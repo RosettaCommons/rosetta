@@ -15,7 +15,6 @@
 #include <devel/init.hh>
 
 // Project Headers (protocols)
-#include <protocols/dna/DnaInterfaceFinder.hh>
 #include <protocols/motifs/motif_utils.hh>
 #include <protocols/motifs/MotifDnaPacker.hh>
 
@@ -23,9 +22,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dna/setup.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/types.hh>
 #include <basic/Tracer.hh>
 static basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 
@@ -38,14 +36,12 @@ static basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
-#include <utility/vector0.hh>
 
 
 ////////////////////////////////////////////////////////////////////////////////

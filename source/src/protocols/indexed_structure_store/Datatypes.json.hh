@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_Datatypes_JSON_HH
 #define INCLUDED_protocols_indexed_structure_store_Datatypes_JSON_HH
 
-#include <algorithm>
 #include <string>
 #include <json.hpp>
 #include <protocols/indexed_structure_store/Datatypes.hh>

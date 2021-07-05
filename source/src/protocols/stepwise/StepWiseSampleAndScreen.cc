@@ -27,6 +27,8 @@
 #include <basic/Tracer.hh>
 #include <algorithm>
 
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh> // AUTO IWYU For Rigi...
+
 static basic::Tracer TR( "protocols.stepwise.StepWiseSampleAndScreen" );
 
 using namespace core;

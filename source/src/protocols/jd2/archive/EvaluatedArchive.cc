@@ -14,7 +14,6 @@
 // Unit headers
 #include <protocols/jd2/archive/EvaluatedArchive.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
-#include <protocols/jd2/archive/VarianceStatisticsArchive.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 
@@ -26,7 +25,6 @@
 #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-#include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 
 #include <utility/exit.hh>
@@ -42,8 +40,6 @@
 #include <basic/options/option_macros.hh>
 
 //for setup_default_evaluators
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //#include <core/scoring/ResidualDipolarCoupling.hh>
 //#include <core/scoring/constraints/ConstraintSet.hh>

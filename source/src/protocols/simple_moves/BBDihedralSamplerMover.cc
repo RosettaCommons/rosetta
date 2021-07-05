@@ -17,20 +17,18 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/kinematics/util.hh>
 
-#include <core/id/types.hh>
 
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <numeric/random/random.hh>
+
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.simple_moves.BBDihedralSamplerMover" );
 

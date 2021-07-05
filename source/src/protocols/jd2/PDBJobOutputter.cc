@@ -14,40 +14,28 @@
 ///Unit headers
 #include <protocols/jd2/PDBJobOutputter.hh>
 #include <protocols/jd2/PDBJobOutputterCreator.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
 ///Project headers
-#include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/io/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/io/pdb/pdb_writer.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/file/file_sys_util.hh>
+#include <utility/io/ozstream.fwd.hh>
 //#include <utility/file/FileName.hh>
-#include <core/types.hh>
 #include <basic/options/option.hh>
 
 ///Basic headers
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringMap.hh>
 
 ///C++ headers
 #include <string>
-#include <map>
 #include <sstream>
 
 // option key includes
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.jd2.PDBJobOutputter" );

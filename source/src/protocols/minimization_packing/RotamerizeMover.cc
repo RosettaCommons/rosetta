@@ -14,31 +14,29 @@
 // Unit headers
 #include <protocols/minimization_packing/RotamerizeMover.hh>
 
-#include <basic/datacache/DataMap.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 //#include <utility/Tag/Tag.hh>
-#include <utility/string_util.hh> // string_split
 
 // option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 namespace protocols {
 namespace minimization_packing {

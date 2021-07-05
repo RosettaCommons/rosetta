@@ -13,33 +13,18 @@
 #define INCLUDED_protocols_hybridization_DomainAssembly_hh
 
 // libRosetta headers
-#include <protocols/loops/loops_main.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
 
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/viewer/viewers.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/CompositionMover.hh>
 
 // C++ headers
-#include <iosfwd>
 #include <string>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <numeric/random/random.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 namespace protocols {
 //namespace comparative_modeling {

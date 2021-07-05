@@ -23,9 +23,7 @@
 
 // Project Headers
 
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
-#include <core/chemical/residue_io.hh>
 
 #include <core/chemical/sdf/mol_writer.hh>
 
@@ -42,6 +40,8 @@
 #include <rdkit/GraphMol/SmilesParse/SmilesParse.h>
 #include <rdkit/GraphMol/MolOps.h>
 #include <rdkit/GraphMol/DistGeomHelpers/Embedder.h>
+
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 static basic::Tracer TR("core.chemical.rdkit.RDMolToRestypeTests.cxxtest");
 

@@ -20,7 +20,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
 #ifdef WIN32
 #include <core/scoring/ScoreFunction.hh>
@@ -33,19 +32,14 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/schema_generator/Constraint.hh>
-#include <basic/Tracer.hh>
 
 // Numeric Headers
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/PCA.hh>
-#include <numeric/xyzVector.io.hh>
 
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

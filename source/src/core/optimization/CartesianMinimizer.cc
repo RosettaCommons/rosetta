@@ -36,11 +36,8 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/optimization/CartesianMinimizerMap.hh>
-#include <core/optimization/DOF_Node.hh>
 #include <core/pose/Pose.hh>
-#include <utility/vector1.hh>
 
 
 using namespace ObjexxFCL::format;

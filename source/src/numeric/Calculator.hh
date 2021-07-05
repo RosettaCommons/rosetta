@@ -20,7 +20,6 @@
 
 #include <utility/VirtualBase.hh>
 
-#include <iosfwd>
 #include <map>
 #include <string>
 

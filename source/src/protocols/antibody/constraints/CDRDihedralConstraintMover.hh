@@ -21,7 +21,6 @@
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 
 #include <core/pose/Pose.fwd.hh>

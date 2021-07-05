@@ -17,8 +17,7 @@
 
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID_Map.hh>
-#include <utility/vector1.fwd.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <core/types.hh>
 #include <map>
 #include <string>

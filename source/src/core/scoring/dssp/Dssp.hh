@@ -24,7 +24,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1.fwd.hh>
@@ -36,10 +35,8 @@
 //// C++ headers
 //#include <cstdlib>
 #include <string>
-#include <cmath>
 
 #include <core/scoring/dssp/StrandPairing.fwd.hh>
-#include <utility/vector1.hh>
 
 //#include <vector>
 

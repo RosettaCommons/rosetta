@@ -23,7 +23,6 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -31,9 +30,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/fragment/FrameList.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragCache.hh> // for FragStore
@@ -60,7 +57,6 @@
 #include <core/fragment/FrameIterator.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 using namespace ObjexxFCL::format;

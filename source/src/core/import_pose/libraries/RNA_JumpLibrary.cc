@@ -28,7 +28,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 
 #include <utility/vector1.hh>

@@ -14,49 +14,36 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/Element.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
 
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/residue_io.hh>
-#include <core/chemical/MergeBehaviorManager.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/optimization/MinimizerOptions.hh> // Needed for MinMover copy constructor
 
-#include <core/types.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
-#include <devel/init.hh>
 
-#include <utility/options/FileVectorOption.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 #include <fstream>
 
 #ifdef SERIALIZATION
+#include <core/chemical/MergeBehaviorManager.hh>
+#include <core/chemical/Element.hh>
+#include <basic/database/open.hh>
+
 // Cereal headers
 //#include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>

@@ -24,20 +24,15 @@
 /// -packstat:min_surface_accessibility 1.4
 
 //std
-#include <iostream>
-#include <map>
 #include <string>
-#include <sstream>
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -51,7 +46,6 @@
 
 
 #include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
 
 //from comput_sasa.cc
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
@@ -59,7 +53,6 @@
 #include <utility/exit.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/etable/Etable.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -70,7 +63,6 @@
 
 using namespace std;
 using namespace core;
-using namespace core::io::pdb;
 using namespace core::conformation;
 using namespace core::chemical;
 using namespace basic::options;

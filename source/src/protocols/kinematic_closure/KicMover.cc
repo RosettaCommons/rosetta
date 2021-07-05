@@ -9,12 +9,11 @@
 
 // Headers {{{1
 #include <protocols/kinematic_closure/types.hh>
-#include <protocols/kinematic_closure/internal.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/kinematic_closure/KicMoverCreator.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
-#include <protocols/kinematic_closure/ClosureSolution.hh>
-#include <protocols/kinematic_closure/perturbers/Perturber.hh>
+#include <protocols/kinematic_closure/ClosureSolution.fwd.hh>
+#include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh>
 #include <protocols/kinematic_closure/perturbers/PerturberSet.hh>
 #include <protocols/kinematic_closure/perturbers/Rama2bPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/OmegaPerturber.hh>
@@ -25,7 +24,6 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Basic headers
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
@@ -33,11 +31,9 @@
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Utility headers
-#include <numeric/random/random.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

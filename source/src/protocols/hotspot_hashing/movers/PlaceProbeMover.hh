@@ -23,16 +23,16 @@
 #include <utility/tag/Tag.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/Stub.fwd.hh>
+#include <core/kinematics/Stub.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/hotspot_hashing/SearchPattern.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-// Unit headers
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace hotspot_hashing {

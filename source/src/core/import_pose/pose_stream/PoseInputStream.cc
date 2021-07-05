@@ -13,26 +13,20 @@
 
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 #include <basic/options/option.hh>
 
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <core/io/raw_data/DisulfideFile.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 // option key includes
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 
 // STL
-#include <utility>
 
 namespace core {
 namespace import_pose {

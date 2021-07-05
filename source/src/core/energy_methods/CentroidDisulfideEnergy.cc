@@ -23,7 +23,6 @@
 
 // Project headers
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>

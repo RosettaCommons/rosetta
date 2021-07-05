@@ -26,7 +26,6 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 
 // Basic/Utility headers
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

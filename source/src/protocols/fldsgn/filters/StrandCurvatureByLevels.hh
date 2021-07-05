@@ -30,8 +30,6 @@
 #include <basic/datacache/DataMap.fwd.hh>
 //#include <utility/tag/Tag.fwd.hh> //transcluded from Filter.hh
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Filter.hh
-#include <utility/vector1.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 

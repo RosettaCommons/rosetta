@@ -21,7 +21,7 @@
 // Unit headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/conformation/symmetry/SymmetryTransform.hh> // needs full decl
+#include <core/conformation/symmetry/SymmetryTransform.hh> // DO NOT AUTO-REMOVE needs full decl for member variable
 
 #include <core/conformation/Conformation.hh>
 

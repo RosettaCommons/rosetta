@@ -35,12 +35,11 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 
 static basic::Tracer TR( "protocols.fldsgn.potentials.sspot.HSPairPotential", basic::t_info );

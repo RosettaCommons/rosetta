@@ -21,7 +21,6 @@
 #include <protocols/match/downstream/SecondaryMatcherToUpstreamResidue.fwd.hh>
 
 // Package headers
-#include <protocols/match/BumpGrid.fwd.hh>
 #include <protocols/match/Matcher.hh>
 #include <protocols/match/Hit.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
@@ -42,7 +41,6 @@
 // C++ headers
 #include <list>
 #include <map>
-#include <string>
 
 #include <core/id/AtomID.hh>
 #include <utility/OrderedTuple.fwd.hh>

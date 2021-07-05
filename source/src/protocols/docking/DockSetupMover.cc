@@ -30,10 +30,8 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
-#include <utility/tools/make_vector1.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 //#include <numeric/trig.functions.hh>
@@ -47,12 +45,12 @@
 
 
 // cmd-line options
-#include <basic/options/option_macros.hh>
-#include <utility/excn/Exceptions.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 static basic::Tracer tr( "protocols.docking.DockSetupMover" );
 

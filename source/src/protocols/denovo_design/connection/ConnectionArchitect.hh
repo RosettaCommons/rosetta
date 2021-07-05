@@ -25,12 +25,10 @@
 #include <protocols/denovo_design/types.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers

@@ -34,6 +34,8 @@
 
 #include <utility/vector1.hh>
 
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For BooleanOptionKey, IntegerOptionKey, StringOptionKey
+
 
 static basic::Tracer TR( "apps.public.analysis.InterfaceAnalyzer" );
 

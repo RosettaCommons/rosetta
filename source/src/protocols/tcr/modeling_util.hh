@@ -14,14 +14,10 @@
 #ifndef INCLUDED_protocols_tcr_modeling_util_hh
 #define INCLUDED_protocols_tcr_modeling_util_hh
 
-#include <protocols/tcr/TCRmodel.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
-#include <protocols/tcr/TCRloopRefine.hh>
-#include <protocols/tcr/TCRseqInfo.fwd.hh>
-#include <protocols/tcr/util.hh>
-#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/loops/loops_main.hh>
+
+#include <protocols/loops/Loops.fwd.hh> // AUTO IWYU For LoopsOP
 
 namespace protocols {
 namespace tcr {

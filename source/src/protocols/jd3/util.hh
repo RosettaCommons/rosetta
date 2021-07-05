@@ -20,7 +20,6 @@
 // Core headers
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/options/OptionCollection.fwd.hh>

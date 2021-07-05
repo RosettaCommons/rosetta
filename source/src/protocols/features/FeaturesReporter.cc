@@ -17,9 +17,8 @@
 // Project Headers
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/jd2/util.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -27,10 +26,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/PDBInfo.hh>
-#include <basic/database/sql_utils.hh>
 
 // Boost Headers
-#include <boost/tokenizer.hpp>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -38,8 +35,6 @@
 // C++ Headers
 #include <string>
 #include <sstream>
-#include <iostream>
-#include <utility/vector0.hh>
 
 
 namespace protocols {

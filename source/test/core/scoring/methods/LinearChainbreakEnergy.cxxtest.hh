@@ -16,11 +16,9 @@
 
 // Unit headers
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
@@ -31,7 +29,6 @@
 
 //Auto Headers
 #include <core/pose/variant_util.hh>
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

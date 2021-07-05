@@ -20,9 +20,8 @@
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

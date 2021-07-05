@@ -18,8 +18,6 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/OneBodyEnergy.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
-#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
-#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -41,7 +39,9 @@
 #include <iostream>
 
 #include <utility/vector1.hh>
-#include <boost/pool/pool.hpp>
+
+#include <core/scoring/methods/LongRangeTwoBodyEnergy.hh> // AUTO IWYU For LongRangeTwoBodyEnergy
+#include <boost/pool/object_pool.hpp> // AUTO IWYU For unordered_object_pool::construct
 
 
 namespace core {

@@ -19,7 +19,6 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 
 #include <core/types.hh>
@@ -28,6 +27,8 @@
 #include <string>
 
 #include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

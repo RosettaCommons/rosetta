@@ -20,7 +20,7 @@
 #include <protocols/sewing/scoring/MotifScorer.hh>
 
 //Package headers
-#include <protocols/sewing/data_storage/SmartAssembly.hh>
+#include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
 
 //Core headers
 #include <core/types.hh>

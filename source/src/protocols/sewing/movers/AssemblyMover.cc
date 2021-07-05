@@ -17,11 +17,9 @@
 
 //Package headers
 #include <protocols/sewing/scoring/AssemblyScorerFactory.hh>
-#include <protocols/sewing/scoring/AssemblyScorerCreator.hh>
 #include <protocols/sewing/scoring/AssemblyScorer.hh>
 #include <protocols/sewing/requirements/AssemblyRequirement.hh>
 #include <protocols/sewing/requirements/AssemblyRequirementFactory.hh>
-#include <protocols/sewing/requirements/AssemblyRequirementCreator.hh>
 #include <protocols/sewing/hashing/ModelFileReader.hh>
 #include <protocols/sewing/hashing/EdgeMapGenerator.hh>
 
@@ -33,6 +31,11 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <protocols/sewing/data_storage/HashedSmartAssembly.hh> // AUTO IWYU For HashedSmartAssembly
+#include <protocols/sewing/hashing/BasisMapGenerator.hh> // AUTO IWYU For BasisMapGenerator
+#include <numeric/random/random.hh> // AUTO IWYU For rg, RandomGenerator
+
 static basic::Tracer TR( "protocols.sewing.movers.AssemblyMover" );
 
 namespace protocols {

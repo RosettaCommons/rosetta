@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/environment/DofPassport.hh>
-#include <core/environment/LocalPosition.hh>
 #include <protocols/environment/DofUnlock.hh>
 
 #include <protocols/environment/claims/TorsionClaim.hh>
@@ -30,7 +29,6 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
@@ -39,8 +37,7 @@
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 #include <protocols/simple_moves/GunnCost.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
 // utility/basic headers
 #include <utility>
@@ -50,7 +47,7 @@
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <basic/Tracer.hh>
 // XSD XRW Includes

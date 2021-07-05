@@ -20,7 +20,6 @@
 // Package Headers
 #include <core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.hh>
 
-#include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/vector1.hh>
 

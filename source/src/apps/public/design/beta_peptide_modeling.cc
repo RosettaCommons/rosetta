@@ -18,30 +18,19 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/etable/Etable.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -58,27 +47,19 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/conversions.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 
 // option key includes
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 using namespace core;

@@ -20,7 +20,7 @@
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
@@ -33,8 +33,6 @@
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
 
-#include <core/pose/util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.io.hh>
 

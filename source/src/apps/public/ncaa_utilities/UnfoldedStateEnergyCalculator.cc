@@ -49,15 +49,15 @@
 #include <basic/options/option.hh>
 
 // Utility Headers
-#include <devel/init.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
 #include <iostream>
 #include <string>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For Integer...
 
 using namespace core;
 using namespace core::scoring;

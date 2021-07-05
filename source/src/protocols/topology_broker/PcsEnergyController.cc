@@ -43,6 +43,8 @@
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl
+
 
 // ObjexxFCL Headers
 

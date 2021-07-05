@@ -14,14 +14,13 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Package headers
 #include <core/scoring/atomic_depth/AtomicDepth.hh>
 #include <core/scoring/atomic_depth/util.hh>
 
 // Project headers
-#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
@@ -29,14 +28,13 @@
 #include <core/pose/init_id_map.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core;
 using namespace core::scoring::atomic_depth;

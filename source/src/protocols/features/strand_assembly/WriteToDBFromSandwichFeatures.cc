@@ -18,6 +18,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
+#include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh> // AUTO IWYU For round_to_Real, count_AA_wo_direction
+#include <core/pose/PDBInfo.hh> // AUTO IWYU For PDBInfo
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
+#include <basic/database/sql_utils.hh> // AUTO IWYU For safely_prepare_statement, safely_w...
+
 namespace protocols {
 namespace features {
 namespace strand_assembly {

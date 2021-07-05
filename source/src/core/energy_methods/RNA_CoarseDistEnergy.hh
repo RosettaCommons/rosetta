@@ -16,15 +16,12 @@
 
 // Unit headers
 #include <core/energy_methods/RNA_CoarseDistEnergy.fwd.hh>
-#include <core/energy_methods/RNA_CoarseDistEnergyCreator.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/OneDDistPotential.fwd.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
-#include <core/scoring/elec/CPRepMapType.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -36,9 +33,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 #include <core/scoring/DerivVectorPair.fwd.hh>

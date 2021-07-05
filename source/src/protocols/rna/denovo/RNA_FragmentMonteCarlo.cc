@@ -13,12 +13,11 @@
 
 
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
-#include <core/fragment/rna/RNA_FragmentHomologyExclusion.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
 #include <core/import_pose/RNA_BasePairHandler.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <core/import_pose/libraries/RNA_LibraryManager.hh>
-#include <core/import_pose/RNA_JumpMover.hh>
+#include <core/import_pose/RNA_JumpMover.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_HelixMover.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoMasterMover.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
@@ -26,46 +25,40 @@
 #include <protocols/rna/denovo/movers/RNP_HighResMover.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
-#include <core/pose/rna/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
-#include <core/import_pose/libraries/BasePairStepLibrary.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/modeler/align/util.hh> //move this to toolbox/
-#include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh> //move this to toolbox/
 #include <protocols/stepwise/modeler/util.hh> //move this to toolbox/
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/import_pose/libraries/ChunkSet.hh>
 #include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
-#include <basic/options/option.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <basic/database/open.hh>
 
 #include <basic/Tracer.hh>
 #include <ctime>
-#include <utility/tools/make_vector.hh>
+
+#include <core/pose/rna/BasePairStep.hh> // MANUAL IWYU
+#include <protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.hh> // AUTO IWYU For RNA_FragmentMonteCarloOutputter
+#include <ObjexxFCL/format.hh> // AUTO IWYU For format
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint, Constraint::AtomID
+
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/ConformationViewer.hh>
 #include <protocols/viewer/viewers.hh>
+#include <core/pose/util.hh>
 #endif
 
 static basic::Tracer TR( "protocols.rna.denovo.RNA_FragmentMonteCarlo" );

@@ -26,25 +26,23 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
 
 #include <core/conformation/Residue.hh>
 
 ///Utility headers
 #include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/make_rot_lib.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/util.hh>
 
 // c++ headers
 #include <string>
 #include <sstream>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
 
 namespace protocols {
 namespace make_rot_lib {

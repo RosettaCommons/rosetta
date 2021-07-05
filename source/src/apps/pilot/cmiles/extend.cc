@@ -1,5 +1,4 @@
 // C/C++ headers
-#include <iostream>
 #include <string>
 
 // Utility headers

@@ -13,39 +13,28 @@
 
 #include <protocols/fold_from_loops/filters/ScorePoseSegmentFromResidueSelectorFilter.hh>
 #include <protocols/fold_from_loops/filters/ScorePoseSegmentFromResidueSelectorFilterCreator.hh>
-#include <protocols/fold_from_loops/movers/SplitAndMixPoseMover.hh>
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/import_pose/import_pose.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
 
 
-#include <algorithm>
-#include <list>
-#include <map>
 
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 namespace protocols {
 namespace fold_from_loops {

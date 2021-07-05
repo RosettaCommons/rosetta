@@ -15,13 +15,10 @@
 #define INCLUDED_protocols_chemically_conjugated_docking_UBQ_GTPaseMover_HH
 
 // Unit headers
-#include <protocols/chemically_conjugated_docking/Gp_quantification_metrics.hh>
-#include <protocols/chemically_conjugated_docking/Gp_extra_bodies.hh>
 #include <protocols/chemically_conjugated_docking/UBQ_GTPaseMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.fwd.hh>
 
@@ -34,6 +31,9 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
+
+#include <protocols/jd2/Job.fwd.hh> // AUTO IWYU For JobOP
+
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
 
 namespace protocols {

@@ -18,7 +18,7 @@
 #include <core/pose/MiniPose.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/id/DOF_ID.hh>
 #include <core/chemical/ResidueType.hh>
 
 #include <basic/Tracer.hh>

@@ -27,18 +27,17 @@
 #include <utility/exit.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 // Boost headers
-#include <boost/lexical_cast.hpp>
 
 // C++ Headers
 #include <cstdlib>
 #include <cstdio>
-#include <fstream>
 #include <sstream>
 #include <string>
 #include <utility>
+
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For stripped_whitespace, rstripped_whitespace, rstrip_whitespace
 
 
 #ifdef    SERIALIZATION

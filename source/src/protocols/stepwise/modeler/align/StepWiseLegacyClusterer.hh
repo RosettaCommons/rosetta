@@ -18,24 +18,16 @@
 #define INCLUDED_protocols_stepwise_StepWiseLegacyClusterer_HH
 
 #include <protocols/stepwise/modeler/align/StepWiseLegacyClusterer.fwd.hh>
-#include <protocols/stepwise/modeler/util.hh> // For PoseList. This is a bit silly.
-#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <map>
-#include <string>
 
-#ifdef PYROSETTA
 #include <core/id/AtomID.hh>
-#endif
 
 
 namespace protocols {

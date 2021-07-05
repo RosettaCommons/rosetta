@@ -20,7 +20,6 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/FromScratchMoverCreator.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 
 namespace protocols {

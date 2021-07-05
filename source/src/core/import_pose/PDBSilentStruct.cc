@@ -13,15 +13,10 @@
 /// @author James Thompson
 
 // C++ Headers
-#include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include <utility>
 #include <vector>
-#include <list>
 #include <string>
-#include <map>
-#include <sstream>
 
 // mini headers
 #include <ObjexxFCL/char.functions.hh>
@@ -30,7 +25,6 @@
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -41,12 +35,11 @@
 #include <core/import_pose/PDBSilentStruct.hh>
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/pose/Pose.hh>
 
 
-#include <core/conformation/Residue.fwd.hh>
 
 // ObjexxFCL
 #include <ObjexxFCL/FArray2D.hh>
@@ -55,13 +48,10 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/memory.hh>
-#include <utility/file/FileName.hh>
-#include <utility/keys/SmallKeyVector.hh>
 #include <basic/options/option.hh>
+
 
 namespace core {
 namespace import_pose {

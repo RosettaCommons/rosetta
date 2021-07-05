@@ -14,28 +14,13 @@
 #define INCLUDED_protocols_splice_SpliceOutAntibody_hh
 
 #include <protocols/splice/SpliceOutAntibody.fwd.hh>
-#include <protocols/splice/SpliceSegment.fwd.hh>
-#include <protocols/splice/SpliceManager.hh>
 #include <protocols/splice/SpliceOutTail.hh>
-#include <protocols/splice/Splice.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <core/sequence/SequenceProfile.fwd.hh>
-#include <protocols/task_operations/SeqprofConsensusOperation.fwd.hh>
-#include <basic/database/open.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <iosfwd>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 
 namespace protocols {

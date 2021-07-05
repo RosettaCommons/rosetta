@@ -21,7 +21,6 @@
 
 #include <basic/options/option.hh>
 
-#include <core/types.hh>
 
 #include <basic/Tracer.hh>
 
@@ -31,7 +30,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/io/silent/EnergyNames.fwd.hh>
 #include <utility/vector1.hh>
 
 

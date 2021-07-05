@@ -20,7 +20,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 
 // Utility headers

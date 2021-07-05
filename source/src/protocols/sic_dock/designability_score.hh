@@ -11,7 +11,6 @@
 #define INCLUDED_protocols_sic_dock_designability_score_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 #include <protocols/sic_dock/types.hh>
 
 namespace protocols {

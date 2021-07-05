@@ -15,7 +15,6 @@
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <numeric/interpolation/spline/spline_functions.hh>
 
-#include <utility>
 #include <utility/tools/make_vector.hh>
 #include <utility/pointer/owning_ptr.hh>
 

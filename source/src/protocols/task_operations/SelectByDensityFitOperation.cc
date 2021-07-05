@@ -15,39 +15,30 @@
 #include <protocols/task_operations/SelectByDensityFitOperationCreator.hh>
 
 // Project Headers
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <protocols/electron_density/util.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 #include <basic/options/util.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
-#include <utility/exit.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 // C++ Headers
 

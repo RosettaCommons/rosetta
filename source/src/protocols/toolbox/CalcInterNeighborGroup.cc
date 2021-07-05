@@ -19,11 +19,9 @@
 
 #include <core/pose/Pose.hh>
 
-#include <basic/MetricValue.hh>
 
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
-#include <utility>
 #include <utility/graph/Graph.hh>
 
 //Utility headers
@@ -31,15 +29,12 @@
 //#include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 
 // option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
-#include <utility/vector1.hh>
 
 
 //C++ headers

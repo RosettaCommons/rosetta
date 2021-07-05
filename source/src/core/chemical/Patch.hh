@@ -19,7 +19,7 @@
 #include <core/chemical/Patch.fwd.hh>
 
 // Package headers
-#include <core/chemical/PatchOperation.hh> // MSVC can't use fwd header
+#include <core/chemical/PatchOperation.fwd.hh> // MSVC can't use fwd header
 #include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>

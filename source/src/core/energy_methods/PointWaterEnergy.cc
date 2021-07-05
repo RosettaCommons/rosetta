@@ -20,26 +20,14 @@
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairNone.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/types.hh>
-#include <core/scoring/NeighborList.tmpl.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/scoring/ResidueNeighborList.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
 #include <core/scoring/ScoringManager.hh>
 
-#include <core/scoring/DerivVectorPair.hh>
 
 // Project headers
-#include <core/kinematics/MinimizerMapBase.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/conformation/RotamerSetBase.hh>
+#include <core/kinematics/MinimizerMapBase.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/chemical/AA.hh>
 
 // Utility headers
@@ -55,6 +43,8 @@
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Residue
 
 static basic::Tracer TR( "core.energy_methods.PointWaterEnergy" );
 

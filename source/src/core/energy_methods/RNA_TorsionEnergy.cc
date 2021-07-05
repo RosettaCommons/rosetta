@@ -14,12 +14,10 @@
 // Unit Headers
 #include <core/energy_methods/RNA_TorsionEnergy.hh>
 #include <core/energy_methods/RNA_TorsionEnergyCreator.hh>
-#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
 
 // Package Headers
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/ScoringManager.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>

@@ -21,10 +21,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/grafting/util.hh>
 
-#include <basic/datacache/DataCache.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <utility>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes

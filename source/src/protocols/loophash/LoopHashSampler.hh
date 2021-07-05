@@ -21,13 +21,11 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <string>
 #include <vector>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

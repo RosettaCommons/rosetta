@@ -14,7 +14,7 @@
 
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryScreener.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <utility>

@@ -18,7 +18,6 @@
 #include <core/io/silent/SilentStructFactory.hh>
 
 // Plaform Headers
-#include <core/types.hh>
 
 // option key includes
 #include <basic/options/option.hh>

@@ -17,18 +17,13 @@
 #include <core/sequence/SSManager.fwd.hh>
 
 // package headers
-#include <core/pose/Pose.fwd.hh>
 
 // utility headers
 #include <core/types.hh>
-#include <utility/exit.hh>
-#include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
-#include <map>
 
 namespace core {
 namespace sequence {

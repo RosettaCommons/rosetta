@@ -17,8 +17,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 
 #include <core/scoring/sc/MolecularSurfaceCalculator.hh>
 #include <core/scoring/sc/ContactMolecularSurfaceCalculator.hh>
@@ -26,10 +24,7 @@
 
 
 // Utility headers
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 #include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR( "core.scoring.sc.ContactMolecularSurfaceCalculator" );

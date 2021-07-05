@@ -20,7 +20,6 @@
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
 
 // Package headers
-#include <protocols/loops/Loops.fwd.hh>
 
 // Project headers
 #include <core/pack/task/PackerTask.fwd.hh>

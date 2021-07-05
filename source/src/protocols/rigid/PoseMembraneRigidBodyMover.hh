@@ -22,7 +22,6 @@
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -52,10 +52,11 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#include <fstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

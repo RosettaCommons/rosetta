@@ -26,11 +26,11 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <set>
+
+#include <core/kinematics/FoldTree.fwd.hh> // AUTO IWYU For FoldTree
 
 namespace protocols {
 namespace denovo_design {

@@ -19,11 +19,9 @@
 #include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <core/types.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <basic/Tracer.fwd.hh>
 
 namespace protocols {
 namespace stepwise {

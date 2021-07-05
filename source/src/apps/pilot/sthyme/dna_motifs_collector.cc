@@ -42,13 +42,15 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 static basic::Tracer TR( "apps.pilot.dna_motifs_collector" );
 
 // Utility Headers
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 
-#include <numeric/xyzVector.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
@@ -60,9 +62,7 @@ static basic::Tracer TR( "apps.pilot.dna_motifs_collector" );
 #include <basic/options/util.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

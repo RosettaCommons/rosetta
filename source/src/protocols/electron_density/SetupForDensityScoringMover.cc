@@ -22,12 +22,8 @@
 
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
-#include <core/chemical/AA.hh>
-#include <numeric/xyzVector.hh>
 
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/conformation/Residue.hh>
 
 // Symmetry
 
@@ -47,7 +43,6 @@
 #include <protocols/loops/Loops.hh>
 
 // Utility headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/keys/OptionKeyList.hh>

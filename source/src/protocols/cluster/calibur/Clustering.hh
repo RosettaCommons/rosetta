@@ -10,28 +10,22 @@
 /// @file external/calibur/Clustering.hh
 /// @author SC Li & YK Ng (kalngyk@gmail.com)
 
-#ifndef external_calibur_Clustering_HH
-#define external_calibur_Clustering_HH
+#ifndef INCLUDED_external_calibur_Clustering_HH
+#define INCLUDED_external_calibur_Clustering_HH
 
 #include <vector>
-#include <stdlib.h>
-#include <string.h>
-#include <iosfwd>
-#include <math.h>
-#include <assert.h>
 #ifndef PYROSETTA
-#include <time.h>
 #endif
 #if !defined(__WIN32__) && !defined(WIN32)
-#include <sys/resource.h>
 #endif
 
 #include <utility/pointer/owning_ptr.hh>
 #include <protocols/cluster/calibur/pdb_util.hh>
-#include <protocols/cluster/calibur/SimPDB.hh>
-#include <protocols/cluster/calibur/PreloadedPDB.hh>
+#include <protocols/cluster/calibur/SimPDB.fwd.hh>
 
 #include <core/types.hh>
+
+#include <string>
 
 namespace protocols {
 namespace cluster {

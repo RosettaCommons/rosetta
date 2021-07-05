@@ -1,6 +1,5 @@
 // Core headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/chemical/AA.hh>

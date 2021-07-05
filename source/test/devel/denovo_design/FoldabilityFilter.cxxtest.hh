@@ -40,7 +40,6 @@
 #include <utility/tag/Tag.hh>
 
 // C++ headers
-#include <test/protocols/denovo_design/test_utils.hh>
 static basic::Tracer TR("devel.denovo_design.FoldabilityFilter.cxxtest");
 
 // Dummy class so that I can access protected functions

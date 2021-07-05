@@ -20,7 +20,6 @@
 ///Project headers
 
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/util.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -35,6 +34,8 @@
 #include <string>
 
 #include <core/import_pose/import_pose.hh>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
 
 
 // option key includes

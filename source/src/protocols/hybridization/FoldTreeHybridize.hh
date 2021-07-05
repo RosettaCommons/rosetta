@@ -15,43 +15,27 @@
 #ifndef INCLUDED_protocols_hybridization_FoldTreeHybridize_hh
 #define INCLUDED_protocols_hybridization_FoldTreeHybridize_hh
 
-#include <protocols/hybridization/InsertChunkMover.hh>
 #include <protocols/hybridization/FoldTreeHybridize.fwd.hh>
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.hh>
-#include <protocols/hybridization/WeightedFragmentTrialMover.hh>
-#include <protocols/hybridization/WeightedFragmentSmoothTrialMover.hh>
+#include <protocols/hybridization/WeightedFragmentTrialMover.fwd.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/util/kinematics_util.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
-#include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
 
 // pairings
-#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/jumping/JumpSample.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 
 #include <set>
 
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace hybridization {

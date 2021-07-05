@@ -42,7 +42,6 @@
 
 // Package headers
 #include <core/chemical/ResidueTypeBase.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/ResidueProperties.hh>
 
 // Utility headers

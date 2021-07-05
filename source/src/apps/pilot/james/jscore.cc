@@ -13,7 +13,7 @@
 #include <core/scoring/constraints/util.hh>
 
 #include <protocols/jobdist/not_universal_main.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/NullMover.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 
@@ -25,8 +25,6 @@
 
 // option key includes
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 

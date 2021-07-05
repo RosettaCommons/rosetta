@@ -22,15 +22,13 @@
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/PackerTask_.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>

@@ -19,12 +19,11 @@
 
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerSized.fwd.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <utility/vector1.hh>
 

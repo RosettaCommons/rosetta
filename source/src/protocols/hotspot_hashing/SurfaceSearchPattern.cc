@@ -12,12 +12,9 @@
 /// @author
 
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <core/types.hh>
 
@@ -25,15 +22,14 @@
 
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/sc/MolecularSurfaceCalculator.hh>
 
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SurfaceSearchPattern.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
 
 namespace protocols {
 namespace hotspot_hashing {

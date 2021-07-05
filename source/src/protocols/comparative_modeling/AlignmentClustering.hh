@@ -23,12 +23,10 @@
 
 #include <map>
 
-#include <core/sequence/SequenceAlignment.fwd.hh>
+#include <core/sequence/SequenceAlignment.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>
 
 

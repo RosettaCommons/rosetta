@@ -13,14 +13,13 @@
 
 #include <core/scoring/motif/motif_hash_stuff.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/xyzStripeHashPose.fwd.hh>
-#include <core/id/AtomID_Mask.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/fixedsizearray1.hh>
-#include <numeric/geometry/hashing/SixDHasher.hh>
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 #include <numeric/xyzTransform.hh>
-#include <numeric/HomogeneousTransform.hh>
-#include <boost/unordered_map.hpp>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
+#include <numeric/numeric.functions.hh> // AUTO IWYU For min
 
 namespace core {
 namespace scoring {

@@ -16,7 +16,6 @@
 
 // Unit headers
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/pose_funcs.hh>
@@ -25,7 +24,6 @@
 
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

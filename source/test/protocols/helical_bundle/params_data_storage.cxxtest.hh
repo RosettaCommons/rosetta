@@ -20,9 +20,7 @@
 #include <protocols/helical_bundle/MakeBundle.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.fwd.hh>
-#include <protocols/helical_bundle/parameters/BundleParametersSet.fwd.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.hh>
-#include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
 #include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 #include <core/conformation/parametric/RealValuedParameter.hh>
 #include <core/conformation/parametric/BooleanValuedParameter.hh>
@@ -30,7 +28,7 @@
 // Other Rosetta libraries:
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <numeric/angle.functions.hh>
 

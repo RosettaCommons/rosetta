@@ -25,7 +25,6 @@
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 
 // package headers
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/signals/GeneralEvent.hh>
 
 

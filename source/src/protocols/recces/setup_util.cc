@@ -15,8 +15,7 @@
 
 #include <protocols/recces/setup_util.hh>
 #include <protocols/recces/options/RECCES_Options.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/rna/util.hh>
@@ -28,13 +27,12 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/RNA_HelixAssembler.hh>
 #include <core/import_pose/FullModelPoseBuilder.hh>
-#include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/rna/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
-#include <protocols/rna/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 
-#include <utility/io/ozstream.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
 
 static basic::Tracer TR( "protocols.recces.setup_util" );
 

@@ -21,8 +21,6 @@
 
 // Package headers
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/types.hh>
-#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 
@@ -31,21 +29,17 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
+#include <basic/datacache/CacheableData.fwd.hh>
 
 
 // Utility headers
 //#include <utility/exit.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
 // C++
 #include <map> // what is the right header for std::pair ?
 
-#include <core/id/AtomID.fwd.hh>
 
 //#include <set>
 

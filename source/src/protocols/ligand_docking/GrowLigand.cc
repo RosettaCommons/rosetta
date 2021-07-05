@@ -16,7 +16,6 @@
 #include <protocols/ligand_docking/GrowLigandCreator.hh>
 
 #include <protocols/ligand_docking/LigandDesign.hh> // For helper functions.  Refactor this
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 
@@ -32,16 +31,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 
 //Auto Headers
 #include <core/pose/Pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
-#include <numeric/random/random_permutation.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -49,6 +43,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <numeric/random/random.hh> // AUTO IWYU For rg, RandomGenerator
 
 
 namespace protocols {

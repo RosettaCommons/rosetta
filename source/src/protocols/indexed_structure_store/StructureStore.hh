@@ -15,15 +15,14 @@
 #define INCLUDED_protocols_indexed_structure_store_StructureStore_hh
 
 // Utility Headers
-#include <platform/types.hh>
 
 #include <utility/VirtualBase.hh>
 
 #include <protocols/indexed_structure_store/StructureStore.fwd.hh>
 #include <protocols/indexed_structure_store/Datatypes.hh>
 
-#include <ndarray.h>
-#include <string>
+
+#include <ndarray/Array.h> // AUTO IWYU For Array
 
 namespace protocols
 {

@@ -16,7 +16,6 @@
 #include <cxxtest/TestSuite.h>
 #include <utility/in_place_list.hh>
 
-#include <iostream>
 
 using namespace utility;
 

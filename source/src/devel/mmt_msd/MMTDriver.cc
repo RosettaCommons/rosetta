@@ -22,11 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/io/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/ResfileReader.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/import_pose_options.hh>
 

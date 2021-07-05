@@ -13,7 +13,6 @@
 
 // Unit Headers
 #include <protocols/toolbox/rotamer_set_operations/RigidBodyMoveRotSetOps.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
 
 #include <basic/Tracer.hh>
 
@@ -21,18 +20,19 @@
 #include <utility>
 #include <utility/exit.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/kinematics/RT.hh>
 #include <core/conformation/Residue.hh>
 //#include <utility/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <protocols/hotspot_hashing/StubGenerator.hh>
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SearchPatternRotSetOp.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 #ifdef WIN32
 #include <utility/tag/Tag.hh>
 #endif

@@ -22,10 +22,11 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/types.hh> // AUTO IWYU For Real, Size
 
 namespace protocols {
 namespace antibody {

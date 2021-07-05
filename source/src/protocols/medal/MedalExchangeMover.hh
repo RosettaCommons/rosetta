@@ -20,7 +20,6 @@
 #include <string>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // Project headers
 #include <core/types.hh>

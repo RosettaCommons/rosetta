@@ -15,9 +15,7 @@
 #define INCLUDED_protocols_backbone_moves_local_backbone_mover_util_hh
 
 // Numeric headers
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 
 // Project headers
 #include <protocols/backbone_moves/local_backbone_mover/types.hh>

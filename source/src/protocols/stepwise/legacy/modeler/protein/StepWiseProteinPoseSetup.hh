@@ -20,9 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
@@ -30,11 +28,8 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 #include <string>
 #include <map>

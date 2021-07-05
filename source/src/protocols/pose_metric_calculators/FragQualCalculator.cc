@@ -24,7 +24,6 @@
 #include <core/scoring/rms_util.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/Frame.hh>
 #include <basic/datacache/DataMap.hh>
 
@@ -36,16 +35,11 @@
 #include <utility/exit.hh>
 
 //// C++ headers
-#include <cmath>
 #include <ObjexxFCL/format.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 #include <core/pose/selection.hh>
-#include <core/id/types.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>

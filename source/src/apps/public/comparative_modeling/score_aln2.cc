@@ -20,14 +20,13 @@
 
 #include <basic/options/option.hh>
 
-#include <core/id/SequenceMapping.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceFactory.hh>
 #include <core/sequence/CompositeSequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/CompositeScoringScheme.hh>
 #include <core/sequence/ScoringSchemeFactory.hh>
 
@@ -50,8 +49,6 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 #include <map>
@@ -69,8 +66,6 @@
 #include <utility/io/ozstream.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 
 
 std::map< std::string, core::pose::Pose >

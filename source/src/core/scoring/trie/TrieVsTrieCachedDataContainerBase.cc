@@ -19,7 +19,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers:
-#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "core.scoring.trie.TrieVsTrieCachedDataContainerBase" );
 

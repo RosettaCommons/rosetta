@@ -19,7 +19,7 @@
 
 // Unit headers
 #include <core/conformation/parametric/ParametrizationCalculator.fwd.hh>
-#include <core/conformation/parametric/Parameters.hh>
+#include <core/conformation/parametric/Parameters.fwd.hh>
 #include <core/conformation/parametric/Parameter.hh>
 #include <core/conformation/parametric/RealValuedParameter.fwd.hh>
 #include <core/conformation/parametric/RealVectorValuedParameter.fwd.hh>
@@ -33,10 +33,8 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // Numeric headers
 

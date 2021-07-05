@@ -24,16 +24,18 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/ResidueIndexDescription.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 
 // Utility headers
-#include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers
 #include <iosfwd>
 #include <string>
+
+#include <utility/json_spirit/json_spirit_value.h> // AUTO IWYU For mValue
+#include <core/types.hh> // AUTO IWYU For Size, Real
 
 namespace protocols {
 namespace loops {

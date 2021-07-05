@@ -22,61 +22,50 @@
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 
 // Core Headers
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/ScoreType.hh>    // scoring stuff can probably be removed / moved elsewhere
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <core/pose/init_id_map.hh>
 
 // Protocol Headers
 #include <protocols/antibody/util.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>  //really?
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
-#include <protocols/forge/methods/chainbreak_eval.hh>
-#include <protocols/rigid/RB_geometry.hh>
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 #include <utility/string_util.hh>
 
 //Options
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 // Basic headers
 
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataCache.hh>
-#include <numeric/NumericTraits.hh>
-#include <cmath>
 
 
 // Boost headers
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
+
+#include <sstream> // MANUAL IWYU
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <protocols/antibody/clusters/CDRCluster.hh> // AUTO IWYU For CDRCluster
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 ///////////////////////////////////////////////////////////////////////////////
 

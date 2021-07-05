@@ -10,7 +10,6 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -33,37 +32,23 @@
 #include <core/sequence/Sequence.hh>
 
 #include <core/conformation/ResidueFactory.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
 // minimize pose into density
-#include <protocols/electron_density/util.hh>
 #include <protocols/electron_density/DensitySymmInfo.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/electron_density/DockIntoDensityMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
-#include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/idealize/IdealizeMover.fwd.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/OptH.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -89,25 +74,22 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 #include <numeric/random/random.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 
 #include <tuple>
 
 #include <basic/Tracer.hh>
 
-#include <iostream>
 #include <string>
-#include <list>
 #include <algorithm>
 
 #include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
+
+#include <fstream> // AUTO IWYU For operator<<, basic_ostream, endl, basic_os...
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
 
 OPT_KEY( String, mode )
 OPT_KEY( String, ca_positions )
@@ -202,6 +184,12 @@ struct CAtrace {
 
 // per fragment info
 struct FragID {
+#ifdef IWYU_SCAN
+	FragID() = default;
+#else
+	FragID() = delete;
+#endif
+
 	FragID( int pos, std::string const & tag) {
 		pos_=pos;
 		tag_=tag;

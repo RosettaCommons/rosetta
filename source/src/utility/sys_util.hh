@@ -20,7 +20,6 @@
 //#include <utility/exit.hh> // For historic reasons (exit used to be here)
 
 // C++ headers
-#include <iosfwd>
 #include <string>
 
 namespace utility {

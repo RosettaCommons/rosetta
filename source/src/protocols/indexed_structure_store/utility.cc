@@ -14,7 +14,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
 #include <core/chemical/VariantType.hh>
 

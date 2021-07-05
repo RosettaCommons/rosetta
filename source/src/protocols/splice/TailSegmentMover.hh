@@ -24,7 +24,6 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 
-#include <core/fragment/ConstantLengthFragSet.fwd.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 

@@ -22,9 +22,7 @@
 #include <core/pose/Pose.hh>
 
 // STL Headers
-#include <utility/assert.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

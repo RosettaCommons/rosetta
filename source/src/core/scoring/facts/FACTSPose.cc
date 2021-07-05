@@ -17,32 +17,16 @@
 #include <core/scoring/facts/FACTSPose.hh>
 
 // Project headers
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/RotamerSetBase.hh>
-#include <core/conformation/RotamerSetCacheableDataType.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
 
-#include <basic/prof.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/exit.hh>
-#include <cmath>
-#include <cstdio>
 //#include <time>
 
 static basic::Tracer TR( "core.scoring.FACTSPoseInfo" );

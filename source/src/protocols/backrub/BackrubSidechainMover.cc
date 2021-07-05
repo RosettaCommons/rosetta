@@ -30,7 +30,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <numeric/MultiDimensionalHistogram.fwd.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -47,7 +46,6 @@
 //Auto Headers
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/MultiDimensionalHistogram.hh>
 

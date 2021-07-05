@@ -14,22 +14,21 @@
 #include <protocols/environment/ClientMover.hh>
 
 // Package headers
-#include <core/environment/DofPassport.hh>
+#include <core/environment/DofPassport.fwd.hh>
 #include <protocols/environment/DofUnlock.hh>
-#include <protocols/environment/ProtectedConformation.hh>
 #include <protocols/environment/Environment.hh>
 
 #include <protocols/environment/EnvExcn.hh>
 
 // Project headers
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/conformation/Conformation.fwd.hh>
 
 #include <utility/excn/Exceptions.hh>
 
 // tracer
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation Conformation::FoldTree
 
 // C++ Headers
 

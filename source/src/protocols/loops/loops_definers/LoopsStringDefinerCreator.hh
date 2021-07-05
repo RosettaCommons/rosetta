@@ -17,8 +17,6 @@
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsDefinerCreator.hh>
 
-#include <core/types.hh>
-#include <utility/vector1.hh>
 
 #include <string>
 

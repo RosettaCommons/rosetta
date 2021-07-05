@@ -19,20 +19,18 @@
 // Unit headers
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/types.hh>
 
 // Package headers
 #include <basic/database/open.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKeyList.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 
 // option key includes
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //#include <basic/Tracer.hh>

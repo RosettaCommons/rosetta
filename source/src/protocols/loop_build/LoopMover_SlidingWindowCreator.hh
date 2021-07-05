@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_loop_build_LoopMover_SlidingWindowCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

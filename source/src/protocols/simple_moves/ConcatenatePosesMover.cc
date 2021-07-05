@@ -19,28 +19,21 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <utility/string_util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <iostream>
 #include <string>
-#include <stdlib.h>
-#include <core/conformation/Atom.hh>
-#include <numeric/random/random.hh>
+#include <core/conformation/Atom.fwd.hh>
 #include <numeric/HomogeneousTransform.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <algorithm>
-#include <regex>
-#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
 // XSD Includes

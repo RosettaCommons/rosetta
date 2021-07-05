@@ -19,11 +19,8 @@
 
 // Unit headers
 #include <protocols/task_operations/DsspDesignOperation.fwd.hh>
-#include <protocols/task_operations/DsspDesignOperationTests.fwd.hh> //For friendship, to allow unit tests to work.
 
 // Core headers
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
@@ -31,13 +28,14 @@
 #include <protocols/parser/BluePrint.fwd.hh>
 
 // Utility headers
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
 #include <map>
+
+class DsspDesignOperationTests; // Forward declaration of test class for friendship
 
 namespace protocols {
 namespace task_operations {

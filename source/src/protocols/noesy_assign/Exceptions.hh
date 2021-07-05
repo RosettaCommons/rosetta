@@ -22,7 +22,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <protocols/noesy_assign/PeakAssignment.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

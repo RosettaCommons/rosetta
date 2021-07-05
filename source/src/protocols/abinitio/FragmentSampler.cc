@@ -24,20 +24,16 @@
 
 // Project Headers
 #include <protocols/topology_broker/TopologyBroker.hh>
-#include <protocols/topology_broker/TopologyClaimer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/kinematics/Jump.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -49,8 +45,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
@@ -60,14 +54,15 @@
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 #include <utility>
 #include <iostream>
+
+#include <protocols/moves/MonteCarlo.hh> // AUTO IWYU For MonteCarlo, MonteCarlo::ScoreFunction
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
 
 
 static basic::Tracer tr( "protocols.abinitio" );

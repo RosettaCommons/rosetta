@@ -19,7 +19,6 @@
 // Unit headers
 #include <protocols/helical_bundle/BundleParametrizationCalculator.fwd.hh>
 #include <core/conformation/parametric/ParametrizationCalculator.hh>
-#include <core/conformation/parametric/Parameter.fwd.hh>
 
 // Package headers
 #include <protocols/helical_bundle/parameters/BundleParametersSet.fwd.hh>
@@ -31,15 +30,10 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // Numeric headers
 
 // C++ headers
-#include <tuple>
 
 #ifdef    SERIALIZATION
 // Cereal headers

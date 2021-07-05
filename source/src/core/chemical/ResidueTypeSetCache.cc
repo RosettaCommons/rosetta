@@ -18,14 +18,12 @@
 // Package headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/Patch.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/tools/make_vector1.hh>
 
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>

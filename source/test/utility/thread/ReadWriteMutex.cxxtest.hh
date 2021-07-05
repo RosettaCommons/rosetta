@@ -12,18 +12,15 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Package headers
-#include <utility/LexicographicalIterator.hh>
-#include <utility/FixedSizeLexicographicalIterator.hh>
-#include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
 #include <cxxtest/TestSuite.h>
 
 /// C++ headers
-#include <iostream>
 
-#include <utility/thread/ReadWriteMutex.hh>
-#include <utility/string_util.hh>
 
 #ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 #include <thread>
 #include <chrono>

@@ -18,10 +18,10 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP
 
 
 namespace protocols {

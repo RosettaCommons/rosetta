@@ -21,10 +21,8 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
-#include <core/id/DOF_ID_Range.hh>
-#include <core/id/TorsionID_Range.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>

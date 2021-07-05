@@ -17,12 +17,14 @@
 #include <protocols/loops/loop_mover/LoopCM.fwd.hh>
 #include <protocols/environment/ClientMover.hh>
 
-#include <protocols/environment/claims/EnvClaim.hh>
-#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
+#include <protocols/environment/claims/EnvClaim.fwd.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
+
+#include <protocols/loops/Loops.fwd.hh> // AUTO IWYU For LoopsOP
+#include <protocols/loops/loop_mover/LoopMover.fwd.hh> // AUTO IWYU For LoopMoverOP
 
 #ifdef WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>

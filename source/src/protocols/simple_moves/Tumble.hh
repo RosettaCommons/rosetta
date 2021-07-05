@@ -22,21 +22,15 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <utility/tag/Tag.fwd.hh>
 
 
 // Utility Headers
-#include <utility/vector1.hh>
 
 // Numeric Headers
 

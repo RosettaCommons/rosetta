@@ -15,6 +15,8 @@
 #ifndef INCLUDED_util_pdb_cyc_pep_w_too_many_hbonds_HH
 #define INCLUDED_util_pdb_cyc_pep_w_too_many_hbonds_HH
 
+#include <string>
+
 std::string
 pdb_cyc_pep_w_too_many_hbonds()
 {

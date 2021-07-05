@@ -19,13 +19,9 @@
 #include <devel/init.hh>
 
 // protocol headers
-#include <protocols/jd2/JobDistributor.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/memory.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/vector1.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -35,16 +31,16 @@
 #include <basic/options/option_macros.hh>
 
 // Multithreading includes
-#include <basic/thread_manager/RosettaThreadManager.hh> //Contains its own #ifdef MULTI_THREADED
-#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
-#include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.hh>
 
 // STL includes
-#include <functional>
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
+
+#include <core/types.hh> // AUTO IWYU For Size
+
+#ifdef MULTI_THREADED
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+#include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.hh>
+#endif
 
 #define NUMBER_OF_NUMBERS 1000
 #define MAX_MULTIPLE 100

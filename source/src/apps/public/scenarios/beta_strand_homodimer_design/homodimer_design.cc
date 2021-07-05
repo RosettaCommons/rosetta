@@ -21,7 +21,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -31,19 +30,17 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/scoring/ScoreType.hh>
 
 //basic
 #include <basic/MetricValue.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <basic/Tracer.hh>
 
 //protocols
@@ -77,12 +74,10 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <sstream>
 #include <iostream>
 #include <string>
 
 //Auto Headers
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR( "apps.public.beta_strand_homodimer_design.homodimer_design" );

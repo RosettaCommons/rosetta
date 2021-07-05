@@ -15,9 +15,7 @@
 #include <protocols/ligand_docking/GALigandDock/GAOptimizer.hh>
 #include <protocols/ligand_docking/GALigandDock/LigandConformer.hh>
 
-#include <core/scoring/rms_util.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
@@ -25,18 +23,11 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/lkball/LK_BallEnergy.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <chrono>

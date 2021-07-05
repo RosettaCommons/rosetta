@@ -38,7 +38,6 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>

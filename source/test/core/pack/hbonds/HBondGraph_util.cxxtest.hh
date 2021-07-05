@@ -14,23 +14,19 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <utility/graph/Graph.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/pack/hbonds/HBondGraph_util.hh>
@@ -38,11 +34,12 @@
 
 #include <core/types.hh>
 
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace core;
 using namespace core::scoring::hbonds::graph;

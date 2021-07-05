@@ -16,7 +16,7 @@
 
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 

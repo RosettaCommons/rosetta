@@ -13,7 +13,7 @@
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace kinematic_closure {

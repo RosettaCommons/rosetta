@@ -15,10 +15,13 @@
 #ifndef INCLUDED_util_mpi_funcs_HH
 #define INCLUDED_util_mpi_funcs_HH
 
+#include <cxxtest/TestSuite.h>
+
 #include <string>
-#include <utility/SimulateMPI.hh>
 #include <utility/mpi_util.hh>
 #include <utility/excn/Exceptions.hh>
+#include <core/types.hh>
+#include <iostream>
 
 void ts_assert_mpi_buffer_has_string(
 	core::Size source,

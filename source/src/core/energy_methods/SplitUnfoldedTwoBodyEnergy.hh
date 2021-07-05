@@ -21,11 +21,8 @@
 
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/SplitUnfoldedTwoBodyPotential.hh>
+#include <core/scoring/SplitUnfoldedTwoBodyPotential.fwd.hh>
 
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 
 #include <utility/vector1.hh>
 

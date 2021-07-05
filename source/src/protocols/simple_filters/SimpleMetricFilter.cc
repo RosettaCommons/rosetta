@@ -23,11 +23,11 @@
 #include <core/simple_metrics/PerResidueRealMetric.hh>
 #include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/simple_metrics/util.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <numeric/util.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -36,6 +36,7 @@
 #include <utility/string_util.hh>
 #include <protocols/filters/filter_schemas.hh>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer TR( "protocols.simple_filters.SimpleMetricFilter" );
 

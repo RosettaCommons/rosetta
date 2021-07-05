@@ -13,10 +13,12 @@
 #include <core/chemical/atomtype_support.hh>
 #include <core/chemical/AtomType.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 
 #include <utility/graph/ring_detection.hh>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 namespace core {
 namespace chemical {

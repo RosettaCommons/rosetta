@@ -19,16 +19,13 @@
 #include <protocols/filters/Filter.hh>
 
 
-#include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Project Headers
 #include <basic/Tracer.hh>
 
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 

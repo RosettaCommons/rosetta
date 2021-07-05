@@ -16,7 +16,7 @@
 
 // Package Headers
 #include <core/scoring/lkball/LK_BallEnergy.fwd.hh>
-#include <core/scoring/lkball/lkbtrie/LKBAtom.hh>
+#include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 
@@ -24,10 +24,8 @@
 #include <core/types.hh>
 
 // STL Headers
-#include <iosfwd>
 
 // Numceric Headers
-#include <numeric/xyzVector.hh>
 
 namespace core {
 namespace scoring {

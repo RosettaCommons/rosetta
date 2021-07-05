@@ -16,17 +16,13 @@
 
 #include <protocols/wum/SilentStructStore.hh>
 #include <protocols/wum/MPI_WorkUnitManager.hh>
-#include <protocols/mpi_refinement/MultiObjective.hh>
+#include <protocols/mpi_refinement/MultiObjective.fwd.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <string>
-#include <vector>
 
-#include <core/kinematics/Jump.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 namespace protocols {
 namespace mpi_refinement {

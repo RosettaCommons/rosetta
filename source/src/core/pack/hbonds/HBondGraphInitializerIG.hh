@@ -17,17 +17,16 @@
 
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pack/hbonds/HBondGraphInitializerIG.fwd.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/hbonds/graph/HBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.fwd.hh>
 
-#include <utility/VirtualBase.hh>
 
-#include <boost/functional/hash.hpp>
 
 #include <unordered_map>
+
+#include <boost/container_hash/extensions.hpp> // AUTO IWYU For hash
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsCOP
 
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>

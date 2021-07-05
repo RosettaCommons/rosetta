@@ -23,7 +23,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>

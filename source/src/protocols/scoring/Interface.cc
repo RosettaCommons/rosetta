@@ -38,8 +38,6 @@
 //Utility Headers
 
 
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 #include <basic/Tracer.hh>
 
@@ -47,7 +45,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
-#include <core/scoring/symmetry/SymmetricEnergies.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 
 
@@ -60,6 +57,8 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace ObjexxFCL;

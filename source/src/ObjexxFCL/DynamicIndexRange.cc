@@ -15,6 +15,8 @@
 #include <ObjexxFCL/DynamicIndexRange.hh>
 #include <ObjexxFCL/DimensionExpressions.hh>
 
+#include <ObjexxFCL/Star.hh> // AUTO IWYU For star, Star (ptr only)
+
 
 namespace ObjexxFCL {
 

@@ -16,27 +16,25 @@
 #include <devel/init.hh>
 
 // core headers
-#include <core/types.hh>
 
 // protocol headers
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 // basic headers
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
+
+#ifdef USE_TENSORFLOW
+#include <core/types.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowManager.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.tmpl.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.tmpl.hh>
+#endif
 
 static basic::Tracer TR("apps.pilot.vmullig.test_tensorflow_graph_convolutional_nn");
 
@@ -176,9 +174,9 @@ initialize_E_values(
 		std::make_tuple( 6, 7, 1.0, 9.0 )
 	};
 	for( auto const & tp : edgedata ) {
-		E( 1, std::get<0>(tp), std::get<1>(tp), 1 ) = std::get<2>(tp); 
+		E( 1, std::get<0>(tp), std::get<1>(tp), 1 ) = std::get<2>(tp);
 		E( 1, std::get<0>(tp), std::get<1>(tp), 2 ) = std::get<3>(tp);
-		E( 1, std::get<1>(tp), std::get<0>(tp), 1 ) = std::get<2>(tp); 
+		E( 1, std::get<1>(tp), std::get<0>(tp), 1 ) = std::get<2>(tp);
 		E( 1, std::get<1>(tp), std::get<0>(tp), 2 ) = std::get<3>(tp);
 	}
 }

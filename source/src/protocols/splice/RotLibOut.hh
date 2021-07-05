@@ -16,14 +16,12 @@
 
 #include <protocols/splice/RotLibOut.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <algorithm>
-#include <core/kinematics/Jump.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <map> // AUTO IWYU For map
 
 // C++ Headers
 namespace protocols {

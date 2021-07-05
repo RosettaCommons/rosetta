@@ -42,8 +42,6 @@
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueTypeFinder.fwd.hh>
-#include <core/chemical/Patch.fwd.hh>
 #include <core/chemical/rings/RingConformer.fwd.hh>
 #include <core/chemical/AA.hh>
 
@@ -88,7 +86,6 @@
 
 // Numeric headers
 #include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
 
 #if defined(WIN32) || defined(__INTEL_COMPILER)
 #include <core/pose/signals/ConformationEvent.hh>

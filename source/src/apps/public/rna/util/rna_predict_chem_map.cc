@@ -24,11 +24,7 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
 #include <core/io/rna/RDAT.hh>
@@ -36,42 +32,27 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/rna/denovo/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/file/FileName.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/conformation/Conformation.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/MathVector.hh>
 
 using namespace core;
 //using namespace protocols;

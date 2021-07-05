@@ -24,7 +24,6 @@
 #include <iostream>
 
 #include <sstream>
-#include <utility/vector1_bool.hh>
 
 #include <utility/vector1.hh>
 

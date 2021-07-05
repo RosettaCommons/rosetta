@@ -19,16 +19,11 @@
 #include <protocols/matdes/SymDofMoverSampler.hh>
 
 // project headers
-#include <protocols/moves/Mover.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
 #include <core/conformation/symmetry/SymmData.hh>
@@ -39,7 +34,6 @@
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>

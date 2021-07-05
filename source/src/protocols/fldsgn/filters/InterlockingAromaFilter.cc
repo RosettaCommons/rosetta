@@ -18,7 +18,6 @@
 
 // Project Headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
@@ -32,12 +31,9 @@
 #include <numeric/numeric.functions.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
-#include <utility>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

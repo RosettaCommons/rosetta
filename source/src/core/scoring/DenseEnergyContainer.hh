@@ -20,7 +20,7 @@
 // Package headers
 #include <core/types.hh>
 #include <core/scoring/LREnergyContainer.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
@@ -28,7 +28,6 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

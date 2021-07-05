@@ -17,7 +17,6 @@
 #include <core/chemical/AA.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -28,7 +27,6 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
@@ -36,16 +34,12 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <basic/database/open.hh>
 
 #include <devel/init.hh>
 
-#include <numeric/xyzVector.hh>
 #include <core/pack/task/ResfileReader.hh>
 
 #include <fstream>
-#include <iostream>
-#include <sstream>
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
@@ -55,10 +49,11 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 //Auto Headers
 static basic::Tracer TR( "apps.public.ddg.ddg_monomer" );

@@ -22,7 +22,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 //#include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/util.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

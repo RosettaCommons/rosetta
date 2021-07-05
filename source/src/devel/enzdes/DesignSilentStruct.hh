@@ -22,18 +22,13 @@
 #include <core/pose/Pose.fwd.hh>
 
 
-#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 
 
-#include <utility/VirtualBase.hh>
 
 
 // C++ Headers
-#include <cstdlib>
 #include <iosfwd>
 //#include <utility/assert.hh>
 //#include <vector>

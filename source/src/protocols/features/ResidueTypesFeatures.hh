@@ -30,7 +30,6 @@
 // C++ Headers
 #include <string>
 
-#include <core/chemical/ResidueType.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

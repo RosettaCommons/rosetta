@@ -32,7 +32,6 @@
 
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
@@ -64,10 +63,8 @@
 #include <basic/Tracer.hh>
 
 //numeric headers
-#include <numeric/conversions.hh>
 
 //// C++ headers
-#include <list>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -75,10 +72,8 @@
 //Auto Headers
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/string_util.hh>
-#include <utility/vector1.hh>
 
 using namespace ObjexxFCL::format;
 

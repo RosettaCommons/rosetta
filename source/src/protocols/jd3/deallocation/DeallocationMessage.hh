@@ -19,7 +19,6 @@
 
 //utility headers
 #include <utility/VirtualBase.hh>
-#include <core/types.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

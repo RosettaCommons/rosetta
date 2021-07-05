@@ -14,16 +14,13 @@
 
 // C++ Headers
 #include <string>
-#include <map>
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 #include <core/sequence/SequenceProfile.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/indexed_structure_store/StructureStore.fwd.hh>
 #include <protocols/indexed_structure_store/search/QueryDatabase.fwd.hh>
@@ -31,10 +28,9 @@
 #include <protocols/indexed_structure_store/SegmentSequenceProfile.hh>
 #include <protocols/indexed_structure_store/movers/SegmentSequenceProfileMover.fwd.hh>
 
-#include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 
 namespace protocols { namespace indexed_structure_store { namespace  movers {

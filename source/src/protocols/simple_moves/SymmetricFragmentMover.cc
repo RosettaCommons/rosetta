@@ -19,11 +19,9 @@
 #include <core/fragment/Frame.hh>
 
 // Utility headers
-#include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
 
 #include <core/fragment/FragData.hh>
-#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

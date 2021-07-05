@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Package headers
 #include <core/select/residue_selector/BondedResidueSelector.hh>
@@ -28,16 +27,16 @@
 #include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 // Utility headers
 #include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
 
 // C++ headers
-#include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core::select::residue_selector;
 

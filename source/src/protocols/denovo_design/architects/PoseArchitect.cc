@@ -25,7 +25,6 @@
 // Core headers
 #include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 

@@ -20,35 +20,28 @@
 // Project headers
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelParameters.hh>
-#include <core/pose/full_model_info/FullModelParameterType.hh>
 
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility>
-#include <utility/vector1.hh>
 
 //C++ headers
-#include <vector>
 #include <string>
-#include <sstream>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
+#include <core/fragment/rna/RNA_FragmentHomologyExclusion.hh> // AUTO IWYU For RNA_FragmentHomologyExclusion
 
 
 using namespace core;

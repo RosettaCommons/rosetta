@@ -18,18 +18,15 @@
 // Package headers
 #include <core/scoring/nmr/NMRDummySpinlabelEnsemble.hh>
 #include <core/io/nmr/SpinlabelDatabaseHandler.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/rms_util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <numeric/agglomerative_hierarchical_clustering.hh>
-#include <numeric/ClusteringTreeNode.hh>
+#include <numeric/ClusteringTreeNode.fwd.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -49,6 +46,8 @@
 
 // Boost headers
 #include <boost/algorithm/string.hpp>
+
+#include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.hh> // AUTO IWYU For NMRDummySpinlabelAtom
 
 namespace core {
 namespace scoring {

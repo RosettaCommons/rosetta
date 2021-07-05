@@ -20,11 +20,11 @@
 #include <protocols/legacy_sewing/scoring/LegacyAssemblyScorer.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
+#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
 
 //Core headers
-#include <core/scoring/motif/motif_hash_stuff.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/scoring/motif/motif_hash_stuff.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/types.hh>
 
 //Utility headers

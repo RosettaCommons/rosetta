@@ -16,12 +16,9 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/types.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 // }}}1
 
 namespace protocols {

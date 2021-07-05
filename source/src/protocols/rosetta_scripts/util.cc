@@ -18,26 +18,18 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/init/score_function_corrections.hh>
 #include <protocols/filters/Filter.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/palette/PackerPaletteFactory.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/palette/PackerPalette.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/id/types.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/select/movemap/util.hh>
 #include <core/select/jump_selector/JumpIndexSelector.hh>
@@ -57,21 +49,21 @@
 
 // Basic Headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 
 // Utility Headers
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/sql_database/types.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <fstream>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <utility/sql_database/DatabaseSessionManager.hh> // AUTO IWYU For session
 
 static basic::Tracer TR( "protocols.RosettaScripts.util" );
 

@@ -17,7 +17,7 @@
 #include <protocols/minimization_packing/PackRotamersMoverLazyCreator.hh>
 
 
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -30,7 +30,6 @@
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 

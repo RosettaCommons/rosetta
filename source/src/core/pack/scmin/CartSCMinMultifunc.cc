@@ -27,15 +27,10 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <core/optimization/DOF_Node.hh>
-#include <core/scoring/DerivVectorPair.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 
 namespace core {

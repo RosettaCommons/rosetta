@@ -15,30 +15,21 @@
 #include <protocols/features/ProteinRMSDFeatures.hh>
 
 // Project Headers
-#include <core/pose/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/ref_pose.hh>
 #include <core/types.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // Basic Headers
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
@@ -54,11 +45,8 @@
 
 // C++ Headers
 #include <string>
-#include <map>
 #include <list>
-#include <sstream>
 
-#include <utility/vector0.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

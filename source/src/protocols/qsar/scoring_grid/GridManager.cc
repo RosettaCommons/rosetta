@@ -12,38 +12,26 @@
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
-#include <protocols/qsar/scoring_grid/SingleGrid.hh>
-#include <protocols/qsar/scoring_grid/GridFactory.hh>
 #include <protocols/qsar/scoring_grid/GridSet.hh>
-#include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
-#include <protocols/qsar/qsarMap.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/UltraLightResidue.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/qsar.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
-#include <utility/tools/make_vector.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_reader.h>
-#include <utility/file/file_sys_util.hh>
 
 #include <numeric/xyzVector.string.hh>
 
 //STL headers
-#include <iostream>
 #include <fstream>
 #include <map>
 

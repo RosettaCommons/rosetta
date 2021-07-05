@@ -19,6 +19,8 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
+struct RootData;
+
 /// @brief  A singleton class for handling static const data for carbohydrate-specific nomenclature and properties.
 class CarbohydrateInfoManager;
 

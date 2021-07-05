@@ -19,9 +19,9 @@
 //STL Headers
 #include <list>
 
-#include <iosfwd>
 
-#include <utility/vector1_bool.hh>
+#include <utility/assert.hh> // MANUAL IWYU
+#include <vector> // AUTO IWYU For vector
 
 
 namespace core {

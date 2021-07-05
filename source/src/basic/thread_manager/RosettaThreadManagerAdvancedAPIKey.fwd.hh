@@ -19,11 +19,6 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-// Forward declarations of classes that can instantiate the RosettaThreadManagerAdvancedAPIKey.
-
-class RosettaThreadManagerTests;
-
-
 // Forward
 namespace basic {
 namespace thread_manager {

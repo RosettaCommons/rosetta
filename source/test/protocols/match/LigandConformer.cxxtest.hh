@@ -18,27 +18,27 @@
 #include <protocols/match/Hit.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
 
 // C++ headers
 #include <string>
-#include <iostream>
-#include <sstream>
 
 //Auto Headers
 #include <core/id/AtomID.hh>
-#include <protocols/match/Hit.hh>
+#include <protocols/match/Hit.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 using namespace protocols::match;
@@ -103,7 +103,6 @@ public:
 	void test_ligand_conformer_recover_input_coords() {
 		using namespace core;
 		using namespace core::chemical;
-		using namespace core::io::pdb;
 		using namespace core::pose;
 
 		Pose carbaryl_pose;
@@ -194,7 +193,6 @@ public:
 	void test_ligand_conformer_measure_global_coords() {
 		using namespace core;
 		using namespace core::chemical;
-		using namespace core::io::pdb;
 		using namespace core::pose;
 
 		Pose carbaryl_pose;

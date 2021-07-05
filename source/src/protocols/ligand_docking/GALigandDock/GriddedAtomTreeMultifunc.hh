@@ -14,12 +14,11 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_GriddedGriddedAtomTreeMultifunc_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_GriddedGriddedAtomTreeMultifunc_hh
 
-#include <protocols/ligand_docking/GALigandDock/GridScorer.hh>
+#include <protocols/ligand_docking/GALigandDock/GridScorer.fwd.hh>
 
 #include <protocols/ligand_docking/GALigandDock/LigandConformer.hh>
-#include <protocols/ligand_docking/GALigandDock/GridHash3D.hh>
 #include <core/optimization/Multifunc.hh>
-#include <core/optimization/MinimizerMap.hh>
+#include <core/optimization/MinimizerMap.fwd.hh>
 
 namespace protocols {
 namespace ligand_docking {

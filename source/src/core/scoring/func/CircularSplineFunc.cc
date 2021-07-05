@@ -15,26 +15,17 @@
 #include <core/scoring/func/CircularSplineFunc.hh>
 
 // Package Headers
-#include <core/scoring/func/Func.fwd.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/database/open.hh>
 
 // Project Headers
 #include <basic/Tracer.hh>
 
 // Utility and Numeric Headers
-#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
-#include <numeric/interpolation/spline/Interpolator.hh>
-#include <numeric/interpolation/util.hh>
 #include <numeric/MathVector.hh>
 #include <numeric/conversions.hh>
 
 // C++ Headers
 #include <iostream>
-#include <sstream>
 #include <string>
 
 static basic::Tracer TR( "core.scoring.constraints.CircularSplineFunc" );

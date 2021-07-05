@@ -33,9 +33,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>

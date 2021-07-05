@@ -14,6 +14,8 @@
 #include <protocols/sewing/data_storage/SmartSegment.hh>
 #include <basic/Tracer.hh>
 
+#include <protocols/sewing/data_storage/SmartSewingResidue.hh> // AUTO IWYU For SmartSewingResidue
+
 static basic::Tracer TR( "protocols.sewing.SmartSegment" );
 
 

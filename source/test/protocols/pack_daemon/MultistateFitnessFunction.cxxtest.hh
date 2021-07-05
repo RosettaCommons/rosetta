@@ -19,13 +19,11 @@
 #include <test/core/init_util.hh>
 
 // Core headers
-#include <core/types.hh>
 
 // Protocols headers
 #include <protocols/genetic_algorithm/Entity.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <list>

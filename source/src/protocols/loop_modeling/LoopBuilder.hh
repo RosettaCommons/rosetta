@@ -15,25 +15,22 @@
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/LoopBuilder.fwd.hh>
 #include <protocols/loop_modeling/utilities/TrajectoryLogger.fwd.hh>
-#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship.
 
 // Core headers
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/kinematic_closure/KicMover.fwd.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.fwd.hh>
-#include <protocols/loops/Loop.fwd.hh>
-#include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+
+class LoopModelerTests; // Forward declaration of test class for friendship.
 
 namespace protocols {
 namespace loop_modeling {

@@ -16,17 +16,15 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/AtomID.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
 #include <core/types.hh>

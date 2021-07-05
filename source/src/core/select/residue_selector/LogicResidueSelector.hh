@@ -18,7 +18,6 @@
 #include <core/select/residue_selector/LogicResidueSelector.fwd.hh>
 
 // Package headers
-#include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -27,10 +26,8 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <set>
 
 #ifdef    SERIALIZATION
 // Cereal headers

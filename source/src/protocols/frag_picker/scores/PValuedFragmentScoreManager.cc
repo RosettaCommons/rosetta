@@ -23,9 +23,10 @@
 
 
 // C++
-#include <algorithm>
 
 #include <utility/vector1.hh>
+
+#include <ObjexxFCL/format.hh> // AUTO IWYU For F, RJ, I, format
 
 
 namespace protocols {

@@ -33,10 +33,9 @@
 
 //utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
+#include <map>
 
 namespace protocols {
 namespace forge {

@@ -22,13 +22,14 @@
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

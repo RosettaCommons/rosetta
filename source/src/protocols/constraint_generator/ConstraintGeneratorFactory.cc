@@ -23,10 +23,9 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 

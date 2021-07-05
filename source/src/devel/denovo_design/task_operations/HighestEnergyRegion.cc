@@ -18,8 +18,6 @@
 // package headers
 #include <protocols/denovo_design/calculators/CavityCalculator.hh>
 #include <devel/denovo_design/calculators/ResidueCentralityCalculator.hh>
-#include <core/io/external/PsiPredInterface.hh>
-#include <protocols/flxbb/utility.hh>
 
 // project headers
 #include <core/conformation/Residue.hh>
@@ -30,11 +28,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
-#include <protocols/parser/BluePrint.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>
-#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
 

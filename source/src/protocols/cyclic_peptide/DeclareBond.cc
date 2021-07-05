@@ -19,9 +19,8 @@
 #include <core/pose/variant_util.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -29,20 +28,14 @@
 
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/kinematics/FoldTree.hh>
 
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
 
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
-#include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-#include <cstdio>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

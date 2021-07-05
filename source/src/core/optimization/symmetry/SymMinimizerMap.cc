@@ -40,7 +40,6 @@
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
-#include <utility/options/BooleanVectorOption.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>

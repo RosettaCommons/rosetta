@@ -17,24 +17,21 @@
 // Unit headers
 
 // Project header
-#include <platform/types.hh>
 
 // Utility headers
-#include <utility/thread/threadsafe_creation.hh>
-#include <utility/pointer/memory.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 // C++ headers
+
+#ifdef USE_TENSORFLOW
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
+#include <utility/thread/threadsafe_creation.hh>
 #include <iostream>
-#include <string>
-#include <tuple>
-#include <functional>
+#endif
 
 // Construct tracer.
 static basic::Tracer TR( "basic.tensorflow_manager.RosettaTensorflowManager" );

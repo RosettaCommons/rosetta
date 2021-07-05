@@ -24,10 +24,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>

@@ -25,10 +25,10 @@
 //Numeric
 #include <numeric/xyzVector.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <map> // AUTO IWYU For map
+
 //Protocols
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
-#include <protocols/loops/Loop.fwd.hh>
 
 namespace devel {
 namespace loop_creation {

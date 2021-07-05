@@ -26,11 +26,9 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
-#include <core/select/residue_selector/util.hh>
 
 // utility headers
 #include <utility>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
 // numeric headers

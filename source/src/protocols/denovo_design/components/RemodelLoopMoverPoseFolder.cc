@@ -16,7 +16,6 @@
 
 // Protocol headers
 #include <protocols/denovo_design/components/Picker.hh>
-#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>

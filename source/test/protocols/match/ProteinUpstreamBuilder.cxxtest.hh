@@ -24,17 +24,13 @@
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/GlobalResidueTypeSet.hh>
-#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pose/util.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
 /// Project headers
@@ -42,14 +38,12 @@
 
 // C++ headers
 #include <string>
-#include <iostream>
 #include <sstream>
 
 //Auto Headers
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/Hit.hh>
 #include <utility/vector1.hh>
-#include <boost/unordered/unordered_map_fwd.hpp>
 
 
 using core::Size;

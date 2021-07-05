@@ -18,7 +18,6 @@
 //unit headers
 #include <protocols/jd2/AtomTreeDiffJobOutputter.fwd.hh>
 #include <protocols/jd2/FileJobOutputter.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.fwd.hh>
 
 //project headers
@@ -26,14 +25,12 @@
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 
 //utility headers
-#include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>
 
 //C++ headers
 #include <string>
 #include <set>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

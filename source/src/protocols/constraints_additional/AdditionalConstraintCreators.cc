@@ -21,7 +21,6 @@
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -25,10 +25,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
@@ -41,29 +39,24 @@
 #include <core/kinematics/MoveMap.hh>
 
 // Package headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <basic/Tracer.fwd.hh>
 #include <protocols/membrane/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <basic/datacache/DataMap.hh>
 #include <utility/string_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
-#include <protocols/membrane/util.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 static basic::Tracer TR( "apps.pilot.jkleman.mp_quick_relax" );
 
@@ -340,7 +333,6 @@ void TestQuickRelaxMover::apply( Pose & pose ) {
 	// get time
 	std::clock_t start = std::clock();
 
-	using namespace protocols::idealize;
 	using namespace protocols::membrane;
 	using namespace protocols::simple_moves;
 	using namespace protocols::moves;

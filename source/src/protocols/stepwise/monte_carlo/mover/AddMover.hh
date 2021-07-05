@@ -26,7 +26,6 @@
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/AddMoverCreator.fwd.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
 
 namespace protocols {

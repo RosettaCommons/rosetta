@@ -17,7 +17,6 @@
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.fwd.hh>
 
 // C/C++ headers
-#include <string>
 
 // Project headers
 #include <core/types.hh>

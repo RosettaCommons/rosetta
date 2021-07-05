@@ -9,37 +9,21 @@
 
 // Pose
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/io/silent/SilentStruct.hh>
 
 // Scoring
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 
 // Normal Mode
 #include <protocols/normalmode/NormalModeRelaxMover.fwd.hh>
-#include <protocols/normalmode/NormalModeRelaxMover.hh>
 
 // LoopHash
 #include <protocols/loophash/LoopHashSampler.fwd.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
-#include <protocols/loophash/LocalInserter.fwd.hh>
-#include <protocols/loophash/LocalInserter.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 // Relax, min
-#include <core/optimization/AtomTreeMinimizer.fwd.hh>
-#include <core/optimization/CartesianMinimizer.fwd.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 
 
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
+
+#include <core/io/silent/silent.fwd.hh> // AUTO IWYU For SilentStructOP
 
 using namespace core;
 

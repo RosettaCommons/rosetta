@@ -23,7 +23,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/util.hh>
@@ -35,13 +34,11 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <numeric/constants.hh>
-#include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // Basic headers

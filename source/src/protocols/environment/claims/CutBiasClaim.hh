@@ -20,21 +20,18 @@
 #include <protocols/environment/claims/CutBiasClaim.fwd.hh>
 
 // Package Headers
-#include <core/environment/LocalPosition.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/BrokerElements.hh>
 
 // Project Headers
-#include <core/id/types.hh>
 #include <core/fragment/SecondaryStructure.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 //// C++ headers
 #include <string>

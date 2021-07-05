@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
@@ -30,7 +28,6 @@
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <test/util/pose_funcs.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>

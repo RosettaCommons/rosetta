@@ -13,7 +13,6 @@
 // libRosetta headers
 
 
-#include <core/types.hh>
 #include <devel/init.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/viewer/viewers.hh>

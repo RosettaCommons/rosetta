@@ -28,7 +28,6 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 

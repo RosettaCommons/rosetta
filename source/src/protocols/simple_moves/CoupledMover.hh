@@ -23,18 +23,18 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/kinematic_closure/KicMover.hh>
-#include <protocols/simple_moves/ShortBackrubMover.hh>
-#include <protocols/minimization_packing/BoltzmannRotamerMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <protocols/kinematic_closure/KicMover.fwd.hh>
+#include <protocols/simple_moves/ShortBackrubMover.fwd.hh>
+#include <protocols/minimization_packing/BoltzmannRotamerMover.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
 // Parser headers
-#include <basic/datacache/DataMap.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
+
+#include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh> // AUTO IWYU For PerturberOP
+#include <protocols/moves/Mover.hh> // AUTO IWYU For Mover
 
 
 namespace protocols {

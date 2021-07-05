@@ -18,12 +18,9 @@
 #include <protocols/rna/denovo/movers/RNA_DeNovoProtocolMoverCreator.hh>
 #include <core/import_pose/RNA_DeNovoParameters.hh>
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
-#include <core/import_pose/RNA_HelixAssembler.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/util.hh>
@@ -31,7 +28,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/scoring/func/FadeFunc.hh>
@@ -43,7 +39,6 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
@@ -54,8 +49,6 @@
 
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
 // #include <core/fragment/rna/FullAtomRNA_Fragments.hh>
-#include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <core/import_pose/RNA_BasePairHandler.hh>
 #include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 // #include <protocols/rna/denovo/movers/RNA_Relaxer.hh>
@@ -64,7 +57,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
@@ -74,7 +66,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
@@ -90,11 +81,11 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
-#include <ObjexxFCL/format.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/io/izstream.hh>
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 
 static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_DeNovoProtocolMover" );
 using utility::vector1;
@@ -220,7 +211,6 @@ void RNA_DeNovoProtocolMover::apply( core::pose::Pose & pose ) {
 
 	using namespace core::pose;
 	using namespace core::scoring;
-	using namespace core::io::pdb;
 	using namespace core::io::silent;
 	using namespace protocols::rna::denovo;
 

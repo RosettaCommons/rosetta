@@ -37,10 +37,8 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 
@@ -59,7 +57,6 @@
 
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/tools/make_vector1.hh>
 #include <core/types.hh>
 
 #include <utility/file/file_sys_util.hh> // file_exists
@@ -67,7 +64,6 @@
 using basic::Error;
 using basic::Warning;
 #include <sstream>
-#include <fstream>
 
 
 // option key includes

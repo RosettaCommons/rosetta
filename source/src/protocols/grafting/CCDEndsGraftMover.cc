@@ -18,7 +18,6 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/selection.hh>
@@ -27,7 +26,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
@@ -38,12 +36,12 @@
 
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationManager.hh>
-#include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 static basic::Tracer TR( "protocols.grafting.CCDEndsGraftMover" );

@@ -32,6 +32,10 @@
 // C++ libraries
 #include <complex>
 
+#include <numeric/model_quality/RmsData.hh> // AUTO IWYU For RmsData
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A, FArray1A<>::size_type, FArray1A::IR
+#include <ObjexxFCL/FArray2A.hh> // AUTO IWYU For FArray2A, FArray2A<>::size_type, FArray2A::IR
+
 
 namespace numeric {
 namespace model_quality {

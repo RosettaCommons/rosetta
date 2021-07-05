@@ -32,11 +32,9 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
-#include <ostream>
 
 #include <core/fragment/FrameIterator.hh>
 

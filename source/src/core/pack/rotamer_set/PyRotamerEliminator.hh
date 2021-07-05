@@ -20,19 +20,15 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
-#include <core/types.hh>
 #include <utility/vector1.hh>
 
 #include <functional>

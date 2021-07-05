@@ -15,23 +15,18 @@
 #define INCLUDED_core_scoring_P_AA_ss_hh
 
 // Unit Headers
-#include <core/scoring/P_AA.fwd.hh>
 
 // Package headers
-#include <core/scoring/types.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/interpolation/spline/BicubicSpline.hh>
 
 namespace core {
 namespace scoring {

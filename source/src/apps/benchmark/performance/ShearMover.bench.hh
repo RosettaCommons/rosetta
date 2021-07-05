@@ -22,7 +22,6 @@
 
 #include <apps/benchmark/performance/performance_benchmark.hh>
 
-#include <utility/vector1.hh>
 
 
 class ShearMoverBenchmark : public PerformanceBenchmark

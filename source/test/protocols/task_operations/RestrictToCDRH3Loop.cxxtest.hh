@@ -29,6 +29,8 @@
 // utility headers
 #include <basic/Tracer.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 // C++ headers
 
 

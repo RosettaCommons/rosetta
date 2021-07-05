@@ -25,7 +25,6 @@
 #include <map>
 
 #include <protocols/frag_picker/VallChunk.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

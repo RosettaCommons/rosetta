@@ -18,17 +18,13 @@
 // Package headers
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/string_util.hh>
-#include <utility/vector1.hh>
-#include <utility/assert.hh>
 
 // C++ headers
 

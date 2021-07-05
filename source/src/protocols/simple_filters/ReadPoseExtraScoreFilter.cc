@@ -13,19 +13,15 @@
 
 //Unit Headers
 #include <protocols/simple_filters/ReadPoseExtraScoreFilter.hh>
-#include <protocols/simple_filters/ReadPoseExtraScoreFilterCreator.hh>
 
 //Project Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <protocols/filters/filter_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 namespace protocols {
 namespace simple_filters {

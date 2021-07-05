@@ -44,7 +44,6 @@
 
 //C++ headers
 #include <utility>
-#include <vector>
 #include <string>
 #include <sstream>
 
@@ -56,8 +55,6 @@
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 using namespace ObjexxFCL::format;

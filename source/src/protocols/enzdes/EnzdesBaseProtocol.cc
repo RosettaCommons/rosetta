@@ -70,9 +70,9 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/variant_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <sstream> // MANUAL IWYU
 
 namespace protocols {
 namespace enzdes {

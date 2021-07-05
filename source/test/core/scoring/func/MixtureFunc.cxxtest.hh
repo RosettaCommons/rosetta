@@ -15,11 +15,11 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
+#include <core/scoring/func/MixtureFunc.hh> // DO NOT AUTO-REMOVE
+
 // basic headers
-#include <basic/Tracer.hh>
 
 // unit headers
-#include <core/scoring/func/MixtureFunc.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

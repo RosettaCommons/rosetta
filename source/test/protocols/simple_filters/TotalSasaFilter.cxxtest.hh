@@ -18,7 +18,7 @@
 // Unit headers
 #include <protocols/simple_filters/TotalSasaFilter.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
@@ -30,8 +30,6 @@
 #include <test/util/pose_funcs.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
-#include <utility/vector1.hh>
 
 // --------------- Test Class --------------- //
 

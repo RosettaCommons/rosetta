@@ -20,7 +20,6 @@
 
 // Unit Headers
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 // Package Headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -34,7 +33,7 @@
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // DO NOT AUTO-REMOVE -- Not used in this header, but will be by practically every other Filter
 
 // C++ headers
 #include <string>

@@ -13,14 +13,11 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -30,6 +27,9 @@
 #include <basic/Tracer.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <numeric/xyz.functions.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 #define EXPECTEDDIST 2.01
 #define DISTTHRESH 0.05

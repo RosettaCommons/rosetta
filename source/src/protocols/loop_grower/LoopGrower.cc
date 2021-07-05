@@ -16,36 +16,26 @@
 #include <protocols/loop_grower/LoopGrower.hh>
 #include <protocols/loop_grower/util.hh>
 
-#include <iostream>
 #include <fstream>
 
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataMap.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FragData.hh>
-#include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FragID_Iterator.hh>
-#include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/util.hh>
 #include <core/fragment/Frame.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -55,80 +45,46 @@
 #include <core/pack/task/ResidueLevelTask.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/ScalarWeightedFunc.hh>
-#include <core/scoring/func/SOGFunc.hh>
-#include <core/scoring/func/USOGFunc.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/sequence/AnnotatedSequence.hh>
-#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/sequence/SWAligner.hh>
-#include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 
-#include <protocols/comparative_modeling/coord_util.hh>
-#include <protocols/hybridization/util.hh>
-#include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/relax/util.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/symmetry/SetupNCSMover.hh>
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 #include <protocols/loop_grower/SheetSampler.hh>
 #include <protocols/loop_grower/DensSkeleton.hh>
 
-#include <utility/excn/Exceptions.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
 
-#include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/WeightedSampler.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationCollection.hh>
@@ -136,6 +92,11 @@
 
 #include <boost/unordered/unordered_map.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
+#include <core/fragment/BBTorsionSRFD.hh> // AUTO IWYU For BBTorsionSRFD
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type
 
 namespace protocols {
 namespace loop_grower {

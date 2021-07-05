@@ -17,10 +17,8 @@
 #include <core/scoring/etable/count_pair/CountPairCrossover3.hh>
 
 // Package Headers
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 // Project Headers
-#include <core/types.hh>
 
 namespace core {
 namespace scoring {

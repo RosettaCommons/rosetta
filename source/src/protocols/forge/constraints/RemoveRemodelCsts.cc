@@ -21,14 +21,13 @@
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 
 // Project headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

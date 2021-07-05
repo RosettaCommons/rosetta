@@ -17,16 +17,15 @@
 #include <protocols/topology_broker/BasicJumpClaimer.fwd.hh>
 
 // Package headers
-#include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/claims/DofClaim.fwd.hh>
-#include <protocols/topology_broker/claims/JumpClaim.hh>
 
 // Project Headers
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <string>
 #include <iosfwd>
+
+#include <protocols/topology_broker/TopologyClaimer.hh> // AUTO IWYU For TopologyClaimer
 
 namespace protocols {
 namespace topology_broker {

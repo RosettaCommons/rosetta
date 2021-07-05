@@ -25,12 +25,11 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/vector1_bool.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/keys/Key3Tuple.hh> //container holds Loop, movemap, movemap (OPs)
 

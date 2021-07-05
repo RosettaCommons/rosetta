@@ -35,7 +35,9 @@
 
 // Utility headers
 #include <utility/graph/Graph.hh>
-#include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 
 namespace core {

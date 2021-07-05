@@ -25,18 +25,10 @@
 #include <core/simple_metrics/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh> // for xml schema utility functions
-#include <core/scoring/Energies.hh>
-#include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/select/residue_selector/util.hh>
-#include <core/pose/ref_pose.hh>
-#include <core/pose/util.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -51,15 +43,11 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
-#include <numeric/zscores.hh>
 #include <utility/pointer/memory.hh>
 
 // C++ headers
-#include <utility/assert.hh>
-#include <cmath>
 
 // XSD Includes
-#include <core/select/residue_selector/util.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

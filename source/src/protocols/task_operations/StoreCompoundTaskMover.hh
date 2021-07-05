@@ -24,6 +24,8 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
+#include <vector>
+
 namespace protocols {
 namespace task_operations {
 

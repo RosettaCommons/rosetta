@@ -28,7 +28,6 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -37,11 +36,8 @@
 #include <numeric/xyzVector.fwd.hh>
 
 // Objexx headers
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <cmath>
 
 namespace protocols {
 namespace nmr {

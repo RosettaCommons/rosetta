@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -32,12 +30,12 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("AddHelixSequenceConstraintsMoverTests");
 

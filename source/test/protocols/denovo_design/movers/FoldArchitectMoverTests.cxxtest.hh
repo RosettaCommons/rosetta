@@ -12,8 +12,6 @@
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 #include <test/util/pose_funcs.hh>
 
@@ -22,7 +20,6 @@
 #include <protocols/denovo_design/architects/HelixArchitect.hh>
 #include <protocols/denovo_design/architects/PoseArchitect.hh>
 #include <protocols/denovo_design/components/RandomTorsionPoseFolder.hh>
-#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
@@ -36,6 +33,8 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("FoldArchitectMoverTests");
 

@@ -20,22 +20,15 @@
 
 // Numeric Headers
 #include <numeric/MathMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
-#include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <numeric/cubic_polynomial.hh>
 #include <core/types.hh>
 
 // Basic/Utility headers
-#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -21,15 +21,9 @@
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/SegmentPairing.fwd.hh>
-#include <protocols/denovo_design/components/StructureDataObserver.fwd.hh>
 #include <protocols/denovo_design/types.hh>
-#include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
-#include <protocols/loops/Loop.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 // Core headers
-#include <utility/graph/Graph.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/Remarks.fwd.hh>

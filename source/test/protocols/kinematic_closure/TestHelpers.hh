@@ -12,31 +12,32 @@
 
 // Headers {{{1
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/kinematic_closure/utilities.hh>
 
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 
 // Protocol headers
-#include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/utilities.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
 #include <protocols/kinematic_closure/pivot_pickers/LoopPivots.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 
 // Utility headers
 #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
 
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
+
 
 // Global names {{{1
+using namespace std;
 using namespace core;
 using core::PointPosition;
 using core::pose::Pose;

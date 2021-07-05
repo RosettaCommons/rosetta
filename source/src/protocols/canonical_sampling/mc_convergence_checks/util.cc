@@ -24,7 +24,6 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

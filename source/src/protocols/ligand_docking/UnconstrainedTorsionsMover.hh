@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_ligand_docking_UnconstrainedTorsionsMover_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/ligand_docking/ResidueTorsionRestraints.hh> ///TODO make this a .fwd
+#include <protocols/ligand_docking/ResidueTorsionRestraints.fwd.hh> ///TODO make this a .fwd
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.fwd.hh>
 #include <protocols/ligand_docking/MinimizeLigand.fwd.hh>
 #include <protocols/moves/Mover.hh>

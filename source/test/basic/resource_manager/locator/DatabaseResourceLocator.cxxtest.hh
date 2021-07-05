@@ -22,14 +22,11 @@
 
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
 // Utility headers
-#include <utility/io/ozstream.hh>
-#include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
 
 // External Headers
@@ -38,7 +35,6 @@
 // C++ headers
 #include <cstdio>
 #include <string>
-#include <sstream>
 
 static basic::Tracer tr( "basic.resource_manager.locator.DatabaseResourceLocator.cxxtest");
 

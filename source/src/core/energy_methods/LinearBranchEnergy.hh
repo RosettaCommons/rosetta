@@ -21,8 +21,6 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>

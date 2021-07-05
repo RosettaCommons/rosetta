@@ -32,11 +32,12 @@
 
 // Test headers
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 //Auto Headers
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/ubyte.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 static basic::Tracer TR("test.core.pack.interaction_graph.rotamerdots");

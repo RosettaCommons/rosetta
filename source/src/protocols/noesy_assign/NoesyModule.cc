@@ -26,7 +26,6 @@
 #include <protocols/noesy_assign/PeakFileFormat.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/noesy_assign/PeakAssignment.hh>
-#include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
 #include <protocols/noesy_assign/PeakFileFormat_Sparky.hh>
 #include <protocols/noesy_assign/CovalentCompliance.hh>
 
@@ -38,11 +37,9 @@
 #include <core/pose/Pose.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/excn/Exceptions.hh>
@@ -60,6 +57,8 @@
 #include <protocols/noesy_assign/CrossPeakList.impl.hh>
 #include <protocols/noesy_assign/NoesyModule.impl.hh>
 #include <utility/vector1.hh>
+
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
 
 OPT_2GRP_KEY( File, noesy, in, resonances )
 OPT_2GRP_KEY( FileVector, noesy, in, peaks )

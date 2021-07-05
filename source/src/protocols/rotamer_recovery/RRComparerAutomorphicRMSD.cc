@@ -14,11 +14,10 @@
 
 
 // Unit Headers
-#include <protocols/rotamer_recovery/RRComparer.hh>
 #include <protocols/rotamer_recovery/RRComparerAutomorphicRMSD.hh>
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
 
@@ -33,8 +32,6 @@
 #include <sstream>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <utility/vector1.hh>
 
 
 using std::string;

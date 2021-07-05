@@ -17,7 +17,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/relax/membrane/MPRangeRelaxMover.hh>
@@ -32,10 +31,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -43,8 +39,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/membrane/util.hh>
 #include <utility/io/util.hh>
@@ -53,7 +49,10 @@
 #include <core/pose/util.hh>
 
 // C++ Headers
-#include <cstdlib>
+
+#include <protocols/relax/membrane/util.hh> // AUTO IWYU For add_mutant_to_vectors, check_mutants_ok
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.membrane.MPMutateRelaxMover" );
 

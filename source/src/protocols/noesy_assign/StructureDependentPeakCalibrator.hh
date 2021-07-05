@@ -19,17 +19,13 @@
 
 
 // Package Headers
-#include <protocols/noesy_assign/CrossPeak.hh>
-#include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers

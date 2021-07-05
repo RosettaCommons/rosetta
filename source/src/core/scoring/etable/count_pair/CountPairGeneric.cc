@@ -16,19 +16,14 @@
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
 
 #include <core/types.hh>
-#include <core/conformation/Atom.hh>
 #include <core/conformation/PseudoBond.hh>
 
 //Auto Headers
-#include <platform/types.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
 
 
 namespace core {

@@ -24,13 +24,13 @@
 
 // Utility headers
 #include <utility>
-#include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
+
+#include <protocols/topology_broker/ConstraintClaimer.hh> // AUTO IWYU For ConstraintClaimer
+
 //// C++ headers
 
-#include <core/id/SequenceMapping.hh>
-#include <utility/vector1.hh>
 
 
 // option key includes

@@ -21,14 +21,11 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/protein_interface_design/filters/SequenceRecoveryFilter.fwd.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/vector1.hh>
-#include <map>
 
-// Unit headers
+#include <map>
 
 namespace protocols {
 namespace protein_interface_design {

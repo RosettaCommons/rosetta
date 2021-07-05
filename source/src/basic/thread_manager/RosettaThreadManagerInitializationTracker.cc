@@ -26,7 +26,6 @@
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 // C++ headers
-#include <string>
 #ifdef MULTI_THREADED
 #include <thread>
 #endif

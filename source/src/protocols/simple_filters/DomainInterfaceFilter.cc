@@ -17,10 +17,7 @@
 #include <protocols/simple_filters/DomainInterfaceFilter.hh>
 
 // Package Headers
-#include <basic/datacache/DataMap.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/PointGraph.hh>
-#include <core/conformation/find_neighbors.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/pose/selection.hh>
 #include <core/select/util/interface_vector_calculate.hh>
 #include <core/types.hh>

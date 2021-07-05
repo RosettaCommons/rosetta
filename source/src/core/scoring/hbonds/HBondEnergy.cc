@@ -32,7 +32,6 @@
 #include <core/scoring/hbonds/hbtrie/HBCountPairFunction.hh>
 #include <core/scoring/hbonds/hbtrie/HBondsTrieVsTrieCachedDataContainer.hh>
 
-#include <core/scoring/lkball/LK_BallEnergy.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/trie/TrieCollection.hh>
@@ -51,14 +50,13 @@
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/BasicDataCache.fwd.hh>
 
 #include <core/scoring/ScoringManager.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/RotamerSetBase.hh>
-#include <core/chemical/rna/RNA_Info.hh>
 
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
@@ -67,16 +65,13 @@
 #include <core/scoring/func/SmoothStepFunc.hh>
 
 // Numeric Headers
-#include <numeric/numeric.functions.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/id/types.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <utility/vector1.hh>
 #include <boost/unordered_map.hpp>
 
-#include <basic/Tracer.hh>
 
 #ifdef SERIALIZATION
 // Project serialization headers

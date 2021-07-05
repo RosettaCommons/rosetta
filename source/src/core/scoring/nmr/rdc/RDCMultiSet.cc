@@ -21,7 +21,6 @@
 #include <core/scoring/nmr/rdc/RDCTensor.hh>
 #include <core/scoring/nmr/util.hh>
 #include <core/scoring/nmr/rdc/parameters.hh>
-#include <core/io/nmr/util.hh>
 #include <basic/svd/SVD_Solver.hh>
 
 // Project headers
@@ -30,7 +29,6 @@
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Basic headers
@@ -45,9 +43,6 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/HomogeneousTransform.hh>
-#include <numeric/constants.hh>
 #include <numeric/nls/lmmin.hh>
 #include <numeric/random/random.hh>
 
@@ -58,12 +53,12 @@
 // C++ headers
 #include <cmath>
 #include <iostream>
-#include <iomanip>
 #include <string>
 #include <limits>
 
 // Boost headers
-#include <boost/algorithm/string.hpp>
+
+#include <numeric/xyzMatrix.hh> // MANUAL IWYU
 
 namespace core {
 namespace scoring {

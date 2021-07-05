@@ -17,7 +17,6 @@
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/MutableResidueType.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Bond.hh>
 
@@ -27,6 +26,8 @@
 #include <utility/graph/ring_detection.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 namespace core {
 namespace chemical {

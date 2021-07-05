@@ -16,12 +16,10 @@
 #include <core/pose/Pose.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/NoOutputJobOutputter.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobInputter.hh>
 
 #include <protocols/toolbox/DecoySetEvaluation.hh>
@@ -38,7 +36,6 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 
 
-#include <core/id/AtomID.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -57,15 +54,11 @@
 // ObjexxFCL includes
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <ostream>
-#include <algorithm>
 #include <string>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
 #include <utility/excn/Exceptions.hh>
 
 

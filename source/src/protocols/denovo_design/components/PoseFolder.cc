@@ -13,7 +13,6 @@
 
 // Unit header or inline function header
 #include <protocols/denovo_design/components/PoseFolder.hh>
-#include <utility>
 
 namespace protocols {
 namespace denovo_design {

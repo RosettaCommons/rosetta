@@ -19,7 +19,6 @@
 //#include <core/scoring/disulfides/DisulfideMatchingDatabase.fwd.hh>
 
 //Project headers
-#include <core/types.hh>
 
 //Utility Headers
 

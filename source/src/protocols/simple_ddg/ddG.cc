@@ -46,7 +46,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/symmetry/util.hh>
@@ -59,12 +58,11 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/energy_methods/PoissonBoltzmannEnergy.hh>
 
-#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/simple_ddg/ddG.hh>
 #include <protocols/simple_ddg/ddGCreator.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
@@ -74,13 +72,11 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/pb_potential.OptionKeys.gen.hh>
 
 //debug tools
 #include <protocols/jd2/util.hh>
@@ -89,7 +85,6 @@
 
 // C++ headers
 #include <map>
-#include <algorithm>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>

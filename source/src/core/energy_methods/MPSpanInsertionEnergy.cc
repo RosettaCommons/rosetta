@@ -24,20 +24,14 @@
 #include <core/pose/Pose.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
 #include <numeric/interpolation/spline/CubicSpline.hh>
 #include <boost/lexical_cast.hpp>
 #include <map>
 
 //utility headers
-#include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <core/conformation/membrane/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 //C++ headers
@@ -47,10 +41,10 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 #include <basic/database/open.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
 //Auto Headers
-#include <core/pose/init_id_map.hh>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
 
 static basic::Tracer TR( "core.energy_methods.MPSpanInsertionEnergy" );
 

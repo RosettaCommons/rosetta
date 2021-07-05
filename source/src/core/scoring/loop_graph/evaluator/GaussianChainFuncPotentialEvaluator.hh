@@ -21,6 +21,8 @@
 #include <core/scoring/loop_graph/LoopCycle.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
+
 namespace core {
 namespace scoring {
 namespace loop_graph {

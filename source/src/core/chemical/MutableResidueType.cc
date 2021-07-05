@@ -33,17 +33,9 @@
 #include <core/chemical/Element.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/MMAtomType.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
-#include <core/chemical/rings/RingConformerSet.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/rna/RNA_Info.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/bond_support.hh>
-#include <core/chemical/RestypeDestructionEvent.hh>
-#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 #include <core/chemical/Orbital.hh>
 
 #include <core/chemical/ResidueType.hh> // For conversion functions
@@ -56,12 +48,10 @@
 #include <utility>
 #include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
-#include <utility/graph/ring_detection.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/string_util.hh>
 
 // External headers
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <numeric/conversions.hh>

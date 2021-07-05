@@ -17,17 +17,15 @@
 #include <core/pose/Pose.hh>
 
 #include <protocols/scoring/Interface.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/PackerTask.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/make_symmetric_task.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
@@ -36,12 +34,9 @@
 #include <core/select/util.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <core/chemical/ResidueType.hh>
 //#include <protocols/moves/ResidueMover.hh>
-#include <protocols/moves/MoverStatus.hh>
 
 
-#include <numeric/random/random.hh>
 #include <basic/options/option.hh>
 
 #include <utility/tag/Tag.hh>
@@ -58,9 +53,12 @@
 
 
 // C++ headers
-#include <map>
 #include <string>
-#include <algorithm>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue Residue, Residue::ResidueType
+#include <utility/tag/XMLSchemaGeneration.hh> // AUTO IWYU For operator+, XMLSchemaAttribute, xsct_...
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 using namespace core;
 
 // option key includes

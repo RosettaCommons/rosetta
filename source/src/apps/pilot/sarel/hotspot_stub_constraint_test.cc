@@ -13,8 +13,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <devel/init.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
@@ -24,12 +22,10 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 
 // Unit Headers
 //#include <protocols/hotspot_hashing/HotspotHashingConstraints.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 

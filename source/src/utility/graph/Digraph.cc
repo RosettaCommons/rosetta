@@ -28,7 +28,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Boost Headers
-#include <boost/pool/pool.hpp>
+
+#include <boost/pool/object_pool.hpp> // AUTO IWYU For unordered_object_pool::construct
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

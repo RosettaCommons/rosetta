@@ -20,31 +20,26 @@
 #include <core/types.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 
-#include <core/pack/task/ResfileReader.hh>
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh> // for a handful of options that should be read
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for a handful of options that should not be read
-#include <basic/options/option.hh>
 #include <basic/options/util.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <utility/backtrace.hh>
+#include <utility/assert.hh>
 #include <utility/keys/VariantKey.hh>
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKey.hh>
 
 // C++ headers
 #include <string>
-#include <sstream>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::ResidueTypeCOPList
 
 
 

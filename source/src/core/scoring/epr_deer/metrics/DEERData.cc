@@ -19,37 +19,29 @@
 
 // Unit headers
 #include <core/scoring/epr_deer/metrics/DEERData.hh>
-#include <core/scoring/epr_deer/EPRSpinLabel.hh>
-#include <core/scoring/epr_deer/Simulated4PDEERTrace.hh>
 #include <core/scoring/epr_deer/util.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 // Basic headers
-#include <basic/datacache/CacheableData.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
-#include <numeric/xyzVector.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/epr_deer.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 
 // C++ headers
 #include <string>
-#include <set>
 #include <map>
+
+#include <cmath> // MANUAL IWYU
 
 namespace core {
 namespace scoring {

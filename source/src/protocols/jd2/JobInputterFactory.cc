@@ -13,7 +13,7 @@
 
 #include <protocols/jd2/JobInputterFactory.hh>
 #include <protocols/jd2/JobInputterCreator.hh>
-#include <protocols/jd2/JobInputter.hh>
+#include <protocols/jd2/JobInputter.fwd.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -26,7 +26,6 @@
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <basic/Tracer.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

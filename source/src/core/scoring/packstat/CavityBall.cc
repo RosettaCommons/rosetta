@@ -18,7 +18,6 @@
 
 
 #include <iostream>
-#include <sstream>
 
 #include <ObjexxFCL/format.hh>
 

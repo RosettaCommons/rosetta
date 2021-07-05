@@ -23,22 +23,18 @@
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/ChemicalManager.hh> //need for changing residue type sets
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/GlobalResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Patch.hh> //needed for residue type base name function
 #include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/CharmmPeriodicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
@@ -47,7 +43,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/util.hh>
-#include <core/id/AtomID.hh>
 #include <core/io/Remarks.hh> //reading remarks
 #include <core/id/SequenceMapping.hh>
 
@@ -62,7 +57,6 @@
 // Utility Headers
 #include <utility>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 // External header
 #include <ObjexxFCL/string.functions.hh>
@@ -70,7 +64,6 @@
 // C++ headers
 #include <iostream>
 #include <string>
-#include <sstream>
 
 
 static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintParameters" );
@@ -716,7 +709,6 @@ EnzConstraintParameters::update_pdb_remarks(
 {
 	using namespace core::pose;
 	using namespace core::io;
-	using namespace core::io::pdb;
 
 	core::pose::PDBInfo & pdbinfo( *(pose.pdb_info() ) );
 	Remarks & rems(pose.pdb_info()->remarks() );

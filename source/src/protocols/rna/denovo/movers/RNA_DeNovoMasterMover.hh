@@ -20,7 +20,6 @@
 #include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoMasterMover.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.fwd.hh>
-#include <core/fragment/rna/RNA_Fragments.fwd.hh>
 #include <core/import_pose/RNA_BasePairHandler.fwd.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <core/import_pose/RNA_JumpMover.fwd.hh>

@@ -15,7 +15,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <test/util/pose_funcs.hh>
 #include <test/util/rosettascripts.hh>
 #include <test/core/init_util.hh>
 
@@ -25,7 +24,6 @@
 #include <protocols/filters/FilterFactory.hh>
 
 // Package headers
-#include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/filters/filter_schemas.hh>
 
@@ -35,6 +33,9 @@
 
 // Test utility headers
 #include <test/util/schema_utilities.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+
 using namespace protocols::filters;
 using namespace utility::tag;
 

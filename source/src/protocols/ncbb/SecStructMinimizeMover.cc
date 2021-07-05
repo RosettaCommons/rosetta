@@ -31,13 +31,12 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
-#include <protocols/minimization_packing/MinMover.hh>
 
 #include <numeric/conversions.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>

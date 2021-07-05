@@ -14,9 +14,7 @@
 
 
 #include <protocols/stepwise/monte_carlo/util.hh>
-#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
@@ -25,19 +23,15 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/util.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 //////////////////////////////////////////////////////////
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>

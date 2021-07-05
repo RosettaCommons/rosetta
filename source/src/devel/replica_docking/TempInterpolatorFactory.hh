@@ -23,14 +23,10 @@
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
-#include <map>
-#include <set>
-#include <utility/vector1.hh>
 
 namespace devel {
 namespace replica_docking {

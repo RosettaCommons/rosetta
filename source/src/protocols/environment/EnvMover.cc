@@ -16,7 +16,6 @@
 
 // Package headers
 #include <protocols/environment/Environment.hh>
-#include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/EnvExcn.hh>
 
 // Project headers
@@ -26,13 +25,15 @@
 #include <utility/tag/Tag.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // tracer
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/moves/MoverContainer.hh> // AUTO IWYU For SequenceMover
 
 // C++ Headers
 

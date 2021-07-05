@@ -15,19 +15,18 @@
 
 // Unit Headers
 #include <protocols/task_operations/SelectByDeltaScoreOperation.fwd.hh>
-#include <protocols/task_operations/SelectByDeltaScoreOperationCreator.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <string>
+
+#include <core/scoring/ScoreType.hh> // AUTO IWYU For ScoreType
 
 // C++ Headers
 

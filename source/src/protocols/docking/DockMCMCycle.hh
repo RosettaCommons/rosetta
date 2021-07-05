@@ -28,15 +28,12 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/TrialMover.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <utility/vector1.hh>
-#include <iosfwd>
 
 
 namespace protocols {

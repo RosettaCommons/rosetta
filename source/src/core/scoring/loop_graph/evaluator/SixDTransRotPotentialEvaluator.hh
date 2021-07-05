@@ -23,6 +23,8 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
 
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
+
 namespace core {
 namespace scoring {
 namespace loop_graph {

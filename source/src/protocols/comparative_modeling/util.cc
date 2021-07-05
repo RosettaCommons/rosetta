@@ -13,17 +13,14 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/chemical/util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -32,7 +29,6 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
 #include <basic/options/option.hh>

@@ -20,7 +20,7 @@
 
 // Unit header
 #include <protocols/monte_carlo/GenericMonteCarloMover.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMapObj.fwd.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
 
 // C/C++ headers

@@ -19,14 +19,12 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/DOF_ID.fwd.hh>
+#include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
-#include <utility/vector1.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/fixedsizearray1.fwd.hh>
+#include <utility/vector1.hh>
 #include <core/types.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 //// C++ headers
 #include <string>

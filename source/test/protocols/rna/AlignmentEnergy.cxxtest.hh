@@ -16,12 +16,9 @@
 
 // Unit headers
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
-#include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -30,14 +27,13 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/rna/AlignmentEnergy.hh>
-#include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <numeric/xyzVector.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For get_pdb_and_cleanup
 
 
 // --------------- Test Class --------------- //

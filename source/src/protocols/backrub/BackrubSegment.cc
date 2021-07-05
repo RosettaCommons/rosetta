@@ -19,14 +19,11 @@
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/types.hh>
 
 // Protocols Headers
 
 // Utility Headers
-#include <utility/keys/Key3Vector.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++ Headers

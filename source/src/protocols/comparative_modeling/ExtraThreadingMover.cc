@@ -16,26 +16,17 @@
 
 #include <core/types.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/conformation/Residue.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
 
-#include <core/sequence/SWAligner.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/SimpleScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/util.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <basic/Tracer.hh>

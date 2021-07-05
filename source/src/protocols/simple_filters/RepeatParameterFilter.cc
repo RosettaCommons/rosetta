@@ -16,29 +16,27 @@
 #include <protocols/simple_filters/RepeatParameterFilterCreator.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/chemical/ResidueType.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //external
-#include <Eigen/Dense>
 
 //Project Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <Eigen/Dense>
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
+#include <Eigen/SVD> // AUTO IWYU For JacobiSVD, SVDBase<>::MatrixUType, SVDBa...
 
 namespace protocols {
 namespace simple_filters {

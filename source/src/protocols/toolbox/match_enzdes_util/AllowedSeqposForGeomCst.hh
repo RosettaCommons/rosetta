@@ -24,8 +24,6 @@
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
-//c++ heades
-
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {

@@ -33,6 +33,8 @@
 // C++ header
 #include <map>
 
+#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh> // AUTO IWYU For RootData
+
 
 static basic::Tracer TR( "core.chemical.carbohydrates.database_io.cxxtest" );
 

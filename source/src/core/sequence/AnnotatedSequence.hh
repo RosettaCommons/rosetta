@@ -18,7 +18,6 @@
 
 // C/C++ headers
 #include <string>
-#include <map>
 
 // Project headers
 #include <core/types.hh>

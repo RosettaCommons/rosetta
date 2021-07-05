@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_minimization_packing_PackRotamersMoverLazyCreator_hh
 
 #include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
-#include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace minimization_packing {

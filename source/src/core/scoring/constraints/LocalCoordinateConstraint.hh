@@ -14,23 +14,20 @@
 #define INCLUDED_core_scoring_constraints_LocalCoordinateConstraint_hh
 
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/XYZ_Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
 
 
 // C++ Headers
-#include <cstdlib>
 #include <iosfwd>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
 
 
 //#include <map>

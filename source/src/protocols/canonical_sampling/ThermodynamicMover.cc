@@ -22,9 +22,7 @@
 
 
 // Utility Headers
-#include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/exit.hh>
 
 #include <core/id/DOF_ID_Range.hh>
 #include <utility/vector1.hh>

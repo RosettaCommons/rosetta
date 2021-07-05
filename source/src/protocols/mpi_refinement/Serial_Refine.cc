@@ -13,7 +13,6 @@
 
 #include <protocols/mpi_refinement/Serial_Refine.hh>
 #include <protocols/mpi_refinement/util.hh>
-#include <protocols/mpi_refinement/WorkUnit_Aggressive.hh>
 #include <protocols/mpi_refinement/WorkUnit_Relax.hh>
 #include <protocols/mpi_refinement/WorkUnit_Loop.hh>
 #include <protocols/mpi_refinement/StructAvrgMover.hh>
@@ -22,35 +21,27 @@
 //#include <protocols/mpi_refinement/MPI_Refinement.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/Residue.hh>
 
 #include <protocols/wum/SilentStructStore.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 
 /// ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <numeric/random/random.hh>
-#include <utility/string_util.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -58,7 +49,9 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <numeric/random/random.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

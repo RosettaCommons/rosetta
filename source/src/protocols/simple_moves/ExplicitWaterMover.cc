@@ -19,9 +19,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator_Private.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -30,7 +27,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/chains_util.hh>
@@ -39,13 +36,11 @@
 
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/annealer/FixbbPwatSimAnnealer.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/PackerTask_.hh>
@@ -54,11 +49,7 @@
 
 #include <core/scoring/lkball/LK_BallInfo.hh>
 
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pack/packer_neighbors.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
@@ -68,14 +59,16 @@
 #include <utility/io/izstream.hh>
 #include <utility/graph/Graph.hh>
 
-#include <utility/thread/threadsafe_creation.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <fstream>
-#include <iostream>
+
+#include <numeric/conversions.hh> // AUTO IWYU For radians
+#include <core/kinematics/Stub.hh> // AUTO IWYU For Stub
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D::IR
 
 
 namespace protocols {

@@ -65,20 +65,16 @@ returned in JobQueen::job_results_that_should_be_discarded()
 #include <protocols/jd3/CompletedJobOutput.fwd.hh>
 
 // Utility headers
-#include <utility/graph/Digraph.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/DiscreteIntervalEncodingTree.hh>
 #include <utility/VirtualBase.hh>
 
-#include <boost/container/flat_set.hpp>
 
 // C++ headers
-#include <map>
-#include <set>
 #include <unordered_set>
-#include <utility>
+
+#include <list> // AUTO IWYU For list
 
 #ifdef    SERIALIZATION
 // Cereal headers

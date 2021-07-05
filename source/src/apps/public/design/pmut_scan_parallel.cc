@@ -16,7 +16,7 @@
 // Protocol headers
 #include <protocols/pmut_scan/PointMutScanDriver.hh>
 #include <protocols/pmut_scan/AlterSpecDisruptionDriver.hh>
-#include <protocols/pmut_scan/Mutant.hh>
+#include <protocols/pmut_scan/Mutant.hh> // DO NOT AUTO-REMOVE
 
 #include <devel/init.hh>
 
@@ -29,7 +29,8 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <core/pose/Pose.hh>
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For BooleanOptionKey, FileOptionKey, RealOptionKey
+
 
 
 static basic::Tracer TR( "apps.pmut_scan_parallel" );

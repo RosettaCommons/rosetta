@@ -15,43 +15,27 @@
 #include <devel/coupled_sidechains/CoupledSidechainProtocol2.hh>
 //#include <devel/coupled_sidechains/CoupledSidechainProtocolCreator.hh>
 
-#include <basic/prof.hh>
 
 // Core Headers
 #include <core/types.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 
-#include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
 //Auto Headers
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <basic/datacache/DataMap.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/SidechainMetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -61,22 +45,15 @@
 #include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMover.hh>
 
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
+
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 // Numeric Headers
-#include <numeric/angle.functions.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
-#include <numeric/random/random.hh>
 
-#include <ObjexxFCL/format.hh>
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <ostream>
-#include <sstream>
-#include <fstream>
-#include <utility/fixedsizearray1.hh>
 
 #ifdef WIN_PYROSETTA
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>

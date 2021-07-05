@@ -21,11 +21,13 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <utility/string_util.hh>
 #include <utility/exit.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <protocols/multistate_design/SingleStateFitnessFunction.hh> // AUTO IWYU For SingleStateFitnessFunction
+
 using utility::vector1;
 
 #include <basic/Tracer.hh>
@@ -35,16 +37,12 @@ static basic::Tracer TR( "protocols.multistate_design.MultiStatePacker", t_info 
 #include <ObjexxFCL/format.hh>
 using namespace ObjexxFCL::format;
 
-#include <boost/functional/hash.hpp>
 
-#include <cmath> // std::exp
-#include <vector>
 #include <iostream>
 
 //Auto Headers
 #include <protocols/multistate_design/SingleStateEntityData.hh>
 #include <protocols/pose_metric_calculators/MetricValueGetter.hh>
-#include <utility/options/IntegerVectorOption.hh>
 
 
 namespace protocols {

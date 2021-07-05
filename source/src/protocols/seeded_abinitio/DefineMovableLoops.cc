@@ -25,12 +25,8 @@
 #include <core/conformation/Conformation.hh>
 
 //protocols
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
-#include <protocols/loops/Loops.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/chemical/VariantType.hh>
 
@@ -43,11 +39,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 //util
 #include <utility/vector1.hh>
-#include <set>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

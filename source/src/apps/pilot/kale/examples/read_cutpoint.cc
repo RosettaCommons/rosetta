@@ -2,13 +2,8 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/TorsionID.hh>
 
 // Protocols headers
 #include <protocols/loops/Loop.hh>
@@ -18,7 +13,6 @@
 
 // Utility headers
 #include <devel/init.hh>
-#include <utility/exit.hh>
 #include <iostream>
 
 using namespace std;

@@ -20,21 +20,16 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
-#include <core/pose/selection.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/util.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/id/types.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
@@ -43,14 +38,10 @@
 #include <core/select/residue_selector/RandomGlycanFoliageSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
-#include <core/select/residue_selector/GlycanLayerSelector.hh>
-#include <core/select/residue_selector/AndResidueSelector.hh>
-#include <core/select/residue_selector/SymmetricalResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/simple_metrics/metrics/TimingProfileMetric.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -66,14 +57,10 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-#include <numeric/random/random.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // XSD XRW Includes

@@ -12,18 +12,15 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/L1ScoringScheme.hh>
 
 #include <utility/exit.hh>
-#include <string>
 
-#include <complex>
 
 #include <utility/vector1.hh>
 
+#include <cmath>
 
 namespace core {
 namespace sequence {

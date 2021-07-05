@@ -17,10 +17,9 @@
 //unit headers
 
 //project headers
-#include <basic/resource_manager/ResourceLocatorFactory.hh>
+#include <basic/resource_manager/ResourceLocatorFactory.fwd.hh>
 
 //utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 //C++ headers

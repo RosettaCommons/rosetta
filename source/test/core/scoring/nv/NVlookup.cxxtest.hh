@@ -17,7 +17,6 @@
 // Unit headers
 #include <core/scoring/nv/NVlookup.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>
@@ -27,7 +26,6 @@
 
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

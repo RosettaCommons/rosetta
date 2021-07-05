@@ -13,41 +13,33 @@
 
 #include <devel/init.hh>
 
-#include <core/chemical/AtomType.hh>
+#include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/ResidueKinWriter.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/EnergyGraph.fwd.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/optimization/MinimizerMap.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Protocol headers
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 
@@ -59,7 +51,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
@@ -67,8 +58,6 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/insert_statement_generator/InsertGenerator.hh>
-#include <basic/database/insert_statement_generator/RowData.hh>
 
 // Utility headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -78,15 +67,14 @@
 
 // C++ headers
 #include <fstream>
-#include <sstream>
 
 // External Headers
 #include <cppdb/frontend.h>
 #include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 #include <ObjexxFCL/format.hh>
+
+#include <boost/uuid/random_generator.hpp> // AUTO IWYU For basic_random_generator
 
 OPT_1GRP_KEY( Boolean, sweep_respair_energies, output_bestpose_only )
 OPT_1GRP_KEY( Boolean, sweep_respair_energies, find_local_minima )
@@ -1413,7 +1401,6 @@ int main( int argc, char * argv [] )
 		using namespace core::chemical;
 		using namespace core::conformation;
 		using namespace core::id;
-		using namespace core::io::pdb;
 		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;

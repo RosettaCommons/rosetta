@@ -20,7 +20,7 @@
 
 // package headers
 #include <protocols/frag_picker/LazySortedVector1.hh>
-#include <protocols/frag_picker/FragmentCandidate.hh>
+#include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/CommonFragmentComparators.hh>
 

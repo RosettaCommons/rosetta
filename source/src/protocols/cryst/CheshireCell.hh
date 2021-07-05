@@ -14,9 +14,10 @@
 #ifndef INCLUDED_protocols_cryst_CheshireCell_hh
 #define INCLUDED_protocols_cryst_CheshireCell_hh
 
+#include <protocols/cryst/CheshireCell.fwd.hh>
+
 // Rosetta core includes:
 #include <core/types.hh>
-#include <core/kinematics/RT.fwd.hh>
 
 // Rosetta numeric includes:
 #include <numeric/xyzVector.hh>

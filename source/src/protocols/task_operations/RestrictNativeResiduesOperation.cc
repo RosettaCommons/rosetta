@@ -26,18 +26,16 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Conformation.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 #include <string>
-#include <ObjexxFCL/format.hh>
-#include <utility/vector0.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR( "protocols.task_operations.RestrictNativeResiduesOperation" );

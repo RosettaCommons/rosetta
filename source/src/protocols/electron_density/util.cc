@@ -17,18 +17,15 @@
 #include <core/scoring/dssp/Dssp.hh>
 
 
-#include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
 
 // Symmetry
 #include <core/pose/symmetry/util.hh>
 
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
 #include <core/pose/Pose.hh>
@@ -48,7 +45,6 @@
 #include <protocols/loops/Loops.hh>
 
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 
 namespace protocols {

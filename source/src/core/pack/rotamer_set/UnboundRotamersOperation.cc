@@ -34,6 +34,8 @@
 
 #include <utility/vector1.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 //Auto Headers
 //#include <core/import_pose/import_pose.hh>
 

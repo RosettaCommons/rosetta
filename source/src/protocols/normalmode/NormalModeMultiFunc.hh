@@ -15,6 +15,8 @@
 #ifndef INCLUDED_protocols_normalmode_NormalModeMultifunc_hh
 #define INCLUDED_protocols_normalmode_NormalModeMultifunc_hh
 
+#include <protocols/normalmode/NormalModeMultiFunc.fwd.hh>
+
 // Package headers
 #include <protocols/normalmode/NormalMode.hh>
 #include <core/optimization/types.hh>

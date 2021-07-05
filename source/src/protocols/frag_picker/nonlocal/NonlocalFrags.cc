@@ -25,13 +25,11 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
@@ -42,7 +40,6 @@
 #include <protocols/simple_ddg/DdgFilter.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
@@ -56,11 +53,9 @@
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
-#include <numeric/random/random.hh>
 
 #include <sstream>
 #include <fstream>

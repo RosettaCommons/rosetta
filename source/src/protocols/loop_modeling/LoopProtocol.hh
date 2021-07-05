@@ -16,22 +16,21 @@
 #include <protocols/loop_modeling/LoopProtocol.fwd.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.fwd.hh>
 #include <protocols/loop_modeling/utilities/TrajectoryLogger.fwd.hh>
-#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocols headers
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/loops/Loops.hh>
 
 // Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
+
+class LoopModelerTests; // Forward declaration of tests for friendship
 
 namespace protocols {
 namespace loop_modeling {

@@ -19,11 +19,8 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <utility/exit.hh>
-#include <utility/stream_util.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <basic/options/option.hh>

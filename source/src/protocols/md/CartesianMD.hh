@@ -16,11 +16,11 @@
 
 #include <protocols/md/CartesianMD.fwd.hh>
 #include <protocols/md/MDBase.hh>
-#include <protocols/md/Rattle.hh>
+#include <protocols/md/Rattle.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/optimization/CartesianMinimizerMap.hh>
 #include <core/optimization/types.hh>
 

@@ -23,15 +23,14 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/exit.hh>
 
 //// C++ headers
-#include <string>
 #include <iostream>
 
 #include <numeric/model_quality/RmsData.hh>
 #include <ObjexxFCL/FArray3.hh>
 
+#include <numeric/xyzVector.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace toolbox {

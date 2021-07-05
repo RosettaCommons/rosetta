@@ -16,21 +16,19 @@
 
 #include <utility/VirtualBase.hh>
 #include <protocols/pockets/Fingerprint.fwd.hh>
-#include <protocols/pockets/PocketGrid.fwd.hh>
 #include <protocols/pockets/PocketGrid.hh>
-#include <protocols/pockets/DarcParticleSwarmMinimizer.fwd.hh>
-#include <core/optimization/ParticleSwarmMinimizer.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/vector1_bool.hh>
 #include <list>
 #include <cmath>
-#include <iosfwd>
 #include <utility/vector1.hh>
+
+#ifdef USEOPENCL
+#include <core/optimization/ParticleSwarmMinimizer.fwd.hh>
 #include <basic/gpu/GPU.hh>
+#endif
 
 namespace protocols {
 namespace pockets {

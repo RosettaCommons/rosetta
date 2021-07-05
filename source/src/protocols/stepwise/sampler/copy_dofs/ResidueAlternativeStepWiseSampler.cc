@@ -15,7 +15,6 @@
 
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeSet.hh>
-#include <protocols/simple_moves/CopyDofMover.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>

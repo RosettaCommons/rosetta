@@ -22,7 +22,7 @@
 
 
 // Project Headers
-#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 
 
 // Utility headers
@@ -36,7 +36,6 @@
 // #include <numeric/numeric.functions.hh>
 // #include <core/util/prof.hh>
 
-#include <utility/vector1.hh>
 
 // #include <core/options/option.hh>
 // #include <core/options/keys/abinitio.OptionKeys.gen.hh>

@@ -13,6 +13,7 @@
 
 //ResidueSelectorCreator #includes
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricRegistrator.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.hh>
 
 #include <protocols/multistage_rosetta_scripts/cluster/metrics/JumpMetricCreator.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/metrics/SequenceMetricCreator.hh>

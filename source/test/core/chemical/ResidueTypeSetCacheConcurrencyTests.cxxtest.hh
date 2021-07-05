@@ -16,30 +16,23 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueTypeSetCache.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>
-#include <ostream>
-#include <vector>
 
 #ifdef MULTI_THREADED
+#include <core/chemical/ResidueTypeSetCache.hh>
+#include <basic/database/open.hh>
 
 // Utility headers
 #include <utility/thread/ReadWriteMutex.hh>

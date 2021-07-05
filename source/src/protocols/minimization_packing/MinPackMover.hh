@@ -22,16 +22,10 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 #ifdef __clang__
-#include <core/pack/task/PackerTask.hh>
 #endif
 
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

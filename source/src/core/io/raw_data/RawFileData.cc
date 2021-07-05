@@ -13,7 +13,6 @@
 /// @author James Thompson, Monica Berrondo
 
 // C++ Headers
-#include <vector>
 #include <string>
 #include <map>
 

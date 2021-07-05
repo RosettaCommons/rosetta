@@ -14,28 +14,11 @@
 // Unit headers
 #include <protocols/minimization_packing/symmetry/SymRotamerTrialsMoverCreator.hh>
 #include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/pose/symmetry/util.hh>
 
-#include <utility>
-#include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {

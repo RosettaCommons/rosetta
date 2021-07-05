@@ -18,11 +18,12 @@
 #include <utility/vector1.hh>
 
 // Boost Headers
-#include <boost/pool/pool.hpp>
 #include <utility/graph/unordered_object_pool.hpp>
 
 // C++ headers
 #include <iostream>
+
+#include <boost/pool/object_pool.hpp> // AUTO IWYU For unordered_object_pool::construct
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

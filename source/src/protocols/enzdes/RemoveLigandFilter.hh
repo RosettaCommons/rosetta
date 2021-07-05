@@ -21,7 +21,6 @@
 // package headers
 
 // Project Headers
-#include <core/io/silent/SilentEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/filters/Filter.hh>

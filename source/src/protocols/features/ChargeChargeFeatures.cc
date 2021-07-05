@@ -15,11 +15,8 @@
 #include <protocols/features/ChargeChargeFeatures.hh>
 
 // Platform Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/conformation/Atom.hh>
-#include <core/conformation/Residue.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -30,14 +27,9 @@
 #include <basic/database/schema_generator/DbDataType.hh>
 
 // Numeric Headers
-#include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/sphericalVector.hh>
-#include <core/kinematics/Stub.hh>
-#include <numeric/constants.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 
 // External Headers

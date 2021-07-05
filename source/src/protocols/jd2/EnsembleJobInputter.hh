@@ -20,12 +20,9 @@
 //unit headers
 //#include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/PDBJobInputter.hh>
-#include <protocols/jd2/Job.fwd.hh>
-#include <protocols/jd2/JobsContainer.hh>
+#include <protocols/jd2/JobsContainer.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace jd2 {

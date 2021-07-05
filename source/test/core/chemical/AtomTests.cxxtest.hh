@@ -17,13 +17,12 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Element.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
@@ -31,6 +30,8 @@
 // C++ Headers
 #include <string>
 #include <ostream>
+
+#include <core/chemical/AtomICoor.fwd.hh> // AUTO IWYU For AtomICoor
 
 //Auto Headers
 

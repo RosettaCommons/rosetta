@@ -27,10 +27,7 @@
 #include <utility/vector1.hh>
 #include <utility/keys/Key3Tuple.hh>
 #include <utility/keys/Key2Tuple.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -40,10 +37,7 @@
 // C++ headers
 #include <string>
 #include <map>
-#include <iostream>
-#include <sstream>
 #include <fstream>
-#include <utility/assert.hh>
 
 
 namespace core {

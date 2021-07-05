@@ -29,7 +29,6 @@
 
 // C++ Headers
 #include <string>
-#include <vector>
 
 // Utility Headers
 #include <utility/io/izstream.hh>

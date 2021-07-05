@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_cyclic_peptide_PeptideInternalHbondsMetric_HH
 
 #include <protocols/cyclic_peptide/PeptideInternalHbondsMetric.fwd.hh>
-#include <protocols/cyclic_peptide/PeptideInternalHbondsMetricTests.fwd.hh>
 #include <core/simple_metrics/RealMetric.hh>
 
 // Core headers
@@ -31,6 +30,8 @@
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
+
+class PeptideInternalHbondsMetricTests; // Forward declaration of test class for freindship purposes
 
 namespace protocols {
 namespace cyclic_peptide {

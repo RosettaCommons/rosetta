@@ -19,7 +19,6 @@
 //
 // now in flux
 //
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.fwd.hh>
 

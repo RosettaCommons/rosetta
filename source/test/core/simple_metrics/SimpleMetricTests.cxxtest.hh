@@ -13,23 +13,15 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
 #include <core/simple_metrics/util.hh>
 #include <core/simple_metrics/SimpleMetricData.hh>
-#include <core/simple_metrics/StringMetric.hh>
-#include <core/simple_metrics/RealMetric.hh>
 
-#include <core/simple_metrics/CompositeStringMetric.hh>
-#include <core/simple_metrics/CompositeRealMetric.hh>
 
-#include <core/simple_metrics/PerResidueRealMetric.hh>
-#include <core/simple_metrics/PerResidueStringMetric.hh>
+#include <core/simple_metrics/PerResidueRealMetric.fwd.hh>
 
 #include <core/simple_metrics/test_classes.hh>
 #include <core/simple_metrics/test_classes.fwd.hh>
@@ -53,9 +45,7 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 //
 #include <protocols/antibody/residue_selector/CDRResidueSelector.hh>

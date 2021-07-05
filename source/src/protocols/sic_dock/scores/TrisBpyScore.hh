@@ -12,16 +12,10 @@
 #include <protocols/sic_dock/scores/TrisBpyScore.fwd.hh>
 #include <protocols/sic_dock/RigidScore.hh>
 
-#include <core/scoring/motif/motif_hash_stuff.fwd.hh>
 
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/sic_dock/types.hh>
-#include <utility/VirtualBase.hh>
-#include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <core/pose/xyzStripeHashPose.fwd.hh>
 
 

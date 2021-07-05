@@ -67,15 +67,12 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>
 
 //Utility Headers
 
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 #include <basic/Tracer.hh>
 
@@ -84,8 +81,6 @@
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

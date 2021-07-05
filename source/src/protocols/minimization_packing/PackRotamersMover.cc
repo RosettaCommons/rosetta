@@ -19,19 +19,15 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetsFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/make_symmetric_task.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -43,13 +39,14 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 
 // basic headers
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

@@ -32,23 +32,13 @@
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomProperty.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/Adduct.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/Bond.fwd.hh>
-#include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/Element.fwd.hh>
 #include <core/chemical/Elements.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/AtomProperties.fwd.hh>
-#include <core/chemical/ResidueProperties.fwd.hh>
 #include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 #if defined(__INTEL_COMPILER) || defined(WIN32)
 #include <core/chemical/RestypeDestructionEvent.hh>
 #else
@@ -59,18 +49,13 @@
 #include <core/chemical/Orbital.hh>
 #include <core/chemical/ResidueConnection.hh>
 #else
-#include <core/chemical/Orbital.fwd.hh>
 #include <core/chemical/ResidueConnection.fwd.hh>
 #endif
 #include <core/chemical/rna/RNA_Info.fwd.hh>
-#include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.fwd.hh>
 #include <core/chemical/rings/RingConformerSet.fwd.hh>
 #include <core/chemical/rings/RingSaturationType.hh>
-#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/types.hh>

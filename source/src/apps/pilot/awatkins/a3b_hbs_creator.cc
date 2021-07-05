@@ -14,26 +14,20 @@
 #include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/ncbb/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
@@ -49,7 +43,6 @@
 
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -60,14 +53,11 @@
 #include <protocols/ncbb/hbs/HbsPatcher.hh>
 #include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 
-#include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 
 //Basic headers
@@ -78,18 +68,14 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 //#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tools/make_vector1.hh>
 
 // C++ headers
 #include <string>
-#include <sstream>
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces

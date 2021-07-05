@@ -18,39 +18,26 @@
 #include <protocols/antibody/H3PerturbCCD.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
-#include <core/import_pose/import_pose.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameList.hh>
-#include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
 
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 

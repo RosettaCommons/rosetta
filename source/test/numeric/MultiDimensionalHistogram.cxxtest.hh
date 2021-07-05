@@ -20,8 +20,6 @@
 #include <numeric/constants.hh>
 
 #include <vector>
-#include <iostream>
-#include <sstream>
 
 
 class MultiDimensionalHistogramTests : public CxxTest::TestSuite

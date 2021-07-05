@@ -19,7 +19,6 @@
 #include <protocols/simple_moves/CombinePoseMover.hh>
 
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 

@@ -25,7 +25,6 @@
 #include <core/types.hh>
 
 #include <protocols/loops/Loop.hh>
-#include <utility/vector1.hh>
 
 
 namespace devel {

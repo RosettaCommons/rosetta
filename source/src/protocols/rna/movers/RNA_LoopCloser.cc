@@ -17,30 +17,17 @@
 #include <core/import_pose/libraries/RNA_ChunkLibrary.hh> // for ROSETTA_LIBRARY_DOMAIN id.
 #include <core/conformation/Residue.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/chainbreak_util.hh>
 
 
 //Minimizer stuff
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
-#include <basic/options/keys/OptionKeys.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -51,9 +38,7 @@
 
 
 //C++ headers
-#include <vector>
 #include <string>
-#include <sstream>
 
 //Auto Headers
 #include <core/chemical/VariantType.hh>
@@ -64,6 +49,8 @@
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include <core/id/TorsionID.hh> // AUTO IWYU For TorsionID
 
 using namespace ObjexxFCL;
 

@@ -21,14 +21,12 @@
 
 // Package headers
 #include <core/conformation/parametric/Parameters.fwd.hh>
-#include <core/conformation/parametric/Parameters.hh>  //THIS SHOULD CHANGE TO Parameters.fwd.hh.  (Note that that's included in the previous line, so this line should just be deleted.)
 #include <core/conformation/Conformation.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>

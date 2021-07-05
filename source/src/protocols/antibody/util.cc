@@ -20,65 +20,41 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/init_id_map.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/OptH.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
-#include <core/select/residue_selector/AndResidueSelector.hh>
-#include <core/select/residue_selector/NotResidueSelector.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
 
 // Protocol Headers
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/interface/util.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 // Numeric Headers
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/random/random.hh>
-#include <numeric/conversions.hh>
-#include <numeric/PCA.hh>
 
 
 // Basic Headers
-#include <iostream>
 #include <fstream>
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_constants.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

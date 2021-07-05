@@ -30,17 +30,10 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/AtomPointer.hh>
-#include <core/kinematics/DomainMap.hh>
-#include <utility/io/icstream.fwd.hh>
-#include <utility/io/ocstream.fwd.hh>
-#include <numeric/BodyPosition.fwd.hh>
-#include <numeric/Quaternion.fwd.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("core.pose.PDBInfoTests");

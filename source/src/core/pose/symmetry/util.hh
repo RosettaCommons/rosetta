@@ -18,7 +18,6 @@
 
 // Unit headers
 #include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -26,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/types.hh>
-#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <string>

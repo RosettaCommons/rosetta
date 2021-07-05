@@ -18,7 +18,6 @@
 // Unit headers
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
 
-#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 
 // Package headers
@@ -26,6 +25,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
+
+#include <core/scoring/etable/Etable.hh> // AUTO IWYU For Etable
+#include <core/scoring/etable/etrie/EtableAtom.hh> // AUTO IWYU For EtableAtom
 
 #ifdef    SERIALIZATION
 #include <cereal/types/polymorphic.fwd.hpp>

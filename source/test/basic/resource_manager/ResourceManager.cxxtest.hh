@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Project headers
 #include <basic/resource_manager/ResourceManager.hh>
@@ -30,6 +29,9 @@
 
 // C++ headers
 #include <string>
+
+#include <basic/resource_manager/ResourceLoaderFactory.hh> // MANUAL IWYU
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 //#include <basic/resource_manager/;
 

@@ -15,9 +15,6 @@
 #include <protocols/features/ChargeChargeFeaturesCreator.hh>
 
 // Package Headers
-#include <protocols/features/FeaturesReporterCreator.hh>
-#include <protocols/features/ChargeChargeFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

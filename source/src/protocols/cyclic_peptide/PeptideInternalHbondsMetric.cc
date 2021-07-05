@@ -17,7 +17,6 @@
 #include <protocols/cyclic_peptide/PeptideInternalHbondsMetricCreator.hh>
 
 // Core headers
-#include <core/simple_metrics/RealMetric.hh>
 #include <core/simple_metrics/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -36,9 +35,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/graph/Graph.hh>
 #include <basic/citation_manager/CitationCollection.hh>

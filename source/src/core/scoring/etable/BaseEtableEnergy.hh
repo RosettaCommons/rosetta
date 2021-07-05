@@ -37,7 +37,7 @@
 #include <core/scoring/etable/etrie/EtableTrie.fwd.hh>
 
 
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
@@ -45,19 +45,17 @@
 #include <core/scoring/MinimizationData.hh>
 
 // Project headers
-#include <core/conformation/Atom.hh>
+#include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 #include <core/kinematics/DomainMap.fwd.hh>
 
-#include <ObjexxFCL/FArray3D.hh>
 
 #include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
-#include <core/scoring/etable/etrie/EtableAtom.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <utility/vector1.hh>
 

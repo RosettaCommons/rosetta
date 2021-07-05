@@ -32,15 +32,12 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/exit.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
 
 // Basic header
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 

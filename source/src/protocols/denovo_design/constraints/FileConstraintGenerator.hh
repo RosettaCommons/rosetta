@@ -24,7 +24,6 @@
 
 // Proeject Header
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {

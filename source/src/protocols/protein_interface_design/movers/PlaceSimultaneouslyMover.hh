@@ -26,14 +26,16 @@
 // C++ headers
 
 // Unit headers
-#include <protocols/hotspot_hashing/HotspotStubSet.hh>
-#include <protocols/hotspot_hashing/HotspotStub.hh>
+#include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
+#include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/movers/PlacementAuctionMover.fwd.hh>
 #include <protocols/protein_interface_design/movers/PlacementMinimizationMover.fwd.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilter.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <map>
 
 //Auto Headers
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>

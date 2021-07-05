@@ -23,10 +23,11 @@
 
 //utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
 #include <iosfwd>
+#include <string>
 
 namespace basic {
 namespace resource_manager {

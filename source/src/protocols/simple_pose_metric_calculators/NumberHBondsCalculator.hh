@@ -22,7 +22,6 @@
 //#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
 
 
 // utility headers

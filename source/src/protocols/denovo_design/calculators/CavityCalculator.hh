@@ -22,21 +22,14 @@
 #include <basic/MetricValue.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 
 // Utility headers
-#include <numeric/xyzVector.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers
 
 // Parser headers
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

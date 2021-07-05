@@ -25,12 +25,8 @@
 #include <core/pose/init_id_map.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/DerivVectorPair.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/etable/EtableOptions.hh>
-#include <core/scoring/sasa.hh>
 #include <core/conformation/util.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -39,25 +35,24 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/util.hh>
 
 // Basic Headers
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 
-#include <numeric/conversions.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/graph/Graph.hh>
-#include <utility/io/izstream.hh>
 
 #include <boost/format.hpp>
+
+#include <core/conformation/symmetry/SymmetryInfo.hh> // AUTO IWYU For SymmetryInfo
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/scoring/methods/EnergyMethodOptions.hh> // AUTO IWYU For EnergyMethodOptions
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 static basic::Tracer TR("core.pack.guidance_scoreterms.sap.SapConstraintHelper");

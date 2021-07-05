@@ -14,7 +14,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/rosettascripts.hh>
 #include <test/util/pose_funcs.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
@@ -27,7 +26,7 @@
 
 #include <protocols/constraint_movers/AddConstraintsToCurrentConformationMover.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/Func.hh>
@@ -36,6 +35,9 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <memory>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <core/scoring/ScoreFunctionFactory.hh> // AUTO IWYU For ScoreFunctionFactory
 
 static basic::Tracer TR("protocols.constraint_movers.AddConstraintsToCurrentConformationMover.cxxtest.hh");
 

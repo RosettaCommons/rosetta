@@ -28,14 +28,13 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/json_spirit/json_spirit_writer.h>
-#include <utility/json_spirit/json_spirit_reader.h>
 
 #include <map>
+
+#include <utility/json_spirit/json_spirit_value.h> // AUTO IWYU For Value, mArray
 
 namespace protocols {
 namespace qsar {

@@ -18,7 +18,6 @@
 #include <test/protocols/init_util.hh>
 
 // Project Headers
-#include <protocols/membrane/util.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
@@ -31,10 +30,7 @@
 
 
 // Package Headers
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -43,7 +39,6 @@
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR("protocols.membrane.TransformIntoMembraneMover.cxxtest");
 

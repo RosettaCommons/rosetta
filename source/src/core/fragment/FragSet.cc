@@ -20,7 +20,6 @@
 
 // Package Headers
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FragData.hh>
 
@@ -33,7 +32,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 

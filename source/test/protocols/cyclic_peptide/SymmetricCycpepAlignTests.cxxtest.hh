@@ -14,8 +14,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -32,6 +30,8 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 #include <numeric/xyzVector.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("SymmetricCycpepAlignTests");
 

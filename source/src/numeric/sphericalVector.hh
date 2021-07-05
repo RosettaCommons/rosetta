@@ -26,10 +26,8 @@
 // Unit headers
 #include <numeric/sphericalVector.fwd.hh>
 // Package headers
-#include <numeric/constants.hh>
 // C++ headers
 #include <utility/assert.hh>
-#include <cmath>
 
 
 namespace numeric {

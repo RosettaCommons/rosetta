@@ -18,7 +18,6 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <platform/types.hh>
 
 #include <core/id/PartialAtomID.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -26,20 +25,16 @@
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
 #include <core/pack/dunbrack/DunbrackEnergy.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <numeric/angle.functions.hh> // AUTO IWYU For principal_angle_degrees, nonnegative_principal_angle_degrees
 
 
 static basic::Tracer TR( "DunbrackEnergyTests" );

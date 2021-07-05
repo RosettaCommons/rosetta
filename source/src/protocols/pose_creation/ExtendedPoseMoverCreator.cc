@@ -17,10 +17,7 @@
 #include <string>
 
 // Package headers
-#include <protocols/pose_creation/ExtendedPoseMover.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

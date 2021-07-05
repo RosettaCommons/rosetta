@@ -17,31 +17,25 @@
 #include <protocols/carbohydrates/IdealizeAnomericHydrogensCreator.hh>
 
 // Package headers
-#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfoManager.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
 // Project headers
-#include <core/id/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
 #include <core/pose/carbohydrates/util.hh>
-#include <core/kinematics/util.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <protocols/moves/MoverStatus.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
 // Utility header
-#include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

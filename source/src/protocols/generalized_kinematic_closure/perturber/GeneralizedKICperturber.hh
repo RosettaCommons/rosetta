@@ -16,27 +16,20 @@
 
 // Unit Headers
 //#include <protocols/moves/Mover.hh>
-#include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
 #include <protocols/generalized_kinematic_closure/perturber/GeneralizedKICperturber.fwd.hh>
 
 // Scripter Headers
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 //// Project Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Ramachandran.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
 #include <protocols/simple_moves/BBGaussianMover.fwd.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculator.fwd.hh>
 

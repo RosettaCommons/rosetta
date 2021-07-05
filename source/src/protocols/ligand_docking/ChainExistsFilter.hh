@@ -15,13 +15,10 @@
 #define INCLUDED_protocols_ligand_docking_ChainExistsFilter_hh
 
 
-#include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 
-#include <utility>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

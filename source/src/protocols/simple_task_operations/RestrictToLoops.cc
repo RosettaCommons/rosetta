@@ -23,12 +23,10 @@
 // Project headers
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 

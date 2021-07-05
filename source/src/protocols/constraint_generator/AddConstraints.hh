@@ -26,7 +26,6 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 namespace protocols {
 namespace constraint_generator {

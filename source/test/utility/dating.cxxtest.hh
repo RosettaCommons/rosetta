@@ -21,7 +21,6 @@
 #include <utility/dating.hh>
 
 // Basic header
-#include <basic/Tracer.hh>
 
 // C++ header
 #include <string>

@@ -17,17 +17,13 @@
 
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
 

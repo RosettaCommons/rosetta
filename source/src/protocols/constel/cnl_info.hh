@@ -16,7 +16,6 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {

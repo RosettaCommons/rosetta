@@ -20,53 +20,44 @@
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/chains_util.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/palette/NoDesignPackerPalette.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <numeric/xyz.functions.hh>
-#include <numeric/random/random_xyz.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random.functions.hh>
 #include <numeric/conversions.hh>
 
 #include <utility>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/io/util.hh>
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 

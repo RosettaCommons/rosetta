@@ -13,16 +13,15 @@
 #ifndef INCLUDED_protocols_enzdes_AddorRemoveCsts_hh
 #define INCLUDED_protocols_enzdes_AddorRemoveCsts_hh
 
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <map> // AUTO IWYU For map
+
 
 
 namespace protocols {

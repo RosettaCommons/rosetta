@@ -16,22 +16,13 @@
 #include <core/scoring/mm/MMLJScore.hh>
 
 // Project headers
-#include <core/chemical/MMAtomTypeSet.hh>
 
 
 // Utility header
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
-#include <map>
 
-#include <core/scoring/mm/MMLJLibrary.hh>
-#include <utility/vector1.hh>
-#include <cmath>
 
 
 namespace core {

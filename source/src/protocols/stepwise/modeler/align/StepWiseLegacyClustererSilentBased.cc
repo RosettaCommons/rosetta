@@ -21,27 +21,23 @@
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <list>
 
 #ifdef PYROSETTA
 	#include <time.h>

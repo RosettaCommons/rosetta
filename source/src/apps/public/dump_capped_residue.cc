@@ -13,71 +13,37 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/VariantType.hh>
 
-#include <numeric/xyz.functions.hh>
 
 #include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/func/TopOutFunc.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 // Mover headers
 #include <protocols/ncbb/util.hh>
-#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
-#include <numeric/conversions.hh>
-#include <numeric/random/random.hh>
 
 //Basic headers
-#include <basic/resource_manager/ResourceManager.hh>
 
 // Utility Headers
 #include <devel/init.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/tools/make_vector1.hh>
 
 // C++ headers
 #include <string>
 #include <sstream>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For BooleanOptionKey, OptionKeys, StringOptio...
 
 using namespace core;
 using namespace conformation;

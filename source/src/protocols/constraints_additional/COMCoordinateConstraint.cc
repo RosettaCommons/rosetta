@@ -15,7 +15,6 @@
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -27,11 +26,7 @@
 #include <core/id/NamedAtomID.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <numeric/model_quality/rms.hh>
 
-#include <utility>
-#include <utility/string_util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -39,13 +34,10 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 
 static basic::Tracer tr( "core.io.constraints" );
 

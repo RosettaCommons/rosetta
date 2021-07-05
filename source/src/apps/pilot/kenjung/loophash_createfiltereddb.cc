@@ -14,7 +14,6 @@
 // libRosetta headers
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 //j#include <basic/options/keys/wum.OptionKeys.gen.hh>
-#include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 #ifdef USEMPI
@@ -32,11 +31,13 @@
 
 #include <core/types.hh>
 #include <protocols/loophash/LoopHashSampler.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 
 #ifdef USEMPI
 #include <mpi.h>
+#include <basic/options/keys/lh.OptionKeys.gen.hh>
 #endif
 
 using namespace basic::options;

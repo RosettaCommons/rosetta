@@ -25,6 +25,9 @@
 #include <numeric/random/random.hh>
 #include <iterator>
 
+#include <protocols/canonical_sampling/TemperatureController.hh> // AUTO IWYU For TemperatureController
+#include <protocols/canonical_sampling/ThermodynamicMover.hh> // AUTO IWYU For ThermodynamicMover
+
 using basic::Error;
 using basic::Warning;
 

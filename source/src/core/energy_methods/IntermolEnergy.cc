@@ -17,7 +17,7 @@
 #include <core/energy_methods/IntermolEnergyCreator.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/EnergyMap.hh>

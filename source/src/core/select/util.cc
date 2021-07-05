@@ -22,19 +22,16 @@
 #include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
-#include <core/select/residue_selector/SymmetricalResidueSelector.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/id/AtomID.hh>
-#include <core/chemical/AtomType.hh>
 
 
 #include <numeric/xyzVector.hh>

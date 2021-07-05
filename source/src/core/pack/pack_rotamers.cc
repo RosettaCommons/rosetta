@@ -30,13 +30,13 @@
 
 //#include <core/kinematics/FoldTree.hh>
 //#include <core/kinematics/Jump.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -47,12 +47,13 @@
 
 // option key includes
 
-#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <utility/thread/backwards_thread_local.hh> //For THREAD_LOCAL
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D::IR
 
 using namespace ObjexxFCL;
 

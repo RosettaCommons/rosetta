@@ -20,15 +20,13 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <map>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <map>
 
 namespace protocols {
 namespace task_operations {

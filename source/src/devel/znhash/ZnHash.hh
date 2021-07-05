@@ -21,7 +21,7 @@
 // Core headers
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
 // Utility headers
@@ -32,12 +32,14 @@
 // Numeric headers
 #include <numeric/polynomial.fwd.hh>
 #include <numeric/HomogeneousTransform.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 #include <numeric/geometry/BoundingBox.hh>
 #include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Boost headers
 #include <unordered_map>
+
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For ResidueCOP
 
 #ifdef    SERIALIZATION
 // Cereal headers

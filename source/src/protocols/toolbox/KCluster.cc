@@ -30,7 +30,6 @@
 
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/random/random.hh>
@@ -38,8 +37,6 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <sstream>
-#include <cstdio>
 #include <algorithm>
 
 #include <utility/vector1.hh>

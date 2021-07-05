@@ -16,18 +16,13 @@
 
 // package headers
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // project headers
-#include <core/types.hh>
-#include <core/id/types.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++ Headers

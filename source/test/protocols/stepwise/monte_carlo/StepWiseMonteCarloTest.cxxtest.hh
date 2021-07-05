@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -25,14 +23,16 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 
 // Protocol Headers
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
-#include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_ad...
 
 static basic::Tracer TR("StepWiseMonteCarloTest");
 

@@ -14,7 +14,6 @@
 #define INCLUDED_protocols_jd3_chunk_library_inputters_chunk_library_inputter_schemas_HH
 
 // Project headers
-#include <core/types.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

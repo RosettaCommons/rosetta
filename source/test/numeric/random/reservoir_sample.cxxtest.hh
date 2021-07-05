@@ -19,10 +19,7 @@
 #include <numeric/random/reservoir_sample.hh>
 
 #include <vector>
-#include <iostream>
-#include <sstream>
 
-#include <test/UTracer.hh>
 
 
 class ReservoirSamplingTests : public CxxTest::TestSuite {

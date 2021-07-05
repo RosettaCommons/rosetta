@@ -17,6 +17,8 @@
 
 #include <fstream>
 
+#include <utility/json_spirit/json_spirit_writer_options.h> // AUTO IWYU For pretty_print
+
 using std::string;
 
 namespace basic {

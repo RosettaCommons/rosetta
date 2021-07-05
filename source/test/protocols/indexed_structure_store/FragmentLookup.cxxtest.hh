@@ -14,18 +14,11 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <util/pose_funcs.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <protocols/indexed_structure_store/FragmentStoreManager.hh>
 #include <protocols/indexed_structure_store/FragmentStore.hh>
@@ -36,7 +29,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <boost/algorithm/string.hpp>
 
 #include <vector>
 #include <iterator>

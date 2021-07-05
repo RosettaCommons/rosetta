@@ -14,11 +14,7 @@
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
-#include <protocols/jd2/MPIFileBufJobDistributor.hh>
-#include <protocols/jd2/BOINCJobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
-#include <core/types.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 
 #include <devel/init.hh>
@@ -27,28 +23,21 @@
 // Utility Headers
 
 // Unit Headers
-#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/filters/FilterFactory.hh>
-#include <protocols/moves/MoverFactory.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/pack/task/operation/TaskOperationFactory.hh>
-#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
 
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
 
-#include <fstream>
+#ifdef USEMPI
+#include <protocols/jd2/MPIFileBufJobDistributor.hh>
+#endif
 
 // Tracer
 static basic::Tracer TR( "apps.public.rosetta_scripts.rosetta_scripts" );

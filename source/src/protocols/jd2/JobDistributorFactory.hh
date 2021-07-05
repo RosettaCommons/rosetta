@@ -20,8 +20,8 @@
 
 // Package headers
 #include <protocols/jd2/JobDistributor.fwd.hh>
-#include <protocols/jd2/JobInputter.hh>
-#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/JobInputter.fwd.hh>
+#include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
 
 namespace protocols {

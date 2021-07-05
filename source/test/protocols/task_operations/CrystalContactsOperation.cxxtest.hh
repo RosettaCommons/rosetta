@@ -12,27 +12,16 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
-#include <test/UTracer.hh>
 
 // Unit headers
-#include <protocols/parser/BluePrint.hh>
 #include <protocols/task_operations/CrystalContactsOperation.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pose/annotated_sequence.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
-#include <map>
 
 static basic::Tracer TR("protocols.task_operations.CrystalContactsOperationTests.cxxtest");
 

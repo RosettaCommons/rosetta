@@ -9,7 +9,6 @@
 
 #include <numeric/alignment/rmsd_calc.hh>
 #include <numeric/alignment/rmsd_calc.impl.hh>
-#include <numeric/types.hh>
 
 namespace numeric
 {

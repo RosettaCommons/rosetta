@@ -11,13 +11,10 @@
 /// @brief class for converting SS to int. For use with the ss hashed fragment database
 /// @author TJ Brunette ( tjbrunette@gmail.com )
 
-#include <core/chemical/ResidueType.hh>
 #include <core/sequence/SSManager.hh>
-#include <core/pose/Pose.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <cmath>
-#include <utility/vector1.hh>
 
 static basic::Tracer TR( "core.sequence.SSManager" );
 

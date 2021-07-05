@@ -23,11 +23,9 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/chemical/carbohydrates/LinkageConformers.hh>
+#include <core/chemical/carbohydrates/LinkageConformers.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/id/SequenceMapping.hh>
 
 // Utility Header
 #include <utility/vector1.hh>
@@ -35,6 +33,8 @@
 // C++ Header
 #include <string>
 #include <utility>
+
+#include <core/id/types.hh> // AUTO IWYU For MainchainTorsionType
 
 
 namespace core {

@@ -19,11 +19,9 @@
 #include <core/select/residue_selector/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/select/residue_selector/util.hh> // for xml schema utility functions
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
@@ -34,7 +32,6 @@
 
 // C++ headers
 #include <numeric/random/random.hh>
-#include <utility/assert.hh>
 
 static basic::Tracer TR( "core.select.residue_selector.RandomGlycanFoliageSelector" );
 

@@ -22,6 +22,8 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/AA.hh>
 
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, cout, ostream,
+
 using namespace std;
 
 using core::Size;

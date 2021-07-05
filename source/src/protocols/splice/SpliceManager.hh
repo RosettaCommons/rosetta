@@ -20,23 +20,16 @@
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <map>
 #include <protocols/splice/SpliceSegment.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/id/SequenceMapping.hh>
-#include <utility/tag/Tag.hh>
-#include <core/import_pose/import_pose.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <numeric/constants.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <protocols/toolbox/superimpose.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/id/SequenceMapping.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMapObj.fwd.hh>
+
+#include <core/pack/task/PackerTask.fwd.hh> // AUTO IWYU For PackerTaskOP
+#include <basic/datacache/DataMap.fwd.hh> // AUTO IWYU For DataMap
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 

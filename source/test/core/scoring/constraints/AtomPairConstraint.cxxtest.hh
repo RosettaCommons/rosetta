@@ -25,69 +25,33 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/select/movemap/MoveMapFactory.hh>
 
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AtomToAxisConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/FourPointsFunc.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
 
-#include <protocols/minimization_packing/MinMover.hh>
 
 //Auto Headers
-#include <platform/types.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/SequenceMapping.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/FourPointsFunc.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
-#include <core/scoring/func/XYZ_Func.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/random/random.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <iostream>
-#include <limits>
-#include <ostream>
 #include <sstream>
 #include <string>
-#include <vector>
-#include <basic/Tracer.fwd.hh>
 
 #ifdef SERIALIZATION
 #include <core/id/AtomID.hh>

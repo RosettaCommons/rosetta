@@ -41,21 +41,13 @@
 #include <protocols/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <basic/Tracer.hh>
-#include <basic/MetricValue.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/after_opts.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 

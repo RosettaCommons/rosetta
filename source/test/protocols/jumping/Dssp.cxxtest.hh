@@ -20,10 +20,8 @@
 
 #include <protocols/jumping/util.hh>
 
-#include <string>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("test.protocols.jumping.DsspTests");

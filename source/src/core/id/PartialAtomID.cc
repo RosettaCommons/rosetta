@@ -16,7 +16,6 @@
 #include <core/id/PartialAtomID.hh>
 //#include <core/chemical/ResidueType.hh>
 
-#include <utility/exit.hh>
 
 
 #include <basic/Tracer.hh>

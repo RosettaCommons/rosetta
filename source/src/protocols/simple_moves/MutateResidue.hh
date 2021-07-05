@@ -22,13 +22,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 //parsing
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace simple_moves {

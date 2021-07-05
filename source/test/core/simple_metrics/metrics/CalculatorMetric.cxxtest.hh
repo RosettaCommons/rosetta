@@ -21,7 +21,6 @@
 #include <protocols/parser/SimpleMetricLoaderCreator.hh>
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <core/simple_metrics/metrics/CalculatorMetric.hh>
@@ -29,6 +28,8 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+
+#include <core/simple_metrics/util.hh> // AUTO IWYU For complex_type_name_for_simple_metric
 
 static basic::Tracer TR("core.simple_metrics.metrics.CalculatorMetric.cxxtest");
 

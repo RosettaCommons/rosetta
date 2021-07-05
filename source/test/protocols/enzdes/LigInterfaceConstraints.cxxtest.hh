@@ -19,11 +19,10 @@
 #include <core/types.hh>
 
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <basic/options/option.hh> //needed to set option
 
 #include <core/pose/Pose.hh>
 
@@ -35,14 +34,12 @@
 #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/Func.fwd.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 #include <protocols/moves/MoverFactory.hh> //for parser testing
 
 #include <basic/datacache/DataMap.hh> //for parser test
-#include <protocols/filters/Filter.hh> //for parser test
 
 
 //minimization stuff
@@ -54,7 +51,6 @@
 
 // option key includes
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <numeric/constants.hh>
 
@@ -64,10 +60,8 @@
 
 //Auto Headers
 #include <core/chemical/ResidueType.hh>
-#include <core/id/AtomID_Mask.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 using basic::Error;

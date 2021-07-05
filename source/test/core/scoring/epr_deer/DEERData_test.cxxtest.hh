@@ -13,7 +13,6 @@
 
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <core/scoring/epr_deer/Simulated4PDEERTrace.hh>
 #include <core/scoring/epr_deer/Simulated4PDEERTraceFactory.hh>
 #include <core/scoring/epr_deer/metrics/DEERData.hh>
 #include <core/scoring/epr_deer/metrics/DEERData.fwd.hh>
@@ -34,6 +33,8 @@
 #include <core/scoring/epr_deer/metrics/DEERMiscMethod.fwd.hh>
 #include <core/scoring/epr_deer/metrics/DEERMiscMethod.hh>
 #include <core/types.hh>
+
+#include <iostream> // AUTO IWYU For endl, basic_ostream<>::__ostream_type
 
 class DEERDataTest : public CxxTest::TestSuite {
 

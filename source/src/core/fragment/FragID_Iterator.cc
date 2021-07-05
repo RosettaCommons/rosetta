@@ -29,7 +29,6 @@
 
 // Utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
 
 // std Headers
 

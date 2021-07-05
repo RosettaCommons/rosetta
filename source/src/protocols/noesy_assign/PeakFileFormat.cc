@@ -19,7 +19,6 @@
 #include <protocols/noesy_assign/PeakFileFormat.hh>
 #include <protocols/noesy_assign/CrossPeak.hh>
 #include <protocols/noesy_assign/CrossPeakInfo.hh>
-#include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 
 // Package Headers
@@ -27,7 +26,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 
 // Utility headers
 #include <ObjexxFCL/format.hh>
@@ -46,12 +44,14 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <basic/options/option_macros.hh>
 
 #include <utility/vector1.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys, options, RealVectorOptionKey
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 
 OPT_1GRP_KEY( RealVector, noesy_weights, tolerances )

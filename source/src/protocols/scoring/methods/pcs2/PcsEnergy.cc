@@ -45,7 +45,6 @@
 #include <protocols/scoring/methods/pcs2/TensorsOptimizerFix.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/PCS.OptionKeys.gen.hh>
 
@@ -69,6 +68,8 @@
 
 #include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
 #include <utility/vector1.hh>
+
+#include <numeric/xyzVector.hh> // AUTO IWYU For xyzVector
 
 
 namespace protocols {

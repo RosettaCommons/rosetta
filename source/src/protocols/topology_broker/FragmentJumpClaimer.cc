@@ -48,8 +48,6 @@
 //// C++ headers
 
 #include <core/fragment/Frame.hh>
-#include <utility/vector1.hh>
-#include <typeinfo>
 
 // option key includes
 

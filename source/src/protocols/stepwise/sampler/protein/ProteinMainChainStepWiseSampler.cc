@@ -17,7 +17,6 @@
 #include <core/pose/Pose.hh>
 #include <core/id/TorsionID.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.protein.ProteinMainChainStepWiseSampler" );
 

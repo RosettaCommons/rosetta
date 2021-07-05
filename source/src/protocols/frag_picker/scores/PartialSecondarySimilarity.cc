@@ -18,7 +18,6 @@
 #include <core/types.hh>
 
 // package headers
-#include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
@@ -28,7 +27,6 @@
 // project headers
 #include <basic/Tracer.hh>
 
-#include <utility>
 #include <utility/vector1.hh>
 
 

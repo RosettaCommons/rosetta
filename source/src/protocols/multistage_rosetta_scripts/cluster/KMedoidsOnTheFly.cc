@@ -19,8 +19,10 @@
 //#include <utility/random/random.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/testing.OptionKeys.gen.hh>
+
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh> // AUTO IWYU For ClusterMetric
+#include <core/types.hh> // AUTO IWYU For Real
 
 namespace protocols {
 namespace multistage_rosetta_scripts {

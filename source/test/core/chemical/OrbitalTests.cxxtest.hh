@@ -17,13 +17,12 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/Orbital.hh>
-#include <core/chemical/orbitals/ICoorOrbitalData.hh>
+#include <core/chemical/orbitals/ICoorOrbitalData.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>

@@ -29,7 +29,6 @@
 // c++ headers
 #include <string>
 #include <fstream>
-#include <sstream>
 
 namespace protocols {
 namespace make_rot_lib {

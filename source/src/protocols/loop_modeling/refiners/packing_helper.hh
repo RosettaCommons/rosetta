@@ -11,7 +11,6 @@
 #define INCLUDED_protocols_loop_modeling_refiners_utilities_HH
 
 // Unit headers
-#include <protocols/loop_modeling/types.hh>
 
 // Core headers
 #include <core/pack/task/TaskFactory.hh>
@@ -20,7 +19,6 @@
 #include <core/pose/Pose.hh>
 
 // Protocol headers
-#include <protocols/loops/Loops.hh>
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 
 namespace protocols {

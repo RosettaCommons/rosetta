@@ -15,11 +15,13 @@
 #include <core/scoring/trie/TrieCollection.hh>
 
 // Package Headers
-#include <core/scoring/trie/RotamerTrieBase.hh>
+#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 
 // STL Headers
 
 #ifdef    SERIALIZATION
+#include <core/scoring/trie/RotamerTrieBase.hh>
+
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>

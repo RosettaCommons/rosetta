@@ -23,7 +23,6 @@
 #include <protocols/moves/Mover.hh>
 //
 //// Project Headers
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/util.hh>
@@ -35,14 +34,10 @@
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/simple_moves/AddChainMover.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -57,11 +52,10 @@
 
 #include <utility/tag/Tag.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

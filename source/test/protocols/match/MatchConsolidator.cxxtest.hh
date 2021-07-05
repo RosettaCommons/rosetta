@@ -16,7 +16,6 @@
 #include <cxxtest/TestSuite.h>
 
 // Utility headers
-#include <utility/fixedsizearray1.hh>
 
 /// Project headers
 #include <core/types.hh>
@@ -26,8 +25,6 @@
 
 //Auto Headers
 #include <protocols/match/Hit.hh>
-#include <utility/vector0.hh>
-#include <boost/unordered/unordered_map_fwd.hpp>
 
 
 using namespace protocols::match;

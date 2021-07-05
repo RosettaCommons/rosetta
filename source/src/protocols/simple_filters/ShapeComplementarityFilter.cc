@@ -21,7 +21,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/select/residue_selector/util.hh>
@@ -29,26 +28,21 @@
 #include <core/select/jump_selector/util.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/matdes.OptionKeys.gen.hh>
-#include <core/pose/symmetry/util.hh>
 #include <protocols/jd2/util.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D
 
 
 //// C++ headers

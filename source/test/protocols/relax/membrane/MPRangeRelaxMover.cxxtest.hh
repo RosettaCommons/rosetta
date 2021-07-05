@@ -16,31 +16,20 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/conformation/Residue.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/util.hh>
+#include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/relax/membrane/MPRangeRelaxMover.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/moves/Mover.hh>
 
 // Package Headers
-#include <core/types.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <core/conformation/membrane/Exceptions.hh>
-#include <numeric/xyzVector.hh>
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR("protocols.relax.membrane.MPRangeRelaxMover.cxxtest");
 

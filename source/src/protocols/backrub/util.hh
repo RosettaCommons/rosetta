@@ -17,7 +17,7 @@
 
 
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.fwd.hh>
 

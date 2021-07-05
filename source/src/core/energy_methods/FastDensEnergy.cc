@@ -22,10 +22,8 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/OneToAllEnergyContainer.hh>
 #include <core/scoring/DerivVectorPair.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/statistics/functions.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -42,7 +40,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <utility/vector1.hh>
 

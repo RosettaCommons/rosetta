@@ -12,6 +12,7 @@
 /// @author Matt O'Meara (mattjomeara@gmail.com)
 
 // Package headers
+#include <cxxtest/TestSuite.h>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/IntegerOptionKey.hh>
 

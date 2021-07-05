@@ -14,30 +14,19 @@
 // // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 // Package headers
-#include <core/energy_methods/HRFDynamicsEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 //Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
 #include <basic/Tracer.hh>
 
 //Utility headers
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
-#include <basic/options/option.hh>
 
 static basic::Tracer TR("core.scoring.HRFDynamicsEnergyTests.cxxtest");
 

@@ -15,16 +15,12 @@
 #ifndef INCLUDED_protocols_mpi_refinement_MPI_Refine_Emperor_hh
 #define INCLUDED_protocols_mpi_refinement_MPI_Refine_Emperor_hh
 
-#include <protocols/wum/SilentStructStore.hh>
-#include <protocols/wum/MPI_WorkUnitManager.hh>
+#include <protocols/wum/SilentStructStore.fwd.hh>
 #include <protocols/mpi_refinement/MPI_Refinement.hh>
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 
 #include <string>
-#include <vector>
 
 namespace protocols {
 namespace mpi_refinement {

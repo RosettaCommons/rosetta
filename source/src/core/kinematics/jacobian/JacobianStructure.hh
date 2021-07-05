@@ -18,14 +18,12 @@
 #include <core/kinematics/jacobian/JacobianStructure.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // protocol headers
 #include <core/id/AtomID.hh>
 #include <core/kinematics/jacobian/SeriesJacobians.fwd.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/types.hh>
 

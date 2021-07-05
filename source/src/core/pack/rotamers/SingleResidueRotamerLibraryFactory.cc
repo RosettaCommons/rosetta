@@ -16,20 +16,16 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 // Package headers
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleBasicRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryCreator.hh>
 
 // Program Headers
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
-#include <core/chemical/rotamers/BasicRotamerLibrarySpecification.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/thread/threadsafe_creation.hh>
 #include <basic/Tracer.hh>
 
 namespace core {

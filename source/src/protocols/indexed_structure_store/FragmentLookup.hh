@@ -14,24 +14,18 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_FragmentLookup_hh
 #define INCLUDED_protocols_indexed_structure_store_FragmentLookup_hh
 
-#include <iterator>
 #include <vector>
-#include <map>
-#include <limits>
 
 #include <utility/VirtualBase.hh>
 
 #include <numeric/types.hh>
-#include <numeric/xyzVector.fwd.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/indexed_structure_store/FragmentStore.hh>
 #include <protocols/indexed_structure_store/FragmentLookup.fwd.hh>
 
 #include <numeric/coordinate_fitting/CoordinateArray_RMSD_FlatLookup.hh>
-#include <vector>
 
 namespace protocols
 {

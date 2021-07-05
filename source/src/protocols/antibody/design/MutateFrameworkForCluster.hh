@@ -21,15 +21,15 @@
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/chemical/AA.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 
 #include <map>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 // Forward
 

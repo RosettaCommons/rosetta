@@ -24,7 +24,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -34,7 +33,6 @@
 // Utility headers
 #include <utility/exit.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>

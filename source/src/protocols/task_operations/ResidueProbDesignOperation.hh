@@ -14,15 +14,18 @@
 #ifndef INCLUDED_protocols_task_operations_ResidueProbDesignOperation_hh
 #define INCLUDED_protocols_task_operations_ResidueProbDesignOperation_hh
 
-#include <protocols/task_operations/ResidueProbDesignOperationCreator.hh>
 #include <protocols/task_operations/ResidueProbDesignOperation.fwd.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <map>
+#include <string>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
+
 //#include <core/pose/PDBInfo.hh>
 
 

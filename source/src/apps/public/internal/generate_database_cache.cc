@@ -16,13 +16,11 @@
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <utility/exit.hh>
 
 #include <core/init/score_function_corrections.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 static basic::Tracer TR( "apps.public.generate_database_cache" );
 

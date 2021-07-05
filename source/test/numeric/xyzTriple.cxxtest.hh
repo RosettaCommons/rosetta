@@ -18,7 +18,6 @@
 
 // Package Headers
 #include <numeric/xyzTriple.hh>
-#include <numeric/xyzTriple.io.hh>
 
 
 // --------------- Test Class --------------- //

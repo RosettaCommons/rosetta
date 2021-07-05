@@ -51,6 +51,13 @@
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/strand_assembly/SandwichFeaturesCreator.hh>
 
+#include <core/scoring/ScoreFunctionFactory.hh> // AUTO IWYU For get_score_function, ScoreFu...
+#include <core/scoring/dssp/Dssp.hh> // AUTO IWYU For Dssp
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
+#include <basic/database/schema_generator/Schema.hh> // AUTO IWYU For Schema
+#include <iostream> // AUTO IWYU For operator<<, endl, basic_ost...
+#include <basic/database/schema_generator/Column.hh> // AUTO IWYU For Column
+
 namespace protocols {
 namespace features {
 namespace strand_assembly {

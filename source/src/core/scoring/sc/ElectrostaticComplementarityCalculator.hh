@@ -24,10 +24,9 @@
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 
 #include <core/id/AtomID_Map.hh>
-#include <core/scoring/PoissonBoltzmannPotential.hh>
+#include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 
 #include <utility/vector0.hh>
-#include <utility/string_util.hh>
 
 namespace core {
 namespace scoring {

@@ -16,10 +16,10 @@
 #include <protocols/splice/RBInMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <algorithm>
-#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Jump.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 // C++ Headers
 namespace protocols {

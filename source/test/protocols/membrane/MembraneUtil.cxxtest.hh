@@ -28,7 +28,6 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
@@ -37,18 +36,13 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 
-#include <core/conformation/membrane/Exceptions.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
 
 using namespace core;
 using namespace core::import_pose;

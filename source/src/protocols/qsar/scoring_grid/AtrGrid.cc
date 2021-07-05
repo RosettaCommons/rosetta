@@ -21,7 +21,6 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/excn/Exceptions.hh>

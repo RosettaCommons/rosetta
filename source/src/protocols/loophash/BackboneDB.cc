@@ -13,18 +13,14 @@
 /// @author Ken Jung
 #include <protocols/loophash/BackboneDB.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
 #include <protocols/loophash/Exceptions.hh>
 #include <boost/lexical_cast.hpp>
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 

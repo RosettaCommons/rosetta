@@ -22,9 +22,7 @@
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <map>

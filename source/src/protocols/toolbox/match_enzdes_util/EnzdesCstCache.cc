@@ -17,7 +17,7 @@
 
 //package headers
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh> //for CovalentConnectionReplaceInfo
 
 //project headers
@@ -31,7 +31,6 @@
 #include <utility>
 #include <utility/string_util.hh>
 
-#include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
 
@@ -45,6 +44,8 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/utility.hpp>
+
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #endif // SERIALIZATION
 
 namespace protocols {

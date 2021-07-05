@@ -16,12 +16,13 @@
 
 #include <protocols/qsar/scoring_grid/SolvationMetaGrid.fwd.hh>
 
-#include <protocols/qsar/scoring_grid/SolvationGrid.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <map>
+
+#include <protocols/qsar/scoring_grid/SingleGrid.fwd.hh> // AUTO IWYU For SingleGridOP
 
 namespace protocols {
 namespace qsar {

@@ -20,9 +20,10 @@
 #include <utility/file/FileName.fwd.hh>
 
 // C++ headers
-#include <ios>
 
 #include <utility/vector1.fwd.hh>
+
+#include <fstream> // AUTO IWYU For ios_base, ios_base::openmode, ifstream, ofstream
 
 namespace utility {
 namespace file {

@@ -16,24 +16,19 @@
 #ifndef INCLUDED_protocols_electron_density_DockIntoDensityMover_hh
 #define INCLUDED_protocols_electron_density_DockIntoDensityMover_hh
 
-#include <basic/datacache/DataMap.fwd.hh>
 
 #include <core/conformation/Residue.hh> // only necessary here because of functions that ought to be in the .cc
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 
-#include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray3D.fwd.hh>
 
 #include <protocols/electron_density/DensitySymmInfo.hh>
-#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers

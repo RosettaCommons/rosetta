@@ -19,23 +19,18 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/loops/loops_main.hh>
-#include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/relax/FastRelax.hh>
 
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/CompositionMover.hh>
 
 #include <devel/init.hh>
 
 // C++ headers
-#include <iostream>
-#include <string>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -45,7 +40,6 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <basic/options/option.hh>
 
 #include <utility/excn/Exceptions.hh>

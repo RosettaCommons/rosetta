@@ -15,15 +15,8 @@
 #define INCLUDED_numeric_zscores_hh
 
 #include <numeric/types.hh>
-#include <numeric/numeric.functions.hh>
-#include <utility/vector1.hh>
-#include <utility/numbers.hh>
 
-#include <numeric/MathNTensorBase.fwd.hh>
 
-#include <limits>
-#include <cmath>
-#include <algorithm>
 #include <map>
 
 namespace numeric {

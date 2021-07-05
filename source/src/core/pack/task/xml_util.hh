@@ -20,14 +20,12 @@
 // Unit headers
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
 
 // Basic headers

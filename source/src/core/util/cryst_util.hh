@@ -19,7 +19,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <iosfwd>
 
 
 namespace core {

@@ -17,13 +17,10 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
+#include <ObjexxFCL/FArray3D.fwd.hh>
 
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #include <complex>
 

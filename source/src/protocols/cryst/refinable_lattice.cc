@@ -15,35 +15,24 @@
 #include <protocols/cryst/refinable_lattice_creator.hh>
 #include <protocols/cryst/refinable_lattice.hh>
 
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/cryst/cryst_rms.hh>
 #include <protocols/cryst/spacegroup.hh>
 #include <protocols/cryst/util.hh>
 #include <protocols/cryst/wallpaper.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/relax/FastRelax.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/viewer/viewers.hh>
 
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -51,61 +40,45 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/electron_density/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/types.hh>
 
-#include <basic/datacache/CacheableString.hh>
 #include <basic/datacache/CacheableStringMap.hh>
 
 
-#include <numeric/model_quality/rms.hh>
 #include <numeric/random/random_xyz.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/options/after_opts.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/PDBInfo.hh> // AUTO IWYU For PDBInfo
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
 
 
 #define DEG2RAD 0.0174532925199433

@@ -32,7 +32,6 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <map>
 #include <string>
 
 namespace protocols {

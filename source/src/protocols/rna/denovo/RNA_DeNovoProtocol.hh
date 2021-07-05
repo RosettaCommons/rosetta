@@ -19,24 +19,23 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.fwd.hh>
-#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
-#include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 
 //// C++ headers
-#include <list>
-#include <core/io/silent/silent.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/import_pose/RNA_DeNovoParameters.fwd.hh> // AUTO IWYU For RNA_DeNovoParametersCOP
+#include <core/io/silent/SilentStruct.fwd.hh> // AUTO IWYU For SilentStruct
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace rna {

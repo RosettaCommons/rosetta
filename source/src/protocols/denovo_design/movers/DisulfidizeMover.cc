@@ -22,20 +22,17 @@
 #include <protocols/denovo_design/util.hh>
 
 //Protocol Headers
-#include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 //Core Headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/util.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -44,7 +41,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 //Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 //Utility Headers
@@ -52,10 +49,11 @@
 #include <utility/stream_util.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 //C++ Headers
 

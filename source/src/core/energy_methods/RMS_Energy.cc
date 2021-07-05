@@ -20,7 +20,6 @@
 
 #include <core/scoring/rms_util.hh>
 #include <basic/options/option.hh>
-#include <core/pose/Pose.hh>
 #include <utility/exit.hh>
 
 // option key includes
@@ -30,7 +29,6 @@
 
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

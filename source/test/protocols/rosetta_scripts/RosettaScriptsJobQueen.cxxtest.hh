@@ -20,7 +20,7 @@
 
 // Package headers
 #include <protocols/jd3/JobDigraph.hh>
-#include <protocols/jd3/LarvalJob.hh>
+#include <protocols/jd3/LarvalJob.fwd.hh>
 //#include <protocols/jd3/InnerLarvalJob.hh>
 //#include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
@@ -30,11 +30,9 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/moves/NullMover.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 
 // basic headers
-#include <basic/options/option.hh>
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/ResourceLoader.hh>
 #include <basic/resource_manager/ResourceLoaderCreator.hh>
@@ -42,16 +40,16 @@
 #include <basic/resource_manager/loader_schemas.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
-#include <utility/options/OptionCollection.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <basic/resource_manager/ResourceLoaderFactory.hh> // MANUAL IWYU
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 // Boost headers
 
 // C++ headers
-#include <sstream>
 
 using namespace utility::tag;
 using namespace protocols::jd3;

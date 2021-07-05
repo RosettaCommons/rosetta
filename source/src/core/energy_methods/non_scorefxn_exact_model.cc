@@ -35,13 +35,8 @@
 // C++ Headers
 #include <cmath>
 #include <iostream>
-#include <iomanip>
-#include <map>
 
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
-#include <numeric/xyz.functions.hh>
 
 
 //Vector dummy_res_energy_vector_;

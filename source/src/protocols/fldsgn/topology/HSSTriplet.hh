@@ -21,7 +21,6 @@
 // Project headers
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 #include <map>
 #include <string>
@@ -32,6 +31,13 @@ namespace topology {
 
 struct TripletID {
 public:
+
+#ifdef IWYU_SCAN
+	TripletID() = default;
+#else
+	TripletID() = delete;
+#endif
+
 	/// @brief construct from numbers
 	TripletID( core::Size const helix_id, core::Size const strand1_id, core::Size const strand2_id );
 

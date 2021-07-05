@@ -23,19 +23,15 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 //// C++ headers

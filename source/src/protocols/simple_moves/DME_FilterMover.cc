@@ -32,7 +32,6 @@ static basic::Tracer TR( "protocols.DME_FilterMover" );
 
 #include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

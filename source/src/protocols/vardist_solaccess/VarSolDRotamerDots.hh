@@ -22,7 +22,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <core/pack/interaction_graph/RotamerDots.hh>
+#include <core/pack/interaction_graph/RotamerDots.fwd.hh>
 #include <core/types.hh>
 
 #include <basic/MetricValue.fwd.hh>
@@ -33,12 +33,12 @@
 #include <utility/vector1.hh>
 
 //C++ Headers
-#include <algorithm>
-#include <cmath>
-#include <vector>
 
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
+#ifdef WIN32
+#include <core/pack/interaction_graph/RotamerDots.hh>
+#endif
 
 #ifdef    SERIALIZATION
 // Cereal headers

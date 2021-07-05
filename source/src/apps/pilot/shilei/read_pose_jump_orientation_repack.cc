@@ -11,53 +11,32 @@
 /// @author shilei
 
 #include <iostream>
-#include <iomanip>
 
-#include <protocols/viewer/viewers.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
 //pose
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 //score
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 //job distribution
-#include <protocols/jd2/JobDistributor.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <utility/tools/make_vector1.hh>
 
 //Options
 #include <basic/options/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-#include <basic/Tracer.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -69,35 +48,19 @@
 //jumps
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/AtomTree.hh>
 #include <core/conformation/Conformation.hh>
 
 //matrix
 #include <numeric/xyzMatrix.hh>
-#include <numeric/angle.functions.hh>
-#include <numeric/random/random.hh>
 
 //id
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
 
 
 //silent
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
 
 //options
 #include <basic/options/option_macros.hh>
 
-#include <protocols/scoring/Interface.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <protocols/forge/methods/pose_mod.hh>
-#include <protocols/docking/DockingLowRes.hh>
-#include <protocols/docking/util.hh>
 
 using namespace core;
 using namespace core::scoring;

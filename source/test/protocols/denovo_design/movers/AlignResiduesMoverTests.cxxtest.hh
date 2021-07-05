@@ -39,7 +39,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <test/protocols/denovo_design/test_utils.hh>
 static basic::Tracer TR("devel.denovo_design.AlignResiduesMoverTests.cxxtest");
 
 using namespace protocols::denovo_design::components;

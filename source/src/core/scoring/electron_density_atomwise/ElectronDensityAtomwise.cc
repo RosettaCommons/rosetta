@@ -16,16 +16,10 @@
 #include <core/scoring/electron_density_atomwise/ElectronDensityAtomwise.hh>
 
 // Package headers
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Edge.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
@@ -33,9 +27,6 @@
 #include <numeric/fourier/FFT.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/statistics/functions.hh>
 
 #include <core/scoring/electron_density/SplineInterp.hh>
 
@@ -47,13 +38,11 @@
 
 // C++ headers
 #include <fstream>
-#include <limits>
 
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/id/AtomID.hh>
 #include <core/kinematics/RT.hh>
 
 

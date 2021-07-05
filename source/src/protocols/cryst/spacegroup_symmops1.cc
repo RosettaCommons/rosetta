@@ -21,6 +21,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
 
+#include <protocols/cryst/CheshireCell.hh> // AUTO IWYU For CheshireCell
+
 namespace protocols {
 namespace cryst {
 

@@ -16,20 +16,15 @@
 #include <core/scoring/dna/base_geometry.hh>
 //#include <core/scoring/dna/DNA_BasePotential.hh>
 
-#include <core/scoring/ScoringManager.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
@@ -37,11 +32,11 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/izstream.hh>
 #include <numeric/conversions.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <ObjexxFCL/format.hh>
+
+#include <numeric/constants.hh> // AUTO IWYU For pi
+#include <numeric/numeric.functions.hh> // AUTO IWYU For square
 
 //using namespace ObjexxFCL;
 

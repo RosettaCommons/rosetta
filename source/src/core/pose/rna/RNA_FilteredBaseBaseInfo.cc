@@ -15,14 +15,12 @@
 // Unit headers
 #include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/chemical/rna/util.hh>
 
 // Package headers
 
 // Project headers
-#include <core/chemical/AA.hh>
 
 // Utility headers
 #include <ObjexxFCL/FArray3D.hh>

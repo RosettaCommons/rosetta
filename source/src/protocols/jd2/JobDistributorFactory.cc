@@ -18,13 +18,8 @@
 // Package heaaders
 #include <protocols/jd2/FileSystemJobDistributor.hh>
 #include <protocols/jd2/ShuffleJobDistributor.hh>
-#include <protocols/jd2/BOINCJobDistributor.hh>
 #include <protocols/jd2/MPIWorkPartitionJobDistributor.hh>
-#include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
-#include <protocols/jd2/MPIFileBufJobDistributor.hh>
-#include <protocols/jd2/MPIMultiCommJobDistributor.hh>
 //#include <protocols/jd2/MultiThreadedJobDistributor.hh>
-#include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 
 #include <protocols/jd2/JobInputterFactory.hh>
 
@@ -35,18 +30,21 @@
 #include <basic/options/option.hh>
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/parser.OptionKeys.gen.hh>
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#ifdef USEMPI
+#include <utility/mpi_util.hh>
+#include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
+#include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
+#include <protocols/jd2/MPIFileBufJobDistributor.hh>
+#include <protocols/jd2/MPIMultiCommJobDistributor.hh>
+#include <basic/options/keys/jd2.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#endif
 
 //Haiku is classy
 #ifdef BOINC

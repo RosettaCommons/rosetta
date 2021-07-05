@@ -13,18 +13,14 @@
 
 // Rosetta headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 #include <protocols/docking/TemperedDocking.hh>
 
 #include <devel/init.hh>
-#include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // option key includes
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <utility/excn/Exceptions.hh>
 

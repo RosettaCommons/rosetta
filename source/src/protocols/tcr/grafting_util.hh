@@ -16,9 +16,6 @@
 
 #include <protocols/tcr/TCRmodel.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
-#include <protocols/tcr/TCRseqInfo.fwd.hh>
-#include <protocols/tcr/util.hh>
-#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.fwd.hh>
 
 

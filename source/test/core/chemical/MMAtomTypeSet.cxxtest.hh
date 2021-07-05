@@ -19,7 +19,6 @@
 // Unit headers
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/MMAtomType.hh>
-#include <core/types.hh>
 #include <core/chemical/util.hh>
 
 // Project headers

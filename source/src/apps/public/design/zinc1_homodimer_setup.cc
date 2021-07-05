@@ -31,17 +31,12 @@
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
-#include <numeric/xyz.io.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <protocols/jd2/JobDistributor.hh>
+
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For StringOptionKey
 
 
 //tracers
@@ -77,7 +72,7 @@ public:
 
 		///////////////////////////Graft match onto scaffold///////////////////////////////////////////////////////////
 
-		protocols::metal_interface::MatchGrafterOP match_grafter = new protocols::metal_interface::MatchGrafter;
+		protocols::metal_interface::MatchGrafterOP match_grafter = utility::pointer::make_shared< protocols::metal_interface::MatchGrafter >();
 		core::pose::Pose scaffold_with_match = match_grafter->graft( match, scaffold );
 
 		core::pose::Pose const homodimer_with_matches = match_grafter->build_combined_pose_with_zinc_overlay( scaffold_with_match, scaffold_with_match );
@@ -121,7 +116,7 @@ public:
 		axis const parallel_axis = metalsite_atom_xyz[2] - metalsite_atom_xyz[1];
 		core::Size const chain_begin = scaffold.conformation().chain_begin(1);
 		core::Size const chain_end =  scaffold.conformation().chain_end(1);
-		protocols::rigid::RollMoverOP parallel_rollmover = new protocols::rigid::RollMover( chain_begin, chain_end, 180, 180, parallel_axis, metalsite_atom_xyz[5], true );
+		protocols::rigid::RollMoverOP parallel_rollmover = utility::pointer::make_shared< protocols::rigid::RollMover >( chain_begin, chain_end, 180, 180, parallel_axis, metalsite_atom_xyz[5], true );
 		parallel_rollmover->apply( homodimer_A ); // A and B will diverge after 90 degree or -90 degree flip
 		parallel_rollmover->apply( homodimer_B );
 
@@ -141,7 +136,7 @@ public:
 		//this is the axis through zinc, parallel to 3 -> 1 vector (point 1 was changed, needs to be updated)
 		axis const axis_90_degree = metalsite_atom_xyz[3] - homodimer_A.residue( metalsite_seqpos[1] ).atom( metalsite_atom_name[1] ).xyz();
 
-		protocols::rigid::RollMoverOP rollmover_90_degree = new protocols::rigid::RollMover( chain_begin, chain_end, 90, 90, axis_90_degree, metalsite_atom_xyz[5], true );
+		protocols::rigid::RollMoverOP rollmover_90_degree = utility::pointer::make_shared< protocols::rigid::RollMover >( chain_begin, chain_end, 90, 90, axis_90_degree, metalsite_atom_xyz[5], true );
 		rollmover_90_degree->apply( homodimer_A );
 		// also want to flip -90 degrees
 		rollmover_90_degree->set_min_max_angles( -90.0, -90.0 ); // change rollmove angle to -90 degrees
@@ -170,7 +165,7 @@ private:
 	//utility::vector1< std::string > metalsite_atom_name_;
 };
 
-typedef utility::pointer::owning_ptr< zinc1_homodimer_setup > zinc1_homodimer_setupOP;
+typedef utility::pointer::shared_ptr< zinc1_homodimer_setup > zinc1_homodimer_setupOP;
 
 int main( int argc, char* argv[] )
 {
@@ -178,7 +173,7 @@ int main( int argc, char* argv[] )
 		basic::options::option.add( scaffold_pdb, "protein monomer for metal-mediated dimerization" ).def("3DE8_A.pdb");
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go(new zinc1_homodimer_setup);
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< zinc1_homodimer_setup >() );
 
 		TR << "************************d**o**n**e**************************************" << std::endl;
 

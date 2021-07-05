@@ -21,37 +21,29 @@
 
 //#include <utility/graph/Graph.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/loops/Loops.hh>
 
-#include <protocols/motifs/Motif.hh>
-#include <protocols/motifs/SingleMotif.hh>
 #include <protocols/motifs/MotifLibrary.hh>
 #include <protocols/motifs/IRCollection.hh>
 
 //utilities
-#include <protocols/jd2/JobDistributor.hh>
-#include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
-#include <iostream>
 //#include <string>
 //#include <algorithm>
 

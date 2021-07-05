@@ -17,7 +17,7 @@
 
 // Unit Headers
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 
 // Project Headers
@@ -26,11 +26,8 @@
 
 // Platform Headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>

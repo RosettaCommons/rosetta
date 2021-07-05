@@ -17,7 +17,7 @@
 #include <protocols/features/InterfaceFeatures.fwd.hh>
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

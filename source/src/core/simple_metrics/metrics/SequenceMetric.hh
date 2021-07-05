@@ -19,7 +19,6 @@
 #include <core/simple_metrics/StringMetric.hh>
 
 // Core headers
-#include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 

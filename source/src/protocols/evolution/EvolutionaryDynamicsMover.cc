@@ -16,54 +16,33 @@
 // Unit Headers
 #include <protocols/evolution/EvolutionaryDynamicsMover.hh>
 #include <protocols/evolution/EvolutionaryDynamicsMoverCreator.hh>
-#include <basic/datacache/DataMapObj.hh>
 #include <basic/datacache/DataMap.hh>
 
 // C/C++ headers
-#include <iostream>
-#include <iterator>
 #include <string>
 
 // External headers
-#include <algorithm>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
-#include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/filters/Filter.hh>
 
 
 // Package Headers
-#include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverStatus.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <fstream>
-#include <utility/io/izstream.hh>
-#include <sstream>
 #include <cmath>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <protocols/calc_taskop_filters/OperatorFilter.hh>
-#include <protocols/filters/BasicFilters.hh>
 //////////////////////////////////////////////////
 // option key includes
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 ///////////////////////////////////////////////////
 static basic::Tracer TR( "protocols.evolution.EvolutionaryDynamicsMover" );
 static basic::Tracer TR_energies( "protocols.evolution.EvolutionaryDynamicsMover.individual_energies" );

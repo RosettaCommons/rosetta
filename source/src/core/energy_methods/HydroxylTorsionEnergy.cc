@@ -17,13 +17,12 @@
 #include <core/energy_methods/HydroxylTorsionEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <basic/Tracer.hh>
 

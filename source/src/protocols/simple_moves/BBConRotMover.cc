@@ -10,10 +10,7 @@
 
 #include <protocols/simple_moves/BBConRotMover.hh>
 //core
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueType.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
@@ -25,20 +22,19 @@
 #include <core/kinematics/Stub.hh>
 
 //util
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/constants.hh>
-#include <numeric/internal/RowVectors.hh>
 
 #include <iostream>
-#include <sstream>
 
 #include <utility/vector1.hh>
 
+
+#include <core/id/DOF_ID.hh> // AUTO IWYU For DOF_ID
 
 using namespace std;
 using namespace core;

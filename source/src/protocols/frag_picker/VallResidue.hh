@@ -24,19 +24,17 @@
 #include <core/types.hh>
 
 // utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // project headers
 #include <core/chemical/AA.hh>
 
 // C++ headers
-#include <iosfwd>
-#include <map>
 
 //Auto Headers
 #include <core/fragment/BBTorsionSRFD.fwd.hh>
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

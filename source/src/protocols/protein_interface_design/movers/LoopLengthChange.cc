@@ -20,18 +20,14 @@
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <core/chemical/ResidueType.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/pointer/memory.hh>
 // XSD XRW Includes

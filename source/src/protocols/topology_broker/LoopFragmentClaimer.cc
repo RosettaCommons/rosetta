@@ -16,9 +16,7 @@
 #include <protocols/topology_broker/LoopFragmentClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
-#include <core/fragment/FragSet.hh>
 
 // Project Headers
 //#include <core/pose/Pose.hh>
@@ -34,7 +32,6 @@
 //#include <utility/io/util.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
 
 
 //#include <basic/options/option.hh>

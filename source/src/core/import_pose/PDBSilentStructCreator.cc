@@ -11,14 +11,11 @@
 /// @author James Thompson
 
 // Unit Headers
-#include <core/io/silent/SilentStructCreator.hh>
 
 // Package Headers
-#include <core/io/silent/SilentStruct.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
 #include <core/import_pose/PDBSilentStructCreator.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

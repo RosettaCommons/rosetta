@@ -17,25 +17,22 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask_.hh>
 #include <core/pack/hbonds/HBondGraph_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/atomic_depth/AtomicDepth.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/graph/Graph.hh>
 #include <utility/pointer/memory.hh>
 #include <boost/format.hpp>
 
 #include <chrono>
-#include <thread>
-#include <cstdint>
 #include <iostream>
+
+#include <core/pack/rotamer_set/RotamerSet.hh> // AUTO IWYU For RotamerSet
+#include <core/pack/task/IGEdgeReweightContainer.hh> // AUTO IWYU For IGEdgeReweightContainer
 
 namespace core {
 namespace pack {

@@ -18,15 +18,11 @@
 
 // Package headers
 #include <core/scoring/sasa.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
-#include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -35,9 +31,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 
 #include <basic/options/option.hh>
@@ -50,13 +43,14 @@
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/statistics/functions.hh>
-#include <numeric/util.hh>
 //#include <math.h>
 
 //#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue Residue, Residue::AtomType
+#include <core/scoring/ProQPotential.hh> // AUTO IWYU For ProQPotential
 
 
 namespace core {

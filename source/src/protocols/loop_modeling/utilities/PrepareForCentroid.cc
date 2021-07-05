@@ -14,12 +14,11 @@
 
 // Core headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // Protocol headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

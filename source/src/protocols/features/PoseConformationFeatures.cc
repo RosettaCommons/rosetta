@@ -17,11 +17,9 @@
 //External
 
 // Project Headers
-#include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/io/util.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -29,11 +27,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/types.hh>
-#include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
@@ -41,7 +37,6 @@
 
 // Basic Headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
@@ -61,7 +56,6 @@
 #include <cppdb/frontend.h>
 
 // C++ Headers
-#include <cmath>
 #include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

@@ -22,16 +22,13 @@
 
 //Protocol headers
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
 //Utility headers
 #include <utility/io/izstream.hh>
-#include <utility/mpi_util.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/file/FileName.hh>
 
 #include <basic/options/option.hh>
@@ -39,12 +36,15 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <basic/database/sql_utils.hh>
 
 //C++ headers
 #include <map>
-#include <set>
-#include <iterator>
+
+#include <protocols/legacy_sewing/sampling/SewGraph.hh> // AUTO IWYU For SewGraph
+
+#ifdef USEMPI
+#include <utility/mpi_util.hh>
+#endif
 
 static basic::Tracer TR("sewing_hasher");
 

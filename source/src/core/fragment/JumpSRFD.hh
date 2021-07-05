@@ -32,7 +32,6 @@
 
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 

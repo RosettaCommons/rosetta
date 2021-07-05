@@ -23,7 +23,6 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Utility Headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
 #include <string>

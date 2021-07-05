@@ -20,15 +20,16 @@
 #include <protocols/frag_picker/CandidatesCollector.hh>
 
 // package headers
-#include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
+#include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 
 // utility headers
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
+
+#include <protocols/frag_picker/scores/FragmentScoreMap.hh> // AUTO IWYU For FragmentScoreMap
+#include <ostream> // AUTO IWYU For operator<<, basic_ostream, endl, ostream, basic_...
 
 namespace protocols {
 namespace frag_picker {

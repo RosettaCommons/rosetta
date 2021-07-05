@@ -20,38 +20,23 @@
 #include <core/pack/guidance_scoreterms/hbnet_energy/HBNetEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/chemical/AtomType.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
 // Utility headers
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/numbers.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/graph/Graph.hh>

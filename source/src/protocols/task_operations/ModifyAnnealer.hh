@@ -29,6 +29,9 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 
+#include <string>
+
+
 namespace protocols {
 namespace task_operations {
 

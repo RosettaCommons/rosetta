@@ -33,7 +33,6 @@
 #include <numeric/random/random.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ header

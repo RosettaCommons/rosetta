@@ -20,7 +20,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -29,6 +28,8 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

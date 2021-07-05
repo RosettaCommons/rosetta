@@ -17,21 +17,15 @@
 #include <devel/denovo_protein_design/util.hh>
 
 //project Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
-#include <basic/Tracer.hh>
-#include <core/scoring/EnergyMap.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
 
 
-#include <basic/options/option.hh>
 // Utility Headers
 
 // Numeric Headers
@@ -39,18 +33,14 @@
 // ObjexxFCL Headers
 
 // C++ headers
-#include <vector>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <sstream>
-#include <core/chemical/AA.hh>
 #include <devel/denovo_protein_design/DesignRelaxMover.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <utility/file/FileName.fwd.hh> // AUTO IWYU For FileName
 
 
 // Auto-header: duplicate removed #include <protocols/jobdist/standard_mains.hh>

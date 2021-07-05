@@ -20,13 +20,11 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/util.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

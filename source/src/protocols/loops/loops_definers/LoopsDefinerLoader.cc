@@ -13,14 +13,12 @@
 
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsDefinerLoader.hh>
-#include <protocols/loops/loops_definers/LoopsDefinerCreator.hh>
 #include <protocols/loops/loops_definers/LoopsDefinerLoaderCreator.hh>
 
 // Project Headers
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
 #include <protocols/loops/loops_definers/LoopsDefinerFactory.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
 #include <basic/datacache/DataMap.hh>
 
 
@@ -30,7 +28,8 @@
 // Boost Headers
 
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+#include <utility/tag/XMLSchemaGeneration.hh> // AUTO IWYU For XMLSchemaComplexTypeGenerator, XMLSch...
 
 
 using std::string;

@@ -12,9 +12,7 @@
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
 
 #include <protocols/frag_picker/scores/FragmentAllAtomCrmsd.hh>
-#include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallResidue.hh>
-#include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #ifdef WIN32
@@ -41,7 +39,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <utility>
 #include <utility/vector1.hh>
 #include <fstream>
 

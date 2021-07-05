@@ -26,6 +26,8 @@
 
 #include <utility/vector1.hh>
 
+#include <core/sequence/SequenceProfile.fwd.hh> // AUTO IWYU For SequenceProfileOP
+
 
 namespace protocols {
 namespace frag_picker {

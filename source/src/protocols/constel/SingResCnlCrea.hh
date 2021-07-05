@@ -12,7 +12,6 @@
 /// @author jk
 /// @author Andrea Bazzoli
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 #include <map>
 #include <string>

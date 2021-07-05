@@ -31,7 +31,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 //#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/conformation/RotamerSetBase.hh>
+#include <core/conformation/RotamerSetBase.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

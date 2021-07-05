@@ -22,7 +22,6 @@
 #include <protocols/motifs/motif_utils.hh>
 
 // Project Headers (protocols)
-#include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -51,10 +50,8 @@
 // Utility Headers
 #include <utility/io/ozstream.hh>
 
-#include <numeric/xyzVector.hh>
 
 // C++ Headers
-#include <iostream>
 
 // Option Key Includes
 #include <basic/options/option.hh>

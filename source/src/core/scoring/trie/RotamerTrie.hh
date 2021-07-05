@@ -27,9 +27,9 @@
 #include <core/scoring/etable/etrie/CountPairData_1_2.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_3.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairDataGeneric.fwd.hh>
-#include <core/scoring/hbonds/hbtrie/HBCPData.hh> // we need full header here because we have inline template function with HBCPData as template specifier
-#include <core/scoring/lkball/lkbtrie/LKBAtom.hh>
-#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+#include <core/scoring/hbonds/hbtrie/HBCPData.fwd.hh> // we need full header here because we have inline template function with HBCPData as template specifier
+#include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -44,7 +44,9 @@
 #include <core/scoring/etable/etrie/CountPairData_1_3.hh> // WIN32 INCLUDE
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh> // WIN32 INCLUDE
 #include <core/scoring/elec/electrie/ElecTrieEvaluator.fwd.hh>
-#include <core/scoring/elec/electrie/ElecAtom.fwd.hh>
+#include <core/scoring/elec/electrie/ElecAtom.hh>
+#include <core/scoring/lkball/lkbtrie/LKBAtom.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
 #include <core/scoring/hbonds/hbtrie/HBCPData.hh> // WIN32 INCLUDE
 #include <core/scoring/vdwaals/VDWTrie.hh>
 #endif

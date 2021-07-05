@@ -17,16 +17,14 @@
 // package headers
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.fwd.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // project headers
-#include <core/types.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++ Headers

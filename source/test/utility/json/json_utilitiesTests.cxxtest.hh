@@ -17,6 +17,7 @@
 #include <test/core/init_util.hh>
 
 // Project Headers
+#include <utility/excn/Exceptions.hh>
 
 // Core Headers
 

@@ -13,15 +13,11 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 #include <libxml/xmlschemas.h>
 #include <libxml/xmlstring.h>
 #include <libxml/tree.h>
-#include <iostream>
-#include <sstream>
 #include <fstream>
-#include <cstdarg>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>

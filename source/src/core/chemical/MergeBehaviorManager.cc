@@ -15,19 +15,14 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
 
 // C++ headers
 #include <fstream>
 #include <string>
 //#include <sstream>
-#include <set>
-#include <algorithm>
 
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>

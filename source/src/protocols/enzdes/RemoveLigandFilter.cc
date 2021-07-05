@@ -19,27 +19,26 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/types.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilter.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 
 //utility headers
 #include <utility/tag/Tag.hh>
 
-#include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace core;
 using namespace core::scoring;

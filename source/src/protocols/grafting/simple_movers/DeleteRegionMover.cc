@@ -25,21 +25,18 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/util.hh>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataCache.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationManager.hh>
-#include <utility>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <boost/range/algorithm.hpp>
+
+#include <boost/range/algorithm/count.hpp> // AUTO IWYU For count
 
 namespace protocols {
 namespace grafting {

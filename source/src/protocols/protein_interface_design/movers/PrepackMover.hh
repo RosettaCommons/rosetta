@@ -16,14 +16,11 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

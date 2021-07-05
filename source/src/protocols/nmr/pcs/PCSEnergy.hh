@@ -22,13 +22,10 @@
 #include <core/scoring/nmr/pcs/PCSData.fwd.hh>
 #include <core/scoring/nmr/pcs/PCSMultiSet.fwd.hh>
 #include <core/scoring/nmr/pcs/PCSSingleSet.fwd.hh>
-#include <core/scoring/nmr/pcs/PCSSingle.fwd.hh>
-#include <core/scoring/nmr/pcs/PCSTensor.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
@@ -38,19 +35,16 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 // C++ headers
 #include <iosfwd>
-#include <string>
 
 namespace protocols {
 namespace nmr {

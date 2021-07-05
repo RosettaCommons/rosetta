@@ -33,7 +33,6 @@
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 #include <core/scoring/DerivVectorPair.fwd.hh>
 #include <utility/vector1.hh>

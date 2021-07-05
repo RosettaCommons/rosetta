@@ -28,7 +28,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/Tracer.hh>
 

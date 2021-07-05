@@ -17,12 +17,12 @@
 
 
 // Package headers
-#include <numeric/xyzTransform.hh>
-#include <numeric/xyzMatrix.io.hh>
-#include <numeric/xyzVector.io.hh>
+#include <numeric/xyzTransform.fwd.hh>
 #include <ObjexxFCL/format.hh>
 // C++ headers
 #include <iosfwd>
+
+#include <numeric/xyz.functions.hh> // AUTO IWYU For rotation_axis
 
 
 namespace numeric {

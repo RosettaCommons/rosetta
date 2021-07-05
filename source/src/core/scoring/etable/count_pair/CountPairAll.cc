@@ -15,9 +15,7 @@
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 
-#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 

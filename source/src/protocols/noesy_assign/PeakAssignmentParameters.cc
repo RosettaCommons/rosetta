@@ -39,7 +39,6 @@
 
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>
@@ -47,6 +46,8 @@
 
 // Boost headers
 #include <functional>
+
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 namespace protocols {
 namespace noesy_assign {

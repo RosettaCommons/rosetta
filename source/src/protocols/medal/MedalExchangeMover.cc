@@ -44,19 +44,19 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
-#include <core/util/kinematics_util.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/medal/util.hh>
 #include <protocols/nonlocal/BiasedFragmentMover.hh>
-#include <protocols/nonlocal/Policy.hh>
+#include <protocols/nonlocal/Policy.fwd.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
 #include <protocols/nonlocal/TreeBuilder.hh>
 #include <protocols/nonlocal/TreeBuilderFactory.hh>
-#include <protocols/nonlocal/util.hh>
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 #include <protocols/star/Extender.hh>
+
+#include <core/fragment/Frame.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace medal {

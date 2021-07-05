@@ -22,7 +22,6 @@
 
 // Project headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -35,11 +34,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
-#include <core/id/AtomID_Map.hh>
-#include <core/scoring/sasa.hh>
-#include <core/pose/util.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -54,8 +50,6 @@
 
 // C++ header
 #include <fstream>
-#include <map>
-#include <cmath>
 
 
 using basic::Error;

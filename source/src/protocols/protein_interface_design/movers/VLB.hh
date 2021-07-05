@@ -19,12 +19,14 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <core/pose/ResidueIndexDescription.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 
 #include <utility/vector1.hh>
 
+#ifdef PYROSETTA
+#include <core/pose/ResidueIndexDescription.hh>
+#endif
 
 namespace protocols {
 namespace protein_interface_design {

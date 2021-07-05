@@ -15,7 +15,6 @@
 
 // Unit Headers
 #include <protocols/environment/AutoCutData.fwd.hh>
-#include <protocols/environment/AutoCutDataCreator.hh>
 
 // Package headers
 

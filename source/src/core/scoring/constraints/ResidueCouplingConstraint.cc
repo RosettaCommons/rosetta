@@ -19,13 +19,14 @@
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID, GLOBAL_BOGUS_ATOM_ID
 
 namespace core {
 namespace scoring {

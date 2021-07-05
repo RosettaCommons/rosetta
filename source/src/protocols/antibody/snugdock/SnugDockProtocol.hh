@@ -23,7 +23,6 @@
 #include <protocols/antibody/snugdock/SnugDockProtocol.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/loops/Loops.hh>
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
@@ -31,18 +30,17 @@
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/docking/DockingProtocol.fwd.hh>
-#include <protocols/loop_modeling/LoopProtocol.fwd.hh>
 #include <protocols/loop_modeler/LoopModeler.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
 #include <set>
+
+#include <protocols/loops/Loop.fwd.hh> // AUTO IWYU For Loop
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace antibody {

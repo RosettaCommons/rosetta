@@ -11,14 +11,9 @@
 #include <devel/init.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
@@ -34,8 +29,6 @@
 #include <core/pack/task/TaskFactory.hh>
 
 
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <utility/LexicographicalIterator.hh>
 
@@ -48,7 +41,6 @@ int main( int argc, char * argv [] )
 		using namespace core::chemical;
 		using namespace core::conformation;
 		using namespace core::id;
-		using namespace core::io::pdb;
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace utility::graph;

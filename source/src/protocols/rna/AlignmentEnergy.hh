@@ -19,13 +19,12 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
 // Project Headers
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Basic/Utility headers

@@ -55,7 +55,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -71,21 +70,17 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh> // used to create a resfile
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
 #include <string>
-#include <fstream>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/sort_predicates.hh>
 #include <cmath>

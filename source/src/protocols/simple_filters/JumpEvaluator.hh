@@ -31,15 +31,12 @@
 
 #include <core/kinematics/Stub.hh>
 
-#include <core/io/silent/silent.fwd.hh>
 
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 //// C++ headers

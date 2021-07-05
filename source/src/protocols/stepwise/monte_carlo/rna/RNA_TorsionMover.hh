@@ -21,7 +21,6 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.fwd.hh>
 
 namespace protocols {

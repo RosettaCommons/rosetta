@@ -15,13 +15,11 @@
 #endif
 
 // Package Headers
-#include <protocols/relax/relax_main.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 
 //core library
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
 
@@ -30,7 +28,6 @@
 //#include <core/pack/task/TaskFactory.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <basic/options/option.hh>
 
 //#include <core/kinematics/MoveMap.hh>
 
@@ -49,12 +46,11 @@
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 #include <protocols/jd2/util.hh>
 //#include <protocols/jd2/parser/TaskOperationLoader.hh>
 
-#include <protocols/jd3/Job.hh>
+#include <protocols/jd3/Job.fwd.hh>
 //#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd3/JobDistributor.hh>
 #include <protocols/jd3/JobDistributorFactory.hh>
@@ -63,7 +59,6 @@
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 #include <protocols/jd3/jobs/MoverJob.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 #include <devel/init.hh>
 
@@ -73,12 +68,10 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/options/keys/OptionKeyList.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 
 // option key includes
@@ -87,6 +80,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+
+#include <utility/options/OptionCollection.hh> // AUTO IWYU For OptionCollection
 
 //local options
 //namespace basic { namespace options { namespace OptionKeys {

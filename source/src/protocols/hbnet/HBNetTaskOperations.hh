@@ -18,13 +18,9 @@
 //#include <protocols/motifs/LigandMotifSearch.fwd.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/types.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
-#include <set>
 #include <string>
 
 

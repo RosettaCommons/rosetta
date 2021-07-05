@@ -27,7 +27,6 @@
 #include <core/scoring/methods/MMLJEnergyInter.hh>
 
 // STL Headers
-#include <iostream>
 
 #include <core/scoring/trie/RotamerTrie.hh>
 #include <utility/vector1.hh>

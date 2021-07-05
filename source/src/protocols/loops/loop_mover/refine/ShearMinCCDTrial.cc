@@ -19,7 +19,6 @@
 
 // Package headers
 
-#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
@@ -33,7 +32,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <core/optimization/Minimizer.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
@@ -42,11 +40,12 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/optimization/MinimizerOptions.hh> // AUTO IWYU For MinimizerOptions
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 static basic::Tracer TR( "protocols.loops.loop_mover.refine.ShearMinCCDTrial" );
 using namespace core;

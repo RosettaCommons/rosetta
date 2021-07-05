@@ -10,34 +10,16 @@
 /// @file
 /// @brief
 
-#include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/movers/ErraserMinimizerMover.hh>
 
 //////////////////////////////////////////////////
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 ///////////////////////////////////////////////////
 
-#include <core/pose/PDBInfo.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
 //////////////////////////////////////////////////////////
 
 // C++ headers
-#include <iostream>
-#include <string>
 
 #include <protocols/jd2/JobDistributor.hh>
 
@@ -46,6 +28,8 @@
 #include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 //////////////////////////////////////////////////////////////////
 //

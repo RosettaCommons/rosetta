@@ -18,13 +18,10 @@
 
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/GlobalResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 
 // Project Headers
-#include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
@@ -32,7 +29,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>

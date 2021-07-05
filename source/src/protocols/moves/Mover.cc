@@ -24,20 +24,15 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <utility/string_util.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/jobdist/Jobs.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Basic Headers
 
 // tracer
 #include <basic/Tracer.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/exit.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 // C++ Headers

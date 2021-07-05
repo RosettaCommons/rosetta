@@ -20,14 +20,12 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
-#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/fourier/FFT.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray4D.hh>
+#include <ObjexxFCL/FArray4D.fwd.hh>
 
-#include <iosfwd>
 #include <complex>
 #include <map>
 

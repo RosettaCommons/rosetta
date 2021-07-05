@@ -20,8 +20,9 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <vector>
 
+#include <protocols/filters/Filter.fwd.hh> // AUTO IWYU For FilterOP
 
 namespace protocols {
 namespace protein_interface_design {

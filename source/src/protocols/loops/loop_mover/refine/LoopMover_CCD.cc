@@ -21,9 +21,7 @@
 
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCDCreator.hh>
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/Loops.tmpl.hh>
 #include <protocols/loops/loops_definers/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -32,7 +30,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -51,18 +48,15 @@
 
 #include <core/pose/symmetry/util.hh>
 
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 #include <protocols/loops/util.hh>
 #include <basic/Tracer.hh> // tracer output
 
 //Utility and numeric Headers
-#include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 
 // option key includes
@@ -70,7 +64,6 @@
 #include <basic/options/keys/MonteCarlo.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>

@@ -26,16 +26,11 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/pose_metric_calculators/PiPiCalculator.hh>
-#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
@@ -50,7 +45,6 @@
 #include <core/types.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 

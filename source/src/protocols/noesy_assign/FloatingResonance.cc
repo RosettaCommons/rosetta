@@ -19,21 +19,19 @@
 #include <protocols/noesy_assign/FloatingResonance.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/PeakCalibrator.hh>
-#include <protocols/noesy_assign/FoldResonance.hh>
+#include <protocols/noesy_assign/FoldResonance.fwd.hh>
 #include <protocols/noesy_assign/ResonanceList.fwd.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
-#include <core/id/NamedAtomID.hh>
 
 // Utility headers
-#include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
 //// C++ headers
 #include <string>
-#include <utility/vector1.hh>
+
+#include <protocols/noesy_assign/ResonanceList.hh> // AUTO IWYU For ResonanceList
 
 
 static basic::Tracer tr( "protocols.noesy_assign.resonances" );

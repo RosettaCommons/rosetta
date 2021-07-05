@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKeyList.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/Tag.hh>
 

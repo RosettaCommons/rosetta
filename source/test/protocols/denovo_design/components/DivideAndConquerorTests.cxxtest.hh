@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -23,15 +21,15 @@
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 
 // Core Headers
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/pose/Pose.hh>
 
 // Basic/Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/stream_util.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <boost/assign/list_of.hpp> // AUTO IWYU For assign_decay<>::type, generic_list
 
 static basic::Tracer TR("DivideAndConquerorTests");
 

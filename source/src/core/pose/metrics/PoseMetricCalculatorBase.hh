@@ -21,12 +21,9 @@
 #include <basic/MetricValue.fwd.hh>
 
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
-#include <iosfwd>
-
-#include <utility/vector1.hh>
+#include <string>
 
 
 #ifdef    SERIALIZATION

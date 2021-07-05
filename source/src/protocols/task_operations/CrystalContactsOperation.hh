@@ -16,15 +16,12 @@
 
 // Unit Headers
 #include <protocols/task_operations/CrystalContactsOperation.fwd.hh>
-#include <protocols/task_operations/CrystalContactsOperationCreator.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 #include <core/types.hh>
 
 // Utility Headers

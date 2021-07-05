@@ -18,28 +18,24 @@
 // Unit Headers
 #include <core/scoring/lkball/LK_BallEnergy.fwd.hh>
 #include <core/scoring/lkball/LK_BallInfo.hh>
-#include <core/scoring/lkball/lkbtrie/LKBAtom.hh>
 #include <core/scoring/lkball/lkbtrie/LKBTrie.fwd.hh>
-#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
-#include <core/scoring/trie/TrieCountPairBase.hh>
+#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 
 #include <core/scoring/etable/count_pair/types.hh>
 
 // Package headers
-#include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/scoring/hbonds/types.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray3D.fwd.hh>
 #include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION

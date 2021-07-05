@@ -9,14 +9,11 @@
 
 #include <core/pose/xyzStripeHashPose.hh>
 
-#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/id/AtomID_Map.hh>
 

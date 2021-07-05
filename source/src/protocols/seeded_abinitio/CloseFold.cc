@@ -28,9 +28,6 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
-#include <protocols/loops/Loops.hh>
 //#include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 //#include <protocols/loops/LoopMover_CCD.hh>
@@ -47,7 +44,6 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/util.hh>
 
 // C++ headers
 #include <string>
@@ -55,15 +51,7 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include  <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/util.hh>
 
 //parser
 #include <utility/tag/Tag.hh>
@@ -73,7 +61,6 @@
 
 //util
 #include <utility/vector1.hh>
-#include <set>
 #include <utility/excn/Exceptions.hh>
 
 // XSD XRW Includes

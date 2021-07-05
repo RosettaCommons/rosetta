@@ -20,8 +20,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilter.fwd.hh>
 
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>

@@ -14,8 +14,6 @@
 #include <core/energy_methods/SplitUnfoldedTwoBodyEnergy.hh>
 #include <core/energy_methods/SplitUnfoldedTwoBodyEnergyCreator.hh>
 
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -24,7 +22,6 @@
 
 #include <utility/vector1.hh>
 
-#include <iostream>
 
 namespace core {
 namespace energy_methods {

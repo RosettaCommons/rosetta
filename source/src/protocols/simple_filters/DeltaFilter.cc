@@ -11,19 +11,17 @@
 #include <protocols/simple_filters/DeltaFilter.hh>
 #include <protocols/simple_filters/DeltaFilterCreator.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/ref_pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

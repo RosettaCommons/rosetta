@@ -27,7 +27,6 @@
 
 // Packet Headers
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/OrderedFragSet.hh>
 
@@ -35,7 +34,6 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -47,7 +45,6 @@
 #include <core/fragment/MinimalFragSet.hh>
 #include <core/fragment/FrameIterator.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

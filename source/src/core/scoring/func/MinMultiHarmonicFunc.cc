@@ -14,7 +14,6 @@
 
 #include <core/scoring/func/MinMultiHarmonicFunc.hh>
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 

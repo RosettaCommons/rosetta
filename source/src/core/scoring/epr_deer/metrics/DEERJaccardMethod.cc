@@ -12,18 +12,12 @@
 /// @author   Diego del Alamo ( del.alamo@vanderbilt.edu )
 
 // Unit headers
-#include <core/scoring/epr_deer/metrics/DEERData.hh>
-#include <core/scoring/epr_deer/metrics/DEERDistanceDistribution.hh>
 #include <core/scoring/epr_deer/metrics/DEERJaccardMethod.hh>
-#include <core/scoring/epr_deer/EPRSpinLabel.hh>
 #include <core/scoring/epr_deer/util.hh>
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <string>
 #include <map>
 
 namespace core {

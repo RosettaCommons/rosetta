@@ -12,8 +12,6 @@
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -30,6 +28,8 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("CompoundArchitectTests");
 

@@ -18,24 +18,17 @@
 
 // Package Headers
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
-#include <core/chemical/carbohydrates/database_io.hh>
 
 // Project Headers
 #include <core/id/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/types.hh>
-#include <core/chemical/AtomICoor.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
 
 // Utility Headers
-#include <utility/string_constants.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/exit.hh>
@@ -44,18 +37,14 @@
 // Numeric Headers
 #include <numeric/conversions.hh>
 #include <numeric/angle.functions.hh>
-#include <numeric/random/random.hh>
 
 //Options
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // External Headers
-#include <basic/basic.hh>
 
 // C++ Header
-#include <list>
 #include <utility>
 
 #include <basic/Tracer.hh>

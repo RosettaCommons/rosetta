@@ -13,7 +13,6 @@
 
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <protocols/recon_design/MSDMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -22,13 +21,10 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/scoring/Energies.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <util/pose_funcs.hh>
 
 static basic::Tracer TR("protocols.recon_design.MSDMoverTest");

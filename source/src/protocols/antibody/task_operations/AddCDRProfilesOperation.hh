@@ -29,10 +29,11 @@
 #include <core/chemical/AA.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <map>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
 
 namespace protocols {
 namespace antibody {

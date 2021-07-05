@@ -18,7 +18,7 @@
 #include <core/fragment/picking_old/concepts/Librarian.fwd.hh>
 
 #include <core/fragment/picking_old/vall/gen/VallFragmentGen.hh>
-#include <core/fragment/picking_old/vall/eval/VallFragmentEval.hh>
+#include <core/fragment/picking_old/vall/eval/VallFragmentEval.fwd.hh>
 #include <core/fragment/picking_old/vall/scores/VallFragmentScore.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.hh>
 
@@ -28,11 +28,8 @@
 // utility headers
 
 // C++ headers
-#include <algorithm>
 #include <functional>
 
-#include <utility/vector1.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace fragment {

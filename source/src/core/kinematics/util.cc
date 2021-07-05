@@ -15,13 +15,10 @@
 #include <core/kinematics/util.hh>
 
 // Package headers
-#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/JumpAtom.hh>
 #include <core/kinematics/tree/BondedAtom.hh>
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/types.hh>
 #include <basic/Tracer.hh>
 #include <utility>
 #include <utility/excn/Exceptions.hh>
@@ -30,7 +27,6 @@
 #include <numeric/random/random.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <iostream>

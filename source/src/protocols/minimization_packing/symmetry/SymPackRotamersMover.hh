@@ -21,8 +21,6 @@
 
 // Project headers
 
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 
 namespace protocols {
 namespace minimization_packing {

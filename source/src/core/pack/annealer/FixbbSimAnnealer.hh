@@ -23,11 +23,9 @@
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
-#include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
 // Utility headers
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>

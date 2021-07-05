@@ -22,8 +22,6 @@
 
 #include <core/conformation/Conformation.hh>
 
-#include <utility>
-#include <utility/excn/Exceptions.hh>
 
 // tracer
 #include <basic/Tracer.hh>

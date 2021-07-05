@@ -17,18 +17,13 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/types.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 #include <test/core/init_util.hh>
 
 //C++ headers
-#include <iostream>
 
 using namespace core;
-
-// ---------------- Toy Movers --------------- //
-
-namespace protocols {
-namespace environment {
 
 // --------------- Test Class --------------- //
 
@@ -47,9 +42,6 @@ public:
   // Shared initialization goes here.
   void setUp() {
     core_init();
-
-    using namespace protocols::environment;
-    using namespace core::environment;
 
     core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 

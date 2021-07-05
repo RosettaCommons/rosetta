@@ -12,16 +12,13 @@
 /// @author Roland A. Pache, PhD
 
 //Unit Headers
-#include <protocols/loops/Loops.hh>
 #include <protocols/viewer/viewers.hh>
 
 
 //Rosetta Headers
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -31,8 +28,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -40,23 +35,21 @@
 
 #include <basic/Tracer.hh> //tracer output
 
-#include <utility/io/izstream.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
 
 //C++ Headers
-#include <iostream>
-#include <map>
 #include <string>
 
 //option key includes
 
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <fstream> // AUTO IWYU For operator<<, endl, basic_ostream, basic_ostream<>::__ostr...
 
 
 using namespace core;

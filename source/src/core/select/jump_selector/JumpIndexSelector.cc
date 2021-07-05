@@ -20,17 +20,14 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Utility Headers
-#include <utility/assert.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

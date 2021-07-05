@@ -16,12 +16,10 @@
 
 // Unit Headers
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/util.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/Embedding.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/SpinAroundPartnerMover.hh>
 #include <core/pose/Pose.hh>
@@ -32,17 +30,11 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <core/conformation/membrane/Exceptions.hh>
-#include <numeric/xyzVector.hh>
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
 
 static basic::Tracer TR("protocols.membrane.SpinAroundPartnerMover.cxxtest");
 

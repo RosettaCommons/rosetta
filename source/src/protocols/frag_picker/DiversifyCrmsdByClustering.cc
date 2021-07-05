@@ -15,7 +15,6 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/id/NamedAtomID.hh>
@@ -27,6 +26,8 @@
 #include <numeric/agglomerative_hierarchical_clustering.hh>
 
 #include <utility/vector1.hh>
+
+#include <numeric/xyzVector.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace frag_picker {

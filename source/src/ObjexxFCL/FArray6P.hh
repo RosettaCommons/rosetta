@@ -17,9 +17,11 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray6P.fwd.hh>
-#include <ObjexxFCL/FArray6D.hh>
 #include <ObjexxFCL/ObserverMulti.hh>
 #include <ObjexxFCL/DynamicIndexRange.hh>
+
+#include <ObjexxFCL/FArray6.hh> // AUTO IWYU For FArray6
+#include <ObjexxFCL/Star.hh> // AUTO IWYU For star
 
 
 namespace ObjexxFCL {

@@ -17,8 +17,6 @@
 #include <core/types.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
-#include <numeric/angle.functions.hh>
-#include <numeric/constants.hh>
 #include <utility/VirtualBase.hh>
 #include <numeric/interpolation/spline/BicubicSpline.hh>
 #include <numeric/MathMatrix.hh>

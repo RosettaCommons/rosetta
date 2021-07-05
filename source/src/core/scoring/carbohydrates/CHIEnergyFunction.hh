@@ -18,11 +18,9 @@
 // Unit Headers
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
 #include <core/scoring/carbohydrates/CHIEnergyFunctionLinkageType.hh>
-#include <core/scoring/carbohydrates/OmegaPreferenceType.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

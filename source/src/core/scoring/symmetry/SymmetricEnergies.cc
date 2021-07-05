@@ -21,7 +21,6 @@
 #include <core/scoring/ContextGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/ContextGraphFactory.hh>
-#include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
 
 #include <core/conformation/Conformation.hh>
@@ -33,10 +32,8 @@
 #include <core/conformation/find_neighbors.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 
-#include <core/id/AtomID.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -49,6 +46,8 @@
 #include <core/scoring/EnergyGraph.hh>
 
 #ifdef SERIALIZATION
+#include <core/scoring/MinimizationGraph.hh>
+
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>

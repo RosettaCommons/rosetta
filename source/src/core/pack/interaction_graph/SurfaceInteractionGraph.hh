@@ -16,7 +16,7 @@
 
 //Rosetta Headers
 #include <core/pack/interaction_graph/AdditionalBackgroundNodesInteractionGraph.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
 #include <core/pack/interaction_graph/SurfaceInteractionGraph.fwd.hh>
 #include <core/pack/interaction_graph/SurfacePotential.hh>
@@ -26,7 +26,6 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
 //Utility Headers
@@ -34,13 +33,15 @@
 #include <utility/exit.hh>
 
 //ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 //C++ Headers
 #include <vector>
 
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+#include <core/scoring/Energies.hh> // needed for initializing the neighbor graph
+#endif
 
 /// Tracer instance for this file
 static basic::Tracer TR_NODE( "core.pack.surfaceig.node" );

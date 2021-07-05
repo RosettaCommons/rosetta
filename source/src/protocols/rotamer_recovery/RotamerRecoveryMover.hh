@@ -24,11 +24,8 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/types.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>

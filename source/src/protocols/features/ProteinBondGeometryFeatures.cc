@@ -14,19 +14,16 @@
 
 // Unit Headers
 #include <core/energy_methods/CartesianBondedEnergy.hh>
-#include <core/scoring/methods/CartBondedParameters.hh>
 #include <protocols/features/ProteinBondGeometryFeatures.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <numeric/xyz.functions.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
@@ -36,7 +33,6 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
-#include <core/pose/PDBInfo.hh>
 
 // Platform Headers
 #include <core/pose/Pose.hh>

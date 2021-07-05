@@ -24,8 +24,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/kinematics/ShortestPathInFoldTree.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/abinitio/FragmentSampler.hh>
 #include <protocols/abinitio/ConstraintFragmentSampler.hh>
 //#include <protocols/abinitio/TMHTopologySampler.hh>
@@ -49,7 +47,6 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -62,7 +59,6 @@
 #include <basic/prof.hh>
 #include <numeric/random/random.hh>
 
-#include <utility/vector1.hh>
 
 #include <protocols/moves/PyMOLMover.hh>
 

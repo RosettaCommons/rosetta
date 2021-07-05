@@ -20,15 +20,7 @@
 #include <core/pack/guidance_scoreterms/sap/SapConstraintHelper.fwd.hh>
 
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/scoring/aa_composition_energy/AACompositionEnergySetup.fwd.hh>
-#include <core/scoring/func/Func.fwd.hh>
-#include <core/scoring/func/XYZ_Func.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
 
-#include <core/scoring/ScoreType.hh>
-#include <core/id/AtomID.hh>
-#include <core/pose/Pose.fwd.hh>
 
 #include <string>
 

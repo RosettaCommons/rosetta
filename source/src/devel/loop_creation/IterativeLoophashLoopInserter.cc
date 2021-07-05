@@ -21,36 +21,22 @@
 
 //Numeric
 #include <numeric/random/random.hh>
-#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 //Basic
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 //Core
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
+#include <core/pose/Pose.fwd.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
 
 //protocols
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 
 //utility
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

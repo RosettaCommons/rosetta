@@ -16,7 +16,6 @@
 #include <devel/dna/relax_util.hh>
 
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>

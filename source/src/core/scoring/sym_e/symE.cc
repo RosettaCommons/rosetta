@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/scoring/Energies.hh>
-#include <core/scoring/LREnergyContainer.hh>
+#include <core/scoring/LREnergyContainer.fwd.hh>
 #include <core/scoring/DenseEnergyContainer.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 
@@ -27,9 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
 
 

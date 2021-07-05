@@ -19,16 +19,13 @@
 #include <core/scoring/ScoringManager.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 // Utility headers
 
 //Auto Headers
-#include <core/id/AtomID.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <core/id/AtomID.fwd.hh>
 
 ////////////////////////////////////////////////////////
 

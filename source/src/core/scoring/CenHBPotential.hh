@@ -21,7 +21,6 @@
 #include <numeric/constants.hh>
 
 
-#include <utility/vector1_bool.hh>
 #include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>

@@ -29,7 +29,7 @@
 
 #include <core/fragment/Frame.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 
 #include <protocols/simple_moves/FragmentMover.hh>
@@ -45,12 +45,10 @@
 //numeric headers
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <core/fragment/FragData.hh>
 #include <utility>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -28,18 +28,13 @@
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/simple_metrics/per_residue_metrics/PerResidueDensityFitMetric.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <map>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -18,9 +18,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <algorithm>
 
-#include <utility/vector1.hh>
 
 namespace protocols  {
 namespace simple_filters {

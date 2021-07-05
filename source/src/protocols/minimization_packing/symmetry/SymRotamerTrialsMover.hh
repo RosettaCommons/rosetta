@@ -16,18 +16,13 @@
 
 // Unit headers
 #include <protocols/minimization_packing/symmetry/SymRotamerTrialsMover.fwd.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.fwd.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector1.hh>
 
 #ifdef PYROSETTA
 #include <protocols/moves/MonteCarlo.hh>
+#include <core/pack/task/PackerTask.hh>
 #endif
 
 namespace protocols {

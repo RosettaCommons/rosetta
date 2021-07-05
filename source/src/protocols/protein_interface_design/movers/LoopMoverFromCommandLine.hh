@@ -18,13 +18,10 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <core/types.hh>
 #include <protocols/protein_interface_design/movers/LoopMoverFromCommandLine.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>

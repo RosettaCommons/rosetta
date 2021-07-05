@@ -43,7 +43,6 @@
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -60,8 +59,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -70,18 +67,20 @@
 #include <basic/options/option_macros.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 #ifdef WIN32
 #include <ctime>
 #endif
 
 //Auto Headers
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
+
+#include <core/scoring/ScoreFunction.hh> // MANUAL IWYU
+
+#include <protocols/moves/MonteCarlo.hh> // AUTO IWYU For MonteCarlo, MonteCarlo::ScoreFunction
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

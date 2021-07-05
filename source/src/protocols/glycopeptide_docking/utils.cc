@@ -15,14 +15,12 @@
 #include <protocols/glycopeptide_docking/utils.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/id/AtomID.hh>
 #include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <protocols/carbohydrates/SimpleGlycosylateMover.hh>
-#include <protocols/carbohydrates/GlycanSampler.hh>
 #include <protocols/glycopeptide_docking/GlycopeptideDockingFlags.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/docking/metrics.hh>
@@ -35,6 +33,8 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/extra_pose_info_util.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 static basic::Tracer TR( "protocols.glycopeptide_docking.utils" );

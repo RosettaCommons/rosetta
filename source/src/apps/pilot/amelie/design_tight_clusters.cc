@@ -19,16 +19,12 @@
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <core/id/types.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -44,21 +40,16 @@
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/rtmin.hh> // rotamer trials with minimization
 #include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/backrub/BackrubMover.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/protein_interface_design/design_utils.hh> // for FavorNativeResidue
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
-#include <ObjexxFCL/format.hh>
+
 
 using namespace core;
 
@@ -72,8 +63,6 @@ using namespace core;
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
-#include <fstream>
-#include <stack>
 #include <map>
 
 // constants / parameters that probably won't change much:

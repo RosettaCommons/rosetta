@@ -19,7 +19,6 @@
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
-#include <list>
 
 namespace protocols {
 namespace qsar {

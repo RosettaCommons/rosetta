@@ -18,7 +18,6 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <platform/types.hh>
 
 // Unit headers
 #include <core/energy_methods/RamaPreProEnergy.hh>
@@ -26,15 +25,11 @@
 
 // Package Headers
 #include <core/id/PartialAtomID.hh>
-#include <core/scoring/ScoringManager.hh>
 
 
-#include <numeric/conversions.hh>
 
 
 // Project headers
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

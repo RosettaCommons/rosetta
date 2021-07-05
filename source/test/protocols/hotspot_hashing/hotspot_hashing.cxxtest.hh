@@ -20,11 +20,9 @@
 #include <basic/Tracer.hh>
 #include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 
 #include <protocols/sic_dock/SICFast.hh>
@@ -38,10 +36,9 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <boost/algorithm/string.hpp>
 

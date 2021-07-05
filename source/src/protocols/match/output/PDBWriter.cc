@@ -27,21 +27,17 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/io/Remarks.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/func/Func.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 
 // Utility headers
 #include <utility>
 #include <utility/string_util.hh>
-#include <utility/VirtualBase.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>
@@ -50,6 +46,8 @@
 
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 #include <utility/vector1.hh>
+
+#include <core/io/StructFileRepOptions.hh> // AUTO IWYU For StructFileRepOptions
 
 
 namespace protocols {

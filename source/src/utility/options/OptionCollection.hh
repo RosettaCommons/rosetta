@@ -35,7 +35,7 @@
 #include <utility/options/StringVectorOption.hh>
 #include <utility/options/FileVectorOption.hh>
 #include <utility/options/PathVectorOption.hh>
-#include <utility/options/AnyVectorOption.hh>
+#include <utility/options/AnyVectorOption.fwd.hh>
 #include <utility/options/VariantOption.hh>
 #include <utility/options/keys/BooleanOptionKey.hh>
 #include <utility/options/keys/IntegerOptionKey.hh>
@@ -64,6 +64,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+
+#include <utility/options/AnyOption.fwd.hh> // AUTO IWYU For AnyOption
 
 // Multithreading headers
 #ifdef MULTI_THREADED

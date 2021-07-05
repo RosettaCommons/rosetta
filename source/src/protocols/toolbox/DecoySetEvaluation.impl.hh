@@ -17,12 +17,10 @@
 #include <protocols/toolbox/DecoySetEvaluation.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
-#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStruct.hh> // DO NOT AUTO-REMOVE (used in templated functions here)
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

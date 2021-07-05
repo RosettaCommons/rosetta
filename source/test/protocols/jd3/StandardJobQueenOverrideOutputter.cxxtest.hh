@@ -31,22 +31,14 @@ CEREAL_REGISTER_DYNAMIC_INIT( DummyOutputSpecification )
 #include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
-#include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/pose_inputters/PoseInputSource.hh>
-#include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
+#include <protocols/jd3/InnerLarvalJob.fwd.hh>
 #include <protocols/jd3/output/MultipleOutputSpecification.hh>
 #include <protocols/jd3/output/MultipleOutputter.hh>
-#include <protocols/jd3/output/OutputSpecification.hh>
-#include <protocols/jd3/output/ResultOutputter.hh>
-#include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputSpecification.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
+#include <protocols/jd3/output/OutputSpecification.fwd.hh>
+#include <protocols/jd3/output/ResultOutputter.fwd.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 #include <protocols/moves/NullMover.hh>
 #include <core/pose/Pose.hh>
@@ -54,24 +46,17 @@ CEREAL_REGISTER_DYNAMIC_INIT( DummyOutputSpecification )
 
 // basic headers
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKey.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/options/keys/StringOptionKey.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/options/keys/OptionKeyList.hh>
 
 // Boost headers
 
 // C++ headers
-#include <sstream>
+
+#include <protocols/jd3/InputSource.hh> // AUTO IWYU For InputSource
 
 using core::Size;
 using namespace utility::tag;

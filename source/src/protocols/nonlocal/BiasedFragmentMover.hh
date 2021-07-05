@@ -26,16 +26,15 @@
 #include <utility/vector1.hh>
 
 // Project headers
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/Frame.hh>
+#include <core/fragment/FragSet.fwd.hh>
+#include <core/fragment/Frame.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Package headers
-#include <protocols/nonlocal/Policy.hh>
+#include <protocols/nonlocal/Policy.fwd.hh>
 
 namespace protocols {
 namespace nonlocal {

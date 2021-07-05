@@ -44,8 +44,6 @@
 #include <basic/svd/SVD_Solver.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 // c++ headers
 

@@ -31,7 +31,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <algorithm>
 #include <utility/assert.hh>
 
 

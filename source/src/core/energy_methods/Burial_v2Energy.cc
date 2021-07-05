@@ -15,16 +15,11 @@
 #include <core/energy_methods/Burial_v2EnergyCreator.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
-#include <core/id/AtomID.hh>
 
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/MetricValue.hh>
-#include <basic/prof.hh>
 
-#include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
 #include <basic/options/option.hh>
@@ -32,7 +27,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/io/izstream.hh>
-#include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>

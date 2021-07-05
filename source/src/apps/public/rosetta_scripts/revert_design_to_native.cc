@@ -15,7 +15,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/Pose.hh>
@@ -40,7 +40,6 @@
 #include <basic/options/option.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 

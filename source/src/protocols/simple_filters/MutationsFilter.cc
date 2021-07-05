@@ -17,22 +17,13 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/jd2/util.hh>
-#include <ObjexxFCL/format.hh>
-#include <core/pose/util.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

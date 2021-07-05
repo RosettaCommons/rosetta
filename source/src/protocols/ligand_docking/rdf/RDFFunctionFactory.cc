@@ -22,7 +22,6 @@
 
 // Project Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector0.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 // C++ Headers

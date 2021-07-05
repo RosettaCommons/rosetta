@@ -16,7 +16,7 @@
 
 // Package headers
 #include <utility/graph/Graph.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/MultiplexedAnnealableGraph.hh>
 
@@ -35,7 +35,6 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pack/task/PackerTask.hh>
@@ -52,11 +51,10 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/options/BooleanVectorOption.hh>
 
+#ifdef MULTI_THREADED
 #include <basic/thread_manager/RosettaThreadManager.hh>
+#endif
 
 namespace core {
 namespace pack {

@@ -19,7 +19,6 @@
 
 #include <fstream>
 
-#include <utility/vector1.hh>
 
 class PDB_IOBenchmark : public PerformanceBenchmark
 {

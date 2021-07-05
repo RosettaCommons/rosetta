@@ -14,38 +14,26 @@
 #ifndef INCLUDED_protocols_hybridization_FragmentBiasAssigner_hh
 #define INCLUDED_protocols_hybridization_FragmentBiasAssigner_hh
 
-#include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/EnergyGraph.hh>
 
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 // symmetry
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/random/WeightedSampler.hh>
+#include <numeric/random/WeightedSampler.fwd.hh>
 
 #include <utility/vector1.hh>
 
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loops.fwd.hh>
 
 #include <utility/VirtualBase.hh>
+
+#include <map> // AUTO IWYU For map, allocator
+#include <set> // AUTO IWYU For set
 
 namespace protocols {
 namespace hybridization {

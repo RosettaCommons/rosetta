@@ -34,7 +34,7 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -48,7 +48,6 @@
 //// C++ headers
 
 #include <protocols/loops/Loop.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -27,7 +27,6 @@
 #include <core/chemical/VariantType.hh>
 
 // STL Headers
-#include <utility/assert.hh>
 
 #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
 #include <utility/vector1.hh>

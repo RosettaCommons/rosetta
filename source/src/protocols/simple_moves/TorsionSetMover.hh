@@ -20,6 +20,8 @@
 #include <protocols/simple_moves/TorsionSetMover.fwd.hh>
 #include <core/id/TorsionID.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 //////////////////////////////////////////////////////////////////////
 // Bare bones mover -- just applied predefined set of torsions
 //  to pose.

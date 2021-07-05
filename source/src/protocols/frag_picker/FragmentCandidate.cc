@@ -36,7 +36,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/fragment/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -45,16 +44,12 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 
 // Project headers
 #include <core/scoring/rms_util.hh>
-#include <numeric/model_quality/rms.hh>
-#include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
-#include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 
@@ -63,6 +58,11 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+
+#include <protocols/frag_picker/scores/FragmentScoreManager.hh> // AUTO IWYU For FragmentScoreManager
+#include <core/io/silent/SilentFileData.hh> // AUTO IWYU For SilentFileData
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
+#include <ObjexxFCL/format.hh> // AUTO IWYU For F, I, format
 
 
 namespace protocols {

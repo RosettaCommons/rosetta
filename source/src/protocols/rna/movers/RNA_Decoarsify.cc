@@ -18,16 +18,9 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/rna/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
 
 #include <protocols/rna/movers/RNA_Coarsify.hh>
@@ -35,12 +28,13 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 static basic::Tracer TR( "protocols.rna.movers.RNA_Decoarsify" );
 

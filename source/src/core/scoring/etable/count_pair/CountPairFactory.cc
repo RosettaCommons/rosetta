@@ -17,7 +17,7 @@
 // Package Headers
 #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPair1B.hh>
 #include <core/scoring/etable/count_pair/CountPair2B.hh>
 #include <core/scoring/etable/count_pair/CountPairIntraRes.hh>
@@ -35,9 +35,7 @@
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 
 //Auto Headers
-#include <core/scoring/etable/Etable.hh>
 #include <utility/vector1.hh>
-#include <basic/Tracer.hh>
 
 
 namespace core {

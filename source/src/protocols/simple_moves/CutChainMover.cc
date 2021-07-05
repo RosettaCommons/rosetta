@@ -18,44 +18,22 @@
 
 // type headers
 #include <core/types.hh>
-#include <core/id/types.hh>
 
 // project headers
 #include <protocols/moves/Mover.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
 
 // package headers
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/carbohydrates/util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/datacache/CacheableObserverType.hh>
-#include <core/pose/datacache/ObserverCache.hh>
 
 // Project headers
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 
-#include <core/id/TorsionID.hh>
-#include <core/id/types.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/Energies.hh>
 
 // utility header
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 namespace protocols {
 namespace simple_moves {

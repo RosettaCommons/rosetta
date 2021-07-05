@@ -22,7 +22,6 @@
 #include <protocols/denovo_design/architects/StructureArchitect.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/Segment.fwd.hh>
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
 
 // Core headers
@@ -34,10 +33,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // Boost headers
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
-#include <set>
 
 namespace protocols {
 namespace denovo_design {

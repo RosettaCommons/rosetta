@@ -18,7 +18,6 @@
 
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 #include <iostream>
 
 namespace protocols {

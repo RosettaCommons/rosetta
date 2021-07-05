@@ -19,16 +19,12 @@
 #include <basic/resource_manager/types.hh>
 
 //project headers
-#include <basic/resource_manager/ResourceLoader.fwd.hh>
 #include <basic/resource_manager/ResourceLocator.fwd.hh>
 
 //utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/file/FileName.fwd.hh>
-#include <utility/file/PathName.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/XMLSchemaValidation.fwd.hh>
 
 //C++ headers

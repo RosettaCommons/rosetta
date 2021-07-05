@@ -16,12 +16,11 @@
 
 // Unit Headers
 #include <protocols/task_operations/LinkResidues.fwd.hh>
-#include <protocols/task_operations/RestrictOperationsBase.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
+#include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -32,6 +31,8 @@
 #include <string>
 
 #include <utility/vector1.hh>
+
+#include <core/pack/task/operation/TaskOperation.hh> // AUTO IWYU For TaskOperation, TaskOperation::DataMap
 
 
 namespace protocols {

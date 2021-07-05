@@ -18,16 +18,13 @@
 
 // you cannot #include yourself #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/scoring/packing/HolesParams.hh>
-#include <core/scoring/packing/PoseBalls.hh>
+#include <core/scoring/packing/PoseBalls.fwd.hh>
 //#include <core/scoring/ScoringManager.hh>
-#include <iosfwd>
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <utility/exit.hh>
+#include <numeric/xyzVector.fwd.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector1.hh>
+
+#include <core/id/AtomID_Map.hh> // AUTO IWYU For AtomID_Map
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
 
 
 namespace core {

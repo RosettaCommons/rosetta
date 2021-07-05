@@ -17,14 +17,10 @@
 // Unit headers
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pose/variant_util.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 
@@ -32,7 +28,6 @@
 
 // Options
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // ObjexxFCL headers
@@ -44,7 +39,6 @@
 #include <utility/io/ozstream.hh>
 
 // C++
-#include <iomanip>
 #include <string>
 
 #include <core/energy_methods/FastSAXSEnergyCreator.hh>

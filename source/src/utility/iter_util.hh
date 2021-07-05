@@ -14,8 +14,8 @@
 #define INCLUDED_UTILITY_ITER_UTIL_hh
 
 // C/C++ headers
-#include <algorithm>
-#include <iterator>
+
+#include <algorithm> // AUTO IWYU For lower_bound
 
 namespace utility {
 

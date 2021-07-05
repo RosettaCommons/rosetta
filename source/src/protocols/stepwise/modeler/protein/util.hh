@@ -20,7 +20,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
 #include <core/types.hh>
 
 //Auto Headers

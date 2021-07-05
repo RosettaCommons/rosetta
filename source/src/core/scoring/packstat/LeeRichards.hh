@@ -24,7 +24,7 @@
 
 #include <core/pose/Pose.hh>
 
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
@@ -32,10 +32,8 @@
 
 #include <numeric/constants.hh>
 
-#include <iosfwd>
 #include <iostream>
 
-#include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
 #include <utility/numbers.hh>
 

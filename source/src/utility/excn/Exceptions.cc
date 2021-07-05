@@ -20,7 +20,6 @@
 
 // Package Headers
 #include <string>
-#include <ostream>
 #include <iostream>
 
 namespace utility {

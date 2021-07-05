@@ -19,6 +19,8 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#include <string>
+
 namespace protocols {
 namespace forge {
 namespace remodel {

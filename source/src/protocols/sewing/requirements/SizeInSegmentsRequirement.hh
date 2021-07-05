@@ -16,12 +16,12 @@
 #define INCLUDED_protocols_sewing_requirements_SizeInSegmentsRequirement_hh
 
 #include <protocols/sewing/requirements/SizeInSegmentsRequirement.fwd.hh>
+#include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
 #include <protocols/sewing/requirements/AssemblyRequirement.hh>
-#include <protocols/sewing/data_storage/SmartAssembly.hh>
 #include <core/types.hh>
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 namespace protocols {
 namespace sewing {

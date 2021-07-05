@@ -19,10 +19,9 @@
 #include <core/pose/Pose.fwd.hh>
 
 
-#include <utility/vector1.hh>
-#include <iosfwd>
 #include <basic/MetricValue.fwd.hh>
 
+#include <string>
 
 namespace protocols {
 namespace pose_metric_calculators {

@@ -19,7 +19,6 @@
 #include <core/types.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <iosfwd>
 
 #ifdef WIN32
 #include <functional>

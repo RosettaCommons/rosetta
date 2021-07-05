@@ -25,7 +25,6 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>

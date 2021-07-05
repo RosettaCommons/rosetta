@@ -20,8 +20,6 @@
 
 //Basic includes
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <utility/io/izstream.hh>
 
 //Numeric includes
@@ -29,6 +27,10 @@
 
 //C++ includes
 #include <iostream>
+
+#include <basic/basic.hh> // MANUAL IWYU
+
+#include <utility/string_util.hh> // AUTO IWYU For filename, pathname, trim
 
 static basic::Tracer TR( "core.pack.dunbrack.RotamericSingleResidueDunbrackLibraryParser" );
 

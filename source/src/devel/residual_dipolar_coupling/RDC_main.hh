@@ -19,6 +19,7 @@
 #ifndef INCLUDED_devel_residual_dipolar_coupling_RDC_main_hh
 #define INCLUDED_devel_residual_dipolar_coupling_RDC_main_hh
 
+#include <devel/residual_dipolar_coupling/RDC_main.fwd.hh>
 
 //Core
 #include <core/types.hh>
@@ -31,9 +32,8 @@
 //// C++ headers
 #include <map>
 
-#include <utility>
-#include <utility/vector1_bool.hh>
-#include <iosfwd>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace devel {

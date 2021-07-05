@@ -15,10 +15,8 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/kinematics/Jump.hh>
@@ -32,9 +30,8 @@
 #include <src/core/pack/pack_rotamers.hh>
 #include <src/core/pack/make_symmetric_task.hh>
 #include <src/core/pack/task/TaskFactory.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <core/scoring/aa_composition_energy/AACompositionConstraint.hh>
 
 #include <core/types.hh>
@@ -43,6 +40,12 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using basic::Error;

@@ -16,23 +16,23 @@
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator_hh
 #include <protocols/pose_metric_calculators/RotamerBoltzCalculator.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <protocols/toolbox/EnergyLandscapeEvaluator.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 //#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <utility/vector0.fwd.hh>
 
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/vector1.hh>
 #include <map>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsCOP
+#include <map> // AUTO IWYU For map, map<>::value_compare
 
 #ifdef    SERIALIZATION
 // Cereal headers

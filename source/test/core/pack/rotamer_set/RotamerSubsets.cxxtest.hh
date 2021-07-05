@@ -16,9 +16,8 @@
 #include <cxxtest/TestSuite.h>
 
 
-#include <platform/types.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSubsets.hh>
@@ -29,7 +28,7 @@
 
 // Core headers
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
@@ -39,6 +38,8 @@
 //Auto Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core;

@@ -30,13 +30,11 @@
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/chemical/rna/util.hh> // for information on phosphate atoms.
 #include <core/pose/copydofs/CopyDofs.hh> // FIXED_DOMAIN
 
 #include <utility/exit.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 using ObjexxFCL::format::I;
 
 // C++ headers

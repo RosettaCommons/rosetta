@@ -14,19 +14,17 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <test/protocols/cyclic_peptide/AchiralResidueTypeTestHeaders.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("AchiralResidueTypeTests");
 

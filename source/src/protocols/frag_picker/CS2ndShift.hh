@@ -17,11 +17,13 @@
 // utility headers
 #include <core/types.hh>
 
-#include <protocols/frag_picker/CSTalosIO.hh>
+#include <protocols/frag_picker/CSTalosIO.fwd.hh>
 
 
 #include <string>
 #include <map>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 // boost headers
 

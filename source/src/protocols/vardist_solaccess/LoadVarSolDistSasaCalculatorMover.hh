@@ -15,7 +15,6 @@
 #ifndef INCLUDED_protocols_vardist_solaccess_LoadVarSolDistSasaCalculatorMover_HH
 #define INCLUDED_protocols_vardist_solaccess_LoadVarSolDistSasaCalculatorMover_HH
 
-#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverCreator.hh>

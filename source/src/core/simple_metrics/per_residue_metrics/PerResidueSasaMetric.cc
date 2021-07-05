@@ -21,14 +21,12 @@
 #include <core/simple_metrics/util.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

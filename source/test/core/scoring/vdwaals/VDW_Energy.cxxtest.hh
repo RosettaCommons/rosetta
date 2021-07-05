@@ -16,7 +16,6 @@
 
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/util/deriv_funcs.hh>
 
 #include <core/types.hh>
 
@@ -24,33 +23,33 @@
 #include <core/scoring/vdwaals/VDW_Energy.hh>
 
 // Package headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
-#include <core/conformation/AbstractRotamerTrie.hh>
-#include <core/scoring/trie/RotamerTrieBase.hh>
+#include <core/conformation/AbstractRotamerTrie.fwd.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <core/scoring/methods/Methods.hh> // AUTO IWYU For methods, vdw_method
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, basic_ostream<>::...
 
 using basic::Error;
 using basic::Warning;

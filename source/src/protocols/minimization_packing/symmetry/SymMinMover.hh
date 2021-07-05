@@ -20,10 +20,7 @@
 #include <protocols/minimization_packing/symmetry/SymMinMover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // Package headers

@@ -21,18 +21,12 @@
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 // Project Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.fwd.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
 
 
 ///////////////////////////////////////////////////////////////////////

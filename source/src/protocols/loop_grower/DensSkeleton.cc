@@ -14,15 +14,10 @@
 
 #include <protocols/loop_grower/DensSkeleton.hh>
 
-#include <iostream>
 #include <fstream>
 #include <queue>
 
-#include <protocols/moves/Mover.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
@@ -30,21 +25,10 @@
 #include <basic/Tracer.hh>
 
 //possibily duplicate includes here
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/option.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/scoring/electron_density/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
-#include <boost/unordered/unordered_map.hpp>
 
 static basic::Tracer TR( "protocols.loop_grower.DensSkeleton" );
 
@@ -52,7 +36,6 @@ namespace protocols {
 namespace loop_grower {
 
 using namespace core;
-using namespace protocols::moves;
 
 core::Real
 DensSkeleton::shortest_path_bfs( numeric::xyzVector< core::Real >const & start, numeric::xyzVector< core::Real >const & end, core::Real max_length,

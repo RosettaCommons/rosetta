@@ -19,10 +19,8 @@
 
 //Protocols
 #include <protocols/features/FeaturesReporter.hh>
-#include <protocols/simple_filters/InterfaceSasaFilter.hh>
 
 //Devel
-#include <protocols/features/helixAssembly/HelicalFragment.hh>
 
 //Utility
 #include <utility/vector1.hh>
@@ -31,6 +29,8 @@
 #include <boost/graph/undirected_graph.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <numeric/xyzVector.hh> // AUTO IWYU For xyzVector
 
 namespace protocols {
 namespace features {

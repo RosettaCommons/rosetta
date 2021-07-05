@@ -15,25 +15,19 @@
 #include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
 
 // Package headers
-#include <core/conformation/parametric/Parameters.hh>
-#include <core/conformation/parametric/ParametersSet.hh>
+#include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.hh>
 
 // Project headers
 
 // Basic headers
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
 
 // Utility Headers
-#include <utility/assert.hh>
-#include <utility/py/PyAssert.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
-#include <iostream>
 
 
 #ifdef    SERIALIZATION

@@ -20,10 +20,8 @@
 #include <core/pose/Pose.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AA.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 #include <basic/Tracer.hh>

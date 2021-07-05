@@ -31,7 +31,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
@@ -41,16 +40,14 @@
 
 //SYMMETRY
 #include <protocols/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 //#include <core/conformation/symmetry/util.hh>
 //#include <core/conformation/symmetry/SymmetricConformation.hh>
 
 #include <sstream>
 
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
 
 
 //tracers

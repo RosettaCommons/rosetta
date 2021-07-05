@@ -18,7 +18,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <utility/tag/Tag.hh>
@@ -32,11 +31,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 //options Includes
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
-#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
-#include <basic/options/keys/OptionKeys.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

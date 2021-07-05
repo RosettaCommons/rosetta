@@ -23,7 +23,6 @@
 
 //// C++ headers
 #include <string>
-#include <vector>
 
 #include <protocols/rna/denovo/movers/RNA_HelixMover.fwd.hh>
 #include <core/import_pose/RNA_BasePairHandler.fwd.hh>

@@ -29,13 +29,11 @@
 
 // Utility headers
 // we need utility/vector1.hh because of declarations in fwd.hh
-#include <utility/vector1.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1A.fwd.hh>
 
 //// C++ headers
-#include <string>
 
 #ifdef PYROSETTA
 #include <ObjexxFCL/FArray1A.hh>

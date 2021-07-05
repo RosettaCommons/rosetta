@@ -26,7 +26,8 @@
 #include <utility/string_util.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
+
+#include <boost/assign/list_of.hpp> // AUTO IWYU For generic_list, assign_decay<>::type
 
 static basic::Tracer TR( "protocols.denovo_design.components.IdealAbegoGeneratorV2" );
 

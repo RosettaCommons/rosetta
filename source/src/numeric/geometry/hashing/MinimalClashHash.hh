@@ -18,11 +18,13 @@
 #define INCLUDED_numeric_geometry_hashing_MinimalClashHash_hh
 
 #include <numeric/geometry/hashing/MinimalClashHash.fwd.hh>
-#include <numeric/geometry/hashing/xyzStripeHash.hh> // need Ball
+#include <numeric/geometry/hashing/xyzStripeHash.hh> // need Ball DO NOT AUTO-REMOVE
 #include <numeric/VoxelArray.fwd.hh>  // Try to avoid including the .hh here
 #include <numeric/types.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
+
+#include <numeric/xyzVector.hh> // AUTO IWYU For xyzVector
 
 namespace numeric {
 namespace geometry {

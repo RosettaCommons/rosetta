@@ -19,20 +19,18 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <utility/tag/Tag.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/kinematics/Jump.hh>
 #include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/filters/BasicFilters.hh>
@@ -49,9 +47,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
@@ -60,6 +56,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

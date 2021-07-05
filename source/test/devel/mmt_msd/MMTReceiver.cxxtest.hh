@@ -25,15 +25,9 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/import_pose_options.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/scmin/SidechainStateAssignment.hh>
-#include <core/pack/scmin/AtomTreeCollection.hh>
 
 // Utility headers
 #include <utility/SimulateMPI.hh>

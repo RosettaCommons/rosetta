@@ -19,7 +19,6 @@
 #include <cxxtest/TestSuite.h>
 
 /// C++ headers
-#include <iostream>
 #include <list>
 
 using namespace utility;

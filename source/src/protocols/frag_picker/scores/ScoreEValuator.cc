@@ -20,7 +20,6 @@
 // package headers
 #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
 // option key includes
@@ -29,17 +28,16 @@
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 
 // mini headers
-#include <core/sequence/SequenceProfile.hh>
-#include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/ScoringSchemeFactory.hh>
 #include <basic/Tracer.hh>
 
-#include <algorithm>
 
 #include <utility/vector1.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
+
+#include <protocols/frag_picker/VallProvider.hh> // AUTO IWYU For VallProvider
 
 namespace protocols {
 namespace frag_picker {

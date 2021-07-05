@@ -15,22 +15,21 @@
 #include <protocols/surface_docking/CentroidRelaxMover.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 //Utility Headers
-#include <utility/exit.hh>
 
 //Basic Headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+
+#include <protocols/moves/TrialMover.hh> // AUTO IWYU For TrialMover
 
 
 

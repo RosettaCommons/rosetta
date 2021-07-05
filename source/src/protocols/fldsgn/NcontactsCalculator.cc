@@ -39,8 +39,6 @@
 //// C++ headers
 #include <cmath>
 
-#include <core/chemical/AtomType.hh>
-#include <utility/options/BooleanVectorOption.hh>
 
 
 static basic::Tracer tr( "protocols.fldsgn.NcontactsCalculator" );

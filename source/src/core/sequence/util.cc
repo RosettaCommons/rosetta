@@ -38,7 +38,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/rms_util.hh>
@@ -55,6 +54,9 @@
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 namespace core {
 namespace sequence {
 

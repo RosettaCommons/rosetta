@@ -23,15 +23,14 @@
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 
 // Project Headers
-#include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
 #include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
 
 // STL Headers
-#include <iostream>
 
-#include <core/scoring/etable/etrie/EtableAtom.hh>
 #include <core/scoring/trie/RotamerTrie.hh>
 #include <utility/vector1.hh>
+
+#include <core/scoring/lkball/lkbtrie/LKBAtom.hh> // AUTO IWYU For LKBAtom
 
 
 namespace core {

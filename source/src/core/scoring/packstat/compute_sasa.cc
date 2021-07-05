@@ -16,12 +16,10 @@
 #include <cmath>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/packstat/packing_score_params.hh>
 #include <core/scoring/packstat/sasa_dot_locations.hh>
@@ -31,7 +29,6 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
@@ -40,7 +37,6 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/ubyte.hh>
 #include <set>
-#include <sstream>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>

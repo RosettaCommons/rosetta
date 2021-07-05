@@ -18,7 +18,6 @@
 #include <core/pose/copydofs/CopyDofs.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>

@@ -24,7 +24,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <core/types.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <map>
 

@@ -17,7 +17,6 @@
 #include <core/scoring/func/SplineFunc.hh>
 
 // Package Headers
-#include <core/scoring/func/Func.fwd.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/database/open.hh>
@@ -26,7 +25,6 @@
 #include <basic/Tracer.hh>
 
 // Utility and Numeric Headers
-#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/interpolation/spline/Interpolator.hh>
@@ -34,8 +32,9 @@
 
 // C++ Headers
 #include <iostream>
-#include <sstream>
 #include <string>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "core.scoring.constraints.SplineFunc" );
 

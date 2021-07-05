@@ -19,7 +19,7 @@
 // Package Headers
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/denovo_design/components/SegmentPairing.hh>
-#include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
@@ -34,7 +34,6 @@
 
 // Parser headers
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

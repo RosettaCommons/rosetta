@@ -39,12 +39,10 @@
 // Utility headers
 #include <utility>
 #include <utility/exit.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 
 // C++ headers
-#include <sstream>
 #include <fstream>
 #include <iostream>
 #include <iomanip>

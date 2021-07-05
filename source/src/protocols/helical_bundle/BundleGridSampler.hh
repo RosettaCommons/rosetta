@@ -18,10 +18,7 @@
 // Unit Headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/helical_bundle/BundleGridSampler.fwd.hh>
-#include <protocols/helical_bundle/BundleGridSamplerHelper.fwd.hh>
-#include <protocols/helical_bundle/BundleGridSamplerHelper.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.fwd.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.hh>
 #include <protocols/helical_bundle/parameters/BundleParametersSet.fwd.hh>
@@ -32,25 +29,17 @@
 #include <core/conformation/parametric/ParametersSet.hh>
 #include <protocols/helical_bundle/MakeBundle.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 // Project Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
 
 
 ///////////////////////////////////////////////////////////////////////

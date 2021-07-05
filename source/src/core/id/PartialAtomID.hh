@@ -17,7 +17,6 @@
 // Unit headers
 #include <core/id/PartialAtomID.fwd.hh>
 
-#include <utility/exit.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/tools/make_vector.hh>
 

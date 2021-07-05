@@ -28,7 +28,6 @@
 #ifndef protocols_sparta_SpartaUtil_hh
 #define protocols_sparta_SpartaUtil_hh
 
-#include <boost/unordered_map.hpp>
 
 #include <protocols/sparta/GDB.hh>
 

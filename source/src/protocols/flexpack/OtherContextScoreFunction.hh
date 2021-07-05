@@ -22,7 +22,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.fwd.hh>  // GET OUT OF THE HABIT OF #INCLUDING POSE.HH IN HEADER FILES
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

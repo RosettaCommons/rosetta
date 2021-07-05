@@ -24,10 +24,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -37,7 +36,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

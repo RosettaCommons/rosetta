@@ -23,7 +23,6 @@
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace membrane {

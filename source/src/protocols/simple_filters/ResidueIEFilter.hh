@@ -18,12 +18,10 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <utility/vector1.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <set>
 
 namespace protocols {

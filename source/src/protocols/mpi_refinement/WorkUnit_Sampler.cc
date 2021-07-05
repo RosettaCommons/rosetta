@@ -14,20 +14,13 @@
 
 #include <protocols/mpi_refinement/WorkUnit_Sampler.hh>
 #include <protocols/mpi_refinement/util.hh>
-#include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <basic/options/option.hh>
@@ -38,22 +31,19 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <numeric/random/random.hh>
 
 #include <basic/Tracer.hh>
+
+#include <protocols/minimization_packing/PackRotamersMover.hh> // AUTO IWYU For PackRotamersMover
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

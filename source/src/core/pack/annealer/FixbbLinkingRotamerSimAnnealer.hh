@@ -22,9 +22,10 @@
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsCOP
 
 namespace core {
 namespace pack {

@@ -18,7 +18,6 @@
 #include <core/fragment/picking_old/vall/gen/LengthGen.fwd.hh>
 #include <core/fragment/picking_old/vall/gen/VallFragmentGen.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

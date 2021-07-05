@@ -22,11 +22,8 @@
 // project headers
 
 // core headers
-#include <core/conformation/Residue.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/packstat/compute_sasa.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/types.hh>
 
@@ -35,6 +32,8 @@
 #include <utility/SingletonBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <map> // AUTO IWYU For map, map<>::value_compare
 
 namespace protocols {
 namespace denovo_design {

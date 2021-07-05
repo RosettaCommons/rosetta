@@ -33,14 +33,11 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>
 
 //Utility Headers
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
@@ -48,7 +45,6 @@
 
 #include <core/pose/Pose.hh>
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

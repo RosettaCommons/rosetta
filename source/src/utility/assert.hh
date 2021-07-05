@@ -16,7 +16,7 @@
 #ifndef INCLUDED_utility_assert_hh
 #define INCLUDED_utility_assert_hh
 
-#include <utility/backtrace.hh> // for debug_assert()
+#include <utility/backtrace.hh> // DO NOT AUTO-REMOVE - for debug_assert()
 
 /// @brief Macro wrapper for paramters that used only indebug_assert(...) statments.
 ///        Intended to supress 'unused parameter' warning.

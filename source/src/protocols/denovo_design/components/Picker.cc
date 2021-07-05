@@ -34,7 +34,8 @@
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
 
-#include <utility/excn/Exceptions.hh>
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
+
 
 // Boost/ObjexxFCL Headers
 

@@ -25,15 +25,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/NeighborList.tmpl.hh>
-#include <core/scoring/ResidueNeighborList.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairNone.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/types.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
+#include <core/kinematics/MinimizerMapBase.fwd.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 
 namespace core {

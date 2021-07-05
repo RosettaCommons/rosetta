@@ -14,15 +14,10 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMoverCreator.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 
 // XSD XRW Includes

@@ -16,24 +16,21 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
 #include <core/io/StructFileRep.fwd.hh>
 #include <core/io/StructFileRepOptions.fwd.hh>
-#include <core/io/ResidueInformation.hh>
+#include <core/io/ResidueInformation.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
-#include <utility/io/ozstream.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <iosfwd>
 #include <set>
+
+#include <map> // AUTO IWYU For map
 
 namespace core {
 namespace io {

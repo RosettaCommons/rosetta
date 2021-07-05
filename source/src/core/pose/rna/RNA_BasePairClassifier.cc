@@ -25,7 +25,6 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
@@ -34,15 +33,12 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/xyzMatrix.hh>
-#include <numeric/conversions.hh>
 
 // External library headers
 
 //C++ headers
-#include <vector>
 #include <string>
 
 #include <basic/Tracer.hh>

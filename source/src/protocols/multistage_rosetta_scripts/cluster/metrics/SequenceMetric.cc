@@ -17,11 +17,12 @@
 #include <protocols/multistage_rosetta_scripts/cluster/util.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/tag/XMLSchemaValidation.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <utility/pointer/memory.hh>
+
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

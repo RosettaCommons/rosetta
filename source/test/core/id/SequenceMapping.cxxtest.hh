@@ -17,7 +17,6 @@
 #include <core/id/SequenceMapping.hh>
 
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 #include <core/sequence/util.hh>
 #include <core/conformation/Conformation.hh>
@@ -26,25 +25,14 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/types.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/sequence/DerivedSequenceMapping.fwd.hh>
-#include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/SequenceAlignment.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <limits>
 #include <string>
-#include <vector>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 static basic::Tracer TR("test.core.id.SequenceMapping");

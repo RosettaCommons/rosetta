@@ -39,16 +39,15 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
 
 
 //// C++ headers
 
-#include <protocols/jobdist/Jobs.hh>
 #include <protocols/jumping/JumpSample.hh>
 #include <protocols/loops/Loops.hh>
-#include <utility/vector1.hh>
+
+#include <protocols/abinitio/KinematicControl.hh> // AUTO IWYU For KinematicControl
 
 
 static basic::Tracer tr( "protocols.general_abinitio", basic::t_info );

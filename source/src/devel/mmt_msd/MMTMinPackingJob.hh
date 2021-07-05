@@ -20,11 +20,12 @@
 
 // Core headers
 #include <core/scoring/MinimizationGraph.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/scmin/AtomTreeCollection.fwd.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.fwd.hh>
 #include <core/pack/scmin/SidechainStateAssignment.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP
 
 
 namespace devel {

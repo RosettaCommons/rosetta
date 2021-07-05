@@ -13,18 +13,11 @@
 #ifndef INCLUDED_protocols_electron_density_MRMover_hh
 #define INCLUDED_protocols_electron_density_MRMover_hh
 
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/FragmentIO.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 
 //// C++ headers

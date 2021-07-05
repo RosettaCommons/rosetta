@@ -28,7 +28,6 @@
 #include <protocols/evaluation/util.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -41,7 +40,6 @@
 
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragCache.hh> // for FragStore
@@ -58,7 +56,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/fast_loops.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 
 // ObjexxFCL Headers
@@ -74,7 +71,6 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
-#include <utility/vector1.hh>
 
 #include <protocols/jobdist/Jobs.hh>
 

@@ -54,7 +54,7 @@
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
 
 // Numeric headers
@@ -72,7 +72,9 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
+#include <protocols/match/downstream/SecMatchResiduePairEvaluator.fwd.hh>
+
+#include <ObjexxFCL/FArray1D.hh> // DO NOT AUTO-REMOVE
 
 namespace protocols {
 namespace match {

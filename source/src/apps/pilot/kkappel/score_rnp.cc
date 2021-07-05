@@ -16,17 +16,13 @@
 //Package Headers
 //Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/extra_pose_info_util.hh>
 //Utility Headers
 #include <basic/options/option.hh>
@@ -34,17 +30,12 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
 //Numeric Headers
-#include <numeric/random/random.hh>
 //C++ Headers
 #include <iostream>
-#include <fstream>
 
 #include <devel/init.hh>
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 
 // New options for this application
 using namespace basic::options::OptionKeys;

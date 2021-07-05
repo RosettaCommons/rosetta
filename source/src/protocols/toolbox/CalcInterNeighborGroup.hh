@@ -18,12 +18,9 @@
 #include <protocols/toolbox/CalcInterNeighborGroup.fwd.hh>
 
 //Unit headers
-#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <protocols/toolbox/CalcInterNeighborGroup.fwd.hh>
 
 
 #include <core/pose/Pose.fwd.hh>
-#include <basic/MetricValue.fwd.hh>
 
 //Utility headers
 #include <core/types.hh>

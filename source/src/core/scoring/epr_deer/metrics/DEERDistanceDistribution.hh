@@ -23,12 +23,9 @@
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <string>
 #include <map>
-#include <tuple>
 
 namespace core {
 namespace scoring {

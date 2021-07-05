@@ -20,7 +20,7 @@
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
@@ -28,7 +28,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
-#include <core/pose/util.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 
@@ -36,6 +35,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 using utility::vector1;
 #include <utility/string_util.hh>
 using utility::string_split;
@@ -46,7 +48,6 @@ using utility::string_split;
 
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 

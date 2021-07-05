@@ -23,11 +23,8 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>

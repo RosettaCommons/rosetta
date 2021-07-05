@@ -24,8 +24,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <string>
 
-#include <basic/datacache/DataMap.hh>
-#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

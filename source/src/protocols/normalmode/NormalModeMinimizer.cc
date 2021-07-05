@@ -43,12 +43,14 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 
 using namespace ObjexxFCL::format;

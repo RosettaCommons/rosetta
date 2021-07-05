@@ -17,7 +17,6 @@
 #ifndef INCLUDED_protocols_rna_denovo_movers_RNA_DeNovoProtocolMover_HH
 #define INCLUDED_protocols_rna_denovo_movers_RNA_DeNovoProtocolMover_HH
 
-#include <utility/VirtualBase.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoProtocolMover.fwd.hh>
 #include <core/import_pose/RNA_DeNovoParameters.fwd.hh>
 #include <core/pose/rna/RNA_SecStruct.fwd.hh>
@@ -27,7 +26,7 @@
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/rna/BasePair.hh>
+#include <core/pose/rna/BasePair.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -35,6 +34,8 @@
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <tuple>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace rna {

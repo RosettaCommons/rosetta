@@ -13,15 +13,7 @@
 /// @author Andy Watkins (andy.watkins2@gmail.com)
 
 // Project Headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
-#include <protocols/jd2/MPIFileBufJobDistributor.hh>
-#include <protocols/jd2/BOINCJobDistributor.hh>
-#include <protocols/viewer/viewers.hh>
-#include <core/types.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
-#include <core/pose/Pose.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
 #include <devel/init.hh>
@@ -30,12 +22,9 @@
 // Utility Headers
 
 // Unit Headers
-#include <protocols/moves/Mover.fwd.hh>
 
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
-#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
@@ -56,7 +45,6 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		using namespace protocols::jd2;
 		using namespace core::pose;
 
 		protocols::rosetta_scripts::RosettaScriptsParser rs;

@@ -20,11 +20,9 @@
 #include <protocols/denovo_design/task_operations/ConsensusLoopDesignOperation.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/util.hh>
 
 // Core headers
 #include <core/io/pdb/build_pose_as_is.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -36,6 +34,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, Res...
 
 // Boost
 

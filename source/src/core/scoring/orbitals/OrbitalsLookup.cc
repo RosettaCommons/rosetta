@@ -12,11 +12,8 @@
 
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/BicubicSpline.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
+#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 #include <numeric/MathVector_operations.hh>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <utility/io/izstream.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <basic/database/open.hh>
@@ -24,9 +21,7 @@
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <core/scoring/ScoreFunction.hh>
 
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/orbitals/OrbitalTypeMapper.hh>

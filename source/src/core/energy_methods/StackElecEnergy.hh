@@ -29,6 +29,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh> // AUTO IWYU For CountPairFunctionCOP
+
 
 namespace core {
 namespace energy_methods {

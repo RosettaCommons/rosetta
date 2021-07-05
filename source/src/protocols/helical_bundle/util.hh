@@ -15,25 +15,19 @@
 #define INCLUDED_protocols_helical_bundle_util_hh
 
 // Unit Headers
-#include <protocols/moves/Mover.hh>
 
 // Scripter Headers
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Project Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <utility/io/ozstream.hh>
-#include <iosfwd>
+#include <numeric/xyzVector.fwd.hh>
+#include <utility/io/ozstream.fwd.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
+#include <core/types.hh> // AUTO IWYU For Real, Size
 
 
 ///////////////////////////////////////////////////////////////////////

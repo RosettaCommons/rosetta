@@ -20,26 +20,16 @@
 #include <protocols/simple_moves/sidechain_moves/SidechainMoverBase.hh>
 
 // Protocols Headers
-#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 
 // Core Headers
-#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/id/DOF_ID_Range.fwd.hh>
 
-#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace simple_moves {

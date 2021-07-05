@@ -17,14 +17,13 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ResidueGridScoresFeatures.fwd.hh>
 
-#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

@@ -24,13 +24,10 @@
 // Package headers
 
 // Project headers
-#include <core/optimization/AtomTreeMinimizer.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 
 // Utility headers
 
 // C++ headers
-#include <iosfwd>
 
 namespace protocols {
 namespace loops {

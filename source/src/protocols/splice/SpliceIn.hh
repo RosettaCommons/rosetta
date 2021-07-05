@@ -16,28 +16,15 @@
 
 #include <protocols/splice/SpliceIn.fwd.hh>
 #include <protocols/splice/SpliceOut.hh>
-#include <protocols/splice/SpliceSegment.fwd.hh>
 #include <protocols/splice/SpliceManager.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <core/sequence/SequenceProfile.fwd.hh>
-#include <protocols/task_operations/SeqprofConsensusOperation.fwd.hh>
-#include <basic/database/open.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <iosfwd>
-#include <protocols/moves/Mover.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/protein_interface_design/movers/LoopLengthChange.hh>
+#include <protocols/protein_interface_design/movers/LoopLengthChange.fwd.hh>
 
 
 

@@ -25,11 +25,8 @@
 #include <core/chemical/AA.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 
-#include <core/pose/selection.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/id/AtomID.hh>
@@ -43,7 +40,6 @@
 #include <utility/string_util.hh>
 
 #include <numeric/random/random.hh>
-#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 
 #include <boost/lexical_cast.hpp>

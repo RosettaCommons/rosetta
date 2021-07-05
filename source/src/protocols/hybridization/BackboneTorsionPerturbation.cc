@@ -16,31 +16,23 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
 
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/sequence/util.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/hybridization/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -56,10 +48,7 @@
 #include <ObjexxFCL/format.hh>
 
 // task operation
-#include <core/pack/task/TaskFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 
 // utility
@@ -68,6 +57,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 static basic::Tracer TR( "protocols.hybridization.BackboneTorsionPerturbation" );
 

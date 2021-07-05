@@ -24,13 +24,11 @@
 #include <core/pose/Pose.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
 
-#include <numeric/xyzVector.hh>
 
 #include <string>
 
 //Auto Headers
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 class SegmentRebuildTests : public CxxTest::TestSuite

@@ -35,7 +35,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
@@ -58,7 +57,6 @@
 #include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
 #include <core/pose/init_id_map.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

@@ -18,7 +18,6 @@
 #include <basic/random/RandomGeneratorSettings.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>

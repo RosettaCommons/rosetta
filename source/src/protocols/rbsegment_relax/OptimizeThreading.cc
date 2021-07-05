@@ -16,16 +16,11 @@
 #include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>
 
 #include <protocols/loops/loops_main.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/Remarks.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -33,7 +28,6 @@
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FragmentIO.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FragData.hh>
@@ -41,28 +35,30 @@
 #include <core/scoring/rms_util.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/rbsegment_relax/util.hh>
 #include <protocols/rbsegment_relax/RBSegmentMover.hh>
 #include <protocols/rbsegment_relax/RBSegment.hh>
 #include <protocols/hybridization/util.hh>
 #include <protocols/loops/util.hh>
-#include <protocols/moves/DsspMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/symmetry/SetupNCSMover.hh>
 
 #include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+#include <utility/string_util.hh> // AUTO IWYU For string_split
+#include <protocols/loops/Loop.hh> // AUTO IWYU For Loop
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree, operator<<
 
 
 

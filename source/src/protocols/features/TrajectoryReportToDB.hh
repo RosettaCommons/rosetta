@@ -22,12 +22,12 @@
 
 // // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 // // Boost Headers
 

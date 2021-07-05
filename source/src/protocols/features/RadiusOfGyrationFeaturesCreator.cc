@@ -16,10 +16,7 @@
 
 // Package Headers
 
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/RadiusOfGyrationFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

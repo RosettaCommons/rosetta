@@ -18,17 +18,12 @@
 #include <protocols/ligand_docking/util.hh>
 
 // Package headers
-#include <protocols/rigid/RB_geometry.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/io/ResidueInformation.hh>
 #include <core/io/AtomInformation.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 
@@ -59,7 +54,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 

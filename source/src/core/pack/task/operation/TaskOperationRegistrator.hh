@@ -16,7 +16,7 @@
 #define INCLUDED_core_pack_task_operation_TaskOperationRegistrator_hh
 
 // Package headers
-#include <core/pack/task/operation/TaskOperationFactory.hh>
+#include <core/pack/task/operation/TaskOperationFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace core {

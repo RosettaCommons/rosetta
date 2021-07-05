@@ -34,21 +34,15 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
-#include <core/chemical/AtomType.hh>
-#include <ObjexxFCL/format.hh>
-#include <core/chemical/rna/RNA_Info.hh>
 #include <core/scoring/func/SmoothStepFunc.hh>
 
 //pba membrane specific hbond
 #include <core/scoring/Membrane_FAPotential.hh>
-#include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
 
 // Hydrogen bonding for membrane proteins - using membrane framework
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
@@ -57,7 +51,6 @@
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>
 
 // Boost Headers
-#include <boost/unordered_map.hpp>
 
 //Standard I/O
 //#include <stdio.h>

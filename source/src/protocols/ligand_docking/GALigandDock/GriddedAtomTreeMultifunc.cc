@@ -20,12 +20,13 @@
 #include <core/optimization/atom_tree_minimize.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/types.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
+
+#include <protocols/ligand_docking/GALigandDock/GridScorer.hh> // AUTO IWYU For GridScorer
+#include <numeric/constants.hh> // AUTO IWYU For deg2rad, pi
 
 //////////////////////////////
 namespace protocols {

@@ -19,12 +19,11 @@
 #include <protocols/calc_taskop_filters/SigmoidFilter.hh>
 #include <protocols/calc_taskop_filters/MultipleSigmoidsFilter.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 //JD2 headers
 #include <protocols/jd2/util.hh>
 //Project Headers
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/string_util.hh>
 #include <protocols/filters/BasicFilters.hh>

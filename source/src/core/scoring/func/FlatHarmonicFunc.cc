@@ -17,7 +17,6 @@
 #include <core/types.hh>
 #include <cmath>
 
-#include <utility/VirtualBase.hh>
 
 
 #include <sstream>

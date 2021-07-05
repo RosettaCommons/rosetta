@@ -28,8 +28,6 @@
 #include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/id/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
@@ -39,7 +37,6 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/func/Func.fwd.hh>
-#include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/sequence/ABEGOManager.hh>

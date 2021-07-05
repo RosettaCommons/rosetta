@@ -21,7 +21,6 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
 namespace simple_filters {

@@ -24,7 +24,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <utility/vector0.hh>
 
 
 #ifdef    SERIALIZATION

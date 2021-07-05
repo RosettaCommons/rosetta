@@ -18,11 +18,10 @@
 // Unit Headers
 #include <protocols/legacy_sewing/sampling/LegacyAssemblyMover.hh>
 #include <protocols/legacy_sewing/sampling/LegacyEnumerateAssemblyMover.fwd.hh>
-#include <protocols/legacy_sewing/conformation/Assembly.hh> // for accessing segments_ and all_segments_
+#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh> // for accessing segments_ and all_segments_
 #include <protocols/legacy_sewing/conformation/Model.hh>
 
 //Protocol headers
-#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

@@ -15,15 +15,11 @@
 #include <protocols/mpi_refinement/MultiObjective.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/io/silent/SilentFileData.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -33,18 +29,17 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 /// ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> // AUTO IWYU For SwitchResidueTypeSetMover
+#include <utility/vector0.hh> // AUTO IWYU For vector0
+
 // Utility headers
-#include <cmath>
-#include <numeric/random/random.hh>
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

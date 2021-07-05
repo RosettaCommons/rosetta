@@ -15,9 +15,7 @@
 
 
 // numeric headers
-#include <numeric/random/random.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
@@ -27,7 +25,6 @@
 
 #include <core/types.hh>
 #include <core/conformation/util.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -39,8 +36,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/util/disulfide_util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/pose/PDBInfo.hh>
 
 // unit headers
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
@@ -48,10 +43,13 @@
 #include <protocols/forge/methods/util.hh>
 #include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 //#include <protocols/flxbb/LayerDesignOperation.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // C++ headers
+
+#include <core/pack/task/PackerTask.hh> // MANUAL IWYU
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace basic::options;
 

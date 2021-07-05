@@ -36,7 +36,6 @@
 
 // Utility Headers
 #include <utility/file/FileName.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <map>

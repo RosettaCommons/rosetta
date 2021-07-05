@@ -16,14 +16,12 @@
 #define INCLUDED_protocols_indexed_structure_store_FragmentStoreProvider_HH
 
 // Utility Headers
-#include <platform/types.hh>
 
 #include <utility/VirtualBase.hh>
 
 #include <protocols/indexed_structure_store/FragmentStoreProvider.fwd.hh>
-#include <protocols/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStore.fwd.hh>
 
-#include <vector>
 #include <string>
 
 namespace protocols

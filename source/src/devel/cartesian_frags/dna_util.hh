@@ -27,7 +27,6 @@
 
 #include <core/types.hh>
 #include <devel/cartesian_frags/Direction.hh>
-#include <utility/vector1.hh>
 
 
 namespace devel {

@@ -19,15 +19,13 @@
 
 //Core headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 
 //Utility headers
-#include <utility/vector1.hh>
 
 // C++ Headers
 

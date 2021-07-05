@@ -13,12 +13,9 @@
 // Unit headers
 #include <protocols/simple_moves/AddChainMover.hh>
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <basic/datacache/DataMap.hh>
-#include <core/kinematics/FoldTree.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <numeric/random/random.hh>
 #include <utility/string_util.hh>
@@ -29,7 +26,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <numeric/xyzVector.hh>
@@ -37,6 +33,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/rosetta_scripts/util.hh> // AUTO IWYU For saved_reference_pose, attributes_for_parse_score_f...
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
 
 static basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
 

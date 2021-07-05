@@ -29,7 +29,6 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <list>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -14,7 +14,6 @@
 #ifndef INCLUDED_core_select_util_hh
 #define INCLUDED_core_select_util_hh
 
-#include <core/select/residue_selector/ResidueIndexSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>

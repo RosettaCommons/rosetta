@@ -24,7 +24,6 @@
 #include <apps/benchmark/performance/init_util.hh>
 
 
-#include <utility/vector1.hh>
 
 
 enum DockType {High, Low};

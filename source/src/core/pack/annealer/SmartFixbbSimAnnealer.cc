@@ -15,36 +15,33 @@
 #include <core/pack/annealer/SmartFixbbSimAnnealer.hh>
 
 // Package Headers
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/random/random.hh>
 #include <utility>
 #include <utility/exit.hh>
 
-#include <iostream>
 #include <fstream>
-#include <math.h>
 
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 // option key includes
+
+#include <utility/vector0.hh>
+
+#ifdef USE_TENSORFLOW
+#include <core/conformation/Residue.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
+#include <numeric/random/random.hh>
+#include <ObjexxFCL/FArray1D.hh>
+#include <unordered_map>
 
-#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-
-#ifdef USE_TENSORFLOW
 #include <tensorflow/c/c_api.h>
 #include <basic/tensorflow_manager/RosettaTensorflowManager.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.tmpl.hh>

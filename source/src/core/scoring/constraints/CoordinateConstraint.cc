@@ -33,13 +33,11 @@
 
 
 // C++ Headers
-#include <cstdlib>
 #include <iostream>
 
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <utility>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "core.scoring.constraints" );

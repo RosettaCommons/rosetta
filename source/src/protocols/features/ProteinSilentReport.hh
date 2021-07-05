@@ -35,7 +35,6 @@
 #include <protocols/features/ResidueConformationFeatures.fwd.hh>
 #include <protocols/features/JobDataFeatures.fwd.hh>
 #include <protocols/features/DatabaseFilters.fwd.hh>
-#include <protocols/features/FeaturesReporterFactory.fwd.hh>
 
 // Platform Headers
 #include <core/types.hh>

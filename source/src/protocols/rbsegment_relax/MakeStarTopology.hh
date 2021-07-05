@@ -14,18 +14,12 @@
 #ifndef INCLUDED_protocols_rbsegment_relax_make_star_topology_hh
 #define INCLUDED_protocols_rbsegment_relax_make_star_topology_hh
 
-#include <protocols/rbsegment_relax/MakeStarTopologyCreator.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/scoring/electron_density/util.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loops.hh>
 
 
 namespace protocols {

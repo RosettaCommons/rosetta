@@ -15,7 +15,6 @@
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 
 #include <utility/exit.hh>

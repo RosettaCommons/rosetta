@@ -15,6 +15,9 @@
 // Unit headers
 #include <protocols/moves/FilterReporterMover.hh>
 
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
+#include <protocols/moves/FilterMover.hh> // AUTO IWYU For FilterMover
+
 namespace protocols {
 namespace moves {
 

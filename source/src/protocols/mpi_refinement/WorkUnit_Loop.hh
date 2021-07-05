@@ -16,9 +16,7 @@
 
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/mpi_refinement/WorkUnit_Sampler.hh>
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <utility/vector1.hh>
-#include <set>  // required for std::set
+#include <protocols/loophash/LoopHashLibrary.fwd.hh>
 
 namespace protocols {
 namespace mpi_refinement {

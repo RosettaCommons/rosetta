@@ -21,13 +21,10 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/sphericalVector.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzMatrix.io.hh>
 #include <numeric/constants.hh>
 #include <utility/vector1.hh>
 
-#include <iostream>
 
 // --------------- Test Class --------------- //
 

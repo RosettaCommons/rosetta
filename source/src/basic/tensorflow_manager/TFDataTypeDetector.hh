@@ -18,7 +18,8 @@
 #include <utility/exit.hh>
 
 // External headers
-#include <tensorflow/c/c_api.h>
+
+#include <tensorflow/c/tf_datatype.h> // AUTO IWYU For TF_DataType, TF_FLOAT, TF_BOOL, TF_DOUBLE, TF_INT32, TF_INT64, TF_UINT32
 
 namespace basic {
 namespace tensorflow_manager {

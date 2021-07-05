@@ -30,10 +30,8 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 
 // External Headers

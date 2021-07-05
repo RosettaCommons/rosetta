@@ -30,15 +30,14 @@
 // Utility Headers
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
 #include <vector>
 #include <set>
 
-#include <utility/vector1.hh>
 #include <utility/io/ozstream.fwd.hh>
 
 

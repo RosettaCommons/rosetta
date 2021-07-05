@@ -12,21 +12,11 @@
 // keep these headers first for compilation with Visual Studio C++
 
 // Package Headers
-#include <core/io/silent/SilentStruct.hh>
-#include <protocols/abinitio/AbrelaxMover.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 
-#include <core/scoring/constraints/BoundConstraint.hh>
-#include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
-#include <core/scoring/func/FuncFactory.hh>
 
 //archive headers
-#include <protocols/abinitio/IterativeAbrelax.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 //trRosetta
 #include <protocols/trRosetta_protocols/movers/trRosettaProtocolMover.hh>
@@ -44,13 +34,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
-#include <basic/options/keys/chunk.OptionKeys.gen.hh>
-#include <basic/options/keys/broker.OptionKeys.gen.hh>
 
 // C/C++ headers
-#include <iostream>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "main" );

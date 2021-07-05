@@ -10,8 +10,8 @@
 /// @file core/scoring/func/USOGFunc.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef CORE_SCORING_CONSTRAINTS_USOGFUNC_HH_
-#define CORE_SCORING_CONSTRAINTS_USOGFUNC_HH_
+#ifndef INCLUDED_CORE_SCORING_CONSTRAINTS_USOGFUNC_HH_
+#define INCLUDED_CORE_SCORING_CONSTRAINTS_USOGFUNC_HH_
 
 // Package headers
 #include <core/scoring/func/USOGFunc.fwd.hh>
@@ -21,7 +21,6 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers

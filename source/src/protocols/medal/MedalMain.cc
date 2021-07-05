@@ -17,7 +17,6 @@
 #include <string>
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
@@ -27,7 +26,7 @@
 
 // Project headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Package headers
 #include <protocols/medal/MedalExchangeMover.hh>

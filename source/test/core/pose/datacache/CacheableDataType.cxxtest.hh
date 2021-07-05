@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // Package headers
 #include <core/pose/datacache/CacheableDataType.hh>

@@ -21,7 +21,7 @@
 
 #include <core/chemical/AA.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -38,8 +38,9 @@
 #include <test/util/pose_funcs.hh>
 
 //Auto Headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 class FASTERAnnealerTests : public CxxTest::TestSuite {

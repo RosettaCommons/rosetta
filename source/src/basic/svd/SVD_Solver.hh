@@ -53,8 +53,8 @@
 #include <utility/vector1.hh>  // for vector1
 
 // Objexx headers
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
 
 namespace basic {
 namespace svd {

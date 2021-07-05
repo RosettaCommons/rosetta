@@ -19,19 +19,15 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Info.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 #include <core/kinematics/Stub.hh>
 
 // Project headers
-#include <numeric/constants.hh>
 #include <numeric/angle.functions.hh>
 
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 

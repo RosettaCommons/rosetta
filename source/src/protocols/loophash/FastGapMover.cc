@@ -25,13 +25,11 @@
 #include <protocols/loophash/LocalInserter.hh>
 
 
-#include <utility/exit.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // C++ headems
-#include <algorithm>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/vector1.hh>
@@ -39,7 +37,6 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 
 
 namespace protocols {

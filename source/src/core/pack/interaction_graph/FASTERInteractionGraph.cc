@@ -22,7 +22,6 @@
 #include <utility/string_util.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2A.hh>
 
@@ -30,13 +29,11 @@
 #include <list>
 #include <algorithm>
 #include <iostream>
-#include <utility/assert.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
 
 
-#include <utility/vector1.hh>
 
 
 using namespace ObjexxFCL;

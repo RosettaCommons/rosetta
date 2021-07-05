@@ -17,10 +17,12 @@
 #include <protocols/frag_picker/scores/FourAtomsConstraintData.fwd.hh>
 
 // mini
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 
 // utility headers
 #include <utility/VirtualBase.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size
 
 
 namespace protocols {

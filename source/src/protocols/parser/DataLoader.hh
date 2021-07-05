@@ -18,13 +18,11 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

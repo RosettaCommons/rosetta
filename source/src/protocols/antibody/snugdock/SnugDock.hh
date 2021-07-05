@@ -22,7 +22,6 @@
 // Unit headers
 #include <protocols/antibody/snugdock/SnugDock.fwd.hh>
 #include <protocols/docking/DockingHighRes.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
 // Package headers
@@ -31,14 +30,14 @@
 #include <protocols/loop_modeler/LoopModeler.fwd.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
+
+#include <protocols/loops/Loop.fwd.hh> // AUTO IWYU For Loop
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace antibody {

@@ -11,16 +11,11 @@
 /// @brief
 /// @author James Thompson
 
-#include <numeric/kdtree/constants.hh>
 #include <numeric/kdtree/util.hh>
 #include <numeric/kdtree/construct_kdtree.hh>
 #include <numeric/kdtree/KDPoint.hh>
 #include <numeric/kdtree/KDNode.hh>
-#include <numeric/kdtree/HyperRectangle.hh>
-#include <numeric/kdtree/HyperRectangle.fwd.hh>
 
-#include <utility/VirtualBase.hh>
-#include <utility/VirtualBase.fwd.hh>
 
 #include <algorithm>
 

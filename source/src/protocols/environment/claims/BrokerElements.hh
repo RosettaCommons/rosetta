@@ -18,12 +18,10 @@
 // #include <protocols/environment/claims/BrokerElements.fwd.hh>
 
 // Package Headers
-#include <protocols/environment/ClientMover.fwd.hh>
 
 // Project Headers
 #include <core/environment/LocalPosition.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/id/TorsionID.hh>
 
 // ObjexxFCL Headers
 

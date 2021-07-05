@@ -18,7 +18,6 @@
 #include <core/types.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>

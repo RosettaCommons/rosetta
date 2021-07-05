@@ -15,19 +15,16 @@
 
 /// Unit headers
 #include <core/pack/annealer/AnnealerObserver.fwd.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
 /// Package headers
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 
 /// C++ headers
-#include <core/types.hh>
 
-#include <ObjexxFCL/FArray1.fwd.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
 
 #include <utility/VirtualBase.hh>
+
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For Residue
 
 namespace core {
 namespace pack {

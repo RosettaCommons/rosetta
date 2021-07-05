@@ -2,84 +2,37 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/annotated_sequence.hh>  //make_pose_from_sequence
-#include <core/pose/util.hh>
 
 #include <core/import_pose/import_pose.hh>
 
-#include <core/conformation/Residue.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/util/SwitchResidueTypeSet.hh>
 
-#include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
 
 // minimize pose into density
-#include <protocols/electron_density/util.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/electron_density/DockIntoDensityMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 
 
-#include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/fragment/util.hh>
-#include <core/fragment/FragmentIO.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FragData.hh>
+
+
 
 //#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <basic/Tracer.hh>
 
-#include <iostream>
 #include <string>
-#include <list>
-#include <algorithm>
 
 #include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
 OPT_KEY( Integer, bw )
 OPT_KEY( Integer, n_to_search )

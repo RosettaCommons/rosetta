@@ -14,9 +14,13 @@
 #ifndef INCLUDED_protocols_features_strand_assembly_WriteToDBFromSandwichFeatures_HH
 #define INCLUDED_protocols_features_strand_assembly_WriteToDBFromSandwichFeatures_HH
 
-#include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
-#include <protocols/features/strand_assembly/SandwichFeatures.hh>
-#include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>
+#include <string>
+
+#include <protocols/features/FeaturesReporter.fwd.hh> // AUTO IWYU For StructureID
+#include <protocols/features/strand_assembly/SandwichFragment.fwd.hh> // AUTO IWYU For SandwichFragment
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
+#include <core/types.hh> // AUTO IWYU For Size, Real
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh> // AUTO IWYU For sessionOP
 
 namespace protocols {
 namespace features {

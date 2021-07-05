@@ -13,45 +13,41 @@
 
 // Unit headers
 #include <protocols/splice/SpliceManager.hh>
-#include <protocols/splice/Splice.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <protocols/splice/util.hh>
 #include <protocols/splice/SpliceSegment.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
-#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
 #include <iostream>
-#include <sstream>
 #include <utility/string_util.hh>
-#include <protocols/toolbox/superimpose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/sequence/SequenceProfile.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
-#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
-#include <basic/options/keys/OptionKeys.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <map>
-#include <protocols/moves/Mover.hh>
-#include <core/sequence/SequenceProfile.hh>
 #include <utility/exit.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <protocols/splice/RBInMover.hh>
 #include <protocols/splice/RBOutMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/algorithm/string.hpp>
-#include <core/kinematics/MoveMap.hh>
 
+#include <core/id/SequenceMapping.hh> // MANUAL IWYU
+#include <core/import_pose/import_pose.hh> // MANUAL IWYU
+#include <core/kinematics/FoldTree.hh> // MANUAL IWYU
+#include <core/pack/task/PackerTask.hh> // MANUAL IWYU
+#include <core/scoring/ScoreFunction.hh> // MANUAL IWYU
+#include <core/scoring/constraints/CoordinateConstraint.hh> // MANUAL IWYU
+#include <core/scoring/constraints/DihedralConstraint.hh> // MANUAL IWYU
+#include <core/scoring/func/CircularHarmonicFunc.hh> // MANUAL IWYU
+#include <core/scoring/func/HarmonicFunc.hh> // MANUAL IWYU
+#include <numeric/constants.hh> // MANUAL IWYU
+#include <numeric/xyz.functions.hh>
+#include <basic/datacache/DataMap.hh> // MANUAL IWYU
+#include <utility/tag/Tag.hh> // MANUAL IWYU
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace splice {

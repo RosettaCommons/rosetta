@@ -256,8 +256,6 @@ sources = {
 		"LegacyMonteCarloAssemblyMover",
 		#"LegacyNodeConstraintAssemblyMover",
 		"SewGraph",
-		#"LegacyLoophashAssemblyMover",
-		#"LegacyRehashAssemblyMover",
 		"LegacyRepeatAssemblyMover",
 		"LegacyEnumerateAssemblyMover",
 	],

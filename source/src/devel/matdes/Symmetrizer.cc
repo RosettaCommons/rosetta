@@ -20,12 +20,9 @@
 #include <devel/matdes/SymmetrizerSampler.hh>
 
 // project headers
-#include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <numeric/xyz.functions.hh>
@@ -33,13 +30,11 @@
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <numeric/random/random.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

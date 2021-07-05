@@ -26,7 +26,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 
-#include <iostream>
 
 namespace {
 

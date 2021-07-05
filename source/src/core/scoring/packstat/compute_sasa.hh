@@ -16,6 +16,8 @@
 #ifndef INCLUDED_core_scoring_packstat_compute_sasa_hh
 #define INCLUDED_core_scoring_packstat_compute_sasa_hh
 
+#include <core/scoring/packstat/compute_sasa.fwd.hh>
+
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/CavityBall.hh>
 #include <core/scoring/packstat/PackingScore.hh>

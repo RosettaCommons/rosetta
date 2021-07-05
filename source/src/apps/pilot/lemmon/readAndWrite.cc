@@ -30,7 +30,6 @@ in::file::extra_res_fa <list of extra params files, one per residue type>
 #include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 

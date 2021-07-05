@@ -16,24 +16,20 @@
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeSet.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
@@ -72,7 +68,6 @@ minimize_all_sampled_floating_bases(
 	using namespace core::optimization;
 	using namespace core::scoring;
 	using namespace core::pose;
-	using namespace core::io::silent;
 	using namespace core::id;
 	using namespace ObjexxFCL;
 
@@ -267,7 +262,6 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 	bool instantiate_sugar /* = false */){
 
 	using namespace ObjexxFCL;
-	using namespace core::io::silent;
 	using namespace core::id;
 
 	if ( instantiate_sugar ) {

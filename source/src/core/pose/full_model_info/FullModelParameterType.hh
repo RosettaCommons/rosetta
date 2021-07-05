@@ -17,7 +17,6 @@
 #define INCLUDED_core_pose_full_model_info_FullModelParameterType_HH
 
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
-#include <iosfwd>
 #if WIN32
 #include <string>
 #endif

@@ -25,7 +25,6 @@
 // Rosetta Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
@@ -36,6 +35,8 @@
 
 #include <core/kinematics/Edge.fwd.hh>
 #include <core/types.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #ifdef    SERIALIZATION
 // Cereal headers

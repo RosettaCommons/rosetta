@@ -13,14 +13,11 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/antibody/utilities.hh>
 
 // Project Headers
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
@@ -32,10 +29,8 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -43,6 +38,8 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 
 using namespace protocols::antibody;

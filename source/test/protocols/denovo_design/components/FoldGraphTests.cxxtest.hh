@@ -12,8 +12,6 @@
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Protocol Headers
@@ -26,9 +24,7 @@
 #include <protocols/loops/Loops.hh>
 
 // Core Headers
-#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
 
 // Basic/Utility Headers
 #include <basic/Tracer.hh>
@@ -36,7 +32,8 @@
 // Boost Headers
 
 // C++ Headers
-#include <set>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("FoldGraphTests");
 

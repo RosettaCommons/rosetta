@@ -17,7 +17,6 @@
 
 // unit headers
 #include <core/pose/datacache/CacheableObserver.fwd.hh>
-#include <core/pose/datacache/CacheableObserverType.hh>
 
 // project headers
 #include <core/pose/Pose.fwd.hh>
@@ -25,7 +24,6 @@
 // utility headers
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

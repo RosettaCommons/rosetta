@@ -17,9 +17,7 @@
 #include <protocols/forge/build/RelativeSequencePosition.hh>
 
 // project headers
-#include <core/pose/Pose.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef WIN32

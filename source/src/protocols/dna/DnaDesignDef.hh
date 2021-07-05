@@ -17,7 +17,6 @@
 #include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1.fwd.hh>
 
 #include <iosfwd>
 #include <string>

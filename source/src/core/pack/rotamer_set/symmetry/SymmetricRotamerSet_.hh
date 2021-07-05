@@ -23,16 +23,11 @@
 
 //Project headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
 
 

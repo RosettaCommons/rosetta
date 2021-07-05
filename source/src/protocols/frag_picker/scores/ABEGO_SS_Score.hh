@@ -18,7 +18,7 @@
 #include <core/types.hh>
 
 // package headers
-#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 
 #include <protocols/frag_picker/quota/ABEGO_SS_Config.hh>

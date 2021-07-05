@@ -18,34 +18,21 @@
 #include <protocols/helical_bundle/MakeBundleHelixCreator.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
-#include <numeric/crick_equations/BundleParams.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/conformation/parametric/RealVectorValuedParameter.hh>
-#include <core/conformation/parametric/RealValuedParameter.hh>
-#include <core/conformation/parametric/SizeVectorValuedParameter.hh>
 #include <core/conformation/parametric/SizeValuedParameter.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/pose/init_id_map.hh>
 #include <utility/pointer/memory.hh>
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <utility/tag/XMLSchemaGeneration.hh> // MANUAL IWYU
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
 
 
 

@@ -19,15 +19,11 @@
 #include <protocols/tcr/grafting_util.hh>
 #include <protocols/tcr/template_util.hh>
 #include <protocols/tcr/modeling_util.hh>
-#include <protocols/loops/loops_main.hh>
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <utility/string_util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/import_pose/import_pose.hh>
 // Utility Headers
 #include <utility/file/file_sys_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -37,6 +33,8 @@
 //option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/tcrmodel.OptionKeys.gen.hh>
+
+#include <core/sequence/MatrixScoringScheme.hh> // AUTO IWYU For MatrixScoringScheme
 
 ///////////////////////////////////////////////////////////////////////////////
 

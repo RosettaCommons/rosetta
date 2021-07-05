@@ -19,7 +19,6 @@
 //Core Headers
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -40,13 +39,14 @@
 //Utility Headers
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <cppdb/frontend.h>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/InterfaceFeaturesCreator.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 static basic::Tracer TR( "protocols.InterfaceFeatures" );
 

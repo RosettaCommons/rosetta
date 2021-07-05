@@ -38,8 +38,9 @@
 #include <string>
 #include <iosfwd>
 
-#include <utility/vector0_bool.hh>
 #include <utility/vector1.hh>
+
+#include <utility/vector0.hh> // AUTO IWYU For vector0
 
 
 namespace protocols {

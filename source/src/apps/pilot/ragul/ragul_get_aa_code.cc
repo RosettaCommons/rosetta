@@ -14,34 +14,19 @@
 //use -gpu:threads 1024 (or other number) on the command line
 
 #include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <ostream>
 #include <string>
-#include <sstream>
 
 // Protocol Headers
 #include <devel/init.hh>
-#include <core/scoring/rms_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
-#include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
-#include <fstream>
-#include <iostream>
-#include <string>
 
 using namespace core;
 using namespace basic::options;

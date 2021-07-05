@@ -19,7 +19,6 @@
 #include <protocols/optimize_weights/PNatLigPoseOptEData.fwd.hh>
 #include <protocols/optimize_weights/OptEData.hh>
 
-#include <utility/vector1.hh>
 
 #include <iosfwd>
 

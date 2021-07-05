@@ -14,11 +14,9 @@
 // Unit Headers
 #include <protocols/task_operations/InteractingRotamerExplosion.hh>
 #include <protocols/task_operations/InteractingRotamerExplosionCreator.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/rotamer_set_operations/AddGood2BPairEnergyRotamers.hh>
 
 // Project Headers
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/PDBInfo.hh>
@@ -28,7 +26,6 @@
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
@@ -42,6 +39,9 @@
 
 // C++ Headers
 #include <set>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer tr( "protocols.TaskOperations.InteractingRotamerExplosion" );

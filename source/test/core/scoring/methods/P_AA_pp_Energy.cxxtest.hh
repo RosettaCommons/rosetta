@@ -19,7 +19,6 @@
 #include <core/scoring/P_AA.hh>
 #include <core/scoring/ScoringManager.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/pose_funcs.hh>
@@ -30,7 +29,6 @@
 #include <numeric/conversions.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

@@ -21,8 +21,6 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 
 #include <basic/Tracer.hh>
@@ -40,7 +38,6 @@
 #include <ObjexxFCL/format.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //C++
@@ -52,12 +49,8 @@ static basic::MemTracer mem_tr;
 #include <basic/options/option_macros.hh>
 #include <basic/prof.hh>
 
-#include <utility/vector1.hh>
-#include <boost/algorithm/string/erase.hpp>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 
 
 OPT_1GRP_KEY( Integer, iterative, pool_size )

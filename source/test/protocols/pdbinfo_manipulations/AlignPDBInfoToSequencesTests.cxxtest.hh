@@ -12,17 +12,13 @@
 /// @author Dan Farrell (danpf@uw.edu)
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/util/pdb1rpb.hh>
 #include <test/core/init_util.hh>
 #include <test/util/rosettascripts.hh>
 
 // Project Headers
 #include <protocols/pdbinfo_manipulations/AlignPDBInfoToSequences.hh>
-#include <protocols/pdbinfo_manipulations/AlignPDBInfoToSequencesUtil.hh>
 
 // Core Headers
 #include <core/import_pose/import_pose.hh>
@@ -31,9 +27,10 @@
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
-#include <utility/json_utilities.hh>
 #include <utility/io/izstream.hh>
 #include <utility/stream_util.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 static basic::Tracer TR("AlignPDBInfoToSequencesTests");
 

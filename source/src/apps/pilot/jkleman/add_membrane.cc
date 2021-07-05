@@ -14,25 +14,16 @@
 #include <devel/init.hh>
 
 // Project Headers
-#include <protocols/moves/Mover.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 
 // Package Headers
-#include <apps/benchmark/performance/init_util.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
-#include <utility/io/ozstream.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <string>
-#include <cmath>
 
 using basic::Error;
 using basic::Warning;

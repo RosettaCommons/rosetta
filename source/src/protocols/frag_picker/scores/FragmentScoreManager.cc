@@ -15,7 +15,7 @@
 // package headers
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
+#include <protocols/frag_picker/FragmentPicker.fwd.hh>
 #include <protocols/frag_picker/VallResidue.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 
@@ -72,8 +72,9 @@
 #include <map>
 #include <utility>
 
-#include <protocols/frag_picker/CommonFragmentComparators.hh>
 #include <utility/vector1.hh>
+
+#include <ObjexxFCL/format.hh> // AUTO IWYU For F, RJ, I, format
 
 static basic::Tracer tr( "protocols.frag_picker.FragmentScoreManager" );
 

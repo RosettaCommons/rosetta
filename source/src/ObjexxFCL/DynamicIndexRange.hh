@@ -23,7 +23,6 @@
 
 // C++ Headers
 //#include <type_traits> // for swap
-#include <algorithm> // for swap
 #include <utility> // also for swap??
 
 namespace ObjexxFCL {

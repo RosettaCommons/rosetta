@@ -12,7 +12,6 @@
 /// @author
 
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
@@ -20,7 +19,6 @@
 // utility headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

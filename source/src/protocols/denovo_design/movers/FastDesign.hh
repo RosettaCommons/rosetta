@@ -23,18 +23,14 @@
 
 // Protocol headers
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/task_operations/DesignAroundOperation.fwd.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Core headers
-#include <core/io/silent/silent.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Basic/Utility headers
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>

@@ -20,7 +20,7 @@
 #include <protocols/motifs/MotifLibrary.fwd.hh>
 #include <protocols/motifs/IRCollection.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>

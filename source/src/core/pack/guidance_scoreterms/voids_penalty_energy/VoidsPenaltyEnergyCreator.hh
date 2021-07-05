@@ -26,7 +26,6 @@
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 
 // Utility header
-#include <utility/vector1.hh>
 
 
 namespace core {

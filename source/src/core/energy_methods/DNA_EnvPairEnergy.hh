@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/dna/DNA_EnvPairPotential.hh>
+#include <core/scoring/dna/DNA_EnvPairPotential.fwd.hh>
 
 
 // Project headers

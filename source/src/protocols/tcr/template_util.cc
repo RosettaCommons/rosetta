@@ -22,6 +22,8 @@
 #include <utility/file/file_sys_util.hh>
 #include <fstream>
 
+#include <protocols/tcr/util.hh> // AUTO IWYU For score_alignment, calculate_identity_score, run_blast
+
 static basic::Tracer TR( "protocols.tcr.template_util" );
 /// @brief MINSCORE const value with large negative number
 /// @details used for checking and ignoring templates

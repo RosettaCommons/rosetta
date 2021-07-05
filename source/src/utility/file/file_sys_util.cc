@@ -36,7 +36,6 @@
 #include <utility/vector1.hh>
 
 // Project headers
-#include <utility/sys_util.hh> //  for rand_sleep?
 #include <utility/exit.hh>
 
 // C++ headers
@@ -57,8 +56,8 @@
 #include <random>
 
 // Platform headers - Win32
-#ifndef _WIN32
-// #include <unistd.h>
+#ifdef _WIN32
+#include <utility/sys_util.hh> //  for rand_sleep?
 #endif // _WIN32
 
 // C POSIX library header for directory manipulation

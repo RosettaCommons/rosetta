@@ -12,14 +12,7 @@
 
 
 #include <vector>
-#include <cstdlib>
-#include <cstring>
-#include <fstream>
 #include <iostream>
-#include <iomanip>
-#include <math.h>
-#include <assert.h>
-#include <time.h>
 
 //#include <protocols/cluster/calibur/SimpPDB.hh>
 //#include <protocols/cluster/calibur/rmsd.hh>

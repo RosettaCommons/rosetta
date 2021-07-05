@@ -19,18 +19,17 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/filters/filter_schemas.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace simple_filters {

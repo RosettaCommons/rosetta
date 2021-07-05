@@ -29,7 +29,6 @@
 
 #include <numeric/random/WeightedSampler.hh>
 #include <numeric/random/random.hh>
-#include <numeric/conversions.hh>
 #include <numeric/angle.functions.hh>
 
 #include <utility/vector1.functions.hh>

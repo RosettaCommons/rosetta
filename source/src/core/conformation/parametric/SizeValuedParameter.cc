@@ -24,8 +24,9 @@
 // Numeric headers
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+
+#include <utility/tag/XMLSchemaGeneration.hh> // AUTO IWYU For operator+, XMLSchemaAttribute, xsct_non_n...
 
 
 #ifdef SERIALIZATION

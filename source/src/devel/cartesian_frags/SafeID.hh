@@ -20,7 +20,6 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
-#include <utility>
 #include <utility/exit.hh>
 
 #include <string>

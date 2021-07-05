@@ -18,10 +18,6 @@
 
 // Project Headers
 
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/pose/symmetry/util.hh>
 
 #include <core/scoring/EnergyMap.hh>
 
@@ -32,18 +28,15 @@
 #include <core/pose/motif/reference_frames.hh>
 #include <numeric/xyzTransform.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
-#include <utility/io/ozstream.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
-#include <string>
 #include <utility/vector1.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 namespace core {
 namespace energy_methods {

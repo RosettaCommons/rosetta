@@ -19,14 +19,11 @@
 
 #include <protocols/optimize_weights/PNatLigPoseOptEData.hh>
 
-#include <core/scoring/ScoreType.hh>
 
 #include <ObjexxFCL/format.hh>
 
 #include <utility/vector1.functions.hh>
 
-#include <ostream>
-#include <sstream>
 #include <string>
 #include <iostream>
 

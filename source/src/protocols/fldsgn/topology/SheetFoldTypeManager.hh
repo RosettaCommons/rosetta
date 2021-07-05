@@ -18,10 +18,10 @@
 
 
 // C++ headers
-#include <iosfwd>
 #include <map>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace fldsgn {

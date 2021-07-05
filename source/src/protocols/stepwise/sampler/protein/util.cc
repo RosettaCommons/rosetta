@@ -27,7 +27,6 @@
 #include <protocols/stepwise/modeler/align/StepWiseLegacyClustererSilentBased.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.hh>
-#include <protocols/stepwise/setup/util.hh>
 
 // Protocols headers
 #include <protocols/jd2/util.hh>
@@ -61,13 +60,13 @@
 // utility headers
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 
 // numeric headers
-#include <numeric/xyz.functions.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
+
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh> // AUTO IWYU For StepWiseModelerOpt...
 
 using namespace core;
 

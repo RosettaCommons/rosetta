@@ -21,15 +21,13 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/DerivVectorPair.fwd.hh>
 
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <boost/unordered/unordered_map.hpp>
 
-#include <boost/unordered_map.hpp>
 
 namespace core {
 namespace scoring {

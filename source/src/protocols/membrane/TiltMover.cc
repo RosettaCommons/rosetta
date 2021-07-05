@@ -26,7 +26,6 @@
 
 // Project Headers
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
@@ -34,25 +33,18 @@
 
 // Package Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

@@ -20,11 +20,10 @@
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 // Basic/Utility headers
-#include <utility/vector1.hh>
 
 #include <string>
 

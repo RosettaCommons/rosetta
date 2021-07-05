@@ -24,7 +24,6 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.fwd.hh>
 
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers

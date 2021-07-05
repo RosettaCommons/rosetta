@@ -24,18 +24,14 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 
 // C++ Headers
-#include <map>
 #include <string>
 
 // Utility Headers
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace moves {

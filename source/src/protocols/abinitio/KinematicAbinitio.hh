@@ -28,27 +28,23 @@
 
 // Package Headers
 #include <protocols/abinitio/FoldConstraints.hh>
-#include <protocols/abinitio/KinematicControl.hh>
-#include <protocols/jumping/JumpSetup.hh>
+#include <protocols/jumping/JumpSetup.fwd.hh>
 
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 
 
 #include <core/fragment/FragSet.fwd.hh>
 
-#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
+#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 
 #include <core/types.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

@@ -16,21 +16,18 @@
 
 // Unit headers
 #include <protocols/antibody/residue_selector/AntibodyRegionSelector.fwd.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
 // Package headers
-#include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <set>
 
 namespace protocols {
 namespace antibody {

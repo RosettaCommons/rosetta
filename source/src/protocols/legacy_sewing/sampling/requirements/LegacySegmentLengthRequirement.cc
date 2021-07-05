@@ -22,6 +22,8 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
+#include <protocols/legacy_sewing/conformation/Model.hh> // AUTO IWYU For SewSegment
+
 namespace protocols {
 namespace legacy_sewing  {
 namespace sampling {

@@ -20,7 +20,7 @@
 // project headers
 #include <core/pose/Pose.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.hh>
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
@@ -32,7 +32,6 @@
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 
 // boost headers
 // XSD XRW Includes

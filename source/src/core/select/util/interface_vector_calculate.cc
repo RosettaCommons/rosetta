@@ -36,7 +36,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/graph/Graph.hh>
 
 // Numeric headers

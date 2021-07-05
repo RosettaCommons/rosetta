@@ -21,15 +21,12 @@
 #include <protocols/dna/DnaDesignDef.fwd.hh>
 
 #include <protocols/multistate_design/MultiStatePacker.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
-#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 #include <protocols/genetic_algorithm/GeneticAlgorithm.fwd.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Mover::Pose
 
 
 namespace protocols {

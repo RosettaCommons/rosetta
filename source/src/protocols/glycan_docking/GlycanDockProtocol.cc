@@ -35,8 +35,6 @@
 
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/BBDihedralSamplerMover.hh>
-#include <protocols/simple_moves/bb_sampler/SugarBBSampler.hh>
-#include <protocols/simple_moves/bb_sampler/SmallBBSampler.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 //#include <protocols/moves/PyMOLMover.hh>
@@ -50,18 +48,11 @@
 
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
-#include <core/conformation/carbohydrates/util.hh>
 
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/pose/chains_util.hh>
-#include <core/pose/carbohydrates/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
@@ -75,12 +66,9 @@
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/rings.OptionKeys.gen.hh>
@@ -88,7 +76,6 @@
 
 // Numeric Headers
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 // Utility Headers
 #include <utility/excn/Exceptions.hh>
@@ -101,6 +88,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For operator<<, FoldTree
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 
 static basic::Tracer TR( "protocols.glycan_docking.GlycanDockProtocol" );

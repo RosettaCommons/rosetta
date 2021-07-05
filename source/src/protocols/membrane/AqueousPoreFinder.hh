@@ -17,10 +17,9 @@
 // Unit headers
 #include <protocols/membrane/AqueousPoreFinder.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/conformation/membrane/AqueousPoreParameters.hh>
+#include <core/conformation/membrane/AqueousPoreParameters.fwd.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -28,12 +27,11 @@
 
 // Basic/Utility headers
 #include <numeric/MathMatrix.hh>
-#include <numeric/linear_algebra/EllipseParameters.hh>
+#include <numeric/linear_algebra/EllipseParameters.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <numeric/cubic_polynomial.hh>
 
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace membrane {

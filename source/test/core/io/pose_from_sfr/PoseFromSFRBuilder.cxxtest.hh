@@ -18,21 +18,17 @@
 
 // Unit headers
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
-#include <core/io/HeaderInformation.hh>
 
 // Program headers
 #include <core/io/StructFileRep.hh>
-#include <core/io/StructFileRepOptions.hh>
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/StructFileReaderOptions.hh>
-#include <core/chemical/Patch.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/import_pose_options.hh>
 

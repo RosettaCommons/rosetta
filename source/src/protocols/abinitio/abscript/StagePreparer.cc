@@ -14,8 +14,6 @@
 #include <protocols/abinitio/abscript/StagePreparer.hh>
 
 // Package headers
-#include <core/environment/DofPassport.hh>
-#include <protocols/environment/DofUnlock.hh>
 
 // Project headers
 

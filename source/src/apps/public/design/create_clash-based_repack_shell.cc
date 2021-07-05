@@ -13,18 +13,16 @@
 
 // Core headers
 #include <devel/init.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <core/pack/task/residue_selector/ClashBasedShellSelector.hh>
-#include <basic/Tracer.hh>
 
 // Option headers
 #include <basic/options/option.hh>

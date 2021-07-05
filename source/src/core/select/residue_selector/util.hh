@@ -26,8 +26,6 @@
 
 // C++ headers
 #include <string>
-#include <list>
-#include <algorithm>
 #include <map>
 #include <vector>
 

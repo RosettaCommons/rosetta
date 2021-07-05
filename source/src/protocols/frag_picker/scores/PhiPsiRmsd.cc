@@ -17,7 +17,6 @@
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/PhiPsiTalosIO.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -41,6 +40,8 @@
 
 //Auto Headers
 #include <core/pose/Pose.hh>
+
+#include <ObjexxFCL/format.hh> // AUTO IWYU For F, I, format
 
 namespace protocols {
 namespace frag_picker {

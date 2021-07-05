@@ -27,7 +27,6 @@
 
 // Unit Headers
 #include <core/scoring/PoissonBoltzmannPotential.hh>
-#include <core/scoring/APBSWrapper.hh>
 
 // Package Headers
 #include <core/scoring/electron_density/util.hh>
@@ -36,27 +35,21 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 
 // Numeric Headers
 
 // Utility Headers
 #include <utility/file/file_sys_util.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 // utility
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray3D.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <algorithm>
 
-#include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
-#include <vector>
 #include <ctime>
 
 // option key includes

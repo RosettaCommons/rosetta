@@ -19,17 +19,13 @@
 #include <core/scoring/nmr/pre/PRESingleSet.fwd.hh>
 
 // Package headers
-#include <core/io/nmr/AtomSelection.fwd.hh>
-#include <core/scoring/nmr/pre/PRESingle.fwd.hh>
-#include <core/scoring/nmr/pre/PREMultiSet.fwd.hh>
-#include <core/scoring/nmr/util.hh>
+#include <core/scoring/nmr/pre/PRESingle.hh> // DO NOT AUTO-REMOVE
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -37,6 +33,8 @@
 // C++ headers
 #include <iosfwd>
 #include <string>
+
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For PRE_RATE_TYPE, SINGLE_NMR_VALUE_WEIGHTING, R2_PARA
 
 namespace core {
 namespace scoring {

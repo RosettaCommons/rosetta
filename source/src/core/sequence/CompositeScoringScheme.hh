@@ -21,7 +21,8 @@
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/CompositeScoringScheme.fwd.hh>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace core {
 namespace sequence {

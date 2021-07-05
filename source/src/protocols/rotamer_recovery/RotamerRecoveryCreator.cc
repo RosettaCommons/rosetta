@@ -29,7 +29,6 @@
 #include <protocols/rotamer_recovery/RRReporterSQLite.hh>
 #include <protocols/rotamer_recovery/RRReporterHuman.hh>
 
-#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>

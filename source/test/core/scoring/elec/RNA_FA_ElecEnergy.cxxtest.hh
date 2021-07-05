@@ -13,29 +13,18 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/util/pdb1lnt.hh>
 #include <test/core/init_util.hh>
 
 // Package headers
-#include <core/energy_methods/RNA_FA_ElecEnergy.hh>
-#include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyMap.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("core.scoring.elec.FA_ElecEnergy.cxxtest");

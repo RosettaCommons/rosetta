@@ -19,13 +19,12 @@
 
 // Package headers
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 // Project headers
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
@@ -43,7 +42,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>

@@ -30,13 +30,11 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/io/ozstream.fwd.hh>
-#include <utility/io/izstream.fwd.hh>
 
 // Numeric headers
 #include <numeric/random/random.fwd.hh>

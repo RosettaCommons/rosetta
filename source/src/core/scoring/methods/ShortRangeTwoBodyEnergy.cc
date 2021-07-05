@@ -16,7 +16,6 @@
 
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>

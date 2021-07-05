@@ -15,7 +15,6 @@
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/loop_build/LoopMover_SlidingWindow.hh>
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
@@ -25,7 +24,6 @@
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
@@ -42,7 +40,6 @@
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 
 // option key includes
@@ -51,7 +48,6 @@
 
 #include <core/pose/variant_util.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

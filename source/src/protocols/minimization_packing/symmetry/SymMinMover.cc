@@ -22,7 +22,6 @@
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.minimization_packing.symmetry.SymMinMover" );
 

@@ -19,9 +19,7 @@
 
 // Project Headers
 #include <core/io/external/PsiPredInterface.fwd.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>

@@ -22,7 +22,6 @@
 
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
-#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -33,10 +32,8 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
 
 
 //// C++ headers

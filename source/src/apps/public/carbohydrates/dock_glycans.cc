@@ -34,9 +34,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -56,7 +54,6 @@
 
 // Numeric headers
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -68,6 +65,8 @@
 // C++ headers
 #include <string>
 #include <iostream>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For operator<<
 
 
 using namespace std;

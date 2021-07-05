@@ -14,12 +14,11 @@
 
 //Unit Headers
 #include <protocols/simple_moves/WriteSSEMover.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <protocols/simple_moves/WriteSSEMoverCreator.hh>
 //Project Headers
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <core/io/external/PsiPredInterface.hh>
 #include <core/pose/Pose.hh>
@@ -27,7 +26,6 @@
 #include <core/scoring/dssp/Dssp.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/filters/filter_schemas.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 namespace protocols {

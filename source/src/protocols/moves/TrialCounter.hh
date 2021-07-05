@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_moves_TrialCounter_hh
 
 // Unit headers
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/TrialCounter.fwd.hh>
 
 // Core headers

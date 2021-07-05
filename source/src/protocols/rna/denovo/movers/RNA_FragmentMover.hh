@@ -19,8 +19,7 @@
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.fwd.hh>
 
 #include <core/fragment/rna/RNA_Fragments.fwd.hh>
-#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
-#include <core/fragment/rna/RNA_FragmentHomologyExclusion.hh>
+#include <core/fragment/rna/RNA_FragmentHomologyExclusion.fwd.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -33,14 +32,11 @@
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
-#include <vector>
 #include <map>
 
 namespace protocols {

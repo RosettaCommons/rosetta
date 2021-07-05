@@ -24,8 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <utility/vector1.hh>
@@ -35,9 +34,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_CachedRepScreenInfo" );
 

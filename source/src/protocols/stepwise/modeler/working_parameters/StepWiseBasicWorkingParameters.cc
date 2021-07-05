@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/modeler/working_parameters/StepWiseBasicWorkingParameters.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 

@@ -21,7 +21,6 @@
 
 #include <protocols/pockets/Fingerprint.fwd.hh>
 #include <protocols/pockets/FingerprintMultifunc.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

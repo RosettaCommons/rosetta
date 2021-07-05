@@ -17,9 +17,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <numeric/statistics/functions.hh>
 #include <basic/Tracer.hh>
@@ -27,6 +25,9 @@
 #include <utility/file/file_sys_util.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
+
+#include <core/scoring/PoissonBoltzmannPotential.hh> // AUTO IWYU For PoissonBoltzmannPotential
+#include <utility/string_util.hh> // AUTO IWYU For file_basename
 
 
 static basic::Tracer TR( "core.scoring.sc.ElectrostaticComplementarityCalculator" );

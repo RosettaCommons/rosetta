@@ -20,15 +20,11 @@
 #include <protocols/simple_task_operations/RestrictToLoops.hh>
 
 // Core headers
-#include <core/types.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 
 // C++ headers
 #include <iostream>
-#include <string>
 
 using namespace std;
 using namespace core;

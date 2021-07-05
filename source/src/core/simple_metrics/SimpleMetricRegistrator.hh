@@ -16,7 +16,7 @@
 #define INCLUDED_core_simple_metrics_SimpleMetricRegistrator_hh
 
 // Package headers
-#include <core/simple_metrics/SimpleMetricFactory.hh>
+#include <core/simple_metrics/SimpleMetricFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace core {

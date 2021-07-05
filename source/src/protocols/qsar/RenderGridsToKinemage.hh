@@ -18,7 +18,6 @@
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.fwd.hh>
 

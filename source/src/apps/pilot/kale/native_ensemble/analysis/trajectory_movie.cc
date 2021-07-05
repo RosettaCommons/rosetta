@@ -13,11 +13,6 @@
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/io/silent/SilentFileData.hh>
 
 // Protocol headers
 #include <protocols/trajectory/DbTrajectoryReader.hh>
@@ -26,19 +21,16 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // External headers
-#include <boost/noncopyable.hpp>
 #include <cppdb/frontend.h>
 
 // C++ headers
-#include <sstream>
 #include <algorithm>
 
 // Global Names {{{1

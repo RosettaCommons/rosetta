@@ -21,22 +21,18 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/rosetta_scripts/XmlObjects.hh>
-#include <protocols/simple_moves/SwitchChainOrderMover.hh>
-
-#include <basic/datacache/DataMap.hh>
-
-#include <utility/tag/Tag.hh>
 
 
-#include <test/UTracer.hh>
+
+
 #include <test/core/init_util.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
-#include <utility/pointer/memory.hh>
+
+#include <protocols/moves/Mover.hh> // AUTO IWYU For Mover
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace core;
-using namespace protocols::simple_moves;
 
 
 static basic::Tracer TR("protocols.simple_moves.SwitchChainOrderMover.cxxtest");

@@ -18,7 +18,6 @@
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 
@@ -28,7 +27,6 @@
 
 // Utility headers
 //#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
 
 #include <utility/vector1.hh>
 

@@ -33,15 +33,14 @@
 // Package Headers
 #include <protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergy.hh>
 // Project Headers
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 //TEMP
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl
 
 // ObjexxFCL Headers
 
@@ -54,7 +53,7 @@ namespace protocols {
 namespace topology_broker {
 
 using namespace core;
-using namespace core::scoring::constraints;
+
 PseudocontactShiftEnergyController_Ts2::PseudocontactShiftEnergyController_Ts2()
 {
 	grid_edge_stage1_ = 50.0;

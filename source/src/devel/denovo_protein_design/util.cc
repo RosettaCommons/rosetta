@@ -14,7 +14,6 @@
 
 
 // Package Headers
-#include <core/init/init.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -22,11 +21,9 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/options/option.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
 
-#include <core/conformation/Residue.fwd.hh>
 
 
 #include <core/pack/task/TaskFactory.hh>
@@ -41,16 +38,12 @@
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
 // C++ Headers
 #include <vector>
 #include <iostream>
-#include <iomanip>
-#include <fstream>
 #include <string>
-#include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 

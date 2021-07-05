@@ -15,8 +15,6 @@
 #include <protocols/environment/claims/VirtResClaim.hh>
 
 // Package Headers
-#include <core/environment/LocalPosition.hh>
-#include <core/environment/DofPassport.hh>
 #include <core/environment/SequenceAnnotation.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
@@ -28,13 +26,10 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 
-#include <core/kinematics/AtomTree.hh>
 
 // Project Headers
-#include <core/id/TorsionID.hh>
 #include <core/id/DOF_ID.hh>
 
-#include <core/pose/util.hh>
 
 // ObjexxFCL Headers
 

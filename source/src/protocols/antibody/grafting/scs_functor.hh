@@ -22,7 +22,7 @@
 
 #include <protocols/antibody/grafting/scs_functor.fwd.hh>
 
-#include <protocols/antibody/grafting/antibody_sequence.hh>
+#include <protocols/antibody/grafting/antibody_sequence.fwd.hh>
 #include <protocols/antibody/grafting/scs_blast.hh>
 
 #include <string>

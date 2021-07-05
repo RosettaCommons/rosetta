@@ -24,42 +24,32 @@
 
 // Project Headers
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/Embedding.hh>
 #include <protocols/membrane/util.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/conformation/membrane/SpanningTopology.hh> // AUTO IWYU For SpanningTopology
 
 static basic::Tracer TR( "protocols.membrane.FlipMover" );
 

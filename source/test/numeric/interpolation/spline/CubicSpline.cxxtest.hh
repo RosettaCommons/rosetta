@@ -20,7 +20,6 @@
 // Unit headers
 #include <numeric/interpolation/spline/CubicSpline.hh>
 #include <numeric/interpolation/spline/CubicSpline.fwd.hh>
-#include <numeric/MathVector_operations.hh>
 
 
 // --------------- Test Class --------------- //

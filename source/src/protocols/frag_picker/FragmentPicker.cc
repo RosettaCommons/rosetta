@@ -27,22 +27,18 @@
 #include <protocols/frag_picker/quota/QuotaCollector.hh>
 #include <protocols/frag_picker/quota/ABEGO_SS_Config.hh>
 #include <protocols/frag_picker/quota/ABEGO_SS_Pool.hh>
-#include <protocols/frag_picker/quota/SecondaryStructurePool.hh>
 #include <protocols/frag_picker/BoundedCollector.hh>
 #include <protocols/frag_picker/PdbIdChunkFilter.hh>
 #include <protocols/frag_picker/BestTotalScoreSelector.hh>
 #include <protocols/frag_picker/CustomScoreSelector.hh>
-#include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/SecondarySimilarity.hh>
-#include <protocols/frag_picker/scores/PartialSecondarySimilarity.hh>
 #include <protocols/frag_picker/scores/ProfileScoreL1.hh>
 #include <protocols/frag_picker/scores/RamaScore.hh>
 #include <protocols/frag_picker/scores/CSScore.hh>
 #include <protocols/frag_picker/scores/ABEGO_SS_Score.hh>
 #include <protocols/frag_picker/scores/TorsionBinSimilarity.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-#include <protocols/frag_picker/TorsionBinIO.hh>
 
 #include <protocols/frag_picker/Contact.hh>
 #include <protocols/frag_picker/ContactCounts.hh>
@@ -54,7 +50,6 @@
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>
 
-#include <core/fragment/FragID.hh> // required for windows build
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 
@@ -67,7 +62,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/scoring/rms_util.hh>
 #include <numeric/model_quality/rms.hh>
 #include <core/fragment/util.hh>
 
@@ -94,9 +88,12 @@
 #include <utility>
 #include <sstream>
 #include <iostream>
-#include <fstream>
 
 #include <ObjexxFCL/format.hh>
+
+#include <protocols/frag_picker/SidechainContactDistCutoff.hh> // AUTO IWYU For SidechainContactDistCutoff
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D...
 
 namespace protocols {
 namespace frag_picker {

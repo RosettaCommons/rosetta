@@ -18,7 +18,6 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
-#include <numeric/interpolation/spline/Interpolator.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
 #include <utility/io/izstream.hh>

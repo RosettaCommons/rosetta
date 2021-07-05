@@ -14,24 +14,18 @@
 
 #include <protocols/rna/denovo/util.hh>
 #include <core/pose/rna/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
-#include <core/pose/rna/BasePairStep.hh>
-#include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/forge/methods/fold_tree_functions.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_Info.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -41,16 +35,12 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/variant_util.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -65,17 +55,16 @@
 //C++ headers
 #include <vector>
 #include <string>
-#include <sstream>
 #include <fstream>
 
 #include <core/fragment/rna/RNA_MatchType.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+
+#include <numeric/conversions.hh> // AUTO IWYU For degrees
 
 
 using namespace core;

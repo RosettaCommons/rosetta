@@ -28,7 +28,6 @@
 
 // package headers
 #include <core/conformation/signals/GeneralEvent.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <iosfwd>

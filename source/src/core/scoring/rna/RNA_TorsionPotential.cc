@@ -22,12 +22,9 @@
 #include <core/pose/rna/util.hh>
 
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/file/file_sys_util.hh>
 
 // Project Headers
@@ -35,61 +32,31 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/func/CircularGeneral1D_Func.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/func/SumFunc.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Numeric Headers
 #include <numeric/angle.functions.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 //Auto Headers
-#include <platform/types.hh>
-#include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/TorsionID.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MinimizerMapBase.fwd.hh>
-#include <utility/Bound.hh>
-#include <utility/vector0_bool.hh>
-#include <utility/keys/AutoKey.hh>
-#include <utility/keys/SmallKeyVector.hh>
 #include <utility/options/BooleanOption.hh>
 #include <algorithm>
-#include <utility/assert.hh>
 #include <cmath>
-#include <complex>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <iomanip>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <limits>
-#include <list>
-#include <map>
 #include <ostream>
-#include <set>
-#include <sstream>
 #include <string>
-#include <utility>
-#include <vector>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
 ///////////////////////////
 

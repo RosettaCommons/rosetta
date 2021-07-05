@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 
 namespace core {

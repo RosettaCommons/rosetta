@@ -11,7 +11,6 @@
 /// @brief Calculates ddG of binding
 /// @author Kyle Barlow (kb@kylebarlow.com)
 
-#include <algorithm>
 
 #include <protocols/features/InterfaceDdGMover.hh>
 #include <protocols/features/InterfaceDdGMoverCreator.hh>
@@ -29,7 +28,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/symmetry/util.hh>
 

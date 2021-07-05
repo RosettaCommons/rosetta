@@ -14,8 +14,10 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_cluster_ClusterMetricFactory_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_ClusterMetricFactory_HH
 
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.fwd.hh>
+
 // Package headers
-#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricCreator.hh>
 
 // Basic headers
@@ -29,6 +31,8 @@
 // C++ headers
 #include <map>
 #include <string>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
 
 namespace protocols {
 namespace multistage_rosetta_scripts {

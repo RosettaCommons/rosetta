@@ -18,7 +18,6 @@
 #include <protocols/simple_moves/TorsionSetMover.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <utility>
-#include <utility/stream_util.hh>
 
 #include <basic/Tracer.hh>
 

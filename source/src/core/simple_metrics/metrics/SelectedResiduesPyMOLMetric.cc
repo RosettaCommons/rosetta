@@ -29,7 +29,7 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 

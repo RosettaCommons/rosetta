@@ -26,7 +26,6 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/conformation/RotamerSetBase.hh>
 
@@ -43,6 +42,8 @@
 #include <numeric/deriv/distance_deriv.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/scoring/func/SOGFunc_Impl.hh> // AUTO IWYU For SOGFunc_Impl
 
 
 // Utility headers

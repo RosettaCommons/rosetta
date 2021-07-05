@@ -2,73 +2,40 @@
 /// @brief
 
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <devel/init.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/moves/Mover.hh>
 
 //options
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 /// Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/conformation/Residue.hh>
 
 #include <protocols/scoring/Interface.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
 //docking flags
-#include <protocols/docking/util.hh>
 #include <protocols/docking/types.hh>
-#include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/docking/DockingHighResLegacy.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <protocols/docking/DockFilters.hh>
 
 //relax
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/cst_util.hh>
 
 //Constraints
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 //boost
 
@@ -76,7 +43,6 @@
 #include <protocols/docking/metrics.hh>
 
 //rms
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
 
 //sequence alignment
@@ -87,7 +53,6 @@
 #include <core/sequence/MatrixScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
 
-#include <protocols/docking/metrics.hh>
 
 using basic::Error;
 using basic::Warning;

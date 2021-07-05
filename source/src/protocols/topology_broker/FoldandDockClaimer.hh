@@ -28,9 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -19,7 +19,7 @@
 #include <protocols/antibody/design/AntibodyDesignMover.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/design/AntibodyDesignEnumManager.fwd.hh>
-#include <protocols/antibody/design/GeneralAntibodyModeler.hh>
+#include <protocols/antibody/design/GeneralAntibodyModeler.fwd.hh>
 #include <protocols/antibody/database/CDRSetOptions.hh>
 #include <protocols/antibody/design/CDRGraftDesignOptions.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
@@ -27,8 +27,8 @@
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/design/MutateFrameworkForCluster.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/database/AntibodyDatabaseManager.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
+#include <protocols/antibody/database/AntibodyDatabaseManager.hh> // DO NOT AUTO-REMOVE
 
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/constraints/ParatopeSiteConstraintMover.fwd.hh>
@@ -38,17 +38,18 @@
 // Protocol Includes
 #include <protocols/grafting/CCDEndsGraftMover.fwd.hh>
 #include <protocols/grafting/AnchoredGraftMover.fwd.hh>
-#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 
 // Core Includes
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocol Includes
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
+
+#include <protocols/antibody/design/AntibodySeqDesignTFCreator.fwd.hh> // AUTO IWYU For AntibodySeqDesignTFCreat...
 
 namespace protocols {
 namespace antibody {

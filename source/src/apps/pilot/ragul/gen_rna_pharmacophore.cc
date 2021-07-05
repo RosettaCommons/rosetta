@@ -13,46 +13,25 @@
 // Project Headers
 #include <devel/init.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/after_opts.hh>
 //Auto Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <protocols/pockets/GenPharmacophore.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/rna/RNA_Info.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
 
 // C++ Headers
-#include <iomanip>
 #include <fstream>
-#include <ostream>
-#include <sstream>
 #include <iostream>
 #include <string>
 
 using namespace std;
 using namespace core;
 using namespace core::pose::datacache;
-using namespace core::optimization;
 using namespace core::pose::metrics;
 using namespace core::scoring;
 using namespace core::scoring::constraints;

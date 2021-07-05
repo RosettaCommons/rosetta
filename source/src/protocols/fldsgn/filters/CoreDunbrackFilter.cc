@@ -19,7 +19,6 @@
 // Project Headers
 
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 
 #include <core/pose/Pose.hh>
@@ -35,12 +34,9 @@
 #include <basic/Tracer.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
-#include <utility>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
 
-#include <core/pose/util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

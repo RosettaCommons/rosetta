@@ -33,7 +33,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <set>
 
 #ifdef    SERIALIZATION
 // Cereal headers

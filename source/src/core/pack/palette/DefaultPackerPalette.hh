@@ -26,16 +26,14 @@
 // Project Headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pack/palette/PackerPalette.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 
 // STL Headers
-#include <utility/vector1.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 
 namespace core {

@@ -13,16 +13,12 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // basic headers
-#include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 
 // C++ headers
-#include <sstream>
 
 // Filter creator headers
 #include <protocols/denovo_design/filters/CavityVolumeFilterCreator.hh>

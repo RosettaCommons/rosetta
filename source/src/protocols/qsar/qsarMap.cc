@@ -15,7 +15,6 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <utility>
-#include <utility/string_util.hh>
 #include <map>
 
 #include <utility/vector1.hh>

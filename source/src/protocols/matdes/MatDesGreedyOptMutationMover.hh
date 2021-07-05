@@ -21,15 +21,13 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/filters/BasicFilters.hh>
+#include <protocols/filters/BasicFilters.fwd.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilter.fwd.hh>
 
 #include <utility/vector1.hh>
 
-#include <protocols/filters/Filter.hh>
 
 namespace protocols {
 namespace matdes {

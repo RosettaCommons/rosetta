@@ -18,11 +18,10 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/OrbitalsFeatures.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <utility/vector1.fwd.hh>
 
 //External
 

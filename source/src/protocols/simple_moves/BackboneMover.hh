@@ -30,7 +30,6 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Header
 #include <utility/vector1.hh>
@@ -43,6 +42,7 @@
 #include <string>
 #include <tuple>
 
+#include <core/id/TorsionID.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace simple_moves {

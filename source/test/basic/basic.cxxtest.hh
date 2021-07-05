@@ -22,6 +22,6 @@
 // generated .cpp file.  This is that file for the basic project.
 
 
-#endif INCLUDED_basic_cxxtest_HH
+#endif // INCLUDED_basic_cxxtest_HH
 
 

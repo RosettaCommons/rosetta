@@ -21,7 +21,7 @@
 #include <protocols/jumping/JumpSetup.fwd.hh>
 
 // Package Headers
-#include <protocols/jumping/PairingLibrary.hh>
+#include <protocols/jumping/PairingLibrary.fwd.hh>
 #include <core/scoring/dssp/PairingsList.hh>
 
 // Project Headers
@@ -37,15 +37,15 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <core/fragment/FrameIterator.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <core/kinematics/MoveMap.fwd.hh> // AUTO IWYU For MoveMap
 
 
 #ifdef    SERIALIZATION

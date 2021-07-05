@@ -15,6 +15,7 @@
 #ifndef INCLUDED_protocols_boinc_boinc_shmem_hh
 #define INCLUDED_protocols_boinc_boinc_shmem_hh
 
+#include <protocols/boinc/boinc_shmem.fwd.hh>
 
 #include <core/types.hh>
 

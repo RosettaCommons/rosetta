@@ -16,14 +16,9 @@
 #include <protocols/sewing/hashing/AlignmentFileGeneratorMover.hh>
 #include <protocols/sewing/movers/LigandBindingAssemblyMover.hh>
 #include <protocols/sewing/movers/LigandBindingAssemblyMoverCreator.hh>
-#include <protocols/sewing/scoring/AssemblyScorerCreator.hh>
 #include <protocols/sewing/scoring/AssemblyScorerFactory.hh>
-#include <protocols/sewing/requirements/AssemblyRequirementCreator.hh>
 #include <protocols/sewing/requirements/AssemblyRequirementFactory.hh>
-#include <protocols/sewing/requirements/LigandAssemblyRequirement.hh>
-#include <protocols/sewing/hashing/ModelFileReader.hh>
-#include <protocols/sewing/hashing/EdgeMapGenerator.hh>
-#include <protocols/sewing/hashing/AlignmentFileGeneratorMover.hh>
+#include <protocols/sewing/requirements/LigandAssemblyRequirement.fwd.hh>
 #include <protocols/sewing/hashing/BasisMapGenerator.hh>
 #include <protocols/sewing/hashing/LigandBindingResPlacer.hh>
 #include <protocols/sewing/data_storage/LigandResidue.hh>
@@ -31,23 +26,23 @@
 #include <protocols/moves/mover_schemas.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/selection.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/select/residue_selector/util.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 // Basic/Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
+
+#include <protocols/sewing/data_storage/HashedSmartAssembly.hh> // AUTO IWYU For HashedSmartAssembly
+#include <protocols/sewing/requirements/AssemblyRequirement.hh> // AUTO IWYU For AssemblyRequirement
+
 //#include <shared_ptr>
 
 static basic::Tracer TR( "protocols.sewing.movers.LigandBindingAssemblyMover" );

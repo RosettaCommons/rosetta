@@ -37,7 +37,6 @@
 #include <set>
 
 #include <protocols/pack_daemon/PackDaemon.fwd.hh>
-#include <utility/vector0.hh>
 
 
 namespace protocols {

@@ -22,6 +22,10 @@
 
 #include <cstring> //memcpy
 
+#ifdef USE_TENSORFLOW
+#include <core/types.hh>
+#endif
+
 namespace basic {
 namespace tensorflow_manager {
 

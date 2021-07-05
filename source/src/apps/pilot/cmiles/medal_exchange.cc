@@ -18,7 +18,6 @@
 #include <protocols/viewer/viewers.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 int main(int argc, char* argv[]) {
 	try {
 		devel::init(argc, argv);

@@ -27,10 +27,7 @@
 #include <string>
 #include <cstdio>
 #include <stdlib.h>
-#include <iosfwd>
 
-#include <utility/CSI_Sequence.hh>
-#include <utility/cxx_versioning_macros.hh>
 #endif
 
 static bool throw_the_next_time_an_assertion_failure_is_hit( false );

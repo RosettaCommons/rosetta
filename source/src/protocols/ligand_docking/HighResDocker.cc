@@ -22,7 +22,6 @@
 #include <protocols/ligand_docking/MinimizeLigand.hh>
 #include <protocols/ligand_docking/MoveMapBuilder.hh>
 #include <protocols/ligand_docking/TetherLigand.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
@@ -33,13 +32,12 @@
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/palette/PackerPalette.hh>
 #include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
@@ -67,20 +65,19 @@
 //STL headers
 #include <string>
 
-#include <set>
 
 //Auto Headers
 #include <protocols/ligand_docking/LigandArea.hh>
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace ligand_docking {

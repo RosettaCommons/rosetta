@@ -27,15 +27,15 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <map> // AUTO IWYU For map, map<>::value_compare
 
 namespace protocols {
 namespace minimization_packing {

@@ -18,13 +18,11 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueConnection.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
@@ -58,8 +56,9 @@
 #include <string>
 #include <vector>
 
-#include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using utility::vector1;

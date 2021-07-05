@@ -18,15 +18,12 @@
 #include <utility/VirtualBase.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
 
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <vector>
 #include <string>
-#include <map>
 
 namespace core {
 namespace scoring {

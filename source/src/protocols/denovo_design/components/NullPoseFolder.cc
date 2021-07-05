@@ -20,7 +20,6 @@
 
 // Basic/Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "protocols.denovo_design.components.NullPoseFolder" );
 

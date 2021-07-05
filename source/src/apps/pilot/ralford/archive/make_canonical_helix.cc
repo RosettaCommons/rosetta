@@ -18,22 +18,16 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
-#include <core/pose/annotated_sequence.hh>
 
 #include <core/types.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/tag/Tag.hh>
 
 // Utility Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "apps.pilot.ralford.make_canonical_helix" );
 

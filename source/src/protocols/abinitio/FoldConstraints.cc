@@ -30,8 +30,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <numeric/numeric.functions.hh>
 
 #include <basic/Tracer.hh>
@@ -41,22 +39,21 @@
 
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 
 // option key includes
 
 
-#include <core/fragment/FragSet.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <utility/vector1.hh>
 
+#include <core/scoring/ScoreFunction.hh> // MANUAL IWYU
 
 static basic::Tracer tr( "protocols.abinitio.foldconstraints", basic::t_info );
 

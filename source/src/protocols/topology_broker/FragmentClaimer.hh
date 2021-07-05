@@ -34,13 +34,14 @@
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
 #include <set>
 
 #include <utility/vector1.hh>
+
+#include <protocols/topology_broker/claims/DofClaim.hh> // AUTO IWYU For DofClaim, DofClaim::ClaimRight
 
 
 namespace protocols {

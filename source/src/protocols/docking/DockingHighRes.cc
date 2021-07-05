@@ -32,7 +32,7 @@
 // For some reason, the full header has to be included in the header. since it's there, it doesn't need to be included here too.
 // Ideally the forward declaration would be included in the header and the full header would be here.
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_task_operations/InterfaceTaskOperation.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 
 // ObjexxFCL Headers
 

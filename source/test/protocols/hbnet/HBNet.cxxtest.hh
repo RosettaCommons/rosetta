@@ -14,24 +14,17 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <util/pose_funcs.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 //core
-#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/chemical/VariantType.hh>
 
 //class headers
-#include <protocols/hbnet/HBNet.hh>
 #include <protocols/hbnet/HBNetStapleInterface.hh>
 //#include <protocols/hbnet/HBNet_util.hh>
 //#include <protocols/symmetry/DetectSymmetryMover.hh>

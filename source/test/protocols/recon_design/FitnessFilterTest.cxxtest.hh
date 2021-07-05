@@ -13,9 +13,8 @@
 
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/recon_design/FitnessFilter.hh>
 
 #include <basic/Tracer.hh>

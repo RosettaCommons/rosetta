@@ -19,7 +19,6 @@
 #include <protocols/constraint_generator/AddConstraints.hh>
 #include <protocols/constraint_generator/AtomPairConstraintGenerator.hh>
 #include <protocols/constraint_generator/RemoveConstraints.hh>
-#include <protocols/denovo_design/architects/CompoundArchitect.hh>
 #include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
 #include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/DivideAndConqueror.hh>
@@ -29,18 +28,14 @@
 #include <protocols/denovo_design/components/RandomTorsionPoseFolder.hh>
 #include <protocols/denovo_design/components/NullPoseFolder.hh>
 #include <protocols/denovo_design/components/Segment.hh>
-#include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/components/StructureDataPerturber.hh>
-#include <protocols/denovo_design/connection/ConnectionArchitect.hh>
 #include <protocols/denovo_design/movers/FoldTreeFromFoldGraphMover.hh>
 #include <protocols/denovo_design/movers/SealFoldTreeMover.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/filters/CalculatorFilter.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureFilter.hh>
-#include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -48,7 +43,6 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 // Core headers
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
@@ -59,7 +53,6 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
 
 // Boost headers
@@ -70,7 +63,8 @@
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.denovo_design.movers.FoldArchitectMover" );
 

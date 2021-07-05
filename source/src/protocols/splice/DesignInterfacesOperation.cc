@@ -16,7 +16,6 @@
 #include <protocols/splice/DesignInterfacesOperationCreator.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -25,31 +24,22 @@
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
 // Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/simple_moves/SwitchChainOrderMover.hh>
-#include <protocols/simple_moves/CutChainMover.hh>
-#include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 
 // C++ Headers
-#include <set>
 
-#include <utility/vector0.hh>
 
 static basic::Tracer TR( "protocols.splice.DesignInterfacesOperation" );
 

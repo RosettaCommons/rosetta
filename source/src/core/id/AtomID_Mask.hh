@@ -18,7 +18,6 @@
 
 // Unit headers
 #include <core/id/AtomID_Mask.fwd.hh>
-#include <core/id/AtomID_Map.hh> // For the actual definitions
 
 // Package headers
 

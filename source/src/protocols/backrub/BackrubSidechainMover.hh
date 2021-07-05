@@ -31,7 +31,6 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.fwd.hh>
-#include <utility/vector0.hh>
 #include <numeric/MultiDimensionalHistogram.fwd.hh>
 
 #ifdef PYROSETTA

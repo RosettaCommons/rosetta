@@ -16,10 +16,7 @@
 
 // Package Headers
 
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/antibody/AntibodyFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

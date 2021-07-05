@@ -21,13 +21,9 @@
 #include <protocols/forge/build/BuildInstruction.hh>
 
 // project headers
-#include <core/conformation/signals/LengthEvent.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // C++ headers
-#include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

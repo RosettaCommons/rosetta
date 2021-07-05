@@ -26,13 +26,12 @@
 #include <protocols/features/strand_assembly/StrandBundleFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 //Protocols
 #include <protocols/features/FeaturesReporter.hh>
 
 //Devel
-#include <protocols/features/strand_assembly/StrandFragment.hh>
+#include <protocols/features/strand_assembly/StrandFragment.fwd.hh>
 
 //Utility
 #include <utility/vector1.hh>

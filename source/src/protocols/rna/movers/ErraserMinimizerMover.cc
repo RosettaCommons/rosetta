@@ -14,89 +14,52 @@
 #include <protocols/rna/movers/ErraserMinimizerMover.hh>
 #include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
 
-#include <core/pose/rna/RNA_IdealCoord.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 #include <protocols/viewer/viewers.hh>
 
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/util.hh>
 
 //////////////////////////////////////////////////
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 ///////////////////////////////////////////////////
 
 #include <core/pose/PDBInfo.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
@@ -106,7 +69,6 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/options/OptionCollection.hh>
 #include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random_permutation.hh>
 
 #include <fstream>
@@ -118,10 +80,13 @@
 #include <protocols/moves/mover_schemas.hh>
 
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 
 #include <numeric>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.rna.movers.ErraserMinimizerMover" );
 
@@ -144,7 +109,6 @@ using namespace core::import_pose::pose_stream;
 using namespace numeric::conversions;
 using namespace protocols::stepwise::modeler::rna;
 using namespace protocols::moves;
-using namespace protocols::filters;
 using utility::vector1;
 
 namespace protocols {

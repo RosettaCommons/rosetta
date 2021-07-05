@@ -35,8 +35,7 @@
 
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/types.hh>
-#include <utility/vector0.hh>
-#include <numeric/MultiDimensionalHistogram.fwd.hh>
+#include <numeric/MultiDimensionalHistogram.hh>
 #include <numeric/types.hh>
 
 

@@ -22,15 +22,12 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/Tracer.hh>
 
@@ -39,6 +36,8 @@
 //// C++ headers
 #include <string>
 #include <iostream>
+
+#include <protocols/abinitio/IterativeFullatom.hh> // AUTO IWYU For IterativeFullatom
 
 static basic::Tracer tr( "protocols.iterative" );
 

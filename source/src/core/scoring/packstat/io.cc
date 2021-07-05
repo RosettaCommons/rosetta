@@ -20,7 +20,6 @@
 
 #include <cstring>
 #include <iostream>
-#include <sstream>
 
 #include <numeric/xyzVector.io.hh>
 

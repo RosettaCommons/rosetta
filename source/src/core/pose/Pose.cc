@@ -33,8 +33,7 @@
 #include <core/pose/metrics/PoseMetricContainer.hh>
 // Project headers
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/PoseResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/rings/RingConformer.hh>
@@ -49,7 +48,6 @@
 #include <core/conformation/signals/XYZEvent.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 #include <core/id/NamedAtomID.hh>
@@ -62,7 +60,6 @@
 #include <core/io/mmtf/mmtf_writer.hh>
 
 // Basic headers
-#include <basic/init.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/ConstDataMap.hh>
 #include <basic/prof.hh>
@@ -71,19 +68,19 @@
 
 // Numeric headers
 #include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
 
 // C++ headers
-#include <algorithm>
-#include <numeric>
-#include <iostream>
 #include <sstream>
 #include <fstream>
-#include <boost/unordered_map.hpp>
+
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
+
+#ifdef PYROSETTA
+#include <basic/init.hh>
+#endif
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

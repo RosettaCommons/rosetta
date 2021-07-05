@@ -29,7 +29,6 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
-#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR( "core.scoring.carbohydrates.CHIEnergyFunction.cxxtest" );
 

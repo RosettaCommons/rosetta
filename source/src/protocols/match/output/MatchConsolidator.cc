@@ -27,9 +27,7 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <algorithm>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

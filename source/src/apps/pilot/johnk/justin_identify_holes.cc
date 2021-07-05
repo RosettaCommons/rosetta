@@ -11,19 +11,14 @@
 /// @author jk
 
 #include <iostream>
-#include <iomanip>
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/database/open.hh>
 //#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/options/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 
 #include <core/scoring/packing/compute_holes_score.hh>
@@ -37,6 +32,8 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys
 
 
 using namespace core;

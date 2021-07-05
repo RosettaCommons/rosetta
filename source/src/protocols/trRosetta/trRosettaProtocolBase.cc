@@ -14,17 +14,19 @@
 
 // Project headers:
 #include <protocols/trRosetta/trRosettaProtocolBase.hh>
-#include <protocols/trRosetta/trRosettaMultipleSequenceAlignment.hh>
 
 // Basic headers:
 #include <basic/Tracer.hh>
-#include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
-#include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.hh>
 
 // Utility headers:
-#include <utility/pointer/memory.hh>
+
+#ifdef USE_TENSORFLOW
+#include <protocols/trRosetta/trRosettaMultipleSequenceAlignment.hh>
+#include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
+#include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.hh>
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
+#endif
 
 static basic::Tracer TR( "protocols.trRosetta.trRosettaProtocolBase" );
 

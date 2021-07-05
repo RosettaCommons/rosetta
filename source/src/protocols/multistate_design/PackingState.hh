@@ -19,14 +19,13 @@
 
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/types.hh>
 
 #include <utility/vector0.hh>
 
-#include <utility/vector1.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP, RotamerSetsCOP
 
 
 namespace protocols {

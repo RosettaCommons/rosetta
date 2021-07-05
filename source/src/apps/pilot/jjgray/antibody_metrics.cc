@@ -16,13 +16,11 @@
 #include <core/pose/Pose.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/metrics.hh>
-#include <protocols/antibody/util.hh>
 
 #include <devel/init.hh>
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // option key includes

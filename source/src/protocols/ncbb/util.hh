@@ -14,11 +14,10 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 // Mover headers
-#include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.fwd.hh>
@@ -29,7 +28,8 @@
 #include <utility/tag/Tag.fwd.hh>
 // C++ headers
 #include <string>
-#include <iosfwd>
+
+#include <core/types.hh> // AUTO IWYU For Real, Size
 
 namespace protocols {
 namespace ncbb {

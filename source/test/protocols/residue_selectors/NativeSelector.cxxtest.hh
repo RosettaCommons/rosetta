@@ -21,19 +21,17 @@
 #include <protocols/simple_filters/ResidueCountFilter.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/memory.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
 
 // C++ headers
-#include <string>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 #ifdef SERIALIZATION
 // Cereal headers

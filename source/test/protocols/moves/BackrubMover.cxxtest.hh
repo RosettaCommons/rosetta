@@ -14,117 +14,28 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 // Protocol Headers
-#include <protocols/branch_angle/BranchAngleOptimizer.hh>
 #include <protocols/backrub/BackrubMover.hh>
 
 // Numeric Headers
 #include <numeric/conversions.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/Adduct.fwd.hh>
-#include <core/chemical/Adduct.hh>
-#include <core/chemical/AtomICoor.fwd.hh>
-#include <core/chemical/AtomICoor.hh>
-#include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/MMAtomType.fwd.hh>
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <core/chemical/ResidueConnection.fwd.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/orbitals/ICoorOrbitalData.hh>
-#include <core/chemical/orbitals/OrbitalType.fwd.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/DOF_ID_Range.fwd.hh>
-#include <core/id/DOF_ID_Range.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/TorsionID_Range.fwd.hh>
-#include <core/id/TorsionID_Range.hh>
-#include <core/id/types.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
-#include <protocols/branch_angle/BranchAngleOptimizer.fwd.hh>
-#include <protocols/branch_angle/BranchCoef1.fwd.hh>
-#include <protocols/branch_angle/BranchCoef2.fwd.hh>
-#include <protocols/branch_angle/BranchParam1.fwd.hh>
-#include <protocols/branch_angle/BranchParam2.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/backrub/BackrubMover.fwd.hh>
-#include <protocols/backrub/BackrubSegment.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverStatus.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.fwd.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
-#include <utility/vector0_bool.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/keys/Key2Tuple.fwd.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <utility/keys/Key3Tuple.fwd.hh>
-#include <utility/keys/Key3Tuple.hh>
-#include <utility/keys/Key3Vector.fwd.hh>
-#include <utility/keys/Key3Vector.hh>
-#include <utility/keys/Key4Tuple.fwd.hh>
-#include <utility/keys/Key4Tuple.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <numeric/IntervalSet.fwd.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/sphericalVector.fwd.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzVector.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <cstdlib>
-#include <iomanip>
-#include <iosfwd>
-#include <iostream>
-#include <limits>
-#include <list>
-#include <map>
 #include <ostream>
-#include <set>
-#include <string>
-#include <vector>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 using namespace core;

@@ -13,26 +13,18 @@
 
 #include <utility>
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzTransform.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <basic/Tracer.hh>
 
 #include <core/types.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
-#include <core/pack/task/TaskFactory.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
 
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
@@ -42,7 +34,7 @@
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SICSearchPattern.hh>
 
-#include <numeric/xyzVector.io.hh>
+#include <numeric/xyzVector.io.hh> // DO NOT AUTO-REMOVE
 
 namespace protocols {
 namespace hotspot_hashing {

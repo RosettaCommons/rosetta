@@ -21,14 +21,14 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueProperties.hh>
 
 // Utility header
-#include <utility>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
 #include <map>
+
+#include <core/chemical/ResidueProperty.hh> // AUTO IWYU For ResidueProperty, NO_PROPERTY
 
 #ifdef    SERIALIZATION
 // Cereal headers

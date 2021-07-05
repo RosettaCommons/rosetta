@@ -19,11 +19,9 @@
 #include <core/chemical/rna/util.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
 
 // Utility headers
 
-#include <utility/vector1.hh>
 
 
 // C++

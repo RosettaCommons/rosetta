@@ -18,7 +18,6 @@
 
 #include <core/types.hh>
 
-#include <utility/VirtualBase.hh>
 
 #include <ObjexxFCL/format.hh>
 

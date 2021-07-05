@@ -16,7 +16,6 @@
 #include <core/scoring/saxs/FormFactor.hh>
 #include <core/scoring/saxs/SinXOverX.hh>
 #include <core/energy_methods/SAXSEnergy.hh>
-#include <core/energy_methods/SAXSEnergyCreatorFA.hh>
 #include <core/energy_methods/SAXSEnergyCreatorCEN.hh>
 #include <core/energy_methods/SAXSEnergyCreator.hh>
 #include <core/scoring/saxs/DistanceHistogram.hh>
@@ -27,7 +26,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 
@@ -48,7 +46,6 @@
 #include <utility/io/izstream.hh>
 
 // C++
-#include <iomanip>
 #include <string>
 
 #include <utility/vector1.hh>

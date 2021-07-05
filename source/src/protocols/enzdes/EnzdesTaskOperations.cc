@@ -11,8 +11,6 @@
 /// @brief various task operations used in enzyme design
 /// @author Florian Richter (floric@u.washington.edu), Sinisa Bjelic (sbjelic@u.washington.edu), Rocco Moretti (rmoretti@u.washington.edu)
 
-#include <protocols/motifs/BuildPosition.hh>  // REQUIRED FOR WINDOWS
-#include <protocols/motifs/Motif.hh>  // REQUIRED FOR WINDOWS
 
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/enzdes/DetectProteinLigandInterfaceOperationCreator.hh>
@@ -37,9 +35,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
@@ -55,7 +52,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
-#include <utility/pointer/access_ptr.hh>
 
 // option key includes
 
@@ -66,8 +62,9 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 #include <core/chemical/VariantType.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

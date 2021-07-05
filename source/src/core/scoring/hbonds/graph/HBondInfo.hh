@@ -15,9 +15,6 @@
 #ifndef INCLUDED_core_scoring_hbonds_graph_HBondInfo_HH
 #define INCLUDED_core_scoring_hbonds_graph_HBondInfo_HH
 
-#include <numeric/xyzVector.hh>
-#include <core/types.hh>
-#include <algorithm>
 
 namespace core {
 namespace scoring {

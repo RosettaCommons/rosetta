@@ -15,38 +15,25 @@
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/excn/Exceptions.hh>
+
+
+
+#include <iostream>
+
+
+#ifdef USE_TENSORFLOW
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <utility/tag/Tag.hh>
-
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/pointer/memory.hh>
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/jobdist/Jobs.hh>
-
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/AndResidueSelector.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
-#include <core/select/residue_selector/InterGroupInterfaceByVectorSelector.hh>
-#include <core/select/residue_selector/LayerSelector.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
-
-#include <core/import_pose/import_pose.hh>
-#include <core/simple_metrics/metrics/SequenceSimilarityMetric.hh>
-
-#include <iostream>
-#include <memory>
-#include <string>
-#include <chrono>
-
 #include <basic/tensorflow_manager/RosettaTensorflowManager.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.tmpl.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.tmpl.hh>
-
+#endif
 
 static basic::Tracer TR( "apps.pilot.jackmaguire.tensorflow_manager_test1" );
 
@@ -80,7 +67,7 @@ void run_with_manager(
   std::chrono::duration< double, std::micro > runtime;
   TF_session->run_session( input_operation, output_operation, input_tensor, output_tensor, runtime );
 
-  bool const passfail( abs( output_tensor( 1 ) - 0.63166666 ) < 0.01 );
+  bool const passfail( std::abs( output_tensor( 1 ) - 0.63166666 ) < 0.01 );
   TR << std::setprecision(5);
   TR << "Output from model: " << output_tensor(1) << "\tExpected: 0.63166666\t" << (passfail ? "PASSED" : "FAILED") << std::endl;
 

@@ -16,29 +16,22 @@
 #ifndef INCLUDED_protocols_stepwise_rna_util_hh
 #define INCLUDED_protocols_stepwise_rna_util_hh
 
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/chemical/AA.hh>
-#include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <numeric/angle.functions.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
 #include <string>
 #include <map>
+
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
+#include <iostream> // AUTO IWYU For cout, ostream
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 

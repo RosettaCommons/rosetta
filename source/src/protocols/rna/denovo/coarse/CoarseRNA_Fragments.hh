@@ -15,7 +15,7 @@
 #include <core/fragment/rna/RNA_FragmentHomologyExclusion.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/MiniPose.hh>
+#include <core/pose/MiniPose.fwd.hh>
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
@@ -23,7 +23,6 @@
 // C++ Headers
 #include <string>
 #include <map>
-#include <vector>
 
 
 /////////////////////////////////////////////////////////////////////////////////////

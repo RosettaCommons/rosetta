@@ -21,8 +21,6 @@
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/trig.functions.hh>
 #include <numeric/deriv/distance_deriv.hh>
 
 #include <utility/exit.hh>
@@ -31,7 +29,6 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
-#include <utility/vector1.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

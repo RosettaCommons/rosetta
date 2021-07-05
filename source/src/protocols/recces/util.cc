@@ -25,8 +25,6 @@
 
 //// C++ headers
 #include <string>
-#include <map>
-#include <cmath>
 #include <utility/vector1.hh>
 
 static basic::Tracer TR( "protocols.recces.util" );

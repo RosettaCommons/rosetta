@@ -17,9 +17,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
-#include <protocols/rbsegment_relax/RBSegment.fwd.hh>
+#include <protocols/rbsegment_relax/RBSegment.hh>
 #include <utility/vector1.hh>
 
 #ifdef PYROSETTA

@@ -16,27 +16,17 @@
 #include <protocols/protein_interface_design/movers/TopologyBrokerMoverCreator.hh>
 
 // Package headers
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/init_id_map.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/id/types.hh>
-#include <core/kinematics/Jump.hh>
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
 //#include <protocols/topology_broker/TopologyBroker.hh>
@@ -45,11 +35,9 @@
 #include <protocols/abinitio/AbrelaxMover.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 
-#include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <core/pose/PDBInfo.hh>
 // XSD XRW Includes

@@ -15,13 +15,10 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
@@ -29,7 +26,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -39,40 +35,31 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/scoring/ResidualDipolarCoupling.hh>
 #include <core/conformation/Conformation.hh>
 
 // Project headers
 #include <core/scoring/rms_util.hh>
 #include <numeric/model_quality/rms.hh>
-#include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
-#include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/frags.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
 
-#include <sstream>
 #include <fstream>
 
 //Auto Headers
 #include <protocols/simple_ddg/DdgFilter.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D::IR
 
 
 static basic::Tracer TR( "main" );

@@ -21,7 +21,6 @@
 #include <core/scoring/constraints/MembraneSpanConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.hh>
 
@@ -29,10 +28,6 @@
 #include <utility/vector1.hh>
 
 // Membrane headers
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
-#include <core/conformation/membrane/Exceptions.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

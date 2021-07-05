@@ -19,16 +19,14 @@
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 
 // Package headers
-#include <protocols/environment/DofUnlock.fwd.hh>
 #include <protocols/environment/Environment.fwd.hh>
-#include <core/environment/SequenceAnnotation.hh>
+#include <core/environment/SequenceAnnotation.fwd.hh>
 
 // Project headers
 #include <core/conformation/Conformation.hh>
 
-#include <core/kinematics/FoldTree.fwd.hh>
 
-#include <core/environment/DofPassport.hh>
+#include <core/environment/DofPassport.fwd.hh>
 
 #include <core/id/TorsionID.fwd.hh>
 

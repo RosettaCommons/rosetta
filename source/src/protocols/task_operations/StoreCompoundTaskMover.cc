@@ -24,7 +24,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -39,11 +38,13 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-#include <ObjexxFCL/format.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.task_operations.StoreCompoundTaskMover" );
 

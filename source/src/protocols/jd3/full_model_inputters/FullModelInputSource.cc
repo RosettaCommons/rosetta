@@ -15,8 +15,6 @@
 #include <protocols/jd3/full_model_inputters/FullModelInputSource.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
-#include <utility>
 
 
 #ifdef    SERIALIZATION

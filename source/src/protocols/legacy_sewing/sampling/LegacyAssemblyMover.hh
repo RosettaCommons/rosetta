@@ -27,10 +27,9 @@
 #include <protocols/legacy_sewing/scoring/LegacyAssemblyScorer.fwd.hh>
 
 // Core Headers
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.hh>
 
 #include <core/pose/Pose.fwd.hh>
 

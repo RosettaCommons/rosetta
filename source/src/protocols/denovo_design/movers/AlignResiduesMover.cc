@@ -47,6 +47,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 static basic::Tracer TR( "protocols.denovo_design.movers.AlignResiduesMover" );
 
 namespace protocols {

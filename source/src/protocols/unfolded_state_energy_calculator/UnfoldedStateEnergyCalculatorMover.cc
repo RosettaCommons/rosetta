@@ -44,6 +44,8 @@
 // Numeric headers
 #include <numeric/random/random.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For Residue...
+
 
 using namespace core;
 using namespace core::pose;

@@ -19,19 +19,17 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableObserverType.hh>
-#include <core/pose/datacache/ObserverCache.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility>
-#include <utility/vector1.hh>
+
+#include <protocols/denovo_design/components/StructureData.hh> // AUTO IWYU For StructureData
+
 
 // Boost/ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <set>
 
 //Auto Headers
 #ifdef    SERIALIZATION

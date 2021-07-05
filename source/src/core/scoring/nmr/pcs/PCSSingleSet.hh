@@ -21,14 +21,12 @@
 // Package headers
 #include <core/scoring/nmr/pcs/PCSSingle.fwd.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 #include <basic/svd/SVD_Solver.fwd.hh>
 
 // Utility headers
@@ -36,8 +34,6 @@
 #include <utility/fixedsizearray1.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -46,6 +42,12 @@
 // C++ headers
 #include <iosfwd>
 #include <string>
+
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For Matrix, NMR_VALUE_AVERAGING_TYPE, SINGLE_NMR_VALUE_WEIGHTING
+
+#ifdef WIN32
+#include <core/scoring/nmr/pcs/PCSSingle.hh>
+#endif
 
 namespace core {
 namespace scoring {

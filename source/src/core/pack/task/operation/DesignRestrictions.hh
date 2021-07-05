@@ -19,7 +19,7 @@
 
 // Package headers
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/ResLvlTaskOperation.hh>
+#include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 
 // Project headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>

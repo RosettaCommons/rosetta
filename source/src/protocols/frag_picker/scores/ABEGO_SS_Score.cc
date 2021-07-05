@@ -22,7 +22,6 @@
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
-#include <core/fragment/SecondaryStructure.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -31,6 +30,8 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+
+#include <protocols/frag_picker/VallProvider.hh> // AUTO IWYU For VallProvider
 
 
 namespace protocols {

@@ -19,12 +19,9 @@
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorExternal.fwd.hh>
-#include <utility/file/FileName.fwd.hh>
-#include <utility/vector1.hh>
 
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
-#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -31,6 +31,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <core/id/TorsionID_Range.hh> // AUTO IWYU For TorsionID_Range
+
 // C++ Headers
 
 // ObjexxFCL Headers
@@ -41,9 +44,6 @@ namespace rigid {
 int const NO_JUMP = 0;
 
 static basic::Tracer tr( "protocols.rigid.UniformRigidBodyMover", basic::t_info );
-
-using namespace core::environment;
-using namespace protocols::environment;
 
 // creator
 

@@ -27,9 +27,7 @@
 #include <utility/vector0.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
 
-#include <utility/vector1.hh>
 
 
 // The double-lazy interaction graph is lazy both in its computation of

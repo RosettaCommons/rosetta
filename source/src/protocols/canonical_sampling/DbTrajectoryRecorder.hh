@@ -18,11 +18,8 @@
 #include <protocols/canonical_sampling/TrajectoryRecorder.hh>
 
 // Project headers
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <iosfwd>
 
 // C++ headers
 #include <string>

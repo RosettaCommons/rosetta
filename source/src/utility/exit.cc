@@ -19,12 +19,9 @@
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/backtrace.hh>
-#include <utility/crash_report.hh>
 #include <utility/CSI_Sequence.hh>
 
 // C++ headers
-#include <cassert>
-#include <cstdlib>
 #include <iostream>
 
 // Boinc headers
@@ -38,7 +35,6 @@
 #include <sstream>
 
 #ifndef _WIN32
-#include <unistd.h>
 #endif
 
 #ifdef _WIN32

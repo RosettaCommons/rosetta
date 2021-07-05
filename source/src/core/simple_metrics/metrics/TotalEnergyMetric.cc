@@ -22,7 +22,6 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/scoring/xml_util.hh>
@@ -34,10 +33,8 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

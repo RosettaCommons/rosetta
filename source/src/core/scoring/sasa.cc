@@ -19,7 +19,6 @@
 #include <core/id/AtomID_Map.hh>
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -40,7 +39,6 @@
 // C++ Headers
 #include <cmath>
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
 
 #include <utility/vector1.hh>

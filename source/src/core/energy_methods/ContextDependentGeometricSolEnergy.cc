@@ -19,21 +19,10 @@
 // Package headers
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/NeighborList.tmpl.hh>
-#include <core/scoring/ResidueNeighborList.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairNone.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/types.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
+#include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 
 // Project headers
@@ -44,12 +33,8 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
-#include <utility/options/StringVectorOption.hh>
-#include <ObjexxFCL/FArray3D.hh>
 
 //Auto Headers
-#include <core/scoring/EnergyGraph.hh>
 
 static basic::Tracer tr( "core.energy_methods.ContextDependentGeometricSolEnergy" );
 

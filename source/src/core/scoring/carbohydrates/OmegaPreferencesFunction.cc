@@ -14,13 +14,11 @@
 
 // Unit Headers
 #include <core/scoring/carbohydrates/OmegaPreferencesFunction.hh>
-#include <core/scoring/carbohydrates/database_io.hh>
 
 // Project Header
 #include <core/types.hh>
 
 // Basic Headers
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 

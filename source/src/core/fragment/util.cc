@@ -20,13 +20,11 @@
 #include <core/fragment/FragID_Iterator.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 
 // Project Headers
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh> //for reading in fragsets from a pdb
 
@@ -39,7 +37,6 @@
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
@@ -58,18 +55,20 @@
 #include <core/scoring/ScoreFunction.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 #include <fstream>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FragData.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
+
+#include <core/fragment/Frame.hh> // MANUAL IWYU
+
+#include <core/io/pdb/pdb_writer.hh> // AUTO IWYU For dump_pdb_residue
 
 namespace core {
 namespace fragment {

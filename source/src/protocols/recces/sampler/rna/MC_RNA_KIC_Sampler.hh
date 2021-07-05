@@ -25,20 +25,15 @@
 #include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.fwd.hh>
 
 // Package headers
-#include <protocols/toolbox/SamplerPlusPlus.hh>
 #include <protocols/recces/sampler/MC_Sampler.hh>
 #include <protocols/recces/sampler/MC_OneTorsion.fwd.hh>
 #include <protocols/recces/sampler/MC_Comb.fwd.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_Sugar.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.fwd.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KinematicCloser.fwd.hh>
-#include <protocols/stepwise/sampler/rna/RNA_ChiStepWiseSampler.fwd.hh>
-#include <protocols/stepwise/sampler/screener/RNA_TorsionScreener.fwd.hh>
 #include <core/id/TorsionID.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <numeric/random/WeightedSampler.hh>
-#include <numeric/random/random.fwd.hh>
 
 namespace protocols {
 namespace recces {

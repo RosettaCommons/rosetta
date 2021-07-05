@@ -17,19 +17,16 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/cp.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 //protocols library (Movers)
 #include <protocols/vip/VIP_Mover.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <utility/string_util.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -41,7 +38,6 @@
 static basic::Tracer TR( "VIP" );
 
 //utilities
-#include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 

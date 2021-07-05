@@ -15,16 +15,11 @@
 #define INCLUDED_core_scoring_epr_deer_metrics_DEEROverlapMethod_hh
 
 // Unit headers
-#include <core/scoring/epr_deer/metrics/DEERData.hh>
 #include <core/scoring/epr_deer/metrics/DEERDistanceDistribution.hh>
-#include <core/scoring/epr_deer/EPRSpinLabel.hh>
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <string>
 #include <map>
 
 namespace core {

@@ -16,19 +16,11 @@
 #include <protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/Etable.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/ScoringManager.hh>
 
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.protein.checker.ProteinAtrRepChecker" );
 

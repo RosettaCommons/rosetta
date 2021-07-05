@@ -19,17 +19,13 @@
 #include <core/simple_metrics/RealMetric.hh>
 #include <core/simple_metrics/util.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
-#include <core/simple_metrics/util.hh>
 
 #include <core/pose/extra_pose_info_util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 #include <numeric/Calculator.hh>
 #include <numeric/random/random.hh>
@@ -38,7 +34,6 @@
 #include <core/simple_metrics/SimpleMetricFactory.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

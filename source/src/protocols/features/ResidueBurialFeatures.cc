@@ -25,7 +25,6 @@
 #include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/scoring/nv/NVscore.hh>
 #include <core/types.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -35,12 +34,10 @@
 #include <basic/database/schema_generator/DbDataType.hh>
 
 // Numeric Headers
-#include <numeric/xyzVector.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
 
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

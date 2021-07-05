@@ -24,7 +24,7 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SharedSilentData.hh>
-#include <core/pose/full_model_info/FullModelParameters.hh>
+#include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 
 #include <utility/VirtualBase.hh>
 

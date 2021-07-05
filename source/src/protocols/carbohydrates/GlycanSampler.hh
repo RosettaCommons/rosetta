@@ -17,7 +17,7 @@
 
 // Unit headers
 #include <protocols/carbohydrates/GlycanSampler.fwd.hh>
-#include <protocols/carbohydrates/LinkageConformerMover.hh>
+#include <protocols/carbohydrates/LinkageConformerMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 
@@ -27,10 +27,8 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
@@ -38,6 +36,8 @@
 
 
 #include <basic/datacache/DataMap.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

@@ -14,14 +14,11 @@
 #include <protocols/interface/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <protocols/toolbox/CalcInterNeighborGroup.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 
 #include <set>

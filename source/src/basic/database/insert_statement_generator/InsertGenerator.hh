@@ -16,10 +16,13 @@
 #define INCLUDED_basic_database_insert_statement_generator_InsertGenerator_HH
 
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <basic/database/insert_statement_generator/RowData.hh>
+#include <basic/database/insert_statement_generator/RowData.fwd.hh>
 
 #include <map>
 #include <vector>
+
+#include <cppdb/frontend.h> // AUTO IWYU For statement
+#include <platform/types.hh> // AUTO IWYU For Size
 
 
 namespace basic {

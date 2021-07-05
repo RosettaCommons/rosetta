@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_forge_constraints_RemoveRemodelCsts_hh
 
 // Unit Header
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
+#include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
 
 // Package Header
 
@@ -26,7 +26,6 @@
 #include <protocols/moves/Mover.hh>
 
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

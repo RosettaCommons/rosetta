@@ -35,7 +35,6 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 // C++ Headers

@@ -24,72 +24,43 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/RNA_CentroidInfo.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.hh>
 #include <core/io/rna/RDAT.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/DOF_ID.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/Stub.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/util.hh>
-#include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <devel/init.hh>
 
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <utility/file/FileName.hh>
 
-#include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/conversions.hh>
-#include <numeric/constants.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -98,12 +69,8 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/conformation/Conformation.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <numeric/xyz.functions.hh>
 
 using namespace core;
 using namespace core::conformation;

@@ -17,22 +17,18 @@
 // Project Headers
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <core/types.hh>
 #include <utility/version.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/insert_statement_generator/InsertGenerator.hh>
-#include <basic/database/insert_statement_generator/RowData.hh>
+#include <basic/database/insert_statement_generator/RowData.fwd.hh>
 
 // Utility Headers
 #include <utility/io/izstream.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.hh>
 
 //Basic Headers

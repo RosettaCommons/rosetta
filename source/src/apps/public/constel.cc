@@ -93,21 +93,17 @@
 #include <protocols/constel/NeighTeller.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/chemical/AA.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/constel.OptionKeys.gen.hh>
 
 #include <string>
-#include <cfloat>
 
 static basic::Tracer TR( "apps.public.constel.main" );
 

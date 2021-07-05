@@ -20,12 +20,10 @@
 #include <core/simple_metrics/RealMetric.hh>
 #include <core/simple_metrics/util.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/util.hh>
@@ -34,6 +32,8 @@
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

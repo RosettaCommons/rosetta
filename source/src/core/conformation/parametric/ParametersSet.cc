@@ -29,7 +29,6 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <iostream>
 
 
 #ifdef SERIALIZATION

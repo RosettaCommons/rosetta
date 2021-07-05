@@ -25,9 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
@@ -37,23 +35,16 @@
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/select/util.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <core/id/AtomID_Map.hh>
 
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 
-#include <protocols/moves/MonteCarlo.hh>
 
-#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
-#include <protocols/loops/Loops.hh>
 
 // Utility Headers
 #include <numeric/constants.hh>
@@ -67,6 +58,8 @@
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
+
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
 
 
 namespace protocols {

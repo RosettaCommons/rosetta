@@ -18,14 +18,12 @@
 #include <core/scoring/constraints/Constraint.hh>
 //#include <core/scoring/constraints/ConstraintForest.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 //#include <core/scoring/constraints/BindingSiteConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/FuncFactory.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 
@@ -40,14 +38,15 @@
 #include <core/id/AtomID.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
+
+#include <core/scoring/constraints/ConstraintFactory.hh> // AUTO IWYU For ConstraintFactory
+
 
 // Boost headers
 

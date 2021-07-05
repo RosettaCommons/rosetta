@@ -20,7 +20,6 @@
 #include <protocols/denovo_design/components/Segment.fwd.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/types.hh>
 
 // Core headers
 #include <core/conformation/Residue.fwd.hh>
@@ -30,6 +29,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -94,6 +95,7 @@ public:
 /// @brief manages information about segments of residues
 class Segment : public utility::VirtualBase {
 public:
+
 	Segment( std::string const & id_val );
 
 	Segment(
@@ -408,6 +410,11 @@ private:
 	ResidueDihedrals upper_dihedrals_;
 	core::conformation::ResidueCOP lower_residue_;
 	core::conformation::ResidueCOP upper_residue_;
+
+#ifdef IWYU_SCAN
+public:
+	Segment() = default;
+#endif
 
 #ifdef    SERIALIZATION
 public:

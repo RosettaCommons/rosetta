@@ -17,6 +17,8 @@
 
 #include <iostream>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 namespace utility {
 
 std::string

@@ -23,13 +23,9 @@
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/constants.hh>
-#include <numeric/MathMatrix.hh>
-#include <numeric/MathVector.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility header
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 #include <basic/Tracer.hh>
 
 // C++ header

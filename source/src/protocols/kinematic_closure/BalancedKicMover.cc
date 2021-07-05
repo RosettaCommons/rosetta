@@ -13,19 +13,17 @@
 #include <protocols/kinematic_closure/BalancedKicMover.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
-#include <protocols/kinematic_closure/perturbers/Perturber.hh>
+#include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh>
 #include <protocols/kinematic_closure/perturbers/PerturberSet.hh>
 #include <protocols/kinematic_closure/perturbers/RamaPerturber.hh>
-#include <protocols/kinematic_closure/pivot_pickers/PivotPicker.hh>
+#include <protocols/kinematic_closure/pivot_pickers/PivotPicker.fwd.hh>
 #include <protocols/kinematic_closure/pivot_pickers/StandardPivots.hh>
 
 // Core headers
 #include <core/id/types.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/TorsionID_Range.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
@@ -35,7 +33,6 @@
 #include <utility/exit.hh>
 #include <numeric/constants.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 
 // C++ headers
 #include <iostream>

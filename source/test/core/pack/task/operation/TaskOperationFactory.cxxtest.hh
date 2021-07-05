@@ -13,11 +13,10 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Package headers
 #include <core/pack/task/operation/TaskOperationFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperationCreator.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
@@ -32,6 +31,8 @@
 
 // C++ headers
 #include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core::pack::task::operation;
 using namespace utility::tag;

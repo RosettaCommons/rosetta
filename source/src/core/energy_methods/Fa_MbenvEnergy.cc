@@ -16,7 +16,6 @@
 #include <core/energy_methods/Fa_MbenvEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/scoring/Membrane_FAPotential.hh>
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/MembraneTopology.hh>
@@ -24,7 +23,6 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh> //pba
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/memb_etable/MembEtable.hh>
 
 // Project headers

@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_scoring_methods_InterchainPairEnergy_hh
 
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <protocols/scoring/InterchainPotential.hh>
+#include <protocols/scoring/InterchainPotential.fwd.hh>
 #include <core/scoring/EnvPairPotential.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>

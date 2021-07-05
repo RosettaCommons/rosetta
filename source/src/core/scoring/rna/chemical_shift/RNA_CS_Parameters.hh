@@ -20,12 +20,6 @@
 
 #include <core/chemical/AA.hh>
 
-#include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
-
-
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 

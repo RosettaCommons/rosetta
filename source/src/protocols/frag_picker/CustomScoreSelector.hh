@@ -19,17 +19,13 @@
 #include <protocols/frag_picker/FragmentSelectingRule.hh>
 
 // package headers
-#include <protocols/frag_picker/FragmentCandidate.hh>
+#include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/CommonFragmentComparators.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-#include <protocols/frag_picker/scores/FragmentScoreManager.hh>
+#include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 
 // utility headers
 #include <core/types.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

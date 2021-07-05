@@ -19,7 +19,7 @@
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>

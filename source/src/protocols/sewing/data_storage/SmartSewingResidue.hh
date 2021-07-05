@@ -19,7 +19,6 @@
 
 #include <utility/vector1.hh>
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <core/conformation/Atom.hh>
 namespace protocols {

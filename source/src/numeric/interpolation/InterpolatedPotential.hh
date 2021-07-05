@@ -16,25 +16,17 @@
 
 // Unit Headers
 #include <numeric/interpolation/InterpolatedPotential.fwd.hh>
-#include <utility/VirtualBase.hh>
 
 // Project Headers
-#include <numeric/interpolation/interpolation.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
+#include <numeric/interpolation/interpolation.hh> // DO NOT AUTO-REMOVE
 
 // Utility Headers
-#include <iosfwd>
-#include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector0.hh>
 
-#include <utility/exit.hh>
 
-#include <cmath>
-#include <map>
-#include <algorithm>
+
+#include <numeric/types.hh> // AUTO IWYU For Size, Real
 
 namespace numeric {
 namespace interpolation {

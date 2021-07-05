@@ -14,8 +14,6 @@
 #ifndef INCLUDED_core_scoring_fiber_diffraction_FiberDiffractionEnergyGpuCreator_hh
 #define INCLUDED_core_scoring_fiber_diffraction_FiberDiffractionEnergyGpuCreator_hh
 
-#include <core/scoring/methods/EnergyMethodCreator.hh>
-#include <core/types.hh>
 
 namespace core {
 namespace energy_methods {

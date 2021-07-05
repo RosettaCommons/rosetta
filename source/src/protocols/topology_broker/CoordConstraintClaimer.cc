@@ -48,7 +48,6 @@
 #include <protocols/topology_broker/Exceptions.hh>
 
 //#include <utility/io/izstream.hh>
-#include <utility>
 #include <utility/io/ozstream.hh> //fur dump cst
 //#include <utility/io/util.hh>
 #include <basic/Tracer.hh>
@@ -58,13 +57,15 @@
 #include <fstream>
 
 #include <core/id/NamedStubID.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <core/scoring/constraints/ConstraintSet.hh> // AUTO IWYU For ConstraintSet
+#include <core/scoring/func/Func.hh> // AUTO IWYU For Func
 
 // option key includes
 

@@ -20,9 +20,7 @@
 #include <basic/Tracer.hh>
 
 //Utility and basic
-#include <basic/database/sql_utils.hh>
 #include <utility>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
 
 //C++

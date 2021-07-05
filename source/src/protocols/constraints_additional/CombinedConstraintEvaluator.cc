@@ -20,14 +20,11 @@
 #include <protocols/constraints_additional/CombinedConstraintEvaluator.hh>
 
 // Package Headers
-#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 
 // Project Headers
 #include <core/io/silent/SilentStruct.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 
-#include <core/scoring/ScoreType.hh>
 
 
 // ObjexxFCL Headers

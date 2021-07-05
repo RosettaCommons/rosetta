@@ -15,14 +15,11 @@
 // protocols
 #include <protocols/viewer/viewers.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/align/util.hh>
 
 #include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
-#include <protocols/rna/denovo/util.hh>
 
 
 // core
@@ -30,22 +27,14 @@
 #include <devel/init.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/sequence/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -62,7 +51,6 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
@@ -73,6 +61,9 @@
 // C++ headers
 #include <iostream>
 #include <string>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 using namespace core;
 using namespace protocols;

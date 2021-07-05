@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/select/residue_selector/ResidueRanges.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Project headers
@@ -31,11 +30,11 @@
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "core.select.residue_selector.SecondaryStructureSelector" );
 

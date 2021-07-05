@@ -16,7 +16,6 @@
 
 // Package Headers
 #include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
@@ -26,14 +25,12 @@
 #include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/util.hh>
 #include <core/conformation/Conformation.hh>
 \
 	// Protocols headers
 	#include <protocols/simple_moves/MutateResidue.hh> //To let me introduce a mutation easily
 
 	// Utility headers
-	#include <utility/vector1.hh>
 
 
 	// --------------- Test Class --------------- //

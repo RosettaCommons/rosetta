@@ -18,26 +18,22 @@
 
 // Unit Headers
 #include <protocols/task_operations/ImportUnboundRotamersOperation.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
 
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
 #include <core/pack/rotamer_set/UnboundRotamersOperation.fwd.hh>
 
+#include <core/types.hh> // AUTO IWYU For Real
+
+#include <string>
 
 namespace protocols {
 namespace task_operations {

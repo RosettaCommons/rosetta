@@ -14,7 +14,6 @@
 #include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
 
 #include <protocols/scoring/InterfaceInfo.hh>
-#include <protocols/rigid/RB_geometry.hh> // geometry
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -25,24 +24,22 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/chemical/ResidueConnection.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 
 #include <utility/tag/Tag.hh>
 
 
 #include <numeric/xyzVector.hh>
-#include <numeric/MathVector.hh>
 
-#include <ObjexxFCL/format.hh>
 
-#include <basic/options/option.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/scoring/Interface.hh> // AUTO IWYU For Interface
 
 using namespace utility::tag;
 

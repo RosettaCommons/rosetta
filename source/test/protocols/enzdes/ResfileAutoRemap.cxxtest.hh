@@ -16,10 +16,9 @@
 
 #include <test/protocols/init_util.hh>
 
-#include <core/types.hh>
 
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <basic/options/option.hh> //needed to set option
 #include <core/conformation/Residue.hh>
@@ -41,11 +40,11 @@
 
 // option key includes
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 using basic::Error;

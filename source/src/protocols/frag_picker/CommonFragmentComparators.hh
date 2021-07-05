@@ -18,7 +18,6 @@
 #include <protocols/frag_picker/CommonFragmentComparators.fwd.hh>
 #include <protocols/frag_picker/FragmentComparatorBase.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 
 #include <utility/vector1.hh>

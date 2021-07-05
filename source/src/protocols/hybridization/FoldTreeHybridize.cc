@@ -16,33 +16,21 @@
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.hh>
 #include <protocols/hybridization/util.hh>
 #include <protocols/hybridization/AllResiduesChanged.hh>
-#include <protocols/hybridization/DomainAssembly.hh>
 
 #include <core/import_pose/import_pose.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/util.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
 
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -51,26 +39,17 @@
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/util/kinematics_util.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
 #include <core/fragment/util.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
-#include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/GunnCost.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -82,30 +61,22 @@
 #include <protocols/loops/util.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 #include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh> // strand pairings
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/random/DistributionSampler.hh>
-#include <numeric/util.hh>
 
 // parser
-#include <protocols/rosetta_scripts/util.hh>
 //#include <protocols/moves/DataMap.hh>
-#include <utility/tag/Tag.hh>
 
 // strand pairings
 #include <core/kinematics/MoveMap.hh>
@@ -121,6 +92,9 @@
 
 #include <set>
 #include <list>
+
+#include <protocols/hybridization/WeightedFragmentSmoothTrialMover.hh> // AUTO IWYU For WeightedFragmentSmoothTrialMover
+#include <protocols/hybridization/WeightedFragmentTrialMover.hh> // AUTO IWYU For WeightedFragmentTrialMover
 
 static basic::Tracer TR( "protocols.hybridization.FoldTreeHybridize" );
 

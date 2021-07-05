@@ -17,7 +17,7 @@
 
 // Protocol Headers
 #include <protocols/denovo_design/components/Picker.hh>
-#include <protocols/denovo_design/components/StructureDataFactory.hh>
+#include <protocols/denovo_design/components/StructureDataFactory.fwd.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -30,13 +30,12 @@
 #include <core/pose/variant_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/select/residue_selector/SecondaryStructureSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -45,6 +44,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // ObjexxFCL Headers
 

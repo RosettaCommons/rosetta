@@ -26,17 +26,18 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/sc/ShapeSimilarityCalculator.hh>
+#include <core/scoring/sc/ShapeSimilarityCalculator.fwd.hh>
 #include <core/types.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/vector1.hh>
 
 // Parser headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <core/scoring/sc/MolecularSurfaceCalculator.hh> // AUTO IWYU For RESULTS
 
 
 namespace core {

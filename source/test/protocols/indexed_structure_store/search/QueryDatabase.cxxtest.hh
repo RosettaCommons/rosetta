@@ -14,7 +14,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <util/pose_funcs.hh>
 
 #include <vector>
 
@@ -22,14 +21,14 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/indexed_structure_store/search/QueryDatabase.hh>
-#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh>
+#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh> // DO NOT AUTO-REMOVE
 #include <protocols/indexed_structure_store/Datatypes.hh>
-#include <protocols/indexed_structure_store/Datatypes.json.hh>
+#include <protocols/indexed_structure_store/Datatypes.json.hh> // DO NOT AUTO-REMOVE
 #include <protocols/indexed_structure_store/orient_array.hh>
 #include <protocols/indexed_structure_store/vector_tools.hh>
 #include <protocols/indexed_structure_store/pose_utility.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <json.hpp>

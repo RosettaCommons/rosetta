@@ -15,7 +15,6 @@
 #include <devel/init.hh>
 
 // protocol headers
-#include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>

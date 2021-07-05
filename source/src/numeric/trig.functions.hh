@@ -18,7 +18,6 @@
 
 
 // Package headers
-#include <numeric/numeric.functions.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -26,13 +25,13 @@
 // C++ headers
 #include <utility/assert.hh>
 #include <cmath>
-#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 
+#ifdef USEMPI
 //Exception for NaN in sin/cos
 #include <utility/excn/Exceptions.hh>
-
+#endif
 
 namespace numeric {
 

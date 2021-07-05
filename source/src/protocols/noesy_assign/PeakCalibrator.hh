@@ -26,7 +26,7 @@
 #include <core/types.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 //#include <core/chemical/AA.hh>
-#include <protocols/noesy_assign/CrossPeak.hh>
+#include <protocols/noesy_assign/CrossPeak.fwd.hh>
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 
 // Utility headers
@@ -47,6 +47,8 @@
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 #include <utility/vector1.hh>
 #include <list>
+
+#include <core/chemical/AA.hh> // AUTO IWYU For AA
 
 namespace protocols {
 namespace noesy_assign {

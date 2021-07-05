@@ -26,7 +26,6 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // External headers
-#include <cppdb/frontend.h>
 
 namespace protocols {
 namespace parser {

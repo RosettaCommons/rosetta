@@ -22,8 +22,6 @@
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <limits>
 #include <protocols/calc_taskop_filters/RelativePoseFilter.fwd.hh>
 #include <protocols/calc_taskop_filters/OperatorFilter.fwd.hh>
 #include <protocols/calc_taskop_filters/SigmoidFilter.fwd.hh>

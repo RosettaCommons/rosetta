@@ -19,7 +19,6 @@
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/AlignRMSD_Screener.fwd.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh>
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 

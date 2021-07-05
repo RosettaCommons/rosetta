@@ -17,7 +17,7 @@
 // package headers
 #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 #include <core/fragment/picking_old/vall/VallLibrarian.hh>
-#include <core/fragment/picking_old/vall/VallLibrary.hh>
+#include <core/fragment/picking_old/vall/VallLibrary.fwd.hh>
 #include <core/fragment/picking_old/vall/eval/ABEGOEval.hh>
 #include <core/fragment/picking_old/vall/eval/IdentityEval.hh>
 #include <core/fragment/picking_old/vall/eval/VallFragmentEval.fwd.hh>

@@ -25,7 +25,6 @@
 #include <core/scoring/ScoringManager.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -42,8 +41,6 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 static basic::Tracer TR( "core.scoring.Membrane_FAEmbed" );
 

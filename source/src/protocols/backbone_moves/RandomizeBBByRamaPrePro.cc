@@ -23,12 +23,11 @@
 #include <core/scoring/RamaPrePro.hh>
 #include <core/id/TorsionID.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 
 // XSD Includes

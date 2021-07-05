@@ -18,16 +18,15 @@
 #ifndef INCLUDED_protocols_antibody_AntibodyModelerProtocol_hh
 #define INCLUDED_protocols_antibody_AntibodyModelerProtocol_hh
 
-#include <utility/vector1.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyModelerProtocol.fwd.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.fwd.hh>
-#include <protocols/loops/Loop.fwd.hh>
+
+#include <protocols/loops/Loop.hh> // AUTO IWYU For Loop
 
 
 namespace protocols {

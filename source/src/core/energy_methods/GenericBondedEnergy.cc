@@ -20,13 +20,8 @@
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/PolymerBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomType.hh>
 
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -36,13 +31,9 @@
 #include <core/conformation/Residue.hh>
 
 // Numeric headers
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
-#include <math.h>
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 namespace core {
 namespace energy_methods {

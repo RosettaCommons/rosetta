@@ -35,8 +35,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzymes.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 

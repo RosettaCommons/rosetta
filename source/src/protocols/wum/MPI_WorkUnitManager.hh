@@ -23,14 +23,9 @@
 
 #include <protocols/wum/MPI_WorkUnitManager.fwd.hh>
 #include <protocols/wum/WorkUnitManager.hh>
-#include <protocols/wum/WorkUnitList.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <string>
-#include <vector>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

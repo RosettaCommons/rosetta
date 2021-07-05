@@ -24,11 +24,12 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 
-#include <numeric/xyzVector.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/VirtualBase.hh>
+
+#include <numeric/xyzVector.hh> // AUTO IWYU For xyzVector
 
 
 

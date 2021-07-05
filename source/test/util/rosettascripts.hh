@@ -41,17 +41,17 @@
 #include <cxxtest/TestSuite.h>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/types.hh>
 
 // Protocol headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/FilterFactory.hh>
@@ -60,7 +60,6 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/datacache/DataMap.hh>
 

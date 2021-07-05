@@ -16,14 +16,12 @@
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/sql_utils.hh>
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/insert_statement_generator/RowData.hh>

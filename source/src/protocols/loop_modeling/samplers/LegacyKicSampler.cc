@@ -18,13 +18,11 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
-#include <protocols/loop_modeling/LoopBuilder.hh>
 
 // C++ headers
 #include <iostream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 using namespace std;
 

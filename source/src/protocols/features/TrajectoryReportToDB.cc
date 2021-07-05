@@ -21,8 +21,6 @@
 #include <protocols/features/FeaturesReporterFactory.hh>
 // Setup Mover
 #include <protocols/features/TrajectoryReportToDBCreator.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <basic/database/sql_utils.hh>
 #include <utility/tag/Tag.hh>
 
 // Platform Headers

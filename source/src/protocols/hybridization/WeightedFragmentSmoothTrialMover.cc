@@ -22,6 +22,9 @@
 #include <utility>
 #include <utility/exit.hh>
 
+#include <protocols/simple_moves/SmoothFragmentMover.hh> // AUTO IWYU For FragmentCost, ScoreList
+#include <core/fragment/FragSet.hh> // AUTO IWYU For FragSet
+
 static basic::Tracer TR( "protocols.hybridization.WeightedFragmentSmoothTrialMover" );
 
 namespace protocols {

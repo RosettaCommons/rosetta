@@ -17,14 +17,15 @@
 
 //project headers
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/forge/remodel/RemodelData.hh>
 #include <protocols/forge/remodel/RemodelWorkingSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <Eigen/Dense>
+
+#include <Eigen/Core> // AUTO IWYU For MatrixXf, Matrix3f
+
+#include <numeric/xyzMatrix.fwd.hh>
 
 namespace protocols {
 namespace forge {

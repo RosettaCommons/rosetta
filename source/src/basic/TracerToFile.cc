@@ -15,8 +15,6 @@
 
 #include <basic/TracerToFile.hh>
 #include <cassert>          // for assert
-#include <iosfwd>           // for ofstream, string, fstream
-#include <ostream>          // for basic_ostream, operator<<, endl
 #include <string>           // for operator+
 #include <utility/exit.hh>  // for utility_exit_with_message
 

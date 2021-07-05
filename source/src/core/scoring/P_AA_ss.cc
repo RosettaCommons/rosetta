@@ -17,21 +17,14 @@
 // Project headers
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/OptionKeys.hh>
 
-#include <core/conformation/Residue.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 

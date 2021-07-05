@@ -28,7 +28,6 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
@@ -40,11 +39,8 @@
 
 #include <basic/Tracer.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR("protocols.membrane.SetMembranePositionMover.cxxtest");
 
@@ -59,7 +55,6 @@ public:
 	void setUp()
 	{
 
-		using namespace basic::options;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 

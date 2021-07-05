@@ -38,7 +38,6 @@
 #include <core/kinematics/FoldTree.hh>
 
 // Utility Headers
-#include <numeric/MathMatrix.hh>
 #include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION

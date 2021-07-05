@@ -23,15 +23,9 @@
 
 //parsing
 #include <utility/tag/Tag.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 
 // XSD XRW Includes

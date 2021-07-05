@@ -53,7 +53,8 @@
 // C++ headers
 #include <map>
 
-#include <utility/vector0.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 // option key includes
 

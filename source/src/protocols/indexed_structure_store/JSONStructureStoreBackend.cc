@@ -15,12 +15,9 @@
 #include <boost/format.hpp>
 
 #include <utility/file/file_sys_util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
 
-#include <iostream>
 #include <fstream>
 
 #include <protocols/indexed_structure_store/JSONStructureStoreBackend.hh>
@@ -30,7 +27,8 @@
 #include <json.hpp>
 
 #include <string>
-#include <stdexcept>
+
+#include <ndarray/initialization.h> // AUTO IWYU For SimpleInitializer, allocate
 
 namespace protocols
 {

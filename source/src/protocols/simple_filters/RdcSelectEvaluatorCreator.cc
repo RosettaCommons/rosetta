@@ -15,22 +15,15 @@
 #include <protocols/simple_filters/RdcSelectEvaluatorCreator.hh>
 
 // Package Headers
-#include <protocols/evaluation/EvaluatorCreator.hh>
 
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
-#include <protocols/evaluation/PoseEvaluator.hh>
-#include <core/io/silent/silent.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
 
 // due to template function
-#include <core/io/silent/SilentStruct.hh>
-#include <utility/vector0.hh>
 
 //Auto Headers
 #include <basic/options/keys/OptionKeys.hh>

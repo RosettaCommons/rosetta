@@ -33,8 +33,6 @@
 #include <basic/options/util.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/io/ozstream.hh>

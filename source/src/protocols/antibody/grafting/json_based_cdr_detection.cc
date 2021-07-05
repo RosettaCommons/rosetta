@@ -22,6 +22,9 @@
 //#include <utility/json_utilities.hh>
 
 #include <protocols/antibody/grafting/json_based_cdr_detection.hh> //provides the ifdef tokens below
+
+#include <protocols/antibody/grafting/antibody_sequence.hh> // AUTO IWYU For uint, AntibodyChain, CDR_Bounds, AntibodySequence
+
 #ifdef __ANTIBODY_GRAFTING__
 #ifdef _NLOHMANN_JSON_ENABLED_
 
@@ -29,7 +32,6 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/report.hh>
 
 #include <string>
 #include <json.hpp>

@@ -14,42 +14,20 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/orbitals/OrbitalsScore.hh>
-#include <core/scoring/orbitals/OrbitalsLookup.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/pose_funcs.hh>
 #include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/id/DOF_ID.hh>
-#include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <basic/options/option.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <numeric/conversions.hh>
 #include <core/import_pose/import_pose.hh>
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "core.scoring.orbitals.OrbitalsScore_cxxtest_hh" );

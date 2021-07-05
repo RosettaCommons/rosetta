@@ -20,7 +20,6 @@
 
 // C++ Headers
 #include <cassert>
-#include <cstddef>
 #include <istream>
 
 

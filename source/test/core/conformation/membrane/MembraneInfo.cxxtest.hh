@@ -41,7 +41,6 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 
 using namespace core;
 using namespace core::kinematics;

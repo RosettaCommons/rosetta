@@ -27,14 +27,13 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <protocols/scoring/Interface.hh>
 
-#include <utility/vector0.hh>
-#include <utility/options/IntegerVectorOption.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.toolbox.task_operations.RestrictToInterface" );
 

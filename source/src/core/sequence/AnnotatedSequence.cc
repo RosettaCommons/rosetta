@@ -13,14 +13,12 @@
 
 // C/C++ headers
 #include <string>
-#include <map>
 
 #include <core/chemical/AA.hh>
 // unit headers
 
 #include <core/sequence/AnnotatedSequence.hh>
 
-#include <utility>
 #include <utility/exit.hh>
 
 namespace core {

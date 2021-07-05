@@ -21,15 +21,12 @@
 // Project headers
 #include <core/types.hh>
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.fwd.hh>
 
 // C++ headers
 #include <string>
-#include <iosfwd>
 #include <map>
 
 namespace core {

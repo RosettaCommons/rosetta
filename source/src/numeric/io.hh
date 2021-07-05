@@ -17,9 +17,6 @@
 
 
 // Classes
-#include <numeric/BodyPosition.io.hh>
-#include <numeric/Quaternion.io.hh>
-#include <numeric/xyz.io.hh>
 
 
 #endif // INCLUDED_numeric_io_HH

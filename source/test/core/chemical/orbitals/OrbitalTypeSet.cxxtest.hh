@@ -33,30 +33,7 @@
 // C++ headers, for debugging your tests
 
 //Auto Headers
-#include <platform/types.hh>
-#include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <limits>
-#include <map>
-#include <string>
-#include <vector>
 
 
 using namespace core;

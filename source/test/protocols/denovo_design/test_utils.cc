@@ -13,6 +13,7 @@
 /// @author Tom Linsky
 
 // Unit headers
+#include <cxxtest/TestSuite.h>
 #include <test/protocols/denovo_design/test_utils.hh>
 
 // Protocol headers

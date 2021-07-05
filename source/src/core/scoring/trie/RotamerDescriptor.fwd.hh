@@ -22,6 +22,7 @@ namespace trie {
 template < class AT, class CPDAT >
 class RotamerDescriptor;
 
+class RotamerDescriptorAtom;
 
 } // namespace trie
 } // namespace scoring

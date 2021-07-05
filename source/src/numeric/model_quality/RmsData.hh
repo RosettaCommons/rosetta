@@ -16,14 +16,12 @@
 #ifndef INCLUDED_numeric_model_quality_RmsData_HH
 #define INCLUDED_numeric_model_quality_RmsData_HH
 
-#include <numeric/types.hh>
-#include <numeric/xyzVector.hh>
 
 #include <utility/SingletonBase.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray2A.hh>
+#include <ObjexxFCL/FArray2A.fwd.hh>
 
 namespace numeric {
 namespace model_quality {

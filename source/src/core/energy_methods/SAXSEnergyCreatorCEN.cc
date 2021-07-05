@@ -14,7 +14,6 @@
 #include <core/energy_methods/SAXSEnergyCEN.hh>
 #include <core/energy_methods/SAXSEnergyCreatorCEN.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

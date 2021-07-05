@@ -16,6 +16,8 @@
 #ifndef INCLUDED_protocols_loophash_BackboneDB_hh
 #define INCLUDED_protocols_loophash_BackboneDB_hh
 
+#include <protocols/loophash/BackboneDB.fwd.hh>
+
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <boost/unordered_map.hpp>
@@ -23,8 +25,7 @@
 #include <vector>
 #include <map>
 
-#include <protocols/frag_picker/VallChunk.hh>
-#include <utility/vector1.hh>
+#include <protocols/frag_picker/VallChunk.fwd.hh>
 #include <numeric/geometry/BoundingBox.fwd.hh>
 
 //numeric headers

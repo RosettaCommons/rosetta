@@ -14,78 +14,50 @@
 // Unit headers
 #include <protocols/seeded_abinitio/SegmentHybridizer.hh>
 #include <protocols/seeded_abinitio/SegmentHybridizerCreator.hh>
-#include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <numeric/xyzVector.hh>
-#include <core/scoring/dssp/Dssp.hh>
 #include <numeric/random/random.hh>
 #include <core/pose/selection.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
 
-#include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <protocols/comparative_modeling/coord_util.hh>
-#include <core/scoring/rms_util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/pose/util.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/Energies.hh>
-#include <core/conformation/util.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
+#include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/picking_old/vall/util.hh>
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
-#include <core/fragment/util.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/model_quality/rms.hh>
 
 #include <basic/Tracer.hh>
@@ -93,6 +65,10 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A::IR, FArray1A, FArray1A<>::size_type
+#include <ObjexxFCL/FArray2A.hh> // AUTO IWYU For FArray2A::IR, FArray2A, FArray2A<>::size_type
 
 namespace protocols {
 namespace seeded_abinitio {

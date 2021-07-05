@@ -25,14 +25,11 @@
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 // Project Headers
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -57,8 +54,6 @@
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <ostream>
 #include <fstream>
 
 static basic::Tracer TR( "apps.pilot.ralford.SampleTiltProtocol" );

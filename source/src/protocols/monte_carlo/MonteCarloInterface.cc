@@ -15,11 +15,12 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 static basic::Tracer TR( "protocols.monte_carlo.MonteCarloInterface" );
 

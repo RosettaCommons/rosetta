@@ -18,6 +18,10 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/pose/PDBInfo.hh> // AUTO IWYU For PDBInfo
+#include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh> // AUTO IWYU For RNA_FilteredBaseBaseInfo
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 static basic::Tracer TR( "core.scoring.rna.RNA_Motif" );
 
 using namespace core::pose;

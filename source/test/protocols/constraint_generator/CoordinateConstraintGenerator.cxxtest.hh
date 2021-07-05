@@ -19,7 +19,6 @@
 #include <test/util/pdb1rpb.hh>
 
 // Protocol headers
-#include <protocols/constraint_generator/AddConstraints.hh>
 #include <protocols/constraint_generator/CoordinateConstraintGenerator.hh>
 
 // Core headers
@@ -27,18 +26,14 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Boost headers
 

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_numeric_deriv_distance_deriv_hh
 #define INCLUDED_numeric_deriv_distance_deriv_hh
 
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 namespace numeric {
 namespace deriv   {

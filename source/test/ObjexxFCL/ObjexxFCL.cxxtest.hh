@@ -22,6 +22,6 @@
 // generated .cpp file.  This is that file for the ObjexxFCL project.
 
 
-#endif INCLUDED_ObjexxFCL_cxxtest_HH
+#endif // INCLUDED_ObjexxFCL_cxxtest_HH
 
 

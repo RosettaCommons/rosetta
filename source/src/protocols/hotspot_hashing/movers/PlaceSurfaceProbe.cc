@@ -14,16 +14,11 @@
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperty.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>

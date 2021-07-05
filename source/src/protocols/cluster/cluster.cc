@@ -16,9 +16,6 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/silent.fwd.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -26,9 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/cluster/cluster.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/jobdist/standard_mains.hh>
 #include <protocols/moves/Mover.hh>
-#include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
 #include <core/scoring/constraints/util.hh>
 #include <protocols/loops/loops_main.hh>
@@ -36,7 +31,6 @@
 #include <numeric/random/random.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -55,6 +49,9 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
+
+#include <protocols/rosetta_scripts/PosePropertyReporter.hh> // AUTO IWYU For PosePropertyReporter
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
 
 using namespace ObjexxFCL::format;
 

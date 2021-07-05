@@ -11,36 +11,23 @@
 
 #include <protocols/hybridization/MRMover.hh>
 #include <protocols/hybridization/HybridizeProtocol.hh>
-#include <protocols/electron_density/util.hh>
 
-#include <protocols/viewer/viewers.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
-#include <protocols/relax/util.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/electron_density/util.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
-#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 
 #include <protocols/relax/RelaxProtocolBase.hh>
 
-#include <protocols/rbsegment_relax/AutoRBRelaxMover.hh>
-#include <protocols/rbsegment_relax/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
@@ -48,21 +35,14 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/variant_util.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/electron_density/util.hh>
-#include <core/scoring/constraints/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/sequence/SequenceAlignment.hh>
 #include <core/pose/symmetry/util.hh>
 
 
@@ -71,18 +51,18 @@
 
 //options
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/fragment/FragSet.hh> // AUTO IWYU For FragSet
+#include <core/fragment/FrameIterator.hh> // AUTO IWYU For ConstFrameIterator
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 
 

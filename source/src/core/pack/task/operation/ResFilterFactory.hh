@@ -23,7 +23,6 @@
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -31,7 +30,6 @@
 #include <string>
 #include <map>
 
-#include <utility/vector0.hh>
 
 namespace core {
 namespace pack {

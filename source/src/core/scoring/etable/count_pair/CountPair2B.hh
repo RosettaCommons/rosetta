@@ -20,17 +20,13 @@
 #ifndef INCLUDED_core_scoring_etable_count_pair_CountPair2B_hh
 #define INCLUDED_core_scoring_etable_count_pair_CountPair2B_hh
 
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 //#include <core/scoring/etable/count_pair/CountPairCrossover3.hh>
 
 #include <core/types.hh>
-#include <core/conformation/Atom.hh>
 
-#include <core/conformation/Residue.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <utility/vector1.hh>
 

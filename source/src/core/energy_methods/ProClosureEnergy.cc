@@ -27,7 +27,6 @@
 
 // Utility headers
 #include <numeric/constants.hh>
-#include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/deriv/distance_deriv.hh>
 #include <numeric/deriv/dihedral_deriv.hh>

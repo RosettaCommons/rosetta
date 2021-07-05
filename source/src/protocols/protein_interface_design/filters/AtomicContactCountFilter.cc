@@ -14,25 +14,20 @@
 #include <algorithm>
 #include <iterator>
 
-#include <boost/algorithm/string/join.hpp>
 #include <utility/string_util.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <basic/Tracer.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
@@ -47,6 +42,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 namespace protocols {
 namespace protein_interface_design {

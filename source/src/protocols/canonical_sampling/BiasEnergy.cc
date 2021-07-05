@@ -18,7 +18,6 @@
 
 //for trajctory output of bias energy
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 
@@ -27,6 +26,9 @@
 #include <utility/exit.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh> // AUTO IWYU For MetropolisHastingsMover
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
 
 //#include <math.h>
 //#include <iomanip>

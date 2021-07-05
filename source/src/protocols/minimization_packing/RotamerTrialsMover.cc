@@ -30,21 +30,20 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 
-#include <protocols/filters/Filter.fwd.hh>
 
 
 // Parser headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 

@@ -13,15 +13,12 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/core/select/residue_selector/DummySelectors.hh>
 
 // Package headers
 #include <core/select/residue_selector/ChainSelector.hh>
 
 // Project headers
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -34,6 +31,9 @@
 
 // C++ headers
 #include <string>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue Residue
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core::select::residue_selector;
 

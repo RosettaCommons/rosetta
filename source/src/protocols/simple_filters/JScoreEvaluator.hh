@@ -16,13 +16,11 @@
 #define INCLUDED_protocols_simple_filters_JScoreEvaluator_hh
 
 #include <string>
-#include <utility/vector1.hh>
 #include <core/types.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 

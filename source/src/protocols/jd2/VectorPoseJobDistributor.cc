@@ -19,11 +19,9 @@
 #endif
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/recon.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 #include <protocols/jd2/VectorPoseJobDistributor.hh>
@@ -37,23 +35,13 @@
 #include <protocols/moves/VectorPoseMover.hh>
 #include <protocols/filters/VectorPoseFilter.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/AA.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/ResfileReader.hh>
-#include <core/conformation/Residue.hh>
 
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 #include <utility/mpi_util.hh>
-#include <utility/string_util.hh>
 
 // #include <protocols/minimization_packing/PackRotamersMover.hh>
 // #include <protocols/simple_moves/MutateResidue.hh>

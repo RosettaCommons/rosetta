@@ -33,7 +33,6 @@
 #include <core/conformation/PointGraphData.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/find_neighbors.hh>

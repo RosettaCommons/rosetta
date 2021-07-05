@@ -16,7 +16,6 @@
 
 // C/C++ headers
 #include <cmath>
-#include <iostream>
 
 // External headers
 

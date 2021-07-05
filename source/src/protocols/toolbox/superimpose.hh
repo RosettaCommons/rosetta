@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_toolbox_superimpose_hh
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 

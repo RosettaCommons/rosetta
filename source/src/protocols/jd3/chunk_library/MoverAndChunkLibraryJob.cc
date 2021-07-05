@@ -16,13 +16,10 @@
 
 // Project headers
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 
 //utility headers
-#include <utility/VirtualBase.hh>
-#include <core/types.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -30,6 +27,10 @@
 
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
+
+// Other headers
+#include <core/pose/Pose.hh>
+
 #endif // SERIALIZATION
 
 namespace protocols {

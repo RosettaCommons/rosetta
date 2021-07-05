@@ -14,7 +14,6 @@
 #define INCLUDED_PROTOCOLS_MEDAL_UTIL_HH
 
 // External headers
-#include <boost/unordered_set.hpp>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -25,6 +24,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
+
+#include <boost/unordered/unordered_set.hpp> // AUTO IWYU For unordered_set
 
 namespace protocols {
 namespace medal {

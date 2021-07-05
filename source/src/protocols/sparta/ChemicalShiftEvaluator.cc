@@ -21,7 +21,6 @@
 // Package Headers
 
 // Project Headers
-#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
@@ -31,8 +30,6 @@
 #include <basic/MemTracer.hh>
 
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 

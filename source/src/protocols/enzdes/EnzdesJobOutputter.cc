@@ -28,9 +28,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/enzdes/EnzFilters.hh>

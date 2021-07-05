@@ -18,18 +18,13 @@
 #define INCLUDED_protocols_rna_denovo_util_HH
 
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/rna/BasePair.hh>
+#include <core/pose/rna/BasePair.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
-#include <core/pose/rna/BasePairStep.fwd.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 // Utility headers
 

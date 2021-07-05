@@ -11,16 +11,13 @@
 /// @brief abstract base class for representing scoring schemes for alignments.
 
 // Unit headers
-#include <core/sequence/ScoringScheme.fwd.hh>
 
 #include <core/types.hh>
-#include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/ScoringScheme.hh>
 
 #include <utility/exit.hh>
 #include <utility/io/izstream.fwd.hh>
 #include <utility/file/FileName.fwd.hh>
-#include <utility/VirtualBase.hh>
 
 #include <string>
 #include <complex>

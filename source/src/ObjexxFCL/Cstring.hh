@@ -17,13 +17,11 @@
 
 // C++ Headers
 #include <cassert>
-#include <cstddef>
 #include <cstring>
 #include <iosfwd>
 #include <string>
 
 //#include <type_traits>  // for swap
-#include <algorithm> // for swap
 #include <utility> // for swap??
 
 namespace ObjexxFCL {

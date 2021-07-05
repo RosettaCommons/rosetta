@@ -19,7 +19,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/carbohydrates/util.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResConnID.hh>
 
 

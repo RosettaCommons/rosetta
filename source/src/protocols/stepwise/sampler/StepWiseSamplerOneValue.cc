@@ -15,12 +15,9 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerOneValue.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
-#include <utility>
 
 using namespace core;
 static basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerOneValue" );

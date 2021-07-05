@@ -19,10 +19,8 @@
 #include <numeric/types.hh>
 
 #include <utility/assert.hh>
-#include <utility/numbers.hh>
 
 // Platform headers
-#include <platform/types.hh>
 
 // C++ headers
 #include <algorithm>

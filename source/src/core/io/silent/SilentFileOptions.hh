@@ -19,7 +19,6 @@
 #include <core/io/silent/SilentFileOptions.fwd.hh>
 
 // Platform Headers
-#include <core/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

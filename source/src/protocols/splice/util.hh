@@ -14,23 +14,19 @@
 #ifndef INCLUDED_protocols_splice_util_hh
 #define INCLUDED_protocols_splice_util_hh
 
-#include <protocols/splice/Splice.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
-#include <protocols/splice/SampleRotamersFromPDB.fwd.hh>
 
 
 // C++ headers
 #include <string>
-#include <set>
 
-#include <utility/vector1.hh>
+
+#include <protocols/splice/SpliceManager.fwd.hh> // AUTO IWYU For ResidueBBDofs
+#include <core/pack/task/TaskFactory.fwd.hh> // AUTO IWYU For TaskFactoryOP
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionOP
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace splice {

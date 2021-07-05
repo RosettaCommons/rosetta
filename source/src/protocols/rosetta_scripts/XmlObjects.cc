@@ -30,7 +30,7 @@
 
 // Project headers
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
@@ -40,7 +40,6 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
 // Basic headers
@@ -52,6 +51,8 @@
 
 //// C++ headers
 #include <string>
+
+#include <core/simple_metrics/SimpleMetric.hh> // AUTO IWYU For SimpleMetric
 
 
 

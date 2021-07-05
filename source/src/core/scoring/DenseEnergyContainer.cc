@@ -14,6 +14,8 @@
 // Unit headers
 #include <core/scoring/DenseEnergyContainer.hh>
 
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
+
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

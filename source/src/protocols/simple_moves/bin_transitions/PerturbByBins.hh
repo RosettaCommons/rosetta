@@ -27,13 +27,11 @@
 
 // Bin transition calculator headers:
 #include <core/scoring/bin_transitions/BinTransitionCalculator.fwd.hh>
-#include <core/scoring/bin_transitions/BinTransitionData.fwd.hh>
 
 //parsing
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // Utility headers

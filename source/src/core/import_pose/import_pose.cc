@@ -23,7 +23,6 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -41,7 +40,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/carbohydrates/util.hh>
-#include <core/pose/selection.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 
@@ -51,18 +49,14 @@
 #include <core/pack/optimizeH.hh>
 
 #include <core/io/pdb/pdb_reader.hh>
-#include <core/io/pdb/RecordType.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactor.
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 #include <core/io/mmcif/cif_reader.hh>
 #include <core/io/mmtf/mmtf_reader.hh>
 #include <core/io/StructFileRep.hh>
-#include <core/io/StructFileRepOptions.hh>
 
-#include <core/io/pdb/pdb_reader.hh>
 
 #include <core/fragment/rna/RNA_MatchType.hh>
 
@@ -77,7 +71,6 @@
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/magnesium.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
@@ -96,6 +89,10 @@
 
 #include <tuple>
 #include <boost/algorithm/string/predicate.hpp>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // MANUAL IWYU
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 #ifdef SERIALIZATION
 // Cereal headers

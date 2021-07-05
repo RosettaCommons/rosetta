@@ -18,8 +18,7 @@
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <core/energy_methods/PoissonBoltzmannEnergy.hh>
+#include <core/energy_methods/PoissonBoltzmannEnergy.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -29,10 +28,13 @@
 
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <vector>
 #include <set>
+
+#include <core/pack/task/PackerTask.fwd.hh> // AUTO IWYU For PackerTaskOP
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionCOP, ScoreFunctionOP
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace simple_ddg {

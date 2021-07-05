@@ -16,10 +16,9 @@
 #include <protocols/match/upstream/UpstreamBuilder.hh>
 
 // Package header
-#include <protocols/match/BumpGrid.hh>
+#include <protocols/match/BumpGrid.fwd.hh>
 #include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

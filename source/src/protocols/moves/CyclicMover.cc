@@ -15,14 +15,14 @@
 
 // C/C++ headers
 #include <string>
-#include <vector>
 
 // Project headers
 
 // Package headers
 #include <protocols/moves/Mover.hh>
 
-#include <utility/vector1.hh>
+#include <utility/assert.hh> // AUTO IWYU For debug_assert
+
 
 
 namespace protocols {

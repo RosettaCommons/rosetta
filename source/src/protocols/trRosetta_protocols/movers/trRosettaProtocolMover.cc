@@ -17,67 +17,65 @@
 #include <protocols/trRosetta_protocols/movers/trRosettaProtocolMoverCreator.hh>
 
 // Core headers
-#include <core/id/AtomID.hh>
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AA.hh>
-#include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
-#include <core/pose/variant_util.hh>
-#include <core/scoring/RamaPrePro.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/simple_metrics/metrics/RMSDMetric.hh>
 #include <core/simple_metrics/metrics/TotalEnergyMetric.hh>
 #include <core/simple_metrics/metrics/TimingProfileMetric.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
 // Protocols headers
 #include <protocols/trRosetta/trRosettaProtocol_v1.hh>
-#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/residue_selectors/StoredResidueSubsetSelector.hh>
-#include <protocols/residue_selectors/StoreResidueSubsetMover.hh>
-#include <protocols/simple_moves/bin_transitions/InitializeByBins.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 #include <protocols/relax/FastRelax.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/trRosetta.OptionKeys.gen.hh>
 #include <basic/tensorflow_manager/util.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/io/ozstream.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 // Citation Manager
-#include <utility/vector1.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/CitationManager.hh>
+
+#ifdef USE_TENSORFLOW
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/variant_util.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/RamaPrePro.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/util.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
+#include <protocols/jd2/util.hh>
+#include <protocols/moves/RepeatMover.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/residue_selectors/StoredResidueSubsetSelector.hh>
+#include <protocols/residue_selectors/StoreResidueSubsetMover.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/simple_moves/bin_transitions/InitializeByBins.hh>
+#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <utility/tag/Tag.hh>
+#endif
 
 static basic::Tracer TR( "protocols.trRosetta_protocols.movers.trRosettaProtocolMover" );
 
@@ -717,7 +715,7 @@ trRosettaProtocolMover::set_msa_file(
 /// constraints are not written.  If only_write_constraints is set to true, the prediction phase is skipped.
 /// @details Triggers disk write!  Not for production runs!  If only_write_constraints is true and filename is
 /// empty, an error is thrown.
-void 
+void
 trRosettaProtocolMover::set_write_constraints_to_file(
 	std::string const & filename,
 	bool const only_write_constraints

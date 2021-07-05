@@ -18,9 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #ifdef PYROSETTA
 #include <core/pose/ResidueIndexDescription.hh>

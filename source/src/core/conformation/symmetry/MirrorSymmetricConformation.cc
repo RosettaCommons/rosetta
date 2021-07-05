@@ -18,8 +18,6 @@
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
@@ -30,16 +28,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <core/conformation/PointGraph.fwd.hh>
-#include <core/conformation/PointGraphData.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <utility/graph/UpperEdgeGraph.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 //#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/conformation/find_neighbors.hh>
-#include <core/conformation/util.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -56,6 +46,7 @@
 #include <cereal/types/utility.hpp>
 #endif // SERIALIZATION
 
+#include <core/conformation/symmetry/SymmetryTransform.hh> // IWYU MANUAL
 
 namespace core {
 namespace conformation {

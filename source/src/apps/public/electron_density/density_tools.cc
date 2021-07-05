@@ -10,14 +10,10 @@
 /// @file
 /// @brief
 
-#include <protocols/viewer/viewers.hh>
 
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 
-#include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
@@ -27,7 +23,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/electron_density/util.hh>
 #include <protocols/hybridization/FragmentBiasAssigner.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
@@ -38,11 +33,7 @@
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <numeric/constants.hh>
 
-#include <ObjexxFCL/string.functions.hh>
-#include <core/kinematics/Jump.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
@@ -52,7 +43,6 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // C++ headers
-#include <iostream>
 #include <fstream>
 #include <string>
 

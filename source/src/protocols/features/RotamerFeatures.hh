@@ -17,13 +17,9 @@
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/RotamerFeatures.fwd.hh>
-#include <basic/database/schema_generator/Schema.hh>
 
-#include <core/conformation/Residue.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
+#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
@@ -31,7 +27,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
@@ -39,6 +34,8 @@
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Residue
 
 
 namespace protocols {

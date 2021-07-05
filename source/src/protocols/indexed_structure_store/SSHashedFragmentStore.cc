@@ -12,17 +12,11 @@
 /// @author TJ Brunette tjbrunette@gmail.com
 
 
-#include <utility/VirtualBase.hh>
 
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/pose/symmetry/util.hh>
 
 #include <protocols/indexed_structure_store/FragmentLookup.hh>
 #include <protocols/indexed_structure_store/FragmentStore.hh>
 #include <protocols/indexed_structure_store/FragmentStoreManager.hh>
-#include <protocols/indexed_structure_store/H5FragmentStoreBackend.hh>
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -36,7 +30,6 @@
 #include <utility/vector1.hh>
 #include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
 
 #include <map>
 #include <set>

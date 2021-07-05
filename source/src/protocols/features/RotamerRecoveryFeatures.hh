@@ -23,11 +23,8 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
@@ -36,9 +33,9 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/rotamer_recovery/RRReporterSQLite.hh>
-#include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/rotamer_recovery/RRProtocol.hh>
+#include <protocols/rotamer_recovery/RRReporterSQLite.fwd.hh>
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

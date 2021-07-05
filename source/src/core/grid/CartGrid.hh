@@ -19,13 +19,11 @@
 
 #include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
 #include <utility/vector0.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector0.fwd.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <utility/Binary_Util.hh>

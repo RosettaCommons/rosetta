@@ -36,9 +36,6 @@
 //#include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 //#include <core/scoring/LREnergyContainer.hh>
 
-#include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
-#include <basic/Tracer.hh>
 
 
 enum fast_relax_perf_benchmark {

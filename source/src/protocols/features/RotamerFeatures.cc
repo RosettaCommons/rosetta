@@ -15,25 +15,16 @@
 #include <protocols/features/RotamerFeatures.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
 // Project Headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
-#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/string_util.hh>
 
 
 //Basic Headers
@@ -45,7 +36,6 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <basic/Tracer.hh>
 
@@ -55,6 +45,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/RotamerFeaturesCreator.hh>
+
+#include <core/pack/dunbrack/ResidueDOFReporter.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace features {

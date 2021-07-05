@@ -16,13 +16,10 @@
 #include <protocols/ligand_docking/CompoundTranslateCreator.hh>
 #include <protocols/ligand_docking/Translate.hh>
 
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/random/random_permutation.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

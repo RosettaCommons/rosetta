@@ -32,14 +32,12 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
@@ -50,8 +48,6 @@
 //Utility
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 //Numeric
 #include <numeric/random/random.hh>
 #include <numeric/constants.hh>

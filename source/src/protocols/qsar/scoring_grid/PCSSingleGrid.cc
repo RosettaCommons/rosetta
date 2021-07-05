@@ -41,7 +41,6 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/constants.hh>
 
 // C++ headers
 #include <string>

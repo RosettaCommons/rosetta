@@ -27,13 +27,9 @@
 
 // Unit Headers
 #include <core/scoring/etable/Etable.hh>
-#include <core/scoring/EnergyMap.hh>
 
 // Package headers
 #include <core/chemical/util.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/trie/RotamerTrieBase.hh>
-#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
@@ -51,7 +47,6 @@
 // Utility Headers
 
 // C++ Headers
-#include <iostream>
 #include <fstream>
 
 #include <basic/Tracer.hh>
@@ -59,8 +54,9 @@
 // option key includes
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <core/chemical/AtomType.hh>
+
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A, FArray1A<>::size_type, FArray1A::IR
 
 using namespace ObjexxFCL;
 

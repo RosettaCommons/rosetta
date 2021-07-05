@@ -15,33 +15,27 @@
 
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 
-#include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/interpolation/util.hh>
-#include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <numeric/kdtree/KDTree.hh>
 #include <numeric/kdtree/nearest_neighbors.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/izstream.hh>
 #include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/tools/make_vector.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
+
+#include <numeric/kdtree/KDPoint.hh> // AUTO IWYU For KDPoint
 
 namespace protocols {
 namespace qsar {

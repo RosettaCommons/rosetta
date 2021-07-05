@@ -21,12 +21,9 @@
 
 // Project headers
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -35,27 +32,20 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/types.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/util/disulfide_util.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/DisulfideInsertion.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <utility>
-#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
 //remove after removing prints
-#include <utility/io/ozstream.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>

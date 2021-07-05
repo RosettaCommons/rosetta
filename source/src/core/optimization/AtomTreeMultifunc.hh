@@ -25,7 +25,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/optimization/MinimizerMap.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

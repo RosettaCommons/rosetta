@@ -35,18 +35,15 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/OrderedFragSet.hh>
 
 //#include <protocols/evaluation/PoseEvaluator.hh>
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace loops {

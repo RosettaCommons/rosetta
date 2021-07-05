@@ -1,22 +1,12 @@
 #include <devel/enzdes/EnzdesRemodelProtocol.hh>
-#include <utility/file/FileName.hh>
 
 #include <core/types.hh>
 
-#include <protocols/enzdes/EnzdesFlexBBProtocol.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <protocols/motifs/Motif.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <protocols/motifs/MotifLibrary.hh>
-#include <protocols/motifs/MotifSearch.hh>
-#include <protocols/motifs/motif_utils.hh>
 
-#include <protocols/dna/util.hh>
 
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #ifndef INCLUDED_devel_enzdes_motif_loop_build_hh
 #define INCLUDED_devel_enzdes_motif_loop_build_hh

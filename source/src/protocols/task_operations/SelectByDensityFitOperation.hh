@@ -15,13 +15,10 @@
 
 // Unit Headers
 #include <protocols/task_operations/SelectByDensityFitOperation.fwd.hh>
-#include <protocols/task_operations/SelectByDensityFitOperationCreator.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 #include <core/types.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

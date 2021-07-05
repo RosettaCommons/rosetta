@@ -19,85 +19,34 @@
 // Package headers
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/MiniPose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/datacache/PositionConservedResiduesStore.hh>
-#include <core/pose/init_id_map.hh>
-#include <core/pose/rna/util.hh>
-#include <core/pose/carbohydrates/util.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/PatchOperation.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/AtomICoor.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/Exceptions.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/io/StructFileRep.hh>
-#include <core/io/raw_data/DisulfideFile.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/SilentFileOptions.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataCache.hh>
+#include <basic/datacache/DataCache.fwd.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 #include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringIntegerMap.hh>
 #include <basic/datacache/CacheableStringMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.string.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
-#include <utility/string_constants.hh>
 #include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 
 // C/C++ headers
-#include <cmath>
-#include <iostream>
 #include <algorithm>
-#include <numeric>
 
 // External headers
-#include <ObjexxFCL/string.functions.hh>
 
 namespace core {
 namespace pose {

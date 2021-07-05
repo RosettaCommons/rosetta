@@ -35,7 +35,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 //#include <protocols/jobdist/Jobs.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -43,20 +42,17 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // DO NOT AUTO-REMOVE -- Not used in this header, but will be by practically every other Mover
 
 // Basic Headers
 #include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 // C++ Headers
 #include <string>
-#include <map>
 #include <list>
 #include <iostream>
 
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <utility/vector1.hh>
 
 #ifdef WIN32
 #include <utility/tag/Tag.hh>

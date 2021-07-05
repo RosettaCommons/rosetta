@@ -26,7 +26,6 @@
 
 #include <string>
 
-#include <utility/vector1.fwd.hh>
 
 
 namespace core {

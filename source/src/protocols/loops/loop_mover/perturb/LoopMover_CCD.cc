@@ -27,7 +27,6 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -36,10 +35,9 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
-#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <core/pose/symmetry/util.hh>
 
@@ -49,11 +47,9 @@
 #include <basic/Tracer.hh> // tracer output
 
 //Utility and numeric Headers
-#include <numeric/random/random.hh>
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 
 // option key includes
@@ -61,7 +57,6 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <core/pose/variant_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>

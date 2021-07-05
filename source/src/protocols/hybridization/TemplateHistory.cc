@@ -16,12 +16,9 @@
 
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
-#include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

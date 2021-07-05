@@ -13,7 +13,8 @@
 // Unit headers
 #include <core/scoring/rna/RNA_ScoringUtil.hh>
 #include <core/types.hh>
-#include <utility/assert.hh>
+
+#include <utility/assert.hh> // AUTO IWYU For debug_assert
 
 namespace core {
 namespace scoring {

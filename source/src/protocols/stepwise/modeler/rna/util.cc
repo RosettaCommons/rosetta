@@ -15,52 +15,35 @@
 //////////////////////////////////
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/stepwise/modeler/rna/phosphate/util.hh>
-#include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
-#include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <protocols/toolbox/rigid_body/util.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
 
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/rna/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/FadeFunc.hh>
-#include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
@@ -71,17 +54,18 @@
 #include <utility/file/file_sys_util.hh>
 
 #include <iostream>
-#include <fstream>
 #include <sstream>
 #include <ObjexxFCL/format.hh>
-#include <set>
 #include <ctime>
 #include <map>
 
 #include <cstdio> //Sept 26, 2011
 
 //for process_mem_usage:
-#include <ios>
+
+#include <core/scoring/rms_util.hh> // AUTO IWYU For superimpose_pose
+#include <numeric/angle.functions.hh> // AUTO IWYU For principal_angle_d...
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core;
 using namespace core::chemical::rna;

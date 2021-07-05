@@ -37,7 +37,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -45,9 +44,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
 
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
 // Basic headers
@@ -58,13 +55,9 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 
 #include <utility/vector1.hh>
-#include <utility/options/BooleanVectorOption.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <numeric/random/random.fwd.hh>
 
 using namespace ObjexxFCL;

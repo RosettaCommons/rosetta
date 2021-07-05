@@ -20,7 +20,6 @@
 #include <protocols/backbone_moves/local_backbone_mover/gap_solution_pickers/GapSolutionPicker.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // Core headers

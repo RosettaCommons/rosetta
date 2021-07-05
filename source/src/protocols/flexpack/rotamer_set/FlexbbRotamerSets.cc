@@ -54,7 +54,6 @@
 // C++
 #include <fstream>
 
-#include <core/conformation/AbstractRotamerTrie.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSet.hh>
 #include <utility/vector1.hh>
 

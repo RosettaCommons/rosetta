@@ -13,7 +13,6 @@
 /// @detail right now there isnt a canonical mapping from nodes back to atom objects.
 
 #include <core/conformation/AtomGraph.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Conformation.hh>

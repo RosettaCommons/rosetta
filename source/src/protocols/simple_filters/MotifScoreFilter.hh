@@ -19,15 +19,12 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/simple_filters/MotifScoreFilter.fwd.hh>
 
-#include <core/scoring/motif/motif_hash_stuff.hh>
-#include <core/scoring/motif/util.hh>
-#include <core/pose/motif/reference_frames.hh>
+#include <core/scoring/motif/motif_hash_stuff.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 // C++ Headers
 #include <string>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -25,10 +25,7 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/DerivVectorPair.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/MinimizationGraph.hh>
 
@@ -43,6 +40,8 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
+
+#include <core/optimization/DOF_Node.hh> // AUTO IWYU For DOF_Node, DOF_Node::AtomIDs
 
 
 using namespace ObjexxFCL::format;

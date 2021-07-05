@@ -17,9 +17,7 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/AA.hh>
 
 // Package headers
 
@@ -34,7 +32,7 @@
 
 #include <map>
 
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

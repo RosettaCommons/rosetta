@@ -13,18 +13,13 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
 
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>

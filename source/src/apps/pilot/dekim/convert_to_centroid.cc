@@ -14,42 +14,23 @@
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/PDBJobOutputter.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pose/Pose.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/VariantType.hh>
 
 // Project headers
 
 // Utility headers
-#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/frags.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/string_util.hh>
 
-#include <sstream>
-#include <fstream>
 
 
 static basic::Tracer TR( "main" );

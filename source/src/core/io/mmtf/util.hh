@@ -15,6 +15,8 @@
 #ifndef INCLUDED_core_io_mmtf_util_HH
 #define INCLUDED_core_io_mmtf_util_HH
 
+#include <core/io/mmtf/util.fwd.hh>
+
 // Package headers
 #include <core/io/AtomInformation.hh>
 #include <utility/vector0.hh>

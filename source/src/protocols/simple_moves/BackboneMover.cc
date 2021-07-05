@@ -17,7 +17,6 @@
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
 
 // Project Headers
-#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -29,13 +28,10 @@
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/carbohydrates/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/id/AtomID.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <core/id/TorsionID_Range.hh>
 
@@ -53,12 +49,10 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <string>
-
 
 static basic::Tracer TR( "protocols.simple_moves.BackboneMover" );
 

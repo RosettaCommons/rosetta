@@ -14,7 +14,6 @@
 // libRosetta headers
 #include <devel/cartesian_frags/CartesianFragment.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/kinematics/util.hh>
 
 #include <core/id/AtomID_Map.hh>
@@ -24,9 +23,7 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>

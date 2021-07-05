@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_ligand_docking_RandomConformers_hh
 
 #include <protocols/moves/Mover.hh>
-#include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////
 

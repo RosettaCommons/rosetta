@@ -26,25 +26,23 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 // C++ Headers
 #include <string>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
 
 static basic::Tracer TR( "protocols.pose_reporters.BasicPosePropertyReporters" );
 

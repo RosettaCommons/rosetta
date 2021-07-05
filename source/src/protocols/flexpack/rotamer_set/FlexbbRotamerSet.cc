@@ -16,7 +16,7 @@
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <utility/graph/Graph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
@@ -26,6 +26,8 @@
 
 
 #ifdef    SERIALIZATION
+#include <core/conformation/Residue.hh>
+
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
 

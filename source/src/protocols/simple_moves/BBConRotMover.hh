@@ -18,16 +18,11 @@
 #include <protocols/simple_moves/BBConRotMover.fwd.hh>
 //core
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 
 //protocols
-#include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
 //movemap
-#include <core/kinematics/MoveMap.fwd.hh>
 //
-#include <utility/vector1.hh>
 
 //std
 #include <string>

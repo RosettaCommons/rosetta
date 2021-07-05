@@ -18,7 +18,6 @@
 #include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/ClosureProblem.fwd.hh>
 #include <protocols/kinematic_closure/ClosureSolution.fwd.hh>
-#include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh>
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.fwd.hh>
 
 // Protocols headers

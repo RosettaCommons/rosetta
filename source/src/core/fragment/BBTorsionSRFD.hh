@@ -19,7 +19,6 @@
 #include <core/fragment/SecstructSRFD.hh>
 
 // Package Headers
-#include <core/fragment/Frame.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -28,8 +27,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/VirtualBase.hh>
 
 // C/C++ headers
 #include <iosfwd>

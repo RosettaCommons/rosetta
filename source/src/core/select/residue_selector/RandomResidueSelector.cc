@@ -16,16 +16,14 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Core headers
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <numeric/random/random_permutation.hh>
@@ -34,7 +32,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+
+#include <set> // MANUAL IWYU
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

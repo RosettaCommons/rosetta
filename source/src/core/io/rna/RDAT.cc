@@ -18,7 +18,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 #include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>

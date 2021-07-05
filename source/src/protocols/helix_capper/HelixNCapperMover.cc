@@ -19,30 +19,21 @@
 #include <basic/database/open.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
-#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/ResfileReader.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <protocols/simple_moves/ScoreMover.hh>
 
 #include <utility/io/izstream.hh>
 
-#include <iostream>
 #include <fstream>
 #include <algorithm>
-#include <iterator>
+
+#include <utility/libsvm/Svm_rosetta.hh> // AUTO IWYU For Svm_rosetta, Svm_node_rosetta
 
 using namespace core;
 using namespace core::conformation;

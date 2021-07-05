@@ -19,7 +19,6 @@
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/id/types.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/scoring/rna/RNA_Motif.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -32,12 +31,9 @@
 #include <core/pose/rna/StubStubType.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/rna/BaseStack.fwd.hh>
-#include <core/pose/rna/StubStubType.fwd.hh>
 #include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
-#include <tuple>
 #include <map>
 
 namespace core {

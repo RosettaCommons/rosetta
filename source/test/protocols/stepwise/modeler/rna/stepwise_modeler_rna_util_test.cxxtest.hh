@@ -13,13 +13,10 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -27,9 +24,12 @@
 #include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
-#include <protocols/stepwise/modeler/rna/util.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("stepwise_modeler_rna_util_test");
 
@@ -57,7 +57,6 @@ public:
 		using namespace core::pose::rna;
 		using namespace core::import_pose;
 		using namespace core::pose::full_model_info;
-		using namespace protocols::stepwise::modeler::rna;
 		using namespace utility;
 
 		ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );

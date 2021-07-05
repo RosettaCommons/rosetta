@@ -21,7 +21,6 @@
 #define INCLUDED_utility_signals_TokenHub_hh
 
 // type headers
-#include <platform/types.hh>
 
 // unit headers
 #include <utility/signals/TokenHub.fwd.hh>
@@ -30,8 +29,6 @@
 // boost headers
 
 // C++ headers
-#include <iosfwd>
-#include <vector>
 
 
 namespace utility {

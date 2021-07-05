@@ -28,7 +28,6 @@
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
 #include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
 #include <protocols/denovo_design/movers/FastDesign.fwd.hh>
-#include <protocols/filters/BasicFilters.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -38,10 +37,9 @@
 // Utility Headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
+#include <utility/fixedsizearray1.hh> // DO NOT AUTO-REMOVE needed for member function
 
 // C++ headers
-#include <cstdio>
 #include <map>
 
 #define SimpleCycpepPredictApplication_PEPBOND_LENGTH 1.328685

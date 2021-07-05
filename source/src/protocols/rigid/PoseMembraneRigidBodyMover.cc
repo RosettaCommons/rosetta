@@ -22,7 +22,6 @@
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/MembranePotential.hh>
 
-#include <core/id/AtomID.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -34,9 +33,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
 

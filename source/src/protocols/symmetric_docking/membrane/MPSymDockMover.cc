@@ -39,39 +39,30 @@
 #include <core/pose/symmetry/util.hh>
 
 // Package Headers
-#include <core/kinematics/FoldTree.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
-#include <utility/tag/Tag.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <iostream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/conformation/membrane/SpanningTopology.hh> // AUTO IWYU For SpanningTopology
 
 static basic::Tracer TR( "protocols.symmetric_docking.membrane.MPSymDockMover" );
 

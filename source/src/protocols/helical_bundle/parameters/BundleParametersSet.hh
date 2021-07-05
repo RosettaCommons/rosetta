@@ -24,17 +24,11 @@
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
-#include <protocols/helical_bundle/parameters/BundleParameters.fwd.hh>
-#include <protocols/helical_bundle/parameters/BundleParameters.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // Numeric headers
 

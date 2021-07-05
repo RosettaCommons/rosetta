@@ -25,27 +25,19 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeler/LoopModeler.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/CDRsMinPackMin.hh>
-#include <protocols/antibody/design/util.hh>
 
 // Project headers
-#include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockMCMCycle.hh>
-#include <protocols/docking/DockTaskFactory.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/minimization_packing/RepackSidechainsMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/DumpPdb.hh>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
 
 // basic
@@ -58,6 +50,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
 
 
 static basic::Tracer TR( "protocols.antibody.SnugDock" );

@@ -14,7 +14,6 @@
 #include <protocols/comparative_modeling/ThreadingJobInputterCreator.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/InnerJob.hh>
 
 ///C++ headers
 #include <string>
@@ -43,6 +42,8 @@
 
 #include <protocols/comparative_modeling/ThreadingMover.hh>
 #include <protocols/comparative_modeling/ExtraThreadingMover.hh>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
 
 namespace protocols {
 namespace comparative_modeling {

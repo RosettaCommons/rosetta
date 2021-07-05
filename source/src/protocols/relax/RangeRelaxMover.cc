@@ -31,7 +31,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -44,10 +43,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -61,12 +59,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <core/conformation/util.hh>
-#include <numeric/random/random.hh>
 #include <protocols/membrane/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <utility/vector1.hh>
@@ -76,12 +71,11 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "protocols.relax.RangeRelaxMover" );
 

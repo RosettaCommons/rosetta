@@ -18,7 +18,7 @@
 #define INCLUDED_core_select_residue_selector_ResidueSelectorRegistrator_hh
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace core {

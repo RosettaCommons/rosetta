@@ -17,28 +17,22 @@
 // project headers
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/id/DOF_ID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/OptCysHG.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 
 // numeric headers
 
 // C++ headers
-#include <cmath>
-#include <list>
 #include <map>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

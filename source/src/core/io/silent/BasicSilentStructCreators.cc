@@ -25,8 +25,7 @@
 #include <core/io/silent/ScoreJumpFileSilentStruct.hh>
 
 //Auto Headers
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
-#include <utility/vector1.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh> // DO NOT AUTO-REMOVE (needed for templated instantiations)
 
 
 namespace core {

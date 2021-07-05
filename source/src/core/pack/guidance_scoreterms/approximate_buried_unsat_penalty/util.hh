@@ -18,11 +18,8 @@
 // Unit headers
 
 // Package headers
-#include <core/scoring/hbonds/graph/HBondGraph.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/task/IGEdgeReweightContainer.hh>
+#include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <basic/datacache/CacheableResRotPairFloatMap.hh>
@@ -30,6 +27,12 @@
 #include <utility/vector1.hh>
 #include <unordered_map>
 
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionOP
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP
+
+#ifdef PYROSETTA
+#include <core/pack/task/IGEdgeReweightContainer.hh>
+#endif
 
 namespace core {
 namespace pack {

@@ -22,7 +22,7 @@
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>

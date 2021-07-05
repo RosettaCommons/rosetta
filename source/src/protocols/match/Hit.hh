@@ -24,7 +24,8 @@
 // Utility headers
 #include <utility/fixedsizearray1.hh>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

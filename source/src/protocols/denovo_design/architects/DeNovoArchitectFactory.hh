@@ -18,16 +18,19 @@
 #include <protocols/denovo_design/architects/DeNovoArchitectFactory.fwd.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/architects/DeNovoArchitectCreator.hh>
+#include <protocols/denovo_design/architects/DeNovoArchitectCreator.fwd.hh>
 
 // Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/SingletonBase.hh>
 
 // C++ headers
 #include <map>
+#include <string>
+
+#include <protocols/denovo_design/architects/DeNovoArchitect.fwd.hh> // AUTO IWYU For DeNovoArchitectOP
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For AttributeList
 
 namespace protocols {
 namespace denovo_design {

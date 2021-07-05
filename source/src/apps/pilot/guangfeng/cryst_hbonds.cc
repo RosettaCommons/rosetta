@@ -3,45 +3,28 @@
 // core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <basic/options/option.hh>
 #include <devel/init.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 //#include <protocols/relax_protocols.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/types.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 
 
 // utility headers
 #include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
+#include <utility/file/FileName.fwd.hh>
 
 // c++ headers
-#include <iostream>
-#include <iomanip>
-#include <fstream>
 #include <string>
-#include <sstream>
 
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/SilentFileJobOutputter.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>

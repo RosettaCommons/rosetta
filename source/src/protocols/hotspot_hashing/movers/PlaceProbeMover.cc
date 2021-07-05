@@ -22,19 +22,13 @@
 #include <utility/exit.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperty.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
@@ -43,12 +37,14 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/hotspot_hashing/SearchPattern.hh>
-#include <protocols/hotspot_hashing/SurfaceSearchPattern.hh>
 #include <protocols/hotspot_hashing/SearchPatternRotSetOp.hh>
 
 #include <protocols/hotspot_hashing/StubGenerator.hh>
 
 #include <protocols/hotspot_hashing/movers/PlaceProbeMover.hh>
+
+#include <sstream> // MANUAL IWYU
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols
 {

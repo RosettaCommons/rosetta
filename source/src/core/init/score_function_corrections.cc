@@ -31,7 +31,6 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/rings.OptionKeys.gen.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/options/OptionCollection.hh>
 
@@ -39,7 +38,6 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
 
 // C++ headers
 #include <istream>

@@ -45,7 +45,6 @@
 // Objexx headers
 
 // C++ headers
-#include <iostream>
 
 //#include <limits>
 

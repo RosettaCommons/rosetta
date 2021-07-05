@@ -43,7 +43,6 @@
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 
 #include <protocols/jobdist/Jobs.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols" );

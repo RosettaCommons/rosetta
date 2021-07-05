@@ -12,16 +12,14 @@
 
 #include <protocols/domain_assembly/AddAssemblyConstraints.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 
 
-#include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
 
 
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/LinearPenaltyFunction.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -30,13 +28,12 @@
 //#include <devel/init.hh>
 
 // C++ headers
-#include <iostream>
 #include <string>
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
-#include <core/kinematics/Jump.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 
 namespace protocols {

@@ -22,14 +22,9 @@
 #include <protocols/canonical_sampling/TemperingBase.hh>
 
 //#include <protocols/canonical_sampling/AsyncMPITemperingBase.fwd.hh>
-#include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
-#include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <numeric/random/WeightedSampler.hh>
 
 // Utility Headers
 #include <core/types.hh>

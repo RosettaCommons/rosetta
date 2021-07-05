@@ -17,9 +17,10 @@
 // Unit headers
 #include <protocols/jd3/job_summaries/StandardPoseJobSummary.fwd.hh>
 #include <protocols/jd3/JobSummary.hh>
-#include <core/simple_metrics/SimpleMetric.fwd.hh>
 #include <core/simple_metrics/SimpleMetricData.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <core/types.hh> // AUTO IWYU For Real
 
 
 #ifdef    SERIALIZATION

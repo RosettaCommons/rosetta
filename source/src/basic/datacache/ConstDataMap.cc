@@ -20,11 +20,9 @@
 // ObjexxFCL Headers
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 #ifdef    SERIALIZATION

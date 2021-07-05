@@ -24,21 +24,14 @@
 
 
 
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/sequence/util.hh>
 #include <core/pose/util.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 
 #include <core/select/movemap/MoveMapFactory.hh>
-#include <core/select/movemap/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/palette/PackerPalette.hh>
@@ -47,11 +40,8 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <basic/options/option.hh>
@@ -69,11 +59,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>
@@ -85,8 +72,9 @@
 #include <protocols/jd2/util.hh>
 
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <basic/citation_manager/CitationCollectionBase.hh> // AUTO IWYU For CitationCollectionList
 
 static basic::Tracer TR( "protocols.relax.ClassicRelax" );
 

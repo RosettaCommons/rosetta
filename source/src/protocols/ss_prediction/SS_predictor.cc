@@ -14,20 +14,19 @@
 // Utility Headers
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
 // C++ headers
 #include <iostream>
-#include <cstring>
 #include <cmath>
 #include <string>
 #include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/io/izstream.hh>
 
 #include <protocols/ss_prediction/SS_predictor.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 namespace protocols {
 namespace ss_prediction {

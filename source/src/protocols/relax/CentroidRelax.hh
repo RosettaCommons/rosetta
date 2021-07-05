@@ -18,14 +18,13 @@
 
 //Core Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 //Protocol Headers
 #include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 //Utility Headers
 #include <utility/vector1.hh>

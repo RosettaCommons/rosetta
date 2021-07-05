@@ -24,8 +24,6 @@
 #include <core/types.hh>
 
 // Test util headers
-#include <test/util/pose_funcs.hh>
-#include <test/core/init_util.hh>
 
 #include <utility/string_util.hh>
 

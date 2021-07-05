@@ -18,38 +18,21 @@
 
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairNone.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/types.hh>
-#include <core/scoring/NeighborList.tmpl.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/scoring/ResidueNeighborList.hh>
 //#include <core/scoring/hbonds/HBondSet.hh>
 
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 
 // Project headers
-#include <core/kinematics/MinimizerMapBase.hh>
-#include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/conformation/RotamerSetBase.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 
 // Numeric headers

@@ -20,7 +20,7 @@
 #include <protocols/hbnet/HBNetStapleInterface.fwd.hh>
 
 // BASIC INCLUDES
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // UTILTIY INCLUDES
 #include <utility/vector1.hh>
@@ -29,25 +29,10 @@
 // CORE INCLUDES
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/sequence/Sequence.fwd.hh>
-#include <core/sequence/SequenceProfile.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // PROTOCOLS INCLUDES
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
-#include <protocols/match/BumpGrid.hh>
-#include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
-#include <protocols/match/upstream/ScaffoldBuildPoint.hh>
-#include <protocols/match/upstream/UpstreamBuilder.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
 namespace hbnet {

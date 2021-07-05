@@ -26,10 +26,9 @@
 
 // C++ Headers
 
-#include <utility/vector1.hh>
 #include <map>
 #include <iosfwd>
-
+#include <string>
 
 namespace core {
 namespace io {

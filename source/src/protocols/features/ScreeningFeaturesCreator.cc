@@ -15,10 +15,7 @@
 #include <protocols/features/ScreeningFeaturesCreator.hh>
 
 // Package Headers
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/ScreeningFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

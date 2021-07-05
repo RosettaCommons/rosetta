@@ -26,10 +26,8 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 
 // utility headers
-#include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
-#include <iosfwd>
 
 #include <utility/vector1.hh>
 

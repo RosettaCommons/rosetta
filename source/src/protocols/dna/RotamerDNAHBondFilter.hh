@@ -18,7 +18,6 @@
 #include <protocols/dna/RotamerDNAHBondFilter.fwd.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -28,7 +27,6 @@
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

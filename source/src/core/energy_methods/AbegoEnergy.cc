@@ -20,20 +20,16 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/AA.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <basic/options/option.hh>
 #include <core/scoring/P_AA_ABEGO3.hh>
 
 // Utility headers
-#include <numeric/conversions.hh>
 
 // option key includes
 
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 

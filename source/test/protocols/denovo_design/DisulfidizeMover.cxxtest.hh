@@ -40,6 +40,8 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 // C++ headers
 
 static basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover.cxxtest" );

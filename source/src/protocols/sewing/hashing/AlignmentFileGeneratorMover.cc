@@ -15,8 +15,6 @@
 
 #include <protocols/sewing/hashing/AlignmentFileGeneratorMover.hh>
 #include <protocols/sewing/hashing/AlignmentFileGeneratorMoverCreator.hh>
-#include <protocols/sewing/hashing/AlignmentGenerator.hh>
-#include <protocols/sewing/hashing/Hasher.hh>
 #include <protocols/sewing/hashing/EdgeMapGenerator.hh>
 #include <protocols/sewing/hashing/BasisMapGenerator.hh>
 #include <protocols/sewing/hashing/LigandBindingResPlacer.hh>
@@ -32,7 +30,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/BondedResidueSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/PDBInfo.hh>
@@ -45,13 +42,9 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/AtomID.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/util.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 
 static basic::Tracer TR( "protocols.sewing.AlignmentFileGeneratorMover" );

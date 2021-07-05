@@ -19,12 +19,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
-#include <numeric/model_quality/rms.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzTransform.hh>
 
 class UltraLightResidueTests : public CxxTest::TestSuite {
 public:

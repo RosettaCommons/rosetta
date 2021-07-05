@@ -25,16 +25,12 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/NamedAtomID.fwd.hh>
 //#include <core/chemical/AA.hh>
-#include <protocols/noesy_assign/CrossPeak.hh>
-#include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 
 // Utility headers
 //#include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 //#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 
@@ -42,10 +38,7 @@
 //#include <cstdlib>
 // #include <string>
 // #include <list>
-#include <map>
-#include <bitset>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

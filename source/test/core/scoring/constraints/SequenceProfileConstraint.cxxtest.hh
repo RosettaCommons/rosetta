@@ -14,14 +14,14 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
+#include <core/scoring/constraints/SequenceProfileConstraint.hh> // DO NOT AUTO-REMOVE
+
 // basic headers
-#include <basic/Tracer.hh>
 
 // Test util headers
 #include <test/core/init_util.hh>
 
 // unit headers
-#include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
 #ifdef SERIALIZATION
 #include <core/id/AtomID.hh>

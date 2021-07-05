@@ -18,7 +18,6 @@
 
 #include <basic/Tracer.hh>
 #include <fstream>
-#include <iosfwd>
 
 namespace basic {
 

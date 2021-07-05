@@ -13,14 +13,12 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/variant_util.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -32,7 +30,6 @@
 
 #include <utility/vector1.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 
 
 // C++ headers
@@ -44,7 +41,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 
 #include <utility/excn/Exceptions.hh>

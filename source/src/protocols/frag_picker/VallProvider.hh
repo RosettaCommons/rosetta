@@ -22,11 +22,13 @@
 #include <protocols/frag_picker/VallProvider.fwd.hh>
 
 // package headers
-#include <protocols/frag_picker/VallChunk.hh>
+#include <protocols/frag_picker/VallChunk.fwd.hh>
 
 // mini headers
-#include <core/sequence/SequenceProfile.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

@@ -17,16 +17,15 @@
 #include <protocols/frag_picker/quota/ABEGO_SS_Map.fwd.hh>
 
 // package headers
-#include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 // utility headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
 #include <string>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 //Auto Headers
 namespace protocols {

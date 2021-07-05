@@ -23,7 +23,6 @@
 #include <core/id/DOF_ID.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 

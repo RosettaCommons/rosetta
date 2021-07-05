@@ -15,12 +15,9 @@
 
 #include <protocols/splice/RBOutMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <algorithm>
 #include <core/kinematics/Jump.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // C++ Headers
 namespace protocols {

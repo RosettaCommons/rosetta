@@ -19,17 +19,13 @@
 // Unit headers
 #include <core/scoring/nmr/NMRTensor.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Package headers
 
 // Project headers
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -37,6 +33,8 @@
 // C++ headers
 #include <string>
 #include <iosfwd>
+
+#include <numeric/xyzVector.hh> // MANUAL IWYU
 
 namespace core {
 namespace scoring {

@@ -16,11 +16,9 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <basic/basic.hh>
 
-#include <core/chemical/ResidueType.hh>
 
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/base_geometry.hh>

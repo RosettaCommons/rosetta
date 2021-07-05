@@ -25,7 +25,6 @@
 
 // Package headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.fwd.hh>
 #include <numeric/internal/ColPointers.hh>
 #include <numeric/internal/ColsPointer.hh>
 #include <numeric/internal/ColVectors.hh>

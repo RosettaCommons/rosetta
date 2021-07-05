@@ -19,13 +19,11 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <protocols/jd2/util.hh>
 
 // Utility headers
 #include <utility/io/ozstream.hh>
-#include <utility/io/ocstream.hh>
 
 // C++ headers
 #include <string>

@@ -14,6 +14,8 @@
 #ifndef INCLUDED_protocols_constraint_generator_ConstraintGeneratorFactory_HH
 #define INCLUDED_protocols_constraint_generator_ConstraintGeneratorFactory_HH
 
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.fwd.hh>
+
 // Unit headers
 #include <utility/SingletonBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

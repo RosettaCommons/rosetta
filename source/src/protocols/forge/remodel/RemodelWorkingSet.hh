@@ -17,14 +17,14 @@
 
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <utility/vector1.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/forge/build/BuildManager.hh>
-#include <protocols/forge/remodel/RemodelData.hh>
+#include <protocols/forge/remodel/RemodelData.fwd.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 namespace protocols {

@@ -29,23 +29,15 @@
 #include <core/import_pose/import_pose.hh>
 
 // basic headers
-#include <basic/options/option.hh>
 #include <basic/options/util.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKey.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/options/keys/StringOptionKey.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/file/file_sys_util.hh>
 
 // C++ headers
-#include <sstream>
 
 using namespace utility::tag;
 using namespace protocols::jd3;

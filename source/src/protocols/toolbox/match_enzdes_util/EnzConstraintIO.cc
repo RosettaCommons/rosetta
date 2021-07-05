@@ -23,16 +23,14 @@
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh> //reading remarks
 #include <core/pose/PDBPoseMap.hh> //for PDB-info-to-resid functionality
 #include <core/scoring/constraints/ConstraintSet.hh>
 
-#include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
+#include <core/scoring/ScoreFunction.fwd.hh> //scoring ambiguous constraints
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/Constraints.hh>
 
 #include <basic/options/option.hh> //options
 
@@ -40,15 +38,12 @@
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 
 // C++ headers
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <sstream>
 
 // Basic Headers
 #include <basic/Tracer.hh>

@@ -27,7 +27,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <numeric/xyzTransform.hh>
 
 #include <utility/vector1.hh>

@@ -18,8 +18,7 @@
 #include <core/types.hh>
 
 #include <sstream>
-
-#include <utility/options/BooleanVectorOption.hh>
+#include <cmath>
 
 
 namespace protocols {

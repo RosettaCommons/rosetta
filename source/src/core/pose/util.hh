@@ -17,12 +17,9 @@
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/MiniPose.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/rings/AxEqDesignation.hh>
@@ -34,21 +31,16 @@
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/io/StructFileRep.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/RT.fwd.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
 #include <numeric/xyzVector.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // C/C++ headers
 #include <map>
 #include <tuple>
-#include <set>
 
 
 namespace core {

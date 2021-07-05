@@ -30,7 +30,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <core/chemical/AtomType.hh>
 
 #include <basic/Tracer.hh>
 

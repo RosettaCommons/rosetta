@@ -22,7 +22,6 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

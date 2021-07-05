@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <core/chemical/AtomProperties.fwd.hh>
-#include <core/chemical/AtomPropertiesManager.fwd.hh>
 #include <core/chemical/AtomProperty.hh>
 
 // Utility headers

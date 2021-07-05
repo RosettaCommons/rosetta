@@ -28,7 +28,6 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>

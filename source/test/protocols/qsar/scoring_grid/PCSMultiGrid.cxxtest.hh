@@ -19,7 +19,7 @@
 // Unit headers
 #include <protocols/qsar/scoring_grid/PCSMultiGrid.hh>
 #include <protocols/qsar/scoring_grid/PCSSingleGrid.hh>
-#include <protocols/qsar/qsarMap.hh>
+#include <protocols/qsar/qsarMap.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -30,7 +30,6 @@
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -39,8 +38,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
-#include <cmath>
 
 static basic::Tracer TR("protocols.qsar.scoring_grid.PCSMultiGrid.cxxtest");
 

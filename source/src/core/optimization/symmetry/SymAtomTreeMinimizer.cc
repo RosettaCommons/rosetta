@@ -25,7 +25,6 @@
 #include <core/optimization/symmetry/SymAtomTreeMultifunc.hh>
 #include <core/optimization/symmetry/SymMinimizerMap.hh>
 
-#include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 
 // Project headers
 #include <core/id/DOF_ID.hh>
@@ -44,7 +43,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <utility/vector1.hh>
 
 using namespace ObjexxFCL::format;
 

@@ -19,13 +19,9 @@
 
 #include <basic/TracerImpl.hh>
 #include <ObjexxFCL/string.functions.hh>  // for lowercased
-#include <algorithm>                      // for find
 #include <cassert>                        // for assert
 #include <cstddef>                        // for size_t
-#include <iosfwd>                         // for string, ostream
 #include <iostream>                       // for cout, cerr
-#include <ostream>                        // for operator<<, basic_ostream
-#include <platform/types.hh>              // for Size
 #include <string>                         // for allocator, operator==, basi...
 #include <utility>
 #include <utility/CSI_Sequence.hh>        // for CSI_Sequence, CSI_Black
@@ -37,7 +33,6 @@
 #include <vector>                         // for vector, vector<>::iterator
 
 #ifndef WIN32
-#include <unistd.h>
 #else
 #include <io.h>
 #endif

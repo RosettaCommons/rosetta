@@ -16,13 +16,13 @@
 #define INCLUDED_core_pack_pack_missing_sidechains_hh
 
 // Project headers
-#include <core/types.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
-#include <utility/vector1.hh>
-
+#ifdef MULTI_THREADED
+#include <core/types.hh>
+#endif
 
 namespace core {
 namespace pack {

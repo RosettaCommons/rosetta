@@ -24,7 +24,6 @@
 // Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 class LigandDockBenchmark : public PerformanceBenchmark
 {

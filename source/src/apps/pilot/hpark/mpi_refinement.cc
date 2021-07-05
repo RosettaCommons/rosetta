@@ -10,14 +10,11 @@
 /// @file
 /// @brief
 
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <protocols/wum/WorkUnitList.hh>
 #include <protocols/wum/WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
 #include <protocols/relax/WorkUnit_BatchRelax.hh>
-#include <protocols/mpi_refinement/MPI_Refinement.hh>
 #include <protocols/mpi_refinement/MPI_Refine_Master.hh>
 #include <protocols/mpi_refinement/MPI_Refine_Emperor.hh>
 #include <protocols/mpi_refinement/WorkUnit_Aggressive.hh>
@@ -27,16 +24,13 @@
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <cstdio>
 
 #include <devel/init.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/excn/Exceptions.hh>
 

@@ -18,22 +18,11 @@
 #include <protocols/hybridization/InsertChunkMover.hh>
 #include <protocols/hybridization/ChunkTrialMover.fwd.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/util/kinematics_util.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
 
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
 
 #include <set>
 

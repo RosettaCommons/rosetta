@@ -14,36 +14,24 @@
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/excn/Exceptions.hh>
+
+
+
+#include <iostream>
+
+#ifdef USE_TENSORFLOW
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
-
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/pointer/memory.hh>
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/jobdist/Jobs.hh>
-
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/AndResidueSelector.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
-#include <core/select/residue_selector/InterGroupInterfaceByVectorSelector.hh>
-#include <core/select/residue_selector/LayerSelector.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
-
-#include <core/import_pose/import_pose.hh>
-#include <core/simple_metrics/metrics/SequenceSimilarityMetric.hh>
-
-#include <iostream>
-#include <memory>
-#include <string>
-
 #include <basic/tensorflow_manager/RosettaTensorflowManager.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.tmpl.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.tmpl.hh>
 #include <basic/citation_manager/CitationManager.hh>
+#endif
 
 
 static basic::Tracer TR( "apps.pilot.jackmaguire.tensorflow_manager_multi_input_test" );
@@ -65,7 +53,7 @@ void test(
 	double const expected,
 	double const observed
 ){
-  bool const pass( abs( observed - expected ) < 0.01 );
+  bool const pass( std::abs( observed - expected ) < 0.01 );
   TR << std::setprecision(5);
   TR << "Output from model: " << observed << "\tExpected: " << expected << "\t" << (pass ? "PASSED" : "FAILED") << std::endl;
 	runtime_assert( pass );
@@ -337,14 +325,14 @@ int main( int argc, char* argv[] ) {
 
 
     core::Real const control = run_with_no_manager( "in1", "in2", "dense3/Sigmoid" );
-    if( abs( EXPECTED_SCORE - control ) > 0.01 ){
+    if( std::abs( EXPECTED_SCORE - control ) > 0.01 ){
       utility_exit_with_message( "Error with the test! Getting the wrong answer even without the manager!" );
     } else {
       TR << "Control is a success!" << std::endl;
     }
 
     core::Real const manager_score = run_with_manager( "in1", "in2", "dense3/Sigmoid" );
-    if( abs( EXPECTED_SCORE - manager_score ) > 0.01 ){
+    if( std::abs( EXPECTED_SCORE - manager_score ) > 0.01 ){
       utility_exit_with_message( "Error! Manager returned " + std::to_string( manager_score ) + " instead of " + std::to_string( EXPECTED_SCORE ) );
     } else {
       TR << "Manager is a success!" << std::endl;

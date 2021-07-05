@@ -18,7 +18,6 @@
 // Project headers
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 #include <protocols/jd2/PDBJobOutputter.hh>
 #include <protocols/moves/Mover.hh>
@@ -26,10 +25,7 @@
 // Package headers
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 
 // Numberic headers
 

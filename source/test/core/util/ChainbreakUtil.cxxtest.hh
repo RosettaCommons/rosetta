@@ -18,7 +18,7 @@
 #include <numeric/xyzVector.hh>
 
 // Project Headers
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>

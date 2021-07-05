@@ -21,35 +21,20 @@
 #include <core/pack/guidance_scoreterms/voids_penalty_energy/VoidsPenaltyVoxelGrid.hh>
 
 // Package headers
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <utility/numbers.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/aa_composition_energy/SequenceConstraint.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Options system
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
 // File I/O
-#include <basic/database/open.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
 
 // Other Headers
 #include <basic/Tracer.hh>

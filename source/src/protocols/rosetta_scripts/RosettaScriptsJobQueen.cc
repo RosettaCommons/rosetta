@@ -16,22 +16,17 @@
 #include <protocols/rosetta_scripts/RosettaScriptsJobQueen.hh>
 
 // protocol headers
-#include <protocols/jd3/Job.hh>
 //#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
-#include <protocols/jd3/JobDistributor.hh>
 //#include <protocols/jd3/JobDistributorFactory.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/deallocation/ResourceDeallocationMessage.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/jobs/MoverJob.hh>
-#include <protocols/jd3/standard/StandardJobQueen.hh>
+#include <protocols/jd3/standard/StandardJobQueen.fwd.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -42,14 +37,10 @@
 
 // Basic headers
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/ConstDataMap.hh>
 #include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/DataMap.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jd3.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 
@@ -59,7 +50,6 @@
 // Utility headers
 #include <utility/options/OptionCollection.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
 
 
 

@@ -20,11 +20,8 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/thread/threadsafe_creation.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 // Boost headers
 

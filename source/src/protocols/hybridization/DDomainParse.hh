@@ -14,14 +14,13 @@
 #ifndef INCLUDED_protocols_hybridization_DDomainParse_hh
 #define INCLUDED_protocols_hybridization_DDomainParse_hh
 
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <numeric/xyzVector.fwd.hh>
 
-#include <list>
 
 namespace protocols {
 //namespace comparative_modeling {

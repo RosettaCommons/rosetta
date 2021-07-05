@@ -18,32 +18,17 @@
 //Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/TorsionID.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 
 //Protocol Headers
-#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/util.hh>
 
 
 //Basic Headers
 #include <basic/Tracer.hh>
 
 //Utility Headers
-#include <utility/py/PyAssert.hh>
 #include <protocols/grafting/util.hh>
 
 

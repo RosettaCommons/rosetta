@@ -34,31 +34,22 @@
 
 // Package Headers
 #include <core/scoring/etable/EtableOptions.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreType.hh>
 
-#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
-#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
-#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
-#include <core/scoring/etable/etrie/EtableAtom.hh>
 
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/conformation/Atom.hh>
-#include <utility/pointer/access_ptr.hh>
 
 #include <numeric/cubic_polynomial.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1A.hh>
+#include <ObjexxFCL/FArray1A.fwd.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/assert.hh>
 #include <utility/VirtualBase.hh>
 
-#include <ObjexxFCL/FArray1.fwd.hh>
-#include <ObjexxFCL/FArray2.fwd.hh>
 
 
 // C++ Headers

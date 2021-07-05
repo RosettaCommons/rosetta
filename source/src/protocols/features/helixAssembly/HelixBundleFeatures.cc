@@ -15,30 +15,22 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
-#include <core/scoring/sasa.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 //Devel
 #include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
 
 //Utility
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/LexicographicalIterator.hh>
 
 //Core
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreType.hh>
-#include <utility/graph/Graph.hh>
 
 //C++
 #include <string>
-#include <cmath>
 
 //External Headers
 #include <cppdb/frontend.h>
@@ -46,18 +38,13 @@
 //Basic
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/util.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
 //Numeric
-#include <numeric/PCA.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

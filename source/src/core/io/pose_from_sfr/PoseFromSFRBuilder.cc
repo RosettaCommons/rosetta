@@ -26,7 +26,6 @@
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/StructFileRep.hh>
 #include <core/io/HeaderInformation.hh>
-#include <core/io/StructFileRepOptions.hh>
 #include <core/io/NomenclatureManager.hh>
 #include <core/io/ResidueInformation.hh>
 
@@ -35,42 +34,27 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedAtomID_Map.hh>
-#include <core/io/raw_data/DisulfideFile.hh>
 #include <core/io/util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
-#include <core/chemical/types.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/parametric/Parameters.hh>
-#include <core/conformation/parametric/ParametersSet.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/ObserverCache.hh>
-#include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/ncbb/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/carbohydrates/util.hh>
-#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/cryst/util.hh>
 #include <core/simple_metrics/util.hh>
 #include <core/simple_metrics/SimpleMetricData.hh>
@@ -82,7 +66,6 @@
 
 // Numeric headers
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility>
@@ -90,22 +73,18 @@
 #include <utility/vector1.functions.hh> // for nmers_of
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
 // External headers
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <fstream>
 #include <sstream>
-#include <cstdlib>
-#include <cstdio>
 #include <utility>
 #include <algorithm>    // std::sort std::find
 #include <vector>
-#include <boost/tokenizer.hpp>
+
+#include <core/chemical/MergeBehaviorManager.hh> // AUTO IWYU For MergeBehaviorManager::AtomRenamingMap, Mer...
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace core {
 namespace io {

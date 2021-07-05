@@ -14,15 +14,11 @@
 //#include <protocols/match/LoopGrid.hh>
 #include <devel/loop_grids/LoopGrid.hh>
 
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
 
-#include <iostream>
 #include <fstream>
-#include <sstream>
 
 #include <protocols/match/BumpGrid.hh>
 #include <utility/vector1.hh>

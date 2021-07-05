@@ -22,7 +22,7 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
 
 #include <core/conformation/Conformation.hh>
@@ -34,7 +34,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
@@ -44,7 +44,6 @@
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/id/TorsionID.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -55,12 +54,13 @@
 
 // numeric
 #include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
 
 // c++ headers
 #include <string>
 #include <algorithm>
 #include <utility>
+
+#include <core/scoring/mm/MMTorsionLibrary.hh> // AUTO IWYU For mm_torsion_library_citer_pair, MMTorsionLibrary
 
 namespace protocols {
 namespace simple_moves {

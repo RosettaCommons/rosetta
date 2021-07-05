@@ -20,11 +20,11 @@
 #include <core/types.hh>
 
 // STL Headers
-#include <iostream>
 
 // Numceric Headers
-#include <numeric/xyzVector.hh>
 #include <utility>
+
+#include <core/scoring/lkball/lkbtrie/LKBAtom.hh> // AUTO IWYU For LKBAtom
 
 namespace core {
 namespace scoring {

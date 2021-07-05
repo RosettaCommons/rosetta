@@ -15,11 +15,7 @@
 #include <protocols/simple_filters/LongestContinuousApolarSegmentFilterCreator.hh>
 
 //Core includes
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AA.hh>
 
 //Protocols includes
 #include <protocols/rosetta_scripts/util.hh>
@@ -29,7 +25,6 @@
 #include <protocols/filters/filter_schemas.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "protocols.simple_filters.LongestContinuousApolarSegmentFilter" );
 

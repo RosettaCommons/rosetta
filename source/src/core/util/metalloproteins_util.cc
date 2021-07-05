@@ -17,21 +17,14 @@
 #include <core/util/metalloproteins_util.hh>
 
 // Package headers
-#include <core/pose/copydofs/CopyDofs.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 // AMW XRW TODO remove dependence on cache
-#include <core/chemical/ResidueTypeSetCache.hh>
 #include <core/chemical/Patch.hh>
-#include <core/chemical/PatchOperation.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/id/AtomID.hh>
 
@@ -54,12 +47,10 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers
 #include <cmath>
-#include <iostream>
 
 // External headers
 #include <ObjexxFCL/string.functions.hh>

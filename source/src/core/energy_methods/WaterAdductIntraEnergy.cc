@@ -16,14 +16,12 @@
 #include <core/energy_methods/WaterAdductIntraEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
 

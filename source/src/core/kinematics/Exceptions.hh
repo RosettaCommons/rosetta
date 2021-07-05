@@ -27,8 +27,6 @@
 // ObjexxFCL Headers
 
 // // C++ Headers
-#include <utility/assert.hh>
-#include <vector>
 
 
 namespace core {

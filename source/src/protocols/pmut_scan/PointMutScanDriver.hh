@@ -23,7 +23,7 @@
 #include <protocols/pmut_scan/Mutant.fwd.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers

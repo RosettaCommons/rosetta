@@ -25,11 +25,12 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
 
 namespace protocols {
 namespace simple_moves {

@@ -32,7 +32,6 @@
 // Utility and Numeric Headers
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/Interpolator.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
 
 // C++ Headers
 #include <iosfwd>

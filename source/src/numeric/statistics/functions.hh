@@ -17,12 +17,12 @@
 
 
 #include <numeric/types.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/sort.functions.hh>
 
 // C++ headers
 //#include <cmath>
 #include <complex>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace numeric {

@@ -39,8 +39,6 @@
 
 // Utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
-#include <numeric/xyzVector.hh>
 
 // C++ headers
 #include <list>

@@ -19,7 +19,7 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/pack/scmin/AtomTreeCollection.fwd.hh>
+#include <core/pack/scmin/AtomTreeCollection.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

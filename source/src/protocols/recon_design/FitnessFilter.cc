@@ -17,11 +17,8 @@
 #include <protocols/filters/VectorPoseFilter.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/scoring/Energies.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/mpi_util.hh>
 #include <basic/datacache/DataMap.hh>
@@ -30,7 +27,6 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/filter_schemas.hh>
 
 namespace protocols {

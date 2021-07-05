@@ -15,10 +15,10 @@
 #ifndef INCLUDED_protocols_nmr_nmrspinlabel_util_HH
 #define INCLUDED_protocols_nmr_nmrspinlabel_util_HH
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.fwd.hh>

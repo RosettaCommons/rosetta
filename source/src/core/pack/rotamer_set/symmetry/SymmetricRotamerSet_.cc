@@ -17,15 +17,12 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
-#include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
 
 
 // Project Headers
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
@@ -38,14 +35,11 @@
 #include <core/scoring/EnergyMap.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/Methods.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2.hh>
 
 // C++ headers
-#include <string>
-#include <iostream>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <utility/vector1.hh>

@@ -16,9 +16,7 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
 // Package headers
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

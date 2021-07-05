@@ -41,35 +41,28 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/GlobalResidueTypeSet.hh>
-#include <core/chemical/sdf/MolFileIOReader.hh>
-#include <core/chemical/mmCIF/mmCIFParser.hh>
 //#include <core/chemical/sdf/MolFileIOData.hh>
 #include <core/chemical/util.hh>
 
-#include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 // Project headers
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
-#include <utility/file/file_sys_util.hh>
 
 // option key includes
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
-
-#include <core/chemical/ResidueType.hh>
-
-#include <utility/thread/threadsafe_creation.hh>
 
 // STL headers
 #include <functional>
+
+#ifdef MULTI_THREADED
+#include <utility/thread/threadsafe_creation.hh>
+#endif
 
 namespace core {
 namespace chemical {

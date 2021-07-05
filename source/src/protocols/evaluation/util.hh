@@ -31,10 +31,7 @@
 
 // ObjexxFCL Headers
 //// C++ headers
-#include <list>
 
-#include <core/fragment/SecondaryStructure.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

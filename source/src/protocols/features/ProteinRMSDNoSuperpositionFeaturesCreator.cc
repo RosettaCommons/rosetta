@@ -17,10 +17,7 @@
 
 // Package Headers
 
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/ProteinRMSDNoSuperpositionFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

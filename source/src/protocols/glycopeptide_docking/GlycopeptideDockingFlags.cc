@@ -27,16 +27,15 @@
 // Basic/Utility headers
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/rings.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 
 #include <string>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.glycopeptide_docking.GlycopeptideDockingFlags" );
 

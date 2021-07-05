@@ -15,13 +15,12 @@
 
 #include <protocols/multistage_rosetta_scripts/MRSJob.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJobSummary.hh>
-#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
@@ -33,6 +32,8 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
+
+#include <boost/container/flat_map.hpp> // AUTO IWYU For flat_map, flat_map<>::mapped...
 
 static basic::Tracer TR( "protocols.multistage_rosetta_scripts.MRSJob" );
 

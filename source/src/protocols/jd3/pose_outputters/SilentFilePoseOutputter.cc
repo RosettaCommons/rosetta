@@ -19,17 +19,14 @@
 #include <protocols/jd3/pose_outputters/SilentFilePoseOutputSpecification.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputSource.hh>
-#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/job_results/PoseJobResult.hh>
 
 //project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <core/io/StructFileRepOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
@@ -44,11 +41,8 @@
 //#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

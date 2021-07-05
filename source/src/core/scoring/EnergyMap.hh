@@ -24,7 +24,6 @@
 #include <iosfwd>
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
 #include <utility/numbers.hh>
 
 namespace core {

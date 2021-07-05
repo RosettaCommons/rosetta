@@ -20,25 +20,20 @@
 #include <devel/znhash/ZnHash.hh>
 
 // Protocols headers
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 // Core headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
-#include <numeric/polynomial.hh>
-#include <core/scoring/hbonds/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/func/XYZ_Func.hh>
 
 // Protocols headers
 #include <protocols/enzdes/AddorRemoveCsts.hh>
@@ -46,24 +41,19 @@
 
 // Utility headers
 #include <utility>
-#include <utility/FixedSizeLexicographicalIterator.hh>
-#include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
 
 // DUMP INCLUDES and clean up later
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/graph/Graph.hh>
 
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/io/Remarks.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
@@ -79,26 +69,17 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 
-#include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/symmetric_docking/SymDockingHiRes.hh>
 
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/RampingMover.hh>
 
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 
-#include <protocols/enzdes/AddorRemoveCsts.hh>
-#include <protocols/enzdes/EnzdesMovers.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/util.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
 
@@ -107,17 +88,17 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // option keys
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // C++ headers
 #include <fstream>
-#include <sstream>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <sstream> // MANUAL IWYU
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 
 #ifdef    SERIALIZATION

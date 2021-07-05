@@ -30,7 +30,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 
@@ -51,12 +50,9 @@
 #include <basic/Tracer.hh>
 
 //Utility Headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>

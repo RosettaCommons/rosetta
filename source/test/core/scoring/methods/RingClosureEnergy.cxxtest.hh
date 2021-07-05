@@ -16,13 +16,11 @@
 
 // Unit headers
 #include <core/energy_methods/RingClosureEnergy.hh>
-#include <platform/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
@@ -32,7 +30,6 @@
 #include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/kinematics/DomainMap.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

@@ -22,7 +22,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>

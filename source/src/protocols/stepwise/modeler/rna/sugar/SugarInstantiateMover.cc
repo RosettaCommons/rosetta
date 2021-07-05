@@ -14,12 +14,12 @@
 
 
 #include <protocols/stepwise/modeler/rna/sugar/SugarInstantiateMover.hh>
-#include <core/chemical/types.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.SugarInstantiateMover" );
 

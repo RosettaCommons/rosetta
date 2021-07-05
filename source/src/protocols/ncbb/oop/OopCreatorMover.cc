@@ -9,29 +9,23 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/ncbb/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/ScoringManager.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/util.hh>
 
 #include <core/chemical/VariantType.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <utility>
@@ -42,21 +36,15 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/ncbb/oop/OopRandomPuckMover.hh>
 #include <protocols/ncbb/oop/OopPuckMover.hh>
-#include <protocols/ncbb/oop/OopMover.hh>
 #include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 #include <protocols/ncbb/oop/OopPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ncbb/oop/OopCreatorMover.hh>
 #include <protocols/ncbb/oop/OopCreatorMoverCreator.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
@@ -65,10 +53,7 @@
 
 
 // Filter headers
-#include <basic/MetricValue.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
 //#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 //#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -77,13 +62,9 @@
 // Utility Headers
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh>
 
 // C++ headers
@@ -92,6 +73,10 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/conformation/ResidueFactory.hh> // AUTO IWYU For ResidueFactory
+#include <core/scoring/constraints/DihedralConstraint.hh> // AUTO IWYU For DihedralConstraint
+#include <core/scoring/func/CircularHarmonicFunc.hh> // AUTO IWYU For CircularHarmonicFunc
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces

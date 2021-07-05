@@ -17,31 +17,12 @@
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/MiniPose.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/rings/AxEqDesignation.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/AtomID_Map.fwd.hh>
-#include <core/id/DOF_ID_Mask.fwd.hh>
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedStubID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh>
-#include <core/io/StructFileRep.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/RT.fwd.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers

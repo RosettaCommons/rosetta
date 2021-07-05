@@ -20,16 +20,12 @@
 
 // Core headers
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/xml_util.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/xml_util.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Protocol headers
 #include <protocols/filters/Filter.fwd.hh>
@@ -42,11 +38,10 @@
 #include <utility/vector1.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // C++ headers
 #include <string>
-#include <set>
 
 namespace protocols {
 namespace rosetta_scripts {

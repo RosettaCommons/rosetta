@@ -14,21 +14,19 @@
 #include <protocols/rotamer_recovery/RRProtocolMinPack.hh>
 
 // Project Headers
-#include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/rotamer_recovery/RRReporter.hh>
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/min_pack.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ Headers
 #include <string>
 
 //Auto Headers
-#include <utility/vector1.hh>
 using std::string;
 using core::Size;
 using core::pack::min_pack;

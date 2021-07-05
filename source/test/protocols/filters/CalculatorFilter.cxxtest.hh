@@ -18,10 +18,8 @@
 #include <test/util/rosettascripts.hh>
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <protocols/filters/Filter.hh>
 #include <protocols/filters/CalculatorFilter.hh>
 
 // Utility Headers

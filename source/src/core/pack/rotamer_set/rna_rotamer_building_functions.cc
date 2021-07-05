@@ -12,12 +12,8 @@
 /// @author Rhiju Das (rhiju@stanford.edu), Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 // Unit Headers
-#include <core/pack/rotamer_set/rotamer_building_functions.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
@@ -28,27 +24,15 @@
 #include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
 // Project Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
 
-#include <core/kinematics/Stub.hh>
-#include <core/kinematics/MoveMap.hh>
 
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
 #include <core/pose/Pose.hh>
@@ -56,26 +40,19 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/database/open.hh>
 
 // Numeric headers
-#include <numeric/xyz.functions.hh>
 #include <numeric/angle.functions.hh>
-#include <numeric/constants.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
 // External headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray3D.hh>
 
 // C++ headers
-#include <string>
 #include <iostream>
-#include <fstream>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace core {

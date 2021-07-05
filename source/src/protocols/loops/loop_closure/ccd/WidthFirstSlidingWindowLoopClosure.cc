@@ -27,7 +27,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -35,7 +35,7 @@
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 
 #include <basic/options/option.hh> // for quick-test from run:dry_run
@@ -49,7 +49,9 @@
 #include <basic/Tracer.hh>
 
 #include <core/fragment/FragData.hh>
-#include <utility/vector1.hh>
+
+#include <protocols/evaluation/PoseEvaluator.hh> // AUTO IWYU For MetaPoseEvaluator
+
 
 //Auto Headers
 

@@ -119,12 +119,9 @@
 #include <functional>
 
 // LibXML includes
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 
 // C++ headers
 #include <list>
-#include <vector>
 #include <map>
 #include <iosfwd>
 

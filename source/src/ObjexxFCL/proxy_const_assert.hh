@@ -16,7 +16,6 @@
 
 
 // C++ Headers
-#include <cassert>
 #if !defined (NDEBUG) && defined (__linux__) && defined (__GNUC__) && OBJEXXFCL_PROXY_CONST_CHECKS == 2
 #include <cstddef>
 #include <cstdio>

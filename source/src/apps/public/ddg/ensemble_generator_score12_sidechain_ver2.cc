@@ -15,16 +15,11 @@
 
 #include <core/types.hh>
 
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -35,95 +30,47 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <core/pack/task/ResfileReader.hh>
 
-#include <fstream>
 #include <iostream>
-#include <sstream>
-#include <ios>
 #include <utility/io/izstream.hh>
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
 #include <string>
-#include <sstream>
 
-#include <basic/Tracer.hh>
 
 //numeric::random::RandomGenerator RG(154313929); // <- Magic number, do not change it!!!
 
-#include <core/types.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
 
-#include <core/scoring/sasa.hh>
-#include <core/scoring/rms_util.hh>
 //#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 //#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
-#include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <devel/init.hh>
 
-#include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <basic/basic.hh>
-#include <basic/Tracer.hh>
-#include <basic/database/open.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <basic/database/open.hh>
 
 //protocols
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -132,24 +79,18 @@
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 //#include <protocols/simple_filters/RmsdEvaluator.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 //#include <protocols/looprelax/looprelax_main.hh>
 //#include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
 
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/excn/Exceptions.hh>
 //#include "james_util.hh" //for calculation of burial
-#include <basic/Tracer.hh>
 #include <ctime>
 
 // C++ headers
-#include <fstream>
-#include <iostream>
-#include <string>
 
 //C++ filechek
 #include <sys/stat.h>

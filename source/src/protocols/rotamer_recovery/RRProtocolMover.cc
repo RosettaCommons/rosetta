@@ -15,15 +15,13 @@
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
 
 // Project Headers
-#include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/rotamer_recovery/RRReporter.hh>
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/min_pack.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ Headers
 #include <string>
@@ -32,7 +30,6 @@
 #include <protocols/moves/Mover.hh>
 #include <utility>
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
 
 
 using std::string;

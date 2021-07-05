@@ -26,11 +26,8 @@
 
 // Project headers
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/signals/Link.hh>
 
-#include <utility/vector1.hh>
-#include <iosfwd>
 
 
 namespace protocols {

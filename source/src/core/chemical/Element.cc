@@ -18,7 +18,6 @@
 
 #include <core/chemical/gasteiger/util.hh>
 
-#include <utility>
 #include <utility/numbers.hh>
 
 #include <utility/exit.hh>

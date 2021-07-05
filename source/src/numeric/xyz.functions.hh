@@ -32,11 +32,12 @@
 
 // C++ headers
 #include <cmath>
-#include <cstdlib>
-#include <vector>
 
 //ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <numeric/numeric.functions.hh> // MANUAL IWYU
+#include <numeric/constants.hh> // AUTO IWYU For pi_over_180
 
 namespace numeric {
 

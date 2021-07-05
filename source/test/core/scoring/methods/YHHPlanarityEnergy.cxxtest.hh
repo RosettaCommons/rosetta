@@ -15,9 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/energy_methods/YHHPlanarityEnergy.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/pose_funcs.hh>
@@ -25,10 +23,8 @@
 #include <test/core/init_util.hh>
 
 
-#include <numeric/conversions.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

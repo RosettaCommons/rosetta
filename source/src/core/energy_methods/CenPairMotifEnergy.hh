@@ -17,13 +17,11 @@
 
 
 // Package headers
-#include <basic/datacache/CacheableData.hh>
 
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <core/scoring/motif/motif_hash_stuff.hh>
+#include <core/scoring/motif/motif_hash_stuff.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

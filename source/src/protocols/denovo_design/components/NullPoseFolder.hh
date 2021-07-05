@@ -24,7 +24,6 @@
 // Core headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace denovo_design {

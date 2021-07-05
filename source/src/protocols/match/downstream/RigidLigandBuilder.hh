@@ -30,13 +30,11 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #ifdef __clang__
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #endif
 
 // Numeric headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>

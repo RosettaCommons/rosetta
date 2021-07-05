@@ -26,15 +26,12 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

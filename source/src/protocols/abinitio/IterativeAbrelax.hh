@@ -28,8 +28,6 @@
 //#include <protocols/abinitio/IterativeAbrelax.fwd.hh>
 
 // Package Headers
-#include <protocols/jd2/archive/ArchiveBase.hh>
-#include <protocols/jd2/archive/EvaluatedArchive.hh>
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
 #include <protocols/abinitio/IterativeCentroid.hh>
 #include <protocols/abinitio/IterativeFullatom.hh>
@@ -38,21 +36,17 @@
 // Project Headers
 
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 
-#include <protocols/loops/Loops.hh>
 
 // ObjexxFCL Headers
 //#include <ObjexxFCL/FArray1D.hh>
 //#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

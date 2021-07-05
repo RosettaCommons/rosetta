@@ -31,7 +31,6 @@
 #include <protocols/constraints_additional/AmbiguousMultiConstraint.hh>
 
 //utility headers
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>

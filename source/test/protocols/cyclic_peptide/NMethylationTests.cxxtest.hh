@@ -13,24 +13,17 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
 #include <test/protocols/cyclic_peptide/NMethylation_functions.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
-#include <protocols/cyclic_peptide/DeclareBond.hh>
-#include <protocols/cyclic_peptide/PeptideStubMover.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("protocols.cyclic_peptide.NMethylationTests");
 

@@ -18,7 +18,7 @@
 
 // Project headers
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 static basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverOutputterContainer" );

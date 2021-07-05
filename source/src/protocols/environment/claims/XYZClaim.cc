@@ -18,22 +18,17 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 
-#include <core/environment/LocalPosition.hh>
 #include <core/environment/SequenceAnnotation.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
-#include <protocols/environment/claims/TorsionClaim.hh>
-#include <protocols/environment/claims/ClaimStrength.hh>
 #include <protocols/environment/claims/EnvLabelSelector.hh>
 
 #include <protocols/environment/ClientMover.hh>
-#include <protocols/environment/ProtectedConformation.hh>
 
 // Project Headers
-#include <core/id/TorsionID.hh>
 
 // ObjexxFCL Headers
 
@@ -41,6 +36,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 // C++ headers
 

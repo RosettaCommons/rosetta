@@ -28,16 +28,16 @@
 #include <utility/SingletonBase.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // c++ headers
 #include <string>
 #include <map>
 
-#include <utility/vector0.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #ifdef MULTI_THREADED
+#include <utility/thread/threadsafe_creation.hh> // for OLDER_GXX_STDLIB logic
 // C++11 Headers
 #ifdef OLDER_GXX_STDLIB
 #include <atomic>

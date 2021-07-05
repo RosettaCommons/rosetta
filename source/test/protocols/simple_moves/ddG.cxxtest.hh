@@ -24,15 +24,10 @@
 #include <protocols/simple_ddg/ddG.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 
-#include <core/conformation/Residue.hh>
 
 // Utility Headers
-#include <utility/file/FileName.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("protocols.simple_moves.ddG.cxxtest.hh");

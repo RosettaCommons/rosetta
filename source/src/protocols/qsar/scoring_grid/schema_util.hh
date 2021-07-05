@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_qsar_scoring_grid_schema_util_HH
 
 // Core headers
-#include <core/types.hh>
 
 // Utility headers
 #include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
@@ -25,7 +24,6 @@
 
 // C++ headers
 #include <string>
-#include <list>
 
 namespace protocols {
 namespace qsar {

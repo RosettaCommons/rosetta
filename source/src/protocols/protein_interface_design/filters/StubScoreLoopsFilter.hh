@@ -16,19 +16,16 @@
 
 
 // Project Headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <protocols/protein_interface_design/filters/StubScoreLoopsFilter.fwd.hh>
 
 #include <protocols/constraint_filters/ConstraintScoreCutoffFilter.hh>
 
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
-#include <utility/vector1.hh>
 
 
 // Unit headers

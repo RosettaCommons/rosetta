@@ -17,8 +17,6 @@
 
 // Unit headers
 #include <protocols/md/MDBase.fwd.hh>
-#include <protocols/md/MDConstants.hh>
-#include <protocols/md/thermostat.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -31,7 +29,7 @@
 //// C++ headers
 #include <string>
 
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {

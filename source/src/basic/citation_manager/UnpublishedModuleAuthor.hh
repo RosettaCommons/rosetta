@@ -18,7 +18,6 @@
 #include <basic/citation_manager/UnpublishedModuleAuthor.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers

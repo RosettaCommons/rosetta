@@ -27,7 +27,8 @@
 // Boost Headers
 #include <utility/graph/unordered_object_pool.hpp>
 
-#include <boost/pool/pool.hpp>
+
+#include <boost/pool/object_pool.hpp> // AUTO IWYU For unordered_object_pool::construct
 
 
 #ifdef    SERIALIZATION

@@ -16,7 +16,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh> //Pretty output.
 
 // Utility Headers
 #include <basic/Tracer.hh>

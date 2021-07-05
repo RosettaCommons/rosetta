@@ -23,10 +23,7 @@
 using namespace ObjexxFCL;
 
 #include <iostream>
-#include <sstream>
 
-#include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

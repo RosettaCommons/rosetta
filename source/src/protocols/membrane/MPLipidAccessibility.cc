@@ -24,10 +24,8 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -39,7 +37,6 @@
 #include <core/membrane/hull.hh>
 
 // Basic/Utility headers
-#include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>

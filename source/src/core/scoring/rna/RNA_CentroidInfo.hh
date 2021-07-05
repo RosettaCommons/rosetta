@@ -25,7 +25,6 @@
 // Utility headers
 
 // Numceric Headers
-#include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
 

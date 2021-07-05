@@ -19,34 +19,28 @@
 #include <core/types.hh>
 #include <core/io/carbohydrates/pose_io.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 //#include <core/pose/annotated_sequence.hh>
 //#include <core/pose/PDBInfo.hh>
 //#include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 //#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
 //#include <core/id/TorsionID.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/pack/task/PackerTask.hh>
 //#include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
 //#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/docking/util.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
 
 // C++ headers
 #include <iostream>
+
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
+
 //#include <algorithm>
 
 

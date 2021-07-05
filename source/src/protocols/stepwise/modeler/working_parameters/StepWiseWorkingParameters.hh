@@ -19,7 +19,6 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseBasicWorkingParameters.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.fwd.hh>
 
 #define  BRIDGE_RES 123
 #define  MOVING_RES 999

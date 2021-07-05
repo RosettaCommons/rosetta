@@ -17,10 +17,6 @@
 #define INCLUDED_protocols_pb_potential_SetupPoissonBoltzmannPotential_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -28,13 +24,8 @@
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotential.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/vector1.hh>
 
 #include <string>
-#include <map>
-#include <vector>
 
 namespace protocols {
 namespace pb_potential {

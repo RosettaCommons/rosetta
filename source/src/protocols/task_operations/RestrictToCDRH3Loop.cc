@@ -20,11 +20,10 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
 
 namespace protocols {

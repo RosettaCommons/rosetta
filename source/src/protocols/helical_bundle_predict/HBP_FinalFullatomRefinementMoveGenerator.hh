@@ -27,8 +27,6 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace helical_bundle_predict {

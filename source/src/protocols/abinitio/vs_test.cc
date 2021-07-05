@@ -22,7 +22,6 @@
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 
 
@@ -47,9 +46,11 @@
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
+
+#include <core/pose/annotated_sequence.hh> // AUTO IWYU For make_pose_from_sequence
+#include <ObjexxFCL/format.hh> // AUTO IWYU For F, format
 
 
 using namespace basic::options;

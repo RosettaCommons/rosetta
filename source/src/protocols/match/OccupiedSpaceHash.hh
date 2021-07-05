@@ -25,7 +25,6 @@
 #include <core/types.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/geometry/BoundingBox.hh>
 #include <numeric/geometry/hashing/SixDHasher.hh>
 

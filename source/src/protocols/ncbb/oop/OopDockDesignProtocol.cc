@@ -9,25 +9,19 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoringManager.fwd.hh>
 
-#include <core/chemical/VariantType.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <utility>
@@ -49,20 +43,14 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/ncbb/oop/OopRandomPuckMover.hh>
 #include <protocols/ncbb/oop/OopRandomSmallMover.hh>
-#include <protocols/ncbb/oop/OopPatcher.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ncbb/oop/OopDockDesignProtocol.hh>
 #include <protocols/ncbb/util.hh>
 #include <protocols/ncbb/oop/OopDockDesignProtocolCreator.hh>
 #include <protocols/viewer/viewers.hh>
 
 // Filter headers
-#include <basic/MetricValue.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/simple_metrics/metrics/SequenceMetric.hh>
 
@@ -73,11 +61,8 @@
 // Utility Headers
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
 // C++ headers

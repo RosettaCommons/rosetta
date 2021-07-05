@@ -17,19 +17,15 @@
 
 // Basic Headers
 #include <basic/Tracer.hh>
-#include <basic/options/util.hh>
-#include <basic/options/option.hh>
 //#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Core Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 //#include <core/pose/symmetry/util.hh>
 //#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 //#include <core/chemical/ResidueConnection.hh>
 //#include <core/conformation/Conformation.hh>
 //#include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -37,12 +33,8 @@
 //#include <core/chemical/ChemicalManager.hh>
 //#include <core/id/AtomID_Map.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 
 
 
@@ -51,24 +43,18 @@
 
 // Protocols Headers
 #include <protocols/rosetta_scripts/util.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
 //#include <core/kinematics/FoldTree.hh>
 //#include <core/conformation/Residue.hh>
 #include <basic/datacache/DataMap.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 
-#include <protocols/moves/Mover.hh>
 //#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 
 //#include <utility/vector0.hh>
 //#include <utility/vector1.hh>

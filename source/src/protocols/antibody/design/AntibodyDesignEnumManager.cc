@@ -17,8 +17,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-#include <utility/py/PyAssert.hh>
-#include <utility/string_util.hh>
 #include <boost/algorithm/string.hpp>
 
 namespace protocols {

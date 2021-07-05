@@ -20,7 +20,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/raw_data/RawStruct.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <string>
 
 namespace core {
 namespace io {

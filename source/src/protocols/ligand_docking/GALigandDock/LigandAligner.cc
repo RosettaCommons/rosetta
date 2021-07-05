@@ -24,7 +24,6 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/scoring/func/SumFunc.hh>
 #include <core/scoring/func/TopOutFunc.hh>
 #include <core/scoring/func/ConstantFunc.hh>
@@ -34,30 +33,13 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <core/conformation/residue_datacache.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueGraphTypes.hh>
-#include <core/chemical/Bond.hh>
-#include <core/chemical/types.hh>
-#include <core/pose/util.hh>
-#include <core/pose/extra_pose_info_util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/pose/util.hh>
+#include <core/chemical/Bond.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <numeric/xyzVector.hh>
@@ -65,23 +47,20 @@
 #include <numeric/random/random.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
-
-#include <core/scoring/constraints/util.hh>
-
-#include <utility/excn/Exceptions.hh>
 
 
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+
 #include <basic/Tracer.hh>
 
 
 // C++ headers
 #include <fstream>
-#include <iostream>
 #include <string>
+
+#include <core/optimization/MinimizerMap.hh> // AUTO IWYU For MinimizerMap
+#include <core/scoring/hbonds/hbonds.hh> // AUTO IWYU For fill_hbond_set
+#include <core/scoring/lkball/LK_BallEnergy.hh> // AUTO IWYU For LK_BallEnergy
 
 namespace protocols {
 namespace ligand_docking {

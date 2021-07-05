@@ -17,24 +17,19 @@
 
 #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
-#include <protocols/qsar/qsarMap.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
-#include <protocols/qsar/scoring_grid/ScoreNormalization.fwd.hh>
 
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/UltraLightResidue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
-#include <utility/json_spirit/json_spirit_writer.h>
-#include <utility/json_spirit/json_spirit_reader.h>
 
 // C++ Headers
 #include <string>
 #include <map>
+
+#include <numeric/xyzVector.hh> // DO NOT AUTO-REMOVE
 
 namespace protocols {
 namespace qsar {

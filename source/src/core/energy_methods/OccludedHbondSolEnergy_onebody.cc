@@ -34,7 +34,6 @@
 // Unit Headers
 #include <core/energy_methods/OccludedHbondSolEnergy_onebody.hh>
 #include <core/energy_methods/OccludedHbondSolEnergy_onebodyCreator.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -48,7 +47,6 @@
 // Package headers
 
 // Project headers
-#include <numeric/trig.functions.hh>
 
 // Utility headers
 

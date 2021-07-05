@@ -12,80 +12,48 @@
 
 
 // libRosetta headers
-#include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/TorsionID.hh>
 
 //#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
 
-#include <basic/options/option_macros.hh>
 #include <protocols/idealize/idealize.hh>
 
 #include <protocols/viewer/viewers.hh>
 
-#include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBInfo.fwd.hh>
 
-#include <basic/basic.hh>
 
-#include <basic/database/open.hh>
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/file/file_sys_util.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/angle.functions.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <ctime>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For options, OptionKeys
 
 using namespace core;
 using namespace protocols;

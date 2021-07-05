@@ -20,20 +20,20 @@
 // Project Headers
 #include <core/scoring/sc/ElectrostaticSimilarityCalculator.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/conformation/Residue.hh>
 
 #include <numeric/statistics/functions.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
+
+#include <core/scoring/PoissonBoltzmannPotential.hh> // AUTO IWYU For PoissonBoltzmannPotential
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
 
 
 static basic::Tracer TR( "core.scoring.sc.ElectrostaticSimilarityCalculator" );

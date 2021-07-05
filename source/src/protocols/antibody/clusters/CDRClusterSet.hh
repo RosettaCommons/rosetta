@@ -16,8 +16,8 @@
 
 #include <protocols/antibody/clusters/CDRClusterSet.fwd.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
-#include <protocols/antibody/clusters/CDRCluster.hh>
-#include <protocols/antibody/clusters/CDRClusterMatcher.hh>
+#include <protocols/antibody/clusters/CDRCluster.fwd.hh>
+#include <protocols/antibody/clusters/CDRClusterMatcher.fwd.hh>
 
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
@@ -25,6 +25,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <basic/datacache/CacheableData.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #ifdef    SERIALIZATION
 // Cereal headers

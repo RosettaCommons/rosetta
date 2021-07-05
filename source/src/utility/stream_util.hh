@@ -20,10 +20,7 @@
 #include <utility/type_traits/has_insertion_operator.hh>
 
 #include <utility/vectorL.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/fixedsizearray0.hh>
-#include <utility/fixedsizearray1.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 
 #include <ostream>
 

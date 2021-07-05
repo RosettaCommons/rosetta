@@ -19,7 +19,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/select/movemap/util.hh>
@@ -45,8 +45,6 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 

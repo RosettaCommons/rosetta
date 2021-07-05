@@ -23,7 +23,6 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/Atom.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/ref_pose.hh>
 #include <core/id/AtomID.hh>
@@ -40,6 +39,7 @@
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer TR( "core.simple_metrics.per_residue_metrics.PerResidueRMSDMetric" );
 

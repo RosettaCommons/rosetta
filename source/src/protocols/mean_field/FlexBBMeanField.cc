@@ -21,10 +21,8 @@
 #include <protocols/mean_field/ResHashMap.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
@@ -37,10 +35,11 @@
 // Numeric headers
 
 // Boost headers
-#include <boost/unordered_map.hpp>
 
 // C++ headers
 #include <iostream>
+
+#include <protocols/mean_field/jagged_array.functions.hh> // AUTO IWYU For operator/=, operator/
 
 
 // Construct tracer.

@@ -18,28 +18,14 @@
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_OutputData_HH
 
 
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh> //Sept 26, 2011 Parin S.
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
 #include <string>
-#include <map>
-#include <core/chemical/AA.hh>
-#include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <set>
+#include <core/io/silent/SilentFileData.fwd.hh>
 
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;

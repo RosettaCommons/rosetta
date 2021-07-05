@@ -20,37 +20,29 @@
 
 // Core Headers
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
 
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 //#include <core/pack/annealer/AnnealerFactory.hh>
 //#include <core/pack/annealer/SimAnnealerBase.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
-#include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
 #include <core/pack/interaction_graph/NPDHBondInteractionGraph.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondEnergy.hh>
-#include <core/scoring/hbonds/NPDHBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/types.hh>
@@ -63,27 +55,22 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility Headers
-#include <utility/graph/Graph.hh>
-#include <utility/vector0.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/LexicographicalIterator.hh>
 
 // Numeric headers
 
 // Test headers
-#include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
 
-#include <assert.h>
-#include <basic/options/option.hh>
 
 // C++ headers
-#include <list>
 #include <map>
 #include <tuple>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("test.core.pack.interactiongraph.NPDHBondInteractionGraph");
 

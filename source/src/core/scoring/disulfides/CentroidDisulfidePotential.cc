@@ -25,7 +25,6 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
-#include <utility/vector1.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>

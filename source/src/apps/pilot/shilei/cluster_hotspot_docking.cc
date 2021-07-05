@@ -13,13 +13,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
@@ -28,14 +24,10 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/docking/metrics.hh>
 
@@ -46,12 +38,9 @@
 
 #include <iostream>
 
-#include <protocols/cluster/cluster.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <basic/options/option_macros.hh>
 #include <map>
-#include <sstream>
 #include <iomanip>
 
 using namespace core;

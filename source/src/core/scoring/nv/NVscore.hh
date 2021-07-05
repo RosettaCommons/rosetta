@@ -20,7 +20,7 @@
 //project headers
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/nv/NVlookup.hh>
+#include <core/scoring/nv/NVlookup.fwd.hh>
 
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

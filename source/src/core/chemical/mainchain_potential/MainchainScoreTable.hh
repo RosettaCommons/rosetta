@@ -34,7 +34,6 @@
 #include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 
 // C++ Headers
-#include <iosfwd>
 #include <string> //getline overload
 
 namespace core {

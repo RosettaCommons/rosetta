@@ -19,13 +19,11 @@
 #include <protocols/moves/Mover.hh>
 
 // Project headers
-#include <core/types.hh>
 //#include <core/pack/types.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsCOP, RotamerSetsOP
 
 //#include <utility/Tag/Tag.fwd.hh>
 //#include <utility/vector0.hh>

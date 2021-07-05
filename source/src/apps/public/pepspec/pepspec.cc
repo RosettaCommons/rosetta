@@ -12,16 +12,13 @@
 
 
 // libRosetta headers
-#include <protocols/frags/VallData.hh>
-#include <protocols/frags/TorsionFragment.hh>
+#include <protocols/frags/VallData.fwd.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/picking_old/vall/util.hh>
-#include <core/fragment/picking_old/FragmentLibraryManager.hh>
 
-#include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -29,58 +26,35 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/OutputMovers.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 // #include <protocols/moves/rigid_body_moves.hh>
-#include <protocols/moves/TrialMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <protocols/viewer/viewers.hh>
 
 #include <core/types.hh>
 
-#include <core/scoring/sasa.hh>
 
 // #include <core/util/prof.hh> // profiling
 // #include <core/util/CacheableData.hh> // profiling
 
 // #include <core/sequence/SequenceMapping.hh>
 
-#include <core/chemical/AtomTypeSet.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/etable/Etable.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Ramachandran.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/Etable.hh>
-#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
 
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -89,41 +63,32 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <basic/options/util.hh>//option.hh>
 // #include <basic/options/after_opts.hh>
 
-#include <basic/basic.hh>
 #include <basic/MetricValue.hh>
 
-#include <basic/database/open.hh>
 
 #include <devel/init.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
-#include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 
 
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 
 // // C++ headers
 #include <cstdlib>
 #include <fstream>
-#include <iostream>
 #include <string>
 
 #include <basic/Tracer.hh>
@@ -142,11 +107,15 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector1.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <core/pose/init_id_map.hh> // AUTO IWYU For initialize_atomid_map
+#include <core/pose/util.hh> // AUTO IWYU For get_restype_for_pose
+#include <core/scoring/Energies.hh> // AUTO IWYU For Energies, Energies:...
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection
+#include <core/kinematics/RT.hh> // AUTO IWYU For RT
 
 
 using namespace core;
@@ -1042,8 +1011,6 @@ gen_pep_bb_sequential(
 	using namespace scoring;
 	using namespace chemical;
 	using namespace scoring::methods;
-	using namespace scoring::etable;
-	using namespace scoring::etable::count_pair;
 	using core::pack::task::operation::TaskOperationCOP;
 
 	Size n_build_loop( option[ pepspec::n_build_loop ] );

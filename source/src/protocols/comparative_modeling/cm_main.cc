@@ -14,7 +14,6 @@
 #include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.comparative_modeling.cm_main" );

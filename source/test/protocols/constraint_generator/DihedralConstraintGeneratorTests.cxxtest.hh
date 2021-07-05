@@ -13,25 +13,18 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
-#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
-#include <core/select/residue_selector/util.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/Func.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <protocols/constraint_generator/DihedralConstraintGenerator.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/residue_selector/CDRResidueSelector.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -41,8 +34,10 @@
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
-#include <numeric/util.hh>
+
 #include <numeric/conversions.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 
 static basic::Tracer TR("DihedralConstraintGeneratorTests");

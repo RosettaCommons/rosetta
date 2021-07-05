@@ -17,7 +17,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 // AMW REMOVE
-#include <utility/excn/Exceptions.hh>
 
 namespace utility {
 namespace factory {

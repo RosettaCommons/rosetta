@@ -16,87 +16,36 @@
 #include <protocols/hbnet/HBNet_util.hh>
 #include <protocols/hbnet/HBNetStapleInterface.hh>
 #include <protocols/hbnet/HBNetStapleInterfaceCreator.hh>
-#include <core/select/util/SelectResiduesByLayer.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <basic/database/open.hh>
-#include <basic/database/sql_utils.hh>
-#include <core/pack/rotamer_set/rotamer_building_functions.hh>
 //#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 //#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 //#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
-#include <protocols/enzdes/AddorRemoveCsts.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/rosetta_scripts/ParsedProtocol.hh>
-#include <protocols/enzdes/AddorRemoveCsts.hh>
-#include <protocols/moves/MoverStatus.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
-#include <protocols/task_operations/PreventResiduesFromRepackingOperation.hh>
-#include <protocols/pose_creation/MakePolyXMover.hh>
-#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/simple_moves/FavorSequenceProfile.hh>
 #include <protocols/scoring/Interface.hh>
-#include <protocols/scoring/InterfaceInfo.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/interaction_graph/InteractionGraphFactory.hh>
-#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/packer_neighbors.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/make_symmetric_task.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/LexicographicalIterator.hh>
 #include <utility/string_util.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/hbonds/HBondSet.hh> // AUTO IWYU For HBond, HBondSet
 
 using namespace core;
 using namespace pack;

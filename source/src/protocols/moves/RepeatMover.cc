@@ -15,10 +15,8 @@
 
 // Utility Headers
 #include <utility>
-#include <utility/vector1.hh>
 
 // Basic Headers
-#include <basic/Tracer.hh>
 
 
 namespace protocols {

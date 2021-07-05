@@ -19,26 +19,20 @@
 // Project Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/types.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 
 //Basic Headers
-#include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/insert_statement_generator/RowData.hh>
@@ -46,11 +40,9 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tools/make_vector.hh>
 
 // External Headers
-#include <cppdb/frontend.h>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

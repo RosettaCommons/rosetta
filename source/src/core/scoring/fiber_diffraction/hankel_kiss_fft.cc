@@ -18,12 +18,10 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/sys_util.hh>
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
 #include <cstring>
+
+#include <numeric/fourier/kiss_fft.hh> // AUTO IWYU For kiss_fft
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES

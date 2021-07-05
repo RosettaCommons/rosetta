@@ -24,7 +24,7 @@
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 
-#include <basic/resource_manager/ResourceManager.hh>
+#include <basic/resource_manager/ResourceManager.fwd.hh>
 #include <basic/resource_manager/ResourceLoaderFactory.hh>
 //#include <core/chemical/ResidueType.hh>
 //#include <core/chemical/ResidueTypeSet.hh>
@@ -35,7 +35,6 @@
 #include <basic/Tracer.hh>
 
 //utility headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/pointer/memory.hh>

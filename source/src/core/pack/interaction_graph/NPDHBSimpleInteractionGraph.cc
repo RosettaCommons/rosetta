@@ -23,14 +23,11 @@
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/util.hh>
 
 // Basic headers
-#include <basic/Tracer.hh>
 
 // utility headers
 #include <utility/vector1.hh>
-#include <utility/assert.hh>
 
 namespace core {
 namespace pack {

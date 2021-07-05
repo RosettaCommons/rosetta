@@ -28,20 +28,14 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
-#include <utility/vector1.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace scoring {

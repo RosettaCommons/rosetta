@@ -14,10 +14,8 @@
 
 #ifndef INCLUDED_core_chemical_Elements_hh
 #define INCLUDED_core_chemical_Elements_hh
-#include <iosfwd>
 #include <map>
 #include <string>
-#include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
 namespace core {

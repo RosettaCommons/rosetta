@@ -14,11 +14,8 @@
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
 
 #include <basic/Tracer.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/types.hh>
 
-#include <utility/graph/unordered_object_pool.hpp>
-#include <boost/pool/pool.hpp>
 
 static basic::Tracer TR( "core.scoring.hbonds.graph.HBondGraph" );
 

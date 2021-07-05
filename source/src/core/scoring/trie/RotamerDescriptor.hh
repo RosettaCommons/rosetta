@@ -17,7 +17,8 @@
 #include <core/types.hh>
 
 
-#include <utility/vector1.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace core {
 namespace scoring {

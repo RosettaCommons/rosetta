@@ -30,8 +30,6 @@
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 #include <utility/vector1.hh>
 

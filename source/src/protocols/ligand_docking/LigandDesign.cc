@@ -35,9 +35,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 #include <numeric/random/random.hh>
 
 //Auto Headers
@@ -46,6 +44,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys
 
 
 namespace protocols {

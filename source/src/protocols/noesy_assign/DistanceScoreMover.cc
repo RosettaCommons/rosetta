@@ -24,8 +24,6 @@
 #include <protocols/noesy_assign/PeakAssignment.hh>
 #include <core/id/Exceptions.hh>
 // Project Headers
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
-#include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
@@ -33,6 +31,8 @@
 #include <protocols/noesy_assign/CrossPeak.hh>
 #include <utility/vector1.hh>
 #include <cmath>
+
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
 
 
 //// C++ headers

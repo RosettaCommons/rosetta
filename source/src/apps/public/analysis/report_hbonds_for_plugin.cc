@@ -12,7 +12,6 @@
 /// @author Matthew O'Meara
 /// @author Ron Jacak
 
-#include <core/chemical/AtomType.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option_macros.hh>
@@ -31,7 +30,6 @@
 #include <basic/Tracer.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
@@ -39,8 +37,6 @@
 
 // utility headers
 #include <utility/io/izstream.hh>
-#include <utility/options/keys/StringOptionKey.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
 #include <utility/file/FileName.hh>
 
 // ObjexxFCL headers

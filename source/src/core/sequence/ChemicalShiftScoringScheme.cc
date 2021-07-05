@@ -12,18 +12,16 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-#include <core/sequence/Sequence.hh>
+#include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/ChemicalShiftSequence.hh>
-#include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/ChemicalShiftScoringScheme.hh>
 
 #include <utility/exit.hh>
-#include <string>
 
-#include <complex>
 
 #include <utility/vector1.hh>
 
+#include <cmath> // MANUAL IWYU
 
 namespace core {
 namespace sequence {

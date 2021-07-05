@@ -19,15 +19,15 @@
 #ifndef INCLUDED_core_scoring_epr_deer_DEERIO_hh
 #define INCLUDED_core_scoring_epr_deer_DEERIO_hh
 
-#include <core/scoring/epr_deer/metrics/DEERData.hh>
+#include <core/scoring/epr_deer/metrics/DEERData.fwd.hh>
 #include <core/scoring/epr_deer/DEERIO.fwd.hh>
-#include <core/scoring/epr_deer/EPRSpinLabel.hh>
+#include <core/scoring/epr_deer/EPRSpinLabel.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <numeric/xyzVector.hh>
-#include <utility/fixedsizearray1.hh>
-#include <iosfwd>
 #include <string>
+
+#include <map> // AUTO IWYU For map
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace core {
 namespace scoring {

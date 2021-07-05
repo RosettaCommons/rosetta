@@ -18,21 +18,16 @@
 #include <protocols/task_operations/DsspDesignOperationCreator.hh>
 
 // Core Headers
-#include <core/conformation/Conformation.hh>
-#include <core/pack/task/PackerTask_.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/selection.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/types.hh>
 
 // Protocol Headers
 #include <protocols/parser/BluePrint.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -42,6 +37,10 @@
 
 // C++ Headers
 #include <set>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.TaskOperations.DsspDesignOperation" );
 

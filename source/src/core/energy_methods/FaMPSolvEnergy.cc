@@ -20,11 +20,10 @@
 // Unit Headers
 #include <core/energy_methods/FaMPSolvEnergy.hh>
 #include <core/energy_methods/FaMPSolvEnergyCreator.hh>
-#include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 
@@ -60,7 +59,6 @@
 #include <numeric/xyzVector.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace energy_methods {

@@ -26,13 +26,10 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 
 

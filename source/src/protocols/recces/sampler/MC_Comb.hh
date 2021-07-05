@@ -21,6 +21,8 @@
 // Package headers
 #include <protocols/recces/sampler/MC_Sampler.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace recces {
 namespace sampler {

@@ -16,7 +16,6 @@
 
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/util/deriv_funcs.hh>
 
 #include <core/types.hh>
 
@@ -25,18 +24,13 @@
 #include <core/scoring/etable/EtableEnergy.hh>
 
 // Package headers
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 //#include <utility/alignedfixedsizearray1.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/FixedSizeLexicographicalIterator.hh>
@@ -46,6 +40,9 @@
 #include <basic/Tracer.hh>
 
 #include <ctime>
+
+#include <core/scoring/Energies.hh> // AUTO IWYU For Energies::EnergyGraph, Energies
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 static basic::Tracer TR("core.scoring.etable.VectorizedEtable.cxxtest");
 
@@ -694,7 +691,8 @@ public:
 
 	void test_vectorization() {
 		EnergyMethodOptions options; // default is fine
-		core::scoring::etable::Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
+		core::scoring::etable::EtableCOP etable_op = ScoringManager::get_instance()->etable( options.etable_type() ).lock();
+		core::scoring::etable::Etable const & etable( *etable_op );
 
 		EtableScratchSpace s;
 
@@ -763,8 +761,9 @@ public:
 		using namespace utility::graph;
 
 		EnergyMethodOptions options; // default is fine
-		core::scoring::etable::Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
-		AnalyticEtableEnergy ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		core::scoring::etable::EtableCOP etable_op = ScoringManager::get_instance()->etable( options.etable_type() ).lock();
+		core::scoring::etable::Etable const & etable( *etable_op );
+		AnalyticEtableEnergy ana_lj_energy( *etable_op, options );
 		EtableScratchSpace s;
 
 		Pose pose = create_test_in_pdb_pose(); //create_trpcage_ideal_pose();
@@ -912,8 +911,8 @@ public:
 		using namespace utility::graph;
 
 		EnergyMethodOptions options; // default is fine
-		core::scoring::etable::Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
-		AnalyticEtableEnergy ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		core::scoring::etable::EtableCOP etable_op = ScoringManager::get_instance()->etable( options.etable_type() ).lock();
+		AnalyticEtableEnergy ana_lj_energy( *etable_op, options );
 		EtableScratchSpace s;
 
 		Pose pose = create_test_in_pdb_pose(); //create_trpcage_ideal_pose();
@@ -1001,7 +1000,6 @@ public:
 
 		core::scoring::EnergyMap emap;
 
-		Real ljatr_tot = 0, ljrep_tot = 0, fasol_tot = 0;
 		clock_t start_time2 = clock();
 		for ( core::Size ii = 1; ii <= niters; ++ii ) {
 			for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {

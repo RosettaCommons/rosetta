@@ -26,14 +26,10 @@
 #include <basic/Tracer.hh>
 
 //utility headers
-#include <utility>
 #include <utility/io/izstream.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <sstream>
 
 namespace protocols {
 namespace toolbox {

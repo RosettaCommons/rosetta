@@ -18,43 +18,31 @@
 
 
 // protocols headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverFactory.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <protocols/canonical_sampling/BiasedMonteCarlo.hh>
-#include <protocols/canonical_sampling/BiasEnergy.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/BiasEnergy.fwd.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 
 // core headers
 #include <core/scoring/ScoreFunction.hh>
 
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/types.hh>
 
 // numeric headers
-#include <numeric/random/random.hh>
 
 // utility headers
 #include <utility>
-#include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
 // ObjexxFCL headers
@@ -62,11 +50,16 @@
 
 // C++ Headers
 #include <utility/excn/Exceptions.hh>
-#include <cmath>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
+
+#ifdef USEMPI
+#include <protocols/canonical_sampling/BiasEnergy.hh>
+#include <numeric/random/random.hh>
+#endif
 
 static basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
 

@@ -25,20 +25,15 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <devel/init.hh>
-#include <sstream>
 #include <string>
 #include <iostream>
-#include <fstream>
 
 using basic::options::option;
 using std::string;

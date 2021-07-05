@@ -23,22 +23,20 @@
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/stream_util.hh>
 #include <utility/string_util.hh>
 
-#include <utility/assert.hh>
 
 
 // option key includes
 
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 using namespace core;
 using namespace core::pose;

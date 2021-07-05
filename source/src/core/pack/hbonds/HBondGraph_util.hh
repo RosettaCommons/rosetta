@@ -14,9 +14,6 @@
 #ifndef INCLUDED_core_pack_hbonds_HBondGraphUtil_HH
 #define INCLUDED_core_pack_hbonds_HBondGraphUtil_HH
 
-#include <core/pack/hbonds/HBondGraphInitializerIG.fwd.hh>
-#include <core/pack/interaction_graph/PDInteractionGraph.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 
 #include <core/scoring/hbonds/graph/HBondGraph.hh>

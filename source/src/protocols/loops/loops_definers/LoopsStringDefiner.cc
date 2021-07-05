@@ -22,13 +22,12 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector0.hh>
 
 // C++ Headers
 #include <string>

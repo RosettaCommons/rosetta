@@ -20,19 +20,15 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/LazySilentFilePoseInputStream.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <utility>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>

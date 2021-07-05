@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -36,6 +35,8 @@
 
 // C++ headers
 #include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("core.select.residue_selector.ResidueSelectorFactory.cxxtest.hh");
 

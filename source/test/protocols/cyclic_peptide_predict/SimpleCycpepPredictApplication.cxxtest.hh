@@ -14,7 +14,6 @@
 // Test headers:
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/pdb1ubq.hh>
 
 // GeneralizedKIC headers:
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
@@ -22,9 +21,7 @@
 #include <protocols/cyclic_peptide_predict/util.hh>
 
 // Other Rosetta libraries:
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <basic/Tracer.hh>
 

@@ -17,7 +17,7 @@
 /// Package headers
 #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/atom_tree_minimize.hh>
-#include <core/optimization/NumericalDerivCheckResult.hh>
+#include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 #include <core/optimization/DOF_Node.hh>
 #include <core/optimization/types.hh>
 

@@ -15,12 +15,10 @@
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/design/AntibodyDesignEnumManager.hh>
 
 #include <utility/string_util.hh>
-#include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
 //#include <utility/io/izstream.hh>
 
@@ -28,12 +26,12 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
-#include <iostream>
 #include <fstream>
-#include <cctype>
 #include <utility/io/izstream.hh>
 
 #include <boost/algorithm/string.hpp>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer TR("protocols.antibody.design.CDRSeqDesignOptionsParser");
 

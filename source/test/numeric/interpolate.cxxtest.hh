@@ -14,11 +14,8 @@
 #include <cxxtest/TestSuite.h>
 
 // C/C++ headers
-#include <iterator>
-#include <vector>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // Project headers
 #include <numeric/interpolate.hh>

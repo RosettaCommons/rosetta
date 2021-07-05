@@ -24,22 +24,19 @@
 #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 // External Headers
-#include <cppdb/frontend.h>
 
 // Boost Headers
 
 // C++ Headers
 #include <sstream>
 
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector0.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

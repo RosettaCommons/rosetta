@@ -17,13 +17,11 @@
 
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.fwd.hh>
 
-#include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/EnergyMap.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
 #include <string>

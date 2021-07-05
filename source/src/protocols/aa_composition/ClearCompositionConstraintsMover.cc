@@ -16,18 +16,11 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/scoring/aa_composition_energy/AACompositionConstraint.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 //Auto Headers
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

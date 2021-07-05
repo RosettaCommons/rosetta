@@ -28,7 +28,6 @@
 #include <utility/vector1.functions.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <cmath>
 
 namespace numeric {

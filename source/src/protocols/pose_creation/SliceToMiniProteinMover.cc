@@ -15,7 +15,7 @@
 // Unit headers
 #include <protocols/pose_creation/SliceToMiniProteinMoverCreator.hh>
 #include <protocols/pose_creation/SliceToMiniProteinMover.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.pose_creation.SliceToMiniProteinMover" );
@@ -26,13 +26,10 @@ static basic::Tracer TR( "protocols.pose_creation.SliceToMiniProteinMover" );
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 //for parsing residue_selectors
-#include <core/conformation/ResidueFactory.hh>
 #include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -41,10 +38,9 @@ static basic::Tracer TR( "protocols.pose_creation.SliceToMiniProteinMover" );
 
 #include <core/types.hh>
 
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/selection.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

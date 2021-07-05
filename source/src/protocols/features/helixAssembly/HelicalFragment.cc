@@ -17,17 +17,13 @@
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
 
 //Core
-#include <core/conformation/Residue.hh>
 
 //Utility
-#include <utility/string_util.hh>
 
 //Numeric
 #include <numeric/xyzVector.hh>
-#include <numeric/HomogeneousTransform.hh>
 
 //C++
-#include <cmath>
 #include <iostream>
 
 namespace protocols {

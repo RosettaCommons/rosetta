@@ -26,11 +26,11 @@
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
-#include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers

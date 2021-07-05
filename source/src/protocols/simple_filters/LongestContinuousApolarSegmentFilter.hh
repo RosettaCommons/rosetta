@@ -17,15 +17,12 @@
 // Unit headers
 #include <protocols/simple_filters/LongestContinuousApolarSegmentFilter.fwd.hh>
 #include <protocols/simple_filters/LongestContinuousPolarSegmentFilter.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Basic/Utility headers
-#include <basic/datacache/DataMap.fwd.hh>
 //#include <utility/tag/Tag.fwd.hh> //transcluded from Filter.hh
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Filter.hh
 

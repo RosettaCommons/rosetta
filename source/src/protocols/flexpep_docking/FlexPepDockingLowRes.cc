@@ -23,7 +23,7 @@
 #include <protocols/flexpep_docking/FlexPepDockingLowRes.hh>
 
 #include <core/types.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -35,7 +35,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
@@ -45,7 +45,6 @@
 #include <utility/exit.hh>
 #include <string>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

@@ -18,10 +18,7 @@
 #include <protocols/jd2/FileSystemJobDistributor.hh>
 
 // Package headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.fwd.hh>
 
-#include <protocols/moves/Mover.fwd.hh>
 
 // Utility headers
 #include <core/types.hh>

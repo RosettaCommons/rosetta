@@ -17,12 +17,10 @@
 
 
 // Unit headers
-#include <numeric/random/random.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzTransform.hh>
 #include <numeric/Quaternion.hh>
-#include <numeric/trig.functions.hh>
 
 
 namespace numeric {

@@ -18,30 +18,25 @@
 #include <basic/options/option.hh>
 
 
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>  // b factors
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <iostream>
 
 // option key includes
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/patterson.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
 
 // C++ Headers
 

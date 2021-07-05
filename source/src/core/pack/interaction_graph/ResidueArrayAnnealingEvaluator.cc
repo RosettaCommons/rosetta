@@ -16,11 +16,8 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
-#include <utility/assert.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
@@ -47,6 +44,8 @@
 #include <boost/foreach.hpp>
 #define foreach_ BOOST_FOREACH
 #include <utility>
+
+#include <ObjexxFCL/FArray1.hh> // AUTO IWYU For FArray1
 
 static basic::Tracer TR("core.pack.interaction_graph.ResidueArrayAnnealingEvaluator");
 

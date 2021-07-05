@@ -15,9 +15,6 @@
 #include <vector>
 #include <numeric>
 
-#include <boost/range/combine.hpp>
-#include <boost/range/algorithm.hpp>
-#include <boost/range.hpp>
 #include <boost/format.hpp>
 
 // Project headers
@@ -28,31 +25,22 @@
 #include <core/pose/xyzStripeHashPose.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/id/types.hh>
-#include <core/conformation/Residue.hh>
 #include <protocols/indexed_structure_store/Datatypes.hh>
-#include <protocols/indexed_structure_store/Datatypes.json.hh>
-#include <protocols/indexed_structure_store/StructureStore.hh>
+#include <protocols/indexed_structure_store/Datatypes.json.hh> // DO NOT AUTO-REMOVE (needed for JSON templating)
 #include <protocols/indexed_structure_store/search/QueryDatabase.hh>
-#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh>
+#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh> // DO NOT AUTO-REMOVE (needed for JSON templating)
 #include <protocols/indexed_structure_store/orient_array.hh>
-#include <protocols/indexed_structure_store/vector_tools.hh>
 #include <protocols/indexed_structure_store/pose_utility.hh>
 
-#include <core/kinematics/MoveMap.hh>
 
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/indexed_structure_store/DirectSegmentLookup.hh>
-#include <protocols/indexed_structure_store/DirectSegmentLookup.json.hh>
+#include <protocols/indexed_structure_store/DirectSegmentLookup.json.hh> // DO NOT AUTO-REMOVE (needed for JSON templating)
 
-#include "ndarray.h"
 #include "ndarray/eigen.h"
+
+#include <boost/range/algorithm/sort.hpp> // AUTO IWYU For sort
+#include <json.hpp> // AUTO IWYU For json, operator<<
 
 static basic::Tracer TR("protocols.indexed_structure_store.DirectSegmentLookup");
 

@@ -16,11 +16,10 @@
 #define INCLUDED_core_scoring_saxs_SAXSEnergy_hh
 
 // Package headers
-#include <core/scoring/saxs/DistanceHistogram.hh>
-#include <core/scoring/saxs/FormFactor.hh>
+#include <core/scoring/saxs/DistanceHistogram.fwd.hh>
+#include <core/scoring/saxs/FormFactor.fwd.hh>
 #include <core/energy_methods/SAXSEnergyCreatorCEN.hh>
 #include <core/energy_methods/SAXSEnergyCreatorFA.hh>
-#include <core/energy_methods/SAXSEnergyCreator.hh>
 
 
 #include <core/scoring/methods/WholeStructureEnergy.hh>

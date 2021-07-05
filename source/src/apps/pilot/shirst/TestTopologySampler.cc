@@ -26,13 +26,10 @@ Try:
 
 //Scoring
 #include <core/scoring/MembraneTopology.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 //Pose
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <utility/excn/Exceptions.hh>
@@ -40,14 +37,11 @@ Try:
 //Options
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -56,28 +50,20 @@ Try:
 
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/PoseMembraneRigidBodyMover.hh>
-#include <protocols/rigid/PoseMembraneRigidBodyMover.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <core/scoring/MembranePotential.hh>
 
 // Project Headers
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/id/NamedStubID.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // numeric headers
-#include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 #include <sstream>
 

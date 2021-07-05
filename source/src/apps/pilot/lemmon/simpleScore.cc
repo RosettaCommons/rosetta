@@ -26,7 +26,6 @@ scorePDB.cc -in::file::s <pdb file> -in::path::database <DB root dir>
 #include <utility/vector0.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -24,11 +24,9 @@
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 
 // Project Headers
-#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 
 // STL Headers
-#include <iostream>
 
 #include <core/scoring/etable/etrie/EtableAtom.hh>
 #include <core/scoring/trie/RotamerTrie.hh>

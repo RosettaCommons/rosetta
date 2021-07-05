@@ -17,7 +17,6 @@
 #include <utility/assert.hh>
 
 // STL Headers
-#include <utility/assert.hh>
 #include <iostream>
 
 #ifdef    SERIALIZATION

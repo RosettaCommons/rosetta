@@ -18,11 +18,10 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loophash/FastGapMover.fwd.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LocalInserter.hh>
+#include <protocols/loophash/LoopHashSampler.fwd.hh>
+#include <protocols/loophash/LoopHashLibrary.fwd.hh>
+#include <protocols/loophash/LocalInserter.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

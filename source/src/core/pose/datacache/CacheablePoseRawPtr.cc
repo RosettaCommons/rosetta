@@ -15,10 +15,12 @@
 #include <core/pose/datacache/CacheablePoseRawPtr.hh>
 
 // Package headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility>
 
 #ifdef    SERIALIZATION
+#include <core/pose/Pose.hh>
+
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
 

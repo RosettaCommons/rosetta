@@ -25,7 +25,6 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
@@ -47,7 +46,6 @@
 #include <utility/tools/make_vector1.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 //#include <numeric/trig.functions.hh>

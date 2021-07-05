@@ -20,12 +20,14 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentPicker.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 
-#include <core/fragment/SecondaryStructure.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <protocols/frag_picker/VallProvider.hh> // AUTO IWYU For VallProvider
 
 
 namespace protocols {

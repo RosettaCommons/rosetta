@@ -27,22 +27,15 @@
 
 // Platform Headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/CacheableString.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/features/FeaturesReporterFactory.hh>
-#include <protocols/features/ProteinRMSDFeatures.fwd.hh>
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/BatchFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
@@ -56,11 +49,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-#include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/schema_generator/ForeignKey.hh>
-#include <basic/database/schema_generator/Column.hh>
-#include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/DbDataType.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
@@ -74,6 +62,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
+#include <utility/sql_database/DatabaseSessionManager.hh> // AUTO IWYU For session
 
 namespace protocols {
 namespace features {

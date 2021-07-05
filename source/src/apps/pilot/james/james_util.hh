@@ -18,7 +18,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/MatrixScoringScheme.hh>

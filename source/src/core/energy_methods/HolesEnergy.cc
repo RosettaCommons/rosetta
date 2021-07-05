@@ -23,7 +23,7 @@
 //#include <core/scoring/ScoringManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableData.hh>
+#include <basic/datacache/CacheableData.fwd.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/database/open.hh>
 #include <core/id/CacheableAtomID_MapVector.hh>
@@ -35,18 +35,12 @@
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
 //utility headers
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 //C++ headers
-#include <iostream>
 
-#include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 
 //Auto Headers

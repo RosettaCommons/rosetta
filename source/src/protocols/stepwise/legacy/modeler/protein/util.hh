@@ -18,9 +18,7 @@
 #define INCLUDED_protocols_stepwise_legacy_modeling_protein_StepWiseProteinUtil_HH
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID_Map.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/types.hh>
 
 //Auto Headers

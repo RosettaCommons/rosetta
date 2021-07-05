@@ -15,77 +15,40 @@
 #include <core/pack/rotamer_set/water_rotamer_building_functions.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
-#include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/types.hh>
 
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
 
-#include <core/kinematics/Stub.hh>
-#include <core/kinematics/MoveMap.hh>
 
-#include <core/scoring/hbonds/HBEvalTuple.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/database/open.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/xyzTransform.hh>
-#include <numeric/constants.hh>
 #include <numeric/UniformRotationSampler.hh>
 #include <numeric/AxisRotationSampler.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
 // External headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray3D.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 // C++ headers
-#include <string>
-#include <iostream>
-#include <fstream>
 
 
 namespace core {

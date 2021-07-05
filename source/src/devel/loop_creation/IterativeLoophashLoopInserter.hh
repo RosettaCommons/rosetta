@@ -20,9 +20,6 @@
 #include <devel/loop_creation/LoophashLoopInserter.hh>
 
 //Protocols
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
-#include <protocols/loops/Loop.fwd.hh>
 
 
 //namespace protocols {

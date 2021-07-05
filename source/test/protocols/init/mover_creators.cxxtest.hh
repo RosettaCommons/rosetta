@@ -13,16 +13,12 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // basic headers
-#include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 
 // C++ headers
-#include <sstream>
 
 // Mover creator headers
 #include <protocols/aa_composition/AddCompositionConstraintMoverCreator.hh>
@@ -35,8 +31,6 @@
 #include <protocols/antibody/constraints/CDRDihedralConstraintMoverCreator.hh>
 #include <protocols/antibody/constraints/ParatopeEpitopeSiteConstraintMoverCreator.hh>
 #include <protocols/antibody/constraints/ParatopeSiteConstraintMoverCreator.hh>
-#include <protocols/antibody/design/AntibodyDesignMoverCreator.hh>
-#include <protocols/antibody/design/AntibodyDesignProtocolCreator.hh>
 #include <protocols/backrub/BackrubMoverCreator.hh>
 #include <protocols/backrub/BackrubProtocolCreator.hh>
 #include <protocols/backrub/BackrubSidechainMoverCreator.hh>
@@ -51,12 +45,10 @@
 #include <protocols/constraint_generator/AddConstraintsCreator.hh>
 #include <protocols/constraint_generator/RemoveConstraintsCreator.hh>
 #include <protocols/carbohydrates/LinkageConformerMoverCreator.hh>
-#include <protocols/carbohydrates/GlycanRelaxMoverCreator.hh>
 #include <protocols/carbohydrates/SimpleGlycosylateMoverCreator.hh>
 #include <protocols/cryst/cryst_movers_creator.hh>
 #include <protocols/cryst/refinable_lattice_creator.hh>
 #include <protocols/relax/loop/LoopRelaxMoverCreator.hh>
-#include <protocols/hybridization/HybridizeProtocolCreator.hh>
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>
 #include <protocols/hybridization/BackboneTorsionSamplerCreator.hh>
 #include <protocols/hybridization/BackboneTorsionPerturbationCreator.hh>
@@ -110,7 +102,6 @@
 #include <protocols/enzdes/BackboneSamplerCreator.hh>
 #include <protocols/enzdes/EnzRepackMinimizeCreator.hh>
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
-#include <protocols/enzdes/EnzdesMoversCreator.hh>
 #include <protocols/enzdes/EnzdesMoversCreator.hh>
 #include <protocols/evolution/EvolutionaryDynamicsMoverCreator.hh>
 #include <protocols/evolution/NucleotideMutationCreator.hh>
@@ -333,7 +324,6 @@
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
 #include <protocols/simple_moves/ShortBackrubMoverCreator.hh>
 #include <protocols/simple_moves/StorePoseSnapshotCreator.hh>
-#include <protocols/simple_moves/BackboneMoverCreator.hh>
 #include <protocols/simple_moves/StructProfileMoverCreator.hh>
 #include <protocols/simple_moves/SuperimposeMoverCreator.hh>
 #include <protocols/simple_moves/PDBReloadMoverCreator.hh>
@@ -435,12 +425,6 @@ public:
 	void test_protocols_antibody_constraints_ParatopeSiteConstraintMoverCreator_name()
 	{ protocols::antibody::constraints::ParatopeSiteConstraintMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ParatopeSiteConstraintMover" ); }
 
-	void test_protocols_antibody_design_AntibodyDesignMoverCreator_name()
-	{ protocols::antibody::design::AntibodyDesignMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AntibodyDesignMover" ); }
-
-	void test_protocols_antibody_design_AntibodyDesignProtocolCreator_name()
-	{ protocols::antibody::design::AntibodyDesignProtocolCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "AntibodyDesignProtocol" ); }
-
 	void test_protocols_backrub_BackrubMoverCreator_name()
 	{ protocols::backrub::BackrubMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Backrub" ); }
 
@@ -482,9 +466,6 @@ public:
 
 	void test_protocols_carbohydrates_LinkageConformerMoverCreator_name()
 	{ protocols::carbohydrates::LinkageConformerMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LinkageConformerMover" ); }
-
-	void test_protocols_carbohydrates_GlycanRelaxMoverCreator_name()
-	{ protocols::carbohydrates::GlycanRelaxMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "GlycanRelaxMover" ); }
 
 	void test_protocols_carbohydrates_SimpleGlycosylateMoverCreator_name()
 	{ protocols::carbohydrates::SimpleGlycosylateMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "SimpleGlycosylateMover" ); }

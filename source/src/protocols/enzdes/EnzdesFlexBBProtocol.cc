@@ -35,7 +35,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/packer_neighbors.hh> //for calculating lig part sums
 #include <core/pack/rotamer_set/RotamerSets.hh> //for calculating lig part sums
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
+#include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pose/PDBInfo.hh> //for getting pdb name
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
@@ -86,13 +86,13 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/variant_util.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

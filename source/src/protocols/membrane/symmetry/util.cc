@@ -26,14 +26,12 @@
 
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <protocols/membrane/util.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.membrane.symmetry.util" );

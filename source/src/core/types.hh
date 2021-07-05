@@ -26,8 +26,6 @@
 #endif
 
 // C++ headers
-#include <cstddef>
-#include <limits>
 
 namespace core {
 // Integer scalars

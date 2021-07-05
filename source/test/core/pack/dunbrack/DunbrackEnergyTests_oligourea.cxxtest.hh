@@ -13,40 +13,29 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
-#include <numeric/xyzVector.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/dunbrack/DunbrackEnergy.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/MinimizationData.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh> //To make it easier to build poses
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/relax/FastRelax.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 static basic::Tracer TR("DunbrackEnergyTests_oligourea");
 

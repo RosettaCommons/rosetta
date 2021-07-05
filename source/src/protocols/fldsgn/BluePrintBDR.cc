@@ -17,22 +17,16 @@
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 
 // package headers
-#include <protocols/forge/build/BuildInstruction.hh>
-#include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/SegmentInsert.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 
 // project headers
 #include <basic/Tracer.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
@@ -59,11 +53,9 @@
 #include <utility/string_util.hh>
 
 // C++ headers
-#include <utility>
 
 // boost
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

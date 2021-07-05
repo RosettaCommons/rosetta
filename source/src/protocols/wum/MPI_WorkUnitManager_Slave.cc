@@ -21,16 +21,12 @@
 
 #include <protocols/wum/MPI_WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
-#include <protocols/wum/SilentStructStore.hh>
-#include <core/io/silent/SilentStruct.hh>
 
 #include <basic/Tracer.hh>
 
 /// ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <utility/vector1.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

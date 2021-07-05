@@ -38,24 +38,19 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/variant_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/pose/rna/BasePair.hh>
 #include <core/pose/rna/BasePairStep.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/pose/rna/VDW_Grid.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/scoring/methods/chainbreak_util.hh>
-#include <core/chemical/AA.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
@@ -66,14 +61,12 @@
 #include <basic/options/option.hh> //
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh> // Will want to kill this once in FMI
 #include <core/scoring/rna/RNA_Motif.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 
 // Project headers
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
@@ -83,6 +76,8 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <map>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "core.pose.rna.RNA_Util" );
 
@@ -643,7 +638,6 @@ position_cutpoint_phosphate_torsions( pose::Pose & current_pose,
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::id;
-	using namespace core::io::pdb;
 
 	if ( three_prime_chainbreak == 0 ) three_prime_chainbreak = five_prime_chainbreak + 1;
 

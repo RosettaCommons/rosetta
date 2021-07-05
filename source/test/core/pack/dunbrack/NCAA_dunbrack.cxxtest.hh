@@ -13,24 +13,18 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/util/deriv_funcs.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <platform/types.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
 //Movers used for testing:
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/relax/FastRelax.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("core.pack.dunbrack.NCAADunbrackTests.cxxtest");

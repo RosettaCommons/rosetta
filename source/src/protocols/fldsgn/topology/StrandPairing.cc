@@ -26,7 +26,6 @@
 
 // C++ headers
 #include <iostream>
-#include <sstream>
 #include <boost/lexical_cast.hpp>
 #include <basic/Tracer.hh>
 

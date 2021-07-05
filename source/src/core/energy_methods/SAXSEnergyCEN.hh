@@ -16,19 +16,14 @@
 #define INCLUDED_core_scoring_saxs_SAXSEnergyCEN_hh
 
 // Package headers
-#include <core/scoring/saxs/FormFactor.hh>
 #include <core/energy_methods/SAXSEnergyCreatorCEN.hh>
 #include <core/energy_methods/SAXSEnergy.hh>
 
-#include <core/scoring/methods/WholeStructureEnergy.hh>
 
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <string>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

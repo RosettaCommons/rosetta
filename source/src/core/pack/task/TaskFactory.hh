@@ -20,7 +20,7 @@
 #include <core/types.hh>
 
 // Package Headers
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/palette/PackerPalette.fwd.hh>
 #include <core/pack/palette/DefaultPackerPalette.fwd.hh>
@@ -34,7 +34,6 @@
 // C++ Headers
 #include <list>
 
-#include <utility/vector1.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

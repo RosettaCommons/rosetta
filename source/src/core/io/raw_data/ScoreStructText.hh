@@ -23,7 +23,6 @@
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++ Headers

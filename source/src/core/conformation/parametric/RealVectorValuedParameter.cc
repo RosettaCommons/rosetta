@@ -29,6 +29,8 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 
+#include <utility/tag/XMLSchemaGeneration.hh> // AUTO IWYU For operator+, XMLSchemaAttribute, xsct...
+
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>

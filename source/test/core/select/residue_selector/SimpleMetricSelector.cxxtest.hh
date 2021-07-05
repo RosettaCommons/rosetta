@@ -14,15 +14,11 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/core/select/residue_selector/DummySelectors.hh>
-#include <test/core/select/residue_selector/utilities_for_testing.hh>
 
 // Package headers
 #include <core/select/residue_selector/SimpleMetricSelector.hh>
 #include <core/simple_metrics/per_residue_metrics/PerResidueEnergyMetric.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -31,22 +27,17 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/conformation/Residue.hh>
 #include <protocols/rosetta_scripts/XmlObjects.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core;
 using namespace core::select::residue_selector;

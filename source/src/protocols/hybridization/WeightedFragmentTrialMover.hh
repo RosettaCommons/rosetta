@@ -18,7 +18,7 @@
 
 #include <protocols/moves/Mover.hh>
 
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 #include <numeric/random/WeightedSampler.hh>
 

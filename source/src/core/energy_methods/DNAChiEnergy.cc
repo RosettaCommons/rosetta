@@ -28,7 +28,6 @@
 #include <core/conformation/Residue.hh>
 
 // Utility headers
-#include <numeric/conversions.hh>
 
 #include <basic/Tracer.hh>
 

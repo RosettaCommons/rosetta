@@ -15,6 +15,8 @@
 // unit headers
 #include <basic/datacache/WriteableCacheableMap.hh>
 
+#include <basic/datacache/WriteableCacheableData.hh> // MANUAL IWYU
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

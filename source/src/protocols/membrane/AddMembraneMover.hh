@@ -51,10 +51,9 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace protocols {
 namespace membrane {

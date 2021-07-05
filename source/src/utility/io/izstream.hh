@@ -34,8 +34,8 @@
 
 // C++ headers
 #include <fstream>
-#include <iosfwd>
 #include <limits>
+#include <ios> // For std::streamsize
 
 namespace utility {
 namespace io {

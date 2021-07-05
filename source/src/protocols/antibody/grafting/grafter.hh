@@ -17,9 +17,11 @@
 
 #include <protocols/antibody/grafting/util.hh>
 
+#include <protocols/antibody/grafting/antibody_sequence.fwd.hh> // AUTO IWYU For AntibodySequence
+
 #ifdef __ANTIBODY_GRAFTING__
 
-#include <protocols/antibody/grafting/scs_blast.hh>
+#include <protocols/antibody/grafting/scs_blast.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 

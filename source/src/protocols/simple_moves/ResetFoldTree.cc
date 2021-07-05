@@ -13,13 +13,10 @@
 // Unit headers
 #include <protocols/simple_moves/ResetFoldTree.hh>
 #include <protocols/simple_moves/ResetFoldTreeCreator.hh>
-#include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/tag/Tag.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>

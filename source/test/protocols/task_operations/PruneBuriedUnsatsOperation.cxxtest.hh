@@ -14,7 +14,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -23,12 +22,11 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/atomic_depth/AtomicDepth.hh>
 #include <core/scoring/atomic_depth/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -38,12 +36,14 @@
 
 #include <core/types.hh>
 
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+#include <core/pack/rotamer_set/RotamerSets.hh> // AUTO IWYU For RotamerSets
 
 using namespace core;
 

@@ -20,7 +20,6 @@
 
 // C/C++ headers
 #include <algorithm>
-#include <iomanip>
 #include <iostream>
 #include <map>
 #include <string>
@@ -32,12 +31,9 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
-#include <core/id/types.hh>
 #include <core/chemical/automorphism.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -53,7 +49,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
-#include <numeric/util.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/model_quality/maxsub.hh>
 #include <numeric/model_quality/rms.hh>
@@ -65,6 +60,9 @@
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
+
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A::IR, FArray1A, FArray1A<>::size_...
+#include <ObjexxFCL/FArray2A.hh> // AUTO IWYU For FArray2A::IR, FArray2A, FArray2A<>::size_...
 
 using namespace ObjexxFCL;
 

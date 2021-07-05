@@ -22,8 +22,6 @@
 #include <numeric/kdtree/HyperRectangle.hh>
 
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/VirtualBase.fwd.hh>
 
 #include <cmath>
 #include <algorithm>

@@ -20,10 +20,13 @@
 
 // Package headers
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 
 // C++ headers
 #include <iostream>
+
+#ifdef PYROSETTA
+#include <utility/vector1.functions.hh>
+#endif
 
 namespace protocols {
 namespace mean_field {

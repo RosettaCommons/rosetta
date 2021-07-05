@@ -25,10 +25,8 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/fibril/fibril_util.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -11,8 +11,10 @@
 /// @brief  Creator #includes for EnergyMethods for init
 /// @author Steven Lewis smlewi@gmail.com
 
-//EnergyMethodCreator #includes
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
+#include <core/scoring/ScoringManager.hh>
+
+//EnergyMethodCreator #includes
 #include <protocols/rna/AlignmentEnergyCreator.hh>
 #include <protocols/scoring/methods/ResidualDipolarCouplingEnergyRigidSegmentsCreator.hh>
 #include <protocols/scoring/methods/SpecialRotamerEnergyCreator.hh>

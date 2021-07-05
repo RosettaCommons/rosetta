@@ -19,7 +19,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 
 #include <map>
 

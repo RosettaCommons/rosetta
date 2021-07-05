@@ -21,6 +21,7 @@
 namespace core {
 namespace energy_methods {
 
+class GridInfo;
 
 class ExactOccludedHbondSolEnergy;
 

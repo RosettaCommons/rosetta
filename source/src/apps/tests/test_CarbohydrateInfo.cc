@@ -17,8 +17,6 @@
 
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -32,7 +30,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <iostream>

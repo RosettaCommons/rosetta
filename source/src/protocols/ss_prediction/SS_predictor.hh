@@ -22,7 +22,6 @@
 
 //// C++ headers
 #include <string>
-#include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/libsvm/Svm_rosetta.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>

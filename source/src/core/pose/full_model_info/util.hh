@@ -20,7 +20,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
-#include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <map>
 #include <string>
 

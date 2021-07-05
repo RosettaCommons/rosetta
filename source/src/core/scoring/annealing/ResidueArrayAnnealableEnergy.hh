@@ -15,11 +15,12 @@
 #define INCLUDED_core_scoring_annealing_ResidueArrayAnnealableEnergy_hh
 
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.fwd.hh>
-#include <core/scoring/annealing/RotamerSets.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // Library-level twisting for core::pack::rotamer_set::RotamerSets
 
 namespace core {
 namespace scoring {

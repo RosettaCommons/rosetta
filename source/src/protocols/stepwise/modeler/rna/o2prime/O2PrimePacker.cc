@@ -14,18 +14,19 @@
 
 
 #include <protocols/stepwise/modeler/rna/o2prime/O2PrimePacker.hh>
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/scoring_util.hh>
 #include <protocols/minimization_packing/GreenPacker.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/Tracer.hh>
-#include <utility>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
+
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.o2prime.O2PrimePacker" );
 

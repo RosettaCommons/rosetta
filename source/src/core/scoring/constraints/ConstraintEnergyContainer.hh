@@ -29,8 +29,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/graph/Graph.hh>
 
-#include <utility/vector1.hh>
-#include <iosfwd>
 
 
 #ifdef    SERIALIZATION

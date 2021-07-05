@@ -23,7 +23,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
@@ -35,7 +34,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/jd2/util.hh>
 #include <utility/string_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/map_util.hh>
@@ -44,9 +42,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
+
+#include <protocols/qsar/scoring_grid/ScoreNormalization.hh> // AUTO IWYU For get_score_normalization_function
 
 namespace protocols {
 namespace ligand_docking {

@@ -24,6 +24,7 @@
 #include <utility/VirtualBase.hh>
 
 // C++
+#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers

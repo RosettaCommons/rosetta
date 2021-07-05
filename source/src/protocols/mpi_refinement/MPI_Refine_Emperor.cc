@@ -18,13 +18,10 @@
 #include <mpi.h> //keep this first
 #endif
 
-#include <protocols/mpi_refinement/MPI_Refinement.hh>
 #include <protocols/mpi_refinement/MPI_Refine_Emperor.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -37,9 +34,10 @@
 
 #include <numeric/random/random.hh>
 
+#include <protocols/mpi_refinement/MultiObjective.hh> // AUTO IWYU For MultiObjective
+
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
 
-#include <utility/vector1.hh>
 
 #endif
 

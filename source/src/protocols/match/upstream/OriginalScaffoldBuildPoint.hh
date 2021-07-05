@@ -28,12 +28,10 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

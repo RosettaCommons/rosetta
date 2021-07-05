@@ -39,12 +39,9 @@
 #include <core/io/nmr/ParaIon.hh>
 
 // Project headers
-#include <basic/datacache/DataMap.hh>
-#include <core/pose/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -52,13 +49,11 @@
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/SplineFunc.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -76,23 +71,15 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/nmr.OptionKeys.gen.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <iostream>
-#include <iomanip>
 #include <sstream>
 #include <string>
 #include <map>
 #include <set>
 #include <cmath>
-#include <numeric>
-#include <algorithm>
 
 namespace protocols {
 namespace nmr {

@@ -19,7 +19,6 @@
 //Rosetta Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -27,7 +26,7 @@
 
 #include <core/pack/interaction_graph/HPatchInteractionGraph.fwd.hh>
 #include <core/pack/interaction_graph/AdditionalBackgroundNodesInteractionGraph.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
 #include <core/pack/interaction_graph/RotamerDots.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -46,12 +45,8 @@
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>  // needed to get arg_max - DO NOT AUTO-REMOVE!
 #include <utility/exit.hh>
-#include <utility/string_util.hh> // needed to get trim - DO NOT AUTOREMOVE!
 
 //ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1.io.hh> // needed to stream operator of FArray1Dint, line 4738 - DO NOT AUTOREMOVE!
-#include <ObjexxFCL/format.hh> // needed for I() - DO NOT AUTOREMOVE!
 
 //C++ Headers
 #include <vector>

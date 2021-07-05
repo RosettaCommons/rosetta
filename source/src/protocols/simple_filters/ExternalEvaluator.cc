@@ -25,7 +25,6 @@
 // Package Headers
 
 // Project Headers
-#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
@@ -33,7 +32,6 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <numeric/random/random.hh>
@@ -41,14 +39,11 @@
 // C++ headers
 #include <cstdlib>
 #include <string>
-#include <vector>
 #include <sys/stat.h>
-#include <iostream>
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef  __native_client__

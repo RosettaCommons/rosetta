@@ -19,7 +19,6 @@
 // Unit header
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileReaderOptions.hh>
-#include <core/io/pdb/Field.hh>
 #include <core/io/pdb/pdb_reader.hh>
 
 // Project headers

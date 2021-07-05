@@ -23,7 +23,6 @@
 
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/sasa.hh>
-#include <core/pose/util.hh>
 
 // utility headers
 #include <utility/exit.hh>
@@ -33,7 +32,6 @@
 #include <map>
 
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>

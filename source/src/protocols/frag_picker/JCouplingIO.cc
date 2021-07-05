@@ -24,7 +24,6 @@
 #include <utility/vector1.hh>
 
 #include <string>
-#include <map>
 #include <utility/exit.hh>
 
 // boost headers

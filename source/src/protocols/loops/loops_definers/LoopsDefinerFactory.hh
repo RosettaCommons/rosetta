@@ -21,10 +21,8 @@
 
 // Project Headers
 #include <protocols/loops/loops_definers/LoopsDefiner.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
 
 // Platform Headers
-#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>

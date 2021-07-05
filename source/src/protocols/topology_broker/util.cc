@@ -15,7 +15,7 @@
 #include <protocols/topology_broker/TopologyClaimerFactory.hh>
 
 // Project Headers
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/util.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
@@ -27,7 +27,6 @@
 #include <protocols/topology_broker/LoopFragmentClaimer.hh>
 #include <protocols/topology_broker/CutBiasClaimer.hh>
 #include <core/fragment/SecondaryStructure.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <basic/options/option.hh>
@@ -42,7 +41,6 @@
 
 // C++ headers
 #include <fstream>
-#include <sstream>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/topology_broker/weights/LargeFragWeight.hh>

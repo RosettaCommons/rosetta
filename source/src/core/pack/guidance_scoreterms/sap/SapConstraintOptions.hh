@@ -21,22 +21,13 @@
 #include <core/pack/guidance_scoreterms/sap/SapConstraintOptions.fwd.hh>
 
 // Package headers
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueProperties.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/chemical/ResidueProperty.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <map>
 #include <string>
-#include <utility/vector1.hh>
-#include <math.h>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 #ifdef    SERIALIZATION
 // Cereal headers

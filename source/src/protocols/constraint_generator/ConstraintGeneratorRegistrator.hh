@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_constraint_generator_ConstraintGeneratorRegistrator_hh
 
 // Package headers
-#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace protocols {

@@ -23,7 +23,6 @@
 
 // Project headers
 #include <core/scoring/nmr/pcs/PCSData.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Core headers
 #include <core/types.hh>
@@ -32,22 +31,20 @@
 #include <core/conformation/Residue.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
 
 // Numeric headers
-#include <numeric/VoxelGrid.impl.hh>
 #include <numeric/geometry/BoundingBox.hh>
 
 // C++ headers
-#include <iosfwd>
 #include <string>
 #include <map>
+
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For Matrix, Vec5
+#include <numeric/VoxelGrid.hh> // AUTO IWYU For VoxelGrid<>::Real, VoxelGrid, VoxelGrid<>::Vector
 
 namespace protocols {
 namespace nmr {

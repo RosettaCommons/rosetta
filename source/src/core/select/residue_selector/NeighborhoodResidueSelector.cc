@@ -18,11 +18,10 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
 #include <core/select/residue_selector/util.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/util.hh>
 
 // Project headers
@@ -34,14 +33,12 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 
 #ifdef    SERIALIZATION

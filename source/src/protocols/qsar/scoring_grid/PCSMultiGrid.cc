@@ -21,7 +21,6 @@
 // Package headers
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 #include <core/io/nmr/util.hh>
-#include <core/scoring/nmr/util.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
 
 // Project headers
@@ -37,14 +36,10 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/nmr.OptionKeys.gen.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // C++ headers
 #include <string>

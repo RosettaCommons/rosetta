@@ -23,6 +23,8 @@
 // tracer
 #include <basic/Tracer.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 
 // C++ Headers
 

@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_metal_interface_FindClosestAtom_HH
 
 #include <core/conformation/Residue.fwd.hh>
-#include <utility/vector1.hh>
 #include <core/types.hh>
 #include <string>
 

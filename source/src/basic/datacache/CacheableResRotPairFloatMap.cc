@@ -16,6 +16,8 @@
 // unit headers
 #include <basic/datacache/CacheableResRotPairFloatMap.hh>
 
+#include <utility/assert.hh> // AUTO IWYU For debug_assert
+
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

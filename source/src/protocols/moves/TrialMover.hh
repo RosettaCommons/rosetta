@@ -32,10 +32,8 @@
 // ObjexxFCL Headers
 
 // C++ Headers
-#include <map>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 // Utility Headers

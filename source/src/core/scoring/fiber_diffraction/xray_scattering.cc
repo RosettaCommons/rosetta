@@ -14,14 +14,12 @@
 #include <core/scoring/fiber_diffraction/xray_scattering.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 #include <iostream>
 #include <map>
 
-#include <utility/vector1.hh>
 
 
 // C++ Headers

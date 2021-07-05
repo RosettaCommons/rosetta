@@ -14,7 +14,6 @@
 #define INCLUDED_protocols_jd3_pose_outputters_pose_outputter_schemas_HH
 
 // Project headers
-#include <core/types.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

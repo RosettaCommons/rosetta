@@ -16,7 +16,9 @@
 #include <core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <utility>
+
+#include <core/pack/rotamer_set/RotamerSet.hh> // AUTO IWYU For RotamerSet
+
 
 namespace core {
 namespace pack {

@@ -20,10 +20,8 @@
 #include <core/types.hh>
 
 
-#include <core/fragment/FragSet.fwd.hh>
 
 
-#include <core/id/SequenceMapping.hh>
 
 
 //numeric headers
@@ -43,7 +41,6 @@
 
 
 // C++ headers
-#include <cstdlib>
 
 #ifdef WIN32
 #include <iterator>

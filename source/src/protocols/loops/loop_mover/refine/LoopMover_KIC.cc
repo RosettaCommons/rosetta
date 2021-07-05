@@ -26,7 +26,6 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MoverStatus.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -37,7 +36,6 @@
 //// Rosetta Headers
 #include <core/chemical/VariantType.hh>
 
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/MoveMap.hh>
 //#include <core/optimization/AtomTreeMinimizer.hh>
 //#include <core/optimization/MinimizerOptions.hh>
@@ -65,7 +63,6 @@
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 
 // option key includes
@@ -77,12 +74,13 @@
 
 #include <core/pose/variant_util.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <fstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace ObjexxFCL;
 

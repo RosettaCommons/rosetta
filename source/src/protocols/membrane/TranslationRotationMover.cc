@@ -26,34 +26,24 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
-#include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/util.hh>
 
 // Package Headers
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzMatrix.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers

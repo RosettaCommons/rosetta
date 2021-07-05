@@ -28,7 +28,6 @@
 #include <utility/VirtualBase.hh>
 
 //C++ headers
-#include <string>
 #include <iosfwd>
 
 namespace protocols {

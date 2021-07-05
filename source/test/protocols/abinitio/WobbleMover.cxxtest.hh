@@ -33,10 +33,7 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/fix_boinc_read.hh>
-#include <utility/vector1.hh>
 
 
 using basic::Error;

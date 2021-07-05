@@ -11,8 +11,8 @@
 /// @brief  Extra utilitiy functions not provided by json spirit library
 /// @author Mike Tyka
 
-#ifndef JSON_SPIRIT_TOOLS
-#define JSON_SPIRIT_TOOLS
+#ifndef INCLUDED_JSON_SPIRIT_TOOLS
+#define INCLUDED_JSON_SPIRIT_TOOLS
 
 #include <utility/json_spirit/json_spirit_value.h>
 

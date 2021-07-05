@@ -32,8 +32,9 @@
 #include <utility/numbers.hh>
 
 //// C++ headers
-#include <cmath>
 #include <iomanip>
+
+#include <protocols/noesy_assign/CrossPeak.hh> // AUTO IWYU For CrossPeak
 
 static basic::Tracer tr( "protocols.noesy_assign.calibration" );
 

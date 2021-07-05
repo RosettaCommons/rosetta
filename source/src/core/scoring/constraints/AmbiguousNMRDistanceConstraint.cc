@@ -32,7 +32,6 @@
 #include <core/chemical/AA.hh>
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <basic/prof.hh>
 // Numeric Headers
 #include <numeric/deriv/distance_deriv.hh>

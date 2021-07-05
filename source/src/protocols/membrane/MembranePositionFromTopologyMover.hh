@@ -28,9 +28,6 @@
 #include <protocols/membrane/MembranePositionFromTopologyMover.fwd.hh>
 
 // Package headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/conformation/membrane/Span.hh>
-#include <core/types.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>

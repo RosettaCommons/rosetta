@@ -22,10 +22,8 @@
 
 
 #include <protocols/grafting/util.hh>
-#include <utility>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataCache.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 // XSD XRW Includes

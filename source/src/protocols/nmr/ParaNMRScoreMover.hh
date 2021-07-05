@@ -30,10 +30,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/func/Func.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>

@@ -16,7 +16,6 @@
 #include <protocols/denovo_design/components/DivideAndConqueror.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
@@ -27,6 +26,8 @@
 
 // Boost headers
 #include <utility>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.denovo_design.components.DivideAndConqueror" );
 

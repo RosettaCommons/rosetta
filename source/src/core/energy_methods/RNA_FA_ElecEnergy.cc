@@ -19,7 +19,6 @@
 
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>

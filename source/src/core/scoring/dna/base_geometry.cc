@@ -16,8 +16,6 @@
 #include <core/scoring/dna/DNA_BasePotential.hh>
 
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyMap.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>

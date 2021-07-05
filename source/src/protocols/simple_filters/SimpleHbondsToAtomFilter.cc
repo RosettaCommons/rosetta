@@ -31,10 +31,8 @@
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
-#include <core/kinematics/tree/Atom_.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/AtomType.hh>
 
 static basic::Tracer TR( "protocols.simple_filters.SimpleHbondsToAtomFilter" );
 

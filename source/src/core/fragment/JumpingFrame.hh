@@ -23,17 +23,12 @@
 #include <core/fragment/Frame.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ STL Headers
-#include <map>
 
-#include <core/fragment/FragData.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 

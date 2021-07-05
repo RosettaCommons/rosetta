@@ -20,7 +20,7 @@
 #include <protocols/match/output/UpstreamHitCacher.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -29,7 +29,6 @@
 
 // Utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <iostream>

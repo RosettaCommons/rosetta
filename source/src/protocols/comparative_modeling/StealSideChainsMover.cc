@@ -16,10 +16,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/SequenceMapping.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/comparative_modeling/StealSideChainsMover.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

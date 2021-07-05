@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_antibody_utilities_HH
 
 // Test headers
-#include <test/UMoverTest.hh>
 #include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
@@ -27,7 +26,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <basic/Tracer.hh>

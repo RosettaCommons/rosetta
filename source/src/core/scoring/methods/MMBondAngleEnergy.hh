@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <core/scoring/methods/MMBondAngleEnergy.fwd.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
@@ -31,9 +31,10 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <iosfwd>
 
 #include <utility/vector1.hh>
+
+#include <core/chemical/ResidueType.fwd.hh> // AUTO IWYU For ResidueType
 
 
 namespace core {

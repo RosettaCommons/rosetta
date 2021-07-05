@@ -16,7 +16,6 @@
 #include <protocols/sewing/data_storage/SmartSegment.hh>
 #include <protocols/sewing/hashing/BasisMapGenerator.hh>
 #include <protocols/sewing/hashing/AlignmentGenerator.hh>
-#include <protocols/sewing/hashing/Hasher.hh>
 #include <protocols/sewing/hashing/EdgeMapGenerator.hh>
 #include <protocols/sewing/hashing/ModelFileReader.hh>
 #include <utility/io/ozstream.hh>
@@ -25,12 +24,9 @@
 //Temporary, functions will move later
 //#include <protocols/sewing/util/io.hh >
 
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/sewing.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "protocols.sewing.BasisMapGenerator" );
 

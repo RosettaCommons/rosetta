@@ -22,22 +22,19 @@
 #include <core/types.hh>
 
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.fwd.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pack/annealer/AnnealerObserver.fwd.hh>
 
 #include <utility/vector0.hh>
-#include <utility/vector1.fwd.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP
 
 
 namespace core {

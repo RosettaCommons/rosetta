@@ -17,24 +17,19 @@
 
 // package headers
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
-#include <protocols/toolbox/match_enzdes_util/InvrotTarget.hh>
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 
 ///project headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/match.OptionKeys.gen.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
@@ -46,8 +41,8 @@
 
 //utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
+
+#include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.hh> // AUTO IWYU For InvrotCollector
 
 // C++ headers
 

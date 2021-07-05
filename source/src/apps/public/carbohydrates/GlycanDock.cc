@@ -19,14 +19,10 @@
 #include <protocols/glycan_docking/GlycanDockProtocol.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
-#include <protocols/moves/Mover.hh>
 
 // Utility Headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 

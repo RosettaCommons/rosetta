@@ -18,7 +18,6 @@
 
 // Unit header
 #include <protocols/monte_carlo/GenericSimulatedAnnealer.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
 
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -28,7 +27,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/tag/Tag.fwd.hh>
 
 // External headers
 

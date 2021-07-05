@@ -21,7 +21,6 @@
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/residue_support.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/Bond.hh>
@@ -36,9 +35,8 @@
 #include <core/chemical/rings/RingSaturationType.hh>
 
 // Project headers
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
-#include <core/kinematics/Stub.hh>
 
 // Basic headers
 #include <basic/database/open.hh>
@@ -50,7 +48,6 @@
 
 // Numeric headers
 #include <numeric/conversions.hh>
-#include <numeric/constants.hh>
 //#include <numeric/xyz.functions.hh>
 
 // Utility headers
@@ -65,11 +62,13 @@
 // External headers
 #include <boost/graph/graphviz.hpp>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
 
 #include <sstream>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 using ObjexxFCL::stripped;
 

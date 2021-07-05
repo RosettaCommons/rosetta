@@ -26,6 +26,8 @@
 #include <numeric/MathNTensor.fwd.hh>
 #include <utility/io/ozstream.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 #ifdef PYROSETTA
 #include <numeric/MathNTensor.hh>
 #endif

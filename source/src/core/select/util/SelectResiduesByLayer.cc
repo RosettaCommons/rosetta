@@ -31,8 +31,6 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
 #include <fstream>
 
 //Auto Headers

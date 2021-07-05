@@ -23,8 +23,8 @@
 
 // Project Headers
 //#include <utility/graph/Graph.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
 

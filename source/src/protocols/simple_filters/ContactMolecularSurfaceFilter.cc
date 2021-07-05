@@ -18,20 +18,17 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/sc/ContactMolecularSurfaceCalculator.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilter.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
 
 // XSD XRW Includes

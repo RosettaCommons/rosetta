@@ -15,8 +15,6 @@
 #include <core/select/residue_selector/CachedResidueSubset.hh>
 
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
@@ -24,6 +22,8 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <core/pose/Pose.hh>
+
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For BadInput, CREATE_EXCEPTION
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

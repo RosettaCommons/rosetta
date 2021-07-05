@@ -20,7 +20,8 @@
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <utility/fixedsizearray1.hh>
-#include <utility/vector1.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace stepwise {

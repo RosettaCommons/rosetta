@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.fwd.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <utility/vector1.hh>
@@ -33,7 +33,6 @@
 
 
 #include <string>
-#include <map>
 
 namespace protocols {
 namespace stepwise {

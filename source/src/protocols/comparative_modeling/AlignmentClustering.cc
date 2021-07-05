@@ -32,7 +32,6 @@
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/kinematics/FoldTree.hh>
 
 #include <protocols/comparative_modeling/AlignmentClustering.hh>
 
@@ -50,7 +49,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 
-#include <fstream>
 #include <map>
 #include <set>
 #include <sstream>

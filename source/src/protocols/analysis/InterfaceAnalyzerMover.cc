@@ -26,7 +26,6 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/sasa.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -46,14 +45,12 @@
 
 #include <protocols/jd2/util.hh>
 
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/rigid_body/util.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculator2.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -64,8 +61,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
-#include <ObjexxFCL/FArray1D.hh> //necessary for fold tree tricks
-#include <ObjexxFCL/FArray2D.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
@@ -82,10 +77,8 @@
 #include <sstream>
 #include <set>
 #include <string>
-#include <numeric>
 
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -94,6 +87,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR( "protocols.analysis.InterfaceAnalyzerMover" );

@@ -16,32 +16,23 @@
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.hh> // for ROSETTA_LIBRARY_DOMAIN
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/stepwise/modeler/rna/util.hh> //Parin Sripakdeevong
 #include <protocols/stepwise/modeler/util.hh> // for figuring out moving chainbreaks
-#include <protocols/stepwise/modeler/output_util.hh> // output movemap
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <core/import_pose/options/RNA_MinimizerOptions.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
-#include <protocols/simple_moves/ConstrainToIdealMover.hh>
-#include <basic/options/option.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>
@@ -50,13 +41,11 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 //Packer stuff
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
@@ -65,17 +54,17 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <sstream>
 #ifdef WIN32
 #include <ctime>
 #endif
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core;
 using namespace core::import_pose;

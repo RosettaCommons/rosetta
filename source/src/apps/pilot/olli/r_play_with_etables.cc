@@ -18,15 +18,12 @@
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 
 #include <basic/database/open.hh>
 
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
 
 
 //Rosetta Scripts Headers
@@ -40,29 +37,20 @@
 // Utility Headers
 
 // Unit Headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 
 // Utility headers
-#include <devel/init.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <utility/exit.hh>
 
-#include <basic/Tracer.hh>
 
 // C++ headers
-#include <iostream>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "main" );

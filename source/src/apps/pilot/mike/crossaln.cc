@@ -20,11 +20,10 @@
 #include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/ScoringScheme.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/file/FileName.hh>
+#include <utility/file/FileName.fwd.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 

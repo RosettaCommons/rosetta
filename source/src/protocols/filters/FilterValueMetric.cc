@@ -19,17 +19,14 @@
 #include <core/simple_metrics/RealMetric.hh>
 #include <core/simple_metrics/util.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
 
 #include <protocols/filters/Filter.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 
 // XSD Includes

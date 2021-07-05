@@ -23,8 +23,6 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/EnergyNames.hh>
-#include <core/io/silent/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <utility/string_util.hh>
@@ -33,6 +31,8 @@
 
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
+
+#include <fstream> // AUTO IWYU For operator<<, basic_ostream, endl, basic_ostre...
 
 static basic::Tracer TR( "protocols.rna.setup.RNA_CSA_JobDistributor" );
 

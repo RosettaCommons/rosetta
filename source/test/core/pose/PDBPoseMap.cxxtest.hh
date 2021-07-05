@@ -15,10 +15,8 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <core/types.hh>
 
 #include <core/pose/PDBPoseMap.hh>
-#include <utility/vector1.hh>
 
 #include <test/core/init_util.hh> //necessary if there is tracer output
 

@@ -33,7 +33,6 @@
 
 #include <core/fragment/FrameIterator.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
-#include <utility/vector1.hh>
 
 #ifdef WIN32
 #include <core/fragment/FragID.hh>

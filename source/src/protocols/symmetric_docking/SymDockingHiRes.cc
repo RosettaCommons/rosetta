@@ -28,11 +28,10 @@
 
 #include <basic/options/option.hh>
 
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
@@ -57,7 +56,6 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 #include <protocols/relax/FastRelax.hh>
 
 //for resfile reading
@@ -65,13 +63,10 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>
 
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 
 #include <basic/Tracer.hh>
@@ -80,7 +75,6 @@
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

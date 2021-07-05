@@ -16,20 +16,8 @@
 #include <devel/init.hh>
 
 // core headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSetsFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 
 // protocol headers
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
@@ -42,8 +30,26 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
+
+#include <cmath>
+
+#include <core/types.hh> // AUTO IWYU For PackerEnergy
+
+#ifdef MULTI_THREADED
+#include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSetsFactory.hh>
+#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
+#include <protocols/symmetry/SetupForSymmetryMover.hh>
+#endif
 
 static basic::Tracer TR("apps.pilot.vmullig.test_multithreaded_ig_correctness");
 

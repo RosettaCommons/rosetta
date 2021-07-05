@@ -21,8 +21,6 @@
 #include <core/conformation/util.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
-#include <protocols/environment/claims/VirtResClaim.hh>
-#include <protocols/environment/claims/JumpClaim.hh>
 
 #include <protocols/environment/ProtectedConformation.hh>
 #include <protocols/environment/ClientMover.hh>
@@ -30,9 +28,6 @@
 #include <protocols/environment/AutoCutData.hh>
 
 // Project headers
-#include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/types.hh>
 
 #include <utility>
 #include <utility/excn/Exceptions.hh>
@@ -41,35 +36,31 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/util.hh>
-#include <core/kinematics/Exceptions.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/BondedAtom.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Atom.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/WriteableCacheableMap.hh>
-#include <basic/datacache/WriteableCacheableData.hh>
+#include <basic/datacache/WriteableCacheableData.fwd.hh>
 
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/PDBInfo.hh>
 
 // utility headers
 #include <utility/string_util.hh>
-#include <boost/functional/hash.hpp>
 
 // tracer
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <functional>
 #include <algorithm>
-#include <numeric>
 #include <set>
+
+#include <core/environment/DofPassport.hh> // AUTO IWYU For DofPassport
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // ObjexxFCL Headers
 

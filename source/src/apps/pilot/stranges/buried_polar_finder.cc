@@ -17,15 +17,12 @@
 //project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/moves/Mover.hh>
@@ -41,31 +38,23 @@
 // Utility Headers
 #include <basic/MetricValue.hh>
 #include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/exit.hh>
 
 
 // jd2 headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
 
 #include <basic/Tracer.hh>
 
 // option key includes
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 using basic::Error;
 using basic::Warning;

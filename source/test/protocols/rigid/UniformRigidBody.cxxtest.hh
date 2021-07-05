@@ -12,28 +12,21 @@
 
 // Package headers
 
-#include <basic/Tracer.hh>
 
-#include <core/id/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <protocols/environment/Environment.hh>
-#include <protocols/environment/EnvExcn.hh>
 
-#include <protocols/environment/claims/JumpClaim.hh>
 
 #include <protocols/rigid/UniformRigidBodyCM.hh>
 
 #include <test/core/init_util.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 //C++ headers
-#include <iostream>
 
 using namespace core;
 
@@ -71,7 +64,6 @@ public:
 		using namespace core::environment;
 		using namespace protocols;
 		using namespace protocols::environment;
-		using namespace core::select::residue_selector;
 		using namespace numeric;
 		using namespace core::conformation;
 		//using namespace abinitio::abscript;

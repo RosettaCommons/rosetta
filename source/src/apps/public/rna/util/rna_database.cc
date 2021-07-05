@@ -24,21 +24,17 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/setup/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/pose/PDBInfo.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
@@ -47,17 +43,14 @@
 
 #include <numeric/conversions.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 //RNA stuff.
 #include <protocols/rna/denovo/util.hh>
-#include <core/import_pose/libraries/BasePairStepLibrary.hh>
 #include <core/import_pose/RNA_BasePairHandler.hh>
 
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -70,8 +63,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
-#include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>

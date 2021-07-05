@@ -20,7 +20,6 @@
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 namespace protocols {

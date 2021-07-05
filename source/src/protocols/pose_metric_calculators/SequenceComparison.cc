@@ -47,7 +47,6 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <basic/prof.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 
@@ -60,12 +59,10 @@
 
 // C++ headers
 #include <sstream>
-#include <map>
 
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
-#include <utility/vector0.hh>
 
 
 namespace protocols {

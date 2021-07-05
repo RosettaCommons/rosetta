@@ -24,11 +24,9 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <platform/types.hh>
 
 #include <utility/graph/Graph.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/optimization/DOF_Node.hh>
 #include <core/optimization/NumericalDerivCheckResult.hh>
 
 //#include <core/chemical/ResidueTypeSet.hh>
@@ -61,16 +59,16 @@
 #include <core/types.hh>
 
 
-#include <test/UTracer.hh>
 
 // Numeric headers
 // Auto-header: duplicate removed #include <numeric/random/random.hh>
 
 //Auto Headers
-#include <core/kinematics/DomainMap.hh>
 #include <core/optimization/MinimizerMap.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Error, Tracer, Warning
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using basic::Error;

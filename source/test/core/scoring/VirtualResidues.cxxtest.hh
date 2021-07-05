@@ -18,7 +18,6 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -35,11 +34,11 @@
 
 // Package headers
 
-#include <test/UTracer.hh>
 
 //Auto Headers
 #include <core/id/AtomID.hh>
-#include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Error, Warning
 
 
 using basic::Error;

@@ -14,19 +14,13 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/AtomID.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/util.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/rms_util.hh>
-#include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
@@ -45,15 +39,12 @@
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
-#include <utility/file/file_sys_util.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
 #include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <core/import_pose/options/RNA_MinimizerOptions.hh>
 #include <protocols/rna/denovo/util.hh>
-#include <protocols/stepwise/modeler/util.hh> // for other_pose.
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
@@ -71,6 +62,8 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
 
 OPT_KEY( String,  params_file )
 OPT_KEY( Boolean,  one_torsion_test )

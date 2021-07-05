@@ -26,16 +26,12 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/schema_generator/Constraint.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/insert_statement_generator/RowData.hh>
 #include <basic/Tracer.hh>
 
 //Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
 
@@ -44,7 +40,6 @@
 
 // C++ Headers
 #include <algorithm>
-#include <limits>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

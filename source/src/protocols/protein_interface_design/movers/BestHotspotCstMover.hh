@@ -13,7 +13,6 @@
 #ifndef INCLUDED_protocols_protein_interface_design_movers_BestHotspotCstMover_hh
 #define INCLUDED_protocols_protein_interface_design_movers_BestHotspotCstMover_hh
 
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
@@ -21,7 +20,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

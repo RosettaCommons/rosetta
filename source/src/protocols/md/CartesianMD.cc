@@ -23,46 +23,37 @@
 #include <core/pose/symmetry/util.hh>
 
 // Constraints
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreType.hh>
 
 //Optimization
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMultifunc.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/CartesianMinimizerMap.hh>
-#include <core/optimization/cartesian_minimize.hh>
 #include <core/optimization/types.hh>
 
 //Mass setup
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/Element.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 // Rosetta Scripts
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 //Constraints
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 //For reading native
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -70,7 +61,6 @@
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
-#include <iostream>
 #include <fstream>
 
 //Temporary
@@ -83,6 +73,11 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/DerivVectorPair.hh> // MANUAL IWYU
+#include <protocols/md/Rattle.hh> // AUTO IWYU For Rattle
+#include <protocols/md/thermostat.hh> // AUTO IWYU For Thermostat
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 namespace protocols {
 namespace md {

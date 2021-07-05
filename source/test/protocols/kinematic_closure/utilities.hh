@@ -16,21 +16,13 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Protocol headers
-#include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
 
 // Utility headers
-#include <numeric/constants.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
-#include <boost/unordered_map.hpp>
 
 // C++ headers
-#include <algorithm>
-#include <iostream>
 #include <sstream>
 
 // Global names

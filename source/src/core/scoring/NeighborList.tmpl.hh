@@ -25,13 +25,13 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 // Project headers
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <basic/prof.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/PointGraph.hh>
+
+#include <core/conformation/PointGraphData.hh> // AUTO IWYU For PointGraphEdgeData, PointGraphVertexData ...
 
 namespace core {
 namespace scoring {

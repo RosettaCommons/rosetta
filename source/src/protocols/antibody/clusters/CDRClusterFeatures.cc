@@ -13,7 +13,6 @@
 
 
 #include <protocols/antibody/clusters/CDRClusterFeatures.hh>
-#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/clusters/CDRCluster.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
@@ -21,7 +20,6 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 #include <basic/database/sql_utils.hh>
@@ -31,14 +29,15 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <utility/string_util.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/antibody/clusters/CDRClusterFeaturesCreator.hh>
+
+#include <sstream> // MANUAL IWYU
 
 namespace protocols {
 namespace antibody {

@@ -22,13 +22,11 @@
 
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
-#include <protocols/topology_broker/SequenceClaimer.hh>
 #include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
 //#include <core/fragment/FragSet.hh>
 
 
@@ -43,8 +41,6 @@
 //#include <iosfwd>
 #include <string>
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -20,6 +20,9 @@
 #include <utility/exit.hh>
 #include <cppdb/frontend.h>
 
+#include <basic/database/insert_statement_generator/RowData.hh> // AUTO IWYU For RowDataBase
+#include <utility/sql_database/DatabaseSessionManager.hh> // AUTO IWYU For session
+
 namespace basic {
 namespace database {
 namespace insert_statement_generator {

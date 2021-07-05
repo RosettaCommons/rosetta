@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_chemical_carbohydrates_LinkageConformers_HH
 #define INCLUDED_core_chemical_carbohydrates_LinkageConformers_HH
 
+#include <core/chemical/carbohydrates/LinkageConformers.fwd.hh>
+
 #include <core/id/types.hh>
 #include <utility/vector1.hh>
 #include <map>

@@ -29,18 +29,16 @@
 
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
 
 #include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/Job.hh>
+#include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
-#include <protocols/jd3/JobResult.hh>
-#include <protocols/jd3/JobSummary.hh>
+#include <protocols/jd3/JobResult.fwd.hh>
+#include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/JobTracker.hh>
 #include <protocols/jd3/CompletedJobOutput.fwd.hh>
 
@@ -53,33 +51,27 @@
 
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputSpecification.hh>
-#include <protocols/jd3/job_summaries/StandardPoseJobSummary.hh>
 #include <protocols/jd3/job_results/PoseJobResult.hh>
 
-#include <protocols/filters/BasicFilters.hh>
 #include <protocols/filters/filter_schemas.hh>
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/filters/FilterCreator.hh>
 
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/jobdist/Jobs.hh>
 
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
-#include <protocols/parser/DataLoader.hh>
 #include <protocols/parser/DataLoaderFactory.hh>
 #include <protocols/parser/ResidueSelectorLoader.hh>
 
-#include <protocols/moves/NullMover.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/moves/MoverCreator.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/tag/XMLSchemaValidation.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/pointer/memory.hh>
+
+#include <protocols/jd3/output/OutputSpecification.hh> // AUTO IWYU For OutputSpecification
 
 static basic::Tracer TR( "protocols.multistage_rosetta_scripts.MRSJobQueen" );
 
@@ -89,6 +81,8 @@ using namespace protocols::jd3::dag_node_managers;
 using namespace protocols::jd3::job_results;
 
 #ifdef    SERIALIZATION
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
+
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>

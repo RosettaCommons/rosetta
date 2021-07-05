@@ -14,7 +14,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
@@ -33,7 +32,6 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/RepeatMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
@@ -49,17 +47,16 @@
 
 // Utility Headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/excn/Exceptions.hh>
 // C++ headers
 #include <string>
-#include <sstream>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces

@@ -21,16 +21,13 @@
 #include <core/scoring/constraints/KofNConstraint.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
-#include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 
 //Utility Headers
-#include <numeric/xyzVector.fwd.hh>
 
 #include <utility/vector1.hh>
 

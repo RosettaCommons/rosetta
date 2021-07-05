@@ -19,26 +19,21 @@
 
 #include <protocols/mpi_refinement/MPI_Refinement.hh>
 #include <protocols/mpi_refinement/MultiObjective.hh>
-#include <protocols/mpi_refinement/WorkUnit_Sampler.hh>
 #include <protocols/mpi_refinement/util.hh>
 
-#include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <core/scoring/ScoreType.hh>
@@ -52,7 +47,6 @@
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 //#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 
@@ -72,8 +66,9 @@
 #endif
 
 //Auto Headers
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <utility/vector1.hh>
+
+#include <utility/vector0.hh> // AUTO IWYU For vector0
 
 using namespace ObjexxFCL::format;
 

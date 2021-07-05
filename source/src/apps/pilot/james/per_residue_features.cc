@@ -25,23 +25,18 @@
 #include <protocols/jumping/util.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
 #include <utility/string_util.hh>
 
 // C++ headers
 #include <string>
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 
-#include <platform/types.hh>
-#include <core/id/types.hh>
 
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 //Auto Headers
-#include <core/conformation/Conformation.hh>
 
 #include <utility/excn/Exceptions.hh>
 

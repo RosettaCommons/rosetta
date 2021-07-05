@@ -23,27 +23,19 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
 // Platform Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <utility/graph/Graph.fwd.hh>
-#include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergiesCacheableDataType.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 // #include <basic/database/sql_utils.hh> 09_11_2013, commented by Doonam due to double declaration
 
 // External Headers
-#include <cppdb/frontend.h>
 
 // C++ Headers
 #include <sstream>
@@ -52,6 +44,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/ScoreTypeFeaturesCreator.hh>
+
+#include <utility/string_util.hh> // AUTO IWYU For to_string
 
 namespace protocols {
 namespace features {

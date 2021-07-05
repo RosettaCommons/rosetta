@@ -56,14 +56,10 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/after_opts.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -73,12 +69,10 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <devel/init.hh>
 #include <numeric/xyzVector.hh>
-#include <sstream>
 #include <iomanip>
 #include <fstream>
 #include <string>

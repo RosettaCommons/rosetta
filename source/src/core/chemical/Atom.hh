@@ -19,12 +19,12 @@
 #include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/AtomProperty.hh>
 #include <core/chemical/AtomProperties.fwd.hh>
-#include <core/chemical/MutableICoorRecord.hh>
+#include <core/chemical/MutableICoorRecord.fwd.hh>
 
 // Package headers
 #include <core/chemical/GreekDistance.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
-#include <core/chemical/Element.hh>
+#include <core/chemical/Element.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -33,11 +33,14 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
-#include <utility/vector1_bool.hh>
 #include <utility/pointer/deep_copy.hh>
 
 // C++ headers
 #include <string>
+
+#include <core/chemical/Elements.hh> // AUTO IWYU For Elements, H
+#include <core/chemical/MutableResidueType.fwd.hh> // AUTO IWYU For MutableResidueType
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 #ifdef    SERIALIZATION

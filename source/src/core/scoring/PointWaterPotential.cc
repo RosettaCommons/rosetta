@@ -15,33 +15,24 @@
 #include <core/scoring/PointWaterPotential.hh>
 
 // Package Headers
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/AtomType.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <basic/basic.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
 #include <numeric/MathMatrix.hh>
-#include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/deriv/distance_deriv.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/angle.functions.hh>
 #include <numeric/interpolation/spline/BicubicSpline.hh>
 
 #include <core/scoring/DerivVectorPair.hh>

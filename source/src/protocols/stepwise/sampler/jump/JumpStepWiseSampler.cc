@@ -16,7 +16,6 @@
 #include <protocols/stepwise/sampler/jump/JumpStepWiseSampler.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.sampler.jump.JumpStepWiseSampler" );
 

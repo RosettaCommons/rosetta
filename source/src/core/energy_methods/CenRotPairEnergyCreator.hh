@@ -20,7 +20,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

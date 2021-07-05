@@ -34,7 +34,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/rms_util.hh>
@@ -44,7 +43,7 @@
 #include <core/sequence/ABEGOManager.hh>
 
 #include <protocols/relax/FastRelax.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -52,12 +51,13 @@
 
 // C++ headers
 #include <set>
+#include <sstream>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace devel {

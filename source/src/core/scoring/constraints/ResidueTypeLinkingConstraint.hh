@@ -21,7 +21,6 @@
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
 

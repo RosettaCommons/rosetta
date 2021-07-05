@@ -17,7 +17,6 @@
 #include <core/scoring/PolymerBondedEnergyContainer.hh>
 
 // Project headers
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/Pose.hh>
@@ -26,6 +25,8 @@
 
 // Tracer
 #include <basic/Tracer.hh>
+
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
 
 #ifdef SERIALIZATION
 // Utility serialization headers

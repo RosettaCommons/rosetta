@@ -19,16 +19,15 @@
 
 #include <utility/vector1.hh>
 
-#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
-#include <protocols/moves/SimulatedTempering.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.fwd.hh>
+#include <protocols/moves/SimulatedTempering.fwd.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.fwd.hh>
 
-#include <protocols/recces/util.hh>
-#include <protocols/recces/sampler/MC_OneTorsion.hh>
+#include <protocols/recces/sampler/MC_OneTorsion.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
-#include <string>
+
+#include <core/id/TorsionID.fwd.hh> // AUTO IWYU For TorsionID
 
 namespace protocols {
 namespace recces {

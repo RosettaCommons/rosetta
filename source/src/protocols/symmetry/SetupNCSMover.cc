@@ -15,7 +15,6 @@
 #include <protocols/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/symmetry/SetupNCSMover.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
 #include <core/id/TorsionID.hh>

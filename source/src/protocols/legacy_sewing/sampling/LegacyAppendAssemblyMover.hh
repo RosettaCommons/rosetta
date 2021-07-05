@@ -22,10 +22,12 @@
 #include <protocols/legacy_sewing/sampling/LegacyMonteCarloAssemblyMover.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
+#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
 
 //Protocol headers
 #include <core/pose/Pose.fwd.hh>
+
+#include <protocols/legacy_sewing/conformation/Model.hh> // AUTO IWYU For Model
 
 namespace protocols {
 namespace legacy_sewing  {

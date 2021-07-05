@@ -24,7 +24,6 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 
-#include <utility>
 #include <utility/vector1.hh>
 
 

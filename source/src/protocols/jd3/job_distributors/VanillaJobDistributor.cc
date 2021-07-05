@@ -19,8 +19,7 @@
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobQueen.hh>
-#include <protocols/jd3/JobResult.hh>
-#include <protocols/jd3/JobSummary.hh>
+#include <protocols/jd3/JobResult.fwd.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/job_distributors/JobExtractor.hh>
 #include <protocols/jd3/output/OutputSpecification.hh>
@@ -32,7 +31,6 @@
 #include <basic/options/keys/jd3.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
@@ -40,7 +38,6 @@
 
 // C++ headers
 #include <string>
-#include <ctime>
 #include <fstream>
 
 namespace protocols {

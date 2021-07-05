@@ -12,13 +12,11 @@
 /// @details
 /// @author Brandon Frenz
 
-#include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Symmetry
-#include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 
@@ -26,7 +24,6 @@
 
 #include <core/pose/Pose.hh>
 
-#include <basic/options/option.hh>
 
 #include <basic/Tracer.hh>
 

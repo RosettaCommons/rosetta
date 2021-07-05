@@ -15,14 +15,11 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pose/Pose.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/moves/NullMover.hh>
 
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/filters/BasicFilters.hh>
 

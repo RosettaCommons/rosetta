@@ -17,16 +17,15 @@
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 
 /// Package headers
-#include <protocols/match/BumpGrid.hh>
-#include <protocols/match/OccupiedSpaceHash.hh>
-#include <protocols/match/downstream/ActiveSiteGrid.hh>
+#include <protocols/match/BumpGrid.fwd.hh>
+#include <protocols/match/OccupiedSpaceHash.fwd.hh>
+#include <protocols/match/downstream/ActiveSiteGrid.fwd.hh>
 #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/LigandConformerBuilder.hh>
 
 //Project header
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

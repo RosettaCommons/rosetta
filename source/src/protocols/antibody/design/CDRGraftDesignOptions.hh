@@ -22,9 +22,10 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
+
+#include <core/types.hh> // AUTO IWYU For Real, Size
 
 namespace protocols {
 namespace antibody {

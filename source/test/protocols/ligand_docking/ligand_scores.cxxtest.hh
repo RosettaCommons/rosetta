@@ -12,16 +12,12 @@
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
 
 #include <protocols/ligand_docking/ligand_scores.hh>
 
-#include <utility/vector1.hh>
 
 static basic::Tracer TR("protocols.ligand_docking.ligand_scores.cxxtest");
 

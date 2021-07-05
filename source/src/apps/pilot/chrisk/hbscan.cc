@@ -18,9 +18,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <core/kinematics/MoveMap.hh>
 
-#include <core/chemical/util.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -29,10 +27,8 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/types.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -41,93 +37,46 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <core/scoring/types.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/Etable.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/scoring/electron_density/util.hh>
-#include <core/scoring/sasa.hh>
 #include <core/pose/util.hh>
 
-#include <core/id/SequenceMapping.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/NWAligner.hh>
-#include <core/sequence/MatrixScoringScheme.hh>
-#include <core/sequence/ScoringScheme.fwd.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/constants.hh>
 
-#include <utility/tools/make_vector1.hh>
-#include <utility/tools/make_map.hh>
 #include <utility/string_util.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/rtmin.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/util.hh>
-#include <basic/options/option_macros.hh>
 
 #include <basic/Tracer.hh>
 
 //protocols library (Movers)
 #include <protocols/viewer/viewers.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <protocols/electron_density/util.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 //calculator stuff
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/pose_metric_calculators/MetricValueGetter.hh>
-#include <basic/MetricValue.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
 //utilities
 
 // option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/rot_anl.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+
+#include <core/conformation/ResidueFactory.hh> // AUTO IWYU For ResidueFactory
+#include <numeric/conversions.hh> // AUTO IWYU For degrees
+#include <utility/io/ozstream.hh> // AUTO IWYU For ozstream
 
 //local options
 namespace basic { namespace options { namespace OptionKeys {
@@ -146,7 +95,6 @@ using namespace kinematics;
 using namespace scoring;
 using namespace options;
 using namespace basic::options::OptionKeys;
-using namespace optimization;
 namespace OK = OptionKeys;
 using utility::vector1;
 using utility::to_string;

@@ -21,8 +21,8 @@
 #include <protocols/forge/build/Interval.hh>
 
 //project headers
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
@@ -30,7 +30,6 @@
 
 //utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

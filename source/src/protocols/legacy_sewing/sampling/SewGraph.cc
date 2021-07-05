@@ -19,13 +19,6 @@
 #include <protocols/legacy_sewing/util/io.hh>
 
 //Protocol headers
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.functions.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
@@ -43,8 +36,9 @@
 #include <utility/io/ozstream.hh>
 
 // Boost Headers
-#include <boost/pool/pool.hpp>
 #include <utility/graph/unordered_object_pool.hpp>
+
+#include <boost/pool/object_pool.hpp> // AUTO IWYU For unordered_object_pool::construct
 
 namespace protocols {
 namespace legacy_sewing  {

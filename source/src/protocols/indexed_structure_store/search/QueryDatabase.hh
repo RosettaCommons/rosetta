@@ -14,20 +14,17 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_HH
 #define INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_HH
 
-#include <iosfwd>
 
-#include <cstdlib>
-#include <cmath>
 #include <vector>
 #include <map>
 
 #include <Eigen/Core>
-#include <Eigen/Geometry>
 
-#include "ndarray.h"
 
 #include <protocols/indexed_structure_store/search/QueryDatabase.fwd.hh>
 #include <protocols/indexed_structure_store/Datatypes.fwd.hh>
+
+#include <ndarray/Array.h> // AUTO IWYU For Array
 
 namespace protocols { namespace indexed_structure_store { namespace search {
 

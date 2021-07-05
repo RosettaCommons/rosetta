@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 // Objexx Headers
-#include <ObjexxFCL/ubyte.hh>
+#include <ObjexxFCL/ubyte.hh> // DO NOT AUTO-REMOVE (needed for member variable)
 
 #ifdef PYROSETTA
 #include <ObjexxFCL/FArray2D.hh>
@@ -33,12 +33,9 @@
 //Utilitiy Headers
 #include <utility/SingletonBase.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
-#include <utility/thread/ReadWriteMutex.hh>
 
 //C++ Headers
-#include <vector>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>

@@ -23,19 +23,16 @@
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/Frame.fwd.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 // Project Headers
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/Mover.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

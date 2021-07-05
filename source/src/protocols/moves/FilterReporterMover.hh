@@ -19,8 +19,8 @@
 #include <protocols/moves/FilterReporterMover.fwd.hh>
 
 // Project headers
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/FilterMover.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/FilterMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // C++ header

@@ -21,7 +21,7 @@
 // Rosetta Headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/conformation/ppo_torsion_bin.hh>
+#include <core/conformation/ppo_torsion_bin.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Ramachandran.fwd.hh>
 #include <core/scoring/Ramachandran2B.fwd.hh>
@@ -31,7 +31,6 @@
 // Utility Headers
 #include <utility/LexicographicalIterator.hh> //not OPable; needs full header
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ Headers

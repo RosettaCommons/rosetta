@@ -16,14 +16,12 @@
 
 // Project Headers
 #include <numeric/MathMatrix.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 #include <numeric/types.hh>
 
-#include <numeric/linear_algebra/EllipseParameters.hh>
+#include <numeric/linear_algebra/EllipseParameters.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
-#include <cstdlib>
 
 namespace numeric {
 namespace linear_algebra {

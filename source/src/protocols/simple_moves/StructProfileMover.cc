@@ -20,23 +20,17 @@
 #include <basic/database/open.hh>
 
 // Core Headers
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 //
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
-#include <protocols/indexed_structure_store/FragmentLookup.hh>
-#include <protocols/indexed_structure_store/FragmentStore.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/EnvPairPotential.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -44,31 +38,26 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 
 #include <core/types.hh>
 
 #include <basic/datacache/DataMap.hh>
 #include <basic/datacache/DataMapObj.hh>
-#include <basic/options/keys/remodel.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/VirtualBase.hh>
 
 #include <iostream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <map>
-#include <set>
 #include <ObjexxFCL/format.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 static basic::Tracer TR( "protocols.simple_moves.StructProfileMover" );
 

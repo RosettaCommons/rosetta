@@ -44,9 +44,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/select/util.hh>
 #include <core/types.hh>
 
@@ -66,12 +64,13 @@
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 
 // ObjexxFCL includes
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D...
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

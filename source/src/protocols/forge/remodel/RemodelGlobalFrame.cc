@@ -15,59 +15,44 @@
 
 // unit headers
 #include <protocols/forge/remodel/RemodelGlobalFrame.hh>
-#include <protocols/forge/remodel/RemodelRotamerLinks.hh>
 #include <protocols/forge/methods/util.hh>
 
 // package headers
 
 // project headers
 #include <basic/Tracer.hh>
-#include <basic/MetricValue.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
-#include <core/util/disulfide_util.hh>
-#include <core/conformation/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/io/Remarks.hh>
-#include <core/io/StructFileRep.hh>
-#include <core/pose/util.hh> // for pdbinfo
 #include <core/id/AtomID.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/io/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 #include <protocols/constraints_additional/COMCoordinateConstraint.hh>
 
 // numeric headers
-#include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //external
-#include <Eigen/Dense>
+#include <Eigen/Dense> // DO NOT AUTO-REMOVE (needed for template instantiation)
 
 // boost headers
 
 // C++ headers
 #include <iostream>
 #include <cmath>
+
+#include <Eigen/SVD> // AUTO IWYU For JacobiSVD, SVDBase<>::MatrixUType
 
 using namespace basic::options;
 using namespace Eigen;

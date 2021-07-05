@@ -24,11 +24,8 @@
 #include <core/pose/Pose.fwd.hh>
 
 //protocols
-#include <protocols/moves/Mover.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/BackboneMover.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

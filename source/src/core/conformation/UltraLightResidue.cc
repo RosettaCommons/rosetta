@@ -22,6 +22,8 @@
 #include <numeric/model_quality/rms.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D::IR, FArray1D<>::size_type
+
 namespace core {
 namespace conformation {
 

@@ -20,8 +20,7 @@
 // Project headers
 
 // C++ Headers
-
-#include <iosfwd>
+#include <string>
 
 
 namespace core {

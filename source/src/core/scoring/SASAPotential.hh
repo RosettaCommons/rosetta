@@ -21,12 +21,10 @@
 
 #include <core/types.hh>
 
-#include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/DerivVectorPair.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>

@@ -22,11 +22,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/id/types.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
@@ -52,7 +50,6 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -69,7 +66,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

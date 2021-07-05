@@ -17,7 +17,6 @@
 //project headers
 
 //utility headers
-#include <utility/VirtualBase.hh>
 
 //C++ headers
 

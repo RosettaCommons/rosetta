@@ -37,16 +37,13 @@
 
 #include <core/kinematics/MinimizerMapBase.hh>
 
-#include <basic/prof.hh>
 
 #include <core/scoring/ScoringManager.hh>
 
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/trie/CPDataCorrespondence.hh>
-#include <core/scoring/trie/RotamerDescriptor.hh>
-#include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/trie/TrieCollection.hh>
-#include <core/scoring/trie/TrieCountPairBase.hh>
+#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 #include <core/scoring/trie/trie.functions.hh>
 
 #include <core/scoring/etable/etrie/CountPairData_1_1.hh>
@@ -67,6 +64,8 @@
 
 #include <core/scoring/mm/MMLJLibrary.hh>
 #include <utility/vector1.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArra...
 
 #ifdef SERIALIZATION
 // Project serialization headers

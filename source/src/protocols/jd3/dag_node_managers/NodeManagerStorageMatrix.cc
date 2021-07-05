@@ -10,7 +10,6 @@
 /// @file protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.cc
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
-#include <utility/VirtualBase.hh>
 #include <protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh>
 #include <algorithm>
 

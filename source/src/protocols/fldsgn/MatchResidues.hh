@@ -24,12 +24,9 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

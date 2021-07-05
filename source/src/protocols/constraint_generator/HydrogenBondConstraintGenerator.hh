@@ -36,6 +36,8 @@
 #include <set>
 #include <list>
 
+#include <core/types.hh> // AUTO IWYU For Real
+
 namespace protocols {
 namespace constraint_generator {
 

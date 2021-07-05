@@ -19,7 +19,6 @@
 // Core headers
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/util.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pack/guidance_scoreterms/buried_unsat_penalty/BuriedUnsatPenalty.hh>
@@ -34,17 +33,14 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
 
 //Protocols headers
 #include <protocols/rosetta_scripts/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

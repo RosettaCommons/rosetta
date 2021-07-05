@@ -19,10 +19,8 @@
 
 // Package headers
 
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>

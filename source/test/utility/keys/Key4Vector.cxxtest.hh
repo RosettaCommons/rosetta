@@ -16,7 +16,6 @@
 // Package headers
 #include <cxxtest/TestSuite.h>
 #include <utility/keys/Key4Vector.hh>
-#include <utility/keys/Key4Tuple.hh>
 
 
 class Key4VectorTests : public CxxTest::TestSuite {

@@ -16,7 +16,6 @@
 
 #include <core/scoring/power_diagram/PowerDiagram.fwd.hh>
 
-#include <numeric/numeric.functions.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -24,7 +23,6 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 

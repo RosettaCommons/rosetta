@@ -18,7 +18,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -32,20 +31,19 @@
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/protein_interface_design/util.hh>
-#include <utility/string_util.hh>
 
 #include <utility/graph/Graph.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <core/pose/variant_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

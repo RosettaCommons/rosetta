@@ -19,7 +19,7 @@
 
 // Package headers
 #include <core/environment/EnvExcnBase.hh>
-#include <core/environment/EnvCore.hh>
+#include <core/environment/EnvCore.fwd.hh>
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
 

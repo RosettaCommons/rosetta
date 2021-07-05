@@ -18,23 +18,17 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/types.hh>
 #include <protocols/comparative_modeling/IgnoreSubsetConstraintSet.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility>
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 
 #include <basic/Tracer.hh>
 
 //// C++ headers
-#include <string>
 #include <set>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.comparative_modeling" );

@@ -24,7 +24,6 @@
 //#include <core/scoring/etable/count_pair/CountPairCrossover3.hh>
 
 #include <core/types.hh>
-#include <core/conformation/Atom.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.fwd.hh>

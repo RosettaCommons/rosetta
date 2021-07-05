@@ -21,8 +21,6 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/func/GaussianChainFunc.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "core.scoring.loop_graph.evaluator.GaussianChainFuncPotentialEvaluator" );

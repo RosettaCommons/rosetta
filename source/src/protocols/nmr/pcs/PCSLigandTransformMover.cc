@@ -27,18 +27,15 @@
 
 // Core headers
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -47,23 +44,21 @@
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <ObjexxFCL/format.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/nls/lmmin.hh>
 #include <numeric/random/random.hh>
+#include <numeric/VoxelGrid.impl.hh> // DO NOT AUTO-REMOVE (needed for template instantiation)
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // C++ headers
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <cmath>

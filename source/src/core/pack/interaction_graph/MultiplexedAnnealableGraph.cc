@@ -15,16 +15,11 @@
 #include <core/pack/interaction_graph/MultiplexedAnnealableGraph.hh>
 
 /// Utility headers
-#include <utility>
-#include <utility/exit.hh>
 
 //STL Headers
-#include <list>
-#include <cassert>
 #include <stdexcept>
 
 //ObjexxFCL Headers
-#include <ObjexxFCL/FArray1A.hh>
 
 using namespace ObjexxFCL;
 

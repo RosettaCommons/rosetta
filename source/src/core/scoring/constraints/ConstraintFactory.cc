@@ -15,11 +15,10 @@
 #include <core/scoring/constraints/ConstraintFactory.hh>
 
 // Package headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintCreator.hh>
 
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

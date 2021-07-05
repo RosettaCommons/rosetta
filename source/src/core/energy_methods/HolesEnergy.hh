@@ -24,7 +24,6 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>

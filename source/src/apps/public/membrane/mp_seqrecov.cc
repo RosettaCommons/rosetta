@@ -19,7 +19,6 @@
 //project Headers
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -28,8 +27,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -40,22 +37,16 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/string_util.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/prof.hh>
-#include <basic/options/util.hh>
 #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // Option keys
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Numeric Headers
 
@@ -70,8 +61,6 @@
 #include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <utility/vector0.hh>
 
 
 static basic::Tracer TR( "sequence_recovery" );

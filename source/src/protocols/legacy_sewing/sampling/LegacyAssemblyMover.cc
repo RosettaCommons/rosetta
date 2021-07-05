@@ -14,7 +14,6 @@
 
 // Unit Headers
 #include <protocols/legacy_sewing/sampling/LegacyAssemblyMover.hh>
-#include <protocols/legacy_sewing/sampling/LegacyAssemblyMoverCreator.hh>
 
 // Package Headers
 #include <protocols/legacy_sewing/conformation/Assembly.hh>
@@ -34,7 +33,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -42,27 +40,18 @@
 #include <core/scoring/rms_util.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/TaskOperationCreators.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <basic/options/option.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/filters/Filter.hh>
 
 #include <protocols/jd2/util.hh>
 
-#include <protocols/minimization_packing/MinMover.hh>
 
-#include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/relax/util.hh>
 #include <protocols/relax/cst_util.hh>
 
 #include <utility/io/ozstream.hh>
@@ -73,6 +62,9 @@
 #include <protocols/legacy_sewing/scoring/LegacyInterModelMotifScorer.hh>
 #include <protocols/legacy_sewing/scoring/LegacyMotifScorer.hh>
 #include <protocols/legacy_sewing/scoring/LegacyPartnerMotifScorer.hh>
+
+#include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalRequirement.hh> // AUTO IWYU For LegacyGlobalRe...
+#include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.hh> // AUTO IWYU For LegacyIntraSeg...
 
 namespace protocols {
 namespace legacy_sewing  {

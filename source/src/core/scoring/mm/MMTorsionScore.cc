@@ -12,13 +12,10 @@
 /// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
-#include <core/scoring/mm/MMTorsionScore.fwd.hh>
 #include <core/scoring/mm/MMTorsionScore.hh>
-#include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
 #include <core/scoring/mm/MMTorsionLibrary.hh>
 
 // Project headers
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
 
 #include <core/scoring/ScoringManager.hh>
 
@@ -26,17 +23,11 @@
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
 
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <iostream>
-#include <string>
 #include <map>
 #include <cmath>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

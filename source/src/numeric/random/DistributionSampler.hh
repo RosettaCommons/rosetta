@@ -13,6 +13,8 @@
 #ifndef INCLUDED_NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH
 #define INCLUDED_NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH
 
+#include <numeric/random/DistributionSampler.fwd.hh>
+
 // External headers
 #include <boost/noncopyable.hpp>
 

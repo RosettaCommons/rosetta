@@ -16,7 +16,6 @@
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
 
 namespace devel {
 namespace domain_assembly {

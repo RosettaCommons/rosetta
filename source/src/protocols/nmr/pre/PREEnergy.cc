@@ -24,22 +24,18 @@
 #include <core/scoring/nmr/pre/PREData.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
 #include <protocols/nmr/nmrspinlabel_util.hh>
-#include <core/scoring/nmr/NMRDummySpinlabelEnsemble.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/util.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/id/AtomID_Map.hh>
@@ -49,32 +45,23 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/nmr.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/graph/Graph.hh>
 #include <utility/string_util.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/HomogeneousTransform.hh>
-#include <numeric/constants.hh>
 
 // boost headers
-#include <boost/unordered/unordered_map.hpp>
 
 // C++ headers
 #include <string>
 #include <iostream>
-#include <sstream>
 #include <iomanip>
-#include <map>
 #include <cmath>
 #include <limits>
-#include <algorithm>
 
 namespace protocols {
 namespace nmr {

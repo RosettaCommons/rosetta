@@ -15,6 +15,8 @@
 #ifndef INCLUDED_protocols_antibody_grafting_AntibodySequence_hh
 #define INCLUDED_protocols_antibody_grafting_AntibodySequence_hh
 
+#include <protocols/antibody/grafting/antibody_sequence.fwd.hh>
+
 #include <protocols/antibody/grafting/util.hh>
 
 #ifdef __ANTIBODY_GRAFTING__
@@ -22,7 +24,6 @@
 #include <core/types.hh>
 
 #include <string>
-#include <vector>
 
 #include <iosfwd>
 #include <limits>

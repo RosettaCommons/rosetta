@@ -19,11 +19,8 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/Patch.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueConnection.hh>
 
 // Project headers
@@ -33,20 +30,15 @@
 #include <core/conformation/Residue.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
 #include <numeric/constants.hh>
 #include <numeric/deriv/distance_deriv.hh>
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
-#include <utility/keys/Key3Tuple.hh>
-#include <utility/keys/Key4Tuple.hh>
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <math.h>
 #include <iostream>
-#include <core/kinematics/Jump.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
@@ -57,6 +49,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
 
 //#include <unordered_map>
 

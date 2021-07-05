@@ -8,22 +8,10 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 #include <protocols/sic_dock/scores/MotifHashRigidScore.hh>
-#include <protocols/sic_dock/util.hh>
 #include <core/scoring/motif/motif_hash_stuff.hh>
 
-#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 #include <basic/options/keys/mh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <core/scoring/dssp/Dssp.hh>

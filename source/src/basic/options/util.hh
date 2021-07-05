@@ -15,7 +15,6 @@
 #define INCLUDED_basic_options_util_hh
 
 // C++ headers
-#include <iosfwd>              // for string
 
 // utility headers
 #include <utility/vector1.hh>  // for vector1

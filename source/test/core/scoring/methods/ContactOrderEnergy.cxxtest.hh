@@ -17,7 +17,6 @@
 // Unit headers
 #include <core/energy_methods/ContactOrderEnergy.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <core/chemical/ChemicalManager.hh>
@@ -30,8 +29,6 @@
 #include <core/io/silent/SilentFileOptions.hh>
 
 //Auto Headers
-#include <core/io/silent/EnergyNames.fwd.hh>
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

@@ -13,7 +13,6 @@
 
 // Unit headers
 #include <protocols/jd3/output/OutputSpecification.hh>
-#include <utility>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

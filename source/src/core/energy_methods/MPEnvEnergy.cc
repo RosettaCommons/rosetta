@@ -35,17 +35,14 @@
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <core/scoring/EnergyMap.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 using namespace core::scoring;
 using namespace core::scoring::methods;

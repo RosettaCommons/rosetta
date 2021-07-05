@@ -21,12 +21,11 @@
 #include <core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/util.hh>
 
 // Package headers
-#include <core/pack_basic/RotamerSetsBase.hh>
+#include <core/pack_basic/RotamerSetsBase.fwd.hh>
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <basic/datacache/CacheableResRotPairFloatMap.hh>
+#include <basic/datacache/CacheableResRotPairFloatMap.fwd.hh>
 
 #include <utility/vector1.hh>
 

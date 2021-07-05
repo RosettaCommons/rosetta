@@ -25,7 +25,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
 
-#include <core/kinematics/DomainMap.fwd.hh>
 
 #include <utility/vector1.hh>
 

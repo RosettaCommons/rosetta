@@ -18,12 +18,10 @@
 // Package headers
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-#include <utility/vector1.hh>
 
 
 // Utility headers

@@ -16,19 +16,13 @@
 #include <protocols/simple_moves/PeriodicBoxMoverCreator.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/MonteCarlo.hh>
 
-#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator_Private.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/CrystInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -37,34 +31,19 @@
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <utility/graph/Graph.fwd.hh>
-#include <utility/graph/Graph.hh>
-#include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.fwd.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
 //#include <core/scoring/EnergyMap.hh>
 //#include <core/scoring/EnergyEdge.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
 
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pack/packer_neighbors.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/types.hh>
@@ -74,7 +53,6 @@
 #include <numeric/random/random.hh>
 #include <cmath>
 
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 
@@ -84,14 +62,14 @@
 
 #include <basic/Tracer.hh>
 
+#include <numeric/xyz.functions.hh> // AUTO IWYU For rotation_matrix_degrees
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+
 static basic::Tracer TR("protocols.moves.PeriodicBoxMover");
 
 #include <utility/tag/Tag.hh>
 
-#include <core/pose/util.hh>
 
-#include <fstream>
-#include <cmath>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

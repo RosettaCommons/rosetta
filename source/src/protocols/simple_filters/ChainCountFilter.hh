@@ -21,10 +21,8 @@
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_filters/ChainCountFilter.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

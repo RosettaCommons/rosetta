@@ -24,7 +24,7 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 #include <set>
 

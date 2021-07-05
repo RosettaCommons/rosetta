@@ -18,7 +18,6 @@
 
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 
 #include <devel/init.hh>
@@ -38,8 +37,6 @@
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 OPT_1GRP_KEY( Boolean, jd2test, set_fail_no_retry )
 OPT_1GRP_KEY( Boolean, jd2test, set_fail_bad_input )

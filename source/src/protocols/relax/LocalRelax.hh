@@ -16,18 +16,15 @@
 #define INCLUDED_protocols_relax_LocalRelax_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
 
-#include <utility/excn/Exceptions.hh>
 
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
 
 namespace protocols {

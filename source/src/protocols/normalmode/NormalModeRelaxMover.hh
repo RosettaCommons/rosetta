@@ -21,7 +21,7 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 // Project headers
@@ -30,7 +30,7 @@
 //// C++ headers
 #include <string>
 
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility>

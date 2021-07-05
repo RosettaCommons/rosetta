@@ -32,7 +32,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //C++ headers
-#include <istream>
 #include <string>
 
 namespace basic {

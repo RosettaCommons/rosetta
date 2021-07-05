@@ -16,7 +16,6 @@
 #include <protocols/denovo_design/movers/RotateSegmentMoverCreator.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/FoldGraph.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
@@ -24,12 +23,10 @@
 #include <protocols/denovo_design/util.hh>
 
 // Core headers
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 
@@ -38,7 +35,8 @@
 #include <numeric/constants.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/tag/Tag.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // Boost headers
 

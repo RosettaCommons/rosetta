@@ -21,7 +21,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/pack_rotamers.hh>
@@ -59,6 +59,8 @@
 // C++ headers
 #include <map>
 #include <string>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 ///// forward declarations //////

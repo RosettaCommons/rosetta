@@ -30,13 +30,11 @@
 #include <core/id/AtomID.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -46,18 +44,12 @@
 #include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/simple_metrics/SimpleMetricData.hh>
 #include <core/simple_metrics/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringIntegerMap.hh>
-#include <basic/datacache/CacheableStringMap.hh>
 
 // Utility headers
 #include <utility/version.hh>
@@ -71,7 +63,6 @@
 // C++ Headers
 #include <sstream>
 #include <vector>
-#include <ctime>
 
 
 namespace core {

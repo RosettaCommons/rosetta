@@ -25,14 +25,11 @@
 #include <core/pose/Pose.hh>
 #include <protocols/forge/build/SegmentSwap.hh>
 
-#include <numeric/xyzVector.hh>
 
 #include <string>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 class SegmentSwapTests : public CxxTest::TestSuite

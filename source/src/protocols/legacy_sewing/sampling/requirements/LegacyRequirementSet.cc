@@ -21,6 +21,9 @@
 //Utility headers
 #include <basic/Tracer.hh>
 
+#include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalRequirement.hh> // AUTO IWYU For LegacyGlobalRequir...
+#include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.hh> // AUTO IWYU For LegacyIntraSegment...
+
 namespace protocols {
 namespace legacy_sewing  {
 namespace sampling {

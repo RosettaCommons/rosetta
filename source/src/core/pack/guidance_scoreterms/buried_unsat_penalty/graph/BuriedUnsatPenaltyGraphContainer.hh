@@ -21,8 +21,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace pack {

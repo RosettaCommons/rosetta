@@ -18,7 +18,6 @@
 
 #include <core/pose/Pose.hh>
 
-#include <basic/prof.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
@@ -28,8 +27,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/io/izstream.hh>
-#include <utility/file/FileName.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
 

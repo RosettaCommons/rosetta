@@ -20,7 +20,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/helical_bundle/MakeBundle.fwd.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.fwd.hh>
-#include <protocols/helical_bundle/MakeBundleHelix.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.fwd.hh>
 #include <protocols/helical_bundle/parameters/BundleParameters.hh>
 #include <protocols/helical_bundle/parameters/BundleParametersSet.fwd.hh>
@@ -34,21 +33,12 @@
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/filters/ContingentFilter.fwd.hh>
-#include <protocols/filters/ContingentFilter.hh>
 
 // Project Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.fwd.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
 
 
 ///////////////////////////////////////////////////////////////////////

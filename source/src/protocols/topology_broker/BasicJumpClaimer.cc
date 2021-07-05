@@ -31,6 +31,8 @@
 #include <sstream>
 #include <utility>
 
+#include <protocols/topology_broker/claims/JumpClaim.hh> // AUTO IWYU For JumpClaim
+
 static basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {

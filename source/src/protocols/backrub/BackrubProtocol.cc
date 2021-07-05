@@ -23,8 +23,6 @@
 
 // Protocols Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
@@ -38,16 +36,10 @@
 #include <protocols/viewer/viewers.hh>
 
 // Core Headers
-#include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-#include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
@@ -63,33 +55,25 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
 
 // Platform Headers
-#include <platform/types.hh>
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <core/import_pose/import_pose.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
-#include <utility/keys/Key3Vector.hh>
 
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
 
 static basic::Tracer TR("protocols.backrub.BackrubProtocol");
 

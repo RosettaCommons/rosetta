@@ -30,13 +30,12 @@
 #include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <string>
 
 namespace protocols {
 namespace task_operations {

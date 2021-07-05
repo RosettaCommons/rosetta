@@ -19,12 +19,8 @@
 #include <protocols/wum/MPI_WorkUnitManager.hh>
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 #include <string>
-#include <vector>
 
-#include <core/kinematics/Jump.hh>
 
 
 namespace protocols {

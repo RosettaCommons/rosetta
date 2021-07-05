@@ -21,12 +21,11 @@
 #include <protocols/peptide_deriver/PeptideDeriverFilter.fwd.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/filters/Filter.hh>
-#include <utility/io/orstream.hh>
 
 // RosettaScripts header
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ headers

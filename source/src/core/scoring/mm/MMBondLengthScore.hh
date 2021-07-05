@@ -20,17 +20,13 @@
 #include <core/scoring/mm/MMBondLengthLibrary.hh>
 
 // Project headers
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
 
 #include <core/types.hh>
 
 // Utility header
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <map>
 
 
 namespace core {

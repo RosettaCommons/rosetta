@@ -12,20 +12,16 @@
 
 
 // libRosetta headers
-#include <core/scoring/rms_util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
@@ -37,14 +33,11 @@
 #include <core/import_pose/RNA_HelixAssembler.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
-#include <numeric/xyzVector.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers

@@ -23,16 +23,16 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/select/residue_selector/ResidueRanges.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 // Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
 

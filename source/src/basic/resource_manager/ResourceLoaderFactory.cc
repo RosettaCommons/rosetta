@@ -15,14 +15,13 @@
 #include <basic/resource_manager/ResourceLoaderFactory.hh>
 
 // package headers
-#include <basic/resource_manager/ResourceLoader.hh>
+#include <basic/resource_manager/ResourceLoader.fwd.hh>
 #include <basic/resource_manager/ResourceLoaderCreator.hh>
 
 // utility headers
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

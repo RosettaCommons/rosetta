@@ -29,44 +29,33 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/tools/make_map.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Options
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // External headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <basic/Tracer.hh>
 
 
 // C++ headers
-#include <cstdlib>
-#include <cstdio>
-#include <algorithm>
+
+#include <core/io/AtomInformation.hh> // AUTO IWYU For AtomInformation
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 static basic::Tracer TR( "core.io.pdb.pdb_writer" );
 

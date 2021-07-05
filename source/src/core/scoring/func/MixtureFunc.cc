@@ -18,7 +18,6 @@
 #include <core/types.hh>
 #include <basic/options/option.hh>
 
-#include <utility/VirtualBase.hh>
 
 
 #include <ObjexxFCL/format.hh>
@@ -33,7 +32,6 @@
 
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef SERIALIZATION

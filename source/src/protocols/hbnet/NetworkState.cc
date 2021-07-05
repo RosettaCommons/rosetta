@@ -13,6 +13,8 @@
 //Headers
 #include <protocols/hbnet/NetworkState.hh>
 
+#include <core/scoring/hbonds/graph/HBondGraph.hh> // AUTO IWYU For HBondEdge, HBondGraph, HBondNode
+
 namespace protocols {
 namespace hbnet {
 

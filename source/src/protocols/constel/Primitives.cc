@@ -27,12 +27,10 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/util.hh>
 #include <core/chemical/AA.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 #include <numeric/xyzVector.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>

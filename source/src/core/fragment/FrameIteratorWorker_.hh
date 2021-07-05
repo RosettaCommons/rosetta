@@ -22,7 +22,6 @@
 // type headers
 
 // Package Headers
-#include <core/fragment/Frame.hh>
 
 // Project Headers
 
@@ -33,7 +32,8 @@
 // std Headers
 
 #include <core/fragment/Frame.fwd.hh>
-#include <iosfwd>
+
+#include <core/types.hh> // AUTO IWYU For Size
 
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the

@@ -26,7 +26,7 @@
 
 #include <core/kinematics/util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/id/AtomID.hh>
 

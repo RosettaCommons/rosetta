@@ -18,7 +18,6 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
@@ -42,6 +41,8 @@
 #include <numeric/xyz.functions.hh>
 
 #include <ObjexxFCL/string.functions.hh>
+
+#include <core/chemical/MutableICoorRecord.hh> // AUTO IWYU For MutableICoorRecord
 
 
 namespace core {

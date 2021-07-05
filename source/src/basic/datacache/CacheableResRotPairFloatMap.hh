@@ -22,17 +22,12 @@
 
 // package headers
 #include <basic/datacache/CacheableData.hh>
-#include <numeric/MathMatrix.hh>
-#include <utility/VirtualBase.fwd.hh>
 
 // C++ headers
 #include <map>
 #include <unordered_map>
-#include <string>
 
 #include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <cassert>
 #include <cstddef>
 #include <iosfwd>
 #include <basic/datacache/CacheableData.fwd.hh>

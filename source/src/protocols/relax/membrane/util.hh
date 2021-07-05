@@ -15,10 +15,8 @@
 #define INCLUDED_protocols_relax_membrane_util_hh
 
 // Unit Headers
-#include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
@@ -26,7 +24,6 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <basic/Tracer.fwd.hh>
 
 namespace protocols {
 namespace relax {

@@ -19,16 +19,12 @@
 // Protocol Headers
 
 // Core headers
-#include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/pose/selection.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -37,7 +33,6 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 static basic::Tracer TR( "core.select.residue_selector.SymmetricalResidueSelector" );
 

@@ -21,19 +21,18 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>
-#include <list>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // MANUAL IWYU
+#include <core/scoring/ScoreType.hh> // AUTO IWYU For ScoreType
 
 namespace protocols {
 namespace pose_reporters {

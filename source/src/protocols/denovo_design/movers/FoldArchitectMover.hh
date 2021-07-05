@@ -41,7 +41,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <set>
 
 namespace protocols {
 namespace denovo_design {

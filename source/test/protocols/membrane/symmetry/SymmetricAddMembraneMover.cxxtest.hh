@@ -28,7 +28,6 @@
 #include <protocols/membrane/symmetry/SymmetricAddMembraneMover.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 
-#include <protocols/membrane/AddMembraneMover.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -45,7 +44,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("protocols.membrane.symmetry.SymmetricAddMembraneMover.cxxtest");

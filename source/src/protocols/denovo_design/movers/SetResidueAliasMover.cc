@@ -16,12 +16,11 @@
 #include <protocols/denovo_design/movers/SetResidueAliasMoverCreator.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>

@@ -18,52 +18,36 @@
 #include <protocols/glycopeptide_docking/GlycopeptideDockingHighResRefinement.hh>
 #include <protocols/glycopeptide_docking/GlycopeptideDockingLowResRefinement.hh>
 #include <protocols/glycopeptide_docking/utils.hh>
-#include <protocols/carbohydrates/SimpleGlycosylateMover.hh>
 #include <protocols/carbohydrates/GlycanSampler.hh>
 
 // Protocol headers
-#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
-#include <protocols/docking/util.hh>
-#include <protocols/docking/metrics.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh> //needed for rmsd_no_super
 #include <core/scoring/ScoreType.hh>
 #include <core/import_pose/import_pose.hh> //pose_from_file
-#include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
-#include <core/pose/extra_pose_info_util.hh>
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 #include <string>
-#include <list>
-#include <map>
 
 static basic::Tracer TR( "protocols.glycopeptide_docking.GlycopeptideDockingProtocol" );
 

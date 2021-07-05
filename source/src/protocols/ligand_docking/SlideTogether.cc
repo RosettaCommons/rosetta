@@ -19,16 +19,12 @@
 
 // Utility Headers
 
-#include <utility>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <utility/excn/Exceptions.hh>

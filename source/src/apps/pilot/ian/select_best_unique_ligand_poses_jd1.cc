@@ -14,10 +14,8 @@
 
 // must be here to avoid VC++ ambiguous symbol w/ ObjexxFCL::byte
 // for boinc builds - dek
-#include <protocols/jobdist/JobDistributors.hh>
 
 
-#include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -28,13 +26,11 @@
 #include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/jobdist/Jobs.hh>
+#include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 
 
 #include <fstream>
-#include <set>
-#include <sstream>
 
 
 // option key includes

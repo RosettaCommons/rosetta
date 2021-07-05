@@ -18,7 +18,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>

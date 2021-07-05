@@ -11,21 +11,15 @@
 #include <cxxtest/TestSuite.h>
 
 // Package headers
-#include <core/environment/DofPassport.hh>
 
 #include <test/protocols/environment/TorsionMover.hh>
 
 #include <protocols/environment/claims/EnvClaim.fwd.hh>
-#include <protocols/environment/claims/TorsionClaim.hh>
-#include <protocols/environment/claims/JumpClaim.hh>
 
-#include <protocols/environment/ProtectedConformation.hh>
-#include <protocols/environment/EnvExcn.hh>
-#include <protocols/environment/ClientMover.hh>
+#include <protocols/environment/EnvExcn.hh> // DO NOT AUTO-REMOVE (not needed for header, but needed for full)
 #include <protocols/environment/Environment.hh>
 
 //Other headers
-#include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>

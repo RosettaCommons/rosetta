@@ -14,10 +14,6 @@
 #include <core/pack/interaction_graph/SymmLinMemInteractionGraph.hh>
 
 /// Debugging headers
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -29,7 +25,6 @@
 #include <ObjexxFCL/FArray1A.hh>
 
 //Auto Headers
-#include <core/scoring/EnergyGraph.hh>
 
 namespace core {
 namespace pack {

@@ -12,25 +12,21 @@
 
 #include <protocols/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
-#include <core/chemical/AtomType.hh>
 #include <basic/MetricValue.hh>
 #include <utility>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <map>
 #include <fstream>
+
+#include <core/energy_methods/ExactOccludedHbondSolEnergy.hh> // AUTO IWYU For create_ExactSHOEnergy_from_cmdline, ExactOcclu...
 
 
 #ifdef    SERIALIZATION

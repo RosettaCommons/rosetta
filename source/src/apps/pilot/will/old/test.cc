@@ -17,7 +17,6 @@
 // Utility headers
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

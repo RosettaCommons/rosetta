@@ -17,14 +17,12 @@
 #include <protocols/protein_interface_design/movers/LoopFinderCreator.hh>
 
 // Package headers
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.fwd.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -32,19 +30,12 @@
 
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 
 // the following must be included because LoopFinder is derived from DRMover
-#include <core/scoring/ScoreFunction.hh>
 //#include <core/pose/Pose.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 
 #include <basic/datacache/DataMap.hh>
-#include <utility>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 

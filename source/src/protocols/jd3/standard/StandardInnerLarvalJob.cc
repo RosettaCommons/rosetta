@@ -14,7 +14,6 @@
 // Unit headers
 #include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
 
-#include <utility/tag/Tag.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

@@ -16,22 +16,20 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-#include <core/sequence/Sequence.hh>
+#include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
-#include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/ProfSimScoringScheme.hh>
 
 #include <utility/exit.hh>
 
 #include <core/chemical/AA.hh>
 
-#include <string>
 
 #include <utility/vector1.hh>
-#include <complex>
 #include <map>
 
+#include <cmath> // MANUAL IWYU
 
 namespace core {
 namespace sequence {

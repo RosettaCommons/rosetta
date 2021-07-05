@@ -21,18 +21,15 @@
 #include <core/chemical/ResidueProperties.hh>
 
 // Package headers
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/MMAtomType.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
 
 // Utility header
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 // C++ header
-#include <map>
 
 static basic::Tracer TR("core.chemical.ResidueProperties.cxxtest");
 

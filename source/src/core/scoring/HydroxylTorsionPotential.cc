@@ -14,20 +14,15 @@
 #include <core/scoring/HydroxylTorsionPotential.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/Patch.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
-#include <numeric/constants.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <basic/database/open.hh>
 #include <iostream>

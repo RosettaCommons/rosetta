@@ -15,9 +15,8 @@
 
 #include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_AtrRepScreener" );

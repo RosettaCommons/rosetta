@@ -12,14 +12,11 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/task_operations/RestrictToMoveMapChiOperation.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 namespace protocols {

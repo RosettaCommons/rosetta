@@ -4,12 +4,11 @@
 
 #include <devel/init.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

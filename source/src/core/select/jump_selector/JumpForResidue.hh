@@ -18,18 +18,15 @@
 #include <core/select/jump_selector/JumpForResidue.fwd.hh>
 
 // Package headers
-#include <core/types.hh>
 #include <core/select/jump_selector/JumpSelector.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <set>
 
 namespace core {
 namespace select {

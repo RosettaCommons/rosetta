@@ -17,7 +17,6 @@
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.fwd.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 
@@ -43,13 +42,12 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/picking_old/FragmentLibraryManager.hh>
@@ -61,7 +59,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/id/SequenceMapping.hh>
 #include <basic/Tracer.hh>
 #include <core/fragment/picking_old/vall/util.hh>
 #include <protocols/loops/Loops.hh>

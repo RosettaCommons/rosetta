@@ -14,7 +14,6 @@
 
 //Unite headers
 #include <devel/fold_from_loops/FoldFromLoops_functions.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -32,13 +31,12 @@
 
 #include <utility/vector1.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragmentIO.hh>
 
 //constraints
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
 //options stuff
@@ -67,7 +65,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace devel {

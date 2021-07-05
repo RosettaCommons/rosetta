@@ -23,7 +23,6 @@
 #include <core/conformation/symmetry/SymSlideInfo.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
 

@@ -16,6 +16,8 @@
 
 
 #ifdef    SERIALIZATION
+#include <core/conformation/ResidueMatcher.hh>
+
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>

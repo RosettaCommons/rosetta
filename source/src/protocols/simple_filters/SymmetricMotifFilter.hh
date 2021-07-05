@@ -19,13 +19,11 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <list>
 
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
 
 
 namespace protocols {

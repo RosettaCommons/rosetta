@@ -20,8 +20,8 @@
 #include <protocols/frag_picker/VallProvider.hh>
 
 // mini
-#include <core/sequence/SequenceProfile.hh>
-#include <core/pose/Pose.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // C++ stuff
 #include <string>

@@ -24,6 +24,8 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <basic/Tracer.hh>
 
+#include <protocols/sewing/data_storage/SmartAssembly.hh> // AUTO IWYU For SmartAssembly
+
 static basic::Tracer TR( "protocols.sewing.requirements.LigandClashRequirement" );
 
 

@@ -18,17 +18,14 @@
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/loop_graph/LoopGraph.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
 

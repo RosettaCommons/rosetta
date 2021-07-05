@@ -10,53 +10,27 @@
 /// @brief
 /// @author jk
 
-#include <cfloat>
 #include <iostream>
-#include <iomanip>
-#include <map>
 #include <string>
 
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/after_opts.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <utility/graph/Graph.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
-#include <core/scoring/methods/ShortRangeTwoBodyEnergy.fwd.hh>
 
-#include <core/pose/util.hh>
-#include <core/scoring/sasa.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
-#include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/pointer/access_ptr.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys
 
 
 using namespace core;

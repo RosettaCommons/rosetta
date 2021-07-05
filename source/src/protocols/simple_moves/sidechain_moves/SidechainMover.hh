@@ -21,7 +21,6 @@
 // Protocols Headers
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core Headers
 #include <core/pack/task/TaskFactory.fwd.hh>

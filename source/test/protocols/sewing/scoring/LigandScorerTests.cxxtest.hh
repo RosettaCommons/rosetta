@@ -13,15 +13,20 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
-#include <test/protocols/sewing/extra_functions.hh>
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <protocols/sewing/hashing/ModelFileReader.hh> // AUTO IWYU For ModelFileReader
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <utility/pointer/memory.hh> // AUTO IWYU For make_shared
+#include <utility/pointer/owning_ptr.hh> // AUTO IWYU For make_shared
+
 using namespace protocols::sewing;
 
 static basic::Tracer TR("LigandScorerTests");
@@ -31,7 +36,7 @@ class LigandScorerTests : public CxxTest::TestSuite {
 	//Define Variables
 private:
 	data_storage::SmartAssemblyOP assembly_;
-	//hashing::SegmentVectorOP segment_vector_;
+	hashing::SegmentVectorOP segment_vector_;
 	core::pose::Pose pose_;
 public:
 	void setUp(){
@@ -47,7 +52,7 @@ public:
 
 	void test_ligand_assembly_scorer(){
 		//Call add_pose_segments_to_segment_vector
-		assembly_ = sewing_testing::create_assembly_from_starting_segment( assembly_, assembly->pdb_segments().at( 1 ) );
+		//assembly_ = sewing_testing::create_assembly_from_starting_segment( assembly_, assembly->pdb_segments().at( 1 ) );
 		TS_ASSERT( true );
 	}
 

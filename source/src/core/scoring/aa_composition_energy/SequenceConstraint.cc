@@ -13,18 +13,9 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #include <core/scoring/aa_composition_energy/SequenceConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/scoring/aa_composition_energy/AACompositionEnergySetup.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/deriv/dihedral_deriv.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -35,9 +26,7 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-#include <utility/exit.hh>
 
-#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

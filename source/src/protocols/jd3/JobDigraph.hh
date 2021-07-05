@@ -19,16 +19,11 @@
 #include <utility/graph/Digraph.hh>
 
 // Package Headers
-#include <utility/graph/unordered_object_pool.fwd.hpp>
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 // STL Headers
-#include <iosfwd>
-#include <list>
 
 #ifdef PYROSETTA
 #include <utility/graph/unordered_object_pool.hpp>

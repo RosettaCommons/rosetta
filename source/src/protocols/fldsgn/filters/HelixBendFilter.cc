@@ -25,8 +25,6 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/parser/BluePrint.hh>
@@ -35,9 +33,7 @@
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/trig.functions.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
 

@@ -25,18 +25,12 @@
 #include <core/id/AtomID_Mask.fwd.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Utility Headers
-#include <utility/exit.hh>
-#include <utility/tag/Tag.hh>
 
 // option key includes
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/options/BooleanVectorOption.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers

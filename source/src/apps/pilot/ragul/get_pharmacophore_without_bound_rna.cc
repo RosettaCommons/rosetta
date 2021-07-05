@@ -12,37 +12,18 @@
 
 // Project Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/after_opts.hh>
 
-#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/pose_metric_calculators/PackstatCalculator.hh>
-#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/rna/RNA_Info.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -52,55 +33,19 @@
 // C++ Headers
 #include <iostream>
 #include <iomanip>
-#include <fstream>
-#include <ostream>
 #include <string>
-#include <sstream>
-#include <cmath>
-#include <map>
 
 //Auto Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/sasa.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondDatabase.fwd.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
-#include <core/scoring/methods/ShortRangeTwoBodyEnergy.fwd.hh>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
+#include <numeric/xyz.functions.hh> // AUTO IWYU For x_rotation_matrix_degrees
 
 using namespace core;
 using namespace core::pose::datacache;
-using namespace core::optimization;
 using namespace core::pose::metrics;
 using namespace core::scoring;
 using namespace core::scoring::constraints;

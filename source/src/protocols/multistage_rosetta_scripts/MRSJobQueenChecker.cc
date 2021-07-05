@@ -18,7 +18,7 @@
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 
-#include <protocols/jd3/LarvalJob.hh>
+#include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJob.hh>

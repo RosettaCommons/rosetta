@@ -14,8 +14,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
-#include <core/pack/guidance_scoreterms/sap/SapConstraintEnergy.hh>
+#include <core/pack/guidance_scoreterms/sap/SapConstraintEnergy.fwd.hh>
 #include <core/pack/guidance_scoreterms/sap/SapDatabase.hh>
 #include <core/pack/guidance_scoreterms/sap/SapConstraintHelper.hh>
 #include <core/pack/guidance_scoreterms/sap/SapConstraintOptions.hh>
@@ -31,33 +30,22 @@
 #include <util/pose_funcs.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/scoring/atomic_depth/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/select/residue_selector/ResidueNameSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/scoring/Energies.hh>
 
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/pack_interface/ProteinProteinInterfaceUpweighterTaskOperation.hh>
 #include <protocols/simple_moves/AddSapConstraintMover.hh>
 #include <protocols/simple_moves/AddSapMathConstraintMover.hh>
 
@@ -66,7 +54,6 @@
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
 
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 //Auto Headers
@@ -75,6 +62,10 @@
 #include <utility/io/izstream.hh>
 
 #include <boost/format.hpp>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 using namespace core;
 using namespace core::pack::guidance_scoreterms::sap;

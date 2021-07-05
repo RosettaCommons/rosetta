@@ -16,8 +16,9 @@
 #ifndef INCLUDED_protocols_stepwise_rna_FloatingBaseClasses_HH
 #define INCLUDED_protocols_stepwise_rna_FloatingBaseClasses_HH
 
+#include <protocols/stepwise/modeler/rna/rigid_body/FloatingBaseClasses.fwd.hh>
+
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <utility>
 

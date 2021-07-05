@@ -14,18 +14,13 @@
 #include <protocols/carbohydrates/SimpleGlycosylateMover.hh>
 #include <protocols/carbohydrates/SimpleGlycosylateMoverCreator.hh>
 
-#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/chemical/AA.hh>
-#include <core/kinematics/util.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 #include <core/chemical/carbohydrates/database_io.hh>
 
@@ -37,14 +32,13 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-#include <utility/io/util.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
 
 static basic::Tracer TR( "protocols.carbohydrates.SimpleGlycosylateMover" );
 

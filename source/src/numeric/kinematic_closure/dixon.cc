@@ -27,10 +27,8 @@
 #include <utility/fixedsizearray1.hh>
 
 // External headers
-#include <Eigen/Dense>
 
 // C++ headers
-#include <cmath>
 #include <iostream>
 
 // Constants

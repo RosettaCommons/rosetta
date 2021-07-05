@@ -13,11 +13,10 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
 // Package headers
-#include <core/pack/task/operation/TaskOperationFactory.hh>
+#include <core/pack/task/operation/TaskOperationFactory.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/FillAUTOTaskOperation.hh>
@@ -26,14 +25,13 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
 
 // C++ headers
-#include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core::pack::task;
 using namespace core::pack::task::operation;

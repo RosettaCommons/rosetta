@@ -18,19 +18,19 @@
 //Unit headers
 #include <protocols/sewing/scoring/MotifScorer.fwd.hh>
 #include <protocols/sewing/scoring/AssemblyScorer.hh>
-#include <protocols/sewing/scoring/AssemblyScorerFactory.fwd.hh>
 
 //Package headers
 #include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
 #include <protocols/sewing/data_storage/SmartSewingResidue.fwd.hh>
 //Core headers
-#include <core/scoring/motif/motif_hash_stuff.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/scoring/motif/motif_hash_stuff.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/types.hh>
 
 //Utility headers
-#include <utility/vector1.hh>
 #include <numeric/xyzTransform.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 namespace protocols {
 namespace sewing  {

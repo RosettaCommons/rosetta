@@ -19,10 +19,8 @@
 #include <core/energy_methods/AARepeatEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 
 // Options system
@@ -31,9 +29,7 @@
 
 // File I/O
 #include <basic/database/open.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 // Other Headers

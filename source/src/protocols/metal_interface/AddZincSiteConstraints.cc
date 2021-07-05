@@ -25,7 +25,6 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/func/MinMultiHarmonicFunc.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
 // Project Headers
@@ -33,7 +32,6 @@
 #include <core/pose/PDBInfo.hh>
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/vector1.hh>
 
 // Numeric Headers

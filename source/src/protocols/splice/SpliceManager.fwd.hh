@@ -19,6 +19,8 @@
 namespace protocols {
 namespace splice {
 
+class ResidueBBDofs;
+
 //Forwards and OP typedefs
 class SpliceManager;
 typedef utility::pointer::shared_ptr< SpliceManager > SpliceManagerOP;

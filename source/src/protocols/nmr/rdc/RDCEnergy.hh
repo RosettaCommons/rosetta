@@ -20,15 +20,10 @@
 
 // Package headers
 #include <core/scoring/nmr/rdc/RDCData.fwd.hh>
-#include <core/scoring/nmr/rdc/RDCMultiSet.fwd.hh>
-#include <core/scoring/nmr/rdc/RDCSingleSet.fwd.hh>
-#include <core/scoring/nmr/rdc/RDCSingle.fwd.hh>
-#include <core/scoring/nmr/rdc/RDCTensor.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
@@ -38,18 +33,15 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 // C++ headers
 #include <iosfwd>
-#include <string>
 
 namespace protocols {
 namespace nmr {

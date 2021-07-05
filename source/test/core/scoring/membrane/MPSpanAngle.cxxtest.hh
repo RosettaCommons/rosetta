@@ -13,21 +13,13 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
-#include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
-#include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
 // Package headers
 #include <core/energy_methods/MPSpanAngleEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -37,8 +29,6 @@
 #include <basic/Tracer.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 static basic::Tracer TR("core.scoring.membrane.MPSpanAngle.cxxtest");
 

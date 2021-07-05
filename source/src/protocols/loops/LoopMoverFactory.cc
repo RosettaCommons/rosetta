@@ -15,21 +15,18 @@
 #include <protocols/loops/LoopMoverFactory.hh>
 
 // Package headers
-#include <protocols/loops/LoopsFileIO.hh>
+#include <protocols/loops/LoopsFileIO.fwd.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/MoverFactory.hh>
 
 // Project Headers
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
-#include <utility/vector0.hh>
 #include <utility/exit.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

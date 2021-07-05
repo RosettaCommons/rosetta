@@ -23,33 +23,25 @@
 
 #include <core/conformation/Residue.hh>
 
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/scoring/electron_density/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/id/AtomID.hh>
 
-#include <core/io/silent/silent.fwd.hh>
 
 #include <protocols/rbsegment_relax/RBSegmentRelax.hh>
 
@@ -57,7 +49,6 @@
 #include <protocols/loops/Loops.hh>
 
 
-#include <utility/options/OptionCollection.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/viewer/viewers.hh>
@@ -67,10 +58,8 @@
 #include <basic/options/option_macros.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
 
 // Platform Headers
-#include <platform/types.hh>
 
 
 #include <basic/Tracer.hh>
@@ -80,13 +69,10 @@ static basic::Tracer TZ( "pilot_apps::ca_to_allatom" );
 
 // C++ headers
 #include <fstream>
-#include <iostream>
 #include <string>
 
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/evaluation/util.hh>
-#include <protocols/moves/MoverStatistics.hh>
 #include <protocols/rbsegment_relax/RBSegment.hh>
 #include <numeric/xyzVector.io.hh>
 

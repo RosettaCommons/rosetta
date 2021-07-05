@@ -14,16 +14,14 @@
 // Unit headers
 #include <devel/mmt_msd/MMTOffRotamerPackingJob.hh>
 
-#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pack/min_pack.hh>
-#include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
+#include <core/pack/interaction_graph/SimpleInteractionGraph.fwd.hh>
 #include <core/pack/rotamer_set/ContinuousRotamerSet.hh>
-#include <core/pack/scmin/AtomTreeCollection.hh>
+#include <core/pack/scmin/AtomTreeCollection.fwd.hh>
 #include <core/pack/scmin/SidechainStateAssignment.hh>
-#include <core/pack/task/PackerTask.hh>
 
 
 #include <utility/excn/Exceptions.hh>

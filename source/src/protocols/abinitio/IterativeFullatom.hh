@@ -25,19 +25,16 @@
 #define INCLUDED_protocols_abinitio_IterativeFullatom_hh
 
 // Unit Headers
-//#include <protocols/abinitio/IterativeFullatom.fwd.hh>
+#include <protocols/abinitio/IterativeFullatom.fwd.hh>
 
 // Package Headers
 #include <protocols/abinitio/IterativeBase.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 
 //// C++ headers
-#include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -14,7 +14,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
-#include <protocols/comparative_modeling/features/ResidueFeature.hh>
 #include <protocols/comparative_modeling/features/TorsionFeature.hh>
 #include <protocols/comparative_modeling/features/ResidueFeature.fwd.hh>
 

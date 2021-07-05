@@ -24,6 +24,8 @@
 
 #include <utility/vector1.hh>
 
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream::operator<<, endl, basic_ostream, basic_o...
+
 
 static basic::Tracer TR( "protocols.ReplicaExchangeMC" );
 

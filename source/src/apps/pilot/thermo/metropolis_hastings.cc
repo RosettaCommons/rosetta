@@ -18,16 +18,12 @@
 #include <protocols/moves/MonteCarlo.hh>
 // core headers
 #include <basic/options/option_macros.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/types.hh>
 //#include <basic/Tracer.hh>
 // numeric headers
 //#include <numeric/random/random.hh>
 // utility headers
-#include <utility/file/file_sys_util.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 //basic::Tracer TR("apps.metropolis_hastings");
 OPT_1GRP_KEY(Integer, mh, ntrials)

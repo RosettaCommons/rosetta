@@ -17,17 +17,19 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/sequence/util.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
+
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> // MANUAL IWYU
+
+#include <core/io/silent/SilentFileData.hh> // AUTO IWYU For SilentFileData
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
 
 static basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.util" );
 

@@ -13,7 +13,6 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
@@ -22,20 +21,16 @@
 #include <protocols/recces/RECCES_Mover.hh>
 #include <protocols/recces/options/RECCES_Options.hh>
 #include <protocols/recces/params/RECCES_Parameters.hh>
-#include <protocols/recces/util.hh>
 #include <protocols/recces/setup_util.hh>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/recces.OptionKeys.gen.hh>
 
 // option key includes
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 
 using namespace core::pose;
 using namespace basic::options;

@@ -15,14 +15,13 @@
 #define INCLUDED_protocols_frag_picker_quota_QuotaCollector_hh
 
 // type headers
-#include <utility/VirtualBase.hh>
 
 // package headers
 #include <protocols/frag_picker/quota/QuotaCollector.fwd.hh>
 #include <protocols/frag_picker/quota/QuotaPool.hh>
 #include <protocols/frag_picker/CandidatesCollector.hh>
-#include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/FragmentCandidate.fwd.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 
 #include <core/fragment/SecondaryStructure.fwd.hh>

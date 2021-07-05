@@ -16,14 +16,13 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
 #include <core/select/residue_selector/util.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Utility Headers
@@ -34,7 +33,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 
 #ifdef    SERIALIZATION

@@ -35,15 +35,12 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "core.energy_methods.MPCBetaEnergy" );
 

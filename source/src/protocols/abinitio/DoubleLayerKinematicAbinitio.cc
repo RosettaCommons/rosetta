@@ -24,8 +24,6 @@
 #include <protocols/abinitio/DoubleLayerKinematicAbinitio.hh>
 
 // Package Headers
-#include <protocols/abinitio/ResolutionSwitcher.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -39,7 +37,6 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
@@ -53,7 +50,9 @@
 
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
+#include <protocols/abinitio/KinematicControl.hh> // AUTO IWYU For KinematicControl, CoordinateConstraintKC
+#include <protocols/jumping/JumpSetup.hh> // AUTO IWYU For operator<<
+
 
 
 static basic::Tracer tr( "protocols.general_abinitio", basic::t_info );

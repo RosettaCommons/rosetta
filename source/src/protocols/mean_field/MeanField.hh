@@ -19,7 +19,7 @@
 #include <protocols/mean_field/MeanField.fwd.hh>
 
 // Package headers
-#include <protocols/mean_field/RotMatrix.hh>
+#include <protocols/mean_field/RotMatrix.fwd.hh>
 
 // Project headers
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.fwd.hh>
@@ -31,14 +31,12 @@
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <protocols/mean_field/jagged_array.hh>
-#include <protocols/mean_field/jagged_array.functions.hh>
 #include <core/types.hh>
 
 // Numeric headers
 
 
 // C++ headers
-#include <iosfwd>
 
 namespace protocols {
 namespace mean_field {

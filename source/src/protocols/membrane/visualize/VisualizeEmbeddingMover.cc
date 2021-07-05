@@ -21,7 +21,6 @@
 // Unit Headers
 #include <protocols/membrane/visualize/VisualizeEmbeddingMover.hh>
 #include <protocols/membrane/visualize/VisualizeEmbeddingMoverCreator.hh>
-#include <protocols/moves/Mover.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
@@ -39,11 +38,8 @@
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Project Headers
-#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
@@ -52,10 +48,11 @@
 // Utility Headers
 #include <numeric/xyzVector.hh>
 #include <utility>
-#include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/conformation/membrane/SpanningTopology.hh> // AUTO IWYU For SpanningTopology
 
 static basic::Tracer TR( "protocols.membrane.visualize.VisualizeEmbeddingMover" );
 

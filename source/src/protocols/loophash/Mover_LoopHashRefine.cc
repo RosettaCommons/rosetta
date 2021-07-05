@@ -19,13 +19,9 @@
 #include <protocols/loophash/Mover_LoopHashRefine.hh>
 
 
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -36,17 +32,11 @@
 
 #include <protocols/relax/FastRelax.hh>
 // #include <protocols/match/Hit.fwd.hh>
-#include <numeric/geometry/hashing/SixDHasher.hh>
-#include <protocols/moves/Mover.hh>
-#include <utility/exit.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/BackboneDB.hh>
@@ -73,7 +63,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
 

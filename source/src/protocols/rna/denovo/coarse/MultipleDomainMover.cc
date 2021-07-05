@@ -17,13 +17,11 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
 
 #include <protocols/rna/denovo/coarse/CoarseRNA_LoopCloser.hh>
 
@@ -41,12 +39,10 @@
 
 // Numeric headers
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
 //C++ headers
 #include <vector>
 #include <string>
-#include <sstream>
 
 using namespace core;
 

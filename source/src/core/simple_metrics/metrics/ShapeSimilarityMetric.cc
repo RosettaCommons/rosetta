@@ -23,31 +23,21 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/ref_pose.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/sc/ShapeSimilarityCalculator.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/pose/selection.hh>
 
 // Basic/Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/string_util.hh>
-#include <utility/exit.hh>
-#include <utility/file/FileName.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/matdes.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Parser headers
 #include <utility/tag/Tag.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
 
 
 //// C++ headers

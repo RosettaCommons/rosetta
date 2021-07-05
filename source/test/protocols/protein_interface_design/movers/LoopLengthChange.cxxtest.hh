@@ -16,7 +16,6 @@
 #include <test/core/init_util.hh>
 
 // Project Headers
-#include <core/types.hh>
 
 #include <core/pose/Pose.hh>
 

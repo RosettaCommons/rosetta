@@ -11,7 +11,6 @@
 /// @brief A collections of methods that are useful for dealing with HBondGraphs
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
-#include <core/chemical/AtomType.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -20,7 +19,6 @@
 
 #include <core/pack/hbonds/HBondGraph_util.hh>
 #include <core/pack/hbonds/HBondGraphInitializerIG.hh>
-#include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
@@ -37,7 +35,6 @@
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 #include <basic/thread_manager/RosettaThreadManager.hh>
@@ -47,6 +44,8 @@
 #include <utility/graph/Graph.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 namespace core {
 namespace pack {

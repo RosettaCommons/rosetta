@@ -10,7 +10,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 #include <core/grid/CartGrid.hh>
 #include <utility/json_spirit/json_spirit_reader.h>
@@ -19,9 +18,7 @@
 
 
 //Auto Headers
-#include <utility/vector1.hh>
 
-#include <sstream>
 #include <iostream>
 
 class CartGridTest : public CxxTest::TestSuite {

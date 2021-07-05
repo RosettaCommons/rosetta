@@ -21,35 +21,20 @@
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <core/scoring/constraints/util.hh>
 //#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
 // Project Headers
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/sequence/util.hh>
-#include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/SequenceAlignment.fwd.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
-#include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
 
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileOptions.hh>
@@ -62,13 +47,9 @@
 // option key includes
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
-#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/fragment/SecondaryStructure.hh>
-#include <core/import_pose/import_pose.hh>
 #include <protocols/evaluation/util.hh>
-#include <utility/vector0.hh>
 
 #ifdef WIN32
 #include <core/scoring/constraints/Constraint.hh>

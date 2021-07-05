@@ -16,7 +16,6 @@
 #include <utility/io/izstream.hh>
 
 // C++ headers
-#include <iostream>
 #include <fstream>
 #include <string>
 

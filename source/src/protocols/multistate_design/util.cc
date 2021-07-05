@@ -21,12 +21,12 @@
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
-#include <core/pack/task/PackerTask.hh>
 
 // C++ headers
 #include <set>
 
-#include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

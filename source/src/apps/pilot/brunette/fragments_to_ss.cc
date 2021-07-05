@@ -12,21 +12,20 @@
 //          rosetta abinitio
 /// @author TJ Brunette
 
-#include <core/fragment/ConstantLengthFragSet.hh>
+#include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <core/fragment/FragID_Iterator.hh>
 #include <core/fragment/FragmentIO.hh>
-#include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FragData.hh>
 
 #include <basic/options/option_macros.hh>
 #include <devel/init.hh>
-#include <basic/Tracer.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <utility/io/ozstream.hh>
+
+#include <core/fragment/FragSet.hh> // AUTO IWYU For FragSet
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 class ThisApplication  {
 public:

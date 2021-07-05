@@ -25,12 +25,14 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 //Devel
-#include <protocols/features/helixAssembly/HelicalFragment.hh>
+#include <protocols/features/helixAssembly/HelicalFragment.fwd.hh>
 
 //Utility
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace features {

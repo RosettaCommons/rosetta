@@ -23,9 +23,7 @@
 
 //project headers
 #include <core/types.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 
 //utility headers
@@ -34,6 +32,8 @@
 //C++ headers
 #include <map>
 #include <cmath>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace noesy_assign {

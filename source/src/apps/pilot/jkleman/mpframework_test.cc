@@ -16,87 +16,34 @@
 
 // Package Headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/Stub.hh>
-#include <core/kinematics/RT.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
 
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/util.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
 
-#include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/util.hh>
+#include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/docking/DockingLowRes.hh>
-#include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/docking/DockingProtocol.hh>
-#include <protocols/docking/DockingLowRes.hh>
-#include <protocols/docking/membrane/MPDockingSetupMover.hh>
-#include <protocols/docking/membrane/MPDockingMover.hh>
-#include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/FlipMover.hh>
-#include <protocols/membrane/TiltMover.hh>
-#include <protocols/membrane/SpinAroundPartnerMover.hh>
-#include <protocols/membrane/OptimizeMembranePositionMover.hh>
-#include <protocols/membrane/TransformIntoMembraneMover.hh>
-#include <protocols/membrane/TranslationRotationMover.hh>
-#include <protocols/membrane/SetMembranePositionMover.hh>
+#include <protocols/docking/membrane/MPDockingSetupMover.fwd.hh>
 #include <protocols/membrane/visualize/VisualizeEmbeddingMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <protocols/scoring/Interface.hh>
-#include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
-#include <protocols/docking/util.hh>
-#include <utility/string_util.hh>
-#include <protocols/toolbox/superimpose.hh>
-#include <protocols/docking/metrics.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <numeric/numeric.functions.hh>
 
 // C++ headers
 #include <iostream>
-#include <cstdlib>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 static basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
 

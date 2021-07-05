@@ -14,7 +14,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/docking/stateless/SaneDockingProtocol.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -16,7 +16,6 @@
 
 // Project headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
@@ -36,7 +35,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/func/Func.hh>
 
 #include <basic/Tracer.hh>
 
@@ -49,7 +47,6 @@
 #include <utility/io/izstream.hh>
 
 // C++ headers
-#include <sstream>
 
 #include <utility/vector1.hh>
 

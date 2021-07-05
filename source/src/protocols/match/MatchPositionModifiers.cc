@@ -23,7 +23,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -45,8 +45,9 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

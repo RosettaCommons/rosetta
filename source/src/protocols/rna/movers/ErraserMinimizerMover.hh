@@ -19,17 +19,13 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/movers/ErraserMinimizerMover.fwd.hh>
 
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 

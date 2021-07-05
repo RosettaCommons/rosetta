@@ -24,7 +24,6 @@
 //Include ObjexxFCL
 
 //Include Rosetta utilities
-#include <utility/vector1.hh>
 
 //Include Rosetta XML tag reader
 #include <utility/tag/Tag.fwd.hh>

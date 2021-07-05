@@ -17,25 +17,21 @@
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/simple_metrics/SimpleMetric.hh>
 #include <core/simple_metrics/SimpleMetricFactory.hh>
 #include <core/simple_metrics/PerResidueRealMetric.hh>
 #include <core/simple_metrics/PerResidueStringMetric.hh>
-#include <core/select/util.hh>
 #include <core/simple_metrics/SimpleMetricData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/tag/util.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
 #include <basic/datacache/DataMap.hh>
-#include <basic/datacache/DataCache.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 static basic::Tracer TR( "core.simple_metrics.util" );

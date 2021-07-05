@@ -13,6 +13,8 @@
 
 //ConstraintGeneratorCreator #includes
 #include <protocols/constraint_generator/ConstraintGeneratorRegistrator.hh>
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
+
 
 #include <protocols/constraint_generator/AtomPairConstraintGeneratorCreator.hh>
 #include <protocols/constraint_generator/ResidueTypeConstraintGeneratorCreator.hh>

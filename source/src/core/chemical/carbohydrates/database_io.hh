@@ -18,17 +18,15 @@
 // Package header
 #include <core/chemical/carbohydrates/SugarModificationsNomenclatureTable.hh>
 #include <core/chemical/carbohydrates/LinkageConformers.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfoManager.fwd.hh>
 
 // Project header
 #include <core/types.hh>
 
 // Utility header
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
-#include <iosfwd>
 
 
 namespace core {

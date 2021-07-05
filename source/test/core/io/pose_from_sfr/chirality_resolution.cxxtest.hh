@@ -26,17 +26,15 @@
 #include <core/import_pose/import_pose_options.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/PoseResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <utility/pointer/memory.hh>
 
 // C++ headers
 #include <string>

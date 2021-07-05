@@ -19,10 +19,8 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh>
 #include <set>
 
 namespace protocols {

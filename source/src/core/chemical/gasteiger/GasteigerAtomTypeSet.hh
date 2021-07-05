@@ -18,7 +18,7 @@
 // Unit headers
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
-#include <core/chemical/ElementSet.hh>
+#include <core/chemical/ElementSet.fwd.hh>
 
 #ifdef WIN32
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
@@ -33,7 +33,6 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <iosfwd>                                                // for string
 #include <map>
 
 #ifdef    SERIALIZATION

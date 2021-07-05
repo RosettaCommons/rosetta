@@ -14,10 +14,9 @@
 // Unit Headers
 #include <core/energy_methods/TNA_SuiteEnergy.hh>
 #include <core/energy_methods/TNA_SuiteEnergyCreator.hh>
-#include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
+#include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Package Headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/PolymerBondedEnergyContainer.hh>
@@ -28,9 +27,7 @@
 // Project Headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
@@ -42,6 +39,8 @@
 
 //Numeric Headers
 #include <numeric/deriv/dihedral_deriv.hh>
+
+#include <core/scoring/rna/TNA_SuitePotential.hh> // AUTO IWYU For TNA_SuitePotential
 
 static basic::Tracer TR( "core.energy_methods.TNA_SuiteEnergy" );
 

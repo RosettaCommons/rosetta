@@ -16,38 +16,27 @@
 #include <devel/init.hh>
 
 // Project Headers
-#include <protocols/moves/Mover.hh>
-#include <core/conformation/membrane/Span.hh>
+#include <core/conformation/membrane/Span.fwd.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/util.hh>
-#include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Package Headers
-#include <apps/benchmark/performance/init_util.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
-#include <utility/io/ozstream.hh>
 
 // utility headers
-#include <utility/excn/Exceptions.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
 
 using basic::Error;
 using basic::Warning;

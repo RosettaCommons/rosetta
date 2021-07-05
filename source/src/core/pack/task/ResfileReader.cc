@@ -25,7 +25,6 @@
 // Project Headers
 #include <core/chemical/types.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueProperties.hh>
 
 // Utility Headers
@@ -42,7 +41,6 @@
 //STL headers
 #include <string>
 //#include <iostream> //need this for debugging
-#include <fstream>
 #include <sstream> //automatic checking string to int conversion
 #ifdef WIN32
 #include <cctype> //for split_lines to handle '\t' tab characters
@@ -55,6 +53,8 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::ResidueTy...
 
 
 namespace core {

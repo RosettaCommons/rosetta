@@ -14,24 +14,20 @@
 #include <core/scoring/constraints/RTConstraint.hh>
 
 // Package Headers
-#include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/util.hh>
 
 #include <core/id/NamedAtomID.hh>
-#include <core/id/NamedStubID.hh>
 
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
 
-#include <core/conformation/Conformation.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -41,13 +37,11 @@
 #include <numeric/xyz.functions.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <iostream>
 
 
 #include <core/id/SequenceMapping.hh>
 #include <utility>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "core.scoring.constraints" );

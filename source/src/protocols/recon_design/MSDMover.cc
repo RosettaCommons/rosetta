@@ -25,29 +25,23 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
-#include <core/conformation/Residue.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/ResfileReader.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
 #include <utility/mpi_util.hh>
 

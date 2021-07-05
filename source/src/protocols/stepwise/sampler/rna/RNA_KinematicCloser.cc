@@ -23,7 +23,6 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -39,13 +38,13 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-#include <numeric/random/random.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
 
-#include <Eigen/Dense>
+#include <Eigen/Dense> // DO NOT AUTO-REMOVE (needed for template instantiation)
+
+#include <Eigen/LU> // AUTO IWYU For MatrixBase::determinant
 
 using namespace core;
 using namespace core::pose;

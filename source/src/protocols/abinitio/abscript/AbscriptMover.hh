@@ -18,17 +18,14 @@
 
 // Package headers
 #include <protocols/environment/ClientMover.hh>
-#include <protocols/environment/claims/EnvClaim.hh>
+#include <protocols/environment/claims/EnvClaim.fwd.hh>
 
 #include <protocols/abinitio/abscript/StageID.hh>
 #include <protocols/abinitio/abscript/AbscriptStageMover.fwd.hh>
-#include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunction.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
@@ -39,12 +36,13 @@
 #endif
 
 // Utility Headers
-#include <utility/vector0.fwd.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
 #include <set>
 #include <string>
+
+#include <utility/vector0.hh> // AUTO IWYU For vector0
 
 // ObjexxFCL Headers
 

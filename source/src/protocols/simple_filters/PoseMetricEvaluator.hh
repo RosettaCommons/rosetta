@@ -32,12 +32,10 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

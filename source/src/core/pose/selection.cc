@@ -19,13 +19,8 @@
 // Project Headers
 
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/ResidueIndexDescription.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 // Utility Headers
@@ -34,8 +29,8 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector0.hh>
-#include <ObjexxFCL/string.functions.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 
 static basic::Tracer TR( "core.pose.selection" );

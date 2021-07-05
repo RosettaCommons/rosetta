@@ -10,31 +10,24 @@
 /// @file
 /// @brief
 
-#include <protocols/moves/Mover.hh>
 #include <basic/options/option.hh>
 #include <core/types.hh>
 #include <devel/init.hh>
-#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <protocols/moves/Mover.hh>
 
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/IterativeAbrelax.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
-#include <protocols/abinitio/BrokerMain.hh>
 
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/MemTracer.hh>
-#include <utility/excn/Exceptions.hh>
 
 // option key includes
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 static basic::MemTracer mem_tr;
 

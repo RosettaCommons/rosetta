@@ -28,16 +28,17 @@
 
 #include <core/pose/motif/reference_frames.hh>
 
-#include <core/scoring/dssp/Dssp.hh>
 
-#include <core/scoring/motif/util.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
 #include <numeric/xyzTransform.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/chemical/ResidueTypeSet.hh> // AUTO IWYU For ResidueTypeSet
+#include <core/scoring/motif/motif_hash_stuff.hh> // AUTO IWYU For MotifHashManager, XformScore
+
 namespace protocols {
 namespace sewing  {
 namespace scoring {

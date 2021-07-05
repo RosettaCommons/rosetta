@@ -31,20 +31,15 @@
 // Core Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/sc/ShapeSimilarityCalculator.fwd.hh>
 #include <core/scoring/sc/MolecularSurfaceCalculator.hh>
-#include <numeric/xyzVector.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
-#include <core/select/residue_selector/util.hh>
-#include <core/select/residue_selector/ResidueVector.hh>
 
 
 
 //// C++ headers
 #include <vector>
-#include <string>
-#include <utility/vector1.hh>
+
+#include <core/select/residue_selector/ResidueSelector.fwd.hh> // AUTO IWYU For ResidueSelectorCOP
 
 namespace core {
 namespace scoring {

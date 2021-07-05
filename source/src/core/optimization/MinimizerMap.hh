@@ -19,7 +19,7 @@
 #include <core/optimization/MinimizerMap.fwd.hh>
 
 // Package headers
-#include <core/optimization/DOF_Node.hh>
+#include <core/optimization/DOF_Node.fwd.hh>
 //#include <core/optimization/AtomNode.hh>
 #include <core/optimization/types.hh>
 

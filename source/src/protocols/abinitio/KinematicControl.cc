@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 
 
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 
 
@@ -34,8 +34,6 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
 
@@ -45,7 +43,6 @@
 //// C++ headers
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
 #include <core/pose/variant_util.hh>
 #include <utility/vector1.hh>
 

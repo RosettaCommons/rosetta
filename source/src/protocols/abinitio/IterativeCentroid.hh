@@ -29,11 +29,11 @@
 
 // Package Headers
 #include <protocols/abinitio/IterativeBase.hh>
-#include <protocols/abinitio/IterativeFullatom.hh>
+#include <protocols/abinitio/IterativeFullatom.fwd.hh>
 
 // Project Headers
 
-#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -43,7 +43,6 @@
 //#include <cstdlib>
 //#include <string>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
 

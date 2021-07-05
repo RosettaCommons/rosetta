@@ -27,12 +27,9 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 
 
 //C++ headers
-#include <map>
-#include <list>
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

@@ -21,7 +21,6 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <basic/options/option.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <utility/io/ozstream.hh>
 
 #include <core/sequence/util.hh>
@@ -37,11 +36,8 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 #include <map>
@@ -55,7 +51,6 @@
 
 // Headers
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 
 using core::Size;
 using core::Real;

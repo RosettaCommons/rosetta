@@ -13,10 +13,7 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <devel/init.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -31,24 +28,14 @@
 //#include <protocols/hotspot_hashing/HotspotHashingConstraints.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 
-#include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 //options
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/util.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 //patchdock
-#include <protocols/protein_interface_design/read_patchdock.hh>
 
 #include <iostream>
-#include <iomanip>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <basic/options/option_macros.hh>
 
@@ -63,15 +50,8 @@
 #include <protocols/forge/methods/pose_mod.hh>
 
 //mc
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/JumpOutMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/metrics.hh>

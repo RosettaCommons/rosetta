@@ -25,7 +25,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Basic/Utility headers
@@ -35,8 +35,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 static basic::Tracer TR( "protocols.denovo_design.movers.BridgeChainsMover" );
 

@@ -17,6 +17,8 @@
 
 #include <utility/vector1.hh>
 
+#include <numeric/interpolation/spline/SplineGenerator.hh> // AUTO IWYU For SplineGenerator
+
 
 namespace core {
 namespace scoring {

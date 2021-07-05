@@ -27,16 +27,12 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 
 
 //// C++ headers

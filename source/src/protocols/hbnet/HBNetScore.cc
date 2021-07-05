@@ -22,7 +22,6 @@
 
 #include <protocols/filters/filter_schemas.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_filters/BuriedUnsatHbondFilter.hh>
 
 #include <utility/tag/Tag.hh>

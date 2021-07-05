@@ -15,18 +15,14 @@
 #include <protocols/pockets/PocketExemplarMultifunc.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 #include <cmath>
 
 #include <utility/vector1.hh>
-#include <numeric/random/random.fwd.hh>
-#include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 using namespace core;
 using namespace core::pose;

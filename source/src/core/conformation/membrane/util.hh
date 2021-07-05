@@ -18,10 +18,10 @@
 #define INCLUDED_core_conformation_membrane_util_hh
 
 // Package Headers
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
-#include <iosfwd>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #include <string>

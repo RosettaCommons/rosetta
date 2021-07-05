@@ -14,8 +14,6 @@
 // Unit header
 #include <core/chemical/adduct_util.hh>
 #include <core/chemical/Patch.hh>
-#include <core/chemical/GlobalResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 
@@ -24,16 +22,15 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 #include <utility/options/StringVectorOption.hh>
+
+#include <core/chemical/PatchOperation.hh> // AUTO IWYU For AddAtom, AddBond, SetICoor
 
 
 static basic::Tracer TR( "core.chemical.adduct_util" );

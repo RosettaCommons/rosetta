@@ -22,11 +22,9 @@
 #include <core/io/nmr/ParaIon.hh>
 
 // Package headers
-#include <core/types.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>

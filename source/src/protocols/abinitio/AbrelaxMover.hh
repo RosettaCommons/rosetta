@@ -32,14 +32,12 @@
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // C++ headers
 #include <string>
 
 #include <protocols/abinitio/FragmentSampler.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -18,28 +18,25 @@
 
 // Package headers
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
-#include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/claims/SymmetryClaim.fwd.hh>
-#include <protocols/topology_broker/claims/DofClaim.hh>
-#include <protocols/topology_broker/claims/SequenceClaim.fwd.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 #include <protocols/topology_broker/weights/ConstAbinitioMoverWeight.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
 
 // Project Headers
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <protocols/abinitio/FragmentSampler.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1_bool.hh>
 
 #include <utility/vector1.hh>
 

@@ -15,7 +15,6 @@
 #define INCLUDED_utility_graph_ring_detection_HH
 
 #include <utility/graph/BFS_prune.hh>
-#include <utility/vector0.hh>
 #include <utility/exit.hh>
 
 #include <platform/types.hh>

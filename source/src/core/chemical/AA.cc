@@ -22,7 +22,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-#include <utility/thread/backwards_thread_local.hh>
 #include <sstream>
 
 

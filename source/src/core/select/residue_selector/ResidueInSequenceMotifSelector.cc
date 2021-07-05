@@ -16,10 +16,9 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh> // for xml schema utility functions
 
 // Project headers
@@ -32,7 +31,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <regex>
 #include <string>
 

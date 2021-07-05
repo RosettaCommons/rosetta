@@ -24,19 +24,16 @@
 
 //Devel
 //#include <protocols/legacy_sewing/conformation/Model.fwd.hh>
-#include <protocols/legacy_sewing/conformation/Model.hh> // for see_whether_model_is_H_bonded_by_terminal_strands
-#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
-#include <protocols/legacy_sewing/sampling/SewGraph.hh>
+#include <protocols/legacy_sewing/conformation/Model.fwd.hh> // for see_whether_model_is_H_bonded_by_terminal_strands
+#include <protocols/legacy_sewing/sampling/SewGraph.fwd.hh>
 
 //C++
 #include <map>
 #include <string>
 
 //to find "beta-sheet" backbone H-bonded strands
-#include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <utility/file/file_sys_util.hh>
+
+#include <protocols/legacy_sewing/hashing/Hasher.hh> // AUTO IWYU For ScoreResults, BasisPair
 
 namespace protocols {
 namespace legacy_sewing  {

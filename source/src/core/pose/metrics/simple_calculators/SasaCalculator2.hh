@@ -16,7 +16,7 @@
 #define INCLUDED_core_pose_metrics_simple_calculators_SasaCalculator2_HH
 
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <core/scoring/sasa/SasaCalc.hh>
+#include <core/scoring/sasa/SasaCalc.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>

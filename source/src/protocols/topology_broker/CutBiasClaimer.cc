@@ -19,7 +19,6 @@
 
 
 // Package Headers
-#include <protocols/topology_broker/Exceptions.hh>
 
 // Project Headers
 #include <core/fragment/SecondaryStructure.hh>
@@ -33,6 +32,8 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For CREATE_EXCEPTION, RangeError
 
 
 //#include <basic/options/option.hh>

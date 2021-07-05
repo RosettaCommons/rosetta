@@ -15,14 +15,11 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/util/symmetric_deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 
 
-#include <core/optimization/symmetry/SymMinimizerMap.hh> // RM: Needed for compilation on my platform.
 #include <core/optimization/MinimizerOptions.hh>
 
 
@@ -35,49 +32,19 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <platform/types.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/symmetry/SymDof.fwd.hh>
-#include <core/conformation/symmetry/SymSlideInfo.fwd.hh>
-#include <core/conformation/symmetry/SymSlideInfo.hh>
-#include <core/conformation/symmetry/SymmData.fwd.hh>
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
-#include <core/id/AtomID_Mask.hh>
 #include <core/id/DOF_ID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
 #include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <limits>
-#include <map>
 #include <ostream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <basic/Tracer.fwd.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
 
 
 using basic::Error;

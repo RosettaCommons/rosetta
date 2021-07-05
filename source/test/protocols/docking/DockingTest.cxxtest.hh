@@ -12,15 +12,14 @@
 /// @author Sergey Lyskov
 
 // Test headers
-#include <test/UMoverTest.hh>
 #include <test/UTracer.hh>
 
 // Unit headers
 #include <protocols/docking/DockFilters.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/docking/DockingLowRes.hh>
-#include <protocols/docking/DockingHighRes.hh>
+#include <protocols/docking/DockingLowRes.fwd.hh>
+#include <protocols/docking/DockingHighRes.fwd.hh>
 #include <protocols/docking/EllipsoidalRandomizationMover.hh>
 
 // Package headers
@@ -29,10 +28,9 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -51,8 +49,11 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 ///////////////////////////////////////////////////////////////////////////

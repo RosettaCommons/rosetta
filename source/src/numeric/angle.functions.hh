@@ -20,8 +20,8 @@
 // Package headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
-#include <numeric/Quaternion.hh>
-#include <numeric/xyzMatrix.hh>
+#include <numeric/Quaternion.fwd.hh>
+#include <numeric/xyzMatrix.fwd.hh>
 
 // C++ headers
 #include <cmath>

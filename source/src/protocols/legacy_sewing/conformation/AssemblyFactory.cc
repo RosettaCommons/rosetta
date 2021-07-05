@@ -17,11 +17,10 @@
 #include <protocols/legacy_sewing/conformation/AssemblyFactory.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
+#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
 #include <protocols/legacy_sewing/conformation/ContinuousAssembly.hh>
 #include <protocols/legacy_sewing/conformation/DisembodiedAssembly.hh>
 
-#include <protocols/legacy_sewing/conformation/Model.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

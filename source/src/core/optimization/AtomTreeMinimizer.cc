@@ -28,14 +28,12 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // External headers
 #include <ObjexxFCL/format.hh>

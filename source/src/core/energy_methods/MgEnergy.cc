@@ -19,11 +19,6 @@
 #include <core/scoring/magnesium/util.hh>
 
 // Package headers
-#include <core/chemical/AtomType.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/DerivVectorPair.hh>
@@ -35,13 +30,12 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 #include <numeric/deriv/angle_deriv.hh>
-#include <numeric/numeric.functions.hh>
-#include <ObjexxFCL/format.hh>
+
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
 
 using namespace core::chemical::rna;
 using namespace basic::options;

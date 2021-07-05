@@ -10,27 +10,17 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 
 
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 
-#include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
 
-#include <protocols/moves/Mover.hh>
 
-#include <utility/exit.hh>
-#include <utility/vector1.hh>
 
-#include <fstream>
 
 //Auto Headers
-#include <core/io/silent/EnergyNames.fwd.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
-#include <utility/vector0.hh>
 
 
 class LigandDockTest : public CxxTest::TestSuite {

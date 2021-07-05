@@ -26,6 +26,9 @@
 // Utility header
 #include <utility/exit.hh>
 
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
+#include <core/chemical/MutableICoorRecord.hh> // AUTO IWYU For MutableICoorRecord
+
 #ifdef    SERIALIZATION
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ElementSet.hh>

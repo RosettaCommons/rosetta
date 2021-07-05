@@ -27,12 +27,13 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
+#include <vector>
+
 #ifdef WIN32
 #include <protocols/moves/MonteCarlo.hh>
 #endif
 
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
-#include <utility>
 #include <utility/VirtualBase.hh>
 
 
@@ -43,8 +44,6 @@
 //// C++ headers
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/vector1.hh>
-#include <iosfwd>
 
 
 namespace protocols {

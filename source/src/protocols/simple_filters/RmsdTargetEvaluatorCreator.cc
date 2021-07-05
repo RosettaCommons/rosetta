@@ -15,7 +15,6 @@
 #include <protocols/simple_filters/RmsdTargetEvaluatorCreator.hh>
 
 // Package Headers
-#include <protocols/evaluation/EvaluatorCreator.hh>
 #include <protocols/evaluation/util.hh>
 
 // Package Headers
@@ -24,22 +23,17 @@
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/simple_filters/ScoreEvaluator.hh>
 
-#include <core/chemical/ResidueType.hh>
 
-#include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.hh>
 
 
-#include <core/scoring/ScoreFunction.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
-#include <utility/file/FileName.hh>
 
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -47,7 +41,6 @@
 //// C++ headers
 
 // due to template function
-#include <core/io/silent/SilentStruct.hh>
 
 
 // option key includes
@@ -55,7 +48,6 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 
 //Auto Headers
 

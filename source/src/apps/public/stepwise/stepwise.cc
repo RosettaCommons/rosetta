@@ -23,15 +23,12 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/rna/RNA_DataReader.hh> // temporary, for scoring RNA chemical mapping data. Move into core?
@@ -42,9 +39,6 @@
 #include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
 #include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/monte_carlo/util.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -63,7 +57,6 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/run.OptionKeys.gen.hh> // for option[ run::show_simulation_in_pymol ] and etc.
@@ -78,15 +71,10 @@
 #include <utility/file/FileName.hh>
 
 //////////////////////////////////////////////////////////
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <string>
-#include <list>
 
 using namespace core;
 using namespace pose;

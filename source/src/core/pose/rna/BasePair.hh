@@ -20,7 +20,6 @@
 #include <core/pose/rna/BasePair.fwd.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
 #include <list>
 

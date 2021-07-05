@@ -27,19 +27,14 @@
 #include <core/conformation/Residue.hh>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/ScoreType.hh>
 
 // Numeric
 #include <numeric/conversions.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <utility/vector1.hh>
 
 
 //////////////////////////////////////////////////////////////////////////////////

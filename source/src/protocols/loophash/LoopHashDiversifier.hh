@@ -15,17 +15,16 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/io/silent/SilentStruct.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/FastRelax.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/loophash/LoopHashLibrary.hh>
+#include <protocols/loophash/LoopHashLibrary.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/io/silent/silent.fwd.hh> // AUTO IWYU For SilentStructOP
 
 
 namespace protocols {

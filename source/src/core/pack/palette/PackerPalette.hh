@@ -30,20 +30,16 @@
 // Package Headers
 
 // Project Headers
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/thread/mutable_cache.hh>
 
 // Basic Headers

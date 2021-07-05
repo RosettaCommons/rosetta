@@ -20,20 +20,14 @@
 // Other project headers or inline function headers
 #include <core/pose/Pose.hh>
 //Gabe testing
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 //#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
 //End gabe testing
 #include <core/scoring/Energies.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/TemperingBase.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
 
@@ -49,6 +43,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 
 // Operating system headers

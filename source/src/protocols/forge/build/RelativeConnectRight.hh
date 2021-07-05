@@ -24,7 +24,6 @@
 
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

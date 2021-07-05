@@ -22,16 +22,15 @@
 #include <core/pose/util.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <sstream>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Conformation.hh>
-#include <core/kinematics/AtomTree.hh>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
+#include <numeric/numeric.functions.hh> // AUTO IWYU For max, min
 
 
 static basic::Tracer TR( "protocols.kinmatchFunGroupTK" );

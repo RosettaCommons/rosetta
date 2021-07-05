@@ -18,9 +18,7 @@
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 #include <protocols/antibody/task_operations/AddCDRProfilesOperation.hh>
-#include <protocols/task_operations/ResidueProbDesignOperation.hh>
 #include <protocols/task_operations/ConservativeDesignOperation.hh>
-#include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
@@ -39,6 +37,8 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility>
+
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
 
 static basic::Tracer TR( "protocols.antibody.design.AntibodySeqDesignTFCreator" );
 

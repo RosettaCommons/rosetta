@@ -21,10 +21,8 @@
 // Package Headers
 
 // Project Headers
-#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/loops/loops_main.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>

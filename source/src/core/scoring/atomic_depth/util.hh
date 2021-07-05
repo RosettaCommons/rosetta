@@ -14,11 +14,12 @@
 #ifndef INCLUDED_core_scoring_atomic_depth_util_hh
 #define INCLUDED_core_scoring_atomic_depth_util_hh
 
-#include <core/scoring/atomic_depth/AtomicDepth.hh>
+#include <core/scoring/atomic_depth/AtomicDepth.fwd.hh>
 
 #include <core/id/AtomID_Map.hh>
 
-#include <utility/vector1.hh>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
 
 namespace core {
 namespace scoring {

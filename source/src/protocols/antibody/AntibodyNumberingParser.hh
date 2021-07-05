@@ -16,8 +16,13 @@
 #define INCLUDED_protocols_antibody_AntibodyNumberingParser_hh
 
 #include <protocols/antibody/AntibodyNumberingParser.fwd.hh>
-#include <protocols/antibody/AntibodyEnumManager.hh>
+#include <protocols/antibody/AntibodyEnumManager.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
+#include <map> // AUTO IWYU For map
+#include <core/types.hh> // AUTO IWYU For Size
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace antibody {

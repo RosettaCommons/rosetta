@@ -19,12 +19,12 @@
 #include <protocols/simple_moves/CombinePoseMover.fwd.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/silent/SilentStruct.hh>
 //#include <core/io/silent/SilentStruct.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <utility/vector1.hh>
+
+#include <core/io/silent/silent.fwd.hh> // AUTO IWYU For SilentStructOP
 
 namespace protocols {
 namespace simple_moves {

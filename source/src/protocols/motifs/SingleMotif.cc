@@ -10,10 +10,8 @@
 /// @file protocols/motifs/Motif.cc
 /// @brief Implementation of interaction motifs
 
-#include <core/conformation/Atom.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
-#include <core/chemical/ResidueType.hh>
 
 #include <core/kinematics/Jump.hh>
 
@@ -24,7 +22,6 @@
 
 #include <sstream>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

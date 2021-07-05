@@ -15,8 +15,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
+// Classes from the external/cifparse namespace
 class CifFile;
-
 class CifParser;
 
 namespace core {
@@ -25,6 +25,8 @@ namespace mmCIF {
 
 class mmCIFParser;
 
+
+typedef utility::pointer::shared_ptr< mmCIFParser > mmCIFParserOP;
 typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
 

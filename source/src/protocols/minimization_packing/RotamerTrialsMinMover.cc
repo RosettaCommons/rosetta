@@ -29,18 +29,17 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 

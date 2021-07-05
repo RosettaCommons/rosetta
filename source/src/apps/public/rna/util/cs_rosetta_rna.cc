@@ -14,25 +14,17 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
-#include <core/sequence/util.hh>
 
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/BasePair.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/sequence/Sequence.hh>
 
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
@@ -41,7 +33,6 @@
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <core/import_pose/RNA_DeNovoParameters.hh>
-#include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
 
 // C++ headers
@@ -49,17 +40,11 @@
 #include <string>
 
 // option key includes
-#include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <protocols/viewer/viewers.hh>
 #include <utility/vector1.hh>
 
@@ -78,7 +63,6 @@ using namespace core::chemical;
 using namespace core::conformation;
 using namespace core::kinematics;
 using namespace core::id;
-using namespace core::io::silent;
 using namespace core::pose;
 using namespace core::pose::rna;
 using namespace core::import_pose;

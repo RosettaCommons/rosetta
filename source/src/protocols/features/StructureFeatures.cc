@@ -16,17 +16,12 @@
 
 // Project Headers
 #include <basic/database/sql_utils.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/variant_util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <numeric/random/random.hh>
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
@@ -45,17 +40,16 @@
 // C++
 #include <string>
 #include <sstream>
-#include <iostream>
 #include <limits>
 
 //Basic Headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/StructureFeaturesCreator.hh>
+
+#include <basic/database/schema_generator/Constraint.hh> // AUTO IWYU For UniqueConstraint
 
 static basic::Tracer TR( "protocols.features.StructureFeatures" );
 

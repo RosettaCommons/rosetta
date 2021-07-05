@@ -20,11 +20,9 @@
 #include <core/scoring/carbohydrates/util.hh>
 
 // Project Headers
-#include <core/types.hh>
 #include <core/id/types.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>

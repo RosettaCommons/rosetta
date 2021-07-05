@@ -17,23 +17,18 @@
 
 // Project Headers
 #include <protocols/membrane/benchmark/MakeCanonicalHelix.hh>
-#include <protocols/moves/Mover.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/sequence/util.hh>
 
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR("protocols.membrane.benchmark.MakeCanonicalHelixTest.cxxtest");
 

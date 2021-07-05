@@ -22,15 +22,11 @@
 
 // Package Headers
 #include <protocols/topology_broker/FragmentJumpClaimer.hh>
-#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
-#include <protocols/abinitio/Templates.hh>
+#include <protocols/abinitio/Templates.fwd.hh>
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/jumping/JumpSetup.hh>
-#include <protocols/jumping/JumpSample.hh>
-#include <core/scoring/dssp/PairingsList.hh>
-#include <core/fragment/SecondaryStructure.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
 #include <protocols/jumping/SheetBuilder.hh>
 // ObjexxFCL Headers
 
@@ -39,9 +35,7 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 //// C++ headers
 //#include <iosfwd>

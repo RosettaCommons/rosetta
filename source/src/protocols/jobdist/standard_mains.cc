@@ -31,7 +31,6 @@
 
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -75,7 +74,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 

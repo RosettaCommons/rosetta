@@ -27,7 +27,6 @@
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 

@@ -35,15 +35,12 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
 //// C++ headers
-#include <string>
-#include <map>
 #include <iosfwd>
 
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 
 //Auto Headers
 

@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <core/scoring/nmr/rdc/RDCSingle.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Package headers
 #include <core/io/nmr/AtomSelection.fwd.hh>
@@ -25,13 +24,12 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh> // DO NOT AUTO-REMOVE
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -39,7 +37,8 @@
 
 // C++ headers
 #include <iosfwd>
-#include <string>
+
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For RDC_TYPE
 
 namespace core {
 namespace scoring {

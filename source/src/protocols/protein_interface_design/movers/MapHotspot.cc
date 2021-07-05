@@ -22,7 +22,6 @@
 #include <utility/graph/Graph.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -35,7 +34,7 @@
 #include <core/pose/variant_util.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
@@ -56,10 +55,11 @@
 #include <basic/datacache/DataMap.hh>
 
 // C++ headers
-#include <algorithm>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 
 
 namespace protocols {

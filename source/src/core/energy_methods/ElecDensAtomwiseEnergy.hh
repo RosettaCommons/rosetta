@@ -20,11 +20,8 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <basic/datacache/CacheableData.hh>
 

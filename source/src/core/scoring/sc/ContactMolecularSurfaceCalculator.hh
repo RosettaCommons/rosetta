@@ -22,16 +22,11 @@
 
 
 // Core Headers
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/sc/ContactMolecularSurfaceCalculator.fwd.hh>
 #include <core/scoring/sc/MolecularSurfaceCalculator.hh>
 
 //// C++ headers
 #include <vector>
-#include <string>
-#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

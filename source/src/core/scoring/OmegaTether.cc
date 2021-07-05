@@ -21,8 +21,6 @@
 #include <core/scoring/OmegaTether.hh>
 
 // Package Headers
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -33,14 +31,12 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/constants.hh>
 #include <numeric/MathMatrix.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
+#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>

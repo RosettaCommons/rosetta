@@ -16,7 +16,6 @@
 #include <protocols/denovo_design/architects/CompoundArchitectCreator.hh>
 // Protocol headers
 #include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
-#include <protocols/denovo_design/architects/PoseArchitect.hh>
 #include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>

@@ -17,18 +17,14 @@
 
 #include <core/types.hh>
 
-#include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 
 #include <numeric/interpolation/spline/BicubicSpline.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
 
 #include <utility/VirtualBase.hh>
 
 #include <map>
 #include <string>
 
-#include <vector>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 namespace core {
 namespace scoring {

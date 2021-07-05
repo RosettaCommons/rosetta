@@ -47,7 +47,8 @@
 #include <map>
 
 #include <utility/SingletonBase.hh>
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace scoring {
@@ -111,8 +112,11 @@ private:
 	void
 	read_PCS_file();
 
+#ifdef IWYU_SCAN
 public:
+#else
 private:
+#endif
 	PCS_file_data();
 public:
 	~PCS_file_data();

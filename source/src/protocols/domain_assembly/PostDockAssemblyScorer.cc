@@ -17,20 +17,16 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 
-#include <protocols/moves/Mover.hh>
 
 //#include <devel/init.hh>
 
 // C++ headers
-#include <iostream>
 #include <string>
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
 // option key includes
 

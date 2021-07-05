@@ -15,18 +15,11 @@
 #include <protocols/antibody/metrics.hh>
 
 #include <protocols/features/InterfaceFeatures.hh>
-#include <protocols/features/FeaturesReporter.hh>
 //#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
 //Core Headers
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/PointGraph.hh>
-#include <core/conformation/PointGraphData.hh>
-#include <core/conformation/find_neighbors.hh>
-#include <core/id/AtomID.hh>
 
 //Protocols Headers
 #include <protocols/features/util.hh>
@@ -45,7 +38,6 @@
 //Utility Headers
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <cppdb/frontend.h>
 
@@ -54,6 +46,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/antibody/AntibodyFeaturesCreator.hh>
+
+#include <protocols/antibody/AntibodyInfo.hh> // AUTO IWYU For AntibodyInfo
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 static basic::Tracer TR( "protocols.antibody.AntibodyFeatures" );
 

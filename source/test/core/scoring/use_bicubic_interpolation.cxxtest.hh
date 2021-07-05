@@ -21,15 +21,13 @@
 #include <core/scoring/Ramachandran.hh>
 
 // Unit headers
-#include <core/scoring/EnergyMap.hh>
 
-#include <test/UTracer.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <sstream>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Error, Warning
 
 
 using basic::Error;

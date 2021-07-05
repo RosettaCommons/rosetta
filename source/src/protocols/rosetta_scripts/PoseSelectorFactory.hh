@@ -17,21 +17,16 @@
 // Unit Headers
 #include <protocols/rosetta_scripts/PoseSelectorFactory.fwd.hh>
 #include <protocols/rosetta_scripts/PoseSelector.fwd.hh>
-#include <protocols/rosetta_scripts/PoseSelector.hh>
 #include <protocols/rosetta_scripts/PoseSelectorCreator.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // c++ headers
 #include <map>
-#include <set>
 
 namespace protocols {
 namespace rosetta_scripts {

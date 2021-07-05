@@ -33,23 +33,19 @@
 
 // Unit headers
 #include <protocols/nmr/pre/PREMover.hh>
-#include <protocols/nmr/pre/PREMoverCreator.hh>
 
 // Package headers
 #include <core/scoring/nmr/pre/PREData.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/Constraint.hh>
@@ -65,8 +61,6 @@
 
 // C++ headers
 #include <string>
-#include <sstream>
-#include <utility>
 
 static basic::Tracer TR("protocols.nmr.pre.PREMover.cxxtest");
 

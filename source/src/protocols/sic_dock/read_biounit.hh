@@ -12,8 +12,8 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/sic_dock/types.hh>
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace sic_dock {

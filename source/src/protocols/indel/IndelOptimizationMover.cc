@@ -10,61 +10,35 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
 
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopsFileIO.hh>
-#include <core/fragment/FragSet.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/make_loops.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
-#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
+#include <core/fragment/FragSet.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loop_build/LoopBuildMover.hh>
 #include <protocols/jd2/util.hh>
 
-#include <protocols/grafting/simple_movers/DeleteRegionMoverCreator.hh>
-#include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <protocols/indel/IndelOptimizationMover.hh>
-#include <protocols/docking/DockingHighRes.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockingPrepackProtocol.hh>
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option.hh>
 
 // C++ headers
-#include <iostream>
 #include <string>
-#include <fstream>
-#include <iomanip>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

@@ -29,9 +29,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <basic/Tracer.fwd.hh>
 
 namespace protocols {
 namespace membrane {

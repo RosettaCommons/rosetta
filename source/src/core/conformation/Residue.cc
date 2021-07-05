@@ -23,16 +23,13 @@
 // Project headers
 #include <core/id/PartialAtomID.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AtomICoor.hh>
-#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformer.fwd.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/Orbital.hh>
 #include <basic/options/option.hh>

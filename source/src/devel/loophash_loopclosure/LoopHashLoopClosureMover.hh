@@ -15,25 +15,15 @@
 #define INCLUDED_devel_loophash_loopclosure_LoopHashLoopClosureMover_HH
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_ddg/ddG.fwd.hh>
 #include <protocols/forge/remodel/RemodelMover.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMover.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/vector1.hh>
 
 #include <string>
-#include <map>
 #include <vector>
 
 namespace devel {

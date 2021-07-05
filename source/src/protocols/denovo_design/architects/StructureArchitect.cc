@@ -15,15 +15,9 @@
 #include <protocols/denovo_design/architects/StructureArchitect.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/Segment.hh>
-#include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <numeric/random/random.hh>
-#include <utility>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

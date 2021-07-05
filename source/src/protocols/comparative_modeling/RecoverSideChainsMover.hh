@@ -17,7 +17,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

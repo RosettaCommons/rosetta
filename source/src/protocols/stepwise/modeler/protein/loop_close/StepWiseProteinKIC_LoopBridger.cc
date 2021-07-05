@@ -16,7 +16,6 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinKIC_LoopBridger.hh>
-#include <protocols/stepwise/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 
@@ -24,19 +23,15 @@
 #include <core/types.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
-#include <core/scoring/Ramachandran.hh>
 #include <basic/Tracer.hh>
-#include <core/kinematics/Jump.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <numeric/conversions.hh>
 

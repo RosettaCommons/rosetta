@@ -20,7 +20,6 @@
 #include <protocols/simple_moves/CopyDofMover.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
-#include <core/pose/copydofs/CopyDofs.fwd.hh>
 #include <core/pose/copydofs/CopyDofsInfo.fwd.hh>
 #include <core/types.hh>
 #include <map>

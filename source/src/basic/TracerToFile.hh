@@ -17,7 +17,6 @@
 
 #include <basic/TracerImpl.hh>  // for otstream
 #include <fstream>
-#include <iosfwd>
 
 
 namespace basic {

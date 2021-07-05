@@ -16,20 +16,15 @@
 
 // Numeric Headers
 #include <numeric/MathMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
-#include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <numeric/cubic_polynomial.hh>
 #include <core/types.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 
 // C++ Headers
-#include <cstdlib>
+#include <cmath>
 
 static basic::Tracer TR( "core.conformation.membrane.AqueousPoreParameters" );
 
@@ -207,7 +202,6 @@ AqueousPoreParameters::eval_piecewise_cubic_polynomial(
 ) const {
 
 	using namespace numeric;
-	using namespace numeric::interpolation::spline;
 
 	if ( zcoord < boundaries_.front() ) {
 		return min_score;
@@ -236,7 +230,6 @@ AqueousPoreParameters::eval_piecewise_cubic_polynomial_deriv(
 ) const {
 
 	using namespace numeric;
-	using namespace numeric::interpolation::spline;
 
 	if ( zcoord < boundaries_.front() || zcoord >= boundaries_.back() ) {
 		return 0.0;

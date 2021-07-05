@@ -23,7 +23,7 @@
 #include <core/scoring/membrane/MPTerminiPenalty.fwd.hh>
 
 // Project Headers
-#include <core/scoring/membrane/MembraneData.hh>
+#include <core/scoring/membrane/MembraneData.fwd.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 
 // Package Headers
@@ -36,7 +36,6 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace scoring {

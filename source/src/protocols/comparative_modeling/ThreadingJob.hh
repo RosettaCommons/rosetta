@@ -22,7 +22,6 @@
 //project headers
 
 //utility headers
-#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //C++ headers

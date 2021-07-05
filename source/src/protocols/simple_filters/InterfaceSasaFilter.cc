@@ -23,12 +23,11 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <basic/MetricValue.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // Jacob
 #include <utility/string_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/symmetry/util.hh>
 
 // Project Headers
 #include <utility/excn/Exceptions.hh>

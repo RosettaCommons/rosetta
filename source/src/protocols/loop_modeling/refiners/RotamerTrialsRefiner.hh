@@ -16,7 +16,6 @@
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 

@@ -20,13 +20,12 @@
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/VirtualBase.fwd.hh>
 
-#include <cmath>
-#include <string>
 #include <iostream>
 #include <algorithm>
+
+#include <cmath> // MANUAL IWYU
 
 namespace numeric {
 namespace kdtree {

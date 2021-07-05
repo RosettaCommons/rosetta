@@ -24,6 +24,8 @@
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/UniformRotationSampler.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace magnesium {
 

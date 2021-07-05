@@ -28,7 +28,6 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/conformation/membrane/SpanningTopology.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
@@ -37,10 +36,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/chemical/AA.hh>
@@ -52,10 +48,8 @@
 #include <core/pose/symmetry/util.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace energy_methods {

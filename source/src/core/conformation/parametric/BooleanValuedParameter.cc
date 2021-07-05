@@ -24,7 +24,6 @@
 // Numeric headers
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 
 #ifdef SERIALIZATION

@@ -16,7 +16,6 @@
 #include <protocols/match/output/SameRotamerComboGrouper.hh>
 
 // Package headers
-#include <protocols/match/output/MatchGrouper.hh>
 #include <protocols/match/Hit.hh>
 
 // Utility headers

@@ -42,7 +42,6 @@
 #include <utility/io/izstream.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 

@@ -24,16 +24,12 @@
 #include <core/select/util.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/select/util.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 
 // XSD Includes

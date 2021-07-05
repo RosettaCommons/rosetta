@@ -21,29 +21,17 @@
 #include <protocols/helical_bundle/BundleGridSamplerHelper.hh>
 #include <protocols/helical_bundle/MakeBundleHelix.hh>
 #include <protocols/helical_bundle/MakeBundle.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/Energies.hh>
 
-#include <numeric/constants.hh>
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <numeric/random/random.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/conformation/parametric/Parameter.hh>
 #include <core/conformation/parametric/RealValuedParameter.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/pose/init_id_map.hh>
 #include <protocols/helical_bundle/util.hh>
 #include <utility/pointer/memory.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
@@ -55,7 +43,6 @@
 #include <core/pose/Pose.hh>
 
 // C math
-#include <cmath>
 
 // C output headers:
 #include <cstdio>
@@ -64,6 +51,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 namespace protocols {

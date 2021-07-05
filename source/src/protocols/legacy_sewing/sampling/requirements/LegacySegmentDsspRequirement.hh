@@ -20,10 +20,13 @@
 #include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/conformation/Model.hh>
+#include <protocols/legacy_sewing/conformation/Model.fwd.hh>
 
 //Utility headers
 #include <set>
+#include <string>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 namespace protocols {
 namespace legacy_sewing  {

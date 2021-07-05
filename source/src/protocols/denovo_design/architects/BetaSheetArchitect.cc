@@ -23,7 +23,6 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/denovo_design/types.hh>
-#include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -33,6 +32,9 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 // Boost headers
 
 static basic::Tracer TR( "protocols.denovo_design.architects.BetaSheetArchitect" );

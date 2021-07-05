@@ -35,7 +35,6 @@
 
 
 // Utility headers
-#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 

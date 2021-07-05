@@ -26,8 +26,6 @@
 
 // Utility headers
 // #include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 //Auto Headers
 // #include <numeric/numeric.functions.hh>

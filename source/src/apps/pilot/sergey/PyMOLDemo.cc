@@ -16,7 +16,6 @@
 #include <protocols/moves/PyMOLMover.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -25,13 +24,11 @@
 
 //#include <unistd.h>
 
-#include <utility/io/zipstream.hpp>
 
-#include <utility/tools/make_map.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <stdio.h>
-#include <cstring>
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+
 
 static basic::Tracer TR( "PyMOLDemo" );
 

@@ -27,8 +27,6 @@
 
 // Basic headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/citation_manager/CitationManager.hh>
 

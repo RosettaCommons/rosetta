@@ -14,7 +14,6 @@
 
 // Unit Headers
 #include <protocols/ligand_docking/MoveMapBuilder.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <protocols/ligand_docking/InterfaceBuilder.hh>
 #include <protocols/ligand_docking/LigandDockingLoaders.hh>
@@ -29,7 +28,6 @@
 
 // Utility Headers
 #include <utility>
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
@@ -39,9 +37,9 @@
 
 #include <protocols/ligand_docking/LigandArea.hh>
 #include <protocols/ligand_docking/ligand_options/Interface.hh>
-#include <utility/vector0.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 
 //STL headers

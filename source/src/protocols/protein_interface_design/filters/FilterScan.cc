@@ -13,7 +13,6 @@
 #include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
-#include <iostream>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -24,8 +23,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>
 #include <utility/vector1.hh>
@@ -35,7 +33,6 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
 #include <utility/string_util.hh>
@@ -52,6 +49,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace protein_interface_design {

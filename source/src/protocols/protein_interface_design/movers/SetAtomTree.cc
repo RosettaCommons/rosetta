@@ -31,18 +31,14 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
-#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueType.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/stream_util.hh>
-#include <utility/vector0.hh>
 #include <protocols/simple_moves/CutChainMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
-#include <core/chemical/VariantType.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

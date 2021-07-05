@@ -22,26 +22,22 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <core/scoring/nmr/NMRSpinlabel.hh>
 #include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.hh>
 #include <core/scoring/nmr/NMRDummySpinlabelEnsemble.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -50,9 +46,6 @@
 // C++ headers
 #include <string>
 #include <iostream>
-#include <iomanip>
-#include <map>
-#include <algorithm>
 #include <numeric>
 
 static basic::Tracer TR("core.scoring.nmr.NMRDummySpinlabelEnsemble.cxxtest");

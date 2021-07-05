@@ -23,14 +23,12 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
-#include <core/conformation/membrane/Exceptions.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <iostream>
 
 static basic::Tracer TR( "protocols.membrane.geometry.EmbeddingDef" );

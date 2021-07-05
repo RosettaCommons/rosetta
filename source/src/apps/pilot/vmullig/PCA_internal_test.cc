@@ -6,7 +6,6 @@ more than 3 dimensions.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
-#include <core/scoring/ScoreFunction.hh>
 //#include <core/pose/util.hh>
 //#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 //#include <core/scoring/ScoreFunctionFactory.hh>
@@ -16,14 +15,9 @@ more than 3 dimensions.
 //#include <protocols/loops/Loops.hh>
 //#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 //#include <core/import_pose/pose_stream/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <devel/init.hh>
 #include <iostream>
 #include <string>
-#include <deque>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 //#include <basic/options/keys/cluster.OptionKeys.gen.hh>
 //#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
@@ -37,8 +31,6 @@ more than 3 dimensions.
 //#include <protocols/minimization_packing/RepackSidechainsMover.hh>
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 //#include <protocols/simple_moves/MutateResidue.hh>
 //#include <protocols/relax/FastRelax.hh>
 //#include <numeric/model_quality/rms.hh>
@@ -60,6 +52,8 @@ more than 3 dimensions.
 //#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
 #include <numeric/PCA.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For options, OptionKeys
 
 #define PI 3.1415926535897932384626433832795
 #define CNCa_ANGLE 121.7

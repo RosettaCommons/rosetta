@@ -17,13 +17,13 @@
 // Unit headers
 #include <protocols/simple_moves/ScoreMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <map> // AUTO IWYU For map
+
 
 
 namespace protocols {

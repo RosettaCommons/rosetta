@@ -14,7 +14,7 @@
 //unit headers
 #include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/JobTracker.hh>
-#include <protocols/jd3/JobDigraph.hh>
+#include <protocols/jd3/JobDigraph.fwd.hh>
 
 
 
@@ -24,6 +24,9 @@
 
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
+
+// Other headers
+#include <protocols/jd3/JobDigraph.hh>
 #endif // SERIALIZATION
 
 namespace protocols {

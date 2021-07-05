@@ -28,55 +28,15 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
-#include <utility/vector1.hh>
 
 //RNA stuff.
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <core/import_pose/RNA_DeNovoSetup.hh>
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
-#include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
-#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
-#include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <core/import_pose/RNA_BasePairHandler.hh>
-#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <core/import_pose/RNA_DeNovoParameters.hh>
-#include <protocols/rna/denovo/movers/RNA_Relaxer.hh>
-#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
-#include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
-#include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
-#include <protocols/rna/setup/RNA_CSA_JobDistributor.hh>
-#include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <protocols/rna/denovo/util.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoProtocolMover.hh>
 
 
-#include <core/conformation/Residue.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/util.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-#include <core/pose/rna/util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 
@@ -90,7 +50,6 @@
 #include <protocols/jd2/RNA_DeNovoJobOutputter.hh>
 //#include <protocols/jd3/JobDistributorFactory.hh>
 //#include <protocols/jd3/JobQueen.hh>
-#include <core/scoring/Energies.hh>
 
 //#include <protocols/moves/PyMOLMover.hh>
 
@@ -99,23 +58,13 @@
 #include <string>
 
 // option key includes
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/full_model.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/sequence/Sequence.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <utility/options/keys/OptionKeyList.hh>
 
 #include <basic/Tracer.hh>
 
@@ -126,8 +75,6 @@ using namespace core::io::silent;
 using namespace protocols;
 using namespace protocols::rna::denovo;
 using namespace core::import_pose;
-using namespace core::import_pose::libraries;
-using namespace protocols::rna::setup;
 using namespace basic::options::OptionKeys;
 using namespace core::import_pose;
 using namespace core::import_pose::options;

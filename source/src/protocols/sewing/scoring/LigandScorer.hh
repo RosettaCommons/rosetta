@@ -24,11 +24,12 @@
 
 //Core headers
 #include <core/scoring/func/Func.fwd.hh>
-#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 
 //Utility headers
-#include <utility/vector1.hh>
 #include <numeric/constants.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 namespace protocols {
 namespace sewing  {

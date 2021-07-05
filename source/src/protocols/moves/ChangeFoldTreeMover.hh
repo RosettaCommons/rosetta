@@ -21,11 +21,9 @@
 // Package headers
 
 // Project headers
-#include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -33,9 +31,7 @@
 #include <string>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

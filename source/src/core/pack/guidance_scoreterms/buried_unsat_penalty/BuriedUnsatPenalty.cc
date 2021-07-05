@@ -27,49 +27,29 @@
 
 // Package headers
 #include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/chemical/AtomType.hh>
 
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
 // Utility headers
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/numbers.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/memory.hh>
 #include <utility/graph/Graph.hh>
-#include <utility/graph/graph_util.hh>
 
 namespace core {
 namespace pack {

@@ -20,16 +20,13 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>

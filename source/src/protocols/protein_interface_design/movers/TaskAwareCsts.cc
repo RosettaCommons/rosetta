@@ -16,20 +16,15 @@
 #include <protocols/protein_interface_design/movers/TaskAwareCstsCreator.hh>
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/util.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <basic/Tracer.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 //Auto Headers
 #include <core/conformation/Residue.hh>
-#include <numeric/xyzVector.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/id/AtomID.hh>

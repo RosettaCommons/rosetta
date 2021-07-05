@@ -36,6 +36,8 @@
 // C++ Headers
 #include <string>
 
+#include <map> // AUTO IWYU For map
+
 namespace protocols {
 namespace surface_docking {
 

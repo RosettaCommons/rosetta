@@ -30,7 +30,6 @@
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
@@ -39,9 +38,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/util.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 // Boost headers
 

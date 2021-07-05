@@ -17,29 +17,21 @@
 #include <core/pose/ref_pose.hh>
 
 // Package headers
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataCache.hh>
 #include <basic/datacache/DataMap.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
-#include <utility/vector1.hh>
 //#include <utility/file/file_sys_util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/Tag.hh>
 
 // C/C++ headers
-#include <cmath>
 #include <iostream>
-#include <algorithm>
-#include <numeric>
 
 // External headers
-#include <ObjexxFCL/string.functions.hh>
 
 
 

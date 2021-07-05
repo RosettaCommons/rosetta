@@ -22,7 +22,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 //protocols
-#include <protocols/loops/Loop.hh>
 
 namespace devel {
 namespace loop_creation {

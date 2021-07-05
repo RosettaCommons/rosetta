@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <cmath>
 
 static basic::Tracer TR( "core.membrane.hull" );

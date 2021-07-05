@@ -48,7 +48,6 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/LexicographicalIterator.fwd.hh>
-#include <utility/vector1_bool.hh>
 
 // Numeric headers
 #include <numeric/geometry/BoundingBox.hh>

@@ -30,7 +30,6 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR( "ligand_dock.main" );

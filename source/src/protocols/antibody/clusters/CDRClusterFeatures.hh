@@ -21,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

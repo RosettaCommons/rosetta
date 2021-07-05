@@ -30,15 +30,12 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/lkball/LK_BallInfo.hh>
-#include <core/scoring/util.hh>
 
 #include <core/pack/packer_neighbors.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
@@ -53,12 +50,14 @@
 
 // Test headers
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
 
-#include <numeric/xyz.io.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core;
 

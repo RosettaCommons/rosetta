@@ -13,14 +13,10 @@
 
 #include <fstream>
 #include <string>
-#include <stdexcept>
 
-#include <boost/algorithm/string.hpp>
 
 #include <core/types.hh>
 
-#include <utility/exit.hh>
-#include <utility/json_spirit/json_spirit.h>
 #include <utility/json_spirit/json_spirit_tools.hh>
 
 #include <basic/Tracer.hh>

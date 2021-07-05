@@ -13,24 +13,18 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // basic headers
-#include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 
 // C++ headers
-#include <sstream>
 
 // Mover creator headers
 #include <devel/domain_insertion/FusePosesNtoCMoverCreator.hh>
 #include <devel/domain_insertion/InsertionSiteTestMoverCreator.hh>
-#include <devel/domain_insertion/FusePosesNtoCMoverCreator.hh>
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 //#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
-#include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
 #include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
 #include <devel/denovo_design/ConnectJumpsCreator.hh>
 #include <devel/denovo_design/DumpStatsSSCreator.hh>

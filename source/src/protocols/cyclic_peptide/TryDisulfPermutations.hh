@@ -24,16 +24,12 @@
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/constants.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 
 
 ///////////////////////////////////////////////////////////////////////

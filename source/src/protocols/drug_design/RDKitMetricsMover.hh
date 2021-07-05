@@ -20,19 +20,14 @@
 #include <protocols/moves/Mover.hh>
 
 // Package headers
-#include <core/chemical/ResidueType.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/AtomRefMapping.hh>
 
 // Project Headers
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 // External headers
 

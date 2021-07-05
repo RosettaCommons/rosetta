@@ -19,12 +19,12 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.hh>
-#include <boost/noncopyable.hpp>
+
+#include <boost/core/noncopyable.hpp> // AUTO IWYU For noncopyable
 
 // C++ headers
-#include <string>
 
 namespace protocols {
 namespace trajectory {

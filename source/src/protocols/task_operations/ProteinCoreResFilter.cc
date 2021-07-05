@@ -20,7 +20,7 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>

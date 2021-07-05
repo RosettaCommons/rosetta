@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_ligand_docking_CompoundTranslate_hh
 
 // Unit Headers
-#include <protocols/ligand_docking/Translate.hh>
+#include <protocols/ligand_docking/Translate.hh> // DO NOT AUTO-REMOVE
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>

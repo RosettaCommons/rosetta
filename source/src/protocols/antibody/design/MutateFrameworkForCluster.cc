@@ -28,7 +28,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -45,6 +45,9 @@
 #include <utility/string_util.hh>
 
 #include <fstream>
+
+#include <protocols/antibody/clusters/CDRCluster.hh> // AUTO IWYU For CDRCluster
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("protocols.antibody.designMutateFrameworkForCluster");
 

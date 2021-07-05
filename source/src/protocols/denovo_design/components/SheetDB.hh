@@ -19,13 +19,17 @@
 // Unit headers
 
 // Protocol headers
-#include <protocols/denovo_design/architects/StrandArchitect.hh>
 
 // Package headers
-#include <protocols/fldsgn/topology/StrandPairing.hh>
+#include <protocols/fldsgn/topology/StrandPairing.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
+
+#include <protocols/denovo_design/architects/StructureArchitect.hh> // AUTO IWYU For Lengths
+#include <protocols/denovo_design/components/SegmentPairing.fwd.hh> // AUTO IWYU For RegisterShifts, StrandOrientations
+#include <protocols/fldsgn/topology/SS_Info2.fwd.hh> // AUTO IWYU For SS_Info2
+#include <map> // AUTO IWYU For map, map<>::value_compare
 
 // C++ headers
 

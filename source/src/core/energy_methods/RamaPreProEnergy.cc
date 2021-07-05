@@ -24,51 +24,27 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/chemical/AA.hh>
-#include <core/id/DOF_ID.hh>
+#include <core/id/DOF_ID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/PartialAtomID.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/scoring/PolymerBondedEnergyContainer.hh>
-#include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/deriv/angle_deriv.hh>
-#include <numeric/deriv/distance_deriv.hh>
-#include <numeric/deriv/dihedral_deriv.hh>
-#include <numeric/NumericTraits.hh>
 #include <numeric/angle.functions.hh>
-#include <core/scoring/DerivVectorPair.hh>
 
 // C++ headers
-#include <iostream>
 #include <utility/vector1.hh>
-#include <core/pose/PDBInfo.hh>
+
+#include <core/scoring/methods/util.hh> // AUTO IWYU For determine_lo_and_hi_residues, create_long_range_e...
+#include <numeric/conversions.hh> // AUTO IWYU For degrees
 
 namespace core {
 namespace energy_methods {

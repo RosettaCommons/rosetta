@@ -15,14 +15,12 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -41,8 +39,9 @@
 
 //Auto Headers
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Mask.hh>
-#include <utility/vector1.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 using basic::Error;

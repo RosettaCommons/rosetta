@@ -17,7 +17,6 @@
 
 #include <utility/vector0.hh>
 
-#include <vector>
 #include <string>
 
 namespace protocols {

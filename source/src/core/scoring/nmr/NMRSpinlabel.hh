@@ -24,16 +24,13 @@
 
 // Package headers
 #include <core/scoring/nmr/NMRDummySpinlabelEnsemble.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

@@ -19,10 +19,8 @@
 
 #include <core/types.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -38,12 +36,8 @@
 #include <core/id/NamedAtomID.hh>
 
 #include <core/sequence/Sequence.hh>
-#include <core/sequence/SWAligner.hh>
-#include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/SimpleScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/util.hh>
 
 #include <core/pack/optimizeH.hh>
 #include <core/pack/pack_missing_sidechains.hh>
@@ -53,8 +47,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>

@@ -20,7 +20,6 @@
 #include <utility/fixedsizearray1.hh>
 #include <numeric/geometry/hashing/SixDHasher.hh>
 #include <numeric/xyzTransform.hh>
-#include <numeric/HomogeneousTransform.hh>
 #include <boost/unordered_map.hpp>
 #include <utility/SingletonBase.hh>
 

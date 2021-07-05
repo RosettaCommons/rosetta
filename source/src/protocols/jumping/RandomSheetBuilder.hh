@@ -23,23 +23,15 @@
 #include <protocols/jumping/SheetBuilder.hh>
 
 // Package Headers
-#include <protocols/jumping/SameStrand.fwd.hh>
-#include <core/scoring/dssp/PairingsList.hh>
-#include <protocols/jumping/JumpSetup.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray2A.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 //// C++ headers

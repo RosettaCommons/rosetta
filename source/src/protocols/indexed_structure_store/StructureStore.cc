@@ -15,9 +15,9 @@
 #include <protocols/indexed_structure_store/StructureStore.hh>
 
 #include <algorithm>
-#include <vector>
-#include <string>
 #include <stdexcept>
+
+#include <ndarray/initialization.h> // AUTO IWYU For SimpleInitializer, allocate
 
 namespace protocols
 {

@@ -18,49 +18,30 @@
 
 // Unit headers
 #include <core/chemical/ResidueTypeBase.hh>
-#include <core/chemical/ResidueConnection.hh>
 
 // Package Headers
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueType.hh>
 
 // Project Headers
-#include <core/chemical/residue_support.hh>
-#include <core/chemical/icoor_support.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/Atom.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/Element.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/MMAtomType.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
+#include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/rna/RNA_Info.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/chemical/bond_support.hh>
-#include <core/chemical/RestypeDestructionEvent.hh>
-#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #include <core/chemical/Orbital.hh>
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility>
-#include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
-#include <utility/graph/ring_detection.hh>
 
 // External headers
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <numeric/conversions.hh>
 
 // C++ headers
-#include <algorithm>
 
 #ifdef    SERIALIZATION
 #include <core/chemical/ResidueGraphTypes.srlz.hh>
@@ -79,6 +60,11 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/utility.hpp>
+
+// Other headers
+#include <core/chemical/ElementSet.hh>
+#include <core/chemical/MMAtomTypeSet.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #endif // SERIALIZATION
 
 namespace core {

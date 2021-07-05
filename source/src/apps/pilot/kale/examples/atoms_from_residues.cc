@@ -2,10 +2,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 
 static basic::Tracer TR( "apps.pilot.kale.examples" );

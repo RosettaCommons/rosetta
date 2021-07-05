@@ -13,16 +13,13 @@
 #ifndef INCLUDED_protocols_protein_interface_design_movers_DockAndRetrieveSidechains_hh
 #define INCLUDED_protocols_protein_interface_design_movers_DockAndRetrieveSidechains_hh
 
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 #include <protocols/docking/DockingProtocol.fwd.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

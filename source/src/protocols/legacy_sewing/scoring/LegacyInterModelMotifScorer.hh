@@ -20,14 +20,11 @@
 #include <protocols/legacy_sewing/scoring/LegacyMotifScorer.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
+#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
 
 //Core headers
-#include <core/scoring/motif/motif_hash_stuff.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 //Utility headers
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

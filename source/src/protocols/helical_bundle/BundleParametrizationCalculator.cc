@@ -39,7 +39,6 @@
 #include <utility/pointer/memory.hh>
 
 // C++ headers
-#include <tuple>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

@@ -22,7 +22,6 @@
 #include <core/pose/variant_util.hh>
 #include <core/types.hh>
 
-#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 
@@ -30,7 +29,6 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++ Headers

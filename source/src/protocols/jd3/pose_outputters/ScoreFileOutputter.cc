@@ -18,7 +18,7 @@
 // package headers
 #include <protocols/jd3/pose_outputters/ScoreFileOutputSpecification.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
-#include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/InnerLarvalJob.fwd.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/job_results/PoseJobResult.hh>
 
@@ -26,7 +26,6 @@
 #include <core/io/raw_data/ScoreFileData.hh>
 #include <core/io/raw_data/ScoreMap.hh>
 
-#include <basic/datacache/ConstDataMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>

@@ -18,14 +18,12 @@
 #include <protocols/parser/DataLoader.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
+#include <string>
 
 
 namespace protocols {

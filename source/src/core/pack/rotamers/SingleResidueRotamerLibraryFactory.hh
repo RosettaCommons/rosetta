@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_pack_rotamers_SingleResidueRotamerLibraryFactory_HH
 #define INCLUDED_core_pack_rotamers_SingleResidueRotamerLibraryFactory_HH
 
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.fwd.hh>
+
 // Package headers
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryCreator.fwd.hh>

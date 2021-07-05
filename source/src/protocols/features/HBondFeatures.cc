@@ -28,10 +28,8 @@
 #include <core/conformation/Residue.hh>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreType.hh>
@@ -60,7 +58,6 @@
 #include <utility/vector1.hh>
 #include <utility/assert.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/vector0.hh>
 
 // External Headers
 #include <cppdb/frontend.h>

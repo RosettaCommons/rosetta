@@ -21,18 +21,16 @@
 #include <core/pose/Pose.hh>
 
 #include <protocols/scoring/Interface.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
-#include <core/select/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -55,11 +53,12 @@
 #include <algorithm>
 
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
-#include <utility/vector0.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

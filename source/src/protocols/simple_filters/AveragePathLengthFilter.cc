@@ -18,11 +18,9 @@
 #include <core/pose/Pose.hh>
 #include <protocols/filters/Filter.hh>
 //Project Headers
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 //Utility Headers
-#include <utility/string_util.hh>
 #include <protocols/toolbox/NetworkAlgorithms.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

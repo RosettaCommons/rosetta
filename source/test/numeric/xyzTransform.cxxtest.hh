@@ -17,14 +17,10 @@
 
 // Package headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzTransform.hh>
-#include <utility/fixedsizearray1.hh>
-#include <utility/numbers.hh>
-#include <iostream>
 #include <core/types.hh>
 
 

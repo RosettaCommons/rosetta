@@ -11,20 +11,18 @@
 
 #include <protocols/sic_dock/RigidScore.fwd.hh>
 
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/kinematics/Stub.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <core/types.hh>
 #include <protocols/sic_dock/types.hh>
 #include <protocols/sic_dock/xyzStripeHashPoseWithMeta.hh>
 #include <utility/VirtualBase.hh>
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <protocols/loophash/LoopHashLibrary.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+
+#include <boost/unordered_map.hpp> // AUTO IWYU For unordered_map
 
 namespace protocols {
 namespace sic_dock {

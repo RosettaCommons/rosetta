@@ -17,29 +17,20 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
-#include <utility/vector1.hh>
 
 // Rosetta Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/file/FileName.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/forge/remodel/RemodelLoopMover.hh>
-#include <core/chemical/ChemicalManager.hh> // for ncaa handling
-#include <core/chemical/ResidueTypeSet.hh> // for ncaa handling
-#include <core/chemical/ResidueType.hh> // for ncaa handling
 
 #include <protocols/forge/remodel/RemodelData.hh>
 //#include <protocols/sparta/PDB.hh>
-#include <core/pose/PDBInfo.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 // C++ Headers
 #include <vector>

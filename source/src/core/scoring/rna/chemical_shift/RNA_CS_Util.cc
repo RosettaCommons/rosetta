@@ -17,7 +17,6 @@
 
 #include <core/conformation/Residue.hh>
 
-#include <ObjexxFCL/format.hh>
 #include <core/chemical/AA.hh>
 
 #include <numeric/xyzMatrix.hh>

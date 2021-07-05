@@ -19,11 +19,7 @@
 #include <protocols/optimize_weights/NestedEnergyTermOptEData.fwd.hh>
 
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/optimization/types.hh>
 
 
 #include <map>

@@ -19,19 +19,13 @@
 #include <protocols/docking/membrane/MPDockingMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/membrane/MembraneInfo.fwd.hh>
 
 // Project Headers
 #include <protocols/membrane/AddMembraneMover.fwd.hh>
 #include <protocols/docking/DockingProtocol.fwd.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/PyMOLMover.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
@@ -39,15 +33,11 @@
 
 // Utility Headers
 
-#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
-#include <protocols/viewer/viewers.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
 
 namespace protocols {
 namespace docking {

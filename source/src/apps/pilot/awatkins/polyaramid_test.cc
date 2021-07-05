@@ -13,8 +13,6 @@
 
 // includes
 #include <iostream>
-#include <fstream>
-#include <string>
 
 #include <devel/init.hh>
 
@@ -22,12 +20,9 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -41,21 +36,15 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 
 #include <protocols/minimization_packing/MinMover.hh>
 
-#include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <numeric/random/random.hh>
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For IntegerOptionKey, OptionKeys, RealOptionKey,
+
 
 using namespace core;
 using namespace utility;

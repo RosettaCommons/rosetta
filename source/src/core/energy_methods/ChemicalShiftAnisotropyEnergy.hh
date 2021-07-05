@@ -24,7 +24,6 @@
 #include <core/pose/Pose.fwd.hh>
 //#include <core/kinematics/MinimizerMapBase.fwd.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/id/AtomID_Map.hh>
 
 

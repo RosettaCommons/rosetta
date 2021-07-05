@@ -16,13 +16,11 @@
 #include <protocols/matdes/BuildingBlockInterfaceOperationCreator.hh>
 
 // Project Headers
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/chains_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
@@ -38,13 +36,16 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
 #include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A::IR, FArray1A, FArray1A<>::si...
+#include <ObjexxFCL/FArray2A.hh> // AUTO IWYU For FArray2A::IR, FArray2A, FArray2A<>::si...
 
 
 static basic::Tracer TR( "protocols.matdes.BuildingBlockInterfaceOperation" );

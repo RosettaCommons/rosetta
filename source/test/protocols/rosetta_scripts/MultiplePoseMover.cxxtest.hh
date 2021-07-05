@@ -22,7 +22,6 @@
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/rosetta_scripts/MultiplePoseMover.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
@@ -35,7 +34,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
 // Numberic headers

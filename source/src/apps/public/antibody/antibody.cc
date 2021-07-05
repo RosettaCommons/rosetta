@@ -18,7 +18,6 @@
 
 #include <protocols/antibody/grafting/antibody_sequence.hh>
 #include <protocols/antibody/grafting/regex_based_cdr_detection.hh>
-#include <protocols/antibody/grafting/chothia_numberer.hh>
 #include <protocols/antibody/grafting/scs_blast.hh>
 #include <protocols/antibody/grafting/scs_multi_template.hh>
 #include <protocols/antibody/grafting/exception.hh>
@@ -32,22 +31,14 @@
 // Grafting util function related includes
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/sequence/util.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/simple_moves/SuperimposeMover.hh>
 
-#include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/util.hh>
 
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
@@ -59,26 +50,18 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 #include <utility/file/file_sys_util.hh>
 #include <utility/pointer/memory.hh>
-#include <utility/file/file_sys_util.hh>
 
 #include <devel/init.hh>
 
-#include <fstream>
-#include <cassert>
-#include <cstdlib>
 #include <iostream>
 
 #include <string>
-#include <regex>
-#include <cstdlib>
 
 //#include <typeinfo>
 

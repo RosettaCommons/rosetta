@@ -26,7 +26,6 @@
 #include <core/pose/Pose.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 //Devel
 #include <protocols/features/strand_assembly/StrandBundleFeatures.hh>
@@ -35,7 +34,6 @@
 //Utility and basic
 #include <basic/options/option.hh>
 #include <basic/database/sql_utils.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <numeric/xyz.functions.hh> // for torsion calculations
 #include <utility/vector1.hh> // for utility::vector1<Column> primary_key_columns;
 
@@ -48,17 +46,13 @@
 
 //Basic
 #include <basic/Tracer.hh>
-#include <basic/options/util.hh>
 #include <basic/options/keys/strand_assembly.OptionKeys.gen.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
-#include <protocols/analysis/InterfaceAnalyzerMover.hh> // for SASA
-#include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

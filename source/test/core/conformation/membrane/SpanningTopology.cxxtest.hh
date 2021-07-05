@@ -25,21 +25,18 @@
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/Conformation.hh>
 
 // Package Headers
 #include <core/types.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <core/conformation/membrane/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
+
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
 
 static basic::Tracer TR("core.conformation.membrane.SpanningTopology.cxxtest");
 

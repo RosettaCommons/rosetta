@@ -15,7 +15,6 @@
 
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 
-#include <utility>
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
@@ -24,7 +23,6 @@
 #include <algorithm>
 #include <iostream>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

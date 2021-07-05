@@ -22,15 +22,11 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/XYZ_Func.hh>
 
 // Project Headers
-#include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -48,6 +44,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.rna.AlignmentEnergy" );
 

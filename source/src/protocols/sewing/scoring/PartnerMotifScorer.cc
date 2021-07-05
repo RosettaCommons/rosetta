@@ -19,13 +19,11 @@
 //Core headers
 #include <core/types.hh>
 
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/motif/reference_frames.hh>
 
-#include <core/scoring/motif/util.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -34,9 +32,13 @@
 //Utility headers
 #include <basic/Tracer.hh>
 #include <numeric/xyzTransform.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <protocols/sewing/data_storage/SmartAssembly.hh> // AUTO IWYU For SmartAssembly
+#include <protocols/sewing/data_storage/SmartSewingResidue.hh> // AUTO IWYU For SmartSewingResidue
+#include <core/chemical/ResidueTypeSet.hh> // AUTO IWYU For ResidueTypeSet
+
 namespace protocols {
 namespace sewing  {
 namespace scoring {

@@ -22,11 +22,10 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/magnesium/util.hh>
 #include <numeric/random/random.hh>
 #include <numeric/UniformRotationSampler.hh>

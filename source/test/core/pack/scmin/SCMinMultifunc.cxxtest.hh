@@ -23,7 +23,6 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <platform/types.hh>
 
 #include <utility/graph/Graph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -44,11 +43,12 @@
 #include <core/types.hh>
 
 
-#include <test/UTracer.hh>
 
 //Auto Headers
-#include <core/kinematics/DomainMap.hh>
 #include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Error, Tracer, Warning
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using basic::Error;

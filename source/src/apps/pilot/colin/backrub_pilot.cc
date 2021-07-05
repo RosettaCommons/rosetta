@@ -32,7 +32,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <devel/init.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -53,10 +53,8 @@
 
 // Numeric Headers
 #include <numeric/random/random.hh>
-#include <numeric/MultiDimensionalHistogram.hh>
 
 // Platform Headers
-#include <platform/types.hh>
 
 // option key includes
 
@@ -68,9 +66,8 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
-#include <utility/keys/Key3Vector.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR( "apps.backrub" );

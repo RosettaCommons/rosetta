@@ -21,13 +21,8 @@
 #include <protocols/mean_field/RotMatrix.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/VirtualBase.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

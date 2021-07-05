@@ -27,7 +27,7 @@
 
 // Project headers
 #include <core/id/TorsionID.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 // Utility headers

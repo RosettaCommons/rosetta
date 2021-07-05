@@ -13,12 +13,12 @@
 #include <protocols/sic_dock/Rose.fwd.hh>
 
 #include <platform/types.hh>
-#include <utility>
-#include <utility/vector1.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/xyzStripeHashPose.hh>
 #include <numeric/xyzTransform.hh>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
 
 
 namespace protocols {

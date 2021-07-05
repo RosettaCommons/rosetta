@@ -24,7 +24,6 @@
 
 #include <apps/benchmark/performance/performance_benchmark.hh>
 
-#include <utility/vector1.hh>
 
 enum  ScoreFnType {SFT_dfpmin, SFT_dfpmin_armijo, SFT_dfpmin_armijo_nonmonotone};
 

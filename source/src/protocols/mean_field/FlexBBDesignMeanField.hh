@@ -26,13 +26,11 @@
 
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
 
 
 // C++ headers
-#include <iosfwd>
 
 namespace protocols {
 namespace mean_field {

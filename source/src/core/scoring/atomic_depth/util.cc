@@ -16,6 +16,8 @@
 
 #include <core/pose/init_id_map.hh>
 
+#include <core/scoring/atomic_depth/AtomicDepth.hh> // AUTO IWYU For AtomicDepth
+
 
 namespace core {
 namespace scoring {

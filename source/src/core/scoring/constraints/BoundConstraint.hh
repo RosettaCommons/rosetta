@@ -19,7 +19,6 @@
 //#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
-#include <basic/basic.hh>
 
 
 // C++ Headers

@@ -21,16 +21,10 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/EnvPairPotential.hh>
-#include <basic/datacache/CacheableData.hh> //TMP HACK
-#include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

@@ -17,14 +17,11 @@
 ///Project headers
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 
 ///Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
 
 ///C++ headers
 #include <string>

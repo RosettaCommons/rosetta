@@ -22,21 +22,15 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Residue.functions.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 //headers for transform_segment
-#include <core/kinematics/RT.hh>
-#include <core/kinematics/Stub.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/Remarks.hh>
 
 #include <utility/utility.functions.hh>
 

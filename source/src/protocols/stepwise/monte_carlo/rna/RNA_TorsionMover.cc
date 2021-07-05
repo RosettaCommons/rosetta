@@ -19,22 +19,15 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/chemical/rna/util.hh>
 
-#include <protocols/moves/MonteCarlo.hh>
 
 #include <numeric/random/random.hh>
 
 #include <basic/Tracer.hh>
 
-#include <map>
 
 using namespace core;
 using namespace protocols::stepwise::monte_carlo::mover;

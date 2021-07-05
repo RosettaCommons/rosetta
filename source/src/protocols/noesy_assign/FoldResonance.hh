@@ -26,8 +26,6 @@
 #include <utility/assert.hh>
 
 // C++ headers
-#include <string>
-#include <cmath>
 #include <ostream>
 
 namespace protocols {

@@ -13,41 +13,29 @@
 
 // Core Headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/Atom.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
@@ -55,7 +43,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
@@ -63,41 +50,31 @@
 
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
-#include <numeric/constants.hh>
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/Minimizer.hh>
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 //for fragment insertion
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <protocols/simple_moves/GunnCost.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 
 //sampling
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/NullMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/moves/ReplicaExchangeMC.hh>
+#include <protocols/moves/TrialMover.fwd.hh>
 
 #include <protocols/simple_moves/BBGaussianMover.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 
 //docking
 #include <utility/tools/make_vector1.hh>
@@ -111,16 +88,15 @@
 // #include <protocols/evaluation/EvaluatorFactory.hh>
 // #include <protocols/evaluation/PoseEvaluator.hh>
 
-#include <sstream>
-#include <iostream>
 #include <string>
 #include <fstream>
-#include <map>
+
+#include <core/optimization/MinimizerOptions.hh> // AUTO IWYU For MinimizerOptions
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For operator<<
 
 /////////////////////////////////////////////////////////////////
 using namespace core;
 using namespace core::import_pose;
-using namespace core::io::pdb;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

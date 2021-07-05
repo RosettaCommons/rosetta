@@ -21,10 +21,7 @@
 #include <protocols/docking/types.hh>
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
@@ -34,7 +31,6 @@
 
 
 // Utility Headers
-#include <utility/vector1.hh>
 
 // Numeric Headers
 

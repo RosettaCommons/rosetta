@@ -11,21 +11,15 @@
 /// @author SC Li & YK Ng (kalngyk@gmail.com)
 /// @author Andy Watkins (amw579@stanford.edu)
 
-#ifndef external_calibur_pdb_util_HH
-#define external_calibur_pdb_util_HH
+#ifndef INCLUDED_external_calibur_pdb_util_HH
+#define INCLUDED_external_calibur_pdb_util_HH
 
 #define LONGEST_CHAIN 4000
 
-#include <iosfwd>
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
-#include <map>
 #include <vector>
 
-#include <protocols/cluster/calibur/SimPDB.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 

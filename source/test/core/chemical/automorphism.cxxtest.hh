@@ -10,11 +10,10 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 #include <core/chemical/automorphism.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 //Auto Headers

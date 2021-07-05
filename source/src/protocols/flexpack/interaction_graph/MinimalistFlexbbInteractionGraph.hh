@@ -20,7 +20,6 @@
 /// Package headers
 #include <protocols/flexpack/interaction_graph/OTFFlexbbInteractionGraph.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

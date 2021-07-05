@@ -21,33 +21,20 @@
 
 
 // Unit headers
-#include <core/io/pdb/Field.fwd.hh>
 
 // Package headers
-#include <core/io/StructFileRep.fwd.hh>
-#include <core/io/StructFileRepOptions.fwd.hh>
 #include <core/io/StructFileReaderOptions.fwd.hh>
 
 // Project headers
-#include <core/types.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
-#include <utility/io/izstream.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <iosfwd>
-#include <map>
 #include <string>
 
 

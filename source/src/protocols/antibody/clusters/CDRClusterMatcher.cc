@@ -23,15 +23,12 @@
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
-#include <utility/string_util.hh>
 
-#include <numeric/NumericTraits.hh>
 
 
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <core/types.hh>
-#include <cmath>
 #include <map>
 
 //Options

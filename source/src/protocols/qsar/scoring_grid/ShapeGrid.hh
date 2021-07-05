@@ -16,12 +16,10 @@
 #include <protocols/qsar/scoring_grid/ShapeGrid.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
-#include <core/grid/CartGrid.hh>
+#include <core/grid/CartGrid.fwd.hh>
 
-#include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/kdtree/KDPointList.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

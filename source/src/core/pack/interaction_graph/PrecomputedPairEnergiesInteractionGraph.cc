@@ -31,7 +31,10 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+
+#ifdef MULTI_THREADED
 #include <basic/thread_manager/RosettaThreadManager.hh>
+#endif
 
 using namespace ObjexxFCL;
 

@@ -23,6 +23,8 @@
 #include <numeric/types.hh>
 #include <basic/Tracer.hh>
 
+#include <numeric/MathNTensor.hh> // AUTO IWYU For MathNTensor<>::Size, MathNTensor, MathNTensor::Size
+
 static basic::Tracer TR("numeric.interpolation.polycubic_catmull_rom.cxxtest");
 
 using namespace numeric;

@@ -17,7 +17,6 @@
 #include <core/scoring/disulfides/DisulfideMatchingDatabase.hh>
 
 // Project Headers
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/kinematics/RT.hh>
@@ -30,14 +29,13 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <core/id/DOF_ID_Mask.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
 
 //Auto Headers
-#include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/FArray2A.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D
 
 
 static basic::Tracer TR( "core.scoring.disulfides.CentroidMatchingPotential" );

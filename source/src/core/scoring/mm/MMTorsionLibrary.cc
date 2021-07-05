@@ -22,16 +22,12 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -41,9 +37,7 @@
 // C++ headers
 #include <string>
 #include <map>
-#include <sstream>
 #include <fstream>
-#include <utility/assert.hh>
 
 
 namespace core {

@@ -21,7 +21,6 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <cstddef>
 #include <string>
 

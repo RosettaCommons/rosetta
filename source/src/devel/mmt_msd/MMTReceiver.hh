@@ -17,7 +17,7 @@
 // Unit headers
 #include <devel/mmt_msd/MMTReceiver.fwd.hh>
 
-#include <devel/mmt_msd/MMTPackingJob.hh>
+#include <devel/mmt_msd/MMTPackingJob.fwd.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -28,10 +28,11 @@
 #include <protocols/pack_daemon/EntityCorrespondence.fwd.hh>
 
 // C++ headers
-#include <algorithm>
 #include <list>
 #include <map>
 #include <string>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 namespace devel {
 namespace mmt_msd {

@@ -14,30 +14,26 @@
 #include <protocols/rotamer_recovery/RRProtocolRotamerTrials.hh>
 
 // Project Headers
-#include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/rotamer_recovery/RRReporter.hh>
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/chemical/AA.hh>
-#include <utility/graph/Graph.hh>
-#include <core/conformation/Residue.hh>
+#include <utility/graph/Graph.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ Headers
 #include <string>
 
 //Auto Headers
-#include <utility/vector1.hh>
 using std::string;
 using core::Size;
 using core::pack::task::PackerTask;

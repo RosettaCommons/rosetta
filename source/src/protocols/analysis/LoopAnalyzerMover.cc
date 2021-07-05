@@ -33,7 +33,6 @@
 
 #include <core/conformation/Residue.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <protocols/jd2/util.hh>
@@ -41,21 +40,16 @@
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 
 // Utility Headers
-#include <ObjexxFCL/FArray1D.hh> //necessary for fold tree tricks
-#include <ObjexxFCL/FArray2D.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // C++ Headers
 #include <sstream>
 #include <iomanip>
-#include <limits>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

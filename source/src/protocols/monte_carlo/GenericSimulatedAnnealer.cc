@@ -33,7 +33,6 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 
@@ -41,7 +40,9 @@
 #include <fstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <basic/datacache/DataMapObj.hh> // AUTO IWYU For DataMapObj
+
 
 static basic::Tracer TR( "protocols.simple_moves.GenericSimulatedAnnealer" );
 

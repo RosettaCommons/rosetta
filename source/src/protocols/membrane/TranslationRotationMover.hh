@@ -19,38 +19,18 @@
 
 // Unit Headers
 #include <protocols/membrane/TranslationRotationMover.fwd.hh>
-#include <protocols/membrane/TranslationRotationMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <protocols/rigid/RigidBodyMover.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/membrane/MembraneInfo.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.fwd.hh>
-#include <core/conformation/membrane/Span.fwd.hh>
-#include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
-#include <protocols/membrane/util.hh>
 
 // Package Headers
-#include <core/kinematics/Stub.fwd.hh>
-#include <core/kinematics/Jump.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
-#include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/Tracer.fwd.hh>
 
 namespace protocols {
 namespace membrane {

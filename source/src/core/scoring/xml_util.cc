@@ -18,21 +18,17 @@
 #include <core/scoring/xml_util.hh>
 
 // Core headers
-#include <core/types.hh>
 #include <core/scoring/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector1.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers

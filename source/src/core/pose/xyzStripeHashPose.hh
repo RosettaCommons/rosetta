@@ -14,7 +14,6 @@
 #include <numeric/geometry/hashing/xyzStripeHash.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 
 #include <platform/types.hh>

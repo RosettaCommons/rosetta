@@ -22,7 +22,8 @@
 #include <core/sequence/PairScoringScheme.fwd.hh>
 
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace core {

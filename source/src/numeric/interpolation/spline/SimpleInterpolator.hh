@@ -17,7 +17,6 @@
 
 #include <numeric/interpolation/spline/Interpolator.hh>
 #include <utility/vector1.hh>
-#include <numeric/interpolation/spline/spline_functions.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

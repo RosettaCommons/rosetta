@@ -15,7 +15,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreType.hh>
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
@@ -30,8 +29,6 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // C++ headers
-#include <sstream>
-#include <algorithm>
 
 // Global Names {{{1
 

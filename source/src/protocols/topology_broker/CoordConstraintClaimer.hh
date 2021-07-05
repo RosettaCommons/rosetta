@@ -23,7 +23,7 @@
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/topology_broker/claims/DofClaim.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -36,9 +36,9 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
+
+#include <core/scoring/func/Func.fwd.hh> // AUTO IWYU For FuncOP
 
 
 //// C++ headers

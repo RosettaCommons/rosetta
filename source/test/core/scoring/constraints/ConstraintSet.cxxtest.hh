@@ -17,25 +17,15 @@
 // #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/types.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
-#include <core/scoring/constraints/BackboneStubConstraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/EnergyMap.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
 
 // numeric headers
-#include <numeric/conversions.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

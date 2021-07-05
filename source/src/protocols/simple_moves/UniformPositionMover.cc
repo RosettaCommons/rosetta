@@ -34,7 +34,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-#include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 
 static basic::Tracer TR( "protocols.simple_moves.UniformPositionMover" );

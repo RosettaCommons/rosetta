@@ -17,27 +17,22 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/packer_neighbors.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Parser headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 // Numeric Headers

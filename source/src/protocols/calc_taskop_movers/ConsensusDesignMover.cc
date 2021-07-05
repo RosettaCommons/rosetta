@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/task_operations/SeqprofConsensusOperation.hh>
@@ -52,7 +52,6 @@ static basic::Tracer TR( "protocols.simple_moves.ConsensusDesignMover" );
 // c++ headerss
 #include <string>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

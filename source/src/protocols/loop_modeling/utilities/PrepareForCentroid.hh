@@ -16,7 +16,6 @@
 #include <protocols/loop_modeling/utilities/PrepareForCentroid.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {

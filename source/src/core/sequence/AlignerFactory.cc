@@ -11,7 +11,7 @@
 /// @author James Thompson
 
 // Unit headers
-#include <core/sequence/Aligner.hh>
+#include <core/sequence/Aligner.fwd.hh>
 #include <core/sequence/AlignerFactory.hh>
 
 // Package headers

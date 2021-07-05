@@ -28,10 +28,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -40,11 +37,8 @@
 
 #include <basic/Tracer.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 using namespace core;
 
@@ -59,7 +53,6 @@ public:
 	void setUp()
 	{
 
-		using namespace basic::options;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane;
 

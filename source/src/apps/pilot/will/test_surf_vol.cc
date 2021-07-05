@@ -14,7 +14,6 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/packing/PoseBalls.hh>
 
 #include <core/scoring/sasa.hh>
 

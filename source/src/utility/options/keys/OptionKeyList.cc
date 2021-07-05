@@ -15,7 +15,7 @@
 #include <utility/options/keys/OptionKeyList.hh>
 
 // Package headers
-#include <utility/options/keys/all.hh>
+#include <utility/options/keys/all.hh> // DO NOT AUTO-REMOVE (convenience header)
 #include <utility/keys/VariantKey.hh>
 #include <utility/options/keys/OptionKey.hh>
 

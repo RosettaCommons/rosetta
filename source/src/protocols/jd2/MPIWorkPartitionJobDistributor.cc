@@ -24,7 +24,7 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -40,8 +40,6 @@
 #include <string>
 
 //Auto Headers
-#include <utility/vector1.hh>
-#include <complex>
 
 
 static basic::Tracer TR( "protocols.jd2.MPIWorkPartitionJobDistributor" );

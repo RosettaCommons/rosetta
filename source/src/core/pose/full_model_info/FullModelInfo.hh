@@ -25,8 +25,7 @@
 #include <basic/datacache/CacheableData.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/pose/full_model_info/SubMotifInfo.hh>
+#include <core/pose/full_model_info/SubMotifInfo.fwd.hh>
 
 
 // C++

@@ -19,9 +19,8 @@
 #include <basic/Tracer.fwd.hh>
 #include <basic/TracerImpl.hh> // Non-fwd is intentional, for inlining efficiency.
 
-#include <unordered_map>
 
-#include <utility/CSI_Sequence.hh>
+#include <utility/CSI_Sequence.fwd.hh>
 
 namespace basic {
 

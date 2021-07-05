@@ -20,19 +20,14 @@
 
 //package headers
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
-#include <protocols/jd3/JobOutputIndex.fwd.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
 
 // utility headers
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

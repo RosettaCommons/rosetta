@@ -14,14 +14,15 @@
 #ifndef INCLUDED_protocols_sewing_movers_LigandBindingAssemblyMover_hh
 #define INCLUDED_protocols_sewing_movers_LigandBindingAssemblyMover_hh
 
+#include <protocols/sewing/movers/LigandBindingAssemblyMover.fwd.hh>
+
 // Unit headers
 //#include <protocols/sewing/hashing/AlignmentFileGeneratorMover.hh>
-#include <protocols/sewing/hashing/LigandBindingResPlacer.hh>
+#include <protocols/sewing/hashing/LigandBindingResPlacer.fwd.hh>
 #include <protocols/sewing/movers/AppendAssemblyMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>

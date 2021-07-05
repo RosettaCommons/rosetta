@@ -30,10 +30,8 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pack/make_symmetric_task.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -42,16 +40,14 @@
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 
 // C++ headers
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace core {

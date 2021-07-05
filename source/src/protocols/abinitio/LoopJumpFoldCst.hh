@@ -29,17 +29,16 @@
 #include <protocols/abinitio/KinematicTaskControl.hh>
 
 // Package Headers
-#include <protocols/jumping/JumpSetup.hh>
-#include <protocols/abinitio/KinematicControl.hh>
-#include <protocols/abinitio/Protocol.hh>
-#include <protocols/abinitio/ResolutionSwitcher.hh>
+#include <protocols/jumping/JumpSetup.fwd.hh>
+#include <protocols/abinitio/KinematicControl.fwd.hh>
+#include <protocols/abinitio/Protocol.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/loops/Loops.hh>
-#include <core/fragment/SecondaryStructure.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
 
 // ObjexxFCL Headers
 //#include <ObjexxFCL/FArray1D.hh>
@@ -47,10 +46,8 @@
 
 // Utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>

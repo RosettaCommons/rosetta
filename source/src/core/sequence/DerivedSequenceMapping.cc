@@ -11,19 +11,14 @@
 /// @brief
 /// @author
 
-#include <core/types.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/DerivedSequenceMapping.hh>
-#include <utility/exit.hh>
 
-#include <algorithm> // for max_element
 
 // ObjexxFCL headers
 
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 
 

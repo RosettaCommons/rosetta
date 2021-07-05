@@ -17,27 +17,14 @@
 #include <core/import_pose/import_pose.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.hh>
-#include <protocols/filters/BasicFilters.hh>
-#include <protocols/filters/FilterFactory.hh>
-#include <protocols/moves/MoverFactory.hh>
-#include <protocols/rosetta_scripts/ParsedProtocol.hh>
-#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/loop_modeler/LoopModeler.hh>
 #include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.hh>
 #include <protocols/loop_modeling/utilities/PrepareForCentroid.hh>
 #include <protocols/loop_modeling/utilities/PrepareForFullatom.hh>
-#include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
-#include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
-#include <protocols/loop_modeling/LoopModelerTests.fwd.hh>
 
 // Utility headers
-#include <basic/datacache/DataMap.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 
 // Basic headers
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -45,7 +32,6 @@
 
 // C++ headers
 #include <string>
-#include <iostream>
 #include <fstream>
 
 
@@ -53,7 +39,6 @@
 using namespace std;
 using namespace protocols::loop_modeling;
 using namespace protocols::loop_modeler;
-using namespace protocols::rosetta_scripts;
 using core::import_pose::pose_from_file;
 
 using utility::excn::Exception;

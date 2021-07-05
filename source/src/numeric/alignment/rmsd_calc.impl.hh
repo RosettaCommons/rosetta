@@ -14,10 +14,10 @@
 
 #include <Eigen/Core>
 
-#include "ndarray.h"
-#include "ndarray/eigen.h"
 
 #include <numeric/alignment/QCPKernel.hh>
+
+#include <ndarray/Array.h> // AUTO IWYU For Array
 
 namespace numeric
 {

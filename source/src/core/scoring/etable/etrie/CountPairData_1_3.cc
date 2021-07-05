@@ -19,7 +19,6 @@
 
 // STL Headers
 #include <iostream>
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

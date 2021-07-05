@@ -17,10 +17,9 @@
 #include <devel/init.hh>
 
 // Project Headers
-#include <core/conformation/membrane/MembraneInfo.hh>
 
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
@@ -31,27 +30,16 @@
 #include <protocols/simple_moves/ScoreMover.hh>
 
 // Package Headers
-#include <apps/benchmark/performance/init_util.hh>
-#include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/file/file_sys_util.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <string>
-#include <cmath>
 
 static basic::Tracer TR( "apps.public.membrane.mp_transform" );
 

@@ -22,7 +22,6 @@
 #include <protocols/task_operations/MutationSetDesignOperation.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/AA.hh>
 
 #include <basic/Tracer.hh>

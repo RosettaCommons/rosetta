@@ -16,7 +16,7 @@
 #define INCLUDED_core_io_mmtf_mmtf_writer_HH
 
 // Package headers
-#include <core/io/StructFileRep.hh>
+#include <core/io/StructFileRep.fwd.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/StructFileRepOptions.fwd.hh>
 
@@ -26,7 +26,6 @@
 
 #include <iosfwd>
 
-#include <mmtf.hpp>
 
 namespace core {
 namespace io {

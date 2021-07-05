@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_comparative_modeling_LoopRelaxThreadingMover_hh
 
 #include <core/types.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/comparative_modeling/LoopRelaxThreadingMover.fwd.hh>

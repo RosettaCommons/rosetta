@@ -20,7 +20,6 @@
 #include <basic/Tracer.hh>
 
 //utility headers
-#include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

@@ -12,31 +12,22 @@
 /// @author Nick Marze (nickmarze@gmail.com)
 
 
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 #include <utility/excn/Exceptions.hh>
 //#include <utility/exit.hh>
 
 #include <devel/init.hh>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/exit.hh>
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <core/pose/PDBInfo.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/vector1.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
 
 static basic::Tracer TR( "apps.pilot.nmarze.packing_angle" );
 

@@ -20,7 +20,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #ifdef WIN32
@@ -28,16 +27,15 @@
 #else
 #include <core/chemical/ResidueType.fwd.hh>
 #endif
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/sequence/Sequence.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace rna {

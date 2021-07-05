@@ -18,7 +18,7 @@
 
 
 // Package headers
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 #include <numeric/IOTraits.hh>
 
 // C++ headers

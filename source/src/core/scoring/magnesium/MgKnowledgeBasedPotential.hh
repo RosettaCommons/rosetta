@@ -28,7 +28,6 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace scoring {

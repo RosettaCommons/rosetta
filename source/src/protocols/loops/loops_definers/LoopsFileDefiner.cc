@@ -20,7 +20,7 @@
 #include <protocols/loops/loops_definers/util.hh>
 
 // Project Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>

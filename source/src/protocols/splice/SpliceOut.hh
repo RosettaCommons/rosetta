@@ -14,28 +14,20 @@
 #define INCLUDED_protocols_splice_SpliceOut_hh
 
 #include <protocols/splice/SpliceOut.fwd.hh>
-#include <protocols/splice/SpliceSegment.fwd.hh>
 #include <protocols/splice/SpliceManager.hh>
-#include <protocols/splice/Splice.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMapObj.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <core/sequence/SequenceProfile.hh>
-#include <protocols/task_operations/SeqprofConsensusOperation.fwd.hh>
-#include <basic/database/open.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <iosfwd>
+#include <core/sequence/SequenceProfile.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/protein_interface_design/movers/LoopLengthChange.hh>
+#include <protocols/protein_interface_design/movers/LoopLengthChange.fwd.hh>
 
 
 

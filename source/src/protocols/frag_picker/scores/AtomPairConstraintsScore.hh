@@ -19,15 +19,12 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-#include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 // mini
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/FuncFactory.hh>
-#include <numeric/xyzVector.hh>
 
-#include <core/scoring/func/Func.hh>
 #include <utility/vector1.hh>
 
 

@@ -18,7 +18,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -27,7 +26,6 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
-#include <core/chemical/AtomType.hh>
 //Numeric Headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
@@ -35,7 +33,6 @@
 
 //Utility Headers
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 
 // External Headers
@@ -43,7 +40,6 @@
 
 #include <utility/exit.hh>
 
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 // XSD XRW Includes

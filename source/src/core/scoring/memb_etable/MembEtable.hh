@@ -23,16 +23,13 @@
 #include <core/scoring/etable/EtableOptions.hh>
 
 // Project Headers
-#include <core/chemical/AtomTypeSet.hh>
-#include <utility/pointer/access_ptr.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 
 // Utility Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray2.fwd.hh>
 
-#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace scoring {

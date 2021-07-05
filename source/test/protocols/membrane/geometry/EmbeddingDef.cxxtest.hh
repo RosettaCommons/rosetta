@@ -19,7 +19,6 @@
 // Unit Headers
 #include <core/conformation/Residue.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -28,15 +27,8 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <core/conformation/membrane/Exceptions.hh>
-#include <numeric/xyzVector.hh>
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <string>
-#include <cmath>
 
 static basic::Tracer TR("protocols.membrane.geometry.EmbeddingDef.cxxtest");
 

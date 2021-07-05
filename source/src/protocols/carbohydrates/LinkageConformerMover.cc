@@ -23,14 +23,9 @@
 
 // Project headers
 #include <core/id/types.hh>
-#include <core/id/TorsionID.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
 #include <core/pose/carbohydrates/util.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/GlycanResidueSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
@@ -49,10 +44,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // Utility header
 #include <utility/tag/Tag.hh>

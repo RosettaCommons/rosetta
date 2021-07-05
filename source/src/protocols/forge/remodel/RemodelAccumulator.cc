@@ -14,7 +14,6 @@
 
 // unit headers
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
-#include <protocols/forge/methods/util.hh>
 
 // package headers
 
@@ -32,10 +31,11 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/relax/util.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/score_filters/ScoreTypeFilter.hh>
+
+#include <protocols/cluster/cluster.hh> // AUTO IWYU For ClusterPhilStyle, ClusterPhilStyle_Loop
 
 
 // numeric headers

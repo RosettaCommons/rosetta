@@ -25,7 +25,6 @@
 
 // C++ headers
 #include <iostream>
-#include <sstream>
 #include <iomanip>
 
 void TS_ASSERT_FOLD_TREE_HAS_EDGE( // {{{1

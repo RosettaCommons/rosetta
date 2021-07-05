@@ -22,20 +22,14 @@
 #include <test/core/init_util.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
 
 // C++ headers
-#include <string>
-#include <iostream>
 
 //Auto Headers
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <utility/vector1.hh>
 
 
 using namespace protocols::match;

@@ -18,7 +18,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/rms_util.hh>
@@ -27,24 +26,20 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <utility/exit.hh>
 
 // Parser headers
 #include <protocols/parser/BluePrint.hh>
-#include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 
 // Boost Headers
 #include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_comparison.hpp>
 
+#include <set>
 
 static basic::Tracer TR( "protocols.fldsgn.MatchResidues" );
 

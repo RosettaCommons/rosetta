@@ -31,6 +31,7 @@
 #include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/JobSummary.fwd.hh>
 #include <protocols/jd3/JobQueen.fwd.hh>
+#include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
 #include <protocols/jd3/job_distributors/JobExtractor.fwd.hh>
 #include <protocols/jd3/output/OutputSpecification.fwd.hh>

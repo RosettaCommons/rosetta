@@ -20,14 +20,14 @@
 #include <boost/math/distributions/normal.hpp>
 
 // Package headers
-#include <protocols/nonlocal/Region.hh>
+#include <protocols/nonlocal/Region.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 // Utility headers
-#include <numeric/random/DistributionSampler.hh>
+#include <numeric/random/DistributionSampler.fwd.hh>
 #include <utility/VirtualBase.hh>
 
 #include <memory>

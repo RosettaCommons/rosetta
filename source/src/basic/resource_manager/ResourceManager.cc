@@ -25,14 +25,12 @@
 #include <basic/resource_manager/locator/FileSystemResourceLocator.hh>
 
 //utility headers
-#include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 //basic headers
 #include <basic/options/option.hh>
@@ -41,7 +39,8 @@
 
 //C++ headers
 #include <sstream>
-#include <iomanip>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace basic {
 namespace resource_manager {

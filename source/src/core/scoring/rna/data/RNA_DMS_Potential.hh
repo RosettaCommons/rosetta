@@ -30,14 +30,10 @@
 #include <numeric/MathTensor.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathVector.hh>
-#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
 #include <numeric/interpolation/InterpolatedPotential.hh>
-#include <numeric/interpolation/interpolation.hh>
 
-#include <numeric/numeric.functions.hh>
 #include <set>
 
-#include <utility/fixedsizearray1.hh>
 
 
 namespace core {

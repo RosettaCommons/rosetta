@@ -21,7 +21,6 @@
 #include <algorithm>
 
 #include <core/optimization/Multifunc.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

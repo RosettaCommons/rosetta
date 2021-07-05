@@ -25,7 +25,6 @@
 #include <core/scoring/constraints/BackboneStubLinearConstraint.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 
 //#include <protocols/docking/DockingProtocol.hh>
@@ -40,7 +39,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
-#include <numeric/xyzVector.hh>
 
 
 // Unit Headers
@@ -51,7 +49,6 @@
 // C++ headers
 #include <map>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -60,6 +57,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace protocols::protein_interface_design;

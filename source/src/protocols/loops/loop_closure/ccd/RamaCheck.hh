@@ -28,8 +28,8 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <iostream>

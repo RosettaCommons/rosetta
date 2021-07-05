@@ -20,14 +20,15 @@
 #include <protocols/peptide_deriver/PeptideDeriverOutputter.hh>
 
 // Utility headers
-#include <utility/io/orstream.hh>
+#include <utility/io/orstream.fwd.hh>
 #include <iosfwd>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
 #include <sstream>
+
+#include <sstream> // MANUAL IWYU
 
 namespace protocols {
 namespace peptide_deriver {

@@ -13,17 +13,14 @@
 #ifndef INCLUDED_protocols_protein_interface_design_movers_RandomMutation_hh
 #define INCLUDED_protocols_protein_interface_design_movers_RandomMutation_hh
 #include <protocols/protein_interface_design/movers/RandomMutation.fwd.hh>
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

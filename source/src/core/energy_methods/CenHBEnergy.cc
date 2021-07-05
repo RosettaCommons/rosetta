@@ -25,10 +25,8 @@
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/constants.hh>
-#include <numeric/conversions.hh>
 #include <numeric/deriv/distance_deriv.hh>
 #include <numeric/deriv/angle_deriv.hh>
-#include <numeric/numeric.functions.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>

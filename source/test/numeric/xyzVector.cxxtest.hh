@@ -19,15 +19,12 @@
 
 // Package Headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/xyz.json.hh>
 
-#include <boost/functional/hash.hpp>
 
 #include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/json_spirit/json_spirit_writer.h>
 
-#include <sstream>
 #include <iostream>
 
 // --------------- Test Class --------------- //

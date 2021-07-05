@@ -18,7 +18,6 @@
 #include <protocols/simple_moves/VirtualRootMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/types.hh>
 
 namespace protocols {
 namespace simple_moves {

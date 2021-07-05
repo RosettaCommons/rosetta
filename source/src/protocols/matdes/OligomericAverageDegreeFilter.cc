@@ -22,28 +22,23 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <basic/options/option.hh>

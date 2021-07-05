@@ -18,33 +18,17 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/util/kinematics_util.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/util.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
 
-#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.hybridization.ChunkTrialMover" );
 

@@ -19,29 +19,21 @@
 #include <protocols/jumping/JumpSetup.hh>
 
 // Project Headers
-#include <core/types.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FrameList.fwd.hh>
 
 #include <core/scoring/dssp/PairingsList.hh>
-#include <protocols/jumping/PairingLibrary.hh>
 #include <protocols/jumping/JumpSample.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
-#include <vector>
 
 #include <protocols/abinitio/PairingStatistics.fwd.hh>
 #include <protocols/abinitio/Templates.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -24,30 +24,22 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
 #include <utility/vector1.hh>
 
-#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
 
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -63,16 +55,13 @@
 
 // C++ headers
 #include <iostream>
-#include <string>
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/pose/annotated_sequence.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <utility/options/keys/OptionKeyList.hh>
 
 using namespace core;
 using namespace core::chemical;

@@ -20,7 +20,6 @@
 #include <core/import_pose/PoseResource.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/import_pose_options.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
@@ -29,7 +28,6 @@
 
 // Utility headers
 #include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 

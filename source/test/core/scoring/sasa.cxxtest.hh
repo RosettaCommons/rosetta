@@ -18,7 +18,7 @@
 #include <core/scoring/sasa.hh>
 
 #include <core/id/AtomID_Map.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 // for core::pose::make_pose_from_sequence
 
@@ -28,7 +28,6 @@
 #include <test/util/pose_funcs.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <utility/vector1.hh>
 

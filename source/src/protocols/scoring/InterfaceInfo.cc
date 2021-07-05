@@ -18,17 +18,16 @@
 #include <protocols/scoring/InterfaceInfo.hh>
 
 // Package headers
-#include <core/scoring/EnvPairPotential.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 
 // Basic headers
-#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+
+#include <protocols/scoring/Interface.hh> // AUTO IWYU For Interface
 
 
 #ifdef    SERIALIZATION

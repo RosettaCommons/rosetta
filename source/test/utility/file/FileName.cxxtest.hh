@@ -16,7 +16,6 @@
 #include <utility/file/FileName.hh>
 
 // C++ headers
-#include <iostream>
 
 class FileNameTests : public CxxTest::TestSuite {
 

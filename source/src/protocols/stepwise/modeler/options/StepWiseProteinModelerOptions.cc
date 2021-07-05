@@ -16,10 +16,7 @@
 
 #include <protocols/stepwise/modeler/options/StepWiseProteinModelerOptions.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
-#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>

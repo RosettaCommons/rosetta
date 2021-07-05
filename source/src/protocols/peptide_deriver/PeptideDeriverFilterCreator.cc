@@ -18,7 +18,6 @@
 
 
 #include <protocols/peptide_deriver/PeptideDeriverFilterCreator.hh>
-#include <protocols/peptide_deriver/PeptideDeriverFilter.hh>
 
 namespace protocols {
 namespace peptide_deriver {

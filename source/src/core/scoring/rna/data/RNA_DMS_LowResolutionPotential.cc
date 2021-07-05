@@ -17,22 +17,17 @@
 #include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/scoring/rna/data/util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 
 #include <numeric/conversions.hh>
-#include <numeric/constants.hh>
 #include <numeric/xyzMatrix.hh>
 
 #include <basic/options/option.hh>

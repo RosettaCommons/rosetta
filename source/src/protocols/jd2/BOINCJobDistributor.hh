@@ -18,8 +18,6 @@
 #include <protocols/jd2/ShuffleJobDistributor.hh>
 
 // Package headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 
@@ -29,7 +27,6 @@
 // C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

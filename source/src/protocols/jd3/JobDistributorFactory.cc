@@ -15,18 +15,19 @@
 #include <protocols/jd3/JobDistributorFactory.hh>
 
 // Package headers
-#include <protocols/jd3/JobDistributor.hh>
+#include <protocols/jd3/JobDistributor.fwd.hh>
 //#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
-#include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
-#include <protocols/jd3/job_distributors/MultiThreadedJobDistributor.hh>
 #include <protocols/jd3/job_distributors/VanillaJobDistributor.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/jd3.OptionKeys.gen.hh>
 
+#ifdef MULTI_THREADED
+#include <protocols/jd3/job_distributors/MultiThreadedJobDistributor.hh>
+#endif
 
-//#include <protocols/jd3/job_distributors/FileSystemJobDistributor.hh>
+#ifdef USEMPI
+#include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
+#endif
 
 namespace protocols {
 namespace jd3 {

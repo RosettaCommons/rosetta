@@ -14,11 +14,10 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_FragmentStore_hh
 #define INCLUDED_protocols_indexed_structure_store_FragmentStore_hh
 
-#include <utility>
 #include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <numeric/xyzVector.fwd.hh>
+#include <numeric/xyzVector.hh>
 #include <numeric/types.hh>
 
 #include <protocols/indexed_structure_store/FragmentStore.fwd.hh>
@@ -30,7 +29,6 @@
 #include <iosfwd>
 #include <mutex>
 
-#include <ctime>
 
 namespace protocols {
 namespace indexed_structure_store {

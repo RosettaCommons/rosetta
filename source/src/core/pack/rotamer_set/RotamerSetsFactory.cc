@@ -19,7 +19,7 @@
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <utility/pointer/memory.hh>

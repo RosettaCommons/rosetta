@@ -18,7 +18,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
 //#include <utility/graph/Graph.hh>
 

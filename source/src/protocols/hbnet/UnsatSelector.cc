@@ -16,18 +16,15 @@
 #include <protocols/hbnet/UnsatSelector.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 //Tracer headers
 #include <basic/Tracer.hh>
 
 // Package headers
-#include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/Atom.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -37,23 +34,15 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/pose/selection.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <protocols/hbnet/HBNet_util.hh>
-#include <protocols/hbnet/HBNet.hh>
 #include <core/id/AtomID.hh>
 
 // Utility Headers
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <basic/Tracer.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <iostream>
 #include <string>
 

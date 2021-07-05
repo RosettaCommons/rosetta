@@ -27,15 +27,12 @@
 #include <protocols/jd2/util.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // utility headers
-#include <utility/VirtualBase.hh>
 // #include "utility/sys_util.h"
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 // C++ headers
-#include <map>
 #include <string>
 
 //Auto Headers

@@ -24,6 +24,7 @@ namespace datacache {
 template< typename Data >
 class DataCache;
 
+class DataCache_CacheableData;
 
 } // namespace datacache
 } // namespace basic

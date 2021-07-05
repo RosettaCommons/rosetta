@@ -15,7 +15,6 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_SegmentSequenceProfile_HH
 #define INCLUDED_protocols_indexed_structure_store_SegmentSequenceProfile_HH
 
-#include <ndarray.h>
 
 #include <core/chemical/AA.hh>
 #include <core/types.hh>

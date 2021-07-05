@@ -18,13 +18,11 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
 

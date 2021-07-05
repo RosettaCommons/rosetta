@@ -21,7 +21,7 @@
 #include <core/chemical/AtomType.hh>
 #include <basic/MetricValue.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>

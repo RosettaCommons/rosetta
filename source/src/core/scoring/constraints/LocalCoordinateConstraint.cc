@@ -30,14 +30,11 @@
 
 
 // C++ Headers
-#include <cstdlib>
 #include <iostream>
 
 #include <core/id/NamedStubID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <utility>
-#include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 
 static basic::Tracer tr( "core.LocalCoordinateConstraint" );

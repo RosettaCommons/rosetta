@@ -22,7 +22,6 @@
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
@@ -34,18 +33,12 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/util.hh>
 #include <core/select/util.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/Constraints.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 
 #include <utility/tag/Tag.hh>
@@ -54,7 +47,6 @@
 #include <iostream>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 
 //#include <basic/datacache/BasicDataCache.hh>
@@ -65,7 +57,6 @@
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -74,6 +65,8 @@
 
 #include <map>
 #include <queue>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 using namespace core;
 using namespace protocols::simple_moves;

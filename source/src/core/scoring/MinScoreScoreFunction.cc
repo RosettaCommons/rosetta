@@ -19,10 +19,7 @@
 
 // // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
 
 // Basic headers
@@ -30,8 +27,8 @@
 #include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKeyList.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // C++ headers
 #include <limits>

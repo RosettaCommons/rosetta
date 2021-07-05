@@ -15,13 +15,12 @@
 #define INCLUDED_devel_cycles_reindexing_mover_CXXTEST_HH
 
 #include <cxxtest/TestSuite.h>
+#include <test/core/init_util.hh>
 
 #include <devel/cycles/SetupMover.hh>
-#include <devel/cycles/ReindexingMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
 using namespace core;
 using namespace devel;
@@ -36,7 +35,7 @@ public:
 	void test_something() {
 
 		pose::Pose original_pose, reindexed_pose;
-		string pdb_path = "devel/cycles/peptides/8.unmarked.pdb";
+		std::string pdb_path = "devel/cycles/peptides/8.unmarked.pdb";
 
 		import_pose::pose_from_file(original_pose, pdb_path, core::import_pose::PDB_file);
 		import_pose::pose_from_file(reindexed_pose, pdb_path, core::import_pose::PDB_file);

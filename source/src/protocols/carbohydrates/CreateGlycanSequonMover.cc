@@ -21,7 +21,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/util.hh>
@@ -32,8 +31,6 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>

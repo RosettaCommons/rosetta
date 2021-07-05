@@ -29,7 +29,6 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 
 #include <core/scoring/Energies.hh>
@@ -40,7 +39,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/util.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -50,7 +48,6 @@
 // Utility Headers
 #include <utility/vector1.hh>
 
-#include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 
 #include <basic/Tracer.hh>

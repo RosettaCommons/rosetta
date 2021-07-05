@@ -21,12 +21,10 @@
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
-#include <basic/datacache/DataMapObj.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

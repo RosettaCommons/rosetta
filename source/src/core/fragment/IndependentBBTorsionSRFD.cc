@@ -19,9 +19,9 @@
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 
-#include <utility/vector1.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 
 namespace core {

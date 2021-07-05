@@ -39,23 +39,18 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 //#include <core/scoring/MembraneTopology.fwd.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 //#include <core/pack/task/PackerTask.fwd.hh>
 
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <basic/prof.fwd.hh>
-#include <utility/exit.hh>
 
 //// C++ headers
 #include <string>
-#include <vector>
 
-#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/vector1.hh>
 
 

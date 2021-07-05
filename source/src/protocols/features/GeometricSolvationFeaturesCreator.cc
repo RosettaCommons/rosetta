@@ -13,14 +13,10 @@
 
 // Unit Headers
 #include <protocols/features/GeometricSolvationFeaturesCreator.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Package Headers
 
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/GeometricSolvationFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

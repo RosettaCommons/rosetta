@@ -29,9 +29,7 @@
 #include <protocols/stepwise/screener/PackScreener.hh>
 #include <protocols/stepwise/screener/SugarInstantiator.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/scoring/Energies.hh>
 
 #include <basic/Tracer.hh>
 #include <utility>

@@ -16,17 +16,15 @@
 
 #include <protocols/genetic_algorithm/Entity.hh>
 
-#include <core/types.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 
 // C++ Headers
 #include <map>
 
-#include <protocols/multistate_design/SingleStateEntityData.fwd.hh>
+#include <protocols/multistate_design/SingleStateEntityData.hh>
 #include <utility/vector1.hh>
 
 

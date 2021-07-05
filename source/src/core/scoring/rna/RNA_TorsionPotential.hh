@@ -24,7 +24,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/SumFunc.fwd.hh>
-#include <core/scoring/func/SumFunc.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
@@ -34,7 +33,6 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <utility/vector1.hh>
 #include <string>
 
 

@@ -23,7 +23,8 @@
 
 // In a perfect world, I would ifdef for Windows PyRosetta. A perfect world this isn't.
 #include <string>
-#include <utility>
+
+#include <utility/assert.hh> // AUTO IWYU For debug_assert
 
 
 namespace core {

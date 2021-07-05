@@ -18,15 +18,19 @@
 #include <protocols/jd3/standard/PreliminaryLarvalJob.fwd.hh>
 
 //hh Needed by Binder
-#include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/pose_inputters/PoseInputter.hh>
+#include <protocols/jd3/InnerLarvalJob.fwd.hh>
+#include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+
+#ifdef PYROSETTA
+#include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/pose_inputters/PoseInputter.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/options/OptionCollection.hh>
+#endif
 
 namespace protocols {
 namespace jd3 {

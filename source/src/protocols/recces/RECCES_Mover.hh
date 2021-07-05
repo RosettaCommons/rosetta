@@ -21,12 +21,15 @@
 #include <protocols/recces/options/RECCES_Options.fwd.hh>
 #include <protocols/recces/params/RECCES_Parameters.fwd.hh>
 #include <protocols/recces/Histogram.hh>
-#include <protocols/recces/sampler/MC_Comb.hh>
-#include <protocols/recces/sampler/MC_Loop.hh>
+#include <protocols/recces/sampler/MC_Comb.fwd.hh>
+#include <protocols/recces/sampler/MC_Loop.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <fstream>
+
+#include <core/id/TorsionID.hh> // AUTO IWYU For TorsionID
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace recces {

@@ -37,15 +37,10 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

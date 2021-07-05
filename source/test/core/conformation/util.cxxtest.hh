@@ -26,7 +26,7 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformer.fwd.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>

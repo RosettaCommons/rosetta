@@ -28,7 +28,6 @@
 #include <ObjexxFCL/FArray3D.hh>
 
 // C++ Headers
-#include <iostream>
 #include <fstream>
 
 #include <basic/Tracer.hh>

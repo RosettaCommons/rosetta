@@ -27,13 +27,14 @@
 
 // Protocol headers
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
 
 #include <protocols/jd3/CompletedJobOutput.hh>
 #include <protocols/jd3/Job.hh>
 
 //Utility headers
 #include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace jd3 {

@@ -12,27 +12,21 @@
 #include <protocols/matdes/InterfacePackingFilterCreator.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/scoring/packing/HolesParams.hh>
 #include <basic/database/open.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/io/util.hh>
 // XSD XRW Includes

@@ -17,8 +17,6 @@
 #include <utility/small_vector1.hh>
 
 // Utility header
-#include <utility/excn/Exceptions.hh>
-#include <utility/backtrace.hh>
 
 // C++ headers
 #include <vector>

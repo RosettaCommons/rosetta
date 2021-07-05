@@ -36,7 +36,6 @@
 #include <core/optimization/Multifunc.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // Numeric headers
 

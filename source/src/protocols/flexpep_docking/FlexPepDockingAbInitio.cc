@@ -23,12 +23,12 @@
 #include <protocols/flexpep_docking/FlexPepDockingAbInitio.hh>
 
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
@@ -45,7 +45,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
@@ -56,7 +56,6 @@
 #include <string>
 #include  <cmath>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

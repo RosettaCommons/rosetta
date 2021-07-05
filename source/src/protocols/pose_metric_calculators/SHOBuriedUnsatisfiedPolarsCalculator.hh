@@ -13,15 +13,14 @@
 #ifndef INCLUDED_SHOBuriedUnsatisfiedPolarsCalculator_hh
 #define INCLUDED_SHOBuriedUnsatisfiedPolarsCalculator_hh
 
-#include <core/energy_methods/ExactOccludedHbondSolEnergy.hh>
+#include <core/energy_methods/ExactOccludedHbondSolEnergy.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/id/AtomID_Map.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <core/types.hh>
+#include <utility/vector1.hh>
 #include <string>
 #include <map>
 

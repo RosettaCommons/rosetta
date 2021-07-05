@@ -15,10 +15,8 @@
 #define INCLUDED_basic_resource_manager_locator_NullResourceLocatorCreator_hh
 
 // Unit Headers
-#include <basic/resource_manager/locator/NullResourceLocator.fwd.hh>
 #include <basic/resource_manager/ResourceLocatorCreator.hh>
 
-#include <utility/vector1.hh>
 #include <string>
 
 namespace basic {

@@ -12,7 +12,6 @@
 /// @author Sergey Lyskov
 
 
-#include <utility/string_util.hh>
 #include <basic/report.hh>
 
 #include <basic/Tracer.hh>
@@ -21,11 +20,12 @@
 #include <test/core/init_util.hh>
 #include <cxxtest/TestSuite.h>
 
-#include <fstream>
 
 #include <utility/json_utilities.hh>
 #include <protocols/antibody/grafting/json_based_cdr_detection.hh>
 #include <protocols/antibody/grafting/util.hh>
+
+#include <protocols/antibody/grafting/antibody_sequence.hh> // AUTO IWYU For AntibodySequence
 
 static basic::Tracer TR("protocols.antibody.grafting.json_based_cdr_detection.cxxtest");
 

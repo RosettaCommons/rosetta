@@ -19,6 +19,8 @@
 #ifndef INCLUDED_protocols_jumping_DisulfPairingLibrary_hh
 #define INCLUDED_protocols_jumping_DisulfPairingLibrary_hh
 
+#include <protocols/jumping/DisulfPairingLibrary.fwd.hh>
+
 // Unit Headers
 #include <protocols/jumping/DisulfPairingsList.fwd.hh>
 
@@ -38,7 +40,6 @@
 #include <utility/vector1.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 #include <map>
 

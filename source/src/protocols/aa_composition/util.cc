@@ -15,12 +15,11 @@
 #include <protocols/aa_composition/util.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 // Auto Headers
 #include <basic/Tracer.hh>
-#include <utility/excn/Exceptions.hh>
 
 static basic::Tracer TR( "protocols.aa_composition.util" );
 

@@ -35,9 +35,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility>
 #include <utility/vector1.hh>

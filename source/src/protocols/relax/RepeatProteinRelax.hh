@@ -18,11 +18,11 @@
 
 #include <protocols/relax/RepeatProteinRelax.fwd.hh>
 
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
 // C++ Headers
@@ -31,7 +31,9 @@
 
 //unit header
 #include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

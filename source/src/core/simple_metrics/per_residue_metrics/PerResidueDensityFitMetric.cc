@@ -24,33 +24,21 @@
 #include <core/simple_metrics/util.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/select/residue_selector/util.hh> // for xml schema utility functions
-#include <core/scoring/Energies.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/ref_pose.hh>
-#include <core/pose/util.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/electron_density/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <numeric/zscores.hh>
 
 // XSD Includes

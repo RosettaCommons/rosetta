@@ -26,7 +26,6 @@
 // Package Headers
 
 // Project Headers
-#include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // ObjexxFCL Headers

@@ -10,8 +10,6 @@
 /// @file
 /// @brief  read and write XEASY format peak-lists
 /// @author Oliver Lange
-#include <protocols/noesy_assign/CrossPeakList.hh>
-#include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/noesy_assign/NoesyModule.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
@@ -38,10 +36,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer tr( "main" );

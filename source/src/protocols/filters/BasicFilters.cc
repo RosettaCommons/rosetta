@@ -39,7 +39,6 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 

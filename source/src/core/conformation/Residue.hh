@@ -28,17 +28,12 @@
 #include <core/conformation/PseudoBond.fwd.hh>
 #include <core/conformation/residue_datacache.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/Atom.fwd.hh>
-#include <core/chemical/Orbital.fwd.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResConnID.hh>
 #include <core/chemical/ResidueType.hh> // also defines AtomIndices == vector1< Size >
-#include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/rings/RingConformer.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
@@ -47,7 +42,6 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/pointer/memory.hh>
-#include <utility/vector1.fwd.hh>
 
 // Numeric headers
 #include <numeric/xyzMatrix.fwd.hh>

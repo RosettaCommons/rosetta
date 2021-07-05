@@ -19,7 +19,6 @@
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <devel/init.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>

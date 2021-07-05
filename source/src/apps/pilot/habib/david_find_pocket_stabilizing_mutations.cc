@@ -10,15 +10,11 @@
 /// @brief
 /// @author jk
 
-#include <iostream>
-#include <iomanip>
 
-#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <devel/init.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/util.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -29,7 +25,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
 // Utility Headers
@@ -40,6 +35,9 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core;

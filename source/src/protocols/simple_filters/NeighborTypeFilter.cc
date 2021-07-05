@@ -14,13 +14,11 @@
 #include <protocols/simple_filters/NeighborTypeFilter.hh>
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

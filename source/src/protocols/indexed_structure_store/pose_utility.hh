@@ -13,10 +13,9 @@
 #define INCLUDED_protocols_indexed_structure_store_pose_utility_HH
 
 #include <boost/range.hpp>
-#include <ndarray.h>
+#include <ndarray.h> // DO NOT AUTO-REMOVE
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/indexed_structure_store/Datatypes.hh>
 

@@ -29,7 +29,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/id/NamedAtomID_Map.hh>
-#include <core/chemical/MergeBehaviorManager.hh>
+#include <core/chemical/MergeBehaviorManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -38,7 +38,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
 
 // C++ headers
 #include <map>

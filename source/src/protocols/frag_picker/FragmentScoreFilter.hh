@@ -28,7 +28,7 @@
 //#include <utility/tag/Tag.fwd.hh> //transcluded from Filter.hh
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Filter.hh
 #include <protocols/frag_picker/FragmentPicker.hh>
-#include <protocols/frag_picker/scores/FragmentCrmsd.hh>
+#include <protocols/frag_picker/scores/FragmentCrmsd.fwd.hh>
 
 namespace protocols {
 namespace frag_picker {

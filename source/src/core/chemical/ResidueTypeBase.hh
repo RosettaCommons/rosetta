@@ -27,13 +27,10 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueProperty.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 

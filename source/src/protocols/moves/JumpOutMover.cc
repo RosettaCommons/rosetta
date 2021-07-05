@@ -13,7 +13,6 @@
 
 // Unit Headers
 #include <protocols/moves/JumpOutMover.hh>
-#include <protocols/moves/JumpOutMover.fwd.hh>
 
 // Package headers
 
@@ -24,10 +23,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // tracer
-#include <basic/Tracer.hh>
 
 #include <utility>
-#include <utility/vector1.hh>
 
 
 // C++ Headers

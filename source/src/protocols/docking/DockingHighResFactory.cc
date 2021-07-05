@@ -23,7 +23,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // C++ headers
 #include <map>

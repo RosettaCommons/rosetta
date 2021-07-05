@@ -21,7 +21,6 @@
 #include <core/scoring/func/FuncFactory.hh>
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
@@ -34,10 +33,10 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/func/XYZ_Func.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/id/types.hh>
+
+#include <core/scoring/func/Func.hh> // AUTO IWYU For Func
 
 static basic::Tracer TR( "core.scoring.constraints.NamedAngleConstraint" );
 

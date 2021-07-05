@@ -20,14 +20,11 @@
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/func/FadeFunc.hh>
 #include <numeric/angle.functions.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 
@@ -39,7 +36,6 @@
 
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/format.hh>
 
 
 // C++

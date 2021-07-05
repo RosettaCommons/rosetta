@@ -20,15 +20,11 @@
 
 // project headers
 
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.hh>
 
 #include <core/pose/annotated_sequence.hh>
-#include <utility>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

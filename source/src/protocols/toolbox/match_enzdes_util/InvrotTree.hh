@@ -29,9 +29,6 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-
-// C++ headers
-
 #include <utility/vector1.hh>
 
 

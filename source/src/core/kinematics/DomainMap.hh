@@ -19,7 +19,6 @@
 #include <core/kinematics/DomainMap.fwd.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
 
 //Auto Headers
 

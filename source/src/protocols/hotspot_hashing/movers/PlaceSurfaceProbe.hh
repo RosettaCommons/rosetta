@@ -21,17 +21,14 @@
 #include <utility/tag/Tag.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/Stub.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/hotspot_hashing/SearchPattern.fwd.hh>
 #include <protocols/hotspot_hashing/movers/PlaceProbeMover.hh>
 #include <protocols/hotspot_hashing/movers/PlaceSurfaceProbe.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 
 // Unit headers

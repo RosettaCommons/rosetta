@@ -24,7 +24,6 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

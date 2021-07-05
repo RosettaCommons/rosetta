@@ -22,9 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // Utility headers

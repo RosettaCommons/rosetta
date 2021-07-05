@@ -12,16 +12,17 @@
 #define INCLUDED_protocols_loop_modeler_perturbers_LoopHashPerturber_HH
 
 // Unit headers
-#include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
 #include <protocols/loop_modeler/perturbers/LoopHashPerturber.fwd.hh>
 
 // Protocol headers
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
-#include <protocols/loophash/BackboneDB.hh>
+#include <protocols/loophash/BackboneDB.hh> // DO NOT AUTO-REMOVE
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
+
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh> // AUTO IWYU For Real6
 
 
 namespace protocols {

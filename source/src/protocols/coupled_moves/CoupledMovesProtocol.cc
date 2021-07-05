@@ -30,8 +30,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinPackMover.hh>
 #include <protocols/simple_moves/CoupledMover.hh>
-#include <protocols/minimization_packing/MinPackMover.hh>
-#include <protocols/minimization_packing/BoltzmannRotamerMover.hh>
+#include <protocols/minimization_packing/MinPackMover.fwd.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/jd2/util.hh>
@@ -51,29 +50,22 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <numeric/random/random.hh>
-#include <numeric/angle.functions.hh>
-#include <numeric/conversions.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/xyz.functions.hh>
-#include <ctime>
-#include <iostream>
 #include <string>
 #include <sstream>
 
 // option key includes
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/coupled_moves.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
+
+#include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh> // AUTO IWYU For FragmentPerturber
+#include <protocols/kinematic_closure/perturbers/WalkingPerturber.hh> // AUTO IWYU For WalkingPerturber
+#include <protocols/loops/loops_main.hh> // AUTO IWYU For read_loop_fragments
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 static basic::Tracer TR( "protocols.CoupledMovesProtocol" );
 

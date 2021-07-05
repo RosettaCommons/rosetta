@@ -20,10 +20,8 @@
 
 //Core
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 
 //Utility
-#include <utility/vector1.fwd.hh>
 #include <utility/VirtualBase.hh>
 
 //Devel
@@ -34,8 +32,6 @@
 
 //C++ Headers
 #include <string>
-#include <vector>
-#include <map>
 
 namespace protocols {
 namespace features {

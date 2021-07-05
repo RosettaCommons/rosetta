@@ -16,7 +16,6 @@
 // Unit Headers
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef WIN32

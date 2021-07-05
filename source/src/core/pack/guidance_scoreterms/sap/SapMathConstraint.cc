@@ -13,21 +13,11 @@
 /// @author Brian Coventry (bcov@uw.edu)
 
 #include <core/pack/guidance_scoreterms/sap/SapMathConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/pack/guidance_scoreterms/sap/SapConstraintHelper.hh>
 #include <core/pack/guidance_scoreterms/sap/SapConstraintOptions.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueRanges.hh>
-#include <core/scoring/aa_composition_energy/AACompositionEnergySetup.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/deriv/dihedral_deriv.hh>
 
 #include <utility/pointer/memory.hh>
 

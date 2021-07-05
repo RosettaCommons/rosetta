@@ -22,7 +22,6 @@
 #include <core/scoring/elec/CountPairRepresentative.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -34,9 +33,7 @@
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/Energies.hh>
 
-#include <core/scoring/hbonds/HBondSet.hh>
 
 // Project headers
 #include <core/kinematics/MinimizerMapBase.hh>
@@ -47,7 +44,7 @@
 #include <core/scoring/trie/RotamerDescriptor.hh>
 #include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/trie/TrieCollection.hh>
-#include <core/scoring/trie/TrieCountPairBase.hh>
+#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 #include <core/scoring/trie/trie.functions.hh>
 
 #include <core/scoring/etable/etrie/CountPairData_1_1.hh>
@@ -60,29 +57,25 @@
 #include <core/scoring/etable/etrie/TrieCountPairNone.hh>
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
 
-#include <core/scoring/hbonds/hbonds.hh>
 
 #include <core/chemical/RestypeDestructionEvent.hh>
-#include <core/conformation/residue_datacache.hh>
 #include <core/conformation/RotamerSetBase.hh>
-#include <core/conformation/RotamerSetCacheableDataType.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+
+#include <core/scoring/elec/electrie/ElecTrieEvaluator.hh> // AUTO IWYU For ElecTrieEvaluator
 
 #ifdef SERIALIZATION
 // Project serialization headers

@@ -21,11 +21,9 @@
 #include <core/pose/carbohydrates/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/select/residue_selector/util.hh> // for xml schema utility functions
 #include <core/pose/Pose.hh>
 
 // Utility Headers
@@ -34,7 +32,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <utility/string_util.hh>
 
 static basic::Tracer TR( "core.select.residue_selector.GlycanPositionSelector" );

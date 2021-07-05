@@ -14,20 +14,14 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/util/deriv_funcs.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <platform/types.hh>
 
 // Unit headers
-#include <core/scoring/CenRotEnvPairPotential.hh>
-#include <core/energy_methods/CenPairEnergy.hh>
-#include <core/energy_methods/CenRotEnvEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
 
 // Project headers
 #include <core/id/AtomID.hh>
@@ -39,13 +33,14 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Residue, Residue::ResidueType
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 // --------------- Test Class --------------- //

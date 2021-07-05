@@ -24,7 +24,6 @@
 #include <iosfwd>
 #include <map>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

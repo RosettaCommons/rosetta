@@ -33,7 +33,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
 
 namespace protocols {
 namespace membrane {

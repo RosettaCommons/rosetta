@@ -13,33 +13,29 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
-#include <protocols/antibody/design/CDRGraftDesignOptions.hh>
-#include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 #include <protocols/antibody/database/CDRSetOptions.hh>
 #include <protocols/antibody/database/CDRSetOptionsParser.hh>
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/backtrace.hh>
+#include <utility/assert.hh>
 #include <utility/vector1.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 using namespace protocols::antibody;
 using namespace protocols::antibody::design;

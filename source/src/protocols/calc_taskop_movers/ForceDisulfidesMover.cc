@@ -18,11 +18,9 @@
 
 // type headers
 #include <core/types.hh>
-#include <core/id/types.hh>
 
 // project headers
 #include <protocols/moves/Mover.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
@@ -39,9 +37,9 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

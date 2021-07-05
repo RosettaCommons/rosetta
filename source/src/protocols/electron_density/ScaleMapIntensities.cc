@@ -12,16 +12,10 @@
 #include <protocols/electron_density/ScaleMapIntensities.hh>
 #include <protocols/electron_density/ScaleMapIntensitiesCreator.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/scoring/electron_density/xray_scattering.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -29,19 +23,12 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/scoring/cryst/util.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/kinematics/MoveMap.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/cryst.OptionKeys.gen.hh>
 
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

@@ -12,9 +12,7 @@
 
 #include <core/chemical/NucleotideTools.hh>
 #include <map>
-#include <core/types.hh>
 #include <string>
-#include <utility/vector0.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 

@@ -17,7 +17,7 @@
 
 // Unit headers
 #include <core/energy_methods/RNA_FullAtomVDW_BasePhosphate.fwd.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
+#include <core/scoring/etable/EtableEnergy.fwd.hh>
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -25,7 +25,6 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 
 //typedef utility::pointer::shared_ptr< core::scoring::etable::TableLookupEtableEnergy > TableLookupEtableEnergyOP;
 

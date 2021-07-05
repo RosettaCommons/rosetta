@@ -18,19 +18,15 @@
 #include <core/scoring/fiber_diffraction/util_ndft.hh>
 #include <core/scoring/fiber_diffraction/hankel_kiss_fft.hh>
 #include <core/scoring/fiber_diffraction/xray_scattering.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -38,34 +34,26 @@
 
 // Options
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
 
 // Utility headers
-#include <basic/prof.hh>
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/sys_util.hh>
 
 // C++
-#include <iomanip>
 #include <string>
+
+#include <core/energy_methods/FiberDiffractionEnergyDensCreator.hh> // AUTO IWYU For FiberDiffractionEnergyDensCreator
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
+#include <numeric/interpolation/spline/SplineGenerator.hh> // AUTO IWYU For SplineGenerator
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1...
+#include <fstream> // AUTO IWYU For operator<<, basic_ostream, endl, basic_o...
+
 //#include <sys/time.h>
 
 #ifdef WIN32

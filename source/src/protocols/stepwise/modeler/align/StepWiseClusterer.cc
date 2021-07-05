@@ -22,11 +22,12 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <utility/string_util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
+
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For lead_zero_string_of
 
 static basic::Tracer TR( "protocols.stepwise.modeler.align.StepWiseClusterer" );
 

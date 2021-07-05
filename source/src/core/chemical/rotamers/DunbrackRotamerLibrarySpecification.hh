@@ -27,6 +27,8 @@
 // C++ headers
 #include <iosfwd>
 
+#include <utility/assert.hh> // AUTO IWYU For debug_assert
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>

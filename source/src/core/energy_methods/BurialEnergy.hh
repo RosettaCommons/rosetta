@@ -16,11 +16,9 @@
 
 #include <core/energy_methods/BurialEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 

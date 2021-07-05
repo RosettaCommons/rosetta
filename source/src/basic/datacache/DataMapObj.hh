@@ -14,6 +14,8 @@
 #ifndef INCLUDED_basic_datacache_DataMapObj_hh
 #define INCLUDED_basic_datacache_DataMapObj_hh
 
+#include <basic/datacache/DataMapObj.fwd.hh>
+
 // Project headers
 #include <utility/VirtualBase.hh>
 

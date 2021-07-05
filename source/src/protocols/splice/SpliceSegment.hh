@@ -14,12 +14,10 @@
 #define INCLUDED_protocols_splice_SpliceSegment_hh
 
 #include <protocols/splice/SpliceSegment.fwd.hh>
-#include <protocols/splice/Splice.fwd.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <map>
-#include <core/types.hh>
 
 
 namespace protocols {

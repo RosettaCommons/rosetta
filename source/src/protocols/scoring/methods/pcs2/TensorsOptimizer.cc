@@ -41,7 +41,6 @@
 #include <utility/exit.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
 
 // Objexx headers
 
@@ -49,6 +48,7 @@
 
 #include <utility/vector1.hh>
 
+#include <cmath> // MANUAL IWYU
 
 namespace protocols {
 namespace scoring {

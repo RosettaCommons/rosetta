@@ -19,12 +19,8 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/MutableResidueType.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/Atom.hh>
 
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <iostream>

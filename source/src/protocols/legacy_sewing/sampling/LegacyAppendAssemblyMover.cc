@@ -15,34 +15,24 @@
 // Unit Headers
 #include <protocols/legacy_sewing/sampling/LegacyAppendAssemblyMover.hh>
 #include <protocols/legacy_sewing/sampling/LegacyAppendAssemblyMoverCreator.hh>
-#include <protocols/legacy_sewing/conformation/DisembodiedAssembly.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/util/io.hh>
-#include <protocols/legacy_sewing/util/util.hh>
 #include <protocols/legacy_sewing/conformation/Model.hh>
 #include <protocols/legacy_sewing/conformation/Assembly.hh>
 #include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementSet.hh>
 #include <protocols/legacy_sewing/sampling/requirements/LegacyResidueRetentionRequirement.hh>
-#include <protocols/legacy_sewing/scoring/LegacyAssemblyScorer.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/TaskOperationCreators.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
-#include <core/scoring/AtomVDW.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/ScoringManager.hh>
 
 //#include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/relax/util.hh>
 #include <protocols/relax/cst_util.hh>
 #include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/task_operations/RestrictResiduesToRepackingOperation.hh>
@@ -52,16 +42,15 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/legacy_sewing/sampling/SewGraph.hh> // AUTO IWYU For SewGraph
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 namespace protocols {
 namespace legacy_sewing  {

@@ -33,11 +33,9 @@
 #include <core/conformation/symmetry/SymDof.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers

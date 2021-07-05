@@ -16,7 +16,7 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
 #include <core/select/residue_selector/util.hh>
@@ -25,12 +25,10 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 static basic::Tracer TR( "core.select.residue_selector.ResiduePDBInfoHasLabelSelector" );
 

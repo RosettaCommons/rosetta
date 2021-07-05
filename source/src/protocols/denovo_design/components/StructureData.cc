@@ -17,17 +17,12 @@
 #include <protocols/denovo_design/components/StructureDataCreator.hh>
 
 //Project Headers
-#include <protocols/denovo_design/components/FoldGraph.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-#include <protocols/denovo_design/components/StructureDataObserver.hh>
 #include <protocols/denovo_design/util.hh>
 
 //Protocol Headers
-#include <protocols/constraint_generator/ConstraintGenerator.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/moves/Mover.hh>
 
 //Core Headers
 #include <core/chemical/VariantType.hh>
@@ -36,13 +31,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/Remarks.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/datacache/CacheableObserver.fwd.hh>
-#include <core/pose/datacache/CacheableObserverType.hh>
-#include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/sequence/ABEGOManager.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
@@ -69,6 +58,9 @@
 
 // C++ Headers
 #include <algorithm>
+
+#include <stack> // AUTO IWYU For stack
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.denovo_design.components.StructureData" );
 

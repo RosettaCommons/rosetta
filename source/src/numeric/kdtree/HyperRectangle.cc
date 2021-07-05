@@ -14,9 +14,7 @@
 #include <numeric/types.hh>
 #include <numeric/kdtree/HyperRectangle.hh>
 
-#include <utility>
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 #include <iostream>
 

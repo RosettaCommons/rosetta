@@ -20,7 +20,6 @@
 
 // Protocol headers
 #include <protocols/denovo_design/connection/ConnectionArchitect.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>

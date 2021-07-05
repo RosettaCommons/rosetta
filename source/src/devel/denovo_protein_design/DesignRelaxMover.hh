@@ -25,7 +25,6 @@
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace devel {

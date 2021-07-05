@@ -19,7 +19,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/fragment/FragData.hh>
+#include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>

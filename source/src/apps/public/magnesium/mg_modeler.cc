@@ -15,7 +15,6 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <protocols/magnesium/util.hh>
@@ -26,7 +25,7 @@
 #include <protocols/magnesium/MgMonteCarlo.hh>
 #include <protocols/magnesium/MgScanner.hh>
 #include <protocols/viewer/viewers.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -41,7 +40,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/magnesium.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 
 using namespace core;
 using namespace basic::options;

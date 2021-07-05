@@ -23,23 +23,22 @@
 
 // Core headers
 #include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh> // for xml schema utility functions
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
-#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 // C++ headers
-#include <utility/assert.hh>
 
 static basic::Tracer TR( "protocols.denovo_design.residue_selectors.NamedSegmentSelector" );
 

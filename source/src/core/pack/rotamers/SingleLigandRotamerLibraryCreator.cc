@@ -13,11 +13,11 @@
 
 // Package headers
 #include <core/pack/rotamers/SingleLigandRotamerLibraryCreator.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 
 // Program header
-#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/rotamers/PDBRotamerLibrarySpecification.hh>
 #include <core/chemical/ResidueType.hh>
 

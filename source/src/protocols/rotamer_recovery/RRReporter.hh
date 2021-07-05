@@ -23,7 +23,8 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
+
+#include <string>
 
 namespace protocols {
 namespace rotamer_recovery {

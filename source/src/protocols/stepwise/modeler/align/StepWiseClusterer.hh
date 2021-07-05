@@ -22,7 +22,6 @@
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <string>
 

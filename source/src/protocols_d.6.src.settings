@@ -168,7 +168,6 @@ sources = {
     ],
     "protocols/stepwise/legacy/modeler/rna/": [
         "RNA_AnalyticLoopCloser",
-        #"StepWiseRNA_Minimizer",
         "StepWiseRNA_Clusterer",
         "StepWiseRNA_WorkingParametersSetup",
         "StepWiseRNA_PoseSelection",

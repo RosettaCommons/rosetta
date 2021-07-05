@@ -28,7 +28,6 @@
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
@@ -39,6 +38,8 @@
 
 /// Utility headers
 #include <utility/VirtualBase.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSets, RotamerSe...
 
 namespace protocols {
 namespace minimization_packing {

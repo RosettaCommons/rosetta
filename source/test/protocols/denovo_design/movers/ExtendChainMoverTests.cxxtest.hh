@@ -22,8 +22,6 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
 
 // Core headers
 #include <core/io/pdb/build_pose_as_is.hh>
@@ -89,39 +87,39 @@ public:
 		std::stringstream xml;
 		xml << "<ExtendChain name=extend motif=\"2LG-6EB-1LX\" />";
 		utility::tag::TagOP tag = utility::tag::Tag::create( xml );
-		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, input_pose ), utility::excn::RosettaScriptsOptionError & );
+		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap ), utility::excn::RosettaScriptsOptionError & );
 
 		std::stringstream xml2;
 		xml2 << "<ExtendChain name=extend motif=\"2LG-6EB-1LX\" segment=\"pose.1\" chain=\"2\" />";
 		tag = utility::tag::Tag::create( xml2 );
 		extend = ExtendChainMover();
-		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, input_pose ), utility::excn::RosettaScriptsOptionError & );
+		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap ), utility::excn::RosettaScriptsOptionError & );
 
 		std::stringstream xml3;
 		xml3 << "<ExtendChain name=extend motif=\"2LG-6EB-1LX\" segment=\"pose.2\" />";
 		tag = utility::tag::Tag::create( xml3 );
 		extend = ExtendChainMover();
-		TS_ASSERT_THROWS_NOTHING( extend.parse_my_tag( tag, datamap, input_pose ) );
+		TS_ASSERT_THROWS_NOTHING( extend.parse_my_tag( tag, datamap ) );
 
 		std::stringstream xml4;
 		xml4 << "<ExtendChain name=extend motif=\"2LG-6EB-1LX\" chain=\"2\" />";
 		tag = utility::tag::Tag::create( xml4 );
 		extend = ExtendChainMover();
-		TS_ASSERT_THROWS_NOTHING( extend.parse_my_tag( tag, datamap, input_pose ) );
+		TS_ASSERT_THROWS_NOTHING( extend.parse_my_tag( tag, datamap ) );
 
 		// must have motif specified!
 		std::stringstream xml5;
 		xml5 << "<ExtendChain name=extend segment=\"pose.2\" />";
 		tag = utility::tag::Tag::create( xml5 );
 		extend = ExtendChainMover();
-		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, input_pose ), utility::excn::RosettaScriptsOptionError & );
+		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap ), utility::excn::RosettaScriptsOptionError & );
 
 		// must have motif specified, not length!
 		std::stringstream xml6;
 		xml6 << "<ExtendChain name=extend length=10 segment1=\"pose.2\" />";
 		tag = utility::tag::Tag::create( xml6 );
 		extend = ExtendChainMover();
-		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap, input_pose ), utility::excn::RosettaScriptsOptionError & );
+		TS_ASSERT_THROWS( extend.parse_my_tag( tag, datamap ), utility::excn::RosettaScriptsOptionError & );
 	}
 
 	void test_append() {
@@ -139,7 +137,7 @@ public:
 		std::stringstream xml;
 		xml << "<ExtendChain name=" << ext_id << " motif=\"2LG-6HA\" chain=\"2\" />";
 		utility::tag::TagOP tag = utility::tag::Tag::create( xml );
-		extend.parse_my_tag( tag, datamap, pose );
+		extend.parse_my_tag( tag, datamap );
 		extend.set_dry_run( true );
 
 		core::io::pdb::build_pose_from_pdb_as_is( pose, "protocols/denovo_design/connection/test_pdbcomp_BridgeChains.pdb" );
@@ -181,7 +179,7 @@ public:
 		std::stringstream xml;
 		xml << "<ExtendChain name=" << e_id << " motif=\"2LG-6HA\" prepend=\"1\" chain=\"2\" />";
 		utility::tag::TagOP tag = utility::tag::Tag::create( xml );
-		extend.parse_my_tag( tag, datamap, pose );
+		extend.parse_my_tag( tag, datamap );
 		extend.set_dry_run( true );
 
 		core::io::pdb::build_pose_from_pdb_as_is( pose, "protocols/denovo_design/connection/test_pdbcomp_BridgeChains.pdb" );

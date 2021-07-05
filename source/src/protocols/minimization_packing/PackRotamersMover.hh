@@ -27,10 +27,8 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 
 #include <core/pack/annealer/AnnealerObserver.fwd.hh>
@@ -39,11 +37,11 @@
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #include <list>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsCOP, RotamerSetsOP
 
 namespace protocols {
 namespace minimization_packing {

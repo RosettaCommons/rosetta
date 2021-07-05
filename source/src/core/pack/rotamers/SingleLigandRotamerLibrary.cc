@@ -11,20 +11,17 @@
 ///
 /// @brief
 /// @author Ian W. Davis
-#include <utility/fixedsizearray1.hh>
 // Unit headers
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 
 // Package headers
 #include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 
 // Project headers
 #include <core/id/PartialAtomID.hh>
 //#include <core/chemical/automorphism.hh>
 //#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.functions.hh>

@@ -19,9 +19,6 @@
 #include <protocols/init/init.hh>
 
 #include <string>
-#include <fstream>
-#include <iostream>
-#include <vector>
 
 
 /// @brief For unit tests only.  Creates an argc/argv pair, calls init() and deletes argv.

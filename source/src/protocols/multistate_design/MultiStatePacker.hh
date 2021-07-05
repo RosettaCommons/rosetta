@@ -17,18 +17,14 @@
 #include <protocols/genetic_algorithm/Entity.hh>
 #include <protocols/multistate_design/MultiStatePacker.fwd.hh>
 #include <protocols/multistate_design/MultiStateFitnessFunction.hh>
-#include <protocols/multistate_design/SingleState.fwd.hh>
 #include <protocols/multistate_design/PackingState.fwd.hh>
 
 #include <core/chemical/AA.hh>
 
 #include <core/types.hh>
 #include <utility/vector0.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
-#include <iosfwd>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

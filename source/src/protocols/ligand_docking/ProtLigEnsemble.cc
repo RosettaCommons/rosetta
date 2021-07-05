@@ -13,17 +13,11 @@
 // Unit Headers
 #include <protocols/ligand_docking/ProtLigEnsemble.hh>
 #include <protocols/ligand_docking/ProtLigEnsembleCreator.hh>
-#include <protocols/ligand_docking/InterfaceBuilder.hh>
-#include <protocols/ligand_docking/ligand_options/Interface.hh>
-#include <protocols/ligand_docking/MinimizeLigand.hh>
-#include <protocols/ligand_docking/MoveMapBuilder.hh>
-#include <protocols/ligand_docking/TetherLigand.hh>
 #include <protocols/ligand_docking/HighResEnsemble.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -40,28 +34,17 @@
 #include <core/conformation/Conformation.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-#include <core/pack/task/ResfileReader.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/palette/PackerPalette.hh>
 #include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/OperateOnResidueSubset.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
 // Project Headers
-#include <core/scoring/Energies.hh>
 #include <core/chemical/ResidueType.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <protocols/jd2/util.hh>
 
@@ -71,11 +54,6 @@
 #include <utility/string_util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/json_spirit/json_spirit_reader.h>
-#include <utility/io/izstream.hh>
-#include <ObjexxFCL/format.hh>
-#include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <core/kinematics/Edge.hh>
 #include <core/pack/task/PackerTask.hh>
 
 // Scripter Headers
@@ -87,11 +65,8 @@
 //STL headers
 #include <string>
 
-#include <set>
 
 //Auto Headers
-#include <protocols/ligand_docking/LigandArea.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/io/util.hh>
 
@@ -99,9 +74,11 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace ligand_docking {

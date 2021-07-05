@@ -23,7 +23,6 @@
 
 #include <utility/exit.hh>
 
-#include <string>
 
 #include <utility/vector1.hh>
 

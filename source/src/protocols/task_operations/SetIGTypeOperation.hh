@@ -20,7 +20,6 @@
 #include <protocols/task_operations/SetIGTypeOperation.fwd.hh>
 
 // Core Headers
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
@@ -28,6 +27,8 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <string>
 
 namespace protocols {
 namespace task_operations {

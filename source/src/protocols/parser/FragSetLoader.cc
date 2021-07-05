@@ -32,7 +32,6 @@
 #include <utility/vector1.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
 
 
 static basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );

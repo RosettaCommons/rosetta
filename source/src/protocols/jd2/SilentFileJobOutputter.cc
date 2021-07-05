@@ -36,7 +36,6 @@
 #include <basic/prof.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableString.hh>
 #include <basic/datacache/CacheableStringMap.hh>
 
 #include <utility/vector1.hh>

@@ -20,17 +20,15 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 
 #include <map>

@@ -28,7 +28,6 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
@@ -36,14 +35,11 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <basic/database/open.hh>
 
 
-#include <numeric/xyzVector.hh>
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
 
 // C++ headers
 #include <cstdlib>
@@ -54,9 +50,11 @@
 #include <basic/Tracer.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 static basic::Tracer TR( "pilot_apps.fix_bb_monomer_ddg" );
 

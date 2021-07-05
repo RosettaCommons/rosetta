@@ -7,33 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#include <core/environment/DofPassport.hh>
 
 #include <protocols/environment/claims/EnvClaim.fwd.hh>
 #include <protocols/environment/claims/TorsionClaim.hh>
-#include <protocols/environment/claims/JumpClaim.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
 
-#include <protocols/environment/ProtectedConformation.hh>
-#include <protocols/environment/EnvExcn.hh>
 #include <protocols/environment/DofUnlock.hh>
 #include <protocols/environment/ClientMover.hh>
-#include <protocols/environment/Environment.hh>
-#include <protocols/environment/EnvClaimBroker.hh>
 
 //Other headers
-#include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/types.hh>
 
-#include <test/core/init_util.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/WriteableCacheableMap.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
 
 using namespace protocols::environment;

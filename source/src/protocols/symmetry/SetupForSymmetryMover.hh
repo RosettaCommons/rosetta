@@ -19,12 +19,10 @@
 #include <protocols/symmetry/SetupForSymmetryMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/symmetry/SymmData.hh>
+#include <core/conformation/symmetry/SymmData.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 // Utility Headers
 

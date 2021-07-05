@@ -42,8 +42,6 @@
 #include <numeric/statistics/functions.hh>
 
 #include <fstream>
-#include <ostream>
-#include <sstream>
 #include <string>
 #include <cmath>
 

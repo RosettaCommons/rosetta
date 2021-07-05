@@ -27,7 +27,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>

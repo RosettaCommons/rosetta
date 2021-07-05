@@ -11,29 +11,20 @@
 /// @brief
 
 // libRosetta headers
-#include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/chemical/rna/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
 
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
@@ -47,25 +38,18 @@
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/sys_util.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/stepwise/modeler/util.hh> //has euler angle stuff.
 #include <protocols/toolbox/sample_around/util.hh> //has euler angle stuff.
-#include <protocols/toolbox/rigid_body/util.hh>
 
 #include <protocols/viewer/viewers.hh>
 
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -75,13 +59,10 @@
 
 #include <numeric/random/random_xyz.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/random.functions.hh>
 #include <numeric/constants.hh>
 
-#include <utility/stream_util.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 

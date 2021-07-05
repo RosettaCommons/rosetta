@@ -36,12 +36,10 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/PyMOLMover.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>
@@ -50,14 +48,11 @@
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 #include <basic/Tracer.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

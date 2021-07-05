@@ -21,22 +21,20 @@
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
 
 // Protocols headers
-#include <protocols/trRosetta/trRosettaOutputsBase.hh>
 #ifdef USE_TENSORFLOW
+#include <protocols/trRosetta/trRosettaOutputsBase.hh>
 #include <protocols/trRosetta/trRosettaOutputs_v1.fwd.hh>
+#include <core/id/AtomID.hh>
 #endif //USE_TENSORFLOW
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/types.hh>
-#include <core/id/AtomID.hh>
 
 // Basic headers
 
 // Utility headers
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {

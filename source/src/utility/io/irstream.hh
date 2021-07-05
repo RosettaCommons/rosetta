@@ -21,8 +21,8 @@
 
 // C++ headers
 #include <iosfwd>
+#include <ios> // For std::streamsize
 #include <string>
-#include <iostream>
 
 
 namespace utility {

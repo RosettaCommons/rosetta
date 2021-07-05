@@ -11,35 +11,15 @@
 /// @brief
 
 // libRosetta headers
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/AtomICoor.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/RT.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -50,73 +30,42 @@
 #include <protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh>
 #include <protocols/stepwise/legacy/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/sampler/protein/util.hh>
 
 //clustering
-#include <protocols/cluster/cluster.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/util.hh>
 
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/optimizeH.hh>
 
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/import_pose/pose_stream/ExtendedPoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/angle.functions.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
-#include <fstream>
-#include <iostream>
 
 
 #include <basic/Tracer.hh>
+
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
 
 static basic::Tracer TR( "swa_protein_main" );
 
 // option key includes
 
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
@@ -192,7 +141,6 @@ rebuild_test(){
 	using namespace core::scoring::constraints;
 	using namespace core::io::silent;
 	using namespace core::pose;
-	using namespace core::pack;
 	using namespace protocols::stepwise::modeler;
 	using namespace align;
 

@@ -38,19 +38,17 @@ Chain2Chain2Chain2
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 
@@ -59,7 +57,8 @@ Chain2Chain2Chain2
 
 #include <sstream>
 
-#include <utility/vector0.hh>
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For RealOptionKey, StringOptionKey
+
 
 
 using Pose = core::pose::Pose;

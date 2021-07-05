@@ -24,7 +24,6 @@
 #include <protocols/match/upstream/UpstreamBuilder.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #ifdef WIN32
 #include <utility/OrderedTuple.hh>
 #include <utility/vector1.hh>

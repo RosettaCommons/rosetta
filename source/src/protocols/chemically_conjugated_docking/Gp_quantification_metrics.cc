@@ -16,7 +16,6 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <core/chemical/ResidueType.hh>
@@ -25,11 +24,9 @@
 
 #include <core/types.hh>
 
-#include <protocols/rigid/RB_geometry.hh>
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
 // Utility Headers

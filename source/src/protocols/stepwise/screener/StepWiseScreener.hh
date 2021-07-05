@@ -21,7 +21,6 @@
 #include <protocols/stepwise/screener/StepWiseScreenerType.hh>
 #include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
 #include <protocols/moves/CompositionMover.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <core/types.hh>
 #include <string>
 

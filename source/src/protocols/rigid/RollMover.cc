@@ -19,9 +19,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 #include <core/id/AtomID.hh>

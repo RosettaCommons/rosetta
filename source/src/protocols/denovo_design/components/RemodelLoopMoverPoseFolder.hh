@@ -27,8 +27,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace denovo_design {

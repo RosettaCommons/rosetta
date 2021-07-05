@@ -24,7 +24,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/hbonds/NPDHBondSet.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
@@ -35,7 +35,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

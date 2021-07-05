@@ -28,22 +28,20 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.hh>
+#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 //// C++ headers
-#include <string>
 
-#include <utility/vector1.hh>
+
+#include <core/kinematics/FoldTree.fwd.hh> // AUTO IWYU For FoldTree
 
 
 #ifdef    SERIALIZATION

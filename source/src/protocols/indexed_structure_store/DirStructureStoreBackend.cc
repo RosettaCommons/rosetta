@@ -16,7 +16,6 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.hh>
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
 #include <protocols/indexed_structure_store/DirStructureStoreBackend.hh>
@@ -24,11 +23,13 @@
 #include <protocols/indexed_structure_store/StructureStore.hh>
 #include <protocols/indexed_structure_store/pose_utility.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <string>
-#include <stdexcept>
+
+#include <ndarray/initialization.h> // AUTO IWYU For SimpleInitializer, allocate
+
 
 namespace protocols
 {

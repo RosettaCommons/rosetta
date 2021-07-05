@@ -16,7 +16,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -25,17 +24,13 @@
 #include <devel/init.hh>
 
 #include <protocols/antibody/metrics.hh>
-#include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
+#include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/internal_util.hh>
 
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 

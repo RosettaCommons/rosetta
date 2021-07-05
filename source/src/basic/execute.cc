@@ -24,6 +24,8 @@
 
 #include <iostream>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
+
 #ifndef WIN32
 #include <sys/wait.h>
 #endif

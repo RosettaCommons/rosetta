@@ -24,26 +24,18 @@
 // Project Headers
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/FlipMover.hh>
-#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 #include <protocols/relax/membrane/MPRangeRelaxMover.hh>
-#include <protocols/membrane/OptimizeMembranePositionMover.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
 #include <protocols/membrane/SpinAroundPartnerMover.hh>
 #include <protocols/membrane/TiltMover.hh>
-#include <protocols/membrane/TranslationRotationMover.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/util.hh>
-#include <protocols/docking/util.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/scoring/Interface.hh>
-#include <protocols/simple_filters/InterfaceSasaFilter.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/simple_moves/ShakeStructureMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -53,7 +45,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <protocols/jd2/util.hh>
 
@@ -63,8 +54,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <core/scoring/rms_util.hh>
@@ -82,11 +71,14 @@
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <numeric/xyz.functions.hh> // AUTO IWYU For angle_of
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #undef interface

@@ -19,16 +19,14 @@
 // Protocol Headers
 
 // Core headers
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/simple_metrics/SimpleMetricData.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/tag/util.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

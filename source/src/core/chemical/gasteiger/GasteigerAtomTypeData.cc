@@ -21,11 +21,9 @@
 
 #include <core/chemical/gasteiger/util.hh>
 
-#include <utility>
 #include <utility/numbers.hh>
 #include <utility/exit.hh>
 #include <utility/tools/make_vector.hh>
-#include <utility/thread/backwards_thread_local.hh>
 
 namespace core {
 namespace chemical {

@@ -26,11 +26,9 @@
 
 // Project headers
 #include <core/id/DOF_ID.fwd.hh>
-#include <core/id/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <map>
 
 namespace core {
 namespace energy_methods {

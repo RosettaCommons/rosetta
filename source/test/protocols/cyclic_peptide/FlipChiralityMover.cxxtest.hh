@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
@@ -23,23 +21,14 @@
 
 // Core Headers
 #include <core/types.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Atom.hh>
-#include <core/conformation/util.hh>
-#include <core/chemical/AA.hh>
 // Protocol Headers
 #include <basic/Tracer.hh>
-#include <iostream>
 
 static basic::Tracer TR("FlipChiralityMover");
 

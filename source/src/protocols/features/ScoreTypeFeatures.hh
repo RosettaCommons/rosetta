@@ -22,14 +22,12 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

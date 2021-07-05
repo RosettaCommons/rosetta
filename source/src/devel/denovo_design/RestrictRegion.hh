@@ -18,7 +18,6 @@
 
 // Unit headers
 #include <devel/denovo_design/RestrictRegion.fwd.hh>
-#include <devel/denovo_design/task_operations/DesignBySecondaryStructure.hh>
 // Project headers
 #include <protocols/moves/Mover.hh>
 
@@ -26,7 +25,6 @@
 
 #include <core/fragment/Frame.fwd.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -34,13 +32,14 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 //// C++ headers
 #include <string>
 
-#include <core/io/silent/silent.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <devel/denovo_design/task_operations/HighestEnergyRegion.fwd.hh> // AUTO IWYU For HighestEnergyRegionOperationOP
+#include <map> // AUTO IWYU For map
 
 
 namespace devel {

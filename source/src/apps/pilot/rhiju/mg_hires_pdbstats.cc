@@ -14,16 +14,12 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/chemical/AtomTypeSet.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <core/pose/Pose.hh>
@@ -41,8 +37,6 @@
 #include <numeric/conversions.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 //silly using/typedef
 // option key includes

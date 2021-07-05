@@ -15,35 +15,25 @@
 
 // C++ headers
 #include <fstream>
-#include <iostream>
-#include <cstdlib>
 
 // Unit Headers
-#include <utility/stream_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
 
 
 // Project Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/sequence_comparation/DesignContrast.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <basic/options/option.hh>
 
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 
 
-#include <ObjexxFCL/format.hh>
 
 
 // option key includes

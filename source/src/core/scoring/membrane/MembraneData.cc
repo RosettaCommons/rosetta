@@ -32,11 +32,8 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
-#include <utility/vector1.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
@@ -46,7 +43,6 @@
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 
 static basic::Tracer TR( "core.scoring.membrane.MembraneData" );

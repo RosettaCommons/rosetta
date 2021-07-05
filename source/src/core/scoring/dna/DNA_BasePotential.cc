@@ -18,7 +18,6 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/kinematics/Stub.hh>
 #include <basic/database/open.hh>
 

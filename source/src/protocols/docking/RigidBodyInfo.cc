@@ -10,7 +10,6 @@
 /// @author Zhe Zhang
 
 #include <protocols/docking/RigidBodyInfo.hh>
-#include <protocols/docking/types.hh>
 //#include <iostream>
 
 

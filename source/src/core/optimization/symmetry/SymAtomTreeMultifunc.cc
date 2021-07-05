@@ -35,7 +35,6 @@
 
 /// Numeric headers
 
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <utility/string_util.hh>

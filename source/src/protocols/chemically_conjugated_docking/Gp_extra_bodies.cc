@@ -16,7 +16,6 @@
 // Project Headers
 #include <protocols/chemically_conjugated_docking/Gp_extra_bodies.hh>
 
-#include <core/chemical/ResidueType.hh>
 
 #include <core/kinematics/FoldTree.hh>
 

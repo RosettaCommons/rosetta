@@ -17,13 +17,12 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, cout, ostream
 
 static basic::Tracer tr( "core.scoring.rna.util" );
 

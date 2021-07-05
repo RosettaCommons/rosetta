@@ -29,9 +29,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 
@@ -55,7 +53,6 @@
 #include <protocols/symmetric_docking/SymDockingHiRes.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
@@ -63,12 +60,10 @@
 
 #include <protocols/simple_filters/SAXSScoreFilter.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -106,17 +101,14 @@
 #include <core/scoring/electron_density/util.hh>
 
 
-#include <core/import_pose/import_pose.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/prof.hh>
 
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

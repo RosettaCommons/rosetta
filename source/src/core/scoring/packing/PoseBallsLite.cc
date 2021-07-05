@@ -14,14 +14,11 @@
 #include <core/scoring/packing/PoseBallsLite.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
 
-#include <map>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

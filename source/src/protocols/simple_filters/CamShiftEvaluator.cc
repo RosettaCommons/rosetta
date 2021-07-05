@@ -21,7 +21,6 @@
 // Package Headers
 
 // Project Headers
-#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 
@@ -31,7 +30,6 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
-#include <utility/vector1.hh>
 
 // C++ headers
 

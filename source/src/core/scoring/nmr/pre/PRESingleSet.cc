@@ -22,9 +22,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -43,6 +41,8 @@
 #include <iomanip>
 #include <string>
 #include <numeric>
+
+#include <core/scoring/nmr/util.hh> // AUTO IWYU For convert_string_to_weighting_scheme, convert_string...
 
 namespace core {
 namespace scoring {

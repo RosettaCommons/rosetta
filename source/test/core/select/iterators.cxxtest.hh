@@ -23,24 +23,13 @@
 
 #include <test/core/init_util.hh>
 #include <core/types.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/pose/chains_util.hh>
-#include <core/pose/extra_pose_info_util.hh>
 
 
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
-#include <core/kinematics/FoldTree.hh>
 
 #include <basic/Tracer.hh>
 
-#include <test/util/pose_funcs.hh>
 
 //Auto Headers
 #include <core/pose/annotated_sequence.hh>

@@ -19,7 +19,6 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/types.hh>
 

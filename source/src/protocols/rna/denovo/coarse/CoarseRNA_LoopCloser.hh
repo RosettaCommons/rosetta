@@ -18,19 +18,20 @@
 #define INCLUDED_protocols_coarse_rna_CoarseRNA_LoopCloser_HH
 
 #include <protocols/moves/Mover.hh>
-#include <core/pose/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/fixedsizearray1.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 //// C++ headers
 #include <string>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

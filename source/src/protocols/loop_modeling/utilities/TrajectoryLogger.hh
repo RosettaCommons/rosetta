@@ -13,8 +13,6 @@
 // Unit headers
 #include <protocols/loop_modeling/utilities/TrajectoryLogger.fwd.hh>
 #include <protocols/loop_modeling/types.hh>
-#include <protocols/loop_modeling/LoopBuilder.fwd.hh>
-#include <protocols/loop_modeling/LoopProtocol.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>

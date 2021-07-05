@@ -15,7 +15,6 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
 // Numeric Headers

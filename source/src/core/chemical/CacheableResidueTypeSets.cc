@@ -12,7 +12,7 @@
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #include <core/chemical/CacheableResidueTypeSets.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 
 #include <basic/Tracer.hh>

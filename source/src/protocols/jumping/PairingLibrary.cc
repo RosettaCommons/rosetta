@@ -24,7 +24,6 @@
 #include <core/pose/util.hh>
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/id/NamedStubID.hh>
@@ -34,7 +33,6 @@
 #endif
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/SingleResidueFragData.fwd.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/JumpSRFD.hh>
 #include <core/fragment/JumpingFrame.hh>
@@ -46,7 +44,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -56,11 +53,11 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyz.functions.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D
 
 static basic::Tracer tr( "protocols.jumping" );
 

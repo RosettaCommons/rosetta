@@ -28,7 +28,6 @@
 // Utility headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <utility>
-#include <utility/vector1_bool.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>

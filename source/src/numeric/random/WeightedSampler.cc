@@ -20,7 +20,6 @@
 #include <numeric/random/random.hh>
 
 // External library headers
-#include <utility>
 #include <utility/exit.hh>
 
 // C++ headers

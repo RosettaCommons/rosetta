@@ -18,8 +18,8 @@
 
 //Package headers
 #include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
-#include <protocols/legacy_sewing/sampling/SewGraph.fwd.hh>
-#include <protocols/legacy_sewing/conformation/Model.hh>
+
+#include <string>
 
 namespace protocols {
 namespace legacy_sewing  {

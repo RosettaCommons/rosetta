@@ -16,7 +16,6 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
-#include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 

@@ -17,20 +17,16 @@
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 //#include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
-#include <core/select/residue_selector/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/select/residue_selector/util.hh> // for xml schema utility functions
 #include <core/pose/Pose.hh>
 
 // Utility Headers
-#include <utility>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers

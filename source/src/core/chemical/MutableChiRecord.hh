@@ -18,17 +18,14 @@
 
 // Unit headers
 #include <core/chemical/MutableChiRecord.fwd.hh>
-#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 
 //// Project headers
 #include <core/types.hh>
 
 //// Utility headers
-#include <utility/exit.hh>
 
 // C++ headers
-#include <string>
 
 namespace core {
 namespace chemical {

@@ -16,7 +16,6 @@
 #define INCLUDED_core_init_score_function_corrections_hh
 
 #include <utility/options/OptionCollection.fwd.hh>
-#include <string>
 
 namespace core {
 namespace init {

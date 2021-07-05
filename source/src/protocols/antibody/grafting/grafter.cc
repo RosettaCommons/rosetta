@@ -15,6 +15,9 @@
 
 #include <protocols/antibody/grafting/util.hh>
 
+#include <protocols/antibody/grafting/chothia_numberer.hh> // AUTO IWYU For AntibodyChainNumbering::NumberingVector
+#include <protocols/antibody/grafting/scs_blast.hh> // AUTO IWYU For SCS_ResultSet, SCS_Result, trim_fram...
+
 #ifdef __ANTIBODY_GRAFTING__
 
 #include <protocols/antibody/grafting/grafter.hh>
@@ -31,15 +34,12 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
-#include <protocols/grafting/AnchoredGraftMover.hh>
 #include <protocols/antibody/constraints/CDRDihedralConstraintMover.hh>
 #include <protocols/antibody/design/GeneralAntibodyModeler.hh>
-#include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyCDRGrafter.hh>
 #include <basic/Tracer.hh>
 

@@ -15,6 +15,9 @@
 
 #include <basic/MetricValueIO.hh>
 
+#include <utility/exit.hh> // AUTO IWYU For runtime_assert
+#include <istream> // AUTO IWYU For operator<<, istream, basic_ios, basic_ostream, ostream, basic_istream
+
 
 namespace protocols {
 namespace multistate_design {

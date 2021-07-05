@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -27,13 +25,14 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("CopyDofsTest");
 

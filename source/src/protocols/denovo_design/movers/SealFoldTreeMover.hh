@@ -19,15 +19,16 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/FoldGraph.hh>
+#include <protocols/denovo_design/components/FoldGraph.fwd.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
+
+#include <protocols/loops/Loops.fwd.hh> // AUTO IWYU For Loops
 
 namespace protocols {
 namespace denovo_design {

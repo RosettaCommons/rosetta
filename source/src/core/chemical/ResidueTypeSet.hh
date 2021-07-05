@@ -40,12 +40,9 @@
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
-#include <basic/datacache/CacheableData.hh>
 
 // STL headers
-#include <list>
 #include <map>
-#include <set>
 
 #ifdef    SERIALIZATION
 #include <utility/serialization/serialization.hh>

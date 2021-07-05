@@ -16,9 +16,7 @@
 
 // RosettaScripts headers
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

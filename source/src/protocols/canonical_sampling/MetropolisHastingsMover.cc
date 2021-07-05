@@ -43,9 +43,8 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -58,15 +57,12 @@
 // utility headers
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#include <ObjexxFCL/format.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -78,6 +74,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/canonical_sampling/TemperatureController.hh> // AUTO IWYU For TemperatureController, FixedTemper...
 
 static basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
 

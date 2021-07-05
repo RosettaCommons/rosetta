@@ -18,10 +18,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/vector1.hh>
-#include <utility/stream_util.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
-#include <set>
 
 static basic::Tracer TR( "core.pose.rna.RNA_SecStruct" );
 

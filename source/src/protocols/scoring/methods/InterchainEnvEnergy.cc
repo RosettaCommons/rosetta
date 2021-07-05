@@ -28,7 +28,6 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

@@ -23,10 +23,10 @@
 // core headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/mm/MMTorsionLibrary.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
 
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 namespace protocols {
 namespace simple_moves {

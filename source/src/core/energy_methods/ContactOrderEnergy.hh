@@ -18,14 +18,12 @@
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 

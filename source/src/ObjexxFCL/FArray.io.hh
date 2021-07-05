@@ -16,12 +16,6 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1.io.hh>
-#include <ObjexxFCL/FArray2.io.hh>
-#include <ObjexxFCL/FArray3.io.hh>
-#include <ObjexxFCL/FArray4.io.hh>
-#include <ObjexxFCL/FArray5.io.hh>
-#include <ObjexxFCL/FArray6.io.hh>
 
 
 #endif // INCLUDED_ObjexxFCL_FArray_io_HH

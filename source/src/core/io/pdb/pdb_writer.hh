@@ -22,8 +22,7 @@
 
 // Package headers
 #include <core/io/StructFileRep.fwd.hh>
-#include <core/io/StructFileRepOptions.hh>
-#include <core/io/StructFileReaderOptions.fwd.hh>
+#include <core/io/StructFileRepOptions.fwd.hh>
 
 // Project header
 #include <core/id/AtomID_Mask.fwd.hh>
@@ -33,6 +32,7 @@
 // Utility header
 #include <utility/io/ozstream.fwd.hh>
 
+#include <vector>
 
 namespace core {
 namespace io {

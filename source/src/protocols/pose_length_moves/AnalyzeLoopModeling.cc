@@ -12,10 +12,6 @@
 /// @author TJ Brunette tjbrunette@gmail.com
 ///
 // Unit headers
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/pose/symmetry/util.hh>
 
 #include <protocols/jd2/util.hh>
 
@@ -28,10 +24,8 @@
 #include <protocols/loops/Loop.hh>
 
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
-#include <protocols/indexed_structure_store/FragmentStore.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <protocols/pose_length_moves/NearNativeLoopCloser.hh>
 
@@ -40,7 +34,6 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/VirtualBase.hh>
 
 #include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
@@ -48,13 +41,11 @@
 #include <basic/Tracer.hh>
 
 #include <iostream>
-#include <sstream>
-#include <map>
-#include <set>
-#include <ctime>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 
 static basic::Tracer TR( "protocols.pose_length_moves.AnalyzeLoopModeling" );

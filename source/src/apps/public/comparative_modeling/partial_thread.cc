@@ -38,14 +38,10 @@
 
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 #include <map>
@@ -61,8 +57,6 @@
 #include <core/import_pose/import_pose.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 
 
 std::map< std::string, core::pose::Pose >

@@ -17,9 +17,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/func/Func.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 namespace protocols {

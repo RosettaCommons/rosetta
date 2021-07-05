@@ -19,21 +19,19 @@
 #include <basic/tensorflow_manager/RosettaTensorflowManager.fwd.hh>
 
 // Basic headers
-#include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.fwd.hh>
 
 // Utility header
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.hh>
 
 // C++ header
-#include <tuple>
-#include <map>
 
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>
 #endif
 
 #ifdef USE_TENSORFLOW
+#include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.fwd.hh>
+#include <map>
 #include <tensorflow/c/c_api.h>
 #endif
 

@@ -15,12 +15,10 @@
 #ifndef INCLUDED_protocols_backbone_moves_local_backbone_mover_free_peptide_movers_FreePeptideMover_hh
 #define INCLUDED_protocols_backbone_moves_local_backbone_mover_free_peptide_movers_FreePeptideMover_hh
 
-#include <protocols/backbone_moves/local_backbone_mover/types.hh>
 #include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/FreePeptideMover.fwd.hh>
 #include <protocols/backbone_moves/local_backbone_mover/FreePeptide.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // BOOST

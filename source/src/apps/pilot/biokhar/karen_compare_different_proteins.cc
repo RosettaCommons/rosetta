@@ -10,38 +10,25 @@
 /// @brief
 /// @author jk
 #include <iostream>
-#include <iomanip>
 #include <fstream>
-#include <ostream>
 #include <string>
-#include <sstream>
-#include <cmath>
-#include <map>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/after_opts.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 
 #include <numeric/xyz.functions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/io/mpistream.hh>
 
 // Eigen header for SVD support
 #include <Eigen/SVD>

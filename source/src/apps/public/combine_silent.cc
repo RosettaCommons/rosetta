@@ -31,7 +31,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 

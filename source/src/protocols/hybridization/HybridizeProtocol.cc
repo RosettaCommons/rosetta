@@ -18,14 +18,11 @@
 #include <protocols/hybridization/CartesianHybridize.hh>
 #include <protocols/hybridization/TemplateHistory.hh>
 #include <protocols/hybridization/util.hh>
-#include <protocols/hybridization/DomainAssembly.hh>
 #include <protocols/hybridization/DDomainParse.hh>
 #include <protocols/hybridization/TMalign.hh>
 
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
@@ -35,7 +32,6 @@
 #include <core/pose/selection.hh>
 
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/util.hh>
 
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
@@ -46,11 +42,8 @@
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 // dynamic fragpick
-#include <protocols/moves/DsspMover.hh>
 #include <core/fragment/picking_old/vall/util.hh>
 
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/io/silent/SilentFileOptions.hh>
@@ -62,12 +55,11 @@
 #include <core/pose/init_id_map.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/CrystInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
@@ -79,14 +71,12 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/util.hh>
 
-#include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SWAligner.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
-#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 
@@ -95,18 +85,14 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -116,26 +102,17 @@
 // task operation
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/ResFilters.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
 
 #include <basic/datacache/DataMap.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // utility
 #include <utility/excn/Exceptions.hh>
-#include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
@@ -146,8 +123,6 @@
 #include <numeric/random/random.functions.hh>
 
 // evaluation
-#include <core/scoring/rms_util.hh>
-#include <protocols/comparative_modeling/coord_util.hh>
 
 // option
 #include <basic/options/option.hh>
@@ -156,12 +131,10 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh> // strand pairings
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
-#include <basic/options/keys/mistakes.OptionKeys.gen.hh> // check pre talaris
 
 //citations
 #include <basic/citation_manager/CitationManager.hh>
@@ -170,12 +143,14 @@
 //docking
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
-#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 
 #include <string>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
 

@@ -18,12 +18,11 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/multistate_design/SingleStateFitnessFunction.hh>
+#include <protocols/multistate_design/SingleStateFitnessFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 #ifdef WIN32
 #include <core/pose/Pose.hh>

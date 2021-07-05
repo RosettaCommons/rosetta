@@ -24,7 +24,6 @@
 #define INCLUDED_core_pack_guidance_scoreterms_voids_penalty_energy_VoidsPenaltyVoxelGrid_hh
 
 #include <core/pack/guidance_scoreterms/voids_penalty_energy/VoidsPenaltyVoxelGrid.fwd.hh>
-#include <core/pack/guidance_scoreterms/voids_penalty_energy/VoidsPenaltyVoxelGridTests.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -45,6 +44,10 @@
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 
 #include <map>
+
+class VoidsPenaltyVoxelGridTests;  // Forward declaration of tests for friendship
+class VoidsPenaltyVoxelGridTests_rotamer_setup; // Forward declaration of tests for friendship
+class VoidsPenaltyVoxelGridTests_rotamer_setup_2; // Forward declaration of tests for friendship
 
 namespace core {
 namespace pack {

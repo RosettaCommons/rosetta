@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_sewing_movers_AppendAssemblyMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
-#include <protocols/sewing/movers/AssemblyMoverCreator.hh>
 namespace protocols {
 namespace sewing {
 namespace movers {

@@ -18,7 +18,6 @@
 
 #include <test/core/init_util.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -33,9 +32,10 @@
 
 //Auto Headers
 #include <core/chemical/ResidueType.hh>
-#include <utility/vector1.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::ResidueT...
 
 //I'm lazy using's
 using namespace core;

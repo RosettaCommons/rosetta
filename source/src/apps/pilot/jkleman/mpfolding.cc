@@ -18,45 +18,33 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 
 // Package Headers
-#include <apps/benchmark/performance/init_util.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/viewer/viewers.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // HEADERS FROM PROTOCOL
 
 // Unit Headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Project Headers
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/TranslationRotationMover.hh>
 #include <protocols/membrane/FlipMover.hh>
-#include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/docking/DockingProtocol.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMOLMover.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
@@ -65,26 +53,19 @@
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/membrane/util.hh>
 #include <protocols/membrane/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/util.hh>
-#include <core/types.hh>
 
 // Utility Headers
-#include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 using basic::Error;
 using basic::Warning;

@@ -15,9 +15,7 @@
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
 
 // Package Headers
-#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 #include <core/scoring/elec/electrie/ElecTrieEvaluator.hh>
 #include <core/scoring/methods/MMLJEnergyInter.hh>
 #include <core/scoring/vdwaals/VDW_Energy.hh>
@@ -38,6 +36,8 @@
 #include <core/scoring/etable/etrie/EtableAtom.hh>
 #include <core/scoring/trie/RotamerTrie.hh>
 #include <utility/vector1.hh>
+
+#include <core/scoring/lkball/lkbtrie/LKBAtom.hh> // AUTO IWYU For LKBAtom
 
 
 namespace core {

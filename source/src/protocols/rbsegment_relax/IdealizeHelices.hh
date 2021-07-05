@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_rbsegment_relax_idealize_helices_hh
 #define INCLUDED_protocols_rbsegment_relax_idealize_helices_hh
 
-#include <protocols/rbsegment_relax/IdealizeHelicesCreator.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -23,10 +22,7 @@
 #include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loops.hh>
 
 
 namespace protocols {

@@ -17,20 +17,19 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/AA.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/minimization_packing/GreenPacker.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilter.fwd.hh>
 
 // Stored tasks
-#include <protocols/task_operations/STMStoredTask.hh>
 
 #include <utility/vector1.hh>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 #ifdef PYROSETTA
 	#include <protocols/filters/Filter.hh>

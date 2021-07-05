@@ -35,7 +35,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 //Abinitio
 #include <protocols/abinitio/ClassicAbinitio.hh>
@@ -52,11 +51,12 @@
 
 //Utility Headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 
 //C++ Headers
 #include <string>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace protocols::surface_docking;

@@ -14,47 +14,32 @@
 
 // Unit headers
 #include <core/scoring/ProQPotential.hh>
-#include <core/scoring/ProQPotential.fwd.hh>
 
 // Package headers
 
 // Project headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 
 
 //symmetry
-#include <core/pose/symmetry/util.hh>
 
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 //options
 #include <basic/options/option.hh>
 #include <basic/options/keys/ProQ.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
 #include <core/types.hh>
 
 
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/random/random.hh>
-#include <numeric/conversions.hh>
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
 #include <string>
 
 namespace core {

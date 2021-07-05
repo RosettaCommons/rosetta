@@ -15,10 +15,8 @@
 #define INCLUDED_core_scoring_hbonds_graph_AtomInfo_HH
 
 #include <numeric/xyzVector.hh>
-#include <core/types.hh>
 #include <algorithm>
 #include <utility/DenseBoolMap.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 #include <boost/container/flat_set.hpp>
 

@@ -22,7 +22,6 @@
 #include <protocols/loops/loop_mover/refine/LoopRefineInnerCycle.hh>
 
 // Package headers
-#include <protocols/loops/loop_mover/LoopMover.fwd.hh>
 
 // Project headers
 //#include <core/pack/task/TaskFactory.fwd.hh>
@@ -33,10 +32,8 @@
 
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
 
 namespace protocols {
 namespace loops {

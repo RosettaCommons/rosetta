@@ -19,7 +19,6 @@
 
 // Package headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -30,7 +29,6 @@
 // C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

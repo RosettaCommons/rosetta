@@ -24,12 +24,10 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/PDBInfo.hh> //JAB - temp
 
 // Numeric headers
 
 // C++ headers
-#include <cstdlib>
 
 #include <core/id/DOF_ID_Map.hh>
 #include <core/id/AtomID_Map.hh>
@@ -39,7 +37,8 @@
 #include <core/pose/init_id_map.hh>
 
 // Options - TEMP
-#include <core/select/util.hh>
+
+#include <core/scoring/DerivVectorPair.hh> // AUTO IWYU For DerivVectorPair
 
 namespace core {
 namespace optimization {

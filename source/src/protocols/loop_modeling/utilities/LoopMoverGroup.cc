@@ -16,7 +16,6 @@
 #include <core/pose/Pose.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

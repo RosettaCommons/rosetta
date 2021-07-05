@@ -19,31 +19,28 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/closure.hh>
 
-#include <numeric/angle.functions.hh>
 
 // Utility headers
-#include <utility>
-#include <utility/exit.hh>
 
 // External headers
-#include <Eigen/Dense>
+#include <Eigen/Dense> // Needed for GCC
 
 // C++ headers
 #include <algorithm>
 #include <cmath>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For max
+#include <Eigen/LU> // AUTO IWYU For MatrixBase::determinant
 
 using namespace std;
 

@@ -15,19 +15,16 @@
 #ifndef INCLUDED_protocols_task_operations_RestrictToMoveMapChiOperation_hh
 #define INCLUDED_protocols_task_operations_RestrictToMoveMapChiOperation_hh
 
-#include <protocols/task_operations/RestrictToMoveMapChiOperationCreator.hh>
 #include <protocols/task_operations/RestrictToMoveMapChiOperation.fwd.hh>
-#include <basic/datacache/DataMap.hh>
 
-#include <basic/datacache/DataMap.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>
 
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <string>
 
 namespace protocols {
 namespace task_operations {

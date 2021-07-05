@@ -20,25 +20,23 @@
 #include <protocols/environment/claims/TorsionClaim.fwd.hh>
 
 // Package Headers
-#include <protocols/environment/ProtectedConformation.fwd.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/BrokerElements.hh>
 
-#include <core/environment/LocalPosition.hh>
+#include <core/environment/LocalPosition.fwd.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
 #include <core/conformation/Conformation.fwd.hh>
 
 // Project Headers
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <core/id/types.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //// C++ headers

@@ -18,89 +18,45 @@
 
 #include <core/types.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
 
-#include <core/scoring/electron_density/util.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/relax/FastRelax.hh>
 
 
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
-#include <core/scoring/constraints/util.hh>
 
-#include <utility/excn/Exceptions.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
 
 
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-#include <numeric/random/random.hh>
-#include <numeric/model_quality/rms.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pose/PDBInfo.hh> // AUTO IWYU For PDBInfo
 
 
 namespace protocols {

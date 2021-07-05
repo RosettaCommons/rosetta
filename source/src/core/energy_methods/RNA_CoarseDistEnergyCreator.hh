@@ -15,9 +15,7 @@
 #define INCLUDED_core_energy_methods_RNA_CoarseDistEnergyCreator_hh
 
 // Unit headers
-#include <core/energy_methods/RNA_CoarseDistEnergy.fwd.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 

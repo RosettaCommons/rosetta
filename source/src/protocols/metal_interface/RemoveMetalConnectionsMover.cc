@@ -24,7 +24,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
@@ -42,7 +41,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 // Citation Manager
-#include <utility/vector1.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 static basic::Tracer TR( "protocols.metal_interface.RemoveMetalConnectionsMover" );

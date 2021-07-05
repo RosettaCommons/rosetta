@@ -23,18 +23,14 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
 
-#include <basic/datacache/CacheableData.hh>
 
 // Utility headers
 
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
-#include <utility/vector1.hh>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 
 // C++

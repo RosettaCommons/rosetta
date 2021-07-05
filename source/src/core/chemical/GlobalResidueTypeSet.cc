@@ -40,18 +40,13 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/Metapatch.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/MergeBehaviorManager.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/adduct_util.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
-#include <core/chemical/Orbital.hh> /* for copying ResidueType */
-#include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
 #include <core/chemical/residue_support.hh>
 
 #include <core/chemical/mmCIF/mmCIFParser.hh>
@@ -84,6 +79,8 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 using namespace basic::options;
 

@@ -21,8 +21,6 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/scmin/SCMinMultifunc.hh>
-#include <core/pack/scmin/CartSCMinMultifunc.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
 #include <core/pack/scmin/AtomTreeSCMinMinimizerMap.hh>
 #include <core/pack/scmin/CartSCMinMinimizerMap.hh>
@@ -32,7 +30,6 @@
 #include <core/types.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -42,7 +39,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 
@@ -54,12 +50,9 @@
 #include <numeric/random/random_permutation.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 // STL headers
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
 
 
 namespace core {

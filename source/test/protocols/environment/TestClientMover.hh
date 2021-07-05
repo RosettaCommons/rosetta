@@ -12,7 +12,6 @@
 
 #include <protocols/environment/claims/EnvClaim.hh>
 
-#include <core/environment/DofPassport.hh>
 
 #include <core/pose/Pose.hh>
 

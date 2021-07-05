@@ -16,7 +16,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
 // Numeric Headers

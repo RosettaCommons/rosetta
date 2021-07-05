@@ -34,7 +34,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <iomanip>

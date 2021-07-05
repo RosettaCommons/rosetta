@@ -14,7 +14,6 @@
 // Unit Headers
 #include <protocols/splice/FindEndpointsOperation.hh>
 #include <protocols/splice/FindEndpointsOperationCreator.hh>
-#include <core/conformation/Conformation.hh>
 // Project Headers
 // Utility Headers
 #include <core/types.hh>
@@ -28,7 +27,9 @@
 #include <core/pose/Pose.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 // C++ Headers
 

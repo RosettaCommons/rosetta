@@ -21,7 +21,6 @@
 // Utility headers
 #include <utility/io/util.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 // Basic header
 #include <basic/Tracer.hh>
@@ -31,7 +30,6 @@
 #include <string>
 #include <map>
 #include <sstream>
-#include <cmath>
 
 
 namespace core {

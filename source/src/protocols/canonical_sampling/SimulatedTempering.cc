@@ -18,35 +18,24 @@
 
 
 // protocols headers
-#include <basic/datacache/DataMap.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverFactory.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/jd2/util.hh>
 
 // core headers
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
 
 // utility headers
-#include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/io/ozstream.hh>
@@ -57,6 +46,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For BooleanOptionKey, IntegerOptionKey, Opt...
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 // cmd-line options
 OPT_2GRP_KEY( Integer, tempering, reweight, stride )

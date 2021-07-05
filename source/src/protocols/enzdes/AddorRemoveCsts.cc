@@ -27,13 +27,10 @@
 
 #include <core/scoring/ScoreFunction.hh>
 
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 
 // amw debug
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

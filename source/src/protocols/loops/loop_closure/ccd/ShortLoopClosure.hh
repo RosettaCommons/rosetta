@@ -24,7 +24,6 @@
 // Package Headers
 #include <protocols/loops/loop_closure/ccd/LoopClosure.hh>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace loops {

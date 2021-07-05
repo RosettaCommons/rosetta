@@ -20,10 +20,8 @@
 
 // Unit headers
 #include <core/scoring/nmr/pcs/PCSSingleSet.hh>
-#include <core/scoring/nmr/pcs/PCSSingle.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -35,11 +33,9 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -52,8 +48,6 @@
 // C++ headers
 #include <string>
 #include <iostream>
-#include <iomanip>
-#include <utility>
 
 static basic::Tracer TR("core.scoring.nmr.pcs.PCSSingleSet_Symmetry.cxxtest");
 

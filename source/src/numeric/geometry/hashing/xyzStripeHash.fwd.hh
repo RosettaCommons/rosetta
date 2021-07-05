@@ -18,6 +18,8 @@ namespace numeric {
 namespace geometry {
 namespace hashing {
 
+struct Ball;
+
 class xyzStripeHash;
 typedef utility::pointer::shared_ptr< xyzStripeHash > xyzStripeHashOP;
 typedef utility::pointer::shared_ptr< xyzStripeHash const > xyzStripeHashCOP;

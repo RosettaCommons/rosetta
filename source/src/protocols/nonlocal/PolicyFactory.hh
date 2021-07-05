@@ -23,6 +23,8 @@
 // Package headers
 #include <protocols/nonlocal/Policy.fwd.hh>
 
+#include <limits> // AUTO IWYU For numeric_limits
+
 
 namespace protocols {
 namespace nonlocal {

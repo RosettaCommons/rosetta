@@ -13,13 +13,11 @@
 
 // libRosetta headers
 
-#include <core/types.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 
 #include <basic/datacache/BasicDataCache.hh>

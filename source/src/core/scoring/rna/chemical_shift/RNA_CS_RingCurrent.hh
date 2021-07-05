@@ -19,8 +19,6 @@
 #include <core/types.hh>
 
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 
 #include <core/scoring/rna/chemical_shift/RNA_CS_Parameters.hh>
 

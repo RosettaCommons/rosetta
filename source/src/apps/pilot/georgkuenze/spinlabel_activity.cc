@@ -21,14 +21,13 @@
 #include <devel/init.hh>
 
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -39,11 +38,8 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/annealer/AnnealerFactory.hh>
-#include <core/pack/annealer/SimAnnealerBase.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -55,10 +51,9 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 // Basic headers
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
@@ -67,12 +62,10 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // C++ headers
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <iomanip>
 
 OPT_KEY ( Integer, label_position )
@@ -90,7 +83,6 @@ main( int argc, char** argv )
 		using namespace core::pack::rotamers;
 		using namespace core::pack::task;
 		using namespace core::pack::palette;
-		using namespace core::pack::annealer;
 		using namespace core::pack::interaction_graph;
 		using namespace core::pack::rotamer_set;
 		using namespace core::conformation;

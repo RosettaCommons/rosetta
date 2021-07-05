@@ -17,7 +17,6 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>

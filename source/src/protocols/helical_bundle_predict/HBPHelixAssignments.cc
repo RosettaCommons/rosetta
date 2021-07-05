@@ -20,7 +20,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/parametric/RealValuedParameter.hh>
 #include <core/conformation/parametric/RealVectorValuedParameter.hh>
-#include <core/conformation/parametric/SizeValuedParameter.hh>
 #include <core/conformation/parametric/SizeVectorValuedParameter.hh>
 
 // Protocols headers
@@ -29,15 +28,12 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 // Utility headers
 #include <utility/pointer/memory.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
 
 // Numeric headers
-#include <numeric/angle.functions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>

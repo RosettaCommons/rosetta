@@ -23,7 +23,7 @@
 #include <core/io/HeaderInformation.fwd.hh>
 #include <core/io/Remarks.fwd.hh>
 #include <core/io/CrystInfo.hh>
-#include <core/io/AtomInformation.hh>
+#include <core/io/AtomInformation.hh> // DO NOT AUTO-REMOVE (Needed for templated instantiation)
 #include <core/simple_metrics/SimpleMetricStruct.hh>
 
 // Project headers

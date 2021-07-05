@@ -21,7 +21,6 @@
 #include <test/core/init_util.hh>
 
 //C++ headers
-#include <iostream>
 
 
 class FoldTreeSketch : public CxxTest::TestSuite {

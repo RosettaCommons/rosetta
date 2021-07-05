@@ -27,7 +27,6 @@
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
 
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/options/option.hh>
@@ -42,7 +41,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -55,14 +53,14 @@
 // option key includes
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

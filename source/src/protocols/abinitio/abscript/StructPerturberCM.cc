@@ -18,14 +18,11 @@
 #include <core/environment/DofPassport.hh>
 
 #include <protocols/environment/DofUnlock.hh>
-#include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/TorsionClaim.hh>
 
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 // Project headers
-#include <core/id/TorsionID.hh>
-#include <core/id/DOF_ID.hh>
 
 
 //Utility Headers
@@ -41,7 +38,6 @@
 // ObjexxFCL Headers
 
 //Req'd on WIN32
-#include <basic/datacache/WriteableCacheableMap.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

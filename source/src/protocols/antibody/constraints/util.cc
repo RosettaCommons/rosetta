@@ -16,33 +16,17 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/pose/Pose.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 
 #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/antibody.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
-#include <basic/options/option.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
 
-#include <iostream>
-#include <fstream>
-#include <cctype>
-
-#include <boost/algorithm/string.hpp>
+#include <core/types.hh> // MANUAL IWYU
 
 static basic::Tracer TR("antibody.constraints.util");
 

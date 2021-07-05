@@ -16,108 +16,68 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/init_id_map.hh>
-#include <core/pose/annotated_sequence.hh>
 
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 //////////////////////////////////////////////////
 #include <basic/options/option.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/rna/util.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh> //for EnergyMap
-#include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh> //Parin April 15, 2012
 #include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
+#include <numeric/xyz.functions.hh>
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <core/import_pose/options/RNA_MinimizerOptions.hh>
-#include <protocols/rna/denovo/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/legacy/modeler/rna/util.hh>
-#include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
 
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <algorithm>  //Test
-#include <cctype>
-#include <iomanip>
-#include <map>
 #include <cstdlib>
 #include <ctime>
 
 //Added by Parin
 //#include <core/scoring/ScoreType.hh>
-#include <list>
-#include <cstdio>
 #include <cmath>
+
+#include <core/scoring/rms_util.hh> // AUTO IWYU For superimpose_pose
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> // AUTO IWYU For O3I_C5I_PLUS_ONE_MAX_DIST, O3I_O3I_PLUS...
+#include <core/io/silent/SilentFileData.hh> // AUTO IWYU For SilentFileData
 
 
 using namespace core;

@@ -21,33 +21,23 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
 #include <protocols/frag_picker/BestTotalScoreSelector.hh>
 #include <protocols/frag_picker/BoundedCollector.hh>
 #include <protocols/frag_picker/FragmentPicker.hh>
-#include <protocols/frag_picker/BoundedCollector.hh>
 
 // Project Headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/scoring/sasa.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/moves/DsspMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 // Utility Headers
 #include <basic/database/open.hh>
-#include <basic/datacache/ConstDataMap.hh>
-#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
-#include <basic/options/keys/frags.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/file_sys_util.hh>
@@ -56,6 +46,8 @@
 // XSD XRW Includes
 #include <protocols/moves/mover_schemas.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 
 namespace protocols {

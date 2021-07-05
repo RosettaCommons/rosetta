@@ -13,9 +13,6 @@
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 
-#include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi and mac boinc build (fails if not first for some odd reason) -dek
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DiagnosticData.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -26,36 +23,18 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
-#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyModelerProtocol.hh>
@@ -68,13 +47,14 @@
 #include <protocols/antibody/design/util.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/jd2/util.hh>
-#include <core/io/raw_data/ScoreMap.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeler/LoopModeler.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 using namespace ObjexxFCL::format;
 

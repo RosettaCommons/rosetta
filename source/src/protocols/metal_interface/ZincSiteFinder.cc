@@ -16,14 +16,12 @@
 #include <protocols/metal_interface/FindClosestAtom.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>

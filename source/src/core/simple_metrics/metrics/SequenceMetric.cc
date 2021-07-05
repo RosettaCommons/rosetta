@@ -28,11 +28,10 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/util.hh>
-#include <utility/string_util.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

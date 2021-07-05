@@ -12,7 +12,6 @@
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #include <utility/tag/Tag.hh>
-#include <iosfwd>
 #include <sstream>
 
 inline

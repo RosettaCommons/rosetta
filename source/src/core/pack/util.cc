@@ -19,7 +19,6 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <numeric/numeric.functions.hh>
 
@@ -27,7 +26,6 @@
 #include <core/pose/util.hh>
 #include <utility/string_util.hh>
 #include <core/types.hh>
-#include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 

@@ -21,12 +21,10 @@
 
 #include <core/pack/task/operation/TaskOperation.hh>
 
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector0.hh>
 
 // Cpp headers
 #include <string>

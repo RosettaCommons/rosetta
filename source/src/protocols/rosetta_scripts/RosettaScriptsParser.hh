@@ -31,7 +31,6 @@
 #include <basic/resource_manager/ResourceManager.fwd.hh>
 
 // Utility headers
-#include <utility/options/StringVectorOption.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -42,7 +41,6 @@
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
 #include <set>
 
 namespace protocols {

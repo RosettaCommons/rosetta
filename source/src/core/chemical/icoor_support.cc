@@ -19,7 +19,6 @@
 #include <core/chemical/MutableResidueConnection.hh>
 #include <core/chemical/bond_support.hh>
 
-#include <core/chemical/bond_support.hh>
 
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/tree/Atom.hh>

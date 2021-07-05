@@ -24,7 +24,6 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
@@ -39,6 +38,8 @@
 #include <rdkit/GraphMol/Atom.h>
 #include <rdkit/GraphMol/MolOps.h>
 #include <rdkit/GraphMol/SmilesParse/SmilesWrite.h>
+
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 static basic::Tracer TR("core.chemical.rdkit.RestypeToRDMolTests");
 

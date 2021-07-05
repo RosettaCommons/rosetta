@@ -60,6 +60,8 @@
 #include <protocols/frag_picker/VallProvider.hh>
 #include <cstdio>
 
+#include <protocols/frag_picker/VallChunk.hh> // AUTO IWYU For VallChunk
+
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

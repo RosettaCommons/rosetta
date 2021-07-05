@@ -17,19 +17,23 @@
 #define INCLUDED_protocols_relax_util_hh
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/Constraints.hh>
-
+#include <core/scoring/func/HarmonicFunc.fwd.hh>
 
 //// C++ headers
+#include <string>
+
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For Residue
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
+#include <core/scoring/constraints/Constraint.fwd.hh> // AUTO IWYU For ConstraintCOPs
+#include <core/types.hh> // AUTO IWYU For Size
+
 
 namespace protocols {
 namespace relax {

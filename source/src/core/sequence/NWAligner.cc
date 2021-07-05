@@ -14,7 +14,6 @@
 
 #include <core/types.hh>
 
-#include <core/sequence/Aligner.hh>
 #include <core/sequence/NWAligner.hh>
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
@@ -23,9 +22,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

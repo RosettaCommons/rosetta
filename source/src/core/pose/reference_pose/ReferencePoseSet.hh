@@ -34,15 +34,15 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // Numeric headers
 
 // C++ headers
 #include <map>
+
+#include <utility/exit.hh> // AUTO IWYU For runtime_assert_string_msg
 
 #ifdef    SERIALIZATION
 // Cereal headers

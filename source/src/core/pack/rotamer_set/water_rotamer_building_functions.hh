@@ -17,21 +17,18 @@
 
 //Package headers
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 // //Project headers
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/graph/Graph.fwd.hh>
 
 // // Utility headers
-#include <utility/io/izstream.fwd.hh>
 #include <utility/vector1.hh>
 
-#include <numeric/xyzVector.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size, PackerEnergy
 
 
 namespace core {

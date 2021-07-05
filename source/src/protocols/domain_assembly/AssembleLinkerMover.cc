@@ -20,10 +20,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -32,12 +29,10 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 
-#include <protocols/moves/Mover.hh>
 
 //#include <devel/init.hh>
 
 // C++ headers
-#include <iostream>
 #include <string>
 
 #include <core/types.hh>

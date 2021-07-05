@@ -15,7 +15,6 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
@@ -23,46 +22,30 @@
 //////////////////////////////////
 
 #include <core/types.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
-#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/init_id_map.hh>
 #include <basic/Tracer.hh>
 
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 
 #include <utility>
-#include <utility/file/FileName.hh>
 #include <utility/exit.hh>
 #include <ctime>
 
 #include <string>
-#include <cstdio>
-#include <iostream>
 #include <fstream>
-#include <sstream>
+
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
+#include <core/scoring/rms_util.hh> // AUTO IWYU For superimpose_pose
 
 using namespace core;
 using core::Real;

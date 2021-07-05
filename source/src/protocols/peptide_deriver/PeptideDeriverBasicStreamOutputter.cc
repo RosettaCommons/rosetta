@@ -18,12 +18,11 @@
 
 // Project header
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
 #include <utility/io/orstream.hh>
-#include <utility/io/ozstream.hh>
 
 // External headers
 #include <boost/format.hpp>

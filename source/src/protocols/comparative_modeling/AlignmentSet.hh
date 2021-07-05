@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_comparative_modeling_AlignmentSet_HH
 #define INCLUDED_protocols_comparative_modeling_AlignmentSet_HH
 
-#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
 #include <set>

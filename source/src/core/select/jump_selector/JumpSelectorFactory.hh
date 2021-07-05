@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_select_jump_selector_JumpSelectorFactory_HH
 #define INCLUDED_core_select_jump_selector_JumpSelectorFactory_HH
 
+#include <core/select/jump_selector/JumpSelectorFactory.fwd.hh>
+
 // Package headers
 #include <core/select/jump_selector/JumpSelector.fwd.hh>
 #include <core/select/jump_selector/JumpSelectorCreator.fwd.hh>

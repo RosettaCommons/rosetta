@@ -13,16 +13,15 @@
 // Unit headers
 #include <protocols/simple_moves/ContingentAcceptMover.hh>
 #include <protocols/simple_moves/ContingentAcceptMoverCreator.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <basic/datacache/DataMap.hh>
-#include <core/kinematics/FoldTree.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
+
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
+
 static basic::Tracer TR( "protocols.simple_moves.ContingentAcceptMover" );
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

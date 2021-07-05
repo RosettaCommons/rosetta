@@ -10,26 +10,18 @@
 /// @author Sarel Fleishman (sarelf@uw.edu)
 #include <protocols/protein_interface_design/filters/StubScoreLoopsFilter.hh>
 #include <protocols/protein_interface_design/filters/StubScoreLoopsFilterCreator.hh>
-#include <core/pose/Pose.hh>
-#include <protocols/hotspot_hashing/HotspotStub.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
 #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsLoopsMover.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 
 //Auto Headers
-#include <protocols/score_filters/ScoreTypeFilter.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

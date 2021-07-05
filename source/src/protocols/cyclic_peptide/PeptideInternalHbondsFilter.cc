@@ -20,9 +20,7 @@
 
 //Core includes
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/xml_util.hh>
 
 //Basic includes
 #include <basic/Tracer.hh>

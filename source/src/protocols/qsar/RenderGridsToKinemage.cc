@@ -15,15 +15,12 @@
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/qsar/scoring_grid/GridSet.hh>
-#include <protocols/jobdist/Jobs.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/tag/Tag.hh>

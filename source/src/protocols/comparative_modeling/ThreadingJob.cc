@@ -17,7 +17,6 @@
 #include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
-#include <core/id/SequenceMapping.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>

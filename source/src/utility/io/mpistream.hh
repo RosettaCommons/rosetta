@@ -21,11 +21,8 @@
 #endif
 
 // C++ headers
-#include <algorithm>
-#include <iosfwd>
 #include <vector>
 #include <sstream>
-#include <ios>
 
 namespace utility {
 namespace io {
@@ -344,8 +341,10 @@ typedef  basic_mpi_ostream< wchar_t >  mpi_wostream;
 } //io
 } //utility
 
+#ifdef USEMPI
 // Implementation [adding extra space before #include so PyRosetta skipp it...]
 #include <utility/io/mpistream.ipp>
+#endif
 
 
 #endif // INCLUDED_utility_io_mpistream_HPP

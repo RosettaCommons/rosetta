@@ -16,7 +16,6 @@
 #include <basic/resource_manager/ResourceLoader.hh>
 
 //utility headers
-#include <utility/VirtualBase.hh>
 
 namespace basic {
 namespace resource_manager {

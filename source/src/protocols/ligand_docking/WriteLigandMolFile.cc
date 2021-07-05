@@ -27,7 +27,6 @@
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <core/chemical/sdf/mol_writer.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <map>
 #include <basic/Tracer.hh>

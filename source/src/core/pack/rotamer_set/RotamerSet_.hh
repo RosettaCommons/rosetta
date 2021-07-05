@@ -27,7 +27,6 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 #ifdef WIN32
 #include <core/scoring/trie/RotamerTrieBase.hh>
@@ -37,9 +36,7 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
-#include <core/pack/rotamer_set/WaterAnchorInfo.hh> // wym
 
 // C++ headers
 #include <list>

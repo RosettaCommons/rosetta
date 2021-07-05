@@ -15,13 +15,9 @@
 #ifndef INCLUDED_core_energy_methods_MSLabelingEnergy_hh
 #define INCLUDED_core_energy_methods_MSLabelingEnergy_hh
 
-#include <core/energy_methods/HRF_MSLabelingEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
 
 

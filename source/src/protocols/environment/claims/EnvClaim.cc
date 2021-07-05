@@ -18,7 +18,6 @@
 #include <protocols/environment/ClientMover.hh>
 #include <core/environment/SequenceAnnotation.hh>
 
-#include <protocols/environment/claims/ClaimStrength.hh>
 
 #include <protocols/environment/claims/CutBiasClaim.hh>
 #include <protocols/environment/claims/JumpClaim.hh>
@@ -34,7 +33,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -43,6 +42,8 @@
 
 //// C++ headers
 #include <iostream>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
 
 // option key includes
 

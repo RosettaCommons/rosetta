@@ -21,15 +21,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
 
-#include <core/conformation/Conformation.fwd.hh>
 
 
 // C++ Headers
-#include <cstdlib>
 #include <iosfwd>
 //#include <map>
 
-#include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/xyzVector.hh>

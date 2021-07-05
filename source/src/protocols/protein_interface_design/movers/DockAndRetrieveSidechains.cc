@@ -25,18 +25,15 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <basic/Tracer.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 
 namespace protocols {

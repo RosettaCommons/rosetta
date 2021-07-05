@@ -16,15 +16,13 @@
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/io/pdb/Field.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/StructFileRep.hh>
@@ -47,7 +45,7 @@
 
 #include <algorithm>
 #include <set>
-#include <sstream>
+
 
 namespace core {
 namespace import_pose {

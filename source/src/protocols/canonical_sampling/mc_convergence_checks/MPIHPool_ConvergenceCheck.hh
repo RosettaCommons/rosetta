@@ -11,21 +11,12 @@
 #define INCLUDED_protocols_canonical_sampling_mc_convergence_checks_MPIHPool_ConvergenceCheck_hh
 
 #include <protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.fwd.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.fwd.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/pool_util.hh>
-#include <core/pose/Pose.fwd.hh>
-
-
-#include <core/io/silent/SilentStruct.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <utility/vector1.hh>
-#include <core/types.hh>
 
 #ifdef USEMPI
 #include <mpi.h>
+
+#include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/pool_util.hh>
 
 namespace protocols {
 namespace canonical_sampling {

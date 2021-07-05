@@ -27,21 +27,20 @@
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/file/FileName.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 // Utility headers
 #include <basic/options/option_macros.hh>
 
-#include <utility/vector1.hh>
 
 #include <ctime>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For BooleanOptionKey, OptionKeys,
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 static basic::Tracer tr( "protocols.iterative" );
 

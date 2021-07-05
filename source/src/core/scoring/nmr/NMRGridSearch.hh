@@ -28,7 +28,6 @@
 #include <numeric/xyzVector.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 namespace core {
 namespace scoring {

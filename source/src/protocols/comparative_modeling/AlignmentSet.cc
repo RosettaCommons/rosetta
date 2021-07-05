@@ -11,7 +11,6 @@
 /// @brief
 /// @author James Thompson
 
-#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
 #include <protocols/comparative_modeling/AlignmentSet.hh>

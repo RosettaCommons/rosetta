@@ -22,8 +22,6 @@
 #include <protocols/jd2/util.hh>
 
 #include <core/util/cryst_util.hh>
-#include <core/scoring/cryst/util.hh>
-#include <core/energy_methods/XtalMLEnergy.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -55,19 +53,12 @@
 /////////////
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/types.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/AtomTreeMultifunc.hh>
 
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/symmetry/SymMinimizerMap.hh>
-#include <core/optimization/symmetry/SymAtomTreeMultifunc.hh>
 
 #include <core/optimization/CartesianMinimizerMap.hh>
 #include <core/optimization/CartesianMultifunc.hh>
-#include <core/optimization/CartesianMinimizer.hh>
 
 ///////////
 
@@ -81,7 +72,6 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <fstream>
 
@@ -89,6 +79,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/util.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/methods/EnergyMethodOptions.hh> // AUTO IWYU For EnergyMethodOptions
 
 namespace protocols {
 namespace cryst {

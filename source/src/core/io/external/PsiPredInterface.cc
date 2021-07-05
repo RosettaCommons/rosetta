@@ -18,8 +18,6 @@
 
 // project headers
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 
 // utility headers

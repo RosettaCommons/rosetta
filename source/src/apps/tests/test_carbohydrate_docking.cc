@@ -15,15 +15,10 @@
 // Project headers
 #include <devel/init.hh>
 
-#include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/pose/util.hh>
-#include <core/pose/carbohydrates/util.hh>
 #include <protocols/docking/util.hh>
 
 // Utility headers

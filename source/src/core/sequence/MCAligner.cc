@@ -14,7 +14,6 @@
 
 #include <core/types.hh>
 
-#include <core/sequence/Aligner.hh>
 #include <core/sequence/MCAligner.hh>
 #include <core/sequence/NWAligner.hh>
 #include <core/sequence/ScoringScheme.hh>
@@ -26,10 +25,7 @@
 
 #include <numeric/random/random.hh>
 
-#include <utility/vector1.hh>
 
-#include <iostream>
-#include <string>
 
 namespace core {
 namespace sequence {

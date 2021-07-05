@@ -20,15 +20,13 @@
 #include <core/simple_metrics/util.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Basic/Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

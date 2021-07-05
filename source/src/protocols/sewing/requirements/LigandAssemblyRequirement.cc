@@ -14,7 +14,6 @@
 
 // Unit header or inline function header
 #include <protocols/sewing/requirements/LigandAssemblyRequirement.hh>
-#include <protocols/sewing/requirements/AssemblyRequirementCreator.hh>
 // NOTE: This file should have NO dependencies other than its header.
 
 

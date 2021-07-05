@@ -21,13 +21,10 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/OneToAllEnergyContainer.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/statistics/functions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>

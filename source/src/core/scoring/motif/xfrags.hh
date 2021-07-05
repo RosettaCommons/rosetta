@@ -15,12 +15,10 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/xyzStripeHashPose.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/fixedsizearray1.hh>
 #include <numeric/geometry/hashing/SixDHasher.hh>
 #include <numeric/xyzTransform.hh>
-#include <numeric/HomogeneousTransform.hh>
 #include <boost/unordered_map.hpp>
 
 namespace core {

@@ -21,7 +21,6 @@
 #include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
 
 // project headers
-#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -29,7 +28,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
 
 // C++ headers

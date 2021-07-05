@@ -5,16 +5,12 @@
 
 // Project headers
 #include <devel/init.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 

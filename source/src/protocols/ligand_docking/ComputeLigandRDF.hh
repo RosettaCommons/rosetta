@@ -21,17 +21,14 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/coulomb/Coulomb.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/chemical/AtomType.hh>
+#include <core/id/AtomID.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
 #include <map>
 #include <string>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace ligand_docking {

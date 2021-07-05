@@ -33,7 +33,6 @@
 
 
 // C++ headers
-#include <iosfwd>
 #include <iostream>
 
 namespace protocols {

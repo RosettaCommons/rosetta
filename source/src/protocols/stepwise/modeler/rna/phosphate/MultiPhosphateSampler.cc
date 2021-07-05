@@ -17,13 +17,11 @@
 #include <protocols/stepwise/modeler/rna/phosphate/PhosphateMover.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 

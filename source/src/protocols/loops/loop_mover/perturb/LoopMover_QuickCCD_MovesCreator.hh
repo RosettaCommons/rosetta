@@ -17,10 +17,7 @@
 // Unit Headers
 #include <protocols/moves/MoverCreator.hh>
 
-#include <protocols/loops/Loops.fwd.hh>
 
-#include <core/types.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -15,21 +15,18 @@
 
 #include <protocols/recces/RECCES_Mover.hh>
 #include <protocols/recces/options/RECCES_Options.hh>
-#include <protocols/recces/params/RECCES_Parameters.hh>
+#include <protocols/recces/params/RECCES_Parameters.fwd.hh>
 #include <protocols/recces/sampler/MC_Comb.hh>
 #include <protocols/recces/sampler/MC_Loop.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_OneJump.hh>
 #include <protocols/recces/sampler/util.hh>
 #include <protocols/recces/stdev_util.hh>
 #include <protocols/recces/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <basic/Tracer.hh>
 #include <utility/stream_util.hh>

@@ -23,7 +23,6 @@
 #include <core/chemical/AA.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
-#include <iostream>
 #include <fstream>
 
 namespace protocols {

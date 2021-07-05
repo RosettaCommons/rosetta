@@ -18,23 +18,15 @@
 #include <utility/VirtualBase.hh>
 #include <protocols/multistage_rosetta_scripts/TagManager.fwd.hh>
 
-#include <protocols/jd3/CompletedJobOutput.hh>
-#include <protocols/jd3/Job.hh>
-#include <protocols/jd3/JobResult.fwd.hh>
-#include <protocols/jd3/JobSummary.fwd.hh>
-#include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/strong_types.hh>
 
-#include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/DataMap.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size
 
 
 #ifdef    SERIALIZATION

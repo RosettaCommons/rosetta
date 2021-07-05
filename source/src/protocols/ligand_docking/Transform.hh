@@ -17,12 +17,12 @@
 #include <protocols/ligand_docking/Transform.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 
-#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/UltraLightResidue.fwd.hh>
-#include <core/kinematics/Jump.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

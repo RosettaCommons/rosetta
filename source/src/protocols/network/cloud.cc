@@ -23,7 +23,7 @@
 #include <basic/options/option.hh>
 
 #include <utility/io/base64.hh>
-#include <utility/io/zipstream.ipp>
+#include <utility/io/zipstream.ipp> // DO NOT AUTO-REMOVE needed for zipstream internal imp
 #include <utility/thread/backwards_thread_local.hh>
 
 #include <utility/json_utilities.hh>

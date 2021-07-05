@@ -20,17 +20,15 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/residue_selector/ClashBasedShellSelector.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
-#include <core/pack/task/operation/ResLvlTaskOperation.hh>
+#include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
@@ -41,6 +39,8 @@
 // C++ headers
 #include <iostream>
 #include <set>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace std;
 using namespace core::pack::task::residue_selector;

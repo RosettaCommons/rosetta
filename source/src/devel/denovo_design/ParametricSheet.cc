@@ -19,25 +19,10 @@
 //Project Headers
 
 //Core Headers
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 
 //Protocol Headers
-#include <protocols/idealize/IdealizeMover.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
 
 //Basic Headers
 #include <basic/Tracer.hh>
@@ -48,11 +33,12 @@
 #include <utility/tag/Tag.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 //C++ Headers
 #include <cmath>
 #include <fstream>
+
+#include <iomanip> // AUTO IWYU For operator<<, setfill, setw, setprecision
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>

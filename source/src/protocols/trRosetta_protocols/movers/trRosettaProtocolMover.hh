@@ -20,23 +20,23 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.fwd.hh>
-#include <protocols/minimization_packing/MinMover.fwd.hh>
 
 // Core headers
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
 
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
+#ifdef USE_TENSORFLOW
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.fwd.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
+#endif
 
 namespace protocols {
 namespace trRosetta_protocols {

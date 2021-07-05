@@ -23,7 +23,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <core/pack/annealer/AnnealerObserver.hh>
+#include <core/pack/annealer/AnnealerObserver.fwd.hh>
 
 // ObjexxFCL Headers
 

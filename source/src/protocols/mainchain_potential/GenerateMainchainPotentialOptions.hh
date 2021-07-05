@@ -16,15 +16,15 @@
 #define INCLUDED_protocols_mainchain_potential_GenerateMainchainPotentialOptions_hh
 
 #include <protocols/mainchain_potential/GenerateMainchainPotentialOptions.fwd.hh>
-#include <protocols/mainchain_potential/GenerateMainchainPotentialTests.fwd.hh>
 
 // Core headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
+
+class GenerateMainchainPotentialTests; // Forward declaration of tests for friendship.
 
 namespace protocols {
 namespace mainchain_potential {

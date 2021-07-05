@@ -19,12 +19,12 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <utility>
-#include <utility/exit.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include <basic/basic.hh> // AUTO IWYU For periodic_range
 
 // Utility headers
 

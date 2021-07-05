@@ -18,35 +18,21 @@
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh>
 
 // Package headers
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/types.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/NeighborList.tmpl.hh>
-#include <core/scoring/ResidueNeighborList.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
+#include <core/kinematics/MinimizerMapBase.fwd.hh>
 
-#include <core/id/AtomID.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 
 static basic::Tracer TR( "core.energy_methods.ContextIndependentGeometricSolEnergy" );

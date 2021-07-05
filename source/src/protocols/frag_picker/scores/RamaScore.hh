@@ -22,9 +22,11 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 #include <core/fragment/SecondaryStructure.fwd.hh>
+
+#include <core/fragment/SecondaryStructure.hh> // AUTO IWYU For SecondaryStructure
 
 namespace protocols {
 namespace frag_picker {

@@ -13,10 +13,8 @@
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
@@ -28,24 +26,19 @@
 #include <core/init/init.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/io/izstream.hh>
 
-#include <utility/assert.hh>
-#include <utility/excn/Exceptions.hh>
 #include <iostream>
-#include <fstream>
 
 //Auto Headers
-#include <utility/vector1.hh>
 #include <utility/inline_file_provider.hh>
 
 #include <utility/json_spirit/json_spirit_value.h>
-#include <utility/json_spirit/json_spirit_reader.h>
-#include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_tools.hh>
 #include <utility/json_spirit/json_spirit_error_position.h>
 
 #include <ObjexxFCL/string.functions.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 namespace protocols {
 namespace rpc {

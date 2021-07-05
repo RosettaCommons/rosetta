@@ -23,8 +23,6 @@
 
 // project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/chains_util.hh>
 #include <core/pose/ref_pose.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -47,14 +45,13 @@
 
 // C++ headers
 
-#include <utility/vector0.hh>
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
-#include <core/conformation/Conformation.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 namespace protocols {
 namespace contact_map {

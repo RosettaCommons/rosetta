@@ -23,7 +23,6 @@
 #include <core/energy_methods/MPEnvEnergy.fwd.hh>
 
 // Project Headers
-#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/scoring/EnvPairPotential.fwd.hh>
@@ -36,7 +35,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/AA.hh>
 
@@ -44,7 +42,6 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace energy_methods {

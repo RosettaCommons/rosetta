@@ -57,14 +57,12 @@
 
 // RNA stuff
 #include <core/chemical/rna/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility>
-#include <utility/stream_util.hh>
 #include <utility/exit.hh>
 
 #include <string>

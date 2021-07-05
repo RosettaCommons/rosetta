@@ -18,12 +18,10 @@
 // Package headers
 #include <basic/datacache/DataMap.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -32,10 +30,7 @@
 
 //// option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

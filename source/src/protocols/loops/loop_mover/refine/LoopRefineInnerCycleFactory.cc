@@ -20,9 +20,9 @@
 #include <protocols/moves/MoverFactory.hh>
 
 // Project Headers
-#include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/MonteCarlo.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -31,7 +31,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

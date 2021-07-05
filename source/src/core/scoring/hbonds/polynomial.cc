@@ -33,7 +33,6 @@
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <iostream>
 #include <string>
 #include <cmath>
 

@@ -30,15 +30,11 @@
 
 #include <numeric/angle.functions.hh>
 
-#include <cmath>
 #include <string>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/Edge.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <utility/fix_boinc_read.hh>
-#include <utility/vector1.hh>
 
 
 class IndependentBBTorsionSRFDTests : public CxxTest::TestSuite

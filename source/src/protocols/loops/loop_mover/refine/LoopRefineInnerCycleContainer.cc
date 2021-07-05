@@ -21,17 +21,13 @@
 // Package headers
 
 // Project headers
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

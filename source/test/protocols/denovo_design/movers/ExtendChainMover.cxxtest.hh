@@ -23,8 +23,6 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
 
 // Core headers
 #include <core/io/pdb/build_pose_as_is.hh>

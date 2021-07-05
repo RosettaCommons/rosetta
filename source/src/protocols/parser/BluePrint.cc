@@ -30,6 +30,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <utility/vector1.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 static basic::Tracer TR( "protocols.jd2.parser.BluePrint" );
 
 using namespace core;

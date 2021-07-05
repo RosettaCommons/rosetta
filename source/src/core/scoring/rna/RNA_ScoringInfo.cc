@@ -14,18 +14,15 @@
 // Unit headers
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.fwd.hh>
-#include <core/pose/rna/RNA_DataInfo.hh>
 
 // Package headers
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 // Utility headers
-#include <numeric/xyzMatrix.hh>
 
 #include <utility/vector1.hh>
 

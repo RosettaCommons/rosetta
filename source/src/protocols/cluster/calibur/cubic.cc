@@ -10,11 +10,7 @@
 /// @file apps/pilot/kalngyk/cubic.cc
 /// @author YK Ng & SC Li (kalngyk@gmail.com)
 
-#include <time.h>
-#include <stdlib.h>
-#include <iostream>
 #include <cmath>
-#include <numeric/NumericTraits.hh>
 #include <core/types.hh>
 #include <protocols/cluster/calibur/cubic.hh>
 

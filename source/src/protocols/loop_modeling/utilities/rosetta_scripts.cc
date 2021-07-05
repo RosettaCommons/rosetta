@@ -17,9 +17,8 @@
 
 // RosettaScripts headers
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // C++ headers

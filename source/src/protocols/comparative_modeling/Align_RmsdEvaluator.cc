@@ -21,16 +21,12 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/model_quality/maxsub.hh>
 #include <numeric/model_quality/rms.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <map>

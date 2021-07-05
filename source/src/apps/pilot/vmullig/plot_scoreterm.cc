@@ -15,7 +15,6 @@
 #include <devel/init.hh>
 
 // protocol headers
-#include <protocols/jd2/JobDistributor.hh>
 
 // core headers
 #include <core/pose/Pose.hh>
@@ -29,10 +28,8 @@
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
 
 // C++ headers

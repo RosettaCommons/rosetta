@@ -16,36 +16,26 @@
 
 // Project Headers
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
 
 #include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 #include <core/types.hh>
-#include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/moves/Mover.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <numeric/random/random.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

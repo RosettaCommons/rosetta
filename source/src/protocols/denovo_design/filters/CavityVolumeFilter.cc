@@ -28,11 +28,9 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>

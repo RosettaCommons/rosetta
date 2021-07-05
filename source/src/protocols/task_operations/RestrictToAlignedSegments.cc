@@ -22,7 +22,7 @@
 #include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/pack/task/TaskFactory.hh>
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 
 

@@ -18,51 +18,27 @@
 
 // Project Headers
 
-#include <ObjexxFCL/FArray1D.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
-#include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/types.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <map>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/scoring/Interface.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/simple_filters/HelixHelixAngleFilter.hh>
 #include <protocols/simple_filters/HelixHelixAngleFilterCreator.hh>
 #include <string>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#include <iostream>
 #include <fstream>
 
 #include <core/scoring/dssp/Dssp.hh>
-#include <numeric/conversions.hh>
-#include <basic/svd/SVD_Solver.hh>
 #include <numeric/PCA.hh>
+#include <numeric/xyz.functions.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue Residue
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace protocols {
 namespace simple_filters {

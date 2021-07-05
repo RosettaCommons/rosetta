@@ -15,13 +15,10 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/grid/CartGrid.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <basic/Tracer.hh>
 
 #include <utility>
-#include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/json_spirit/json_spirit_value.h>

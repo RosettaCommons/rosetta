@@ -18,20 +18,16 @@
 // mini headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileOptions.fwd.hh>
 #include <core/io/StructFileRep.hh>
 
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <iosfwd>
 
-#include <utility/vector1.fwd.hh>
 
 
 namespace core {

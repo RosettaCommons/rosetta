@@ -31,7 +31,6 @@
 // Unit headers
 #include <protocols/scoring/methods/pcsTs4/TensorsOptimizer.hh>
 #include <protocols/scoring/methods/pcsTs4/PseudocontactShiftData.hh>
-#include <protocols/scoring/methods/pcsTs4/PseudocontactShiftInput.hh> // REQUIRED FOR WINDOWS
 // Package headers
 
 // Project headers
@@ -46,7 +45,6 @@
 // Objexx headers
 
 // C++ headers
-#include <sstream>
 #include <iostream>
 
 namespace protocols {

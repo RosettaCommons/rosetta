@@ -29,13 +29,12 @@
 
 #include <numeric/HomogeneousTransform.hh>
 #include <numeric/constants.hh>
+#include <numeric/xyz.functions.hh>
 
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/izstream.hh>
 
-#include <functional>
 
 static basic::Tracer TR( "protocols.sewing.hashing.LigandBindingResPlacer" );
 

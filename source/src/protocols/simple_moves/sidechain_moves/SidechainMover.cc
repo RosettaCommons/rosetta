@@ -53,13 +53,16 @@
 #include <utility/fixedsizearray1.hh>
 
 #include <core/id/TorsionID_Range.hh>
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <protocols/rosetta_scripts/util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/dunbrack/RotamerLibrary.hh> // MANUAL IWYU
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTas...
 
 using namespace core;
 using namespace core::pose;

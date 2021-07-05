@@ -16,7 +16,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
@@ -30,8 +29,6 @@
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
-#include <basic/Tracer.fwd.hh>
-#include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
@@ -40,8 +37,6 @@
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 
 // C++ headers
-#include <cmath>
-#include <cstddef>
 #include <iostream>
 #include <limits>
 #include <string>

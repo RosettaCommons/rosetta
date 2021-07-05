@@ -26,7 +26,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 
 // Utility headers
@@ -38,7 +38,6 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/prof.hh>
 
 // Numeric headers
 

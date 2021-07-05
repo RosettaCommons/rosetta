@@ -16,27 +16,22 @@
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <utility/vector1.hh>
 
-#include <numeric/xyzVector.io.hh>
+#include <numeric/xyzVector.io.hh> // DO NOT AUTO-REMOVE
 
 
 namespace protocols {

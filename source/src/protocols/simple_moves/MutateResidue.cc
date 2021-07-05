@@ -22,23 +22,18 @@
 
 #include <core/conformation/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/select/residue_selector/util.hh>
 //parsing
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/conformation/Conformation.hh>
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

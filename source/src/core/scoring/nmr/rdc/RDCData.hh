@@ -19,9 +19,7 @@
 #include <core/scoring/nmr/rdc/RDCData.fwd.hh>
 
 // Package headers
-#include <core/scoring/nmr/NMRDataFactory.fwd.hh>
 #include <core/scoring/nmr/rdc/RDCMultiSet.fwd.hh>
-#include <core/scoring/nmr/rdc/RDCSingleSet.fwd.hh>
 #include <core/scoring/nmr/rdc/RDCTensor.fwd.hh>
 
 // Project headers
@@ -30,7 +28,6 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -38,7 +35,6 @@
 // C++ headers
 #include <iosfwd>
 #include <string>
-#include <algorithm>
 
 namespace core {
 namespace scoring {

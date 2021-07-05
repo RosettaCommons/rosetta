@@ -13,15 +13,9 @@
 #define INCLUDED_protocols_electron_density_ReportFSC_hh
 
 #include <protocols/moves/Mover.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/electron_density/ElectronDensity.hh>
+#include <core/scoring/electron_density/ElectronDensity.fwd.hh>
 
-#include <core/optimization/Multifunc.hh>
-#include <core/optimization/Minimizer.hh>
 
 namespace protocols {
 namespace electron_density {

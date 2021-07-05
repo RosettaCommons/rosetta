@@ -13,6 +13,7 @@
 
 //ResourceLocatorCreator #includes
 #include <basic/resource_manager/ResourceLocatorRegistrator.hh>
+#include <basic/resource_manager/ResourceLocatorFactory.hh>
 
 #include <basic/resource_manager/locator/DatabaseResourceLocatorCreator.hh>
 #include <basic/resource_manager/locator/FileSystemResourceLocatorCreator.hh>

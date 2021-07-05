@@ -15,8 +15,9 @@
 // Unit Headers
 #include <core/chemical/ResConnID.hh>
 
-// Utility headers
+#ifdef SERIALIZATION
 #include <utility/serialization/serialization.hh>
+#endif
 
 namespace core {
 namespace chemical {

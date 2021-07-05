@@ -24,26 +24,20 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh>
-#include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "apps.pilot.membrane.membrane_relax" );
 

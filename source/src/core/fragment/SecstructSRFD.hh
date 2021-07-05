@@ -19,7 +19,6 @@
 #include <core/fragment/SingleResidueFragData.hh>
 
 // Package Headers
-#include <core/fragment/Frame.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -28,11 +27,9 @@
 
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <iosfwd>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

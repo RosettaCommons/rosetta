@@ -27,7 +27,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #ifdef __clang__
-#include <core/pack/task/PackerTask.fwd.hh>
 #endif
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>

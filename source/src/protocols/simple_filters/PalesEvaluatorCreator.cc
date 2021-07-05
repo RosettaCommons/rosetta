@@ -15,7 +15,6 @@
 #include <protocols/simple_filters/PalesEvaluatorCreator.hh>
 
 // Package Headers
-#include <protocols/evaluation/EvaluatorCreator.hh>
 
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
@@ -23,15 +22,11 @@
 
 #include <protocols/simple_filters/PalesEvaluator.hh>
 
-#include <core/io/silent/silent.fwd.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
 
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -39,14 +34,12 @@
 //// C++ headers
 
 // due to template function
-#include <core/io/silent/SilentStruct.hh>
 
 
 // option key includes
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 
 //Auto Headers
 

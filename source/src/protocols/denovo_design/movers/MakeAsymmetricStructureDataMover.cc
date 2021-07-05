@@ -23,11 +23,9 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

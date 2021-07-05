@@ -26,13 +26,9 @@
 /// Project headers
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
-#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ElementSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/GlobalResidueTypeSet.hh>
-#include <core/chemical/residue_io.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -42,7 +38,6 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/Constraint.hh>
 
 //#include <protocols/match/SixDHasher.hh>
 //#include <protocols/match/MatchSet.hh>

@@ -15,16 +15,16 @@
 #define INCLUDED_protocols_hbnet_HBNet_hh
 
 #include <protocols/hbnet/HBNet.fwd.hh>
-#include <protocols/hbnet/NetworkState.hh>
+#include <protocols/hbnet/NetworkState.fwd.hh>
 
 // BASIC INCLUDES
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // UTILITY INCLUDES
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <utility/pointer/memory.hh>
 
 // CORE INCLUDES
@@ -32,30 +32,28 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/graph/HBondInfo.hh>
-#include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/HBondGraph.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 
 // PROTOCOL INCLUDES
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-//#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+
+#include <set> // MANUAL IWYU
+#include <core/scoring/hbonds/graph/HBondGraph.hh> // AUTO IWYU For HBondGraph, HBondEdge (ptr only), HBondNode
+
+#ifdef PYROSETTA
+#include <core/scoring/hbonds/HBondSet.hh>
+#endif
 
 namespace protocols {
 namespace hbnet {

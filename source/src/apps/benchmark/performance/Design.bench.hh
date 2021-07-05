@@ -22,8 +22,6 @@
 #include <apps/benchmark/performance/performance_benchmark.hh>
 
 //Auto Headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 class DesignBenchmark : public PerformanceBenchmark
 {

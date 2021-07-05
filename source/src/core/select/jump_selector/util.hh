@@ -25,8 +25,6 @@
 
 // C++ headers
 #include <string>
-#include <list>
-#include <algorithm>
 
 namespace core {
 namespace select {

@@ -18,26 +18,21 @@
 #include <mpi.h> //keep this first
 #endif
 
-#include <protocols/loophash/MPI_LoopHashRefine.hh>
 #include <protocols/loophash/MPI_LoopHashRefine_Emperor.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <ObjexxFCL/format.hh>
 /// ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
 
 #include <numeric/random/random.hh>
 
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
 
-#include <utility/vector1.hh>
 
 #endif
 

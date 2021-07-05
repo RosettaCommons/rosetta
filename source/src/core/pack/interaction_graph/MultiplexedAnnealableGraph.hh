@@ -18,7 +18,6 @@
 #include <core/types.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <core/pack/interaction_graph/MultiplexedAnnealableGraph.fwd.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>

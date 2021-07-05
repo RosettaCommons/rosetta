@@ -20,7 +20,6 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -28,10 +27,11 @@
 // Boost headers
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <string>
+
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For string_of
 
 static basic::Tracer TR( "protocols.matdes.SymDofMoverSampler" );
 

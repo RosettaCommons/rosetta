@@ -33,7 +33,6 @@
 
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/graph/Graph.fwd.hh>
 #include <utility/vector1.hh>
 

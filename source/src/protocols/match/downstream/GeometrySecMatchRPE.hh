@@ -27,12 +27,12 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 
 #include <core/chemical/ResidueType.fwd.hh>
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

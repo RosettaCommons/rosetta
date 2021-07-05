@@ -17,47 +17,29 @@
 #include <mpi.h>
 #endif
 
-#include <protocols/jd2/util.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/MPIMultiCommJobDistributor.hh>
-#include <protocols/jd2/JobInputter.hh>
-#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/JobInputter.fwd.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
-#include <basic/mpi/MessageListenerFactory.hh>
 
 #include <protocols/evaluation/util.hh>
 
-#include <core/pose/Pose.hh>
 
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 
 
 #include <basic/Tracer.hh>
 
-#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 
-#include <core/chemical/ChemicalManager.hh>
-#include <protocols/moves/Mover.hh>
-
-#include <core/import_pose/import_pose.hh>
-
-// Utility headers
+#ifdef USEMPI
+#include <protocols/jd2/MPIMultiCommJobDistributor.hh>
 #include <utility/mpi_util.hh>
-#include <utility/assert.hh>
-#include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
+#endif
 
 namespace protocols {
 namespace jd2 {

@@ -17,7 +17,6 @@
 #include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 
 // Package Headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/PolymerBondedEnergyContainer.hh>
@@ -28,10 +27,7 @@
 // Project Headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/rna/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <basic/Tracer.hh>
@@ -42,6 +38,8 @@
 
 //Numeric Headers
 #include <numeric/deriv/dihedral_deriv.hh>
+
+#include <core/scoring/rna/RNA_SuitePotential.hh> // AUTO IWYU For RNA_SuitePotential
 
 static basic::Tracer TR( "core.energy_methods.RNA_SuiteEnergy" );
 

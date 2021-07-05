@@ -15,7 +15,8 @@
 #ifndef INCLUDED_protocols_forge_remodel_RemodelData_hh
 #define INCLUDED_protocols_forge_remodel_RemodelData_hh
 
-#include <utility/vector1.hh>
+#include <protocols/forge/remodel/RemodelData.fwd.hh>
+
 
 #include <ObjexxFCL/FArray1D.fwd.hh>
 

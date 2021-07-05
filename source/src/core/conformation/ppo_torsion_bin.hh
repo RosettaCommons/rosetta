@@ -22,7 +22,6 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <iosfwd>
 #include <string>
 
 namespace core {

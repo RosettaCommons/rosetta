@@ -18,9 +18,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -30,6 +29,8 @@
 // Utility Headers
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh> // AUTO IWYU For PrecomputedPairEnergiesNode
 
 
 namespace core {

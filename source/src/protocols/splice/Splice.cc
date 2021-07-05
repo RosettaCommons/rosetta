@@ -27,7 +27,6 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/splice/Splice.hh>
 #include <protocols/splice/SpliceSegment.hh>
 #include <protocols/splice/TailSegmentMover.hh>
@@ -45,15 +44,8 @@
 #include <protocols/protein_interface_design/util.hh>
 #include <boost/algorithm/string/predicate.hpp>//for comparing string case insensitive
 #include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <protocols/minimization_packing/MinMover.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/Atom.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/id/SequenceMapping.hh>
-#include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 
 
@@ -62,10 +54,8 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/ref_pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/conformation/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -81,8 +71,6 @@
 #include <core/pose/selection.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <iostream>
 #include <sstream>
 #include <algorithm>
 #include <string>
@@ -90,16 +78,12 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueProperty.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
-#include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/task_operations/ThreadSequenceOperation.hh>
-#include <protocols/task_operations/SeqprofConsensusOperation.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <numeric/xyzVector.hh>
-#include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <protocols/protein_interface_design/movers/LoopLengthChange.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <numeric/random/random.hh>
@@ -107,26 +91,20 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <core/scoring/constraints/Constraints.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <numeric/constants.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <core/scoring/Energies.hh>
 #include <numeric/xyz.functions.hh>
 #include <protocols/simple_moves/CutChainMover.hh>
 //////////////////////////////////////////////////
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
-#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
-#include <core/pose/util.hh>
 ///////////////////////////////////////////////////
 #include <fstream>
 #include <ctime>
@@ -135,10 +113,14 @@
 #include <protocols/toolbox/superimpose.hh>
 #include <protocols/splice/SpliceManager.hh>
 #include <protocols/splice/util.hh>
-#include <core/pose/extra_pose_info_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <sstream> // MANUAL IWYU
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 

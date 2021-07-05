@@ -22,7 +22,6 @@
 #include <protocols/generalized_kinematic_closure/util.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -31,29 +30,19 @@
 #include <core/scoring/ScoringManager.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/id/AtomID.hh>
 
-#include <core/pose/util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/kinematic_closure/bridgeObjects.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-#include <numeric/conversions.hh>
 
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
-#include <core/scoring/bin_transitions/BinTransitionData.hh>
 
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 
 

@@ -13,67 +13,26 @@
 #include <protocols/cryst/wallpaper.hh>
 #include <protocols/cryst/util.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/io/CrystInfo.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <core/types.hh>
-#include <core/pack/task/ResfileReader.hh>
 
-#include <protocols/viewer/viewers.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/mpistream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
 // option includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <fstream>
-#include <iostream>
 #include <cmath>
 
-#include <sstream>
 #include <string>
-#include <queue>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/random/random.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/fourier/FFT.hh>
-#include <numeric/constants.hh>
 
 
 

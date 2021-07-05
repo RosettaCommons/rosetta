@@ -21,7 +21,6 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedAny.hh>
 
 // Project headers
-#include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 #include <core/chemical/rna/util.hh>
 
 namespace protocols {

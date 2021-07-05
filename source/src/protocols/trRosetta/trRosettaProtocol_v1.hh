@@ -17,22 +17,20 @@
 
 #include <protocols/trRosetta/trRosettaProtocol_v1.fwd.hh>
 #include <protocols/trRosetta/trRosettaProtocolBase.hh>
-#include <basic/tensorflow_manager/RosettaTensorflowProtocolBase.hh>
+#include <basic/tensorflow_manager/RosettaTensorflowProtocolBase.fwd.hh>
 #include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 // Basic headers
 #ifdef USE_TENSORFLOW
+#include <protocols/trRosetta/trRosettaOutputsBase.fwd.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.fwd.hh>
 #endif //USE_TENSORFLOW
 
 // Core headers
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <utility>
 
 namespace protocols {
 namespace trRosetta {

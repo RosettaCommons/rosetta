@@ -16,18 +16,13 @@
 #include <iostream>
 #include <fstream>
 
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <iomanip>
 
-#include <map>
 #include <vector>
 
-#include <protocols/cluster/calibur/SimPDB.fwd.hh>
 #include <protocols/cluster/calibur/pdb_util.hh>
 
-#include <memory>
+
+#include <string.h> // AUTO IWYU For strtok
 
 namespace protocols {
 namespace cluster {

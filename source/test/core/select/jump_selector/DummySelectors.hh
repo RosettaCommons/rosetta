@@ -17,6 +17,8 @@
 // Package headers
 #include <core/select/jump_selector/JumpSelector.hh>
 
+#include <core/pose/Pose.hh>
+
 using namespace core::select::jump_selector;
 
 class OddJumpSelector : public JumpSelector {

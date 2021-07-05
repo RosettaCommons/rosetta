@@ -16,12 +16,13 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
-#include <iostream>
 #include <string>
 #include <tuple>
 
 #include <boost/algorithm/string/trim.hpp>                  // for trim
 #include <utility/vector1.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 namespace numeric {

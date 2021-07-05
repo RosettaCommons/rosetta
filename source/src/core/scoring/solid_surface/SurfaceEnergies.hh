@@ -21,7 +21,6 @@
 
 // Project Headers
 #include <core/scoring/Energies.hh>
-#include <core/conformation/find_neighbors.fwd.hh>
 
 // Numeric Headers
 //#include <numeric/geometry/BoundingBox.hh>

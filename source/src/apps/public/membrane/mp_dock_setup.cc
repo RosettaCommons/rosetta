@@ -26,6 +26,8 @@
 // Package headers
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
+
 static basic::Tracer TR( "apps.public.membrane.mp_dock_setup" );
 
 int

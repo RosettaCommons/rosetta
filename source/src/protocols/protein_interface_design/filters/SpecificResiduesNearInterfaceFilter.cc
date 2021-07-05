@@ -17,7 +17,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/scoring/Interface.hh>
 
 #include <basic/Tracer.hh>

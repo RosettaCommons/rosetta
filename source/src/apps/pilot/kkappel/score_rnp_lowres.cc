@@ -16,31 +16,17 @@
 //Package Headers
 //Project Headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <utility/vector1.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pose/rna/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 //Utility Headers
 #include <basic/options/option.hh>
@@ -48,25 +34,14 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
 //Numeric Headers
-#include <numeric/random/random.hh>
-#include <numeric/xyzMatrix.hh>
 //C++ Headers
-#include <iostream>
 #include <fstream>
 
 #include <devel/init.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMOLMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 // New options for this application

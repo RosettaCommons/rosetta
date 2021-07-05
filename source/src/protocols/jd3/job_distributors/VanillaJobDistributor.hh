@@ -31,9 +31,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.fwd.hh>
 
 // C++ headers
 #include <map>

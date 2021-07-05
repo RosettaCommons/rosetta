@@ -18,9 +18,6 @@
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <core/types.hh>
 #include <complex>
-#include <numeric/fourier/kiss_fft.hh>
-#include <numeric/fourier/FFT.hh>
-#include <utility/vector0.hh>
 
 namespace core {
 namespace scoring {

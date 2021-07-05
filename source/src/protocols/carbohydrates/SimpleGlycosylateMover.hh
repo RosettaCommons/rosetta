@@ -21,12 +21,12 @@
 
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

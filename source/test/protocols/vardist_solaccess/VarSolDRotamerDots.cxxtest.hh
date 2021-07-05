@@ -20,7 +20,6 @@
 #include <test/util/pose_funcs.hh>
 
 // Core headers
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/interaction_graph/RotamerDots.hh>
 
@@ -31,7 +30,6 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
-#include <cmath>
 
 
 static basic::Tracer TR("VarSolDRotamerDots.cxxtest");

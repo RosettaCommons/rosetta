@@ -33,7 +33,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>

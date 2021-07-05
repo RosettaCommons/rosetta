@@ -40,7 +40,6 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

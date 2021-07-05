@@ -19,11 +19,6 @@
 #include <core/conformation/Residue.hh>
 
 // File I/O
-#include <basic/database/open.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
 
 //Random
 #include <numeric/random/random.hh>
@@ -31,6 +26,10 @@
 
 // Other Headers
 #include <basic/Tracer.hh>
+
+#include <core/scoring/Ramachandran.hh> // AUTO IWYU For Ramachandran
+#include <core/scoring/ScoringManager.hh> // AUTO IWYU For ScoringManager
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

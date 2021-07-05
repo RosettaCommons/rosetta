@@ -18,12 +18,10 @@
 #include <core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.fwd.hh>
 
 // Package headers
-#include <core/pack/interaction_graph/SparseMatrixIndex.hh>
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.hh>
 #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
 
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -36,19 +34,15 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/HomogeneousTransform.hh>
 
 /// C++ headers
 #include <list>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 #include <utility/vector1.hh>

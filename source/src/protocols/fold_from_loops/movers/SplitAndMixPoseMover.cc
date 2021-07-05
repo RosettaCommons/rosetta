@@ -31,7 +31,6 @@
 #include <core/select/residue_selector/ResidueRanges.hh>
 
 #include <protocols/hybridization/util.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
 #include <protocols/fold_from_loops/movers/SplitAndMixPoseMover.hh>
@@ -39,10 +38,12 @@
 #include <utility/vector1.hh>
 
 // XSD XRW Includes
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/filters/Filter.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace protocols {
 namespace fold_from_loops {

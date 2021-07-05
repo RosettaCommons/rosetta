@@ -16,6 +16,7 @@
 // Package headers
 #include <cxxtest/TestSuite.h>
 #include <utility/vector0.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <vector>

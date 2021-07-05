@@ -24,6 +24,8 @@
 #include <utility/vector1.hh>
 #include <map>
 
+#include <map> // AUTO IWYU For map
+
 namespace protocols {
 namespace stepwise {
 namespace legacy {

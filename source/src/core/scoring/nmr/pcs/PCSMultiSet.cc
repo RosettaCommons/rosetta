@@ -17,17 +17,13 @@
 
 // Package headers
 #include <core/scoring/nmr/pcs/PCSSingleSet.hh>
-#include <core/scoring/nmr/pcs/PCSSingle.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
-#include <core/scoring/nmr/NMRDummySpinlabelEnsemble.hh>
-#include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/id/AtomID.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -39,16 +35,12 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/HomogeneousTransform.hh>
 #include <numeric/geometry/BoundingBox.hh>
 
 // C++ headers
-#include <cmath>
 #include <limits>
 #include <string>
 #include <iostream>
-#include <algorithm>
 #include <numeric>
 
 namespace core {

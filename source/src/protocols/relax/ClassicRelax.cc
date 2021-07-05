@@ -18,7 +18,6 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -26,7 +25,6 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -48,9 +46,8 @@
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.fwd.hh>
 #include <protocols/task_operations/LimitAromaChi2Operation.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/simple_moves/GunnCost.hh>
 #include <core/io/raw_data/ScoreMap.hh>
@@ -65,10 +62,7 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 #ifdef BOINC_GRAPHICS

@@ -17,9 +17,10 @@
 
 #include <protocols/task_operations/STMStoredTask.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
-#include <core/pack/task/PackerTask_.hh>
-#include <core/types.hh>
 #include <map>
+#include <string>
+
+#include <core/pack/task/PackerTask.fwd.hh> // AUTO IWYU For PackerTaskOP
 
 #ifdef    SERIALIZATION
 // Cereal headers

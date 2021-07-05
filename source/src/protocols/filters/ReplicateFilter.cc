@@ -14,11 +14,10 @@
 #include <protocols/filters/ReplicateFilter.hh>
 #include <protocols/filters/ReplicateFilterCreator.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>

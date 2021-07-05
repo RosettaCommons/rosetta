@@ -11,34 +11,18 @@
 /// @brief  check quality of fragments against input structure
 /// @author Oliver Lange
 
-#include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/NoOutputJobOutputter.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/SilentFileJobInputter.hh>
-
-#include <protocols/toolbox/DecoySetEvaluation.hh>
-#include <protocols/toolbox/DecoySetEvaluation.impl.hh>
-#include <protocols/toolbox/InteratomicVarianceMatrix.hh>
-#include <protocols/toolbox/superimpose.hh>
-#include <protocols/toolbox/Cluster.hh>
-#include <protocols/toolbox/Cluster.impl.hh>
-
-#include <protocols/loops/Loops.hh>
-
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 
 
-#include <core/id/AtomID.hh>
+
+
+
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -49,36 +33,29 @@
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
 
 // ObjexxFCL includes
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <vector>
 #include <ostream>
-#include <algorithm>
 #include <string>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D::IR
 
 
 static basic::Tracer tr( "main" );
 
 using namespace core;
-using namespace protocols;
 using namespace pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace protocols::toolbox;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 

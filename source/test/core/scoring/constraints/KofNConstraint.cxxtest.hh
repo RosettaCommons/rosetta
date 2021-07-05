@@ -14,11 +14,10 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
+#include <core/scoring/constraints/KofNConstraint.hh> // DO NOT AUTO-REMOVE
 // basic headers
-#include <basic/Tracer.hh>
 
 // unit headers
-#include <core/scoring/constraints/KofNConstraint.hh>
 
 #ifdef SERIALIZATION
 #include <core/id/AtomID.hh>

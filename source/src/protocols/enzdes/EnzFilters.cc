@@ -19,9 +19,8 @@
 
 // package headers
 #include <protocols/match/downstream/LigandConformerBuilder.hh> //for ResidueConformerFilter
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/enzdes/EnzdesMovers.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesSeqRecoveryCache.hh>
 #include <protocols/enzdes/enzdes_util.hh>
@@ -37,7 +36,6 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBPoseMap.hh> //for PDB-info-to-resid functionality
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
@@ -55,7 +53,7 @@
 #include <basic/MetricValue.hh>
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/util.hh>
@@ -70,7 +68,6 @@
 #include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/pose_metric_calculators/SurfaceCalculator.hh>
 
-#include <numeric/random/random.hh>
 
 
 //Objectxxxx header
@@ -82,16 +79,16 @@
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
 #include <utility/numbers.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core;
 using namespace core::scoring;

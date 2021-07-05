@@ -17,36 +17,24 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.hh>
 
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/ResidueSubGraphTypes.hh>
 
 // Project Headers
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/MMAtomType.hh>
 #include <core/pose/Pose.hh>
 // Platform Headers
-#include <utility/vector1.hh>
-#include <basic/Tracer.hh>
 
 // C++ Headers
 #include <string>
-#include <ostream>
 
-#include <core/import_pose/import_pose.hh>
 #include <core/chemical/Atom.hh>
-#include <core/chemical/Bond.hh>
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/filtered_graph.hpp>
-#include <core/chemical/AtomTypeSet.fwd.hh>
 
 #include <test/util/pose_funcs.hh>
-#include <test/util/deriv_funcs.hh>
-#include <test/core/init_util.hh>
 
 
 class ResidueGraphTypesTests : public CxxTest::TestSuite {

@@ -23,11 +23,12 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/prof.hh>
 #include <utility/io/izstream.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
+
+#include <numeric/interpolation/spline/BicubicSpline.hh> // AUTO IWYU For BicubicSpline
 
 
 namespace core {

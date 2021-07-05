@@ -13,27 +13,19 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/ScoringManager.hh>
 
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <utility/pointer/owning_ptr.hh>
@@ -44,47 +36,34 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
 #include <protocols/simple_moves/RandomOmegaFlipMover.hh>
 #include <protocols/simple_moves/CyclizationMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 #include <protocols/ncbb/util.hh>
 
 // Filter headers
-#include <basic/MetricValue.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
-#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
 #include <devel/init.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 
 // C++ headers
 #include <string>
 #include <sstream>
 
 // DEBUG DEBUG
-#include <protocols/moves/PyMOLMover.hh>
 
 
 // Namespaces

@@ -21,8 +21,6 @@
 #include <utility/assert.hh> //MPI_ONLY macro
 
 #include <protocols/wum/MPI_WorkUnitManager.hh>
-#include <protocols/wum/SilentStructStore.hh>
-#include <core/io/silent/SilentStruct.hh>
 
 #include <basic/Tracer.hh>
 
@@ -30,11 +28,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 /// ObjexxFCL headers
-#include <numeric/random/random.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <utility/vector1.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

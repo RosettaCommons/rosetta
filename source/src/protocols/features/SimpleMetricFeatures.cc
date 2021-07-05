@@ -25,25 +25,19 @@
 #include <core/simple_metrics/util.hh>
 
 // Project Headers
-#include <core/pose/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 
 // Basic Headers
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
@@ -58,11 +52,8 @@
 // C++ Headers
 #include <string>
 #include <map>
-#include <list>
 #include <sstream>
 
-#include <utility/vector0.hh>
-#include <utility/string_util.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

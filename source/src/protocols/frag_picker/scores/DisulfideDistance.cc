@@ -25,13 +25,12 @@
 #include <core/io/raw_data/DisulfideFile.hh>
 
 // utils
-#include <ObjexxFCL/FArray1D.hh>
 #include <basic/prof.hh>
-
 
 #include <utility>
 #include <utility/vector1.hh>
 
+#include <cmath> // MANUAL IWYU
 
 namespace protocols {
 namespace frag_picker {

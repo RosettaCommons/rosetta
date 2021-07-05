@@ -10,8 +10,8 @@
 /// @brief A class to determine the neighborhood of a set of residues.
 /// @author Andrea Bazzoli (bazzoli@ku.edu)
 
-#ifndef Incl_prot_neig_Neighborhood_hh
-#define Incl_prot_neig_Neighborhood_hh
+#ifndef INCLUDED_prot_neig_Neighborhood_hh
+#define INCLUDED_prot_neig_Neighborhood_hh
 
 #include <utility/VirtualBase.hh>
 #include <core/pose/Pose.fwd.hh>

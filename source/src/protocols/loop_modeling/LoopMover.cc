@@ -14,7 +14,6 @@
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/util/kinematics_util.hh>
 
 // Protocol headers
@@ -29,10 +28,8 @@
 #include <utility/vector1.hh>
 
 // RosettaScripts headers
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 // }}}1

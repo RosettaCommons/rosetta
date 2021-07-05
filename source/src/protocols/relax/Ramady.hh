@@ -18,7 +18,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

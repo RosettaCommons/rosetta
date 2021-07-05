@@ -19,28 +19,22 @@
 
 
 
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 
 
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
-#include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/pose/rna/VDW_Grid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <string>
 #include <map>
-#include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.fwd.hh>
-#include <set>
-#include <iosfwd>
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 namespace protocols {

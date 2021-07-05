@@ -22,8 +22,6 @@
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
@@ -34,8 +32,6 @@
 #include <utility/cxx_versioning_macros.hh>
 
 // External Headers
-#include <boost/function.hpp>
-#include <boost/bind/bind.hpp>
 
 // C++ headers
 #include <string>

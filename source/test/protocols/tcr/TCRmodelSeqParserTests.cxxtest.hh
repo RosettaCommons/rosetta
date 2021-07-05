@@ -12,15 +12,14 @@
 /// @author Ragul Gowthaman
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 // Protocol Headers
 #include <protocols/antibody/grafting/util.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
-#include <protocols/tcr/TCRmodel.hh>
 #include <protocols/tcr/util.hh>
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 
 static basic::Tracer TR("protocols.tcr.TCRmodelSeqParserTests");

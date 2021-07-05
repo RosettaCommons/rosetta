@@ -20,12 +20,9 @@
 
 // utility headers
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/util.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cstdlib>
 
 namespace core {
 namespace membrane {

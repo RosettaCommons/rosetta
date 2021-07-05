@@ -31,22 +31,21 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 // Package Headers
-#include <core/kinematics/Edge.hh>
 
 #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
+
+#include <core/kinematics/Stub.hh> // AUTO IWYU For Stub
+
 //namespaces
 using namespace core;
 using namespace core::conformation;

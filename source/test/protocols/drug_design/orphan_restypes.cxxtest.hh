@@ -16,37 +16,27 @@
 #include <test/core/init_util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/residue_io.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/optimization/MinimizerOptions.hh> // Needed for MinMover copy constructor
 
-#include <core/types.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
-#include <devel/init.hh>
 
-#include <utility/options/FileVectorOption.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #
 #include <basic/Tracer.hh>
 

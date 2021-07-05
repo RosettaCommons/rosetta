@@ -18,14 +18,12 @@
 #include <core/select/residue_selector/NotResidueSelector.fwd.hh>
 
 // Package headers
-#include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

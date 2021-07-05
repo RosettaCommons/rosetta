@@ -12,10 +12,8 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 // Unit Headers
-#include <core/scoring/elec/FA_ElecEnergy.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
@@ -23,6 +21,8 @@
 // Option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+
+#include <core/scoring/elec/CPRepMapType.fwd.hh> // AUTO IWYU For CPRepMapTypeOP, CPRepMapType
 
 // C++ headers
 

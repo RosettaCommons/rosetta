@@ -20,18 +20,17 @@
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/types.hh>
 
 // Unit headers
 
 // Package headers
 
-#include <test/UTracer.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <protocols/scoring/Interface.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Error, Warning
 
 
 using basic::Error;

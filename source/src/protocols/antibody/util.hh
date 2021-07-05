@@ -25,10 +25,10 @@
 
 //Protocol Headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/AntibodyNumberingParser.hh>
+#include <protocols/antibody/AntibodyNumberingParser.fwd.hh>
 
 //Utility Headers
 #include <utility/vector1.hh>

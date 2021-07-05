@@ -15,10 +15,7 @@
 #include <protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.hh>
 
 // Package Headers
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/AtomInResidueAtomInResiduePairFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

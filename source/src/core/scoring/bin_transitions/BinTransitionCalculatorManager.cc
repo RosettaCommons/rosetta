@@ -17,7 +17,6 @@
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
 
 // Project header
-#include <core/types.hh>
 
 // Utility headers
 #include <utility/thread/threadsafe_creation.hh>

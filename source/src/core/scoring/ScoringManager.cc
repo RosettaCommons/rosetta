@@ -22,7 +22,6 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/unfolded_state.OptionKeys.gen.hh>
-#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 
 #include <core/scoring/OneDDistPotential.hh>
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
@@ -61,7 +60,6 @@
 #include <core/scoring/rna/RNP_LowResPotential.hh>
 #include <core/scoring/rna/RNP_LowResPairDistPotential.hh>
 #include <core/scoring/rna/RNP_LowResStackData.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/rna/RNA_SuitePotential.hh>
 #include <core/scoring/rna/TNA_SuitePotential.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
@@ -103,7 +101,6 @@
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/scoring/interface_/DDPlookup.hh>
 
-#include <core/scoring/types.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -119,7 +116,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>

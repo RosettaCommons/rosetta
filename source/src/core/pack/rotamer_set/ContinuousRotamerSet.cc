@@ -15,7 +15,6 @@
 #include <core/pack/rotamer_set/ContinuousRotamerSet.hh>
 
 // Package Headers
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -34,6 +33,9 @@
 
 //Basic headers
 #include <basic/Tracer.hh>
+
+#include <utility/fixedsizearray1.hh> // MANUAL IWYU
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("core.pack.rotamer_set.ContinuousRotamerSet");
 

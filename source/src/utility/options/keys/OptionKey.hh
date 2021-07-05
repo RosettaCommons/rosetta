@@ -25,8 +25,6 @@
 // Project headers
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/SmallKeyVector.fwd.hh>
-#include <utility/keys/VariantKey.hh>
-
 
 #ifdef    SERIALIZATION
 // Cereal headers

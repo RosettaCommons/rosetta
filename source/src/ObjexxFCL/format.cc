@@ -19,7 +19,6 @@
 
 // C++ Headers
 #include <cmath>
-#include <istream>
 
 
 namespace ObjexxFCL {

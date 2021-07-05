@@ -23,8 +23,6 @@
 //parsing
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -32,7 +30,6 @@
 #include <core/select/util.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

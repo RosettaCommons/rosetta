@@ -18,9 +18,7 @@
 
 
 #include <numeric/random/random_permutation.hh>
-#include <utility/exit.hh>
 #include <utility/file/FileName.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <devel/init.hh>
@@ -35,12 +33,10 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
-#include <protocols/moves/Mover.hh>
 
 
 #include <fstream>
 #include <set>
-#include <sstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -58,7 +54,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

@@ -19,23 +19,22 @@
 #include <protocols/moves/Mover.hh>
 
 //Project headers
-#include <protocols/sewing/data_storage/SmartAssembly.hh>
-#include <protocols/sewing/data_storage/HashedSmartAssembly.hh>
-#include <protocols/sewing/hashing/BasisMapGenerator.hh>
-#include <protocols/sewing/hashing/EdgeMapGenerator.hh>
-#include <protocols/sewing/scoring/AssemblyScorer.hh>
-#include <protocols/sewing/requirements/AssemblyRequirement.hh>
-#include <protocols/sewing/hashing/ModelFileReader.hh>
+#include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
+#include <protocols/sewing/hashing/BasisMapGenerator.fwd.hh>
+#include <protocols/sewing/hashing/EdgeMapGenerator.fwd.hh>
+#include <protocols/sewing/scoring/AssemblyScorer.fwd.hh>
+#include <protocols/sewing/requirements/AssemblyRequirement.fwd.hh>
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <numeric/random/random.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <protocols/sewing/hashing/hasher_data.hh> // AUTO IWYU For SegmentVectorCOP
+
 namespace protocols {
 namespace sewing {
 namespace movers {

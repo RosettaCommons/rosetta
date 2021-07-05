@@ -23,18 +23,18 @@
 #include <devel/inv_kin_lig_loop_design/std_extra.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
 #include <numeric/random/random.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 
 
 namespace devel {

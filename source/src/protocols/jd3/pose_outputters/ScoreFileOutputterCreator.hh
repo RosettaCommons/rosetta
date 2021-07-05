@@ -19,7 +19,6 @@
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputterCreator.hh>
 
 // utility headers
-#include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

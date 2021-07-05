@@ -18,7 +18,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/modeler/packer/SideChainCopier.fwd.hh>
-#include <protocols/stepwise/modeler/util.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace stepwise {

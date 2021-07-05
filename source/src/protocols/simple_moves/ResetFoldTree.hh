@@ -16,7 +16,6 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // C++ Headers
 namespace protocols {

@@ -14,12 +14,9 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_SSHashedFragmentStore_hh
 #define INCLUDED_protocols_indexed_structure_store_SSHashedFragmentStore_hh
 
-#include <utility/VirtualBase.hh>
 #include <protocols/indexed_structure_store/FragmentStore.fwd.hh>
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
-#include <utility/vector1.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 #include <numeric/types.hh>
 #include <map>

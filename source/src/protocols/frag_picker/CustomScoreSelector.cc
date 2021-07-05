@@ -13,7 +13,6 @@
 
 #include <protocols/frag_picker/CustomScoreSelector.hh>
 
-#include <protocols/frag_picker/FragmentSelectingRule.hh>
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.hh>

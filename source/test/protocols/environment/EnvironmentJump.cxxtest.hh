@@ -11,23 +11,18 @@
 #include <cxxtest/TestSuite.h>
 
 // Package headers
-#include <core/environment/DofPassport.hh>
 
 #include <protocols/environment/claims/EnvClaim.fwd.hh>
-#include <protocols/environment/claims/TorsionClaim.hh>
 #include <protocols/environment/claims/JumpClaim.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
 
-#include <protocols/environment/ProtectedConformation.hh>
-#include <protocols/environment/EnvExcn.hh>
+#include <protocols/environment/EnvExcn.hh> // DO NOT AUTO-REMOVE (not needed for header only, but needed for full compile)
 #include <protocols/environment/Environment.hh>
-#include <protocols/environment/EnvClaimBroker.hh>
 
 #include <test/protocols/environment/TestClientMover.hh>
 
 //Other headers
-#include <core/conformation/Conformation.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <core/select/residue_selector/ChainSelector.hh>
@@ -49,7 +44,6 @@
 #include <utility/tag/Tag.hh>
 
 //C++ headers
-#include <iostream>
 #include <functional>
 
 static basic::Tracer TR("protocols.environment.EnvironmentJump.cxxtest");

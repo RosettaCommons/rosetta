@@ -19,7 +19,6 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
-#include <protocols/moves/Mover.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -37,7 +36,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.jd2.FileSystemJobDistributor" );

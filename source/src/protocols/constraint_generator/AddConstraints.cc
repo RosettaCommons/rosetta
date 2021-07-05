@@ -24,10 +24,8 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 // XSD XRW Includes

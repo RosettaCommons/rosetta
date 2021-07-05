@@ -15,7 +15,6 @@
 #include <core/pose/Pose.hh>
 
 #include <utility>
-#include <utility/vector1.hh>
 #include <basic/MetricValue.hh>
 
 

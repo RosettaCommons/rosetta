@@ -21,12 +21,11 @@
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/kinematics/FoldTree.hh>
 
 // Utility header
 #include <utility/vector1.hh>

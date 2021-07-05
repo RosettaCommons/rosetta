@@ -25,11 +25,8 @@
 #include <core/scoring/epr_deer/metrics/DEERDistanceBounds.fwd.hh>
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <string>
 #include <map>
 
 namespace core {

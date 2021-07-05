@@ -26,10 +26,11 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.fwd.hh>
 
-#include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/xyzVector.hh>
 
 #include <list>
+
+#include <numeric/interpolation/spline/Interpolator.hh> // AUTO IWYU For InterpolatorCOP
 
 #ifdef WIN32
 #include <protocols/qsar/qsarMap.hh>

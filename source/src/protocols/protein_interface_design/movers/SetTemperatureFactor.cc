@@ -27,11 +27,8 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

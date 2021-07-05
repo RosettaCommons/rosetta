@@ -54,7 +54,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
@@ -74,7 +73,6 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
 

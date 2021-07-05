@@ -24,8 +24,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 /// Project headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -33,13 +31,11 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/filters/BasicFilters.hh>
 #include <protocols/simple_filters/ResidueCountFilter.hh>
 #include <protocols/score_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // C++ headers
-#include <iostream>
 
 static basic::Tracer TR("protocols.monte_carlo.GenericSimulatedAnnealer.cxxtest");
 

@@ -34,31 +34,32 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
-#include <basic/random/init_random_generator.hh>
 #include <fstream>
 
 // Just for resample_full_model checkpointing -- gross, maybe should refactor later
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <fstream>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+
 #ifdef MULTI_THREADED
+#include <basic/random/init_random_generator.hh>
 #include <basic/options/keys/jd3.OptionKeys.gen.hh>
 #include <CTPL/ctpl_stl.h>
 #include <thread>
 #include <utility/pointer/memory.hh>
+#include <utility/stream_util.hh>
+#include <core/id/AtomID.hh>
 #include <core/init/init.hh>
 
 using boolOP = utility::pointer::shared_ptr< bool >;
@@ -278,7 +279,6 @@ StepWiseMasterMover::initialize( core::scoring::ScoreFunctionCOP scorefxn,
 void
 StepWiseMasterMover::initialize(){
 
-	using namespace protocols::stepwise::modeler::rna;
 	runtime_assert( scorefxn_ != nullptr );
 	runtime_assert( options_  != nullptr );
 
@@ -1149,7 +1149,6 @@ StepWiseMasterMover::set_options( protocols::stepwise::monte_carlo::options::Ste
 modeler::StepWiseModelerOP
 setup_unified_stepwise_modeler( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP mc_options, core::scoring::ScoreFunctionCOP scorefxn ){
 	using namespace modeler;
-	using namespace modeler::rna;
 	using namespace modeler::protein;
 	using namespace modeler::precomputed;
 

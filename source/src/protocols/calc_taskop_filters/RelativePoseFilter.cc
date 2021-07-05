@@ -11,8 +11,7 @@
 #include <protocols/calc_taskop_filters/RelativePoseFilter.hh>
 #include <protocols/calc_taskop_filters/RelativePoseFilterCreator.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/pack_rotamers.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -30,20 +29,19 @@
 #include <core/pose/selection.hh>
 #include <utility/string_util.hh>
 #include <protocols/simple_moves/DumpPdb.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace calc_taskop_filters {

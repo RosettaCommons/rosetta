@@ -23,16 +23,16 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/FuncFactory.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
 
 // Boost headers
 

@@ -18,11 +18,9 @@
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <fstream>
-#include <utility/io/izstream.hh>
-#include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

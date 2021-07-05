@@ -18,18 +18,14 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
+#include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/init/init.hh>
 #include <core/import_pose/import_pose.hh>
@@ -38,26 +34,7 @@
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
-#include <core/io/rna/RNA_DataReader.hh>
-#include <core/pose/PDBInfo.hh>
 
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/EtableEnergyCreator.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/etable/BaseEtableEnergy.hh>
-#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairGeneric.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/atom_pair_energy_inline.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
 // C++ headers
 #include <iostream>
@@ -65,14 +42,12 @@
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <core/pose/init_id_map.hh> // AUTO IWYU For initialize_atomid_map
 
 
 using namespace core;
@@ -99,13 +74,11 @@ get_rmsd()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
-	using namespace core::scoring::rna::data;
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
-	using namespace protocols::stepwise::modeler;
 
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );

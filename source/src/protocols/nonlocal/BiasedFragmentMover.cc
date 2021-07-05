@@ -23,7 +23,6 @@
 
 // Utility headers
 #include <numeric/prob_util.hh>
-#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -34,12 +33,10 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/moves/Mover.hh>
 
 // Package headers
 #include <protocols/nonlocal/Policy.hh>
 
-#include <core/fragment/FrameIteratorWorker_.hh>
 
 //Auto Headers
 #include <numeric/random/random.fwd.hh>

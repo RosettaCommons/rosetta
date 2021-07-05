@@ -22,12 +22,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
-#include <protocols/hybridization/util.hh>
-#include <protocols/hybridization/CartesianSampler.fwd.hh>
 
-#include <iosfwd>
 #include <utility/json_utilities.hh>
-#include <utility/io/ozstream.hh>
+#include <utility/io/ozstream.fwd.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

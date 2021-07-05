@@ -13,6 +13,9 @@
 
 #include <protocols/antibody/grafting/util.hh>
 
+#include <protocols/tcr/util.hh> // AUTO IWYU For minimize_tcr_model
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+
 #ifdef __ANTIBODY_GRAFTING__
 
 // Basic headers
@@ -20,7 +23,6 @@
 #include <basic/Tracer.hh>
 // Protocol includes
 #include <protocols/tcr/TCRloopRefine.fwd.hh>
-#include <protocols/tcr/TCRseqInfo.fwd.hh>
 #include <protocols/tcr/TCRloopRefine.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
 #include <protocols/tcr/modeling_util.hh>

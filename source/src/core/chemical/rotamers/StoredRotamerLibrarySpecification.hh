@@ -19,7 +19,6 @@
 #include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 
 // Package headers
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/types.hh>
 
 // Basic headers
@@ -30,6 +29,8 @@
 // C++ headers
 #include <iosfwd>
 #include <map>
+
+#include <numeric/xyzVector.hh> // DO NOT AUTO-REMOVE
 
 #ifdef    SERIALIZATION
 // Cereal headers

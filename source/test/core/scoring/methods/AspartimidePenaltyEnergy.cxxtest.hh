@@ -16,43 +16,27 @@
 
 // Unit headers
 
-#include <platform/types.hh>
 
 // Package Headers
-#include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/annotated_sequence.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
-#include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
-#include <core/energy_methods/AspartimidePenaltyEnergy.hh>
 
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
-#include <map>
 
-#include <utility>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <core/scoring/Energies.hh> // AUTO IWYU For Energies
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 static basic::Tracer TR("core.scoring.methods.AspartimidePenaltyEnergy.cxxtest");

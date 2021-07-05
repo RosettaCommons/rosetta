@@ -15,11 +15,10 @@
 #endif
 
 //core library
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 
@@ -28,36 +27,29 @@
 #include <core/kinematics/MoveMap.hh>
 
 //protocols library (Movers)
-#include <protocols/minimization_packing/MinPackMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/MinPackMoverCreator.hh>
 #include <protocols/minimization_packing/PackRotamersMoverCreator.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/MinMoverCreator.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
-#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 #include <protocols/parser/ScoreFunctionLoader.hh>
 #include <protocols/parser/TaskOperationLoader.hh>
 
-#include <protocols/jd3/Job.hh>
+#include <protocols/jd3/Job.fwd.hh>
 //#include <protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd3/JobDistributor.hh>
 #include <protocols/jd3/JobDistributorFactory.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.fwd.hh>
 
 #include <devel/init.hh>
 
 // Basic headers
-#include <basic/datacache/ConstDataMap.hh>
 #include <basic/datacache/DataMap.hh>
 
 // Utility headers
@@ -69,8 +61,8 @@
 
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 //local options
 namespace basic { namespace options { namespace OptionKeys {

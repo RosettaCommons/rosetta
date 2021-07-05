@@ -20,6 +20,8 @@
 #include <protocols/stepwise/sampler/copy_dofs/ResidueListStepWiseSampler.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace stepwise {
 namespace sampler {

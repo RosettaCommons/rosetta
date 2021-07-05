@@ -18,20 +18,17 @@
 
 //package headers
 #include <protocols/jd3/pose_outputters/mmTFPoseOutputSpecification.hh>
-#include <protocols/jd3/JobOutputIndex.hh>
+#include <protocols/jd3/JobOutputIndex.fwd.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
 #include <protocols/jd3/job_results/PoseJobResult.hh>
 
 //project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <core/io/mmtf/mmtf_writer.hh>
 
 // ObjexxFCL
-#include <ObjexxFCL/string.functions.hh>
 
 // basic headers
 #include <basic/options/option.hh>
@@ -39,8 +36,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.hh>

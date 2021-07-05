@@ -40,7 +40,6 @@
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 
 /// Numeric headers
-#include <numeric/numeric.functions.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 
@@ -49,7 +48,6 @@
 
 /// C++ Headers
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

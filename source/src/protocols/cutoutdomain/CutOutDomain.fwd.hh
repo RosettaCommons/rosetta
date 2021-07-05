@@ -20,8 +20,8 @@ namespace cutoutdomain {
 
 //Forwards and OP typedefs
 class CutOutDomain;
-typedef utility::pointer::owning_ptr< CutChainMover > CutOutDomainOP;
-typedef utility::pointer::owning_ptr< CutChainMover const > CutOutDomainCOP;
+typedef utility::pointer::shared_ptr< CutOutDomain > CutOutDomainOP;
+typedef utility::pointer::shared_ptr< CutOutDomain const > CutOutDomainCOP;
 
 }//CutOutDomain
 }//protocols

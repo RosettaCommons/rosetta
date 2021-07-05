@@ -13,7 +13,7 @@
 #define INCLUDED_protocols_kinematic_closure_perturbers_FragmentPerturber_HH
 
 // Core headers
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

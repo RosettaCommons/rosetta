@@ -26,16 +26,13 @@
 #include <core/pose/ref_pose.hh>
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
-#include <numeric/xyzVector.hh>
 #include <basic/datacache/DataMap.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/pack_rotamers.hh>
 //#include <core/pack/rotamer_trials.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilter.hh>
@@ -47,7 +44,6 @@
 
 //#include <protocols/docking/DockingProtocol.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/chemical/ResidueType.hh>
 //#include <protocols/moves/ResidueMover.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
@@ -68,9 +64,6 @@
 #include <protocols/protein_interface_design/util.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/scoring/Interface.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -89,6 +82,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core::scoring;

@@ -14,7 +14,6 @@
 // Unit Headers
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

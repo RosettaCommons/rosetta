@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+#include <sstream> // DO NOT AUTO-REMOVE (needed for template instantiation.)
 
 namespace ObjexxFCL {
 

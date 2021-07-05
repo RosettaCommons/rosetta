@@ -17,10 +17,8 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
@@ -30,11 +28,9 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 
 // Protocols Headers
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

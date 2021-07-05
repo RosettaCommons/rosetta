@@ -21,9 +21,7 @@
 //#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
 
 // Rosetta Headers
-#include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Conformation.hh> // DJM: may go away
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ppo_torsion_bin.hh>
@@ -47,7 +45,6 @@
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
 // C++ headers
-#include <cstdio>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -56,6 +53,8 @@
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 #include <numeric/conversions.hh>
+
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
 
 //Auto Headers
 static basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicMover" );

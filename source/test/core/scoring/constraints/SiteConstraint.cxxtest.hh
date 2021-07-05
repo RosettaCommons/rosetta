@@ -15,7 +15,6 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 #include <core/types.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -25,7 +24,10 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For centroid_pose_from_pdb
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <iostream> // AUTO IWYU For ostream, cout
 
 #ifdef SERIALIZATION
 // Cereal headers

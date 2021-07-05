@@ -19,10 +19,9 @@
 
 
 // ObjexxFCL Headers
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/RmsData.hh>
 
-#include <utility/vector1.hh>
+
+#include <ObjexxFCL/FArray1A.fwd.hh> // AUTO IWYU For FArray1A_double
 
 namespace numeric {
 namespace model_quality {

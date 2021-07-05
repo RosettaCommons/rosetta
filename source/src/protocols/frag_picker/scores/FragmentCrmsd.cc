@@ -14,7 +14,6 @@
 #include <protocols/frag_picker/scores/FragmentCrmsd.hh>
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallResidue.hh>
-#include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #ifdef WIN32
@@ -42,9 +41,9 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/pose/Pose.hh>
-#include <utility/io/izstream.hh>
-#include <iostream>
 #include <string>
+
+#include <fstream> // AUTO IWYU For operator<<, endl, basic_ostream, basic_istream
 
 
 namespace protocols {

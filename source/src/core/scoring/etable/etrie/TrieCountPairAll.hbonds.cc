@@ -17,8 +17,6 @@
 #include <core/scoring/etable/etrie/TrieCountPairAll.hh>
 
 // Package Headers
-#include <core/scoring/trie/trie_vs_trie.hh>
-#include <core/scoring/trie/trie_vs_path.hh>
 //#include <core/scoring/etable/etrie/CountPairData_1_1.hh>
 //#include <core/scoring/etable/etrie/CountPairData_1_2.hh>
 //#include <core/scoring/etable/etrie/CountPairData_1_3.hh>
@@ -32,10 +30,9 @@
 //#include <core/scoring/vdwaals/VDW_Energy.hh>
 
 // STL Headers
-#include <iostream>
 
 //#include <core/scoring/etable/etrie/EtableAtom.hh>
-#include <core/scoring/trie/RotamerTrie.hh>
+#include <core/scoring/trie/RotamerTrie.fwd.hh>
 #include <utility/vector1.hh>
 
 

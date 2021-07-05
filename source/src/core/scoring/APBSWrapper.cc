@@ -15,7 +15,6 @@
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -25,8 +24,9 @@
 #include <basic/Tracer.hh>
 #include <string>
 #include <algorithm>
-#include <numeric>
 #include <vector>
+
+#include <core/id/AtomID_Map.hh> // AUTO IWYU For AtomID_Map
 
 #ifdef LINK_APBS_LIB
 

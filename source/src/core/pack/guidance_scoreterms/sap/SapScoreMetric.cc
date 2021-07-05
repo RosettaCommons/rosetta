@@ -22,17 +22,14 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pack/guidance_scoreterms/sap/util.hh>
 
-#include <core/scoring/xml_util.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/tag/Tag.hh>
 

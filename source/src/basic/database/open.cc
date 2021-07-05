@@ -28,11 +28,9 @@
 
 // C++ headers
 #include <cstdlib>
-#include <iostream>
 
 #if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__) || defined(linux) || defined(__linux__) || defined(__linux)
 // POSIX specific headers
-#include <pwd.h>
 #endif
 
 //Auto Headers

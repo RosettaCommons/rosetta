@@ -24,11 +24,8 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // C++ headers
-#include <iostream>
 
 //#include <protocols/jobdist/Jobs.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>

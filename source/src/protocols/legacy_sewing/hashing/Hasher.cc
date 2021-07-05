@@ -19,13 +19,10 @@
 #include <basic/Tracer.hh>
 
 //Package headers
-#include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
 //Utility headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/HomogeneousTransform.hh>
 
 #include <utility/vector1.hh>
@@ -37,7 +34,6 @@
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 
 //External headers
-#include <boost/unordered_map.hpp>
 #include <boost/math/special_functions/round.hpp>
 
 namespace protocols {

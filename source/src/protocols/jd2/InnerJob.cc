@@ -18,14 +18,12 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 ///Utility headers
 #include <basic/Tracer.hh>
 
 ///C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 static basic::Tracer TR( "protocols.jd2.InnerJob" );
 

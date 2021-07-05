@@ -25,13 +25,11 @@
 
 // Core headers
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/select/residue_selector/util.hh> // for xml schema utility functions
 #include <core/pose/Pose.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/stream_util.hh>

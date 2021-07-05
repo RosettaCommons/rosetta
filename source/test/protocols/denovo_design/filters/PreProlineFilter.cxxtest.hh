@@ -20,7 +20,6 @@
 #include <protocols/denovo_design/filters/PreProlineFilter.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // Core headers

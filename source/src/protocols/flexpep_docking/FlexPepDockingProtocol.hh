@@ -17,22 +17,17 @@
 
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/relax/loop/LoopRelaxMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
 #include <protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh>
 #include <string>
 
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <basic/citation_manager/CitationCollection.fwd.hh>
+
+#include <protocols/flexpep_docking/FlexPepDockingFlags.hh> // AUTO IWYU For FlexPepDockingFlags
 
 namespace protocols {
 namespace flexpep_docking {

@@ -25,18 +25,14 @@
 #include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
-#include <list>
 #include <vector>
 #include <iostream>
 
@@ -46,7 +42,7 @@
 
 #include <core/scoring/dssp/PairingsList.hh>
 #include <utility/vector1.hh>
-#include <boost/functional/hash.hpp>
+#include <boost/functional/hash.hpp> // DO NOT AUTO-REMOVE
 
 static basic::Tracer tr( "core.scoring.dssp" );
 

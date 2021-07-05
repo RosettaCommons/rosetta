@@ -18,13 +18,11 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 //parsing
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // Utility headers

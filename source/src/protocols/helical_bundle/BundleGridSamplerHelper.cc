@@ -20,15 +20,11 @@
 // Project headers
 
 // Basic headers
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
 
 // Utility Headers
-#include <utility/assert.hh>
-#include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers

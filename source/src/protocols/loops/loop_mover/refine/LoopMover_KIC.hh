@@ -16,8 +16,7 @@
 #define INCLUDED_protocols_loops_loop_mover_refine_LoopMover_KIC_hh
 
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.fwd.hh>
-#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -27,6 +26,8 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <protocols/loops/loop_mover/LoopMover.hh> // AUTO IWYU For LoopMover
 
 
 // C++ Headers

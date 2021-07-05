@@ -16,13 +16,9 @@
 #include <protocols/ligand_docking/grid_functions.hh>
 
 #include <utility/graph/Graph.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/palette/NoDesignPackerPalette.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random_permutation.hh>
 #include <utility/vector1.hh>
@@ -30,7 +26,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <utility/vector0.hh>
 
 
 namespace protocols {

@@ -17,7 +17,6 @@
 #include <protocols/jd2/InnerJob.hh>
 
 ///Project headers
-#include <devel/domain_assembly/domain_assembly.hh>
 #include <devel/domain_assembly/domain_assembly_setup.hh>
 #include <devel/domain_assembly/DomainAssemblyReader.hh>
 
@@ -26,19 +25,18 @@
 ///Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
 #include <utility/vector1.hh>
 
 ///Basic headers
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 ///Option key headers
 #include <basic/options/keys/DomainAssembly.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 ///C++ headers
 #include <string>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
 
 
 // option key includes

@@ -17,7 +17,6 @@
 // Unit Headers
 #include <protocols/rosetta_scripts/PosePropertyReporterFactory.fwd.hh>
 #include <protocols/rosetta_scripts/PosePropertyReporter.fwd.hh>
-#include <protocols/rosetta_scripts/PosePropertyReporter.hh>
 #include <protocols/rosetta_scripts/PosePropertyReporterCreator.hh>
 
 // Project Headers
@@ -26,14 +25,12 @@
 // Utility Headers
 #include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 
 // c++ headers
 #include <map>
-#include <set>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
 
 namespace protocols {
 namespace rosetta_scripts {

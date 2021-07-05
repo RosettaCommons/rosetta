@@ -16,29 +16,25 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJob_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_MRSJob_HH
 
-#include <utility/VirtualBase.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJob.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/TagManager.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 
 #include <protocols/jd3/CompletedJobOutput.hh>
 #include <protocols/jd3/Job.hh>
-#include <protocols/jd3/JobResult.fwd.hh>
-#include <protocols/jd3/JobSummary.fwd.hh>
-#include <protocols/jd3/LarvalJob.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-#include <boost/container/flat_map.hpp>
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
+#include <protocols/moves/Mover.hh> // AUTO IWYU For Mover
+
 
 namespace protocols {
 namespace multistage_rosetta_scripts {

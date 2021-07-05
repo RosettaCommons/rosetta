@@ -16,7 +16,6 @@
 #include <protocols/simple_filters/ResidueDepthFilter.hh>
 #include <protocols/simple_filters/ResidueDepthFilterCreator.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -25,9 +24,8 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/CrystInfo.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/pose/PDBInfo.hh>
@@ -36,9 +34,6 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/pose/selection.hh>
 
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
 
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
@@ -50,10 +45,8 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/pointer/memory.hh>
 
@@ -65,6 +58,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A::IR, FArray1A, FArray1A<>::size_type
+#include <ObjexxFCL/FArray2A.hh> // AUTO IWYU For FArray2A::IR, FArray2A, FArray2A<>::size_type
 
 namespace protocols {
 namespace simple_filters {

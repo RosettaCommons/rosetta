@@ -16,10 +16,7 @@
 #include <protocols/features/HelixCapFeaturesCreator.hh>
 
 // Package Headers
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/HelixCapFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

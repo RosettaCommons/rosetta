@@ -20,8 +20,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/reference_pose/ReferencePoseSet.fwd.hh>
-#include <core/pose/reference_pose/ReferencePose.fwd.hh>
 #include <core/pose/reference_pose/ReferencePoseSet.hh>
 #include <core/pose/reference_pose/ReferencePose.hh>
 #include <utility/vector1.hh>

@@ -13,11 +13,9 @@
 #include <protocols/rbsegment_relax/FragInsertAndAlignMover.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/conformation/util.hh>
 #include <basic/Tracer.hh>
 
@@ -28,14 +26,11 @@
 #include <protocols/frags/RMSVallData.hh>
 
 // C++ Headers
-#include <map>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 
-#include <utility/VirtualBase.hh>
 
 
 #include <string>
@@ -46,6 +41,7 @@
 #include <protocols/rbsegment_relax/RBSegment.hh>
 #include <utility/vector1.hh>
 
+#include <numeric/xyzMatrix.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace rbsegment_relax {

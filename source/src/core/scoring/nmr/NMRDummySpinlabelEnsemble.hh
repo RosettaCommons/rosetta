@@ -22,8 +22,7 @@
 #include <core/scoring/nmr/NMRDummySpinlabelEnsemble.fwd.hh>
 
 // Package headers
-#include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.hh>
-#include <core/scoring/nmr/util.hh>
+#include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -32,24 +31,21 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/HomogeneousTransform.hh>
 
 // boost headers
 #include <boost/unordered/unordered_map.hpp>
 
 // C++ headers
-#include <iosfwd>
 #include <string>
-#include <map>
+
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For HT
 
 namespace core {
 namespace scoring {

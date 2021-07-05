@@ -13,11 +13,7 @@
 
 #include <protocols/metal_interface/FindClosestAtom.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/AtomType.hh>
-#include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 
 using basic::Warning;
 

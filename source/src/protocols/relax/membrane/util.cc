@@ -24,13 +24,10 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-#include <utility/io/util.hh>
 #include <utility/string_util.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "protocols.relax.membrane.util" );
 

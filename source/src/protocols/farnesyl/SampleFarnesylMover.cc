@@ -27,7 +27,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>

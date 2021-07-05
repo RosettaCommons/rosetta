@@ -26,7 +26,6 @@
 
 // Utility headers
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>

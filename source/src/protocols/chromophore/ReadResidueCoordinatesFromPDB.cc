@@ -26,6 +26,8 @@
 #include <core/io/AtomInformation.hh>
 #include <core/io/pdb/pdb_reader.hh>
 
+#include <core/io/StructFileRep.hh> // AUTO IWYU For StructFileRep
+
 
 static basic::Tracer TR( "protocols.chromophore.ReadResidueCoordinatesFromPDB" );
 

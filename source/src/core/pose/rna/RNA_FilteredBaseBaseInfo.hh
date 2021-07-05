@@ -21,8 +21,7 @@
 
 // Project headers
 #include <core/pose/rna/RNA_RawBaseBaseInfo.fwd.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-#include <core/pose/rna/RNA_DataInfo.hh>
+#include <core/pose/rna/RNA_DataInfo.fwd.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
@@ -31,11 +30,12 @@
 // ObjexxFCL
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++
-#include <map>
+
+#include <core/pose/rna/BasePair.hh> // AUTO IWYU For EnergyBasePairList
+#include <core/pose/rna/BaseStack.hh> // AUTO IWYU For EnergyBaseStackList
 
 #ifdef    SERIALIZATION
 // Cereal headers

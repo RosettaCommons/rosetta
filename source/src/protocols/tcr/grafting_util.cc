@@ -14,15 +14,14 @@
 #include <protocols/grafting/util.hh>
 #include <basic/Tracer.hh>
 #include <protocols/tcr/TCRmodel.hh>
-#include <protocols/tcr/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/antibody/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <core/pose/chains_util.hh>
-#include <protocols/grafting/util.hh>
+
+#include <protocols/tcr/TCRseqInfo.hh> // AUTO IWYU For TCRseqInfo::tcrposi, TCRseqInfo
+
 
 static basic::Tracer TR( "protocols.tcr.grafting_util" );
 

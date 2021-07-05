@@ -15,11 +15,8 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/AA.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -39,13 +36,11 @@
 // Utility Headers
 
 // c++ headers
-#include <iostream>
 #include <string>
-#include <utility>
-#include <vector>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using utility::vector1;

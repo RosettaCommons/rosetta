@@ -20,11 +20,8 @@
 #include <core/pose/copydofs/CopyDofs.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/pose/copydofs/CopyDofsInfo.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 
 namespace core {

@@ -29,7 +29,6 @@
 #include <core/scoring/nmer/NMerPSSMEnergy.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <basic/database/open.hh>
-#include <utility/file/file_sys_util.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 

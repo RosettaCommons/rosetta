@@ -30,12 +30,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
-#include <core/pose/annotated_sequence.hh>
 
 #include <protocols/relax/membrane/MPRangeRelaxMover.hh>
 
@@ -57,30 +55,22 @@
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragmentIO.hh>
 
 // Package Headers
-#include <apps/benchmark/performance/init_util.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/conformation/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <basic/Tracer.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
 #include <utility/minmax.hh>
 #include <numeric/random/random.hh>
 #include <protocols/jd2/util.hh>
@@ -88,9 +78,10 @@
 #include <core/scoring/rms_util.tmpl.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
+
+#include <core/conformation/ResidueFactory.hh> // AUTO IWYU For ResidueFactory
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 using namespace core;
 using namespace core::pose;

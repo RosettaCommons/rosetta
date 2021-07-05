@@ -30,12 +30,10 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <utility/io/izstream.fwd.hh>
 
 // std Headers
 #include <map>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

@@ -30,14 +30,12 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <iosfwd>
-#include <algorithm>
 
 namespace core {
 namespace scoring {

@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <core/scoring/nmr/NMRTensor.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -33,6 +32,8 @@
 // C++ headers
 #include <string>
 #include <iosfwd>
+
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For EULER_CONVENTION
 
 namespace core {
 namespace scoring {

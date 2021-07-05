@@ -29,7 +29,7 @@
 #include <basic/thread_manager/RosettaThreadPool.fwd.hh>
 #endif
 
-#include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.hh>
+#include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.fwd.hh>
 #include <basic/thread_manager/RosettaThreadAllocation.hh>
 
 // Utility header
@@ -40,7 +40,6 @@
 #include <platform/types.hh>
 
 // C++ header
-#include <functional>
 #ifdef MULTI_THREADED
 #include <map>
 #include <mutex>

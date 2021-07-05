@@ -20,9 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
-#include <utility/vector1.hh>
 
 #ifdef WIN32
 #include <utility/tag/Tag.hh>

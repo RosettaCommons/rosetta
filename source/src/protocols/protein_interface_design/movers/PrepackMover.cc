@@ -20,11 +20,11 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
@@ -36,15 +36,12 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/option.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/pose/Pose.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

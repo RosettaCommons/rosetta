@@ -17,7 +17,6 @@
 #include <utility/string_util.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/char.functions.hh>
 
 #include <iostream>
 

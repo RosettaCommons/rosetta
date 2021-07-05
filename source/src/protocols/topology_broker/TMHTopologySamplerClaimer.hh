@@ -23,12 +23,11 @@
 // Package Headers
 #include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
-#include <protocols/topology_broker/TopologyBroker.hh>
+#include <protocols/topology_broker/TopologyBroker.fwd.hh>
 
 // Project Headers
-#include <protocols/topology_broker/MembraneTopologyClaimer.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/scoring/MembraneTopology.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/scoring/MembraneTopology.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -37,12 +36,12 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
-#include <vector>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 namespace protocols {
 namespace topology_broker {

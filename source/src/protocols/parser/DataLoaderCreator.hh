@@ -16,7 +16,6 @@
 
 // Package headers
 #include <protocols/parser/DataLoader.fwd.hh>
-#include <core/types.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>

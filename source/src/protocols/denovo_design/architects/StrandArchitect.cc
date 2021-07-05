@@ -26,6 +26,9 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 // Boost headers
 
 static basic::Tracer TR( "protocols.denovo_design.architects.StrandArchitect" );

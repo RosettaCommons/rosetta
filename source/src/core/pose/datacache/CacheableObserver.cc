@@ -14,10 +14,8 @@
 
 // unit headers
 #include <core/pose/datacache/CacheableObserver.hh>
-#include <core/pose/datacache/ObserverCache.hh>
 
-#include <core/pose/Pose.hh>
-#include <utility/vector1.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 #ifdef    SERIALIZATION

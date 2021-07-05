@@ -20,7 +20,6 @@
 #include <core/simple_metrics/RealMetric.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/scoring/sasa/SasaCalc.fwd.hh>
 #include <core/scoring/sasa/SasaMethod.hh>
 
 // Utility headers

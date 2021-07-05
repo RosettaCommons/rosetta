@@ -21,7 +21,6 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.hh>
 
 // Project headers
-#include <core/id/TorsionID.hh>
 #include <core/chemical/rna/util.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>

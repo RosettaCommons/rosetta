@@ -27,7 +27,6 @@
 #include <basic/options/keys/peptide_deriver.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/NullMover.hh>

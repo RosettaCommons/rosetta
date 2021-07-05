@@ -16,13 +16,11 @@
 
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <list>
 
 #include <utility/vector1.hh>
 

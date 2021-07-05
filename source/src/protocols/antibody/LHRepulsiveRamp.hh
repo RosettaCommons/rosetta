@@ -20,7 +20,7 @@
 
 
 #include <protocols/antibody/LHRepulsiveRamp.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.hh>

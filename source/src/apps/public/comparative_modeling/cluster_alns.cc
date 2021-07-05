@@ -16,10 +16,8 @@
 #include <devel/init.hh>
 #include <protocols/comparative_modeling/AlignmentClustering.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <core/sequence/SequenceAlignment.hh>
 
 
 int main( int argc, char * argv [] ) {

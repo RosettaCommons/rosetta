@@ -18,7 +18,6 @@
 //unit headers
 #include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <protocols/jd2/JobOutputterObserver.hh>
 #ifdef WIN32
 #include <protocols/jd2/Job.hh> // WIN32 INCLUDE
 #endif
@@ -36,8 +35,6 @@
 //C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
-#include <set>
 
 namespace protocols {
 namespace jd2 {

@@ -16,13 +16,11 @@
 #include <protocols/simple_moves/ResetFullModelInfoMoverCreator.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 
 // XSD Includes

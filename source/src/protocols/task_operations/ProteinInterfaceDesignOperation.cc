@@ -23,7 +23,6 @@
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
@@ -37,9 +36,7 @@
 #include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
 // C++ Headers
-#include <set>
 
-#include <utility/vector0.hh>
 
 
 static basic::Tracer TR( "protocols.TaskOperations.ProteinInterfaceDesignOperation" );

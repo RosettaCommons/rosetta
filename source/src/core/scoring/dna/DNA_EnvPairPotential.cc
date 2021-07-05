@@ -14,23 +14,18 @@
 
 // Unit Headers
 #include <core/scoring/dna/DNA_EnvPairPotential.hh>
-#include <core/scoring/dna/base_geometry.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 
 // Package headers
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
 
 #include <basic/database/open.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
-#include <iostream>
 #include <fstream>
-#include <sstream>
 #include <cmath>
 #include <string>
 

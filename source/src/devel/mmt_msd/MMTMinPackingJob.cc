@@ -14,20 +14,17 @@
 // Unit headers
 #include <devel/mmt_msd/MMTMinPackingJob.hh>
 
-#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/MinimizationGraph.hh>
+#include <core/scoring/MinimizationGraph.fwd.hh>
 
 #include <core/pack/min_pack.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/scmin/AtomTreeCollection.hh>
-#include <core/pack/scmin/SCMinMinimizerMap.hh>
+#include <core/pack/scmin/AtomTreeCollection.fwd.hh>
+#include <core/pack/scmin/SCMinMinimizerMap.fwd.hh>
 #include <core/pack/scmin/SidechainStateAssignment.hh>
-#include <core/pack/task/PackerTask.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
 
 #include <utility/excn/Exceptions.hh>
 

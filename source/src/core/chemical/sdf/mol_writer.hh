@@ -24,6 +24,8 @@
 #include <string>
 #include <map>
 
+#include <numeric/xyzVector.hh> // DO NOT AUTO-REMOVE
+
 namespace core {
 namespace chemical {
 namespace sdf {

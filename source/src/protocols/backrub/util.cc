@@ -19,7 +19,6 @@
 
 
 // Core Headers
-#include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -30,11 +29,11 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <platform/types.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <fstream>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("protocols.backrub.util");
 

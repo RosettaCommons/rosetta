@@ -18,7 +18,6 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
-#include <utility/assert.hh>
 #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers

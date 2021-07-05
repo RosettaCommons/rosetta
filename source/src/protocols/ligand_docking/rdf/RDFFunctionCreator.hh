@@ -18,7 +18,7 @@
 #include <protocols/ligand_docking/rdf/RDFFunctionCreator.fwd.hh>
 
 // Package Headers
-#include <protocols/ligand_docking/rdf/RDFBase.hh>
+#include <protocols/ligand_docking/rdf/RDFBase.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>

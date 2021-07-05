@@ -21,8 +21,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>

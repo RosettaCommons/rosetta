@@ -21,10 +21,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 
-#include <numeric/random/random_xyz.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random.functions.hh>
-#include <numeric/constants.hh>
 
 #include <basic/Tracer.hh>
 

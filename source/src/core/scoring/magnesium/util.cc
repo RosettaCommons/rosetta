@@ -13,7 +13,6 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <core/chemical/AtomType.hh>
 #include <core/scoring/magnesium/util.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>

@@ -17,9 +17,7 @@
 
 
 // Package headers
-#include <core/optimization/types.hh>
 #include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/DOF_Node.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

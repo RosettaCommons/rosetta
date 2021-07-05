@@ -14,11 +14,9 @@
 
 
 #include <protocols/stepwise/sampler/copy_dofs/ResidueListStepWiseSampler.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <basic/Tracer.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.rigid_body.ResidueListStepWiseSampler" );
 

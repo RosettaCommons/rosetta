@@ -23,8 +23,6 @@
 #include <utility/exit.hh>
 
 
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/Fmath.hh>
 

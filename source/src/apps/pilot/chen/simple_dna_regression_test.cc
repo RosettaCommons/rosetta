@@ -17,7 +17,6 @@
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/dna/setup.hh>
-#include <core/scoring/dna/base_geometry.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 //#include <core/energy_methods/FA_ElecEnergy.hh>
@@ -30,7 +29,6 @@
 
 #include <core/types.hh>
 
-#include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -52,8 +50,6 @@
 
 #include <utility/vector1.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 
 #include <ObjexxFCL/format.hh>
@@ -63,9 +59,7 @@
 //#include <cstdlib>
 #include <iostream>
 #include <string>
-#include <set>
 #include <cstdlib>
-#include <sstream>
 
 //silly using/typedef
 
@@ -73,9 +67,9 @@
 #include <basic/Tracer.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
 #include <basic/options/keys/OptionKeys.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core;

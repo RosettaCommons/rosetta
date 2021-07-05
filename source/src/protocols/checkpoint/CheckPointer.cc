@@ -13,7 +13,6 @@
 // Project headers
 // This has to come before boinc_util.hh or we get this error on VC++
 // '_read' : is not a member of 'std::basic_istream<_Elem,_Traits>'
-#include <utility>
 #include <utility/io/izstream.hh>
 
 // must be here to avoid VC++ ambiguous symbol w/ ObjexxFCL::byte
@@ -52,7 +51,6 @@
 
 // ObjexxFCL Headers
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/options/option.hh>

@@ -27,18 +27,15 @@
 
 // Utility Headers
 #include <utility>
-#include <utility/vector1.hh>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // C++ headers
 #include <sstream>
-#include <ostream>
 #include <string>
 
 //Auto Headers
-#include <protocols/moves/Mover.fwd.hh>
 namespace protocols {
 namespace rotamer_recovery {
 

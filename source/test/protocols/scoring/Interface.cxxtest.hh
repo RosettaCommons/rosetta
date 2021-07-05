@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/types.hh>
 
 // Unit headers
 #include <protocols/scoring/Interface.hh>
@@ -33,7 +32,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
 
 using basic::Error;

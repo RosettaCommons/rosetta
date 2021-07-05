@@ -21,7 +21,7 @@
 #include <core/types.hh>
 
 // Numeric headers
-#include <numeric/interpolation/spline/SplineGenerator.hh>
+#include <numeric/interpolation/spline/SplineGenerator.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

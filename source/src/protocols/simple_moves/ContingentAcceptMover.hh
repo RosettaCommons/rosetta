@@ -17,7 +17,6 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // C++ Headers

@@ -14,6 +14,8 @@
 #ifndef INCLUDED_util_deriv_funcs_HH
 #define INCLUDED_util_deriv_funcs_HH
 
+#include <cxxtest/TestSuite.h>
+
 // Project headers
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
@@ -31,13 +33,14 @@
 #include <core/types.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // C++ headers
 #include <list>
+
+#include <core/optimization/DOF_Node.hh> // AUTO IWYU For DOF_Node, DOF_Node::AtomIDs, DOF_Node::TorsionID
 
 
 static basic::Tracer TR_deriv_funcs("util.deriv_funcs");

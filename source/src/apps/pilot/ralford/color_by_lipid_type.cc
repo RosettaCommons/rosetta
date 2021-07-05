@@ -21,34 +21,26 @@
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/types.hh>
-#include <core/pose/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
 
 // C++ Headers
-#include <ostream>
-#include <fstream>
 
 static basic::Tracer TR( "apps.pilot.ralford.ColorByLipidType" );
 

@@ -16,22 +16,18 @@
 #define INCLUDED_core_energy_methods_PointWaterEnergy_hh
 
 #include <core/energy_methods/PointWaterEnergy.fwd.hh>
-#include <core/scoring/PointWaterPotential.hh>
+#include <core/scoring/PointWaterPotential.fwd.hh>
 
 // Project headers
-#include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
-#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // C++ headers
 
-#include <cmath>
 
 namespace core {
 namespace energy_methods {

@@ -13,8 +13,7 @@
 
 
 #include <protocols/sewing/data_storage/LigandResidue.hh>
-#include <core/conformation/Atom.hh>
-#include <protocols/sewing/data_storage/LigandSegment.hh>
+#include <protocols/sewing/data_storage/LigandSegment.fwd.hh>
 namespace protocols {
 namespace sewing {
 namespace data_storage {

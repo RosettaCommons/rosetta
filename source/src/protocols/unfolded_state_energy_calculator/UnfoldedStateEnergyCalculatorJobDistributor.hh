@@ -22,12 +22,10 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 // Project headers
-#include <core/types.hh>
 
 #include <core/scoring/EnergyMap.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
 #include <map>

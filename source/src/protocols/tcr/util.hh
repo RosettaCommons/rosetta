@@ -16,16 +16,14 @@
 
 #include <protocols/antibody/grafting/util.hh>
 
+#include <core/sequence/ScoringScheme.fwd.hh> // AUTO IWYU For ScoringSchemeOP
+#include <list> // AUTO IWYU For list
+#include <set> // AUTO IWYU For set
+
 #ifdef __ANTIBODY_GRAFTING__
 
-#include <protocols/tcr/TCRmodel.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
-#include <protocols/tcr/TCRseqInfo.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/file/FileName.hh>
-#include <basic/database/open.hh>
-#include <core/sequence/MatrixScoringScheme.hh>
 
 namespace protocols {
 namespace tcr {

@@ -18,17 +18,12 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh> // needed for ParsedProtocolOP -> MoverOP conversion
 
 // Project headers
-#include <core/types.hh>
-#include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
-#include <basic/options/option.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

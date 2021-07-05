@@ -18,7 +18,6 @@
 // Package Headers
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FrameList.hh>
@@ -42,11 +41,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 
-#include <core/chemical/ResidueType.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
-#include <utility/file/FileName.hh>
 
 
 static basic::Tracer TR( "protocols.jd2.parser.FragmentReader" );

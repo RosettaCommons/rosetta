@@ -18,7 +18,6 @@
 #include <utility/VirtualBase.hh>
 
 // C++ Headers
-#include <string>
 
 namespace basic {
 namespace resource_manager {

@@ -24,7 +24,6 @@
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
-#include <utility/vector1.fwd.hh>
 
 #include <vector>
 

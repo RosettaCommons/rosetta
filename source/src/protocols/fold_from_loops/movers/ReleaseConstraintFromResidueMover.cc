@@ -27,10 +27,9 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Basic/Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <utility>
-#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

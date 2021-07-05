@@ -20,8 +20,9 @@
 
 #include <cstring>
 #include <vector>
+#include <string>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 
 namespace core {

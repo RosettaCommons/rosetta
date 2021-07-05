@@ -16,7 +16,6 @@
 
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 

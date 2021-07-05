@@ -18,10 +18,9 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/PoseInputStreamJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <protocols/jd2/JobsContainer.hh>
+#include <protocols/jd2/JobsContainer.fwd.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

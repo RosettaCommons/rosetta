@@ -27,7 +27,6 @@
 
 /// Utility headers
 #include <utility/LexicographicalIterator.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 /// C++ headers

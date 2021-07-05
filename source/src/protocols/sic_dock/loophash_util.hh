@@ -9,12 +9,8 @@
 #ifndef INCLUDED_protocols_sic_dock_loophash_util_hh
 #define INCLUDED_protocols_sic_dock_loophash_util_hh
 
-#include <core/types.hh>
-#include <core/kinematics/Stub.hh>
 #include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 #include <protocols/sic_dock/types.hh>
-#include <protocols/sic_dock/RigidScore.fwd.hh>
-#include <protocols/sic_dock/SICFast.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 

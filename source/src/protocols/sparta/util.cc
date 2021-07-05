@@ -14,7 +14,6 @@
 #include <protocols/sparta/util.hh>
 
 #include <string>
-#include <vector>
 #include <sstream>
 #include <iterator>
 #include <utility/exit.hh>

@@ -25,7 +25,6 @@
 
 #include <core/optimization/CartesianMinimizerMap.fwd.hh>
 #include <core/optimization/CartesianMultifunc.fwd.hh>
-#include <utility/vector1.hh>
 
 #include <boost/tuple/tuple.hpp>
 

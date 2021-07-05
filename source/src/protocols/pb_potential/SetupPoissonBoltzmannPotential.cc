@@ -16,29 +16,22 @@
 // basic
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotential.hh>
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotential.hh>
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>
 #include <protocols/simple_ddg/ddG.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/energy_methods/PoissonBoltzmannEnergy.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <basic/datacache/DataMap.hh>
 
 // command line options
-#include <basic/options/option.hh>
 #include <basic/options/keys/pb_potential.OptionKeys.gen.hh>
 
 #include <string>
@@ -46,7 +39,6 @@
 #include <cstdio> // for remove()
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace pb_potential {

@@ -12,11 +12,6 @@
 #endif
 
 #include <protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.fwd.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/pool_util.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.fwd.hh>
 
 
 // MPI only headers (wrapping these headers in an ifdef block will prevent my #inclusion-removal script from removing them)
@@ -40,16 +35,9 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #endif
 
-#include <core/io/silent/SilentStruct.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/types.hh>
 
-#include <utility/vector1.hh>
 
-#include <fstream>
 
 static basic::Tracer tr( "MPIHPool_ConvergenceCheck" );
 

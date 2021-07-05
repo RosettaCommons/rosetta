@@ -20,13 +20,10 @@
 // Project headers
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/ncbb/PeptideStapleMover.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

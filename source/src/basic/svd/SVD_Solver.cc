@@ -53,7 +53,6 @@
 #include <utility/exit.hh>        // for utility_exit_with_message
 #include <utility/vector1.hh>     // for vector1
 #include <utility/vectorL.hh>     // for vectorL
-#include <vector>                 // for __vector_base<>::value_type
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

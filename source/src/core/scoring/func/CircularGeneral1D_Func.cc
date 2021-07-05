@@ -15,7 +15,6 @@
 
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 

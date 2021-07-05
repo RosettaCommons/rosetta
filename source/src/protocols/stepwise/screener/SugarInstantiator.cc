@@ -16,7 +16,6 @@
 #include <protocols/stepwise/screener/SugarInstantiator.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarInstantiateMover.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarVirtualizeMover.hh>
-#include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/moves/CompositionMover.hh>

@@ -14,10 +14,6 @@
 #include <core/pack/interaction_graph/SymmMinimalistInteractionGraph.hh>
 
 /// Debugging headers
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -26,10 +22,8 @@
 #include <iostream>
 
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray1A.hh>
 
 //Auto Headers
-#include <core/scoring/EnergyGraph.hh>
 
 namespace core {
 namespace pack {

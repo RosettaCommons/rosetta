@@ -17,31 +17,22 @@
 
 //Core Headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/chemical/VariantType.hh>
 
 //Protocol Headers
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
 
 //Basic Headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

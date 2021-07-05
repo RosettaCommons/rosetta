@@ -14,12 +14,12 @@
 #ifndef INCLUDED_protocols_electron_density_DensitySymmInfo_hh
 #define INCLUDED_protocols_electron_density_DensitySymmInfo_hh
 
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/constants.hh>
-#include <numeric/xyzVector.io.hh>
 #include <core/types.hh>
-#include <core/scoring/electron_density/ElectronDensity.hh>
+#include <core/scoring/electron_density/ElectronDensity.fwd.hh>
+
+#include <utility/exit.hh> // AUTO IWYU For runtime_assert
+#include <ObjexxFCL/FArray3D.fwd.hh> // AUTO IWYU For FArray3D
 
 namespace protocols {
 namespace electron_density {

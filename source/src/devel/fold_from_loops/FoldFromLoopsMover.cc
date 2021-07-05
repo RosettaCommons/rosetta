@@ -12,14 +12,10 @@
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/fragment/FragSet.hh>
 #include <devel/fold_from_loops/FoldFromLoopsMover.hh>
 #include <devel/fold_from_loops/FoldFromLoops_functions.hh>
 
-#include <core/chemical/ResidueConnection.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 
@@ -32,7 +28,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 
 //protocols
@@ -49,7 +44,6 @@
 
 
 //constraints
-#include <core/scoring/func/Func.hh>
 
 //design headers
 
@@ -63,7 +57,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
-#include <utility/string_util.hh>
 
 // C++ headers
 #include <iostream>
@@ -74,7 +67,6 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/relax/ClassicRelax.hh>
-#include <utility/vector1.hh>
 
 
 using namespace core;

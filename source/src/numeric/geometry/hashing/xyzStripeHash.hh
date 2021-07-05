@@ -11,13 +11,14 @@
 #define INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 
 #include <numeric/geometry/hashing/xyzStripeHash.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzTransform.hh>
 #include <utility/VirtualBase.hh>
 
 #include <map>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For min, max
 
 namespace numeric {
 namespace geometry {

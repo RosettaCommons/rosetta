@@ -19,8 +19,6 @@
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/io/silent/SilentFileData.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
 

@@ -18,13 +18,11 @@
 #include <protocols/rotamer_recovery/RRComparer.hh>
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

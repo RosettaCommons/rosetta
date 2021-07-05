@@ -16,8 +16,6 @@
 
 
 #include <core/types.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <deque>
 
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>

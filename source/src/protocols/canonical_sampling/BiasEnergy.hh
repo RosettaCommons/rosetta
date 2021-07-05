@@ -23,23 +23,23 @@
 #include <protocols/canonical_sampling/BiasEnergy.fwd.hh>
 
 // Module Headers
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/jd2/JobOutputterObserver.hh>
 
 //for parse_my_tag
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/VirtualBase.hh>
 
 
 // Utility Headers
 #include <core/types.hh>
+
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh> // AUTO IWYU For ThermodynamicObserver
 
 namespace protocols {
 namespace canonical_sampling {

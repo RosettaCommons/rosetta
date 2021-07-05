@@ -38,8 +38,9 @@
 
 #include <vector>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <protocols/topology_broker/claims/DofClaim.hh> // AUTO IWYU For DofClaim
 
 
 static basic::Tracer tr( "protocols.topo_broker", basic::t_info );

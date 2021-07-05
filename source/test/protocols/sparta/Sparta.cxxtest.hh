@@ -18,13 +18,10 @@
 
 #include <utility/vector1.hh>
 #include <numeric>
-#include <ObjexxFCL/string.functions.hh>
 //Auto Headers
-#include <utility/vector0.hh>
 
 
 using namespace protocols::sparta;
-using namespace ObjexxFCL;
 
 class SpartaTest : public CxxTest::TestSuite {
 

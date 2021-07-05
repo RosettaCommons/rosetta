@@ -25,7 +25,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunctionFactory.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/parser/BluePrint.hh>
@@ -42,13 +42,10 @@
 
 #include <utility/tag/Tag.hh>
 // C++ headers
-#include <utility>
 
 // boost
 
 #include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

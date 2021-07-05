@@ -17,7 +17,6 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoreType.hh>
 
 #include <basic/Tracer.hh>
 

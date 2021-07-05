@@ -18,10 +18,7 @@
 #include <core/pose/chains_util.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
@@ -47,7 +44,6 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh> // needed?
 
 #include <sstream>
 

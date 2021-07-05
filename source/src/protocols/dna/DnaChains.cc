@@ -18,7 +18,6 @@
 
 #include <ObjexxFCL/format.hh> // I()
 
-#include <utility/vector1.hh>
 
 
 

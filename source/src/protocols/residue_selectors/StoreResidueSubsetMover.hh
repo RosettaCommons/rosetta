@@ -22,6 +22,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace residue_selectors {
 

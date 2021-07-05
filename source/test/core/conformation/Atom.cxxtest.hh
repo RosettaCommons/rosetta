@@ -22,7 +22,8 @@
 // Unit headers
 #include <core/conformation/Atom.hh>
 
-#include <test/UTracer.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Error, Tracer, Warning
 
 //Auto Headers
 

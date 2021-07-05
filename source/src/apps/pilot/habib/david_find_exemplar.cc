@@ -9,57 +9,23 @@
 
 /// @brief
 /// @author jk
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <ostream>
 #include <string>
 #include <sstream>
-#include <cmath>
-#include <map>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/Energies.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/after_opts.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <protocols/simple_moves/SuperimposeMover.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/Residue.hh>
-#include <utility/io/mpistream.hh>
-#include <core/kinematics/MoveMap.hh>
 
 //Protocol Headers
 #include <protocols/pockets/PocketGrid.hh>
@@ -69,13 +35,10 @@ using namespace core;
 using namespace basic::options;
 using namespace std;
 using namespace core::scoring;
-using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 using namespace conformation;
 using namespace core::pose::datacache;
 using namespace core::id;
-using namespace protocols::simple_moves;
-using namespace protocols::rigid;
 
 
 static basic::Tracer TR( "apps.pilot.david_pocket_compare.main" );

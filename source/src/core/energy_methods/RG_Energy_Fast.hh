@@ -20,12 +20,10 @@
 #include <basic/datacache/CacheableData.hh>
 
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>

@@ -25,12 +25,14 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 
-#include <core/scoring/motif/util.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
 #include <numeric/xyzTransform.hh>
 #include <utility/io/ozstream.hh>
+
+#include <core/chemical/ResidueTypeSet.hh> // AUTO IWYU For ResidueTypeSet
+#include <core/scoring/motif/motif_hash_stuff.hh> // AUTO IWYU For MotifHits, MotifHashManager, ResPairMotifQuery
 
 namespace protocols {
 namespace legacy_sewing  {

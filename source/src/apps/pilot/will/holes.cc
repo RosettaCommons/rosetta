@@ -14,7 +14,6 @@
 #include <core/id/AtomID_Map.hh>
 #include <devel/init.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -32,12 +31,9 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/types.hh>
 #include <fstream>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>
-#include <sstream>
-#include <utility/io/izstream.hh>
 
 #include <basic/Tracer.hh>
 
@@ -105,7 +101,6 @@ public:
 	) override {
 		using namespace std;
 		using namespace core;
-		using namespace io::pdb;
 		using namespace pose;
 		using namespace scoring;
 		using namespace packing;

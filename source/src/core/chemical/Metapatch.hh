@@ -15,7 +15,7 @@
 
 // Unit headers
 #include <core/chemical/Metapatch.fwd.hh>
-#include <core/chemical/Patch.hh>
+#include <core/chemical/Patch.fwd.hh>
 
 // Package headers
 #include <core/chemical/ResidueType.hh>

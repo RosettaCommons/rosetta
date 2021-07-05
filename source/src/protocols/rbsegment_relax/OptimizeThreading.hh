@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_rbsegment_relax_optimize_threading_hh
 #define INCLUDED_protocols_rbsegment_relax_optimize_threading_hh
 
-#include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -22,8 +21,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
 

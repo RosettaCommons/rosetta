@@ -29,28 +29,18 @@
 
 #include <iostream>
 #include <string>
-#include <protocols/jd2/util.hh>
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
-#include <core/chemical/util.hh>
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-#include <core/import_pose/pose_stream/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/io/izstream.hh>
-#include <utility/file/FileName.hh>
-#include <utility/vector1.hh>
 
 #include <numeric/NumericTraits.hh>
 

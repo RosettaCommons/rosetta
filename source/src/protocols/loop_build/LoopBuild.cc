@@ -19,46 +19,23 @@
 #include <protocols/loop_build/LoopBuildMover.hh>
 
 // basic headers
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 #include <basic/Tracer.hh>
 
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/import_pose/import_pose.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
-#include <core/types.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/electron_density/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/relax/loop/LoopRelaxMover.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/evaluation/EvaluatorFactory.hh>
-#include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopsFileIO.hh>
-#include <protocols/moves/MoverStatus.hh>
-#include <protocols/simple_filters/RmsdEvaluator.hh>
 
-#include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
-#include <numeric/random/random.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

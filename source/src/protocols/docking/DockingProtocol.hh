@@ -21,7 +21,6 @@
 // Package Headers
 #include <protocols/docking/types.hh>
 #include <protocols/docking/DockingEnsemble.fwd.hh>
-#include <protocols/docking/DockingLowResEnsemble.fwd.hh>
 #include <protocols/docking/DockFilters.fwd.hh>
 #include <protocols/docking/DockingLowRes.fwd.hh>
 #include <protocols/docking/DockingHighRes.fwd.hh>
@@ -29,11 +28,11 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>  // Needs to be the full header so the scorefxn can default to NULL
+#include <core/scoring/ScoreFunction.fwd.hh>  // Needs to be the full header so the scorefxn can default to NULL
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/Mover.hh>

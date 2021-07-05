@@ -25,7 +25,6 @@
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/AtomID.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>

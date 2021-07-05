@@ -14,16 +14,10 @@
 #define external_calibur_rmsd_HH
 
 #ifndef PYROSETTA
-#include <time.h>
 #endif
 #if !defined(__WIN32__) && !defined(WIN32)
-#include <sys/resource.h>
 #endif
-#include <stdio.h>
-#include <math.h>
 #include <vector>
-#include <protocols/cluster/calibur/jacobi.hh>
-#include <protocols/cluster/calibur/cubic.hh>
 
 #include <core/types.hh>
 

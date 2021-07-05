@@ -21,7 +21,6 @@
 #include <core/scoring/methods/chainbreak_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>

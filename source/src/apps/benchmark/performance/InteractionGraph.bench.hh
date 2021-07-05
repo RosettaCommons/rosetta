@@ -19,7 +19,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -29,7 +29,6 @@
 #include <core/pack/packer_neighbors.hh>
 
 #include <core/pack/annealer/DebuggingAnnealer.hh>
-#include <core/pack/annealer/FixbbSimAnnealer.hh>
 
 #include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
 #include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
@@ -39,14 +38,14 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 
-#include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
+
+#include <core/pack/rotamer_set/RotamerSets.hh> // AUTO IWYU For RotamerSets
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR2( "apps.benchmark.performance.InteractionGraphPerformanceBenchmark" );

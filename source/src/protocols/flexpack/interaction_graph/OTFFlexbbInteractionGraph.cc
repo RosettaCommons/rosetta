@@ -32,7 +32,6 @@
 #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
 
 
 namespace protocols {

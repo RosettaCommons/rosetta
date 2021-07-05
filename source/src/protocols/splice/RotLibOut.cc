@@ -14,30 +14,23 @@
 // Unit headers
 #include <protocols/splice/RotLibOut.hh>
 #include <protocols/splice/RotLibOutCreator.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <fstream>
 #include <vector>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <numeric/xyzVector.hh>
 #include <algorithm>
-#include <stdio.h>
 #include <ctype.h>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

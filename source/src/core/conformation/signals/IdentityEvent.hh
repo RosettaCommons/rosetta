@@ -28,7 +28,6 @@
 #include <core/conformation/signals/IdentityEvent.fwd.hh>
 
 // package headers
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/GeneralEvent.hh>
 

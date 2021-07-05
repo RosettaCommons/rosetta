@@ -19,14 +19,11 @@
 #include <core/simple_metrics/RealMetric.hh>
 #include <core/simple_metrics/util.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // XSD Includes
@@ -125,7 +122,6 @@ TimingProfileMetric::parse_my_tag(
 void
 TimingProfileMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
-	using namespace core::select::residue_selector;
 
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default("hours", xsct_rosetta_bool, "Boolean to set whether we report in hours.  Default is minutes", "false");

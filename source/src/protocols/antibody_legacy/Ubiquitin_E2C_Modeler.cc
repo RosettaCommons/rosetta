@@ -16,9 +16,7 @@
 #include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <basic/options/option.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
@@ -42,12 +40,14 @@
 #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
+#include <utility/file/FileName.fwd.hh> // AUTO IWYU For FileName
+
 using namespace ObjexxFCL::format;
 
 #include <protocols/antibody_legacy/Ubiquitin_E2C_Modeler.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -66,7 +66,6 @@ using namespace ObjexxFCL::format;
 //#include <utility/vector1.hh>
 
 #include <protocols/scoring/InterfaceInfo.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

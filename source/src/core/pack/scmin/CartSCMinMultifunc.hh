@@ -31,7 +31,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 #include <core/scoring/ScoreType.hh>
 

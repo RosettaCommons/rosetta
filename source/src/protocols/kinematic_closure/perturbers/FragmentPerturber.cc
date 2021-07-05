@@ -15,22 +15,22 @@
 #include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragData.hh>
-#include <core/fragment/SingleResidueFragData.hh>
+#include <core/fragment/SingleResidueFragData.fwd.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 
 // Protocol headers
-#include <protocols/loops/Loop.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/kinematic_closure/vector.hh>
+
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 
 namespace protocols {

@@ -14,12 +14,15 @@
 #ifndef INCLUDED_protocols_hbnet_NetworkState_hh
 #define INCLUDED_protocols_hbnet_NetworkState_hh
 
-#include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/hbonds/graph/HBondInfo.hh>
+#include <protocols/hbnet/NetworkState.fwd.hh>
+
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
-#include <core/scoring/hbonds/graph/HBondGraph.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.fwd.hh>
 #include <boost/container/flat_map.hpp>
-#include <boost/container/flat_set.hpp>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <core/types.hh> // AUTO IWYU For Real
+
 //#include <core/pack/rotamer_set/RotamerSets.hh>
 
 namespace protocols {

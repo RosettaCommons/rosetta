@@ -25,21 +25,18 @@
 //#include <protocols/residue_selectors/LigandMetalContactSelector.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>
 #include <core/scoring/hbonds/HBondEnergy.hh>
-#include <core/scoring/lkball/LK_BallEnergy.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/BaseEtableEnergy.hh>
-#include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/conformation/Conformation.hh>
@@ -57,18 +54,14 @@
 #include <core/types.hh>
 
 //Basic
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 //Utility
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
-#include <utility/VirtualBase.hh>
 //Numeric
-#include <numeric/xyzVector.hh>
 
 
 static basic::Tracer TR("apps.pilot.guffysl.backside_hbond_finder");

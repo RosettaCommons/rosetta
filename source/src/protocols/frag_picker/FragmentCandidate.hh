@@ -21,14 +21,15 @@
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-#include <protocols/frag_picker/scores/FragmentScoreManager.hh>
+#include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 #include <core/fragment/FragData.hh>
-#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/VirtualBase.hh>
 
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/format.hh>
+
+#include <ostream> // AUTO IWYU For operator<<, ostream, basic_ostream, basi...
 
 
 namespace protocols {

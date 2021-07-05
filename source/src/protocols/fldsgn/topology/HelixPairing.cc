@@ -18,14 +18,11 @@
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // utility headers
-#include <utility>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <iostream>
-#include <sstream>
 #include <boost/lexical_cast.hpp>
 #include <basic/Tracer.hh>
 

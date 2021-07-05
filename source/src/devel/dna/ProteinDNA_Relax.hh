@@ -18,9 +18,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <utility>
-#include <utility/vector1.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/TrialMover.fwd.hh>

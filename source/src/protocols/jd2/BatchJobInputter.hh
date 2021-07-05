@@ -18,14 +18,13 @@
 //unit headers
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/BatchJobInputter.fwd.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobsContainer.hh>
+#include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobsContainer.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 //utility headers

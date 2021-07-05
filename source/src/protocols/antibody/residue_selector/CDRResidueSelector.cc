@@ -22,8 +22,6 @@
 #include <protocols/antibody/util.hh>
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/select/residue_selector/util.hh> // for xml schema utility functions
 #include <core/pose/Pose.hh>
 
 // Utility Headers
@@ -33,7 +31,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -48,7 +45,6 @@ namespace protocols {
 namespace antibody {
 namespace residue_selector {
 
-using namespace core::pack::task::operation;
 using utility::vector1;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

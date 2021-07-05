@@ -24,7 +24,6 @@
 #include <core/pack/annealer/AnnealerFactory.hh>
 #include <core/pack/annealer/SimAnnealerBase.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
-#include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
 #include <core/pack/interaction_graph/HPatchInteractionGraph.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -36,7 +35,6 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/sasa.hh>
 
 #include <core/types.hh>
@@ -50,15 +48,13 @@
 
 // Test headers
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 //Auto Headers
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1.io.hh>
-#include <assert.h>
 #include <basic/options/option.hh>
 
 

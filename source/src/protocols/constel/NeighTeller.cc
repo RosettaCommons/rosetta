@@ -21,6 +21,8 @@
 #include <iomanip>
 #include <list>
 
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+
 namespace protocols {
 namespace constel {
 

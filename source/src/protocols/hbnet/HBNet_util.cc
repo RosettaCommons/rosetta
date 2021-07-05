@@ -16,7 +16,6 @@
 #include <protocols/hbnet/HBNet.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/Graph.hh>
 #include <utility/pointer/memory.hh>
@@ -24,31 +23,21 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/sasa.hh>
-#include <core/id/AtomID.hh>
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <protocols/hbnet/NetworkState.hh> // AUTO IWYU For NetworkState
 
 
 namespace protocols {

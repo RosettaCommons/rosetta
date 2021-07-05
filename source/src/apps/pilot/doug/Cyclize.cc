@@ -23,14 +23,11 @@
 #include <devel/init.hh>
 
 // core headers
-#include <core/scoring/ScoreFunction.hh>
 
-#include <core/kinematics/MoveMap.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cyclization.OptionKeys.gen.hh>
 
 // utility headers

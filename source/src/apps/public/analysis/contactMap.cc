@@ -21,15 +21,12 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 //#include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.hh>
 #include <protocols/contact_map/ContactMap.hh>
 
 #include <core/pose/Pose.hh>

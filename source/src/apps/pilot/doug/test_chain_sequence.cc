@@ -15,9 +15,7 @@
 #include <devel/init.hh>
 
 // protocol headers
-#include <protocols/jd2/JobDistributor.hh>
 
-#include <protocols/simple_moves/ScoreMover.hh>
 
 // core headers
 #include <core/import_pose/import_pose.hh>
@@ -43,8 +41,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
-#include <basic/options/option_macros.hh>
 
 static basic::Tracer TR("test_chain_sequence");
 

@@ -25,12 +25,10 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
 

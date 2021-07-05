@@ -24,7 +24,6 @@
 #include <core/scoring/ScoringManager.hh>
 
 // Utility Headers
-#include <utility/assert.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 

@@ -14,9 +14,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/core/select/residue_selector/DummySelectors.hh>
 #include <core/select/residue_selector/util.hh>
 #include <test/core/select/residue_selector/utilities_for_testing.hh>
 
@@ -29,19 +27,12 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/import_pose/import_pose.hh>
-#include <protocols/parser/DataLoader.hh>
 
 // Utility headers
-#include <utility/backtrace.hh>
+#include <utility/assert.hh>
 //#include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/memory.hh>
-#include <utility/options/OptionCollection.hh>
-#include <basic/options/option.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
@@ -49,6 +40,8 @@
 
 // C++ headers
 #include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core::select::residue_selector;
 

@@ -13,34 +13,19 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
-#include <test/util/pdb1ubq.hh>
-#include <test/core/scoring/RamaPrePro_util.h>
+#include <test/core/scoring/RamaPrePro_util.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
-#include <core/scoring/RamaPrePro.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 
 // Protocol Headers
-#include <protocols/cyclic_peptide/FlipChiralityMover.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
-#include <sstream>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("RamaPreProOligoureaTests");
 

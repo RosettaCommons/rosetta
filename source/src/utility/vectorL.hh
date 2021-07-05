@@ -19,14 +19,12 @@
 // Unit headers
 #include <utility/vectorL.fwd.hh>
 #include <utility/vectorL_Selector.hh>
-#include <utility/backtrace.hh> // for debug_assert
+#include <utility/assert.hh> // for debug_assert
 #include <utility/exit.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <vector>
 #include <algorithm>
-#include <memory>
 
 
 namespace utility {

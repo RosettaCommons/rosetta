@@ -22,7 +22,6 @@
 //Other headers
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -35,7 +34,6 @@
 #include <utility/vector1.hh>
 
 //C++ headers
-#include <iostream>
 
 
 class TestCyclicCoordinateDescentMath : public CxxTest::TestSuite {

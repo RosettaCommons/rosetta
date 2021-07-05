@@ -20,12 +20,8 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
 #include <protocols/jd2/internal_util.hh>
-#include <basic/mpi/MessageListenerFactory.hh>
 
-#include <protocols/evaluation/util.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -40,8 +36,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 
 
 #include <core/chemical/ChemicalManager.hh>
@@ -50,7 +44,6 @@
 #include <core/import_pose/import_pose.hh>
 
 // Utility headers
-#include <utility/assert.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>

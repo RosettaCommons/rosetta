@@ -16,7 +16,6 @@
 #include <protocols/simple_filters/LeastNativeLike9merFilter.hh>
 #include <protocols/simple_filters/LeastNativeLike9merFilterCreator.hh>
 
-#include <numeric/xyzVector.hh>
 
 // Project Headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -28,12 +27,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/id/NamedAtomID.hh>
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
-#include <protocols/indexed_structure_store/FragmentStore.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
@@ -45,10 +39,9 @@
 #include <numeric/util.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

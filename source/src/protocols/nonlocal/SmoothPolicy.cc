@@ -23,7 +23,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
 
 //Auto Headers

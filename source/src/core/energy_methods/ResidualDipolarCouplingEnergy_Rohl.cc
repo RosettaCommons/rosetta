@@ -24,7 +24,6 @@
 #include <core/pose/Pose.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
@@ -39,26 +38,13 @@
 #include <iostream>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/Dimension.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <algorithm>
-#include <utility/assert.hh>
 #include <cmath>
-#include <cstddef>
-#include <cstdio>
 #include <cstdlib>
-#include <iomanip>
-#include <iosfwd>
-#include <limits>
-#include <list>
-#include <map>
-#include <ostream>
-#include <sstream>
-#include <string>
 #include <vector>
 
 

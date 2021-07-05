@@ -19,12 +19,10 @@
 #define INCLUDED_protocols_membrane_symmetry_util_hh
 
 // Package Headers
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <protocols/membrane/util.hh>
+#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 namespace protocols {
 namespace membrane {

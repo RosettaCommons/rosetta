@@ -19,11 +19,12 @@
 
 #include <numeric/kdtree/KDNode.fwd.hh>
 #include <numeric/kdtree/KDTree.fwd.hh>
-#include <numeric/kdtree/HyperRectangle.hh>
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.fwd.hh>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 namespace numeric {
 namespace kdtree {

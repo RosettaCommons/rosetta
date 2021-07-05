@@ -13,10 +13,7 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 #include <test/util/pdb1rpb.hh>
 
@@ -26,8 +23,6 @@
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

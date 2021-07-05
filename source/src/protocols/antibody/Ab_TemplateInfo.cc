@@ -17,11 +17,8 @@
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
-#include <core/pose/PDBInfo.fwd.hh>
-#include <core/pose/PDBInfo.hh>
 
 static basic::Tracer TR( "antibody.Ab_TemplateInfo" );
 

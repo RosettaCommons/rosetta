@@ -14,7 +14,5 @@
 // Useful type definitions.
 /////////////////////////////////////////////////////////////////////
 
-#include <core/pose/rna/BasePair.hh>
-#include <core/pose/rna/BaseStack.hh>
 
 #endif

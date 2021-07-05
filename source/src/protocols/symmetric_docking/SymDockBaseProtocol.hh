@@ -16,13 +16,10 @@
 #ifndef INCLUDED_protocols_symmetric_docking_SymDockBaseProtocol_hh
 #define INCLUDED_protocols_symmetric_docking_SymDockBaseProtocol_hh
 
-#include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <utility/VirtualBase.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

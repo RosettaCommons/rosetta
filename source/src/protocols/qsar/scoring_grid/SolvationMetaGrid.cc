@@ -22,10 +22,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
 
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <map>
+
+#include <protocols/qsar/scoring_grid/SolvationGrid.hh> // AUTO IWYU For SolvationGrid
 
 namespace protocols {
 namespace qsar {

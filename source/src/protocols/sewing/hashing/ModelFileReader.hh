@@ -18,12 +18,8 @@
 #include <protocols/sewing/hashing/ModelFileReader.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <protocols/sewing/hashing/hasher_data.hh>
-#include <core/conformation/Atom.hh>
-#include <utility/vector1.hh>
-#include <protocols/sewing/data_storage/SmartSegment.hh>
 
 namespace protocols {
 namespace sewing {

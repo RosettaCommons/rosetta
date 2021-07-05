@@ -18,7 +18,8 @@
 #include <string>
 
 #include <utility/vector1.hh>
-#include <utility/py/PyAssert.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size
 
 namespace protocols {
 namespace antibody {

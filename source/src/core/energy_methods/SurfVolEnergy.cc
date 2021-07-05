@@ -26,20 +26,14 @@
 #include <core/id/CacheableAtomID_MapVector.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
 //utility headers
-#include <utility/exit.hh>
 
 //C++ headers
 #include <iostream>
 
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>

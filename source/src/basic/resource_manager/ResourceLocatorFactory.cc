@@ -21,7 +21,6 @@
 // utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 namespace basic {
 namespace resource_manager {

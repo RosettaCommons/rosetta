@@ -20,13 +20,10 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/extra_pose_info_util.hh>
 #include <core/init/init.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/pose/PDBInfo.hh>
 #include <utility/vector1.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -40,11 +37,11 @@
 #include <string>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
+
+#include <numeric/random/random.hh> // AUTO IWYU For rg, RandomGenerator
 
 OPT_KEY( RealVector, end_node_in_map )
 OPT_KEY( RealVector, next_node_in_map )

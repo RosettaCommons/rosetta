@@ -16,13 +16,10 @@
 #include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/BackboneDB.hh>
 #include <protocols/loophash/Exceptions.hh>
-#include <protocols/frag_picker/VallChunk.hh>
-#include <protocols/frag_picker/VallProvider.hh>
 
 #include <boost/unordered_map.hpp>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
 #include <core/pose/Pose.hh>
@@ -49,7 +46,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>
 #include <boost/lexical_cast.hpp>
 
 

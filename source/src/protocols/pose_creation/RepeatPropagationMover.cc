@@ -21,84 +21,43 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/util.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/CartesianMinimizer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <core/types.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
-#include <protocols/idealize/idealize.hh>
-#include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/relax/CentroidRelax.hh>
-#include <protocols/relax/cst_util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/symmetry/SetupNCSMover.hh>
-#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <protocols/toolbox/superimpose.hh>
 
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
-#include <numeric/conversions.hh>
 #include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzTransform.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <string>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 namespace protocols {

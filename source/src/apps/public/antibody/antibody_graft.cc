@@ -15,20 +15,15 @@
 
 #include <protocols/antibody/GraftCDRLoopsProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
 #include <devel/init.hh>
-#include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 //#include <utility/tools/make_vector1.hh>
 
 // option key includes
-#include <basic/options/option.hh>
-#include <string>
 #include <basic/Tracer.hh>
 
 
@@ -39,7 +34,6 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-		using namespace basic::options;
 		using namespace protocols::antibody;
 		using namespace protocols::jd2;
 

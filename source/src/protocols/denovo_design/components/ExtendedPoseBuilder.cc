@@ -35,10 +35,11 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 // Boost headers
 
 // C++ headers
-#include <iterator>
 
 static basic::Tracer TR( "protocols.denovo_design.components.ExtendedPoseBuilder" );
 

@@ -18,7 +18,6 @@
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/PyMOLMoverCreator.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 
 // core headers
 #include <core/conformation/Conformation.hh>
@@ -32,7 +31,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
-#include <core/scoring/hbonds/types.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/kinematics/Edge.hh>
 
@@ -48,7 +46,7 @@
 
 // utility headers
 #include <utility/vector1.hh>
-#include <utility/io/zipstream.ipp>
+#include <utility/io/zipstream.ipp> // DO NOT AUTO-REMOVE needed for zipstream implementation
 
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
@@ -62,7 +60,6 @@
 #include <algorithm>
 #include <string>       // std::string
 #include <iostream>     // std::cout
-#include <sstream>      // std::stringstream, std::stringbuf
 
 // boost headers
 
@@ -79,7 +76,6 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #else
-#include "pthread.h"
 // XSD XRW Includes
 #endif
 
@@ -90,6 +86,8 @@
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 
 namespace protocols {

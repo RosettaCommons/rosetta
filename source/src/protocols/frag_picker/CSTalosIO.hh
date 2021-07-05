@@ -14,6 +14,8 @@
 #ifndef INCLUDED_protocols_frag_picker_CSTalosIO_hh
 #define INCLUDED_protocols_frag_picker_CSTalosIO_hh
 
+#include <protocols/frag_picker/CSTalosIO.fwd.hh>
+
 // utility headers
 #include <core/types.hh>
 
@@ -23,7 +25,8 @@
 // boost headers
 #include <boost/tuple/tuple.hpp>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

@@ -11,7 +11,6 @@
 /// @author Oliver Lange
 
 // keep these headers first for compilation with Visual Studio C++
-#include <protocols/jobdist/Jobs.hh>
 
 // Project Headers
 #include <protocols/abinitio/BrokerMain.hh>
@@ -23,14 +22,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <iostream>
 
-#include <utility/vector1.hh>
 
 
 using namespace protocols;

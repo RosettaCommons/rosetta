@@ -12,7 +12,6 @@
 /// @author Greg Taylor <gktaylor@u.washington.edu>
 
 // Unit headers
-#include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
 // Package headers
@@ -30,7 +29,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

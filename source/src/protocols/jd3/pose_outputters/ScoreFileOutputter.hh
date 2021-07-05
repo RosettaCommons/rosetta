@@ -24,13 +24,14 @@
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
 
 // utility headers
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
+#include <utility/options/keys/OptionKeyList.fwd.hh> // AUTO IWYU For OptionKeyList
 
 #ifdef    SERIALIZATION
 // Cereal headers

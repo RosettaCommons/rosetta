@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -22,25 +20,21 @@
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/sequence/util.hh>
-#include <core/id/NamedAtomID.hh>
 
 // Protocol Headers
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
-#include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
-#include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
-#include <core/pose/toolbox/AtomLevelDomainMap.hh>
-#include <core/pose/copydofs/CopyDofs.hh>
 
 
-#include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
 
 static basic::Tracer TR("RNA_DeNovoProtocolTest");
 

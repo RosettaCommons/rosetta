@@ -14,7 +14,7 @@
 
 // Core headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Protocol headers
 #include <protocols/jd2/util.hh>
@@ -24,8 +24,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // Basic headers
 #include <basic/database/sql_utils.hh>

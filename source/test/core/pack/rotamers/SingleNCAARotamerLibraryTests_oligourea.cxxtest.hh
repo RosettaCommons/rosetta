@@ -14,10 +14,7 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
@@ -25,21 +22,13 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
-#include <core/pack/rotamers/SingleNCAARotamerLibraryCreator.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/DunbrackEnergy.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/TorsionID.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
+
+#include <utility/fixedsizearray1.hh> // AUTO IWYU For fixedsizearray1
 
 static basic::Tracer TR("SingleNCAARotamerLibraryTests_oligourea");
 

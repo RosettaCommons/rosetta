@@ -21,20 +21,10 @@
 
 // Package headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSetCache.fwd.hh>
 
-#include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/Metapatch.fwd.hh>
-#include <core/chemical/Patch.fwd.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
-#include <map>
 #include <set>
 
 namespace core {

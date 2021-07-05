@@ -24,16 +24,15 @@
 // Core headers
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/id/SequenceMapping.hh>
 
 // Utility headers
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
+
+#include <utility/string_util.hh> // AUTO IWYU For string_split
 
 static basic::Tracer TR( "protocols.denovo_design.constraints.FileConstraintGenerator" );
 

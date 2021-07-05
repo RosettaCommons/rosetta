@@ -23,10 +23,9 @@
 #include <protocols/match/output/MatchScoreWriter.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 

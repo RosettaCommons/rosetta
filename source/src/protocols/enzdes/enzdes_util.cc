@@ -18,15 +18,12 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -35,33 +32,28 @@
 #include <basic/datacache/CacheableString.hh>
 #include <core/pack/task/TaskFactory.hh> //task shit
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 //#include <cctype>
 #include <regex>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 //Auto Headers
-#include <core/id/AtomID.hh>
 
 namespace protocols {
 namespace enzdes {

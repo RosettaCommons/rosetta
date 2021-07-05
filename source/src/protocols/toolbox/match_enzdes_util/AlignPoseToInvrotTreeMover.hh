@@ -19,7 +19,6 @@
 #include <protocols/moves/Mover.hh>
 
 // package headers
-#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
@@ -29,6 +28,9 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 //#include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Utility headers

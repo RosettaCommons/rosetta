@@ -17,7 +17,7 @@
 
 #include <core/scoring/packstat/SimplePDB.fwd.hh>
 #include <core/scoring/packstat/SimplePDB_Atom.fwd.hh>
-#include <core/scoring/packstat/types.hh>
+#include <core/scoring/packstat/types.fwd.hh>
 
 #include <iosfwd>
 

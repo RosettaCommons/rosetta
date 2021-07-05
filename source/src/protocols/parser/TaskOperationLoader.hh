@@ -18,9 +18,9 @@
 #include <protocols/parser/DataLoader.hh>
 
 // utility headers
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#include <string>
 
 namespace protocols {
 namespace parser {

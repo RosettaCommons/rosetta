@@ -19,7 +19,6 @@
 #include <core/types.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 
-#include <utility/vector1.hh>
 
 // C++ headers
 

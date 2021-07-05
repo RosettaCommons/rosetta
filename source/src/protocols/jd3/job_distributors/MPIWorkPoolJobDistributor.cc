@@ -49,6 +49,7 @@
 #include <utility/io/zipstream.hpp>
 #include <utility/pointer/memory.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/stream_util.hh>
 
 // Cereal headers
 #include <cereal/archives/binary.hpp>

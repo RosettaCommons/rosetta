@@ -21,7 +21,6 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1_bool.hh>
 
 // STL Headers
 #include <iosfwd>

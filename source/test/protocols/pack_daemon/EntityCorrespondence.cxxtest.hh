@@ -25,10 +25,10 @@
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <sstream>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#include <iostream> // AUTO IWYU For istringstream, endl, basic_ostream, cout, ostream
 
 
 //static basic::Tracer TR("EntityCorrespondenceTest.cxxtest");

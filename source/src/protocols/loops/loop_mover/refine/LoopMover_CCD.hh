@@ -15,8 +15,7 @@
 #define INCLUDED_protocols_loops_loop_mover_refine_LoopMover_CCD_hh
 
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.fwd.hh>
-#include <protocols/loops/loop_mover/IndependentLoopMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 #include <core/types.hh>
 
@@ -25,10 +24,8 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/fragment/FragSet.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
@@ -38,8 +35,8 @@
 // Added by BDW during refactoring.  These headers should be removed when refactoring is complete.
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/optimization/AtomTreeMinimizer.fwd.hh>
-#include <core/optimization/MinimizerOptions.fwd.hh>
+
+#include <protocols/loops/loop_mover/LoopMover.hh> // AUTO IWYU For LoopMover
 
 
 ///////////////////////////////////////////////////////////////////////////////

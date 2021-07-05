@@ -15,7 +15,6 @@
 #include <protocols/ligand_docking/DistributionMap.hh>
 
 // Utility headers
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

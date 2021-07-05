@@ -19,7 +19,6 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
@@ -36,11 +35,8 @@
 #include <utility>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
-#include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>

@@ -18,14 +18,12 @@
 #include <protocols/chromophore/ReadResidueCoordinatesFromPDB.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
 #include <core/io/ResidueInformation.hh>
-#include <core/io/StructFileRep.hh>
-#include <numeric/xyzVector.hh>
+#include <core/io/StructFileRep.fwd.hh>
 
 namespace protocols {
 namespace chromophore {

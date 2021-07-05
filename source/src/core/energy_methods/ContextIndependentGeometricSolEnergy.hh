@@ -22,14 +22,9 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairNone.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/NeighborList.tmpl.hh>
-#include <core/scoring/ResidueNeighborList.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
+#include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 
 // Project headers

@@ -19,11 +19,8 @@
 #include <protocols/analysis/InterfaceAnalyzerMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace monte_carlo {

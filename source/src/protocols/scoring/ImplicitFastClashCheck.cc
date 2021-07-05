@@ -22,6 +22,8 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 
+#include <numeric/numeric.functions.hh> // AUTO IWYU For max, min, square
+
 
 namespace protocols {
 namespace scoring {

@@ -18,14 +18,12 @@
 
 // Package headers
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/NeighborList.tmpl.hh>
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/MinimizationData.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
@@ -36,7 +34,6 @@
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <basic/options/option.hh>

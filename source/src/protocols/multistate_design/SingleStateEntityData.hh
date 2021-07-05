@@ -17,7 +17,7 @@
 #include <protocols/multistate_design/SingleStateEntityData.fwd.hh>
 
 #include <core/types.hh>
-#include <basic/MetricValue.hh>
+#include <basic/MetricValue.fwd.hh>
 
 #include <string>
 #include <map>

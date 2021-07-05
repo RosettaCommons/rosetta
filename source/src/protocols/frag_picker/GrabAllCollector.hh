@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_frag_picker_GrabAllCollector_hh
 
 // package headers
-#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/CandidatesCollector.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
@@ -24,6 +24,8 @@
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
+
+#include <ObjexxFCL/format.hh> // AUTO IWYU For I, format
 
 
 namespace protocols {

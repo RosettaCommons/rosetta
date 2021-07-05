@@ -23,11 +23,8 @@
 #include <protocols/tcr/util.hh>
 // Option key includes
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/tcrmodel.OptionKeys.gen.hh>
 // Utility Headers
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 static basic::Tracer TR( "protocols.tcr.TCRseqInfo" );
 

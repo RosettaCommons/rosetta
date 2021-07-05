@@ -17,45 +17,24 @@
 #include <protocols/legacy_sewing/sampling/LegacyRepeatAssemblyMoverCreator.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/util/io.hh>
-#include <protocols/legacy_sewing/util/util.hh>
 #include <protocols/legacy_sewing/conformation/Model.hh>
 #include <protocols/legacy_sewing/conformation/AssemblyFactory.hh>
 #include <protocols/legacy_sewing/scoring/LegacyClashScorer.hh>
 #include <protocols/legacy_sewing/scoring/LegacyInterModelMotifScorer.hh>
 
-#include <core/import_pose/import_pose.hh>
-#include <core/scoring/Energies.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/pose/symmetry/util.hh>
 
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/TaskOperationCreators.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <protocols/task_operations/LinkResidues.hh>
 
 #include <protocols/jd2/util.hh>
 
-#include <protocols/relax/AtomCoordinateCstMover.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/relax/util.hh>
-#include <protocols/relax/cst_util.hh>
 
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/symmetry/SetupNCSMover.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
@@ -63,13 +42,16 @@
 #include <numeric/model_quality/rms.hh>
 #include <numeric/xyzTransform.hh>
 
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
-#include <boost/unordered_set.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <core/pose/Pose.hh> // MANUAL IWYU
+
+#include <protocols/legacy_sewing/sampling/SewGraph.hh> // AUTO IWYU For ModelNode, SewGraph
+#include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementSet.hh> // AUTO IWYU For LegacyRequirementSet
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 namespace protocols {
 namespace legacy_sewing  {

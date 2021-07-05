@@ -19,8 +19,6 @@
 #include <utility/factory/WidgetRegistrator.hh>
 
 #include <core/pack/task/operation/ResFilterFactory.fwd.hh>
-#include <utility/vector0.hh>
-#include <iosfwd>
 
 
 namespace core {

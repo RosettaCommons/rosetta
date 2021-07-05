@@ -14,7 +14,8 @@
 #include <protocols/noesy_assign/CovalentCompliance.hh>
 
 // Utility headers
-#include <utility/thread/threadsafe_creation.hh>
+
+#include <protocols/noesy_assign/FragsToAtomDist.hh> // AUTO IWYU For FragsToAtomDist
 
 // Boost headers
 

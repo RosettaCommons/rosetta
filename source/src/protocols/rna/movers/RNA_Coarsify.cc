@@ -17,19 +17,10 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/pose/util.hh>
-#include <core/pose/rna/util.hh>
-#include <core/id/AtomID.hh>
-#include <core/kinematics/FoldTree.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 
 // XSD Includes

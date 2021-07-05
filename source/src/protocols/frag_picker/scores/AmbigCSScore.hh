@@ -16,7 +16,7 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-#include <protocols/frag_picker/CSTalosIO.hh>
+#include <protocols/frag_picker/CSTalosIO.fwd.hh>
 
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>

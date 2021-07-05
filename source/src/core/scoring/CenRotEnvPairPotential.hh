@@ -18,16 +18,13 @@
 
 #include <core/scoring/SmoothEnvPairPotential.hh>
 #include <numeric/interpolation/spline/CubicSpline.hh>
-#include <numeric/interpolation/spline/BicubicSpline.hh>
+#include <numeric/interpolation/spline/BicubicSpline.hh> // DO NOT AUTO-REMOVE
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 
-#include <numeric/constants.hh>
-#include <numeric/types.hh>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 

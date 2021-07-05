@@ -17,9 +17,7 @@
 /// where each ModuleTypeX class is a derived class.
 
 // Project headers:
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/jacobian/ModuleType1.hh>
 #include <core/types.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -34,6 +32,8 @@
 // Utility headers:
 #include <utility/pointer/memory.hh>
 #include <utility/vector1.hh>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For sign
 
 static basic::Tracer TR( "core.kinematics.jacobian.ModuleType1" );
 

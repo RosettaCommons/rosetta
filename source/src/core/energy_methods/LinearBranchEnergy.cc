@@ -23,20 +23,16 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/VariantType.hh>
 
 #include <basic/Tracer.hh>
 
-#include <algorithm>
-#include <iostream>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
 
 
 namespace core {

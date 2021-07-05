@@ -17,7 +17,6 @@
 #include <utility/file/PathName.hh>
 
 // C++ headers
-#include <iostream>
 
 class FileSysUtilTests : public CxxTest::TestSuite {
 

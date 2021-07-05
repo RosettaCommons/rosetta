@@ -13,6 +13,7 @@
 
 //ConstraintGeneratorCreator #includes
 #include <core/simple_metrics/SimpleMetricRegistrator.hh>
+#include <core/simple_metrics/SimpleMetricFactory.hh>
 
 #include <core/simple_metrics/simple_metric_creators.hh>
 

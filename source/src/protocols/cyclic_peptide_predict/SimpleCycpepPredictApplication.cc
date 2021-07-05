@@ -32,7 +32,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
@@ -50,10 +50,7 @@
 #include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/init_id_map.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
@@ -65,15 +62,12 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
-#include <protocols/filters/BasicFilters.hh>
 #include <protocols/aa_composition/AddCompositionConstraintMover.hh>
 #include <protocols/aa_composition/ClearCompositionConstraintsMover.hh>
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilter.hh>
 #include <protocols/cyclic_peptide/CycpepSymmetryFilter.hh>
-#include <protocols/protein_interface_design/filters/HbondsToResidueFilter.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/denovo_design/movers/FastDesign.hh>
 #include <protocols/cyclic_peptide/PeptideInternalHbondsFilter.hh>
@@ -83,7 +77,6 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/string_util.hh>
 
 //Constraints
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -91,14 +84,13 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 //Disulfides
 #include <protocols/cyclic_peptide/TryDisulfPermutations.hh>
 #include <protocols/score_filters/ScoreTypeFilter.hh>
 
 //N-methylation
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.fwd.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
 //TBMB
@@ -119,15 +111,12 @@
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
 
 // option key includes
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //numeric headers
-#include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/constants.hh>
 #include <numeric/angle.functions.hh>
@@ -137,6 +126,8 @@
 
 // C++ headers
 #include <cstdio>
+
+#include <utility/fixedsizearray1.hh> // AUTO IWYU For fixedsizearray1
 
 static basic::Tracer TR( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication" );
 

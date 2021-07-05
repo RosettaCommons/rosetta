@@ -24,13 +24,10 @@
 #include <core/pose/Pose.hh>
 #include <protocols/filters/Filter.hh>
 //Project Headers
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 //Utility Headers
-#include <utility/string_util.hh>
 #include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/lu.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

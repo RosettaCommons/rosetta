@@ -20,10 +20,11 @@
 
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>
-#include <numeric/Quaternion.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/types.hh>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For sign
 
 namespace numeric {
 

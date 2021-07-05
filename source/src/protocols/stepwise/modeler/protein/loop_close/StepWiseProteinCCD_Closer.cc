@@ -20,18 +20,11 @@
 #include <protocols/simple_moves/TorsionSetMover.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 #include <protocols/loops/Loop.hh>
 #include <core/types.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-#include <core/kinematics/Jump.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
@@ -42,6 +35,8 @@
 
 #include <algorithm>
 #include <string>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 
 using namespace core;

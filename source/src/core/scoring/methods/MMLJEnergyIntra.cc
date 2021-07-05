@@ -25,9 +25,7 @@
 
 #include <core/scoring/ScoringManager.hh>
 
-#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/MinimizationData.hh>
-#include <basic/datacache/CacheableData.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
@@ -35,19 +33,16 @@
 #include <core/scoring/DerivVectorPair.hh>
 
 #include <core/scoring/ResidueNeighborList.hh>
-#include <core/scoring/NeighborList.hh>
-#include <core/scoring/NeighborList.tmpl.hh>
 
 #include <core/scoring/Energies.hh>
 
-#include <core/kinematics/MinimizerMapBase.hh>
+#include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
 // C++ headers
-#include <iostream>
 
 #include <core/scoring/mm/MMLJEnergyTable.hh>
 #include <core/scoring/mm/MMLJLibrary.hh>

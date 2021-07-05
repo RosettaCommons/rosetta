@@ -35,10 +35,8 @@
 #include <protocols/loops/Loops.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 #ifdef WIN32
 #define _USE_MATH_DEFINES
 #include <math.h>

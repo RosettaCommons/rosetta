@@ -18,6 +18,22 @@
 #include <devel/init.hh>
 
 // core headers
+
+// protocol headers
+
+// utility headers
+#include <utility/excn/Exceptions.hh>
+
+// basic headers
+#include <basic/Tracer.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
+#ifdef USE_TENSORFLOW
+#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.hh>
+#include <protocols/constraint_movers/ConstraintSetMover.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -31,32 +47,12 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/SplineFunc.hh>
-#include <core/id/AtomID.hh>
-
-// protocol headers
-#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
-
-// utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
-#include <utility/string_util.hh>
-
-// basic headers
-#include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/citation_manager/CitationManager.hh>
-
-#ifndef USE_TENSORFLOW
+#else
 #include <basic/tensorflow_manager/util.hh>
 #endif //ifndef USE_TENSORFLOW
 
-#include <sstream>
 
 static basic::Tracer TR("apps.pilot.vmullig.test_trRosettaConstraintGenerator");
 

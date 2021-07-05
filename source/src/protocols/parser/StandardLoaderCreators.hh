@@ -18,7 +18,6 @@
 #include <protocols/parser/DataLoaderCreator.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {

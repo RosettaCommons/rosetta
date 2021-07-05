@@ -20,17 +20,16 @@
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
 
 // Core headers
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/fixedsizearray1.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/id/SequenceMapping.fwd.hh> // AUTO IWYU For SequenceMapping
+
 namespace protocols {
 namespace constraint_generator {
 

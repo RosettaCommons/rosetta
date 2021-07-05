@@ -50,7 +50,7 @@ BooleanOptionKey const exit( "options:exit" ); // Exit after displaying the opti
 
 
 /// @brief Lookup functors
-#include <utility/keys/KeyLookup.functors.ii>
+#include <utility/keys/KeyLookup.functors.ii> // DO NOT AUTO-REMOVE - not a standard include, but a code injection.
 
 
 } // namespace OptionKeys

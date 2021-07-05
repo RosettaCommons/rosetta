@@ -47,9 +47,7 @@
 #include <protocols/antibody/grafting/scs_blast.fwd.hh>
 
 #include <protocols/antibody/grafting/antibody_sequence.hh>
-#include <protocols/antibody/grafting/chothia_numberer.hh>
 #include <protocols/antibody/grafting/scs_functor.fwd.hh>
-#include <protocols/antibody/grafting/exception.hh>
 
 #include <core/types.hh>
 

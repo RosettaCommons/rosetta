@@ -22,7 +22,6 @@
 //v#include <devel/IntegratedLoop/Loops.fwd.hh>
 
 //core headers
-#include <core/types.hh>
 #include <core/pose/Pose.hh>
 
 // protocols header

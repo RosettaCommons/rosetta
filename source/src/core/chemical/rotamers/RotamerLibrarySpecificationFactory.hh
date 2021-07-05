@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_chemical_rotamers_RotamerLibrarySpecificationFactory_HH
 #define INCLUDED_core_chemical_rotamers_RotamerLibrarySpecificationFactory_HH
 
+#include <core/chemical/rotamers/RotamerLibrarySpecificationFactory.fwd.hh>
+
 // Package headers
 #include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/rotamers/RotamerLibrarySpecificationCreator.hh>

@@ -12,8 +12,6 @@
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
 // Headers
-#include <iostream> // Put this first to allow debug print-outs in project headers
-#include <set>
 
 // Project headers
 #include <cxxtest/TestSuite.h>

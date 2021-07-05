@@ -14,9 +14,8 @@
 #include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
 
 // Project Headers
-#include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/rotamer_recovery/RRReporter.hh>
-#include <protocols/rotamer_recovery/RRComparerElecDensDiff.hh>
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
@@ -24,11 +23,9 @@
 #include <core/pack/rtmin.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <utility/graph/Graph.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pack/rotamer_trials.hh>
+#include <utility/graph/Graph.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -38,7 +35,6 @@
 #include <sstream>
 
 //Auto Headers
-#include <utility/vector1.hh>
 using std::string;
 using std::stringstream;
 using core::Size;

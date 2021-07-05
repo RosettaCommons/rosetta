@@ -21,7 +21,6 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 
-#include <utility>
 #include <utility/vector1.hh>
 
 

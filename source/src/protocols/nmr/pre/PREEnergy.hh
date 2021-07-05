@@ -20,17 +20,10 @@
 
 // Package headers
 #include <core/scoring/nmr/pre/PREData.fwd.hh>
-#include <core/scoring/nmr/pre/PREMultiSet.fwd.hh>
-#include <core/scoring/nmr/pre/PRESingleSet.fwd.hh>
-#include <core/scoring/nmr/pre/PRESingle.fwd.hh>
-#include <core/scoring/nmr/NMRSpinlabel.fwd.hh>
-#include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.fwd.hh>
-#include <core/scoring/nmr/NMRDummySpinlabelEnsemble.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
@@ -40,22 +33,17 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 // boost headers
-#include <boost/unordered/unordered_map.hpp>
 
 // C++ headers
 #include <iosfwd>
-#include <string>
-#include <map>
 
 namespace protocols {
 namespace nmr {

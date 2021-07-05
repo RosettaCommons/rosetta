@@ -17,7 +17,6 @@
 
 // Package Headers
 #include <core/chemical/AA.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <src/core/io/mmtf/mmtf_reader.hh>
 #include <src/core/io/mmtf/mmtf_writer.hh>
 #include <src/core/io/mmcif/cif_reader.hh>
@@ -29,41 +28,29 @@
 #include <utility/version.hh>
 
 // Project Headers
-#include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <core/simple_metrics/util.hh>
 #include <core/simple_metrics/SimpleMetricData.hh>
-#include <core/simple_metrics/StringMetric.hh>
-#include <core/simple_metrics/RealMetric.hh>
 
-#include <core/simple_metrics/CompositeStringMetric.hh>
-#include <core/simple_metrics/CompositeRealMetric.hh>
 
-#include <core/simple_metrics/PerResidueRealMetric.hh>
-#include <core/simple_metrics/PerResidueStringMetric.hh>
 
 #include <core/simple_metrics/test_classes.hh>
-#include <core/simple_metrics/test_classes.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
-#include <mmtf.hpp>
 #include <cifparse/CifFile.h>
 #include <cifparse/CifParserBase.h>
-#include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 
-#include <utility/version.hh>
+#include <core/io/pdb/pdb_reader.hh> // AUTO IWYU For create_records_from_pdb_file_contents, store_...
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 
 static basic::Tracer TR("core.io.mmtf_IO.cxxtest");
 

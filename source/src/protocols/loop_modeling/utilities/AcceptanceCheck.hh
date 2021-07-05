@@ -16,7 +16,6 @@
 #include <protocols/loop_modeling/utilities/AcceptanceCheck.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 
 // Protocols headers
 #include <protocols/moves/MonteCarlo.fwd.hh>

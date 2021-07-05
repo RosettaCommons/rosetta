@@ -12,70 +12,42 @@
 
 
 // libRosetta headers
-#include <protocols/frags/VallData.hh>
-#include <protocols/frags/TorsionFragment.hh>
+#include <protocols/frags/VallData.fwd.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 
-#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/OutputMovers.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 // #include <protocols/moves/rigid_body_moves.hh>
-#include <protocols/moves/TrialMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 
 //#include <protocols/loops/ccd_closure.hh>
-#include <protocols/loops/loops_main.hh>
 
-#include <protocols/viewer/viewers.hh>
 
 #include <core/types.hh>
 
-#include <core/scoring/sasa.hh>
 
 // #include <core/util/prof.hh> // profiling
 // #include <core/util/CacheableData.hh> // profiling
 
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/AtomTypeSet.hh>
 
-#include <core/chemical/AA.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/etable/Etable.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Ramachandran.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -83,21 +55,16 @@
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/util.hh>
 #include <core/id/AtomID_Map.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 
 #include <basic/options/util.hh>//option.hh>
 // #include <basic/options/after_opts.hh>
 
-#include <basic/basic.hh>
 
 #include <basic/options/option.hh>
-#include <basic/database/open.hh>
 
 #include <devel/init.hh>
 
@@ -124,25 +91,23 @@
 #include <core/sequence/ScoringScheme.fwd.hh>
 
 // // C++ headers
-#include <cstdlib>
 #include <fstream>
-#include <iostream>
 #include <string>
-#include <sstream>
 
 //silly using/typedef
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/pepspec.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For square
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 //#include <boost/pool/poolfwd.hpp>
 

@@ -25,7 +25,7 @@
 #include <utility/tag/Tag.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 
 
 // XSD XRW Includes
@@ -33,7 +33,6 @@
 #include <protocols/filters/filter_schemas.hh>
 
 //// C++ headers
-#include <map>
 #include <algorithm>
 #include <unordered_map>
 

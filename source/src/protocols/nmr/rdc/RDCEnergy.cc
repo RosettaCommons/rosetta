@@ -17,7 +17,6 @@
 #include <protocols/nmr/rdc/RDCEnergyCreator.hh>
 
 // Project headers
-#include <core/io/nmr/AtomSelection.hh>
 #include <core/scoring/nmr/NMRDataFactory.hh>
 #include <core/scoring/nmr/rdc/RDCSingle.hh>
 #include <core/scoring/nmr/rdc/RDCSingleSet.hh>
@@ -30,7 +29,6 @@
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -39,8 +37,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 
@@ -56,16 +52,13 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/constants.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
 #include <string>
 #include <iostream>
-#include <sstream>
 #include <iomanip>
 
 namespace protocols {

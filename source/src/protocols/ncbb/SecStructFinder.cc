@@ -9,25 +9,10 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/rna/RNA_Info.hh>
-#include <core/chemical/rings/RingConformerSet.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/VariantType.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -36,41 +21,31 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/util.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 // Mover headers
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMOLMover.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
-#include <protocols/ncbb/SecStructMinimizeMultiFunc.hh>
 #include <protocols/ncbb/SecStructMinimizeMover.hh>
 #include <protocols/ncbb/SecStructFinder.hh>
 #include <protocols/ncbb/SecStructFinderCreator.hh>
 #include <protocols/ncbb/util.hh>
 
-#include <numeric/random/random.hh>
 
 //Basic headers
 #include <basic/basic.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
 #include <string>
 #include <sstream>
-#include <cmath>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue Residue, Residue::ResidueType
 
 // Namespaces
 using namespace core;

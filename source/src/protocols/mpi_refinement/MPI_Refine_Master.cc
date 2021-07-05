@@ -27,27 +27,16 @@
 #include <protocols/mpi_refinement/Scheduler.hh>
 #include <protocols/mpi_refinement/util.hh>
 #include <protocols/mpi_refinement/Clusterer.hh>
-#include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 
-#include <core/pose/util.hh>
-#include <core/pose/selection.hh>
-#include <core/chemical/ChemicalManager.hh>
 
-#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <basic/options/keys/wum.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/Tracer.hh>
 #include <protocols/wum/SilentStructStore.hh>
@@ -66,12 +55,14 @@
 #include <boost/lexical_cast.hpp>
 
 //Auto Headers
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
+
+#include <protocols/mpi_refinement/MultiObjective.hh> // AUTO IWYU For MultiObjective
+
+#ifdef USEMPI
+#include <basic/options/keys/wum.OptionKeys.gen.hh>
+#endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -447,7 +438,6 @@ MPI_Refine_Master::process_round(){
 /// this may send something to Emperor too
 void
 MPI_Refine_Master::process_inbound_wus(){
-	using namespace protocols::loops;
 
 	while ( inbound().size() > 0 )
 			{

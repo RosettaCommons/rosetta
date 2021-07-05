@@ -26,7 +26,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 //#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -38,7 +37,6 @@
 
 // Utility headers
 #include <utility/graph/Graph.hh>
-#include <utility/vector1.hh>
 
 #include <list>
 

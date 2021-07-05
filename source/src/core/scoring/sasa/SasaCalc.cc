@@ -11,7 +11,6 @@
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#include <core/chemical/AtomType.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
 #include <core/scoring/sasa/SasaMethodFactory.hh>
 #include <core/scoring/sasa/util.hh>

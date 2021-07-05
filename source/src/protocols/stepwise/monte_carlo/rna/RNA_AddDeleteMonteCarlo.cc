@@ -20,18 +20,13 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/pose/util.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/id/types.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>

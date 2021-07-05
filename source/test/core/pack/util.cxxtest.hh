@@ -19,7 +19,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 #include <core/types.hh>
 
 #include <test/core/init_util.hh>
@@ -27,7 +26,6 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 static basic::Tracer TR("core.pack.util.cxxtest");
 

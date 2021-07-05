@@ -28,11 +28,9 @@
 #include <basic/Tracer.hh>
 
 // C/C++
-#include <iostream>
 #include <vector>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 using basic::Tracer;

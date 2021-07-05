@@ -28,8 +28,9 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
+#include <vector>
+#include <string>
 
 #include <core/pack/rotamer_set/UnboundRotamersOperation.fwd.hh>
 

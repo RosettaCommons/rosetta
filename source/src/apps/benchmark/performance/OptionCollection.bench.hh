@@ -18,6 +18,8 @@
 #include <utility/keys/KeyLookup.hh>
 #include <basic/options/option.hh>
 
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKey,
+
 class OptionCollectionBenchmark : public PerformanceBenchmark
 {
 public:

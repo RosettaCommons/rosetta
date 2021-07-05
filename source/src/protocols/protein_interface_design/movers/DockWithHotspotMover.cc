@@ -17,10 +17,7 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -28,8 +25,6 @@
 
 //parsing
 #include <utility/tag/Tag.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -40,15 +35,11 @@
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/metrics.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <iostream>
-#include <iomanip>
-#include <ObjexxFCL/string.functions.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

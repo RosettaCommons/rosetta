@@ -20,8 +20,6 @@
 
 // c++ headers
 
-#include <core/types.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

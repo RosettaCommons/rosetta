@@ -18,7 +18,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
@@ -39,7 +38,6 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 namespace protocols {
 namespace symmetry {

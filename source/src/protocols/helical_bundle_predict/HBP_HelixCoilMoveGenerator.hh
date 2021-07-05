@@ -29,8 +29,6 @@
 #include <protocols/helical_bundle_predict/HBPHelixAssignments.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace helical_bundle_predict {

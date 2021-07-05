@@ -20,7 +20,7 @@
 #include <protocols/antibody/AntibodyEnumManager.hh>
 #include <protocols/antibody/AntibodyNumberingParser.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
-#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterEnumManager.fwd.hh>
 #include <protocols/antibody/clusters/CDRClusterSet.fwd.hh>
 #include <protocols/antibody/clusters/CDRCluster.fwd.hh>
 
@@ -28,10 +28,9 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
-#include <protocols/docking/types.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
 

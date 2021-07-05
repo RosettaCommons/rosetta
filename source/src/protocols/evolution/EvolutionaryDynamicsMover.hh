@@ -20,15 +20,12 @@
 
 // Unit header
 #include <protocols/evolution/EvolutionaryDynamicsMover.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <protocols/moves/MonteCarloStatus.hh>
 
 // C/C++ headers
 #include <string>
 
 // External headers
 #include <functional>
-#include <boost/unordered_map.hpp>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -39,8 +36,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/filters/Filter.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
 
 // Package headers

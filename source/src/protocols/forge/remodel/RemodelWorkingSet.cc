@@ -13,7 +13,6 @@
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray2D.hh>
 
 // Utility Headers
 #include <basic/options/option.hh>
@@ -24,19 +23,15 @@
 #include <utility/vector1.hh>
 
 // project headers
-#include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/OrderedFragSet.fwd.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-#include <core/kinematics/FoldTree.hh>
 // for switch typeset
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 
 // for resfile command map
 #include <core/pack/task/ResfileReader.hh>
@@ -51,6 +46,8 @@
 #include <protocols/forge/build/SegmentRebuild.hh>
 #include <protocols/forge/build/SegmentInsert.hh>
 #include <protocols/forge/methods/util.hh>
+
+#include <protocols/forge/remodel/RemodelData.hh> // AUTO IWYU For LineObject
 
 // C++ Headers
 

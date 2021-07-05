@@ -18,7 +18,6 @@
 #include <numeric/linear_algebra/GeneralizedEigenSolver.hh>
 
 // External headers // {{{1
-#include <Eigen/Dense>
 
 #include <basic/Tracer.hh>
 
@@ -26,8 +25,6 @@
 #include <iostream>
 #include <complex>
 #include <string>
-#include <functional>
-#include <sstream>
 
 static basic::Tracer TR("numeric.linear_algebra.GeneralizedEigenSolverTests.cxxtest");
 

@@ -28,7 +28,6 @@
 #include <protocols/docking/util.hh>
 
 // Utility headers
-#include <numeric/random/random.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/option.hh>
@@ -37,7 +36,6 @@
 #include <basic/Tracer.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //C++ Headers
@@ -45,6 +43,10 @@
 #include <fstream>
 
 // Project Headers
+
+#include <core/scoring/ScoreFunction.hh> // MANUAL IWYU
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 static basic::Tracer tr( "protocols.topo_broker.asym_fold_and_dock", basic::t_info );
 

@@ -23,15 +23,12 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 //#include <core/scoring/ScoringManager.hh>
@@ -40,7 +37,6 @@
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -58,7 +54,6 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -76,7 +71,6 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 
@@ -94,8 +88,6 @@
 #include <core/optimization/types.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
 
 #include <basic/options/option_macros.hh>
 
@@ -112,18 +104,11 @@
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/rna/denovo/util.hh>
-#include <protocols/rna/util.hh>
 #include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
-#include <core/energy_methods/RNA_LJ_BaseEnergy.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/EnergyMap.hh> //for EnergyMap
-#include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
 
-#include <basic/database/open.hh>
 
 #include <devel/init.hh>
 
@@ -145,13 +130,11 @@
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
 
 // option key includes
 
@@ -160,6 +143,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <ctime>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core;
 using namespace core::pose::rna;

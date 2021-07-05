@@ -16,8 +16,6 @@
 
 #include <protocols/antibody_legacy/LHRepulsiveRampLegacy.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
@@ -28,33 +26,17 @@
 
 #include <core/pose/variant_util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/variant_util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/OptH.hh>
-#include <core/pack/task/operation/ResFilters.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 using namespace ObjexxFCL::format;
 
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>

@@ -31,21 +31,15 @@
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/residue_io.hh>
-#include <core/chemical/adduct_util.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/Orbital.hh> /* for copying ResidueType */
-#include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
 
 #include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 
 // Basic headers
-#include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
 
 // C++ headers
 #include <fstream>
@@ -55,13 +49,12 @@
 #include <algorithm>
 
 // option key includes
-#include <basic/options/keys/pH.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/chemical/orbitals/AssignOrbitals.hh>
 
 #include <utility/vector1.hh>
-#include <utility/file/file_sys_util.hh>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
 
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>

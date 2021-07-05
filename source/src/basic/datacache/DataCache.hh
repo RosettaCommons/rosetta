@@ -19,7 +19,6 @@
 // unit headers
 #include <basic/datacache/DataCache.fwd.hh>
 
-#include <basic/datacache/CacheableData.hh>
 
 
 // type headers
@@ -28,17 +27,11 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <algorithm>
-#include <cassert>
 #include <cstddef>
 #include <iosfwd>
-#include <vector>
 #include <basic/datacache/CacheableData.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace basic {
 namespace datacache {

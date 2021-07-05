@@ -24,7 +24,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/fixedsizearray1.fwd.hh>
 
 

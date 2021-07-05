@@ -16,11 +16,8 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentComparatorBase.fwd.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
-#include <core/types.hh>
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
 

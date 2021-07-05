@@ -17,7 +17,6 @@
 #include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 
-#include <utility/vector1.fwd.hh>
 
 #include <map>
 

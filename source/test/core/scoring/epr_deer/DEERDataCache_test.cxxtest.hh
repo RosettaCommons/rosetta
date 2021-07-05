@@ -28,6 +28,8 @@
 
 #include <map>
 
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, basic_os...
+
 
 class DEERDataCacheTest : public CxxTest::TestSuite {
 public:

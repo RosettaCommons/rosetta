@@ -15,11 +15,9 @@
 #include <protocols/fold_from_loops/movers/MoveMapFactoryToNamedMoveMapMoverCreator.hh>
 
 // Protocol headers
-#include <protocols/rosetta_scripts/util.hh>
 
 // Core headers
-#include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/util.hh>
@@ -27,14 +25,10 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 static basic::Tracer TR( "protocols.fold_from_loops.MoveMapFactoryToNamedMoveMapMover", basic::t_trace );
 

@@ -23,27 +23,19 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/tag/Tag.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/id/AtomID.hh>
 
 //#include <numeric/rotation.functions.hh>
-#include <numeric/NumericTraits.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random.functions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.io.hh>
 #include <numeric/xyzVector.io.hh>
-#include <numeric/trig.functions.hh>
 #include <numeric/conversions.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer tr( "devel.replica_docking.UnbiasedRigidBodyMover" );

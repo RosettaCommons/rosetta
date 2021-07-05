@@ -14,7 +14,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/fragment/FragSet.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <set>

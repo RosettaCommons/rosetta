@@ -19,7 +19,6 @@
 
 // Package Headers
 #include <utility/VirtualBase.hh>
-#include <protocols/topology_broker/Exceptions.hh>
 
 
 // Project Headers
@@ -27,8 +26,7 @@
 
 // C/C++ headers
 #include <map>
-#include <iterator>
-#include <stdexcept>
+#include <string>
 
 namespace protocols {
 namespace topology_broker {

@@ -29,7 +29,6 @@
 #include <core/select/residue_selector/util.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility>

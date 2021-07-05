@@ -19,9 +19,6 @@
 #include <core/energy_methods/NPDHBondEnergy.fwd.hh>
 
 // Package headers
-#include <core/scoring/hbonds/hbtrie/HBAtom.hh>
-#include <core/scoring/hbonds/hbtrie/HBondTrie.fwd.hh>
-#include <core/scoring/hbonds/constants.hh>
 //pba
 
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
@@ -29,14 +26,11 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <utility/vector1.hh>
-#include <map>
-#include <boost/unordered_map.hpp>
 
 #ifdef PYROSETTA
 #include <core/scoring/hbonds/HBondOptions.hh>

@@ -25,21 +25,19 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
@@ -61,6 +59,9 @@
 
 #include <string>
 #include <algorithm>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree, operator<<
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
 
 namespace protocols {
 namespace fold_from_loops {

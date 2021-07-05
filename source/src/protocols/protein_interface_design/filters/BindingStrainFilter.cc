@@ -11,23 +11,18 @@
 #include <protocols/protein_interface_design/filters/BindingStrainFilter.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/Mover.hh>
-#include <core/pack/pack_rotamers.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/score_filters/ScoreTypeFilter.hh>

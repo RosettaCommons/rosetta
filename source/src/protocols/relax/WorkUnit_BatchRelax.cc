@@ -33,12 +33,11 @@
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/ResidueType.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
+
+#include <core/scoring/constraints/ConstraintSet.hh> // AUTO IWYU For ConstraintSet
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

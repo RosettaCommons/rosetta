@@ -16,11 +16,9 @@
 #include <protocols/dna/WatsonCrickRotamerCouplings.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
-#include <utility/vector1.hh>
-
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#include <string>
 
 namespace protocols {
 namespace dna {

@@ -14,7 +14,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
@@ -22,25 +21,20 @@
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 
 // Project headers
-#include <core/id/AtomID_Mask.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/kinematics/tree/Atom.hh>
-#include <core/kinematics/AtomPointer.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/DomainMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 
 // Numeric Headers
-#include <numeric/BodyPosition.fwd.hh>
-#include <numeric/Quaternion.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/io/icstream.fwd.hh>
-#include <utility/io/ocstream.fwd.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 using namespace core;

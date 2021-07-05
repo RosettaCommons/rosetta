@@ -20,7 +20,6 @@
 // Package Headers
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 #include <numeric/xyzVector.hh>
 
 // Utility headers

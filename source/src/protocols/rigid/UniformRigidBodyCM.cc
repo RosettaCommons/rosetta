@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/environment/DofPassport.hh>
-#include <core/environment/LocalPosition.hh>
 
 #include <protocols/environment/DofUnlock.hh>
 
@@ -26,25 +25,21 @@
 #include <protocols/rigid/UniformRigidBodyCMCreator.hh>
 
 // Project headers
-#include <core/kinematics/MoveMap.hh>
 
-#include <core/pose/util.hh>
 
 //Utility Headers
-#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/string_util.hh>
-#include <utility/vector1.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // tracer
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/rigid/UniformRigidBodyMover.hh> // AUTO IWYU For UniformRigidBodyMover
 
 #ifdef WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>

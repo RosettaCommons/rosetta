@@ -12,29 +12,20 @@
 /// @author Colin A. Smith (colin.smith@ucsf.edu)
 
 // Unit headers
-#include <core/scoring/mm/MMBondAngleScore.fwd.hh>
 #include <core/scoring/mm/MMBondAngleScore.hh>
-#include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
 
 // Project headers
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
 
 #include <core/scoring/ScoringManager.hh>
 
 // Utility header
 #include <utility/keys/Key3Tuple.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 
 // C++ headers
-#include <iostream>
-#include <string>
 #include <map>
 
-#include <utility/vector1.hh>
 #include <utility/keys/Key2Tuple.hh>
 
 

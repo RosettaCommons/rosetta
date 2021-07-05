@@ -28,17 +28,11 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 
-#include <utility/VirtualBase.hh>
 
 
 // C++ Headers
-#include <cstdlib>
 #include <iosfwd>
-#include <utility/assert.hh>
-#include <vector>
 #include <string>
-#include <map>
-#include <algorithm>
 
 #include <utility/vector1.hh>
 

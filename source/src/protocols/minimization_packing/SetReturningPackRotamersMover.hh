@@ -23,12 +23,11 @@
 #include <core/pack/task/PackerTask.fwd.hh> // for PT COP
 #include <core/scoring/ScoreFunction.fwd.hh> // for SF COP
 
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
 
 
-#include <utility/vector0.hh>
 
 
 namespace protocols {

@@ -32,11 +32,8 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
@@ -47,12 +44,10 @@
 
 // Utility includes
 #include <utility/vector1.hh>
-#include <sys/stat.h>
 #include <fstream>
 #include <utility/file/file_sys_util.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 #include <basic/prof.hh>
 // XSD XRW Includes
 
@@ -60,6 +55,8 @@
 #include <protocols/frag_picker/scores/FragmentCrmsd.hh>
 #include <protocols/frag_picker/BoundedCollector.hh>
 #include <protocols/frag_picker/BestTotalScoreSelector.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.frag_picker.FragmentScoreFilter" );
 

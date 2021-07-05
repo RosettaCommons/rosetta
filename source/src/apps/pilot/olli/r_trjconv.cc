@@ -19,7 +19,6 @@
 #include <core/types.hh>
 #include <devel/init.hh>
 
-#include <core/conformation/Conformation.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/util.hh>
@@ -27,48 +26,39 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-#include <protocols/abinitio/ClassicAbinitio.hh>
 
-#include <protocols/evaluation/PoseEvaluator.hh>
 
 
 #include <core/pose/Pose.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 
 
 #include <basic/options/option.hh>
 #include <utility/excn/Exceptions.hh>
 //#include <basic/options/OptionKeys.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 // C++ headers
-#include <iostream>
 #include <string>
 
 #include <basic/Tracer.hh>
 
-#include <core/kinematics/Stub.hh>
-#include <core/id/types.hh>
+
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 
 static basic::Tracer tracer( "r_trjconv" );
 
 using namespace core;
-using namespace protocols;
 using namespace fragment;
-using namespace abinitio;
 
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 
 
 class ThisApplication {

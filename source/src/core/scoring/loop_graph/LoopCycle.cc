@@ -15,7 +15,6 @@
 
 #include <core/scoring/loop_graph/LoopCycle.hh>
 #include <core/scoring/loop_graph/Loop.hh>
-#include <utility>
 #include <ostream>
 
 namespace core {

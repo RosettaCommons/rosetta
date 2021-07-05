@@ -14,22 +14,11 @@
 
 #include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/scoring/sasa.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 
 namespace protocols {

@@ -13,7 +13,6 @@
 /// @author Sam DeLuca
 
 #include <basic/database/insert_statement_generator/RowData.hh>
-#include <utility>
 
 namespace basic {
 namespace database {

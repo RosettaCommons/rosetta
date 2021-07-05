@@ -17,24 +17,15 @@
 
 
 // Project Headers
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/io/util.hh>
-#include <core/io/silent/ScoreFileSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
 #include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>

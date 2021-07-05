@@ -13,19 +13,13 @@
 /// @author Chris Bailey-Kellogg, cbk@cs.dartmouth.edu; Brahm Yachnin, brahm.yachnin@rutgers.edu
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/deriv/dihedral_deriv.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -38,7 +32,6 @@
 
 #include <utility/exit.hh>
 
-#include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 
 namespace core {

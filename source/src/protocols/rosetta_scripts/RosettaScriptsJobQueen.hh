@@ -21,7 +21,6 @@
 
 //#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd3/strong_types.hh>
 
 // utility headers
@@ -31,7 +30,6 @@
 #include <basic/resource_manager/ResourceManager.fwd.hh>
 
 // utility headers
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <list>

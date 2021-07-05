@@ -16,7 +16,6 @@
 // C/C++ headers
 #include <iomanip>
 #include <iostream>
-#include <map>
 #include <string>
 
 // External headers
@@ -52,7 +51,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/sequence/SequenceAlignment.hh>
+#include <core/sequence/SequenceAlignment.fwd.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
@@ -64,13 +63,15 @@
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMotionMover.hh>
 #include <protocols/nonlocal/BiasedFragmentMover.hh>
-#include <protocols/nonlocal/Policy.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
 
 // Package headers
 #include <protocols/medal/util.hh>
+
+#include <core/fragment/Frame.hh> // MANUAL IWYU
+#include <core/util/ChainbreakUtil.hh> // AUTO IWYU For ChainbreakUtil
 
 namespace protocols {
 namespace medal {

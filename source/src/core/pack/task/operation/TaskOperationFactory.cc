@@ -15,25 +15,23 @@
 
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperationCreator.hh>
-#include <core/pack/task/operation/ResLvlTaskOperationCreator.hh>
+#include <core/pack/task/operation/ResLvlTaskOperationCreator.fwd.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-#include <core/pack/task/operation/ResFilterCreator.hh>
+#include <core/pack/task/operation/ResFilterCreator.fwd.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
-#include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
 // Boost headers

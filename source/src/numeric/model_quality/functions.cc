@@ -15,13 +15,11 @@
 // Rosetta Headers
 
 // numeric libraries
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/types.hh>
 
-#include <utility/vector1.hh>
+
+#include <math.h> // AUTO IWYU For cos
 
 
 namespace numeric {

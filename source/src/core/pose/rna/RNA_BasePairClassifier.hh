@@ -18,10 +18,11 @@
 #define INCLUDED_protocols_rna_RNA_BasePairClassifier_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/pose/rna/BasePair.fwd.hh> // AUTO IWYU For BasePair
+#include <core/pose/rna/BaseStack.hh> // AUTO IWYU For EnergyBaseStackList
 
 
 //// C++ headers

@@ -20,7 +20,6 @@
 #include <protocols/jd2/JobOutputterObserver.hh>
 
 #include <core/types.hh>
-#include <utility>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>

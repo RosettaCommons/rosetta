@@ -20,7 +20,7 @@
 
 // Package headers
 #include <protocols/stepwise/sampler/StepWiseSamplerOneValue.hh>
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.fwd.hh>
 
 // Project headers
 #include <core/id/DOF_ID.hh>

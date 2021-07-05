@@ -22,7 +22,6 @@
 #include <basic/Tracer.hh>
 
 //Req'd on WIN32
-#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.options.StepWiseModelerOptions" );
 

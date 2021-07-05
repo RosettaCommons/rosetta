@@ -21,15 +21,11 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Basic headers
-#include <basic/resource_manager/ResourceLoader.hh>
 
 //utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
-#include <iosfwd>
 
 namespace core {
 namespace import_pose {

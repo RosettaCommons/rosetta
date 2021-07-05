@@ -20,15 +20,12 @@
 #include <protocols/moves/MoverForPoseList.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
-#include <core/kinematics/FoldTree.hh>
+#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
 
 namespace protocols {
 namespace stepwise {

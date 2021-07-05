@@ -23,19 +23,12 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/conformation/symmetry/SymDof.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
-#include <map>
 
 namespace protocols {
 namespace topology_broker {

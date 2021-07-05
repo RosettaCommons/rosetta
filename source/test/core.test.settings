@@ -454,9 +454,6 @@ sources = {
 		"FA_ElecEnergy_pre_talaris",
 		"RNA_FA_ElecEnergy",
 	],
-	"scoring/electron_density" : [
-		#"ElectronDensityLoader",
-	],
 	"scoring/epr_deer" : [
 		"DEERData_test",
 		"DEERDataCache_test",

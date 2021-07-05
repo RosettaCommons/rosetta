@@ -20,7 +20,7 @@
 
 #include <core/id/AtomID.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -35,13 +35,10 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
-#include <core/id/AtomID.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/iterators.hh>
 
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
 
 #include <numeric/conversions.hh>
 

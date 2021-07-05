@@ -16,10 +16,7 @@
 
 // core headers
 #include <core/io/StructFileReaderOptions.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
-#include <core/io/mmtf/mmtf_writer.hh>
 #include <core/io/mmtf/mmtf_reader.hh>
 
 // utility headers
@@ -32,7 +29,6 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/parser.OptionKeys.gen.hh>
 
 static basic::Tracer TR("mmtf2pdb");
 

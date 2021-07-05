@@ -32,17 +32,11 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/annotated_sequence.hh>
 //#include <core/import_pose/import_pose.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/tree/Atom.hh>
 #include <core/io/NomenclatureManager.hh>
 #include <core/pose/rna/util.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
@@ -53,24 +47,17 @@
 
 // Protocols
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <utility>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/tag/Tag.hh>
-#include <ObjexxFCL/FArray1D.hh>
 #include <numeric/random/random.hh>
 
 
 #include <iostream>
-#include <fstream>
 
 // TODO:
 // Should deprecate the non-long strategy

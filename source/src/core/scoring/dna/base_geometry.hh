@@ -20,8 +20,6 @@
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 #include <iosfwd>

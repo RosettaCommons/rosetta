@@ -27,8 +27,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility>
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 

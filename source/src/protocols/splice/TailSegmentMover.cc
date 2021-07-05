@@ -16,55 +16,38 @@
 #include <protocols/splice/TailSegmentMoverCreator.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
 
-#include <core/conformation/Conformation.hh>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/util.hh>
 
-#include <core/fragment/ConstantLengthFragSet.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/scoring/constraints/util.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 
 //movers
 #include <protocols/simple_moves/BackboneMover.hh> //SmallMover
-#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
-#include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 #include <protocols/task_operations/DesignAroundOperation.hh>
 #include <basic/options/keys/TailSegment.OptionKeys.gen.hh>
 
 
 //calculators and neighbor detection machinery
-#include <protocols/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/task_operations/RestrictByCalculatorsOperation.hh>
 
 // Utility Headers
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

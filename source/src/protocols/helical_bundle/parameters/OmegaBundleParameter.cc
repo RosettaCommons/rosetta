@@ -28,6 +28,8 @@
 // Basic headers:
 #include <basic/Tracer.hh>
 
+#include <utility/tag/XMLSchemaGeneration.hh> // AUTO IWYU For operator+, XMLSchemaAttribute
+
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

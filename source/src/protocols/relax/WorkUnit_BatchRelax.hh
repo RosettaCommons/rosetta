@@ -18,7 +18,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace relax {

@@ -13,7 +13,6 @@
 /// @author
 
 //graphix
-#include <protocols/viewer/viewers.hh>
 
 
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
@@ -43,11 +42,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/canonical_sampling.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 
-#include <core/chemical/ResidueType.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 #ifdef USEMPI

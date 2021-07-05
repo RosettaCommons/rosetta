@@ -24,18 +24,13 @@
 #include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairNone.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/types.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray3D.fwd.hh>
 
 
 namespace core {

@@ -22,7 +22,6 @@
 #include <protocols/jd3/pose_outputters/PoseOutputSpecification.hh>
 
 // utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>

@@ -16,9 +16,8 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Project headers
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh> // need .hh because we create Pose object in apply()
 
@@ -28,7 +27,6 @@
 
 
 #include <utility/exit.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

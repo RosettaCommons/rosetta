@@ -26,25 +26,17 @@
 #include <protocols/moves/Mover.hh>
 
 // Package Headers
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
 
 namespace protocols {
 namespace symmetric_docking {

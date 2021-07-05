@@ -22,28 +22,20 @@
 #include <protocols/membrane/util.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/simple_moves/UniformPositionMover.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 // Package Headers
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/Stub.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <utility/tag/Tag.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

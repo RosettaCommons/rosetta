@@ -16,7 +16,6 @@
 
 #include <protocols/recon_design/FindConsensusSequence.hh>
 #include <protocols/recon_design/FindConsensusSequenceCreator.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/VectorPoseMover.hh>
 
 // type headers
@@ -27,17 +26,14 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
-#include <utility/excn/Exceptions.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/xml_util.hh>
 #include <core/pack/task/xml_util.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/mpi_util.hh>
 #include <utility/string_util.hh>
@@ -46,6 +42,8 @@
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
 
 namespace protocols {
 namespace recon_design {

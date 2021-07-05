@@ -17,7 +17,6 @@
 #include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
 // C++ headers
@@ -36,7 +35,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 

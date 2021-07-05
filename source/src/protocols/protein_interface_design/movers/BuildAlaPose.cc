@@ -19,24 +19,20 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/id/types.hh>
-#include <core/kinematics/Jump.hh>
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/chemical/AA.hh> // AUTO IWYU For aa_from_name, operator<<, num_ca...
 
 
 namespace protocols {

@@ -28,21 +28,18 @@
 
 // Project Headers
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace protocols {
 namespace membrane {

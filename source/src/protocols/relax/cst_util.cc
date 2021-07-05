@@ -29,7 +29,6 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>

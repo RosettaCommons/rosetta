@@ -14,21 +14,15 @@
 // Test headers:
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/pdb1ubq.hh>
 
 // GeneralizedKIC headers:
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
-#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.hh>
-#include <protocols/cyclic_peptide_predict/util.hh>
 
 // Other Rosetta libraries:
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
 
 static basic::Tracer TR("protocols.cyclic_peptide_predict.simple_cycpep_predict_design_betanov15.cxxtest.hh");
 

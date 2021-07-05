@@ -23,18 +23,11 @@
 #include <utility/vector1.hh>
 
 // Basic headers
-#include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 //read pose stuff
-#include <core/io/StructFileRep.hh>
-#include <core/io/StructFileRepOptions.hh>
-#include <core/io/pdb/pdb_reader.hh>
-#include <core/io/StructFileReaderOptions.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 
 // C++ header
 #include <string>

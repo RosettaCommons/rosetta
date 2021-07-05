@@ -9,14 +9,12 @@
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/pose/util.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -27,7 +25,6 @@
 #include <core/scoring/constraints/util.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/scoring/rms_util.hh>
 #include <numeric/model_quality/rms.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/excn/Exceptions.hh>

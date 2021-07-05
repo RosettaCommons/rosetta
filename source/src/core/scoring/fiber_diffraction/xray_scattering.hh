@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_scoring_fiber_diffraction_xray_scattering_hh
 #define INCLUDED_core_scoring_fiber_diffraction_xray_scattering_hh
 
+#include <core/scoring/fiber_diffraction/xray_scattering.fwd.hh>
+
 #include <core/types.hh>
 
 #include <cmath>

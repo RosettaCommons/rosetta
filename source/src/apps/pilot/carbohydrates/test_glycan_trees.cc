@@ -2,47 +2,29 @@
 #include <devel/init.hh>
 
 // protocol headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/SilentFileJobOutputter.hh>
-#include <protocols/moves/Mover.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
-#include <core/conformation/carbohydrates/GlycanTree.hh>
-#include <core/conformation/carbohydrates/GlycanNode.hh>
-#include <core/conformation/carbohydrates/util.hh>
-#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/carbohydrates/GlycanTree.fwd.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/string_util.hh>
 
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/carbohydrates/util.hh>
 
 // Protocol Headers
-#include <basic/Tracer.hh>
+
+#include <iostream> // AUTO IWYU For endl, operator<<, basic_ostream, basic_ostre...
 
 
 static basic::Tracer TR("glycan_info");
@@ -54,11 +36,9 @@ main( int argc, char * argv [] )
 	try {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		using namespace protocols::jd2;
 		using namespace core::conformation::carbohydrates;
 		using namespace core::pose::carbohydrates;
 		using namespace core::import_pose;
-		using namespace core::io::pdb;
 		using namespace core::conformation;
 		using namespace core::chemical;
 		using namespace core::import_pose;

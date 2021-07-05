@@ -24,13 +24,11 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2.fwd.hh>
 
 // C++ headers
-#include <string>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>

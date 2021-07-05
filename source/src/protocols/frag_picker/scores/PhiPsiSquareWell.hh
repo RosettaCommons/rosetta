@@ -24,8 +24,10 @@
 
 #include <ObjexxFCL/FArray1D.hh>
 
-#include <protocols/frag_picker/PhiPsiTalosIO.hh>
+#include <protocols/frag_picker/PhiPsiTalosIO.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For PoseOP
 
 
 namespace protocols {

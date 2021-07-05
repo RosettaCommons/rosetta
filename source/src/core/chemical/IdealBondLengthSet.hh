@@ -29,7 +29,6 @@
 #include <string>
 
 #include <core/types.hh>
-#include <core/chemical/Element.fwd.hh>
 
 
 namespace core {

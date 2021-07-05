@@ -24,20 +24,17 @@
 // ObjexxFCL headers
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 
 // Numeric headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/interpolation/interpolation.hh>
-#include <numeric/xyzVector.hh>
 
 // option key includes
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

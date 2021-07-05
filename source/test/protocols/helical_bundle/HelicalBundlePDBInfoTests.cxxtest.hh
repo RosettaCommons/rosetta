@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -32,6 +30,10 @@
 #include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <protocols/helical_bundle/MakeBundleHelix.hh> // AUTO IWYU For MakeBundleHelix
 
 static basic::Tracer TR("HelicalBundlePDBInfoTests");
 

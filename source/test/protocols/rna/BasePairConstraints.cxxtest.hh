@@ -18,40 +18,32 @@
 
 // Unit headers
 
-#include <platform/types.hh>
 
 // Package Headers
-#include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
-#include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
-#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/BasePairConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/id/AtomID.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/rna/leontis_westhof_util.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/import_pose/libraries/RNA_JumpLibrary.hh>
 #include <core/import_pose/libraries/RNA_LibraryManager.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <numeric/xyzVector.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 // --------------- Test Class --------------- //

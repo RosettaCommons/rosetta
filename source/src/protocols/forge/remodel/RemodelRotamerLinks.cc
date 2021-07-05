@@ -11,17 +11,14 @@
 #include <protocols/forge/remodel/RemodelRotamerLinksCreator.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // option key includes

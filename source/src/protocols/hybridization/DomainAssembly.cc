@@ -19,31 +19,30 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/Energies.hh>
 
 //numeric
 #include <numeric/random/random.hh>
 #include <numeric/random/WeightedSampler.hh>
 
 // options
-#include <basic/options/option.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
 
 //utility
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
+#include <core/scoring/constraints/AtomPairConstraint.hh> // AUTO IWYU For AtomPairConstraint
+#include <core/scoring/constraints/BoundConstraint.hh> // AUTO IWYU For BoundFunc
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 static basic::Tracer TR( "protocols.hybridization.DomainAssembly" );
 

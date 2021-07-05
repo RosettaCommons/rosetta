@@ -13,16 +13,12 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // basic headers
-#include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 
 // C++ headers
-#include <sstream>
 
 //  creator headers
 #include <protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.hh>
@@ -85,6 +81,8 @@
 #include <protocols/features/InterfaceFeaturesCreator.hh>
 #include <protocols/antibody/clusters/CDRClusterFeaturesCreator.hh>
 #include <protocols/antibody/AntibodyFeaturesCreator.hh>
+
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl
 
 
 class BackwardsProtocolsFeaturesReporterCreatorTests : public CxxTest::TestSuite

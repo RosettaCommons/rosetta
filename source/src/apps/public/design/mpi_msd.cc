@@ -18,14 +18,12 @@
 /// Pack Daemon headers
 #include <protocols/pack_daemon/EntityCorrespondence.hh>
 #include <protocols/pack_daemon/DynamicAggregateFunction.hh>
-#include <protocols/pack_daemon/MultistateAggregateFunction.hh>
 #include <protocols/pack_daemon/MultistateFitnessFunction.hh>
 #include <protocols/pack_daemon/PackDaemon.hh>
 #include <protocols/pack_daemon/util.hh>
 
 /// Core headers
 #include <devel/init.hh>
-#include <core/io/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/StructFileRepOptions.hh>
 #include <basic/options/option.hh>
@@ -51,7 +49,6 @@
 
 // Protocols headers
 #include <protocols/genetic_algorithm/Entity.hh>
-#include <protocols/genetic_algorithm/EntityRandomizer.hh>
 #include <protocols/genetic_algorithm/Mutate1Randomizer.hh>
 #include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
 #include <protocols/multistate_design/util.hh>
@@ -74,13 +71,10 @@
 #include <utility/excn/Exceptions.hh>
 
 // Numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/random/random.hh>
 
 // option key includes
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>

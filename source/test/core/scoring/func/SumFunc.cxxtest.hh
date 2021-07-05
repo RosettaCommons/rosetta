@@ -14,11 +14,11 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
+#include <core/scoring/func/SumFunc.hh> // DO NOT AUTO-REMOVE
+
 // basic headers
-#include <basic/Tracer.hh>
 
 // unit headers
-#include <core/scoring/func/SumFunc.hh>
 
 #ifdef SERIALIZATION
 #include <core/scoring/func/HarmonicFunc.hh>

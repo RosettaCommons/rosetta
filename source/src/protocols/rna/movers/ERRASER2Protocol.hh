@@ -20,7 +20,6 @@
 
 // Protocol headers
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Core headers

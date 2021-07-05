@@ -14,8 +14,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -24,7 +22,7 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/tools/make_vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
@@ -35,7 +33,6 @@
 #include <basic/Tracer.hh>
 
 // External Headers
-#include <cppdb/frontend.h>
 
 // C++ Headers
 #include <sstream>

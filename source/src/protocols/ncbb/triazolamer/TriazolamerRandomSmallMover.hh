@@ -14,13 +14,15 @@
 #define INCLUDED_protocols_simple_moves_triazolamer_TriazolamerRandomSmallMover_hh
 // Unit Headers
 #include <protocols/ncbb/triazolamer/TriazolamerRandomSmallMover.fwd.hh>
-#include <protocols/ncbb/triazolamer/TriazolamerMover.hh>
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
 #include <core/types.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 //#include <utility/vector1.hh>
 
 namespace protocols {

@@ -20,22 +20,13 @@
 #include <core/pack/task/ResidueLevelTask_.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
-#include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 #include <core/pack/palette/PackerPaletteFactory.hh>
 
 //Project Headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <core/pose/PDBInfo.hh>
@@ -55,10 +46,17 @@
 #include <utility/vector1.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
+#include <core/pack/palette/PackerPalette.hh> // AUTO IWYU For PackerPalette
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 #ifdef    SERIALIZATION
+#include <core/pack/rotamer_set/RotamerCouplings.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
+#include <core/pack/rotamer_set/RotamerSetOperation.hh>
+#include <core/pack/rotamer_set/RotamerSetOperation.hh>
+
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>

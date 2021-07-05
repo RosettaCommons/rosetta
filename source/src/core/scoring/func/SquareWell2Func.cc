@@ -19,8 +19,6 @@
 #include <core/types.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/constants.hh>
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 static basic::Tracer TR( "core.scoring.constraints.SquareWall2Func" );
 

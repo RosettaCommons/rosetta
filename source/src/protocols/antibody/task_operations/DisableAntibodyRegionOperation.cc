@@ -16,7 +16,6 @@
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/antibody/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pack/task/operation/TaskOperation.hh>

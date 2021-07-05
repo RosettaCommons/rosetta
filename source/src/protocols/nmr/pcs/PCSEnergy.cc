@@ -21,7 +21,6 @@
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
 #include <protocols/nmr/nmrspinlabel_util.hh>
-#include <core/scoring/nmr/NMRDummySpinlabelEnsemble.hh>
 #include <core/scoring/nmr/pcs/PCSSingle.hh>
 #include <core/scoring/nmr/pcs/PCSSingleSet.hh>
 #include <core/scoring/nmr/pcs/PCSMultiSet.hh>
@@ -34,14 +33,12 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/optimization/Minimizer.hh>
@@ -53,7 +50,6 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/nmr.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -64,18 +60,15 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/constants.hh>
-#include <numeric/HomogeneousTransform.hh>
 #include <numeric/geometry/BoundingBox.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
 #include <string>
 #include <limits>
 #include <iostream>
-#include <sstream>
 #include <iomanip>
 
 namespace protocols {

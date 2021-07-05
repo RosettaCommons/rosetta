@@ -20,13 +20,14 @@
 #include <core/pose/variant_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/packer_neighbors.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace core {
 namespace pack {

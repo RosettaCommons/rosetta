@@ -18,15 +18,11 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/comparative_modeling/ThreadingJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <protocols/jd2/JobsContainer.hh>
+#include <protocols/jd2/JobsContainer.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/sequence/SequenceAlignment.fwd.hh>
-
-#if defined(WIN32) || defined(PYROSETTA)
 #include <core/sequence/SequenceAlignment.hh>
-#endif
 
 //utility headers
 #include <map>

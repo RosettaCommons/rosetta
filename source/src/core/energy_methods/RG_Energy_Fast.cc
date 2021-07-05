@@ -18,7 +18,6 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
 #include <core/chemical/VariantType.hh>
 
 // Project headers

@@ -14,22 +14,17 @@
 #ifndef INCLUDED_protocols_features_strand_assembly_SANDWICHFRAGMENT_HH
 #define INCLUDED_protocols_features_strand_assembly_SANDWICHFRAGMENT_HH
 
+#include <protocols/features/strand_assembly/SandwichFragment.fwd.hh>
+
 //C++ Headers
 #include <string>
-#include <vector>
-#include <map>
 
 //Core
-#include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 //Numeric
-#include <numeric/xyzVector.hh>
-#include <numeric/HomogeneousTransform.hh>
 
 //Utility
-#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace features {

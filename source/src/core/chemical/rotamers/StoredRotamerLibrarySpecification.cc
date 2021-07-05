@@ -19,7 +19,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
 
 #ifdef    SERIALIZATION

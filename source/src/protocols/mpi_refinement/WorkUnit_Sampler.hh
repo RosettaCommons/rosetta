@@ -17,8 +17,8 @@
 
 #include <protocols/wum/WorkUnitBase.hh>
 
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {

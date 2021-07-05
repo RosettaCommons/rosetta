@@ -31,7 +31,6 @@
 #include <sstream>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

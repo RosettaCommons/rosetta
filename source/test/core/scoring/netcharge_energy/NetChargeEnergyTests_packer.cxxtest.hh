@@ -16,24 +16,15 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <core/scoring/netcharge_energy/NetChargeEnergySetup.hh>
-#include <core/energy_methods/NetChargeEnergy.hh>
+#include <core/scoring/netcharge_energy/NetChargeEnergySetup.fwd.hh>
 
 // Unit headers
 
-#include <platform/types.hh>
 
 // Package Headers
-#include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 
 #include <core/pose/annotated_sequence.hh>
 
@@ -45,12 +36,14 @@
 
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR("core.scoring.netcharge_energy.NetChargeEnergyTests_packer.cxxtest");

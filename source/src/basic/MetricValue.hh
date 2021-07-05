@@ -21,13 +21,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/VirtualBase.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <cassert>
-#include <cstddef>
 #include <iosfwd>
 #include <string>
 #include <sstream>

@@ -21,8 +21,6 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

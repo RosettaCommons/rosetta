@@ -11,19 +11,15 @@
 /// @author jk
 
 #include <iostream>
-#include <iomanip>
 
-#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
 
@@ -33,6 +29,8 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core;

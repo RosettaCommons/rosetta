@@ -17,13 +17,15 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR( "core.pack.task.operation.FillAUTOTaskOperation" );

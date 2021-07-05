@@ -19,7 +19,6 @@
 
 // Package Headers
 #include <core/pack/annealer/SimAnnealerBase.hh>
-#include <core/pack_basic/RotamerSetsBase.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
 

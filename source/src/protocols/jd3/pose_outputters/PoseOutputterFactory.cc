@@ -14,9 +14,9 @@
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
-#include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.hh>
+#include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputterCreator.hh>
 
 // required for passing to PoseOutputter::parse_my_tag
@@ -25,7 +25,7 @@
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/excn/Exceptions.hh>
 

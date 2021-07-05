@@ -35,7 +35,6 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/util.hh>
 
 #include <basic/Tracer.hh>
@@ -45,19 +44,16 @@
 #include <basic/datacache/WriteableCacheableMap.hh>
 #include <basic/datacache/WriteableCacheableDataFactory.hh>
 
-#include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/SubMotifInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
@@ -67,8 +63,6 @@
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility>
 #include <utility/vector1.hh>
@@ -76,6 +70,10 @@
 #include <core/sequence/AnnotatedSequence.hh>
 
 #include <ObjexxFCL/format.hh>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters, operator!=
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
+#include <basic/datacache/WriteableCacheableData.hh> // AUTO IWYU For WriteableCacheableData
 
 
 namespace core {

@@ -21,13 +21,11 @@
 #include <protocols/helical_bundle/BackboneGridSamplerHelper.fwd.hh>
 
 // Package headers
-#include <core/conformation/Residue.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>

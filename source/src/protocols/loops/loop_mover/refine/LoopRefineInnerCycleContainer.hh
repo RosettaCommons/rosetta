@@ -27,11 +27,11 @@
 // Project headers
 #include <protocols/moves/MoverContainer.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
 
 namespace protocols {
 namespace loops {

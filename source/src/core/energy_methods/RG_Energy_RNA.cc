@@ -24,7 +24,6 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
 
 
 // Utility headers

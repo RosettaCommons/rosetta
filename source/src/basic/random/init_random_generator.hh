@@ -19,7 +19,10 @@
 
 #include <string>
 #include <basic/random/RandomGeneratorSettings.fwd.hh>
+
+#ifdef MULTI_THREADED
 #include <platform/types.hh>
+#endif
 
 namespace basic {
 namespace random {

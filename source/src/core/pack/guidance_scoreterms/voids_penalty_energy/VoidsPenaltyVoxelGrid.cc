@@ -15,20 +15,19 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 
-#include <numeric/constants.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueTypeSet.hh> // AUTO IWYU For ResidueTypeSet
 
 
 //Default values:

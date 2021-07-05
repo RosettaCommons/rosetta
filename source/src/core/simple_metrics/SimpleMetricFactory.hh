@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_simple_metrics_SimpleMetricFactory_HH
 #define INCLUDED_core_simple_metrics_SimpleMetricFactory_HH
 
+#include <core/simple_metrics/SimpleMetricFactory.fwd.hh>
+
 // Unit headers
 #include <utility/SingletonBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

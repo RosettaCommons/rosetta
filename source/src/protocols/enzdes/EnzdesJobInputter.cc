@@ -42,7 +42,6 @@
 // option key includes
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.enzdes.EnzdesJobInputter" );

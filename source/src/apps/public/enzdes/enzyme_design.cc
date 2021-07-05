@@ -25,7 +25,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/CacheableString.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh> //function for reading cstfiles
 //#include <devel/enzdes/DesignSilentStruct.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/JobDistributors.hh>
@@ -50,6 +50,8 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

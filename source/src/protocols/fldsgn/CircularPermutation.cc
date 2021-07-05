@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <basic/Tracer.hh>
@@ -41,7 +41,6 @@
 #include <utility/tag/Tag.hh>
 
 #include <protocols/forge/build/SegmentRebuild.fwd.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

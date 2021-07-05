@@ -19,19 +19,15 @@
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 
 // Core headers
-#include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #ifdef WIN32
 #include <core/scoring/constraints/Constraint.hh> // WIN32 INCLUDE
 #endif
-#include <core/scoring/func/Func.fwd.hh>
-#include <core/types.hh>
 
 // Basic/Utility headers
 #include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 

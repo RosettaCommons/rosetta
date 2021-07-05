@@ -9,7 +9,6 @@
 // @author Xingjie Pan (xingjiepan@gmail.com)
 
 // Unit headers
-#include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/loop_modeler/perturbers/LoopHashPerturber.hh>
 
@@ -20,11 +19,13 @@
 #include <numeric/random/random.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/selection.hh>
 
 // Protocol headers
 #include <protocols/loophash/LoopHashLibrary.hh>
+
+#include <core/chemical/AA.hh> // AUTO IWYU For aa_from_oneletter_code, name_from_aa
 
 static basic::Tracer TR( "protocols.loop_modeler.perturbers.LoopHashPerturber" );
 

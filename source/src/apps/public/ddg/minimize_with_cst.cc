@@ -16,9 +16,7 @@
 #include <core/types.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -44,13 +42,10 @@
 #include <numeric/xyzVector.hh>
 
 #include <fstream>
-#include <iostream>
-#include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 
 
@@ -63,11 +58,8 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/Func.hh>
 //#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/Jump.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -79,7 +71,6 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 
-#include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
 
@@ -93,7 +84,6 @@
 //new options stuff?
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 // C++ headers
@@ -103,7 +93,8 @@
 //C++ filechek
 #include <sys/stat.h>
 
-#include <utility/vector0.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 static basic::Tracer TR( "apps.public.ddg.minimize_with_cst" );
 

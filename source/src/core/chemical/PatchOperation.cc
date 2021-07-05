@@ -40,6 +40,8 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 
+#include <core/chemical/MutableICoorRecord.hh> // AUTO IWYU For MutableICoorRecord
+
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -24,7 +24,6 @@
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
 #include <protocols/jd3/JobTracker.hh>
-#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/output/MultipleOutputSpecification.hh>
 #include <protocols/jd3/output/MultipleOutputter.hh>
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
@@ -44,16 +43,12 @@
 
 //project headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose_options.hh>
 // #include <basic/resource_manager/JobOptions.hh>
 
 //utility headers
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
 #include <utility/keys/VariantKey.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKeyList.hh>
-#include <utility/VirtualBase.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -64,11 +59,8 @@
 //basic headers
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jd3.OptionKeys.gen.hh>
-#include <basic/options/option.cc.gen.hh>
-#include <basic/datacache/ConstDataMap.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.jd3.standard.StandardJobQueen" );

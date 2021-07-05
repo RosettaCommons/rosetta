@@ -14,34 +14,17 @@
 #include <core/pack/interaction_graph/NPDHBondInteractionGraph.hh>
 
 //Rosetta Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
 
 #include <core/conformation/Residue.hh>
 
-#include <utility/graph/DisjointSets.hh>
 
-#include <core/pack/interaction_graph/AdditionalBackgroundNodesInteractionGraph.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
-#include <core/pack/interaction_graph/RotamerDots.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
 
-#include <core/pose/Pose.hh>
 
 //#include <core/scoring/sasa.hh>
-#include <core/scoring/sasa/util.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/pack/interaction_graph/SurfacePotential.hh>
 
-#include <basic/Tracer.hh>
 
 //Utility Headers
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 namespace core {
 namespace pack {

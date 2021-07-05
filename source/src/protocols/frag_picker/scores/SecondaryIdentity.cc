@@ -17,11 +17,11 @@
 #include <core/types.hh>
 
 // package headers
-#include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
-#include <utility/vector1.hh>
+
+#include <ObjexxFCL/format.hh> // AUTO IWYU For F, I, format
 
 
 namespace protocols {

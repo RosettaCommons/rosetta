@@ -12,7 +12,6 @@
 /// @author Alex Ford <fordas@uw.edu>
 
 #include <boost/algorithm/string/join.hpp>
-#include <boost/format.hpp>
 #include <protocols/indexed_structure_store/FragmentStore.hh>
 #include <protocols/indexed_structure_store/FragmentLookup.hh>
 
@@ -20,7 +19,6 @@
 #include <basic/options/keys/indexed_structure_store.OptionKeys.gen.hh>
 
 #include <utility/io/izstream.hh>
-#include <utility/excn/Exceptions.hh>
 
 #include <set>
 #include <vector>

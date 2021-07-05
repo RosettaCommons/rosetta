@@ -24,7 +24,6 @@
 #include <core/conformation/Residue.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 

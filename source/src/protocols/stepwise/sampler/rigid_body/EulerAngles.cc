@@ -14,7 +14,6 @@
 
 
 #include <protocols/stepwise/sampler/rigid_body/EulerAngles.hh>
-#include <numeric/conversions.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/xyzMatrix.hh>
 

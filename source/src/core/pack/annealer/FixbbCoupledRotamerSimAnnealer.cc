@@ -32,10 +32,11 @@
 #include <iostream>
 
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
+
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D::IR
 
 using namespace ObjexxFCL;
 

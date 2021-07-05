@@ -36,6 +36,8 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 
+#include <core/id/AtomID.hh> // AUTO IWYU For operator==, AtomID
+
 
 #ifdef    SERIALIZATION
 // Project serialization headers

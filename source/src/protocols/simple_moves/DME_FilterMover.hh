@@ -29,12 +29,10 @@
 // ObjexxFCL Headers
 
 // C++ Headers
-#include <map>
 #include <string>
 
 // Utility Headers
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

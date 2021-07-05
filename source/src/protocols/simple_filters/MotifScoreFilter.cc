@@ -18,22 +18,16 @@
 
 // Project Headers
 #include <core/scoring/motif/motif_hash_stuff.hh>
-#include <core/scoring/motif/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 #include <core/pose/motif/reference_frames.hh>
 #include <numeric/xyzTransform.hh>
-#include <core/pose/util.hh>
-#include <utility/io/ozstream.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 #include <string>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

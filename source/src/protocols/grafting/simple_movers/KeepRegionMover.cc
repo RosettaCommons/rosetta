@@ -18,7 +18,6 @@
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/grafting/util.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <utility>
 #include <utility/tag/Tag.hh>

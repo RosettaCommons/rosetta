@@ -22,12 +22,10 @@
 #include <protocols/simple_filters/InterfaceSasaFilter.fwd.hh>
 #include <protocols/simple_ddg/DdgFilter.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>

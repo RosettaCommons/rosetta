@@ -21,54 +21,35 @@
 // Package Headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loodo.OptionKeys.gen.hh>
-#include <basic/prof.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FragmentIO.hh>
-#include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/picking_old/vall/util.hh>
-#include <core/fragment/picking_old/FragmentLibraryManager.hh>
-#include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/build/Interval.hh>
 #include <protocols/match/BumpGrid.hh>
-#include <protocols/match/MatcherTask.hh>
-#include <protocols/match/MatchSet.hh>
-#include <protocols/match/OccupiedSpaceHash.hh>
 #include <protocols/match/downstream/ActiveSiteGrid.hh>
 #include <protocols/sic_dock/util.hh>
 
 // Numeric headers
-#include <numeric/geometry/BoundingBox.fwd.hh>
-#include <numeric/geometry/hashing/SixDHasher.hh>
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 #include <numeric/HomogeneousTransform.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
 // Utility headers
-#include <utility/LexicographicalIterator.hh>
-#include <utility/OrderedTuple.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
@@ -77,9 +58,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <iostream>
 
-#include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "app.loodo" );
 

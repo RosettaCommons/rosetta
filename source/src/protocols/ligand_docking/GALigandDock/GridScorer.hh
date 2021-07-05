@@ -15,6 +15,8 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_GridScorer_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_GridScorer_hh
 
+#include <protocols/ligand_docking/GALigandDock/GridScorer.fwd.hh>
+
 #include <protocols/ligand_docking/GALigandDock/LigandConformer.hh>
 #include <protocols/ligand_docking/GALigandDock/GridHash3D.hh>
 #include <protocols/ligand_docking/GALigandDock/RotamerData.hh>
@@ -23,17 +25,13 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
-#include <core/scoring/hbonds/HBEvalTuple.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/energy_methods/CartesianBondedEnergy.fwd.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/conformation/Atom.hh>
-#include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/scoring/lkball/LK_BallEnergy.hh>
-#include <core/scoring/etable/coulomb/Coulomb.hh>
+#include <core/optimization/MinimizerMap.fwd.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
+#include <core/scoring/lkball/LK_BallEnergy.fwd.hh>
+#include <core/scoring/etable/coulomb/Coulomb.fwd.hh>
 
 
 #include <core/scoring/ScoreFunction.hh>
@@ -42,12 +40,11 @@
 #include <numeric/cubic_polynomial.hh>
 #include <utility/vector1.hh>
 
-#include <core/scoring/electron_density/SplineInterp.hh>
-#include <core/scoring/electron_density/util.hh>
-#include <core/scoring/DerivVectorPair.hh>
 
 #include <cmath>
 #include <chrono>
+
+#include <core/scoring/hbonds/HBondDatabase.fwd.hh> // AUTO IWYU For HBondDatabaseCOP
 
 namespace protocols {
 namespace ligand_docking {

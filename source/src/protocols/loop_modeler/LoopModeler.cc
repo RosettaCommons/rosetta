@@ -14,16 +14,12 @@
 #include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
-#include <protocols/loop_modeling/utilities/LoopMoverGroup.hh>
-#include <protocols/loop_modeling/utilities/AcceptanceCheck.hh>
 #include <protocols/loop_modeling/utilities/TrajectoryLogger.hh>
 
 // Protocols headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/kinematic_closure/pivot_pickers/FixedOffsetsPivots.hh>
-#include <protocols/kinematic_closure/perturbers/OmegaPerturber.hh>
-#include <protocols/kinematic_closure/perturbers/Rama2bPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
 #include <protocols/loop_modeler/perturbers/LoopHashPerturber.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
@@ -31,60 +27,29 @@
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/utilities/PrepareForCentroid.hh>
 #include <protocols/loop_modeling/utilities/PrepareForFullatom.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/moves/mover_schemas.hh>
-#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverFactory.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_filters/BuriedUnsatHbondFilter.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Core headers
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pose/util.hh>
-#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <boost/algorithm/string.hpp>
 
 // C++ headers
-#include <iostream>
-#include <cmath>
-#include <ctime>
 
 // Namespaces
 using namespace std;

@@ -29,7 +29,7 @@
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -39,6 +39,8 @@
 #include <utility/vector1.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For FileOptionKey, IntegerOptionKey
 
 using basic::Error;
 

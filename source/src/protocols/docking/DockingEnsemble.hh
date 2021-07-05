@@ -18,26 +18,23 @@
 #include <protocols/docking/DockingEnsemble.fwd.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
 
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 //Option key includes
 
 // ObjexxFCL Headers
 
 // C++ Headers
-#include <map>
 #include <string>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

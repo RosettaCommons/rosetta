@@ -28,12 +28,8 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
-
 #include <utility/pointer/access_ptr.hh>
-
-
-// C++ STL Headers
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace fragment {

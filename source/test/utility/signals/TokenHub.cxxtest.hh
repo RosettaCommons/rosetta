@@ -25,7 +25,6 @@
 #include <utility/signals/TokenHub.hh>
 
 // C++ headers
-#include <vector>
 
 
 // here must define a different namespace than in SignalHub.cxxtest.hh/BufferedSignalHub.cxxtest.hh

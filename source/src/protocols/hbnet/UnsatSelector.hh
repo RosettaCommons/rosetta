@@ -18,24 +18,23 @@
 // Unit headers
 // Unit headers
 #include <protocols/hbnet/UnsatSelector.fwd.hh>
-#include <core/select/residue_selector/ResidueSelectorCreator.hh>
-#include <core/select/residue_selector/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <protocols/hbnet/HBNet.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionCOP, ScoreFunctionOP
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
+#include <core/types.hh> // AUTO IWYU For Real, Size
 
 #ifdef    SERIALIZATION
 // Cereal headers

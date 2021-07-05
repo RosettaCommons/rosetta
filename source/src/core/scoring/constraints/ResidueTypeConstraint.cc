@@ -21,7 +21,6 @@
 #include <basic/Tracer.hh>
 
 #include <core/id/SequenceMapping.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility>

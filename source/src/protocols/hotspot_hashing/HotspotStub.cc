@@ -25,17 +25,14 @@
 
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <core/types.hh>
 
 
 // C++ Headers
-#include <map>
 
 
 #include <core/pose/variant_util.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

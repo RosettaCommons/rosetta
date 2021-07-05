@@ -12,32 +12,28 @@
 #include <protocols/dna/DnaInterfacePackerCreator.hh>
 
 #include <protocols/dna/typedefs.hh>
-#include <protocols/dna/DnaDesignDef.hh>
+#include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/dna/PDBOutput.hh>
 #include <protocols/dna/DnaChains.hh>
 #include <protocols/dna/RotamerDNAHBondFilter.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/SeparateDnaFromNonDna.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/options/option.hh>
@@ -61,10 +57,11 @@
 // c++ headers
 #include <vector> // for rot_to_pack
 #include <iostream>
-#include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::Resi...
 
 
 namespace protocols {

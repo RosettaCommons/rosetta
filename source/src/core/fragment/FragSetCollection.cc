@@ -22,19 +22,16 @@
 
 // Package Headers
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 
 // Project Headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/exit.hh>
 
 //#include <basic/Tracer.hh>
 
 #include <core/fragment/FrameIterator.hh>
-#include <utility/vector1.hh>
 
 #include <iostream>
 

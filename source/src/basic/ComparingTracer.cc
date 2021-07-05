@@ -20,7 +20,6 @@
 #include <iostream>
 #include <cassert>
 #include <cstddef>
-#include <iosfwd>
 
 namespace basic {
 

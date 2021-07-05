@@ -39,8 +39,9 @@
 #include <utility/VirtualBase.hh>
 #include <map>
 #include <core/types.hh>
-#include <cifparse/CifFile.h>
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
+
+class Block; // Pseudo-forward from the external cifparse library
 
 namespace core {
 namespace chemical {

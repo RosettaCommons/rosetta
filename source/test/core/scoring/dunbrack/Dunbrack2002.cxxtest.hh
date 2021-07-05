@@ -27,7 +27,6 @@
 #include <utility/graph/Graph.hh>
 
 //amw
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
 
@@ -40,7 +39,7 @@
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
 #include <core/types.hh>
 

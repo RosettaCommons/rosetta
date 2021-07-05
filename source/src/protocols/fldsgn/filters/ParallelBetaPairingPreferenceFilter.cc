@@ -31,10 +31,9 @@
 #include <utility/string_util.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <boost/lexical_cast.hpp>
 // XSD XRW Includes

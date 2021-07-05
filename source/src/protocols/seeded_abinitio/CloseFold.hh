@@ -22,11 +22,14 @@
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 
 #include <boost/unordered/unordered_map.hpp>
+
+#ifdef PYROSETTA
+#include <core/fragment/Frame.hh>
+#endif
 
 namespace protocols {
 namespace seeded_abinitio {

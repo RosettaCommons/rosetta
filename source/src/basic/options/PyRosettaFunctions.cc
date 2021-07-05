@@ -14,7 +14,6 @@
 
 #include <basic/options/PyRosettaFunctions.hh>
 #include <basic/options/option.hh>                         // for option
-#include <iosfwd>                                          // for string
 #include <string>                                          // for allocator
 #include <utility/exit.hh>                                 // for utility_ex...
 #include <utility/file/FileName.hh>                        // for operator<
@@ -32,8 +31,6 @@
 #include <utility/options/keys/StringOptionKey.hh>         // for StringOpti...
 #include <utility/options/keys/StringVectorOptionKey.hh>   // for StringVect...
 #include <utility/vector1.hh>                              // for vector1
-#include <utility/vector1_bool.hh>                         // for vector1
-#include <basic/options/keys/OptionKeys.hh>
 
 
 namespace basic {

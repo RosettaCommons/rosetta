@@ -17,9 +17,8 @@
 #define INCLUDED_protocols_ncbb_oop_OopDockDesignProtocl_hh
 
 #include <protocols/ncbb/oop/OopDockDesignProtocol.fwd.hh>
-#include <protocols/ncbb/oop/OopDockDesignProtocolCreator.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 namespace protocols {
 namespace ncbb {

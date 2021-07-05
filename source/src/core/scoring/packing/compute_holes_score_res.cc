@@ -25,8 +25,6 @@
 #include <basic/prof.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
 //utility headers
@@ -42,7 +40,6 @@
 
 //C++ headers
 #include <iostream>
-#include <iomanip>
 
 // option key includes
 

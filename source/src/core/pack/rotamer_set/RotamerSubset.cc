@@ -19,7 +19,6 @@
 
 
 // Project Headers
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <basic/Tracer.hh>
@@ -28,11 +27,12 @@
 #include <string>
 #include <iostream>
 
-#include <core/conformation/AbstractRotamerTrie.hh>
 #include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION
+#include <core/conformation/AbstractRotamerTrie.hh>
+
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>

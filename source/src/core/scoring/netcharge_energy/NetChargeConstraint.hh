@@ -21,9 +21,6 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/netcharge_energy/NetChargeEnergySetup.fwd.hh>
-#include <core/scoring/func/Func.fwd.hh>
-#include <core/scoring/func/XYZ_Func.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 

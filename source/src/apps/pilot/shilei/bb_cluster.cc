@@ -7,53 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#include <protocols/toolbox/KCluster.hh>
 
 #include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/id/AtomID.hh>
 
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <protocols/docking/metrics.hh>
 
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <iostream>
 
-#include <protocols/cluster/cluster.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <basic/options/option_macros.hh>
-#include <map>
-#include <sstream>
-#include <iomanip>
 
 //use TM align for sequence independent
-#include <protocols/hybridization/TMalign.hh>
 
 // VKM, 4 Jun 2020: Rosetta support for Boost::thread has been deprecated.
 // I've updated this app to use the Rosetta thread manager instead.
@@ -65,8 +39,6 @@
 using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace protocols::toolbox;
-using namespace core::io::silent;
 //using namespace protocols::moves::mc_convergence_checks;
 
 OPT_1GRP_KEY(Real,bb_cluster,cluster_radius)

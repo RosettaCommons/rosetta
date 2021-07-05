@@ -17,7 +17,6 @@
 #include <protocols/pose_metric_calculators/ResidueDecompositionCalculator.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <basic/MetricValue.fwd.hh>
 
 #include <utility/vector1.hh>
 

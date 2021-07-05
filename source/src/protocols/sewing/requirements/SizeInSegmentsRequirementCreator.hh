@@ -19,7 +19,6 @@
 #include <protocols/sewing/requirements/SizeInSegmentsRequirementCreator.fwd.hh>
 
 // Package Headers
-#include <protocols/sewing/requirements/SizeInSegmentsRequirement.fwd.hh>
 
 namespace protocols {
 namespace sewing  {

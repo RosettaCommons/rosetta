@@ -16,12 +16,10 @@
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocols headers
-#include <protocols/minimization_packing/MinMover.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {

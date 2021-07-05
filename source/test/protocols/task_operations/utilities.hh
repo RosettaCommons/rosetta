@@ -15,11 +15,10 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 
 // C++ headers
 #include <string>
-#include <iostream>
 
 
 inline

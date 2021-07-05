@@ -32,7 +32,6 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // C++ headers
 #include <string>

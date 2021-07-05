@@ -15,20 +15,15 @@
 #include <protocols/fold_from_loops/movers/SavePDBInfoMoverCreator.hh>
 
 // Protocol headers
-#include <protocols/rosetta_scripts/util.hh>
 
 // Core headers
-#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

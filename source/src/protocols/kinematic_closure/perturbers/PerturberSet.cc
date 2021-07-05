@@ -8,14 +8,12 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 // Unit headers
-#include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/perturbers/PerturberSet.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Protocols headers
-#include <protocols/loops/Loop.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

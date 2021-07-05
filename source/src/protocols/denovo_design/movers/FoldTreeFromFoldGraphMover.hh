@@ -19,8 +19,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/FoldGraph.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/loops/Loops.hh>
 
 // Core headers
@@ -28,6 +26,9 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
+
+#include <protocols/denovo_design/components/StructureData.fwd.hh> // AUTO IWYU For StructureData
+#include <protocols/denovo_design/types.hh> // AUTO IWYU For SegmentNames
 
 namespace protocols {
 namespace denovo_design {

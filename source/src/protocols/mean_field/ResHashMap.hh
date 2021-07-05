@@ -31,12 +31,10 @@
 
 
 // C++ headers
-#include <iosfwd>
 #include <functional>
 
 // Boost headers
 #include <boost/unordered_map.hpp>
-#include <boost/functional/hash.hpp>
 
 namespace protocols {
 namespace mean_field {

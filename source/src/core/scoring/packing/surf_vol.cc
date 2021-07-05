@@ -21,11 +21,8 @@
 #include <basic/prof.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
 
 //utility headers
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
 #ifdef  __native_client__
 #define WIN32
@@ -37,15 +34,11 @@
 
 //C++ headers
 #include <iostream>
-#include <iomanip>
 
 // option key includes
 
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 #include <core/scoring/packing/PoseBallsLite.hh>
 

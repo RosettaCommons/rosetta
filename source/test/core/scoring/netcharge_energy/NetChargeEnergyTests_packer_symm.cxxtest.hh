@@ -16,48 +16,35 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <core/scoring/netcharge_energy/NetChargeEnergySetup.hh>
-#include <core/energy_methods/NetChargeEnergy.hh>
+#include <core/scoring/netcharge_energy/NetChargeEnergySetup.fwd.hh>
 
 // Unit headers
 
-#include <platform/types.hh>
 
 // Package Headers
-#include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/annotated_sequence.hh>
 
-#include <core/pack/packer_neighbors.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 
-#include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
 // Convenience for setting up symmetry and packing:
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR("core.scoring.netcharge_energy.NetChargeEnergyTests_packer_symm.cxxtest");
@@ -69,7 +56,6 @@ using namespace core;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
-using namespace core::scoring::annealing;
 
 using namespace core::pack;
 using namespace core::pack::task;

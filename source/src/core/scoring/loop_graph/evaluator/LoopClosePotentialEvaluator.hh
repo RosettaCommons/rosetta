@@ -19,7 +19,6 @@
 #include <utility/VirtualBase.hh>
 #include <core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 

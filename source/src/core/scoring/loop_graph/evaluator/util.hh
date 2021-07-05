@@ -17,7 +17,6 @@
 #define INCLUDED_core_scoring_loop_graph_evaluator_util_HH
 
 #include <core/types.hh>
-#include <utility/json_spirit/json_spirit.h>
 #include <utility/json_spirit/json_spirit_tools.hh>
 #include <numeric/MathNTensor.hh>
 

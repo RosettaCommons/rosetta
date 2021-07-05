@@ -14,8 +14,10 @@
 // Note:
 //  ALL Task Operation Creators should be by themselves or in their own file to speed compile!
 
-//TaskOperationCreator #includes
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
+#include <core/pack/task/operation/TaskOperationFactory.hh>
+
+//TaskOperationCreator #includes
 #include <core/pack/task/operation/ResFilterRegistrator.hh>
 #include <core/pack/task/operation/ResFilterCreators.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>

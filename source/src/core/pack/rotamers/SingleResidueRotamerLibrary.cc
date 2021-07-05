@@ -34,6 +34,8 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 namespace core {
 namespace pack {
 namespace rotamers {

@@ -35,7 +35,8 @@
 //// C++ headers
 #include <iostream>
 
-#include <utility/vector1.hh>
+#include <protocols/topology_broker/claims/DofClaim.hh> // AUTO IWYU For DofClaim, operator<<
+
 
 // option key includes
 

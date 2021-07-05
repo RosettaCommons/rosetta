@@ -17,14 +17,12 @@
 
 // type headers
 #include <core/pose/MiniPose.fwd.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzVector.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
+#include <numeric/xyzVector.hh> // DO NOT AUTO-REMOVE needed for member variable.
 
 namespace core {
 namespace pose {

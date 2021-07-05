@@ -57,7 +57,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/pose/variant_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -71,7 +70,6 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <numeric/xyzTriple.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -86,8 +84,9 @@
 #include <vector>
 #include <stdexcept>
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/fragment/FragSet.hh> // AUTO IWYU For FragSet
 
 namespace ObjexxFCL { } using namespace ObjexxFCL;
 

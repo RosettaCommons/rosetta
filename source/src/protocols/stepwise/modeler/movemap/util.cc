@@ -14,22 +14,17 @@
 
 
 #include <protocols/stepwise/modeler/movemap/util.hh>
-#include <protocols/stepwise/modeler/output_util.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <utility/tools/make_vector1.hh>
-#include <utility/stream_util.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
+#include <core/pose/toolbox/AtomLevelDomainMap.hh> // AUTO IWYU For AtomLevelDomainMap
 
 static basic::Tracer TR( "protocols.stepwise.modeler.movemap.util" );
 

@@ -20,7 +20,7 @@
 #include <core/sequence/ScoringScheme.fwd.hh>
 
 #include <core/sequence/Aligner.hh>
-#include <core/sequence/DP_Matrix.hh>
+#include <core/sequence/DP_Matrix.fwd.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 

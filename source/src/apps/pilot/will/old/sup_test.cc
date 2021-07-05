@@ -16,10 +16,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>

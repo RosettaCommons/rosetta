@@ -16,13 +16,12 @@
 #define INCLUDED_core_pack_rotamer_set_AddResiduesRotamerSetOperation_hh
 
 //Core
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #ifdef WIN32
 #include <core/conformation/Residue.hh>
 #else

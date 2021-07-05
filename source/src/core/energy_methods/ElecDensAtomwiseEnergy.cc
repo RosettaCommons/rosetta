@@ -28,13 +28,9 @@
 #include <core/conformation/Residue.hh>
 
 
-#include <core/conformation/Atom.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/OneToAllEnergyContainer.hh>
 #include <core/id/AtomID.hh>
 #include <basic/Tracer.hh>

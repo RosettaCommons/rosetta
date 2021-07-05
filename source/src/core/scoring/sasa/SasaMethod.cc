@@ -15,8 +15,9 @@
 
 //Core headers:
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/Atom.hh>
 #include <core/conformation/Residue.hh>
+
+#include <sstream> // MANUAL IWYU
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

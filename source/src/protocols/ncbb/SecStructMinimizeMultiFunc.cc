@@ -12,37 +12,26 @@
 #include <protocols/ncbb/util.hh>
 
 /// Package headers
-#include <numeric/crick_equations/HelixParams.hh>
 
 /// Project headers
 #include <core/pose/Pose.hh>
 #include <core/optimization/MinimizerMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/EnergyGraph.fwd.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <core/scoring/LREnergyContainer.hh>
-#include <numeric/model_quality/rms.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerMap.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/optimization/atom_tree_minimize.hh>
-#include <core/optimization/Multifunc.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/pose/init_id_map.hh>
 
 /// Utility headers
-#include <cmath>
 #include <utility>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+#include <core/optimization/DOF_Node.hh> // AUTO IWYU For DOF_Node
 
 static basic::Tracer TR("protocols.ncbb.SecStructMinimizeMultiFunc");
 

@@ -14,7 +14,6 @@
 #include <core/environment/FoldTreeSketch.hh>
 
 // Package headers
-#include <core/environment/EnvCore.hh>
 
 // Project headers
 #include <core/kinematics/FoldTree.hh>
@@ -27,14 +26,14 @@
 
 // C++ Headers
 #include <algorithm>
-#include <iterator>
-#include <list>
 #include <stack>
 #include <numeric>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer tr( "core.environment.FoldTreeSketch", basic::t_info );
 

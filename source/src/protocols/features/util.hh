@@ -15,13 +15,12 @@
 #ifndef INCLUDED_protocols_features_util_hh
 #define INCLUDED_protocols_features_util_hh
 
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <string>
-#include <map>
 
 #include <protocols/features/FeaturesReporter.fwd.hh>
 

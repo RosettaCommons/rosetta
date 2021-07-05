@@ -25,28 +25,19 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
 // Platform Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/database/sql_utils.hh>
 #include <utility/tools/make_vector.hh>
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
@@ -57,8 +48,6 @@
 #include <string>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/vector0.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

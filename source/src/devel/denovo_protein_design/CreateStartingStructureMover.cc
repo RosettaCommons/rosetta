@@ -26,7 +26,6 @@
 #include <core/chemical/ChemicalManager.hh>
 // core::pose::make_pose_from_sequence
 
-#include <core/conformation/Residue.fwd.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 
@@ -34,7 +33,6 @@
 
 
 #include <protocols/abinitio/ClassicAbinitio.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 #include <protocols/simple_moves/GunnCost.hh>
 
@@ -50,14 +48,11 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/exit.hh>
 
 // C++ Headers
 #include <vector>
 #include <iostream>
-#include <iomanip>
 #include <string>
-#include <sstream>
 #include <utility/vector1.hh>
 
 // option key includes
@@ -70,7 +65,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <utility/vector0.hh>
 
 
 using basic::Error;

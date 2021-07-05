@@ -31,7 +31,6 @@
 
 // C++ Headers
 #include <cmath>
-#include <cstdlib>
 
 namespace numeric {
 namespace model_quality {

@@ -15,11 +15,6 @@
 #include <core/types.hh>
 
 #include <core/id/AtomID_Map.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -27,70 +22,44 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/etable/Etable.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/lkball/LK_BallEnergy.hh>
 #include <core/scoring/sasa.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/residue_datacache.hh>
-#include <core/conformation/RotamerSetBase.hh>
-#include <core/conformation/RotamerSetCacheableDataType.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/scoring/electron_density/util.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
 
-#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
-#include <core/scoring/constraints/util.hh>
 
 #include <utility/excn/Exceptions.hh>
 
 
-#include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
+
+#include <protocols/moves/Mover.hh> // AUTO IWYU For Mover
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue Residue
+
 using basic::Error;
 using basic::Warning;
 

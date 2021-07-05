@@ -25,7 +25,7 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -40,7 +40,6 @@
 //#include <iosfwd>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

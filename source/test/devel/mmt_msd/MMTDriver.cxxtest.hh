@@ -22,18 +22,7 @@
 
 /// Project headers
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/import_pose/import_pose_options.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/scmin/SidechainStateAssignment.hh>
-#include <core/pack/scmin/AtomTreeCollection.hh>
 
 // Protocols headers
 #include <protocols/genetic_algorithm/Entity.hh>
@@ -45,6 +34,8 @@
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/FileContentsMap.hh>
+
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, cerr, ostream, endl
 
 // --------------- Test Class --------------- //
 

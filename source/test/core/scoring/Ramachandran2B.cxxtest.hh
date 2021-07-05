@@ -18,9 +18,10 @@
 
 // Core headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/chemical/AA.hh>
+
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, cout, ostream,
 
 using namespace std;
 

@@ -20,21 +20,17 @@
 #include <protocols/residue_selectors/StoreResidueSubsetMover.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pack/task/xml_util.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
 
 // Utility Headers
-#include <utility>
 #include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/options/keys/OptionKeyList.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

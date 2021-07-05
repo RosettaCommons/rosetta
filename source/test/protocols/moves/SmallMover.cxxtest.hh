@@ -14,23 +14,23 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 // Unit headers
 #include <protocols/simple_moves/BackboneMover.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/annotated_sequence.hh>
 
 // Utility Header
-#include <utility/vector1.hh>
 
 // Basic Header
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 static basic::Tracer TR( "protocols.moves.SmallMover.cxxtest" );

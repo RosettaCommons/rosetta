@@ -14,36 +14,25 @@
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/excn/Exceptions.hh>
+
+
+
+#include <iostream>
+
+#ifdef USE_TENSORFLOW
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
-
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/pointer/memory.hh>
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <basic/citation_manager/CitationManager.hh>
-
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/AndResidueSelector.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
-#include <core/select/residue_selector/InterGroupInterfaceByVectorSelector.hh>
-#include <core/select/residue_selector/LayerSelector.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
-
-#include <core/import_pose/import_pose.hh>
-#include <core/simple_metrics/metrics/SequenceSimilarityMetric.hh>
-
-#include <iostream>
-#include <memory>
-#include <string>
-
 #include <basic/tensorflow_manager/RosettaTensorflowManager.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.tmpl.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.tmpl.hh>
+#include <iomanip>
+#endif
 
 
 static basic::Tracer TR( "apps.pilot.jackmaguire.tensorflow_manager_multirun_test" );
@@ -63,7 +52,7 @@ void test(
 	double const expected,
 	double const observed
 ){
-  bool const pass( abs( observed - expected ) < 0.01 );
+  bool const pass( std::abs( observed - expected ) < 0.01 );
   TR << std::setprecision(5);
   TR << "Output from model: " << observed << "\tExpected: " << expected << "\t" << (pass ? "PASSED" : "FAILED") << std::endl;
 	runtime_assert( pass );

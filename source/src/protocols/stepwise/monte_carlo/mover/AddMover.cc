@@ -44,7 +44,8 @@
 #include <map>
 
 //Req'd on WIN32
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
 
 using namespace core;
 using namespace core::pose;

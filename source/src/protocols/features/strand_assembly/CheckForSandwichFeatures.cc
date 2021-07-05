@@ -13,10 +13,15 @@
 
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 //#include <protocols/features/strand_assembly/SandwichFeatures.hh>
-#include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+
+#include <protocols/features/strand_assembly/StrandAssemblyCommon.hh> // AUTO IWYU For NamedAtomID
+#include <core/id/NamedAtomID.hh> // AUTO IWYU For NamedAtomID
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
+#include <basic/database/sql_utils.hh> // AUTO IWYU For safely_prepare_statement, safely_read_...
+#include <numeric/xyz.functions.hh> // AUTO IWYU For angle_degrees, dihedral_degrees
 
 namespace protocols {
 namespace features {

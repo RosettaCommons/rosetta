@@ -17,27 +17,15 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/pose/variant_util.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Protocols headers
-#include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
-#include <protocols/cyclic_peptide/CreateAngleConstraint.hh>
 
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TetrahedralMetal_Helper" );
 

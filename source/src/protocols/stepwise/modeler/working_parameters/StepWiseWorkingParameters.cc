@@ -14,7 +14,6 @@
 
 
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <ObjexxFCL/FArray1D.hh>

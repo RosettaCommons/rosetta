@@ -22,9 +22,11 @@
 #include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/types.hh> // AUTO IWYU For Real
 
 
 namespace core {

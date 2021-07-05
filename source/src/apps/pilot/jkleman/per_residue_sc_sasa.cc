@@ -16,23 +16,18 @@
 #include <devel/init.hh>
 
 // Project headers
-#include <protocols/docking/membrane/MPFindInterfaceMover.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/scoring/sasa/SasaCalc.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Package headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 
 // utility
-#include <utility/string_util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/sasa/util.hh>
 
@@ -50,8 +45,6 @@ main( int argc, char * argv [] )
 		using namespace core;
 		using namespace core::pose;
 		using namespace core::scoring::sasa;
-		using namespace protocols::jd2;
-		using namespace protocols::scoring;
 
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);

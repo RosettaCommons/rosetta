@@ -23,17 +23,16 @@
 
 //Protocol headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
 //Utility headers
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
 #include <numeric/xyzVector.hh>
 
 //C++ headers
 #include <set>
 #include <map>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
 
 namespace protocols {
 namespace legacy_sewing  {

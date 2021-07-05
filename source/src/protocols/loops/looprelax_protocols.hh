@@ -34,7 +34,6 @@
 #include <string>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

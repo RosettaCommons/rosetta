@@ -32,7 +32,6 @@
 #include <basic/Tracer.hh>
 
 //Numeric headers
-#include <numeric/conversions.hh>
 
 #ifdef SERIALIZATION
 #include <core/id/AtomID.hh>

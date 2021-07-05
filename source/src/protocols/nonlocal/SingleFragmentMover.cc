@@ -20,7 +20,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 
@@ -46,6 +45,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
+
+#include <protocols/nonlocal/Region.hh> // AUTO IWYU For Region
 
 using Parent = protocols::moves::Mover;
 

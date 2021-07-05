@@ -21,7 +21,7 @@
 //#include <protocols/antibody/design/AntibodyDesignMover.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 #include <protocols/antibody/database/CDRSetOptions.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
 //Core Headers
 #include <core/pose/Pose.fwd.hh>
@@ -32,7 +32,7 @@
 #include <map>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 namespace protocols {
 namespace antibody {
@@ -61,7 +61,7 @@ struct CDRDBPose {
 
 
 	//Constructor with pose.
-	CDRDBPose(core::pose::PoseOP pose, clusters::CDRClusterEnum cluster, std::string pdb, core::Real distance, core::Real normalized_distance, core::Real resolution, core::Size structure_length) :
+	CDRDBPose(core::pose::PoseOP pose, clusters::CDRClusterEnum cluster, std::string const & pdb, core::Real distance, core::Real normalized_distance, core::Real resolution, core::Size structure_length) :
 		pose(pose),
 		cluster(cluster),
 		pdb(pdb),
@@ -73,7 +73,7 @@ struct CDRDBPose {
 	}
 
 	//Constructor without pose.   We then load the PoseOP on the fly to save memory.
-	CDRDBPose(protocols::features::StructureID struct_id, clusters::CDRClusterEnum cluster, std::string pdb, core::Real distance, core::Real normalized_distance, core::Real resolution, core::Size structure_length) :
+	CDRDBPose(protocols::features::StructureID struct_id, clusters::CDRClusterEnum cluster, std::string const & pdb, core::Real distance, core::Real normalized_distance, core::Real resolution, core::Size structure_length) :
 		struct_id(struct_id),
 		cluster(cluster),
 		pdb(pdb),
@@ -101,7 +101,7 @@ struct CDRDBSequence {
 
 
 	//Constructor
-	CDRDBSequence(std::string sequence, clusters::CDRClusterEnum cluster, std::string pdb, core::Real distance, core::Real normalized_distance, core::Real resolution) :
+	CDRDBSequence(std::string const & sequence, clusters::CDRClusterEnum cluster, std::string const & pdb, core::Real distance, core::Real normalized_distance, core::Real resolution) :
 		sequence(sequence),
 		cluster(cluster),
 		pdb(pdb),
@@ -221,7 +221,7 @@ private:
 
 	///Create the actual sessionOP.
 	void
-	create_database_session(std::string const database_path);
+	create_database_session(std::string const & database_path);
 
 	/// @brief  Checks to make sure the instructions make sense before trying to create the statement for the db..
 	void

@@ -15,13 +15,8 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_RotamerData_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_RotamerData_hh
 
-#include <utility/VirtualBase.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/lkball/LK_BallInfo.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <numeric/Quaternion.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <map>
 

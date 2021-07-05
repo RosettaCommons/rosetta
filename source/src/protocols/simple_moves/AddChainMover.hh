@@ -16,10 +16,8 @@
 #include <protocols/simple_moves/AddChainMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // C++ Headers
 namespace protocols {

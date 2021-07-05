@@ -20,7 +20,6 @@
 #include <utility/graph/LowMemGraph.hh>
 
 // C++ headers, for debugging your tests
-#include <sstream>
 
 using namespace core;
 using namespace utility::graph;

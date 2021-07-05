@@ -19,9 +19,7 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/conformation/Residue.hh>
@@ -52,13 +50,10 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/FileJobOutputter.hh>
-#include <protocols/jd2/wwPDBJobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loops_main.hh>
 
 //movers
 #include <protocols/moves/MonteCarlo.hh>
@@ -67,7 +62,6 @@
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
-#include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 #include <protocols/simple_moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
@@ -78,8 +72,6 @@
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
@@ -87,7 +79,7 @@
 #include <numeric/conversions.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <core/select/util.hh>
 
@@ -98,7 +90,6 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <basic/prof.hh>
 
 // C++ headers
 #include <string>
@@ -106,12 +97,10 @@
 // option key includes
 #include <basic/options/keys/chemically_conjugated_docking.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 
 //Auto Headers

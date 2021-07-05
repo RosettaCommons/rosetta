@@ -12,14 +12,11 @@
 
 // Package headers
 
-#include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <core/id/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/kinematics/Jump.hh>
 
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -31,9 +28,7 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 
 #include <protocols/environment/Environment.hh>
-#include <protocols/environment/EnvExcn.hh>
 
-#include <protocols/filters/Filter.hh>
 
 #include <protocols/simple_moves/FragmentMover.hh>
 
@@ -41,14 +36,14 @@
 
 #include <test/core/init_util.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <utility/tag/Tag.hh>
+
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
+
 // #include <utility/VirtualBase.hh>
 
 //C++ headers
-#include <iostream>
 
 std::string const FRAGFILE_LOCATION = "protocols/abinitio/abscript/one_frag3_per_pos";
 

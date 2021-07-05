@@ -16,15 +16,12 @@
 #include <protocols/residue_selectors/NativeSelectorCreator.hh>
 
 //Protocols
-#include <protocols/rosetta_scripts/util.hh>
 
 // Core Headers
-#include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/ref_pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/types.hh>
 
@@ -40,7 +37,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 #include <utility/serialization/serialization.hh>

@@ -19,7 +19,6 @@
 
 // Core headers
 #include <core/types.hh>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

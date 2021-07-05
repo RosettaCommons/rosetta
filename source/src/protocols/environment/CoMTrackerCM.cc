@@ -18,7 +18,6 @@
 
 // Package headers
 #include <core/environment/DofPassport.hh>
-#include <core/environment/LocalPosition.hh>
 
 #include <protocols/environment/DofUnlock.hh>
 
@@ -26,32 +25,22 @@
 #include <protocols/environment/claims/VirtResClaim.hh>
 
 // Project headers
-#include <core/id/NamedStubID.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Atom.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/pose/util.hh>
 
 //Utility Headers
 #include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
-#include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <basic/datacache/DataMap.hh>
 

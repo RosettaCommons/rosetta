@@ -24,11 +24,11 @@
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
 #include <string>
-#include <iosfwd>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

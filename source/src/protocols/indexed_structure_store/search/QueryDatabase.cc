@@ -11,18 +11,13 @@
 /// @brief Database for generic alignment-based queries over structure stores.
 /// @author Alex Ford (fordas@uw.edu)
 //
-#include <iostream>
 
-#include <cstdlib>
-#include <cmath>
 #include <vector>
 #include <map>
 
 
 #include <Eigen/Core>
-#include <Eigen/Geometry>
 
-#include "ndarray.h"
 #include "ndarray/eigen.h"
 
 #include <numeric/alignment/QCPKernel.hh>

@@ -20,7 +20,7 @@
 // Package Headers
 #include <protocols/jd2/archive/NormalizedEvaluatedArchive.hh>
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
-#include <protocols/abinitio/HedgeArchive.hh>
+#include <protocols/abinitio/HedgeArchive.fwd.hh>
 
 // Project Headers
 #include <protocols/abinitio/PairingStatistics.fwd.hh>
@@ -40,7 +40,6 @@
 #include <utility/io/ozstream.fwd.hh>
 
 // Third-party Headers
-#include <boost/functional/hash.hpp>
 
 
 //// C++ headers
@@ -48,6 +47,10 @@
 
 #include <protocols/noesy_assign/NoesyModule.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <boost/container_hash/extensions.hpp> // AUTO IWYU For hash
+#include <core/scoring/ResidualDipolarCoupling.fwd.hh> // AUTO IWYU For ResidualDipolarCouplingOP
+#include <core/scoring/constraints/ConstraintSet.fwd.hh> // AUTO IWYU For ConstraintSetOP
 
 
 namespace protocols {

@@ -55,7 +55,7 @@ extern BooleanOptionKey const exit; // Exit after displaying the options
 
 /// @brief Lookup functors
 typedef  OptionKey  KeyType;
-#include <utility/keys/KeyLookup.functors.hh>
+#include <utility/keys/KeyLookup.functors.hh> // DO NOT AUTO-REMOVE -- Not a standard include, but rather code injection.
 
 
 } // namespace OptionKeys

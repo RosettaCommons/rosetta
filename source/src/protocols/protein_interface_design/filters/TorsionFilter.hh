@@ -24,7 +24,6 @@
 #include <protocols/protein_interface_design/filters/TorsionFilter.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <utility/vector1.hh>
 
 // Unit headers
 

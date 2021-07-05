@@ -27,7 +27,6 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
-#include <basic/options/keys/epr_deer.OptionKeys.gen.hh>
 #include <basic/options/keys/dump_trajectory.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
@@ -46,6 +45,8 @@
 #include <utility/options/keys/OptionKeyList.hh>
 
 #include <cppdb/frontend.h>
+
+#include <utility/sql_database/DatabaseSessionManager.hh> // AUTO IWYU For session
 
 using std::string;
 using utility::vector1;

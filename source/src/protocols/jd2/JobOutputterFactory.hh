@@ -23,12 +23,10 @@
 // Utility Headers
 #include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <map>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace jd2 {

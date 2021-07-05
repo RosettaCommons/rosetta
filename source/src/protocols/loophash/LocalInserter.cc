@@ -23,8 +23,6 @@
 #include <protocols/loops/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/conformation/util.hh>
 
 #include <protocols/relax/cst_util.hh>

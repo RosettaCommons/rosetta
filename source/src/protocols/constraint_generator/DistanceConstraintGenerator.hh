@@ -24,9 +24,10 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/scoring/func/Func.fwd.hh> // AUTO IWYU For FuncCOP
+#include <core/types.hh> // AUTO IWYU For Size
 
 namespace protocols {
 namespace constraint_generator {

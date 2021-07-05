@@ -17,7 +17,7 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/Atom.hh>
@@ -28,7 +28,6 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/residue_io.hh>
 
 #include <core/types.hh>

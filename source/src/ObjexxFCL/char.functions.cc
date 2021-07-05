@@ -16,7 +16,6 @@
 
 // C++ Headers
 #include <cctype>
-#include <cstddef>
 #include <cstring>
 #include <string>
 

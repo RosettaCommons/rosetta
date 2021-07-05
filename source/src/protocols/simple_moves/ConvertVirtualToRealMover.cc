@@ -19,13 +19,11 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 

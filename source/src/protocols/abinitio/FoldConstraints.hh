@@ -33,30 +33,24 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
-#include <core/kinematics/FoldTree.fwd.hh>
 
 //#include <core/scoring/EnergyMap.fwd.hh>
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
 
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
 #include <protocols/minimization_packing/MinMover.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

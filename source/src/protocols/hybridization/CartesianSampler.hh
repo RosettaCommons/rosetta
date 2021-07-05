@@ -16,33 +16,23 @@
 #ifndef INCLUDED_protocols_hybridization_CartesianSampler_hh
 #define INCLUDED_protocols_hybridization_CartesianSampler_hh
 
-#include <protocols/hybridization/InsertChunkMover.hh>
 #include <protocols/hybridization/CartesianSampler.fwd.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-#include <core/util/kinematics_util.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
 #include <numeric/random/WeightedSampler.hh>
 
 #include <boost/unordered/unordered_map.hpp>
+
+#include <core/fragment/Frame.hh> // DO NOT AUTO-REMOVE
 
 namespace protocols {
 //namespace comparative_modeling {

@@ -31,10 +31,8 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/FourPointsFunc.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/func/XYZ_Func.hh>
 
 #include <core/types.hh>
 
@@ -43,7 +41,6 @@
 #include <numeric/conversions.hh>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
 #include <utility/vector1.hh>
 
 #ifdef SERIALIZATION

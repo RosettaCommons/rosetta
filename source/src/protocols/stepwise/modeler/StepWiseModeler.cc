@@ -24,15 +24,10 @@
 #include <protocols/stepwise/modeler/packer/StepWisePacker.hh>
 #include <protocols/stepwise/modeler/packer/util.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.fwd.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/util.hh>
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/modeler/align/StepWiseLegacyClusterer.hh>
-#include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
-#include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -42,19 +37,14 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility>
-#include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 #include <basic/Tracer.hh>
 
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
+
 //Req'd on WIN32
-#include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh>
-#include <protocols/stepwise/screener/StepWiseScreener.hh>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.StepWiseModeler" );
 

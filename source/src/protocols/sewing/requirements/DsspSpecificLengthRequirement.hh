@@ -17,11 +17,12 @@
 
 #include <protocols/sewing/requirements/DsspSpecificLengthRequirement.fwd.hh>
 #include <protocols/sewing/requirements/AssemblyRequirement.hh>
-#include <protocols/sewing/data_storage/SmartAssembly.hh>
+#include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
 #include <core/types.hh>
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
+
+#include <protocols/sewing/data_storage/SmartSegment.fwd.hh> // AUTO IWYU For SmartSegmentOP
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 namespace protocols {
 namespace sewing {

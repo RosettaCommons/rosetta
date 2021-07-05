@@ -18,9 +18,7 @@
 
 
 // Utility headers
-#include <utility>
 #include <utility/exit.hh>
-#include <utility/stream_util.hh>
 #include <utility/string_util.hh>
 
 // basic headers
@@ -33,7 +31,6 @@
 // core headers
 //#include <core/pose/init_id_map.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -44,9 +41,10 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 
-#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 using namespace core;
 using namespace core::pose;

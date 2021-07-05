@@ -27,7 +27,6 @@
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // C++ headers
 

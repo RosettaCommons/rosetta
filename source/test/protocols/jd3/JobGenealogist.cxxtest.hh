@@ -20,8 +20,6 @@
 #include <protocols/jd3/JobGenealogist.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <sstream>

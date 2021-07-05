@@ -28,8 +28,7 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
-#include <basic/database/sql_utils.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // External Headers
 #include <cppdb/frontend.h>

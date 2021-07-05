@@ -20,36 +20,26 @@
 #include <core/pose/Pose.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
-#include <map>
 
 //utility headers
-#include <utility/exit.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <core/conformation/membrane/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 //C++ headers
 #include <iostream>
-#include <utility/io/izstream.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
-#include <basic/database/open.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
 //Auto Headers
-#include <core/pose/init_id_map.hh>
 
 // term specific headers
 #include <numeric/conversions.hh>
-#include <basic/svd/SVD_Solver.hh>
 #include <numeric/PCA.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Residue
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
 
 static basic::Tracer TR( "core.energy_methods.MPSpanAngleEnergy" );
 

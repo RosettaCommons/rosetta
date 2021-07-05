@@ -28,18 +28,8 @@
 
 //Auto Headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <iosfwd>
 
-#include <math.h>
-#include <vector>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
-#include <core/sequence/Sequence.fwd.hh>
+#include <protocols/frag_picker/FragmentPicker.fwd.hh>
 
 namespace protocols {
 namespace frag_picker {

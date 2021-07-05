@@ -28,12 +28,10 @@
 #include <core/pose/chains_util.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <sstream>
-#include <ostream>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

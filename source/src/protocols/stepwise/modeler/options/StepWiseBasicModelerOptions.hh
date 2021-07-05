@@ -18,7 +18,6 @@
 
 #include <protocols/stepwise/modeler/options/StepWiseBasicModelerOptions.fwd.hh>
 #include <protocols/stepwise/options/StepWiseBasicOptions.hh>
-#include <core/types.hh>
 
 namespace protocols {
 namespace stepwise {

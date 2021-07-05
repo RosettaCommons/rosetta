@@ -15,9 +15,8 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
@@ -38,15 +37,15 @@
 
 #include <core/types.hh>
 
-#include <basic/basic.hh>
 
-#include <numeric/constants.hh>
 
-#include <test/UTracer.hh>
 #include <test/util/pose_funcs.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Error, Warning
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using basic::Error;

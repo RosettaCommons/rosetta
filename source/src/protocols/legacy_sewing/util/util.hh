@@ -16,22 +16,15 @@
 #define INCLUDED_protocol_legacy_sewing_util_util_HH
 
 //Package headers
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
 
 //Protocol headers
-#include <core/pose/Pose.fwd.hh>
 
 //Utility
-#include <utility/vector1.hh>
-
-//Devel
-#include <protocols/legacy_sewing/conformation/Model.fwd.hh>
-//#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
-#include <protocols/legacy_sewing/sampling/SewGraph.hh>
 
 //C++
 #include <map>
-#include <string>
+
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
 
 namespace protocols {
 namespace legacy_sewing  {

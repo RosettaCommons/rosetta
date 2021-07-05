@@ -18,8 +18,6 @@
 /// -grid_active_res_cutoff 5.0
 
 //std
-#include <iostream>
-#include <map>
 #include <string>
 
 #include <devel/init.hh>
@@ -36,14 +34,12 @@
 #include <basic/Tracer.hh>
 
 
-#include <utility/file/FileName.hh>
 
 //from comput_sasa.cc
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/packstat/types.hh>
 #include <utility/vector1.hh>
 #include <fstream>
 
@@ -56,7 +52,6 @@ using namespace core::conformation;
 using namespace core::chemical;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace core::scoring::packstat;
 
 using namespace ObjexxFCL::format;
 using namespace numeric;

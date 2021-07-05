@@ -18,12 +18,13 @@
 #include <platform/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers
 #include <list>
+
+#include <utility/assert.hh> // MANUAL IWYU
 
 namespace utility {
 namespace graph {

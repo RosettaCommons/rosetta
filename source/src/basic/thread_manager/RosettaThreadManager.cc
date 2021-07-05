@@ -17,24 +17,23 @@
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 #include <basic/thread_manager/RosettaThreadManager.hh>
-#include <basic/thread_manager/RosettaThreadPool.hh>
-#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/memory.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
+
+#ifdef MULTI_THREADED
+#include <basic/thread_manager/RosettaThreadPool.hh>
+#include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
-#ifdef MULTI_THREADED
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationManager.hh>
-#endif
-
-// C++ headers
-#include <string>
 #include <cmath>
+#endif
 
 // Construct tracer.
 static basic::Tracer TR( "basic.thread_manager.RosettaThreadManager" );

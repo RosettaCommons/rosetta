@@ -31,7 +31,6 @@
 #include <protocols/jd3/output/ResultOutputter.fwd.hh>
 #include <protocols/jd3/strong_types.hh>
 
-#include <core/pose/Pose.fwd.hh>
 
 //utility headers
 #include <utility/VirtualBase.hh>

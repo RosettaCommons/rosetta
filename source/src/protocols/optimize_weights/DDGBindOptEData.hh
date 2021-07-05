@@ -18,7 +18,6 @@
 #include <protocols/optimize_weights/DDGBindOptEData.fwd.hh>
 #include <protocols/optimize_weights/OptEData.hh>
 
-#include <iosfwd>
 
 #include <utility/vector1.hh>
 

@@ -13,7 +13,7 @@
 
 // Package headers
 #include <core/pack/rotamers/SingleResidueRotamerLibraryCreator.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Program header
 #include <core/chemical/ResidueType.hh>
@@ -21,7 +21,6 @@
 // Utility headers
 
 // C++ headers
-#include <string>
 
 namespace core {
 namespace pack {

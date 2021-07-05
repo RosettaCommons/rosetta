@@ -21,20 +21,17 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 #include <protocols/antibody/util.hh>
-#include <protocols/antibody/clusters/util.hh>
 #include <protocols/antibody/clusters/CDRCluster.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 //Options
 //#include <basic/options/option.hh>
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <core/types.hh>

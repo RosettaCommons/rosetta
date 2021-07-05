@@ -23,7 +23,6 @@
 // package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 
 // utility headers
 #include <utility/VirtualBase.hh>

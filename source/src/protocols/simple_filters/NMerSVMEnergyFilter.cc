@@ -18,24 +18,11 @@
 
 //Project Headers
 #include <basic/Tracer.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/nmer/NMerSVMEnergy.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <utility/exit.hh>
-#include <ObjexxFCL/format.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/conformation/Conformation.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/selection.hh>
 #include <protocols/jd2/util.hh>

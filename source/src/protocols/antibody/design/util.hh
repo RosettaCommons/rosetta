@@ -24,10 +24,9 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.fwd.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <string>
 #include <core/types.hh>

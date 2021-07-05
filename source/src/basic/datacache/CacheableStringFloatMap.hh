@@ -25,11 +25,6 @@
 #include <map>
 #include <string>
 
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
 #include <basic/datacache/CacheableData.fwd.hh>
 
 

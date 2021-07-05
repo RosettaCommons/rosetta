@@ -33,12 +33,11 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/prof.hh>
 
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh> // DO NOT AUTO-REMOVE needed for template instantiation
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/simple_filters/ScoreEvaluator.hh>
 #include <utility/vector1.hh>

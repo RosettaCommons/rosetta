@@ -17,7 +17,6 @@
 #include <core/simple_metrics/util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/tag/util.hh>
 
 #include <basic/options/keys/simple_metrics.OptionKeys.gen.hh>
 #include <basic/options/option.hh>

@@ -16,22 +16,17 @@
 #include <cxxtest/TestSuite.h>
 
 // Utility headers
-#include <utility/fixedsizearray1.hh>
-#include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
 #include <protocols/match/OccupiedSpaceHash.hh>
 
 // C++ headers
-#include <string>
 #include <iostream>
 
 #include <numeric/HomogeneousTransform.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
-#include <boost/unordered/unordered_map_fwd.hpp>
 
 
 // --------------- Test Class --------------- //

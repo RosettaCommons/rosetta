@@ -41,10 +41,8 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/statistics/functions.hh>
 #include <numeric/fourier/FFT.hh>
-#include <numeric/fourier/SHT.hh>
 
 
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
@@ -54,16 +52,12 @@
 //Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 #include <core/scoring/EnergyGraph.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <boost/math/special_functions/bessel.hpp>
 
 // C++ headers
 #include <fstream>
@@ -71,7 +65,6 @@
 #include <complex>
 
 #ifndef WIN32
-#include <pthread.h>
 #endif
 
 namespace core {

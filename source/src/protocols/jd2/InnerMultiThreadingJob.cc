@@ -15,7 +15,7 @@
 #include <protocols/jd2/InnerMultiThreadingJob.hh>
 
 ///Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>

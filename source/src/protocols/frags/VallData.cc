@@ -16,7 +16,6 @@
 #include <protocols/frags/heap.hh>
 
 #include <basic/basic.hh> // tracer output
-#include <basic/options/util.hh>
 #include <basic/options/option.hh>
 
 // utility headers
@@ -30,11 +29,12 @@
 // C++ Headers
 //#include <cmath>
 //#include <cstdlib>
-#include <iostream>
 //#include <fstream>
 //#include <sstream>
 #include <basic/Tracer.hh> // tracer output
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
+
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D
 
 static basic::Tracer TR( "protocols.frags.VallData" );
 

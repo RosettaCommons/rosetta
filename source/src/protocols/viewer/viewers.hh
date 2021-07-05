@@ -18,14 +18,10 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
-#include <protocols/viewer/GraphicsState.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/viewer/triangle.hh>
 
 // Project headers
 #include <utility/vector1.hh>
@@ -33,33 +29,14 @@
 // C++ Headers
 #include <string>
 
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/sphericalVector.fwd.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
 #include <numeric/xyzVector.hh>
-#include <algorithm>
-#include <utility/assert.hh>
-#include <cmath>
-#include <cstddef>
-#include <cstdlib>
-#include <iosfwd>
-#include <limits>
-#include <vector>
 
+#if defined GL_GRAPHICS || BOINC_GRAPHICS
+#include <protocols/viewer/GraphicsState.hh>
+#include <protocols/viewer/triangle.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#endif
 
 namespace protocols {
 namespace viewer {

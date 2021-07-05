@@ -23,8 +23,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>

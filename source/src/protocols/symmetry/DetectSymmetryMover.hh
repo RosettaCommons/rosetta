@@ -16,9 +16,6 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
 #include <numeric/xyz.functions.hh>
 
 namespace protocols {

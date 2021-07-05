@@ -41,7 +41,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
@@ -57,7 +56,6 @@
 
 // Numeric
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
 // option key includes
 #include <basic/options/option.hh>

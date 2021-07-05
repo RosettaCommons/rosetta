@@ -14,13 +14,15 @@
 #define INCLUDED_protocols_simple_moves_oop_OopRandomSmallMover_hh
 // Unit Headers
 #include <protocols/ncbb/oop/OopRandomSmallMover.fwd.hh>
-#include <protocols/ncbb/oop/OopMover.hh>
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
 #include <core/types.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 //#include <utility/vector1.hh>
 
 namespace protocols {

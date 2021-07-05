@@ -25,17 +25,11 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <protocols/filters/Filter.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 // Utility headers
-#include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 #include <set>
 

@@ -19,17 +19,13 @@
 #include <protocols/topology_broker/RigidBodyRandomTMHMover.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
-#include <protocols/topology_broker/FragmentClaimer.hh>
 #include <core/pose/util.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -44,30 +40,27 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 
 #include <core/types.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <protocols/rigid/RollMover.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 #include <vector>
 #include <fstream>
+
+#include <numeric/trig.functions.hh> // AUTO IWYU For sin_cos_range
 
 static basic::Tracer tr( "protocols.topo_broker.TMHTopologySampler" );
 

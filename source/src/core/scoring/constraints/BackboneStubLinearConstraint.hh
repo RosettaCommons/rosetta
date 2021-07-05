@@ -20,7 +20,6 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/BackboneStubLinearConstraint.fwd.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>

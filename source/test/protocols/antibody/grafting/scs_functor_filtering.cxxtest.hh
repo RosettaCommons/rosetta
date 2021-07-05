@@ -20,7 +20,6 @@
 #include <protocols/antibody/grafting/scs_blast.hh>
 #include <protocols/antibody/grafting/util.hh>
 
-#include <core/types.hh>
 
 #include <basic/Tracer.hh>
 

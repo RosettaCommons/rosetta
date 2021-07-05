@@ -16,22 +16,16 @@
 
 
 // Test headers
-#include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/types.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 

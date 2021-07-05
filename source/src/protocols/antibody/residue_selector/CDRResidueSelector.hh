@@ -20,7 +20,6 @@
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 
 // Package headers
-#include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -30,7 +29,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <set>
 
 namespace protocols {
 namespace antibody {

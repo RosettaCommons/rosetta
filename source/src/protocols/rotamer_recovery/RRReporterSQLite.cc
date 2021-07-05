@@ -36,22 +36,22 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
 
 //C++ Headers
-#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <utility/vector1.hh>
 #include <set>
+
+#include <protocols/features/ReportToDB.hh> // AUTO IWYU For ReportToDB
 
 namespace protocols {
 namespace rotamer_recovery {

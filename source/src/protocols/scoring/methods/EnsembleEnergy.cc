@@ -31,7 +31,6 @@
 #include <basic/Tracer.hh>
 
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.scoring.methods.EnsembleEnergy" );

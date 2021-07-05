@@ -14,24 +14,17 @@
 // Unit Headers
 #include <protocols/legacy_sewing/sampling/LegacyAssemblyMover.hh>
 #include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementFactory.hh>
-#include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalRequirement.hh>
-#include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.hh>
 #include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementCreator.hh>
 
 // Package Headers
 #include <basic/Tracer.hh>
 
 // Project Headers
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // C++ Headers
 #include <sstream>
 
 //Utility Headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 

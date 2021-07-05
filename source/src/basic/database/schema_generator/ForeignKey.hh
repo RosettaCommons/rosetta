@@ -20,7 +20,8 @@
 
 // The full header is necessary for Windows builds, and something
 // arcane about the Windows PyRosetta build isn't responding to ifdefs.
-#include <basic/database/schema_generator/Column.hh>
+// (It's also needed for IWYU to correctly parse things.)
+#include <basic/database/schema_generator/Column.hh> // DO NOT AUTO-REMOVE
 
 //C++ Headers
 #include <string>

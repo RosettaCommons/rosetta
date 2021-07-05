@@ -45,7 +45,6 @@
 // Objexx headers
 
 // C++ headers
-#include <sstream>
 #include <fstream>
 #include <iostream>
 #include <iomanip>

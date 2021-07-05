@@ -21,8 +21,10 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/Ab_TemplateInfo.fwd.hh>
+
+#include <protocols/antibody/AntibodyEnum.hh> // AUTO IWYU For CDRNameEnum
 
 namespace protocols {
 namespace antibody {

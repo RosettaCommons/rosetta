@@ -21,22 +21,21 @@
 // project headers
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
 
 
 // utility headers
-#include <utility/file/FileName.hh>
 
 #include <basic/options/keys/krassk.OptionKeys.gen.hh>
 
 // C++ headers
 #include <fstream>
-#include <iostream>
 #include <string>
 
 #include <utility/vector1.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 static basic::Tracer TR( "protocols.simple_moves.TailsScoreMover" );

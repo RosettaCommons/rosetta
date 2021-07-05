@@ -15,8 +15,9 @@
 
 #include <basic/Tracer.hh>
 
-#include <utility>
 #include <utility/thread/backwards_thread_local.hh> //For THREAD_LOCAL
+
+#include <unordered_map> // AUTO IWYU For unordered_map
 
 namespace basic {
 

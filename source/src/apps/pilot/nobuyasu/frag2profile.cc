@@ -13,8 +13,7 @@
 
 // Project headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -22,10 +21,7 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIterator.fwd.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/scoring/rms_util.hh>

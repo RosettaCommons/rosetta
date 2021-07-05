@@ -15,6 +15,8 @@
 #ifndef INCLUDED_core_io_AtomInformation_HH
 #define INCLUDED_core_io_AtomInformation_HH
 
+#include <core/io/AtomInformation.fwd.hh>
+
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/Bond.fwd.hh>

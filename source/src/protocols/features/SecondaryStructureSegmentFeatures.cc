@@ -16,11 +16,8 @@
 #include <protocols/features/SecondaryStructureSegmentFeatures.hh>
 
 // Project Headers
-#include <basic/Tracer.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
 #ifdef WIN32
 #include <core/scoring/ScoreFunction.hh>
@@ -32,11 +29,9 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

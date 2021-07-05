@@ -22,8 +22,9 @@
 
 // Project headers
 #include <core/environment/DofPassport.fwd.hh>
-#include <protocols/moves/Mover.hh>
 #include <core/conformation/Conformation.fwd.hh>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 // C++ Headers
 

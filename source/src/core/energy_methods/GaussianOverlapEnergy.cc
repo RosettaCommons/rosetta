@@ -13,25 +13,18 @@
 
 
 #include <core/conformation/Residue.hh>
-#include <basic/database/open.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/energy_methods/GaussianOverlapEnergy.hh>
 #include <core/energy_methods/GaussianOverlapEnergyCreator.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/NumericTraits.hh>
-#include <utility/io/izstream.hh>
-#include <sstream>
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/chemical/AtomType.hh>
 
 //Auto Headers
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.fwd.hh>
 
 
 #define DIST_TH 6.0

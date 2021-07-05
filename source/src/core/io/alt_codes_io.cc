@@ -13,7 +13,6 @@
 
 
 // Project header
-#include <core/types.hh>
 
 // Unit header
 #include <core/io/alt_codes_io.hh>

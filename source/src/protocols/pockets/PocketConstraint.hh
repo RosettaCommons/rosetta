@@ -22,8 +22,6 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>

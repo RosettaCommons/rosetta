@@ -17,20 +17,18 @@
 #include <protocols/simple_moves/StructProfileMover.fwd.hh>
 
 
-#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // C++ Headers
 #include <string>
-#include <map>
 // Utility Headers
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
 

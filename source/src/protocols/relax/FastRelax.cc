@@ -155,13 +155,11 @@ endrepeat
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/palette/NoDesignPackerPalette.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/select/movemap/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -180,13 +178,11 @@ endrepeat
 #include <protocols/hydrate/Hydrate.hh>
 
 //Basic Headers
-#include <basic/datacache/DataMap.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/hydrate.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationManager.hh>
@@ -196,7 +192,6 @@ endrepeat
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 

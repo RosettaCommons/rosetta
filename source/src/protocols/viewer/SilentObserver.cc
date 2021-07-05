@@ -16,7 +16,6 @@
 
 // Package headers
 
-#include <core/types.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
@@ -28,8 +27,6 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
-#include <core/id/types.hh>
-#include <utility/vector1.hh>
 
 using ObjexxFCL::string_of;
 

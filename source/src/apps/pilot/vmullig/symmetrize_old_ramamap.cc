@@ -16,11 +16,8 @@
 //General includes
 #include <basic/options/option.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <devel/init.hh>
 #include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <numeric/angle.functions.hh>
@@ -29,9 +26,7 @@
 
 // option key includes
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 
 //Tracer:
 static basic::Tracer TR( "apps.pilot.vmullig.symmetrize_old_ramamap" );

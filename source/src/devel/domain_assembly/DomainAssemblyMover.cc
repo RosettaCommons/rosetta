@@ -17,21 +17,16 @@
 #include <devel/domain_assembly/DomainAssemblyMover.hh>
 
 // Package Headers
-#include <devel/domain_assembly/domain_assembly_setup.hh>
 #include <devel/domain_assembly/domain_assembly.hh>
 
 // Project Headers
 #include <core/types.hh>
 
-#include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/selection.hh>
 
 #include <core/kinematics/MoveMap.hh>
-#include <core/util/kinematics_util.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 
@@ -42,36 +37,30 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
-#include <core/pack/task/operation/ResLvlTaskOperation.hh>
+#include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/select/residue_selector/OrResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/InterGroupInterfaceByVectorSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
-#include <protocols/filters/BasicFilters.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/relax/FastRelax.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
@@ -81,8 +70,6 @@
 #include <protocols/simple_filters/DomainInterfaceFilter.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 // Utility Headers
 
@@ -96,7 +83,6 @@
 
 // C++ headers
 #include <iostream>
-#include <fstream>
 
 namespace devel {
 namespace domain_assembly {

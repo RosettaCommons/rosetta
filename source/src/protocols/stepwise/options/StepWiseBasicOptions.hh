@@ -27,6 +27,8 @@
 #include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/options/keys/OptionKeyList.fwd.hh> // AUTO IWYU For OptionKeyList
+
 #if defined(WIN32) || defined(PYROSETTA)
 #include <utility/tag/Tag.hh>
 #endif

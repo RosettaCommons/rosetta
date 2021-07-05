@@ -16,7 +16,6 @@
 
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
 // Project Headers
@@ -47,9 +46,9 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 //////////////////////////////////////////////////////////////////////////////

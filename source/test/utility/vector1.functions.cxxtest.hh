@@ -17,13 +17,12 @@
 //#include <core/init_util.hh>
 
 // Package Headers
-#include <numeric/random/random.hh>
-#include <numeric/random/random.functions.hh>
 
-#include <numeric/constants.hh>
 
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
+
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, basic_ostream<>::__ostream_type, endl, cerr
 
 class Vector1FunctionsTests : public CxxTest::TestSuite
 {

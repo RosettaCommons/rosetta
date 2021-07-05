@@ -20,7 +20,6 @@
 
 // Core headers
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 

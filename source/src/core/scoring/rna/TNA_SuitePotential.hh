@@ -16,7 +16,6 @@
 
 // Unit Headers
 #include <core/scoring/rna/TNA_SuitePotential.fwd.hh>
-#include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>

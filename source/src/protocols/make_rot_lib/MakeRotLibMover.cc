@@ -43,12 +43,13 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/make_rot_lib.OptionKeys.gen.hh>
-#include <basic/options/util.hh>
 
 // c++ headers
 #include <cmath>
 #include <iomanip>
 #include <fstream>
+
+#include <protocols/make_rot_lib/RotData.hh> // AUTO IWYU For RotData, operator==
 
 namespace protocols {
 namespace make_rot_lib {

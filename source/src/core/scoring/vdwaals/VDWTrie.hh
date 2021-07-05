@@ -21,11 +21,9 @@
 // Package headers
 #include <core/scoring/vdwaals/VDW_Energy.fwd.hh>
 #include <core/scoring/trie/TrieCountPairBase.hh>
-#include <core/scoring/trie/RotamerTrie.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/trie/RotamerTrie.fwd.hh>
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
 #include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
-
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>

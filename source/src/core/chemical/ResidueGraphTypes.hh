@@ -24,8 +24,7 @@
 #include <core/chemical/Atom.hh> // needed full header for ResidueGraph def
 #include <core/chemical/Bond.hh>
 #include <boost/graph/undirected_graph.hpp>
-#include <boost/graph/filtered_graph.hpp>
-#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <boost/graph/filtered_graph.hpp> // DO NOT AUTO-REMOVE needs to be here for compilation, for some reason.
 #include <boost/graph/adjacency_list.hpp>
 #include <utility>
 

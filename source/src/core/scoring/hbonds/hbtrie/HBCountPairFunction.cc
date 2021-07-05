@@ -21,7 +21,7 @@
 #include <core/scoring/hbonds/hbtrie/HBAtom.hh>
 #include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
-#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
 
 // STL Headers
 #include <iostream>

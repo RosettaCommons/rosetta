@@ -17,7 +17,6 @@
 
 #include <protocols/dna/DnaInterfacePacker.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <protocols/dna/typedefs.hh>
 #include <protocols/dna/DnaChains.fwd.hh>
@@ -28,10 +27,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -39,7 +34,6 @@
 #include <string>
 
 #include <protocols/dna/DnaDesignDef.fwd.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

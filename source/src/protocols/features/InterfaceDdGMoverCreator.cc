@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_features_InterfaceDdGMoverCreator_cc
 #define INCLUDED_protocols_features_InterfaceDdGMoverCreator_cc
 
-#include <protocols/moves/MoverCreator.hh>
 #include <protocols/features/InterfaceDdGMover.hh>
 #include <protocols/features/InterfaceDdGMoverCreator.hh>
 

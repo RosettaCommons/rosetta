@@ -24,7 +24,6 @@
 // Package Headers
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
-#include <protocols/fldsgn/topology/util.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -38,15 +37,11 @@
 #include <basic/Tracer.hh>
 
 // Parser headers
-#include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/trig.functions.hh>
 
 static basic::Tracer TR( "protocols.fldsgn.filters.StrandCurvatureByLevels" );
 

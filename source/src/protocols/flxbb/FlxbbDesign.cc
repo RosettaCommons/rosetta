@@ -28,9 +28,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -59,7 +57,6 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/task_operations/RestrictToMoveMapChiOperation.hh>
-#include <utility/vector0.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

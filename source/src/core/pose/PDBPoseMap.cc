@@ -17,14 +17,12 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 
 // Project headers
 
 // STL headers
 #include <map>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

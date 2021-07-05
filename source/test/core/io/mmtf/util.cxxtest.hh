@@ -13,29 +13,16 @@
 
 // Test Headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // Package Headers
-#include <core/chemical/AA.hh>
 #include <src/core/io/mmtf/util.hh>
-#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Atom.hh>
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.fwd.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
 
-#include <mmtf.hpp>
-#include <cifparse/CifFile.h>
-#include <cifparse/CifParserBase.h>
 
 static basic::Tracer TR("core.io.mmtf.util.cxxtest");
 

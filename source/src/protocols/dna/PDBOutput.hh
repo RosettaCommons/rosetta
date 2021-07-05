@@ -28,7 +28,6 @@
 
 #include <string>
 #include <list>
-#include <iosfwd>
 #include <map>
 
 namespace protocols {

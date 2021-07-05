@@ -14,20 +14,18 @@
 
 #include <protocols/network/ui_mover.hh>
 
-#include <protocols/network/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 
+#include <core/pose/datacache/CacheableObserverType.hh> // AUTO IWYU For CacheableObserverType, UI_OBSERVER
+
+
+#ifdef ZEROMQ
+#include <protocols/network/util.hh>
 #include <utility/thread/shared_thread_local_data.impl.hh>
-
-#include <utility/json_utilities.hh>
-
-// #ifdef    SERIALIZATION
-// #include <utility/serialization/serialization.hh>
-// #include <cereal/types/polymorphic.hpp>
-// #endif // SERIALIZATION
-
+#include <json.hpp>
+#endif
 
 namespace protocols {
 namespace network {

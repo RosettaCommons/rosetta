@@ -22,16 +22,12 @@
 #include <core/select/residue_selector/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 //#include <basic/resource_manager/ResourceManager.hh>
 //#include <basic/resource_manager/util.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility>
-#include <utility/exit.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -40,8 +36,6 @@
 #include <string>
 #include <sstream>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

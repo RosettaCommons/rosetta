@@ -17,21 +17,19 @@
 
 // Unit headers
 #include <core/pack/interaction_graph/FASTERInteractionGraph.fwd.hh>
-#include <core/pack/interaction_graph/FASTERInteractionGraphTests.fwd.hh>
 
 // Package Headers
 
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 
 //STL Headers
-#include <list>
 
 //ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2A.hh>
 
+class FASTERInteractionGraphTests; // Forward declaration of test class for friendship.
 
 namespace core {
 namespace pack {

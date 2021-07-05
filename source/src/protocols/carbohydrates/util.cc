@@ -21,8 +21,6 @@
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/select/residue_selector/ResiduePropertySelector.hh>
 #include <core/select/residue_selector/GlycanLayerSelector.hh>
-#include <core/select/residue_selector/GlycanResidueSelector.hh>
-#include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 
@@ -33,12 +31,9 @@
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/string_util.hh>
-#include <cmath>
 
 static basic::Tracer TR( "protocols.carbohydrates.util" );
 

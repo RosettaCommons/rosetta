@@ -40,7 +40,8 @@
 #include <core/id/AtomID_Map.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

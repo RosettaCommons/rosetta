@@ -12,7 +12,6 @@
 
 // libRosetta headers
 
-#include <core/types.hh>
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
@@ -21,7 +20,6 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 void*

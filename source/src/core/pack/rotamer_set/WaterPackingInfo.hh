@@ -25,7 +25,8 @@
 
 // C++
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #ifdef WIN32
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>

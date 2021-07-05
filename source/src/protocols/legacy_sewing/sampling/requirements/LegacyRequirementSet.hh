@@ -22,10 +22,9 @@
 
 //Package headers
 #include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
-#include <protocols/legacy_sewing/conformation/Model.hh>
 
-#include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalRequirement.hh>
-#include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalRequirement.fwd.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.fwd.hh>
 
 //Utility headers
 #include <utility/vector1.hh>

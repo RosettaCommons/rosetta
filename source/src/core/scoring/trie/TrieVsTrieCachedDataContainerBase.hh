@@ -19,7 +19,6 @@
 #include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 namespace core {

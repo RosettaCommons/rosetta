@@ -14,19 +14,16 @@
 
 
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/util.hh>
 #include <core/import_pose/libraries/RNA_JumpLibrary.hh>
 #include <core/import_pose/libraries/RNA_LibraryManager.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <core/pose/rna/util.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Jump.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -35,10 +32,14 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/database/open.hh>
 #include <utility>
-#include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
+
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh> // AUTO IWYU For StepWiseMove, Attachments, FROM_SCRATCH
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For lead_zero_string_of
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.submotif.SubMotifLibrary" );
 

@@ -13,7 +13,6 @@
 
 // Unit headers
 #include <core/chemical/MutableChiRecord.hh>
-#include <core/chemical/MutableResidueType.hh>
 
 // Project headers
 

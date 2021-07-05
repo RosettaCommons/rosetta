@@ -20,27 +20,18 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/kinematics/Jump.hh>
 
 // Utility headers
-#include <utility>
-#include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
 #include <iostream>
 #include <utility/exit.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>

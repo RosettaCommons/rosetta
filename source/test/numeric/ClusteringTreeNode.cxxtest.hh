@@ -13,12 +13,10 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 #include <numeric/ClusteringTreeNode.hh>
 
 #include <core/types.hh>
-#include <iostream>
 
 using namespace numeric;
 

@@ -33,27 +33,27 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/simple_metrics/SimpleMetric.hh>
-#include <core/types.hh>
+#include <core/simple_metrics/SimpleMetric.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/tag/Tag.fwd.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/vector1.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Numeric headers
 
 
 // C++ headers
-#include <iosfwd>
 #include <string>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
+#include <iostream> // AUTO IWYU For ostream, cout
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

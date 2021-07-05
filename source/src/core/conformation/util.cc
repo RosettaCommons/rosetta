@@ -24,7 +24,6 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
@@ -55,7 +54,6 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 
 // C++ headers
 #include <algorithm> //std::min()

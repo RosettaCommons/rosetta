@@ -14,7 +14,6 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
 #include <core/pose/PDBInfo.hh>
-#include <protocols/pockets/PocketGrid.hh>
 #include <protocols/pockets/Fingerprint.hh>
 #include <protocols/pockets/FingerprintMultifunc.hh>
 #include <protocols/pockets/DarcParticleSwarmMinimizer.hh>
@@ -23,7 +22,6 @@
 #include <core/conformation/Conformation.hh>
 
 //reqd minimization headers
-#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/pose_metric_calculators/PackstatCalculator.hh>
@@ -37,7 +35,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/pose/util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -52,6 +49,10 @@
 #include <basic/citation_manager/CitationCollection.hh>
 
 #include <fstream>
+
+#include <numeric/constants.hh> // AUTO IWYU For pi_2
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace std;
 using namespace core;

@@ -15,14 +15,11 @@
 #ifndef INCLUDED_core_pose_metrics_CalculatorFactory_hh
 #define INCLUDED_core_pose_metrics_CalculatorFactory_hh
 
-#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-
+#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
 
 // C++ Headers
 #include <map>
-
-#include <utility/vector1.hh>
-
+#include <string>
 
 namespace core {
 namespace pose {

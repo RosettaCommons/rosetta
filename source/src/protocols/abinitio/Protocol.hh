@@ -29,16 +29,14 @@
 // Package Headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <core/io/silent/silent.fwd.hh>
-#include <protocols/abinitio/KinematicControl.hh>
+#include <protocols/abinitio/KinematicControl.fwd.hh>
 #ifdef USE_TENSORFLOW
 #include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.fwd.hh>
 #endif
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project Headers
 #include <protocols/checkpoint/CheckPointer.hh>
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 

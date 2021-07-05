@@ -25,7 +25,6 @@
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
 
 // C++ headers
 #include <string>

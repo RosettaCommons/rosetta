@@ -21,20 +21,13 @@
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 
 
-#include <core/scoring/func/XYZ_Func.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/id/SequenceMapping.fwd.hh>
 
 
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 
 //Utility Headers
-#include <numeric/xyzVector.fwd.hh>
 
-#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

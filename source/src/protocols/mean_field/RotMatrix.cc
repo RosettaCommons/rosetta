@@ -25,6 +25,8 @@
 // C++ headers
 #include <iostream>
 
+#include <protocols/mean_field/RotProb.hh> // AUTO IWYU For RotProb, operator<<
+
 namespace protocols {
 namespace mean_field {
 

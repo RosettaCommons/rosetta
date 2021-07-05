@@ -25,8 +25,7 @@
 
 // Project Headers
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
+#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
@@ -38,7 +37,6 @@
 
 // C++ Headers
 #include <string>
-#include <cstdlib>
 // #include <iosfwd> WHOA
 
 namespace protocols {

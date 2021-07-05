@@ -17,16 +17,15 @@
 // unit headers
 #include <protocols/make_rot_lib/MakeRotLibMover.fwd.hh>
 #include <protocols/make_rot_lib/MakeRotLibOptionsData.hh>
-#include <protocols/make_rot_lib/RotData.hh>
+#include <protocols/make_rot_lib/RotData.fwd.hh>
 
 // protocols headers
 #include <protocols/moves/Mover.hh>
 
 // core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // c++ headers
 #include <string>

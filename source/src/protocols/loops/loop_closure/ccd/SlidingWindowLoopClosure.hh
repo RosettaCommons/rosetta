@@ -33,26 +33,26 @@
 
 #include <core/types.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/fragment/FragID.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/OrderedFragSet.hh>
 
-#include <core/fragment/SecondaryStructure.hh>
-#include <protocols/evaluation/PoseEvaluator.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
+#include <protocols/evaluation/PoseEvaluator.fwd.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
 
 #include <protocols/constraints_additional/ConstraintEvaluator.fwd.hh>
 #include <protocols/loops/Loop.hh>
-#include <utility/vector1.hh>
+
+#include <core/scoring/ScoreType.hh> // AUTO IWYU For ScoreType
 
 
 namespace protocols {

@@ -18,18 +18,10 @@
 #include <mpi.h>
 #endif
 
-#include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/types.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
-#include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
 
-#include <string>
-#include <map>
-#include <list>
 
 namespace protocols {
 namespace jd2 {

@@ -26,15 +26,10 @@
 #include <protocols/jd3/output/ResultOutputter.hh>
 
 // Project headers
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // utility headers
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
 

@@ -26,7 +26,6 @@
 //#include <core/pack/task/PackerTask.fwd.hh>
 //#include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>

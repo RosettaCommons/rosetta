@@ -24,7 +24,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/prof.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>

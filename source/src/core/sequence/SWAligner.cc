@@ -22,9 +22,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

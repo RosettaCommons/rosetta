@@ -16,24 +16,17 @@
 #include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 
 // Package headers
-#include <protocols/recces/sampler/MC_Comb.hh>
 #include <protocols/recces/sampler/MC_OneTorsion.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_Sugar.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.hh>
+#include <protocols/recces/sampler/rna/MC_RNA_Sugar.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KinematicCloser.hh>
-#include <protocols/stepwise/sampler/rna/RNA_ChiStepWiseSampler.hh>
-#include <protocols/stepwise/sampler/rna/RNA_SugarStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/screener/RNA_TorsionScreener.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <numeric/random/random.hh>
-#include <core/id/NamedAtomID.hh>
 
 // Project headers
 #include <core/id/TorsionID.hh>
-#include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/Pose.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>

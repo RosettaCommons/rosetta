@@ -19,8 +19,6 @@
 #include <protocols/simple_moves/bb_sampler/BBDihedralSampler.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace simple_moves {

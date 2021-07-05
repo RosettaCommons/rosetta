@@ -21,21 +21,16 @@
 
 // Project headers
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {

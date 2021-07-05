@@ -14,18 +14,18 @@
 #ifndef INCLUDED_protocols_cryst_cryst_movers_hh
 #define INCLUDED_protocols_cryst_cryst_movers_hh
 
-#include <protocols/cryst/cryst_movers_creator.hh>
 
 #include <utility>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
-#include <core/scoring/electron_density/util.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loops.hh>
+
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

@@ -26,7 +26,7 @@
 #include <core/pose/signals/EnergyEvent.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/datacache/CacheableObserver.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/kinematics/FoldTree.hh>
 
@@ -36,8 +36,6 @@
 
 // c++ headers
 #include <string>
-#include <numeric/types.hh>
-#include <cmath>
 
 // REQUIRED FOR WINDOWS
 #ifndef __native_client__
@@ -46,9 +44,9 @@
 #undef min
 #undef max
 #else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <sys/socket.h> // DO NOT AUTO-REMOVE
+#include <netinet/in.h> // DO NOT AUTO-REMOVE
+#include <arpa/inet.h> // DO NOT AUTO-REMOVE
 #endif
 #endif
 

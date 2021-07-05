@@ -22,7 +22,6 @@
 #include <protocols/recces/sampler/rna/MC_RNA_Suite.fwd.hh>
 
 // Project headers
-#include <core/id/TorsionID.hh>
 
 namespace protocols {
 namespace recces {

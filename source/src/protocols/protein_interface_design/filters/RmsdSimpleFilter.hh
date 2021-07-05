@@ -21,16 +21,15 @@
 //Include Rosetta protocols
 #include <protocols/filters/Filter.hh>
 
-//Include ObjexxFCL
-#include <ObjexxFCL/FArray1.fwd.hh>
-#include <ObjexxFCL/FArray2.fwd.hh>
-
 //Include Rosetta utilities
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 //Include Rosetta XML tag reader
 #include <utility/tag/Tag.fwd.hh>
+
+#include <ObjexxFCL/FArray1.fwd.hh> // AUTO IWYU For FArray1_double
+#include <ObjexxFCL/FArray2.fwd.hh> // AUTO IWYU For FArray2_double
 
 
 namespace protocols {

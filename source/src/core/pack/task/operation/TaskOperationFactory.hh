@@ -28,16 +28,15 @@
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // c++ headers
 #include <string>
 #include <map>
 
-#include <utility/vector0.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace core {
 namespace pack {

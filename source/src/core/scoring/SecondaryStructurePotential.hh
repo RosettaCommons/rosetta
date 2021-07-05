@@ -17,7 +17,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/SecondaryStructureWeights.hh>
+#include <core/scoring/SecondaryStructureWeights.fwd.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
@@ -31,7 +31,6 @@
 #include <string>
 
 #include <core/scoring/SS_Info.fwd.hh>
-#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
 

@@ -16,7 +16,6 @@
 
 // Package Headers
 #include <core/environment/LocalPosition.hh>
-#include <core/environment/DofPassport.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
 
@@ -24,8 +23,6 @@
 #include <protocols/environment/ProtectedConformation.hh>
 
 // Project Headers
-#include <core/id/TorsionID.hh>
-#include <core/pose/util.hh>
 
 // ObjexxFCL Headers
 
@@ -38,6 +35,10 @@
 // C++ headers
 
 // option key includes
+
+#include <core/select/residue_selector/ResidueSelector.hh> // IWYU Manual addition
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 static basic::Tracer tr( "protocols.environment.claims.JumpClaim", basic::t_info );
 

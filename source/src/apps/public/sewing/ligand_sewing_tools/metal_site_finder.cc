@@ -19,7 +19,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/AtomGraph.hh>
@@ -37,6 +36,9 @@
 
 
 #include <string>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+
 //tracers
 static basic::Tracer TR("apps.pilot.guffysl.metal_site_finder");
 

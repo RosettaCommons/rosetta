@@ -14,56 +14,35 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <utility/string_util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
 
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 

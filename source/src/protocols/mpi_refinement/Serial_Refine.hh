@@ -16,15 +16,14 @@
 #define INCLUDED_protocols_mpi_refinement_Serial_Refine_hh
 
 #include <protocols/wum/SilentStructStore.hh>
-#include <protocols/mpi_refinement/MultiObjective.hh>
+#include <protocols/mpi_refinement/MultiObjective.fwd.hh>
 #include <protocols/mpi_refinement/Scheduler.hh>
 
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 #include <string>
-#include <vector>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 namespace protocols {
 namespace mpi_refinement {

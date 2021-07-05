@@ -13,7 +13,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/energy_methods/pHEnergy.hh>
-#include <core/scoring/Energies.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -26,17 +25,12 @@
 #include <core/conformation/Residue.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
 #include <string>
 #include <utility/vector1.hh>
 
 //neighbors & hbonds
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -44,9 +38,7 @@
 //temp includes krishna
 #include <iostream>
 #include <fstream>
-#include <core/io/pdb/pdb_writer.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -56,9 +48,8 @@
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 
 static basic::Tracer TR( "apps.pilot.krishna.PhProtocol" );

@@ -11,31 +11,19 @@
 /// @author jk
 
 #include <iostream>
-#include <iomanip>
 
 // Protocol Headers
-#include <protocols/rigid/RigidBodyMover.hh>
 
 // Core Headers
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <basic/options/util.hh>
-#include <core/id/AtomID_Map.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 
 //Auto Headers

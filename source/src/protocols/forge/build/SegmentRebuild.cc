@@ -21,16 +21,14 @@
 
 // project headers
 
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/signals/LengthEvent.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/PDBInfo.hh>
@@ -45,8 +43,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 // C++ headers
 #include <algorithm>
-#include <iostream>
-#include <set>
 
 #include <core/pose/annotated_sequence.hh>
 

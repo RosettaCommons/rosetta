@@ -24,26 +24,21 @@
 #include <protocols/topology_broker/FragmentClaimer.hh>
 #include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/claims/JumpClaim.fwd.hh>
-#include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/jumping/DisulfPairingsList.fwd.hh>
-#include <protocols/jumping/DisulfPairingLibrary.hh>
+#include <protocols/jumping/DisulfPairingLibrary.fwd.hh>
 
 #ifdef WIN32
 #include <protocols/jumping/DisulfPairingsList.hh>
 #endif
 
 #include <core/fragment/FrameList.hh>
-#include <core/fragment/Frame.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 //C++ Headers
 #include <string>

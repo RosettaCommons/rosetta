@@ -17,8 +17,6 @@
 #include <numeric/types.hh>
 #include <numeric/kdtree/WrappedPrimitive.hh>
 
-#include <utility/VirtualBase.hh>
-#include <utility/VirtualBase.fwd.hh>
 
 
 namespace numeric {

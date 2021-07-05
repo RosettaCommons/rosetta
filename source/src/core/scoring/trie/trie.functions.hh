@@ -30,6 +30,7 @@
 
 #include <utility/vector1.hh>
 
+#include <core/scoring/trie/RotamerTrie.hh> // DO NOT AUTO-REMOVE
 
 namespace core {
 namespace scoring {

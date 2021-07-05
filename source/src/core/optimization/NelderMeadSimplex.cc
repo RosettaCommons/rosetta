@@ -13,24 +13,19 @@
 
 
 // Unit headers
-#include <core/optimization/LineMinimizer.hh>
 #include <core/optimization/NelderMeadSimplex.hh>
-#include <core/optimization/GA_Minimizer.hh>
 
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
-#include <utility/exit.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 // C++ headers
-#include <cmath>
-#include <iostream>
 #include <algorithm>
 
 #include <utility/vector1.hh>
+
+#include <core/optimization/Multifunc.hh> // AUTO IWYU For Multifunc
 
 #ifdef WIN32
 #include <functional>

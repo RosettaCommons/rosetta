@@ -15,11 +15,9 @@
 #include <protocols/jd3/chunk_library/ChunkLibraryInnerLarvalJob.hh>
 
 //C++ headers
-#include <string>
 #include <sstream>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

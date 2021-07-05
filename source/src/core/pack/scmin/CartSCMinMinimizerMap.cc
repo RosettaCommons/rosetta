@@ -25,11 +25,10 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
-#include <core/scoring/DerivVectorPair.hh>
-#include <utility/options/BooleanVectorOption.hh>
-#include <numeric/constants.hh>
+#include <core/pack/scmin/AtomTreeCollection.hh> // AUTO IWYU For ResidueAtomTreeCollection, AtomTreeCollection
+
+
 
 namespace core {
 namespace pack {

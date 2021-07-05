@@ -15,36 +15,23 @@
 #include <core/energy_methods/DEPC_MS_Energy.hh>
 #include <core/energy_methods/DEPC_MS_EnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/sasa/util.hh>
 
 //Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
-#include <basic/prof.hh>
 #include <core/scoring/ContextGraphTypes.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/TwelveANeighborGraph.hh>
-#include <core/scoring/func/FadeFunc.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/scoring/ScoreType.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <basic/Tracer.hh>
 
 //Utility headers
-#include <core/pose/util.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-#include <basic/options/option.hh>
 #include <utility/io/izstream.hh>
-#include <utility/file/FileName.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <utility/vector1.hh>
-#include <numeric/NumericTraits.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 static basic::Tracer TR( "core.energy_methods.DEPC_MS_Energy" );
 

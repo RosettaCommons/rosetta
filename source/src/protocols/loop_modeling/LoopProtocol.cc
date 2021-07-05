@@ -12,18 +12,16 @@
 #include <protocols/loop_modeling/LoopProtocolCreator.hh>
 
 // Protocols headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.hh>
 #include <protocols/loop_modeling/utilities/AcceptanceCheck.hh>
 #include <protocols/loop_modeling/utilities/TrajectoryLogger.hh>
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/mover_schemas.hh>
 #include <protocols/moves/Mover.hh>
 
 // Core headers
@@ -33,17 +31,15 @@
 #include <core/scoring/constraints/util.hh>
 
 // Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <boost/lexical_cast.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/tools/make_vector1.hh>
 
 // C++ headers
-#include <iostream>
 #include <cmath>
 
 // Namespaces

@@ -17,10 +17,7 @@
 
 // Package Headers
 
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/helixAssembly/ConcurrencyTest.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

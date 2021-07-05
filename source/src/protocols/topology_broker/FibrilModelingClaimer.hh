@@ -26,12 +26,10 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

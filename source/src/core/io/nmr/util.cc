@@ -27,15 +27,13 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 
 // C++ headers
 #include <string>
-#include <iostream>
-#include <sstream>
 #include <fstream>
+
+#include <map> // AUTO IWYU For map, _Rb_tree_iterator
 
 namespace core {
 namespace io {

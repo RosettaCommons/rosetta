@@ -21,15 +21,11 @@
 #include <boost/algorithm/string.hpp>
 
 #include <devel/init.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/dssp/Dssp.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <iostream>
 #include <string>
-#include <stdlib.h>
 #include <numeric/random/random.hh>
 
 #include <utility/io/ozstream.hh>
@@ -42,9 +38,9 @@
 #include <core/conformation/Atom.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/sewing.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For FileOptionKey, BooleanOptionKey, OptionKeys
 
 static basic::Tracer TR( "apps.pilot.frankdt.segment_file_generator" );
 

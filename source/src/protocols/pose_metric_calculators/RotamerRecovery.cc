@@ -42,7 +42,6 @@
 
 //#include <devel/init.hh>
 
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>

@@ -27,24 +27,20 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/fragment/FrameList.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 //#include <core/scoring/constraints/ConstraintForest.fwd.hh>
 
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>

@@ -23,8 +23,8 @@
 #include <functional>
 
 #include <protocols/moves/mover_schemas.hh> // For check_if_mover_tag_validates()
-#include <core/simple_metrics/util.hh> // For check_if_metric_tag_validates()
 #include <basic/Tracer.hh>
+#include <iostream>
 
 static basic::Tracer TR2( "schema_utilities" );
 

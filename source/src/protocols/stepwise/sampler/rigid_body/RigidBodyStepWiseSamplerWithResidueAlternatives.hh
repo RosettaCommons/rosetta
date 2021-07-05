@@ -18,8 +18,14 @@
 
 #include <protocols/stepwise/sampler/StepWiseSamplerComb.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.fwd.hh>
-#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.fwd.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.fwd.hh>
+
+#include <map>
+
+#include <protocols/stepwise/sampler/StepWiseSamplerOneValue.hh> // AUTO IWYU For ValueList
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For ResidueOP, Resi...
+#include <core/kinematics/Stub.hh> // AUTO IWYU For Stub
 
 namespace protocols {
 namespace stepwise {

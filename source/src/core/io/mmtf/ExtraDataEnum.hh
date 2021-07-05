@@ -16,8 +16,6 @@
 #define INCLUDED_core_io_mmtf_ExtraDataEnum_hh
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace io {

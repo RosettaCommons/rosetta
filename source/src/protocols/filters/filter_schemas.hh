@@ -14,8 +14,6 @@
 #define INCLUDED_protocols_filters_filter_schemas_HH
 
 // Project headers
-#include <core/types.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

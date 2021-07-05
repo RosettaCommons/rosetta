@@ -22,7 +22,7 @@
 // Package Headers
 #include <protocols/jumping/JumpSample.hh>
 #include <protocols/jumping/JumpSetup.hh>
-#include <protocols/jumping/ResiduePairJump.hh>
+#include <protocols/jumping/ResiduePairJump.fwd.hh>
 
 // Project Headers
 

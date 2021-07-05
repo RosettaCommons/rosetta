@@ -35,36 +35,24 @@
 #define INCLUDED_protocols_membrane_util_hh
 
 // Package Headers
-#include <core/conformation/membrane/MembraneInfo.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
 #include <protocols/membrane/geometry/Embedding.fwd.hh>
 
 // Project Headers
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.fwd.hh>
 
-#include <core/kinematics/FoldTree.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
 
-#include <numeric/conversions.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 // C++ headers
-#include <cstdlib>
-#include <cmath>
 
 namespace protocols {
 namespace membrane {

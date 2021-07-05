@@ -14,7 +14,6 @@
 // Test Headers
 #include <test/core/init_util.hh>
 #include <cxxtest/TestSuite.h>
-#include <util/pose_funcs.hh>
 
 // Unit Headers
 #include <protocols/features/AtomAtomPairFeatures.hh>
@@ -28,7 +27,6 @@
 #include <protocols/features/HBondParameterFeatures.hh>
 #include <protocols/features/JobDataFeatures.hh>
 #include <protocols/features/LoopAnchorFeatures.hh>
-#include <protocols/features/OrbitalsFeatures.hh>
 #include <protocols/features/PairFeatures.hh>
 #include <protocols/features/PdbDataFeatures.hh>
 #include <protocols/features/PoseCommentsFeatures.hh>
@@ -37,7 +35,6 @@
 #include <protocols/features/ProteinBackboneAtomAtomPairFeatures.hh>
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
 #include <protocols/features/ProteinRMSDFeatures.hh>
-#include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/RadiusOfGyrationFeatures.hh>
 #include <protocols/features/ResidueFeatures.hh>
 #include <protocols/features/ResidueScoresFeatures.hh>
@@ -66,20 +63,18 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/sql_database/types.hh>
 #include <utility/file/file_sys_util.hh>
 
 // Boost Headers
-#include <limits>
 
 // External Headers
-#include <cppdb/frontend.h>
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
 
 
 static basic::Tracer tr("protocols.features.FeaturesReporterTests.cxxtest");

@@ -16,7 +16,6 @@
 #include <cxxtest/TestSuite.h>
 
 // c++ headers
-#include <cmath>
 
 // initialization headers
 #include <test/util/pose_funcs.hh>
@@ -24,7 +23,6 @@
 
 //core
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh> // for initialize_atommap
 #include <core/pose/init_id_map.hh>
 
 //basic

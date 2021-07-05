@@ -40,11 +40,9 @@
 #include <protocols/membrane/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/metrics.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
 //Auto Headers
-#include <protocols/simple_ddg/DdgFilter.hh>
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #undef interface

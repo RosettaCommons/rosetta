@@ -23,10 +23,8 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/variant_util.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/mainchain_potential/MainchainScoreTable.hh>
-#include <core/chemical/mainchain_potential/util.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/TorsionID.hh>
@@ -50,7 +48,6 @@
 #include <utility/file/file_sys_util.hh>
 
 // C++ headers:
-#include <iostream>
 #include <fstream>
 
 static basic::Tracer TR( "protocols.mainchain_potential.GenerateMainchainPotential" );

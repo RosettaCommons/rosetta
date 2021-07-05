@@ -19,8 +19,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <protocols/filters/Filter.fwd.hh>
+#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>

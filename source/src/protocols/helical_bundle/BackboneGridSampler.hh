@@ -20,30 +20,20 @@
 // Unit Headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/helical_bundle/BackboneGridSampler.fwd.hh>
 #include <protocols/helical_bundle/BackboneGridSamplerHelper.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.fwd.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 // Project Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
-#include <basic/citation_manager/CitationCollection.fwd.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
 
 
 ///////////////////////////////////////////////////////////////////////

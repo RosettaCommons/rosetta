@@ -34,12 +34,8 @@
 // Unit headers
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/MutableResidueType.hh>
-#include <core/chemical/Atom.hh> // needed full header for ResidueGraph def
-#include <core/chemical/Bond.hh>
-#include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-#include <boost/graph/adjacency_list.hpp>
 #include <utility>
 
 // Package headers

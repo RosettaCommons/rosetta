@@ -15,11 +15,9 @@
 #define INCLUDED_protocols_wum_WorkUnitList_hh
 
 
-#include <core/types.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 #include <map>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

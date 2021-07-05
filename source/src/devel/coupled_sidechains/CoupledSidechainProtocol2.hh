@@ -16,42 +16,28 @@
 #define INCLUDED_devel_coupled_sidechains_CoupledSidechainProtocol2_hh
 
 // Unit Headers
-#include <devel/coupled_sidechains/CoupledSidechainProtocol.fwd.hh>
 
 // Unit Headers
-#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
-#include <protocols/canonical_sampling/SimulatedTempering.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 
-#include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 
 // Protocols Headers
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 
 // Core Headers
-#include <core/conformation/Residue.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
-#include <numeric/random/random.hh>
 
-#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <iosfwd>
 
 //Auto Headers
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/vector1_bool.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 
 namespace devel {
 namespace coupled_sidechains {

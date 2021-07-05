@@ -17,8 +17,6 @@
 #include <core/simple_metrics/SimpleMetric.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/simple_metrics/SimpleMetricData.fwd.hh>
 
 // Basic headers
@@ -28,7 +26,6 @@
 #include <utility/vector1.hh>
 
 //C++ headers
-#include <map>
 
 namespace core {
 namespace simple_metrics {

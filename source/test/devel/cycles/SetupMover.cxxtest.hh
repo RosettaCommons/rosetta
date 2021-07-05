@@ -15,13 +15,12 @@
 #define INCLUDED_devel_cycles_setup_mover_CXXTEST_HH
 
 #include <cxxtest/TestSuite.h>
+#include <test/core/init_util.hh>
 
 #include <devel/cycles/SetupMover.hh>
-#include <devel/cycles/ReindexingMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
 using namespace core;
 using namespace devel;

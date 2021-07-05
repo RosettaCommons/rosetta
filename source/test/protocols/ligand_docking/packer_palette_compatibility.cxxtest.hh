@@ -37,9 +37,12 @@
 
 #include <core/types.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("protocols.ligand_docking.packer_palette_compatibility.cxxtest");
 

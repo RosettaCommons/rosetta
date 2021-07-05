@@ -44,8 +44,6 @@
 // C/C++ headers
 #include <algorithm>
 #include <iostream>
-#include <ostream>
-#include <sstream>
 #include <string>
 
 namespace core {

@@ -34,7 +34,8 @@
 //// C++ headers
 
 #include <string>
-#include <utility/vector1.hh>
+
+#include <core/conformation/symmetry/SymmData.fwd.hh> // AUTO IWYU For SymmDataOP
 
 
 namespace protocols {

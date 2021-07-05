@@ -19,7 +19,6 @@
 #include <protocols/features/ProteinSilentReport.hh>
 
 // Platform Headers
-#include <core/pose/extra_pose_info_util.hh>
 
 ///Utility headers
 #include <basic/options/option.hh>
@@ -29,7 +28,7 @@
 #include <basic/database/sql_utils.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // External Headers
 #include <cppdb/frontend.h>

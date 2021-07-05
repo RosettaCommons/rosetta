@@ -16,13 +16,13 @@
 // Unit Headers
 #include <protocols/abinitio/abscript/RigidChunkCM.fwd.hh>
 #include <protocols/environment/ClientMover.hh>
-#include <protocols/environment/claims/EnvClaim.hh>
+#include <protocols/environment/claims/EnvClaim.fwd.hh>
 
 // Package headers
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.tmpl.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+
+#include <protocols/loops/Loops.hh> // AUTO IWYU For Loops
 
 #ifdef WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>

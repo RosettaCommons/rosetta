@@ -25,12 +25,9 @@
 
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility>
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ STL Headers

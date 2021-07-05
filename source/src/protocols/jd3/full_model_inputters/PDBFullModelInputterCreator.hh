@@ -22,8 +22,6 @@
 #include <protocols/jd3/full_model_inputters/FullModelInputter.fwd.hh>
 
 // utility headers
-#include <utility/options/keys/OptionKey.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers

@@ -13,13 +13,11 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // Project headers
-#include <core/types.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/WeightedReservoirSampler.hh>
 

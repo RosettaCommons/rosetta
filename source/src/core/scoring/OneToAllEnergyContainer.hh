@@ -19,12 +19,13 @@
 
 // Package headers
 #include <core/scoring/LREnergyContainer.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/scoring/ScoreType.hh> // AUTO IWYU For ScoreType
 
 
 #ifdef    SERIALIZATION

@@ -17,26 +17,21 @@
 
 // Unit headers
 #include <core/scoring/facts/FACTSResidue.hh>
-#include <core/scoring/facts/FACTSPose.hh>
 #include <core/scoring/facts/FACTSPotential.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/RotamerSetBase.hh>
+#include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
-#include <basic/datacache/CacheableData.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <iosfwd>
 
 namespace core {
 namespace scoring {

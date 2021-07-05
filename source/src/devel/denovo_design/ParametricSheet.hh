@@ -23,20 +23,20 @@
 // Package headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/filters/Filter.hh>
-#include <basic/datacache/DataMap.hh>
 
 //// C++ headers
 #include <string>
 
 // Utility Headers
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.fwd.hh>
 #include <utility>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real, Vector
+#include <utility/tag/Tag.fwd.hh> // AUTO IWYU For TagCOP
+#include <map> // AUTO IWYU For map
 
 namespace devel {
 namespace denovo_design {

@@ -14,7 +14,6 @@
 #include <protocols/task_operations/ResidueProbDesignOperation.hh>
 #include <protocols/task_operations/ResidueProbDesignOperationCreator.hh>
 
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
@@ -26,6 +25,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR( "protocols.TaskOperations.ResidueProbDesignOperation" );

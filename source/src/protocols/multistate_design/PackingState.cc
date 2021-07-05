@@ -16,12 +16,11 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 

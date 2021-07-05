@@ -24,7 +24,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <numeric/UniformRotationSampler.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <map>
 #include <string>
 

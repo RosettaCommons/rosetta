@@ -25,7 +25,6 @@
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
@@ -36,7 +35,6 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/string_util.hh>
 #include <utility/stream_util.hh>

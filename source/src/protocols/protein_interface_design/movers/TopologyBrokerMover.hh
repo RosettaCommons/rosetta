@@ -16,15 +16,11 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
-#include <protocols/topology_broker/TopologyBroker.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace protein_interface_design {

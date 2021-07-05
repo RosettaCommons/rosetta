@@ -22,7 +22,6 @@
 
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/Methods.hh>
 

@@ -15,16 +15,12 @@
 #define INCLUDED_protocols_protein_interface_design_filters_AtomicContactCountFilter_hh
 
 // Project Headers
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 #include <string>
 
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilter.fwd.hh>

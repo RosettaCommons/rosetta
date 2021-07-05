@@ -16,7 +16,6 @@
 #include <core/scoring/nmr/NMRGridSearch.hh>
 
 // Package headers
-#include <core/io/nmr/AtomSelection.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -28,13 +27,11 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
 // C++ headers
-#include <cmath>
 
 namespace core {
 namespace scoring {

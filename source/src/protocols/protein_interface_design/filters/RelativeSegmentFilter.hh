@@ -20,7 +20,6 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
 namespace protein_interface_design {

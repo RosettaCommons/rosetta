@@ -12,105 +12,36 @@
 /// @author Gideon Lapidoth (glapidoth@gmail.com)
 
 // Unit headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/splice/SpliceSegment.hh>
-#include <protocols/splice/TailSegmentMover.hh>
 #include <protocols/splice/SpliceInAntibody.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/splice/SpliceInAntibodyCreator.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/AA.hh>
-#include <protocols/protein_interface_design/filters/TorsionFilter.hh>
-#include <protocols/protein_interface_design/util.hh>
-#include <boost/algorithm/string/predicate.hpp>//for comparing string case insensitive
-#include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/Atom.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <protocols/enzdes/AddorRemoveCsts.hh>
-#include <protocols/splice/util.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/id/SequenceMapping.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/conformation/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/datacache/DataMapObj.hh>
-#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
-#include <protocols/protein_interface_design/movers/AddChainBreak.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <iostream>
-#include <sstream>
 #include <algorithm>
 #include <string>
-#include <boost/algorithm/string.hpp>
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueProperty.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/task_operations/DesignAroundOperation.hh>
-#include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
-#include <protocols/task_operations/ThreadSequenceOperation.hh>
-#include <protocols/task_operations/SeqprofConsensusOperation.hh>
-#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
-#include <numeric/xyzVector.hh>
-#include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <protocols/protein_interface_design/movers/LoopLengthChange.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <core/scoring/constraints/Constraints.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <numeric/constants.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/sequence/SequenceProfile.hh>
-#include <core/scoring/Energies.hh>
-#include <numeric/xyz.functions.hh>
 #include <protocols/simple_moves/CutChainMover.hh>
 //////////////////////////////////////////////////
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
-#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
-#include <basic/options/keys/OptionKeys.hh>
 ///////////////////////////////////////////////////
 #include <fstream>
-#include <ctime>
-#include <protocols/splice/RBInMover.hh>
-#include <protocols/splice/RBOutMover.hh>
-#include <protocols/toolbox/superimpose.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>

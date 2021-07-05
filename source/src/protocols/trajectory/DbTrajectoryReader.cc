@@ -16,16 +16,13 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector.hh>
 #include <utility/tools/make_vector1.hh>
 #include <basic/database/sql_utils.hh>
-#include <basic/Tracer.hh>
 
 // External Headers
 #include <cppdb/frontend.h>

@@ -16,7 +16,6 @@
 //KIC
 #include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/WalkingPerturber.hh>
-#include <protocols/kinematic_closure/KicMover.hh>
 
 #include <devel/init.hh>
 
@@ -32,9 +31,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/coupled_moves.OptionKeys.gen.hh>
+
+#include <protocols/loops/loops_main.hh> // AUTO IWYU For read_loop_fragments
 
 static basic::Tracer TR( "apps.coupled_moves" );
 

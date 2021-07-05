@@ -18,7 +18,6 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-#include <algorithm>
 
 namespace protocols {
 namespace frag_picker {

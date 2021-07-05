@@ -15,30 +15,19 @@
 #include <core/scoring/dna/DNABFormPotential.hh>
 
 // Package Headers
-#include <core/scoring/ScoreFunction.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
 //#include <core/io/database/open.hh>
 //#include <basic/options/option.hh>
 
 // Numeric Headers
-#include <numeric/angle.functions.hh>
-#include <numeric/interpolation/periodic_range/half/interpolation.hh>
-#include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
-#include <utility/io/izstream.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray4D.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>

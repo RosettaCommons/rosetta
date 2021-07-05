@@ -21,10 +21,8 @@
 
 // Package headers
 #include <utility/options/keys/VectorOptionKey.hh>
-#include <utility/options/AnyOption.fwd.hh>
 
 // Project headers
-#include <utility/keys/SmallKeyVector.fwd.hh>
 
 
 #ifdef    SERIALIZATION

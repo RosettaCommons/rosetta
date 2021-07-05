@@ -37,7 +37,6 @@
 #include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 
-#include <core/scoring/membrane/MembraneData.hh>
 
 #include <core/pose/Pose.hh>
 

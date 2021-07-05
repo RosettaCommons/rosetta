@@ -25,9 +25,7 @@
 //C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 #include <utility/io/ozstream.fwd.hh>
-#include <iosfwd>
 
 
 namespace protocols {

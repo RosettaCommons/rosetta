@@ -17,7 +17,7 @@
 #define INCLUDED_core_select_jump_selector_JumpSelectorRegistrator_hh
 
 // Package headers
-#include <core/select/jump_selector/JumpSelectorFactory.hh>
+#include <core/select/jump_selector/JumpSelectorFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace core {

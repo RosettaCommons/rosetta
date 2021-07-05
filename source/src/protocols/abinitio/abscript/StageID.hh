@@ -20,8 +20,8 @@
 // Project headers
 
 // Utility Headers
-#include <utility/vector1.fwd.hh>
-#include <core/types.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 // C++ Headers
 

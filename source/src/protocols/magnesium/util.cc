@@ -18,7 +18,6 @@
 #include <protocols/magnesium/MgOrbitalFrameFinder.hh>
 #include <protocols/magnesium/MgHydrater.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
@@ -39,8 +38,9 @@
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
 #include <numeric/UniformRotationSampler.hh>
-#include <numeric/xyzMatrix.io.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/kinematics/Stub.hh> // AUTO IWYU For Stub, Stub::Matrix
 
 static basic::Tracer TR( "protocols.magnesium.util" );
 

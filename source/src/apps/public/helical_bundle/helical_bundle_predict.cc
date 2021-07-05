@@ -39,7 +39,6 @@
 #include <basic/options/keys/helical_bundle_predict.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 

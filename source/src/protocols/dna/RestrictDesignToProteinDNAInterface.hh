@@ -25,8 +25,8 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 #include <protocols/dna/DnaDesignDef.fwd.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

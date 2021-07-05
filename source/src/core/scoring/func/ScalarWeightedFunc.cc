@@ -18,12 +18,10 @@
 
 #include <core/types.hh>
 
-#include <utility/VirtualBase.hh>
 
 
 // C++ Headers
 
-#include <sstream>
 #include <iostream>
 #include <string>
 

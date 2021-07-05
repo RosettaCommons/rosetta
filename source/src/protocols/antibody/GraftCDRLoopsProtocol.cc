@@ -16,12 +16,10 @@
 
 
 
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/Energies.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/import_pose/import_pose.hh>
@@ -32,17 +30,12 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <protocols/loops/loops_main.hh>
 
-#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
-#include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/antibody/GraftOneCDRLoop.hh>
-#include <protocols/antibody/CloseOneCDRLoop.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/Ab_TemplateInfo.hh>
 #include <protocols/antibody/GraftCDRLoopsProtocol.hh>
@@ -51,7 +44,9 @@
 #include <protocols/antibody/GraftedStemOptimizer.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+
 using namespace ObjexxFCL::format;
 
 

@@ -19,14 +19,11 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/AA.hh>
 #include <core/select/util.hh>
-#include <core/pose/symmetry/util.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/loops/loops_main.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
@@ -37,6 +34,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("protocols.simple_moves.SimpleThreadingMover");
 

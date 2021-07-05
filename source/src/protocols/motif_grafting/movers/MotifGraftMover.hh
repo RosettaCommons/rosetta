@@ -27,27 +27,24 @@
 #include <core/types.hh>
 
 //Include Rosetta numeric
-#include <numeric/geometry/hashing/MinimalClashHash.hh>
+#include <numeric/geometry/hashing/MinimalClashHash.fwd.hh>
 #include <numeric/HomogeneousTransform.hh>
-#include <numeric/xyz.functions.hh>
 
 //Include Rosetta XML tag reader
 #include <utility/tag/Tag.fwd.hh>
 
 //Include Rosetta Scoring functions
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 //Include Rosetta protocols
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-//Include ObjexxFCL
-#include <ObjexxFCL/FArray1.fwd.hh>
 
-// Unit headers
+#include <sstream> // DO NOT AUTO-REMOVE needed for inline functions
+#include <ObjexxFCL/FArray1.fwd.hh> // AUTO IWYU For FArray1_double
 
 namespace protocols {
 namespace motif_grafting {

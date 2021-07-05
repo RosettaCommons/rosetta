@@ -15,7 +15,6 @@
 #define INCLUDED_numeric_kdtree_nearest_neighbors_hh
 
 #include <numeric/types.hh>
-#include <utility/vector1.fwd.hh>
 
 #include <numeric/kdtree/KDTree.fwd.hh>
 #include <numeric/kdtree/KDNode.fwd.hh>
@@ -23,7 +22,6 @@
 
 #include <numeric/kdtree/KDPointList.hh>
 
-#include <utility/VirtualBase.fwd.hh>
 
 namespace numeric {
 namespace kdtree {

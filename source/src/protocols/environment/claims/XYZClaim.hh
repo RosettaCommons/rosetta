@@ -20,7 +20,7 @@
 #include <protocols/environment/claims/XYZClaim.fwd.hh>
 
 // Package Headers
-#include <core/environment/LocalPosition.hh>
+#include <core/environment/LocalPosition.fwd.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
@@ -29,19 +29,19 @@
 #include <protocols/environment/claims/BrokerElements.hh>
 
 // Project Headers
-#include <core/id/types.hh>
-#include <core/id/DOF_ID.hh>
+#include <core/id/DOF_ID.fwd.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //// C++ headers
 #include <string>
 #include <iosfwd>
 #include <utility>
+
+#include <protocols/environment/ProtectedConformation.fwd.hh> // AUTO IWYU For ProtectedConformationCOP
 
 namespace protocols {
 namespace environment {

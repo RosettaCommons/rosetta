@@ -17,23 +17,18 @@
 // Unit headers
 #include <basic/Tracer.hh>
 #include <core/energy_methods/RamachandranEnergy.hh>
-#include <core/scoring/Ramachandran.hh>
-#include <core/scoring/ScoringManager.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
-#include <test/util/pose_funcs.hh>
-#include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 
 
-#include <numeric/conversions.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
 
 
 // --------------- Test Class --------------- //

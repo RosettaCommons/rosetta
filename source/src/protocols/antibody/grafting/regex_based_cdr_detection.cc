@@ -15,6 +15,9 @@
 
 #include <protocols/antibody/grafting/util.hh>
 
+#include <protocols/antibody/grafting/antibody_sequence.hh> // AUTO IWYU For AntibodyChain, uint, CDR_Bounds, AntibodySequence
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, basic_ostream<>...
+
 #ifdef __ANTIBODY_GRAFTING__
 
 #include <protocols/antibody/grafting/regex_based_cdr_detection.hh>

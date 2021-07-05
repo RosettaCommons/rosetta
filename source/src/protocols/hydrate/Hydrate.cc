@@ -17,29 +17,24 @@
 #include <protocols/hydrate/Hydrate.hh>
 #include <protocols/hydrate/hydrate_functions.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/AtomTreeDiffJobOutputter.hh>
-#include <protocols/jd2/Job.hh>
 
 // Core
 #include <core/pack/pack_rotamers.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/pack/palette/PackerPalette.hh>
 #include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 
 // Basic
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#ifdef MULTI_THREADED
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
-#include <basic/datacache/BasicDataCache.hh>
+#endif
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 
 // Numeric headers
 
@@ -47,8 +42,14 @@
 #include <iostream>
 #include <string>
 
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
+#include <core/pack/task/operation/TaskOperations.hh> // AUTO IWYU For InitializeFromCommandline, ReadResfile, Rest...
+#include <core/scoring/ScoreFunctionFactory.hh> // AUTO IWYU For get_score_function
+#include <core/scoring/constraints/util.hh> // AUTO IWYU For add_constraints_from_cmdline_to_scorefxn
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+
 //wym
-#include <core/pack/rotamer_set/RotamerSets.hh>
 
 // Construct tracer.
 static basic::Tracer TR( "protocols.hydrate.Hydrate" );

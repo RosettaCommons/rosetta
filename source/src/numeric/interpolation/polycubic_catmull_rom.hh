@@ -16,8 +16,10 @@
 #include <utility/fixedsizearray1.hh>
 #include <utility/modulo.hh>
 
-#include <numeric/MathNTensor.hh>
+#include <numeric/MathNTensor.fwd.hh>
 #include <cmath>
+
+#include <utility/exit.hh> // AUTO IWYU For runtime_assert, utility_exit_with_message
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details

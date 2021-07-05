@@ -16,7 +16,6 @@
 
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/util/deriv_funcs.hh>
 
 #include <core/types.hh>
 
@@ -31,15 +30,13 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <test/UTracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 #include <core/scoring/etable/BaseEtableEnergy.tmpl.hh> // needed for Mac staic build
+
+#include <basic/Tracer.hh> // AUTO IWYU For Error, Tracer, Warning
 
 using basic::Error;
 using basic::Warning;

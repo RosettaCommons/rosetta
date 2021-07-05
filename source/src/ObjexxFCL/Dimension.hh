@@ -26,8 +26,6 @@
 
 #include <utility>
 //#include <type_traits>  // for swap
-#include <algorithm> // for swap
-#include <utility> // for swap??
 
 namespace ObjexxFCL {
 

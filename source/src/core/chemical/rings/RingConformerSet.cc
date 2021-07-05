@@ -32,7 +32,6 @@
 #include <numeric/angle.functions.hh>
 
 // C++ headers
-#include <cmath>
 #include <iostream>
 
 

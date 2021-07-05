@@ -23,7 +23,6 @@
 #include <core/conformation/Residue.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Numeric Headers
@@ -31,6 +30,8 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "core.scoring.rna.TNA_SuitePotential", basic::t_info );
 

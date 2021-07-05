@@ -24,7 +24,6 @@
 #include <utility/vector1.hh>
 
 // utility headers
-#include <ObjexxFCL/FArray1A.hh>
 #include <utility/io/izstream.hh>
 
 #include <numeric/model_quality/rms.hh>
@@ -33,6 +32,12 @@
 
 // C++ Headers
 #include <string>
+
+#include <ObjexxFCL/FArray1A.hh> // MANUAL IWYU
+
+#include <numeric/xyzVector.hh> // AUTO IWYU For xyzVector
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D::IR
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D::IR
 
 namespace protocols {
 namespace frags {

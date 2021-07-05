@@ -26,10 +26,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
@@ -39,24 +37,23 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/scoring/Energies.hh>
 
-#include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <numeric/conversions.hh>
 
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/filters/ContingentFilter.hh> // AUTO IWYU For ContingentFilter
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 

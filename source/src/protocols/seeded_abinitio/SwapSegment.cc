@@ -34,15 +34,13 @@
 
 #include <basic/Tracer.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
 
 //parser
 #include <utility/tag/Tag.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 //loops
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
 
 //util
@@ -51,6 +49,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/loops/Loops.hh> // AUTO IWYU For Loops, operator<<
 
 
 using namespace core;

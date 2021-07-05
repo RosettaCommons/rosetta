@@ -18,20 +18,12 @@
 #include <core/scoring/aa_composition_energy/AACompositionEnergySetup.hh>
 
 // Package headers
-#include <core/scoring/EnergyMap.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/pose/Pose.hh>
 
 // Options system
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // File I/O
 #include <basic/database/open.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 // Other Headers
@@ -41,7 +33,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
-#include <cmath>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

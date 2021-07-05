@@ -17,14 +17,12 @@
 // Unit headers
 #include <core/energy_methods/CartesianBondedEnergy.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
-#include <core/kinematics/DomainMap.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>

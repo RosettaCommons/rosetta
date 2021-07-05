@@ -18,22 +18,15 @@
 
 // Unit headers
 #include <core/scoring/nmr/pcs/PCSData.hh>
-#include <core/scoring/nmr/pcs/PCSSingle.hh>
-#include <core/scoring/nmr/pcs/PCSSingleSet.hh>
-#include <core/scoring/nmr/pcs/PCSMultiSet.hh>
 #include <core/scoring/nmr/NMRDataFactory.hh>
-#include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -42,9 +35,7 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
 #include <iostream>
-#include <utility>
 
 static basic::Tracer TR("core.scoring.nmr.pcs.PCSData.cxxtest");
 

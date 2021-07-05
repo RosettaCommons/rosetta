@@ -18,7 +18,6 @@
 // Project Headers
 #include <core/conformation/membrane/SpanningTopology.hh>
 
-#include <protocols/moves/Mover.hh>
 
 #include <protocols/pose_creation/HelixFromSequence.hh>
 
@@ -32,7 +31,6 @@
 #include <core/sequence/util.hh>
 
 // Package Headers
-#include <apps/benchmark/performance/init_util.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
@@ -46,11 +44,9 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
 
 using namespace basic::options;

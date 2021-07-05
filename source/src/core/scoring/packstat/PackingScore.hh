@@ -16,12 +16,15 @@
 #ifndef INCLUDED_core_scoring_packstat_PackingScore_hh
 #define INCLUDED_core_scoring_packstat_PackingScore_hh
 
+#include <core/scoring/packstat/PackingScore.fwd.hh>
+
 
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace core {

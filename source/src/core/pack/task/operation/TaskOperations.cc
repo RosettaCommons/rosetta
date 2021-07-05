@@ -20,14 +20,13 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
+#include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
+#include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
@@ -40,11 +39,9 @@
 #include <utility/io/izstream.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
-#include <utility/keys/VariantKey.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 // Basic Headers
@@ -52,6 +49,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace core {

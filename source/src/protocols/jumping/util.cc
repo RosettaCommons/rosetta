@@ -25,7 +25,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh>
 #include <core/fragment/JumpingFrame.hh>
-#include <core/fragment/Frame.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/JumpSRFD.hh>
 #include <core/conformation/util.hh>
@@ -33,7 +32,6 @@
 #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymDof.hh>
 
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/Exceptions.hh>
@@ -59,6 +57,8 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include <core/fragment/FragData.hh> // AUTO IWYU For FragData
 
 
 namespace protocols {

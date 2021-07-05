@@ -23,11 +23,9 @@
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/MultipoleElecPotential.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 
 #include <utility/vector1.hh>
 

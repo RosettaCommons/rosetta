@@ -23,23 +23,16 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/kinematics/Stub.hh>
 
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedStubID.fwd.hh>
 
 #include <core/kinematics/RT.hh>
-#include <core/conformation/Conformation.fwd.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <iosfwd>
 //#include <map>
 
-#include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <numeric/xyzVector.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -22,7 +22,6 @@
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
 
 // package headers
-#include <protocols/forge/build/BuildInstruction.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/SegmentInsert.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
@@ -31,23 +30,17 @@
 #include <protocols/forge/methods/util.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <core/pose/datacache/CacheableDataType.hh> // for silent file tags
-#include <basic/datacache/CacheableString.hh> // for silent file tags
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
@@ -58,14 +51,13 @@
 
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <ObjexxFCL/format.hh>
 
 // project headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -82,7 +74,6 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
@@ -92,22 +83,13 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <protocols/forge/build/BuildInstruction.hh>
-#include <protocols/forge/build/BuildManager.hh>
-#include <protocols/forge/build/SegmentInsert.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
-#include <protocols/forge/remodel/RemodelMoverCreator.hh>
-#include <protocols/forge/methods/chainbreak_eval.hh>
-#include <protocols/forge/methods/pose_mod.hh>
-#include <protocols/forge/methods/util.hh>
 #include <protocols/forge/remodel/RemodelMover.hh>
-#include <protocols/forge/remodel/RemodelLoopMover.hh>
-#include <protocols/forge/remodel/RemodelEnzdesCstModule.fwd.hh>
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
@@ -117,21 +99,16 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
-#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/score_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilter.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
-#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/symmetry/SetupNCSMover.hh> // dihedral constraint
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.fwd.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
 #include <protocols/task_operations/LimitAromaChi2Operation.hh>
-#include <protocols/forge/remodel/RemodelDesignMover.hh>
-#include <protocols/forge/remodel/RemodelAccumulator.hh>
-#include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
 
 
 // Parser headers
@@ -150,8 +127,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 // ObjexxFCL includes
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 //#define FILE_DEBUG 1
 

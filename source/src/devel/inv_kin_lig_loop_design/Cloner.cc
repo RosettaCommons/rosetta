@@ -17,9 +17,7 @@
 #include <devel/inv_kin_lig_loop_design/JumpManager.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/AtomICoor.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
@@ -29,7 +27,6 @@
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Stub.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -39,6 +36,8 @@
 #include <utility>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag, operator<<
 
 
 #define FORVC(Iter,Type,Vec)  for( utility::vector0<Type>::const_iterator Iter  = (Vec).begin(); Iter != (Vec).end(); ++Iter)

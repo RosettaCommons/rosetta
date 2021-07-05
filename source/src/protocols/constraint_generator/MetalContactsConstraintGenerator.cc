@@ -31,21 +31,19 @@
 #include <core/chemical/AtomType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
-#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

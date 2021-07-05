@@ -21,7 +21,7 @@
 #include <protocols/topology_broker/ConstraintEvaluatorWrapper.fwd.hh>
 
 // Package Headers
-#include <protocols/topology_broker/ConstraintClaimer.hh>
+#include <protocols/topology_broker/ConstraintClaimer.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

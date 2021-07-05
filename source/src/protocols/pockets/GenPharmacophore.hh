@@ -16,14 +16,11 @@
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <iosfwd>
 #include <string>
 #include <vector>
-#include <cmath>
 
 namespace protocols {
 namespace pockets {

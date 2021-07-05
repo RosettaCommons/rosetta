@@ -18,9 +18,7 @@
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
-#include <utility/vector1.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 
 
 namespace core {

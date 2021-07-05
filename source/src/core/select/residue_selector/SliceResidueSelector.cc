@@ -24,10 +24,9 @@
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 // Utility Headers
 #include <utility/pointer/memory.hh>
@@ -37,7 +36,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

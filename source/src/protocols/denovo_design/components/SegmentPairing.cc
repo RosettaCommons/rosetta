@@ -25,10 +25,11 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // Boost headers
 

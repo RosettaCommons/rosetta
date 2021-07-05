@@ -19,6 +19,8 @@
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 
+#include <core/fragment/FragSet.hh> // AUTO IWYU For FragSet
+
 
 namespace protocols {
 namespace hybridization {

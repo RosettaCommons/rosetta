@@ -22,7 +22,6 @@
 // Utility header
 #include <utility/SingletonBase.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <map>

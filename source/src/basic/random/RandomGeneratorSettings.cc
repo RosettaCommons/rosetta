@@ -17,13 +17,13 @@
 
 // Basic headers:
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
 // Utility headers:
-#include <utility/pointer/memory.hh>
+
+#include <utility/options/OptionCollection.hh> // AUTO IWYU For OptionCollection
 
 static basic::Tracer TR( "basic.random.RandomGeneratorSettings" );
 

@@ -9,39 +9,22 @@
 
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <devel/init.hh>
-#include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
-#include <numeric/random/random.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
+
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 
 using namespace core;
 using namespace core::pose;

@@ -17,7 +17,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/sbyte.fwd.hh>
-#include <ObjexxFCL/byte.hh> // sbyte is a typedef for byte
 
 
 #endif // INCLUDED_ObjexxFCL_sbyte_HH

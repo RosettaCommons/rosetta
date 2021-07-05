@@ -20,7 +20,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/GlycanTree.hh>
@@ -29,8 +28,6 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 

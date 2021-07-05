@@ -14,8 +14,6 @@
 
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/pose/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -23,41 +21,31 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/util/kinematics_util.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/loops/loops_main.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
 //#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AA.hh>
 
 #include <core/scoring/rms_util.hh>
-#include <numeric/model_quality/rms.hh>
 
 #include <cmath>
 #include <cstdlib> // atoi
 #include <algorithm> // for sort
 #include <fstream> // for ifstream
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <basic/Tracer.hh>
@@ -65,7 +53,6 @@
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <boost/algorithm/string.hpp>
 
 static basic::Tracer TR("MPI.LHR.util");
 

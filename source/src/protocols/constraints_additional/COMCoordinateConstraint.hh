@@ -15,7 +15,6 @@
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
@@ -27,7 +26,6 @@
 #include <core/id/AtomID.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/vector1.hh>
 #include <core/types.hh>

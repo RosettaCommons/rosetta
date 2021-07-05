@@ -23,6 +23,8 @@
 #include <protocols/frag_picker/scores/AtomBasedConstraintsScore.hh>
 #include <utility/vector1.hh>
 
+#include <protocols/frag_picker/VallChunk.hh> // AUTO IWYU For VallChunk
+
 
 namespace protocols {
 namespace frag_picker {

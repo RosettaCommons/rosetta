@@ -19,13 +19,10 @@
 
 // Unit headers
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.fwd.hh>
-#include <core/io/pose_to_sfr/PoseToStructFileRepConverterTests.fwd.hh>  // needed for friendship
 
 // Package headers
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.hh>
-#include <core/io/StructFileReaderOptions.fwd.hh>
-#include <core/io/HeaderInformation.fwd.hh>
 #include <core/io/rcsb/ExperimentalTechnique.hh>
 #include <core/io/Remarks.fwd.hh>
 #include <core/io/ResidueInformation.fwd.hh>
@@ -44,8 +41,8 @@
 
 // C++ Headers
 #include <string>
-#include <map>
 
+class PoseToStructFileRepConverterTests; // Forward declare of test class for friendship
 
 namespace core {
 namespace io {

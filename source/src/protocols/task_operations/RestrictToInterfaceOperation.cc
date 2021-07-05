@@ -24,15 +24,12 @@
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility>
-#include <utility/vector1_bool.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 
 // C++ Headers
-#include <set>
 
 #include <utility/vector1.hh>
 

@@ -19,7 +19,7 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/pose_metric_calculators/MetricValueGetter.hh>
 
 #include <protocols/multistate_design/SingleStateEntityData.hh>

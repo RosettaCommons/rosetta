@@ -30,8 +30,6 @@
 #include <utility/tools/make_vector.hh>
 
 // Numeric headers
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.json.hh>
 

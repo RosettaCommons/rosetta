@@ -30,6 +30,8 @@
 #include <utility/pointer/memory.hh>
 #include <utility/excn/Exceptions.hh>
 
+#include <protocols/make_rot_lib/RotData.hh> // MANUAL IWYU
+
 static basic::Tracer TR( "MakeRotLib" );
 
 int

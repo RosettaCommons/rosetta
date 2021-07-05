@@ -25,7 +25,7 @@
 #include <core/scoring/nmr/rdc/RDCData.hh>
 #include <core/scoring/nmr/rdc/RDCMultiSet.hh>
 #include <core/scoring/nmr/rdc/RDCSingleSet.hh>
-#include <core/scoring/nmr/rdc/RDCSingle.hh>
+#include <core/scoring/nmr/rdc/RDCSingle.fwd.hh>
 #include <core/scoring/nmr/rdc/RDCTensor.hh>
 #include <core/scoring/nmr/pre/PREData.hh>
 #include <core/scoring/nmr/pre/PREMultiSet.hh>
@@ -38,7 +38,6 @@
 // Core headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -49,9 +48,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/datacache/DataMap.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/filters/Filter.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 // Utility headers
@@ -59,24 +56,20 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <ObjexxFCL/format.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/nmr.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 
 // C++ headers
-#include <iostream>
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+
+#include <utility/file/FileName.hh> // AUTO IWYU For FileName
 
 namespace protocols {
 namespace nmr {

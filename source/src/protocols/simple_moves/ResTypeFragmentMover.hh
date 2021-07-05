@@ -26,13 +26,10 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

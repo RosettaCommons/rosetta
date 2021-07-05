@@ -14,25 +14,23 @@
 
 
 //////////////////////////////////
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
 //////////////////////////////////
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
 #include <string>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <basic/Tracer.hh>
 
-#include <iostream>
 #include <fstream>
-#include <sstream>
 #include <utility/vector1.hh>
 #include <map>
+
+#include <core/id/TorsionID.hh> // AUTO IWYU For TorsionID
 
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.StepWiseRNA_ResidueInfo" );

@@ -33,11 +33,9 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
-#include <string>
 
 // Boost headers
 #include <boost/unordered_map.hpp>

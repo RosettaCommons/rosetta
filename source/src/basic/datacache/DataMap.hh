@@ -19,13 +19,14 @@
 #include <map>                                        // for map, __map_cons...
 #include <memory>                                     // for shared_ptr, dyn...
 #include <platform/types.hh>                          // for Size
-#include <iosfwd>                                    // for string, operator<<
 #include <string>                                     // for char_traits
 #include <sstream>
 #include <utility/excn/Exceptions.hh>                 // for EXCN_Msg_Exception
 #include <utility>                                    // for pair
 #include <utility/pointer/owning_ptr.hh>              // for dynamic_pointer_cast
 #include <utility/VirtualBase.hh>                     // for VirtualBase
+
+#include <sstream>   // DO NOT AUTO-REMOVE needed for templated function
 
 namespace basic {
 namespace datacache {

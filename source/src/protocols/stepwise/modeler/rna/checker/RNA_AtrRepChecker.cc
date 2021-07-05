@@ -15,7 +15,6 @@
 
 #include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/sampler/rna/util.hh>
 #include <core/pose/Pose.hh>
@@ -24,12 +23,11 @@
 #include <core/scoring/Energies.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/ScoringManager.hh>
 
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_AtrRepChecker" );

@@ -14,9 +14,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/file/file_sys_util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
 #include <protocols/indexed_structure_store/SilentStructureStoreBackend.hh>
@@ -30,7 +27,9 @@
 #include <core/io/silent/SilentStruct.hh>
 
 #include <string>
-#include <stdexcept>
+
+#include <ndarray/initialization.h> // AUTO IWYU For SimpleInitializer, allocate
+
 
 namespace protocols
 {

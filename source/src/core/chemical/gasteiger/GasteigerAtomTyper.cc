@@ -23,7 +23,6 @@
 #include <core/chemical/ElectronConfiguration.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/MutableResidueConnection.hh>

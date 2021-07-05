@@ -22,10 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // Project headers
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 

@@ -24,21 +24,20 @@
 #define INCLUDED_core_conformation_membrane_ImplicitLipidInfo_hh
 
 #include <core/conformation/membrane/ImplicitLipidInfo.fwd.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Package headers
-#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <core/conformation/membrane/AqueousPoreParameters.fwd.hh>
 #include <core/types.hh>
 
 // Numeric Headers
 #include <numeric/MathMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/cubic_polynomial.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <numeric/cubic_polynomial.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #ifdef    SERIALIZATION
 // Cereal headers

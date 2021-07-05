@@ -18,16 +18,12 @@
 // unit Headers
 #include <protocols/features/DatabaseJobOutputter.fwd.hh>
 #include <protocols/jd2/FileJobOutputter.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.fwd.hh>
 
 // project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 // utility Headers
-#include <utility/file/FileName.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>

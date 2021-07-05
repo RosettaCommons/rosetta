@@ -24,11 +24,9 @@
 #include <core/fragment/FragSet.hh>
 #endif
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/antibody_legacy/AntibodyClass.hh>
-#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 
@@ -37,7 +35,6 @@
 // C++ Headers
 
 // Utility Headers
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 

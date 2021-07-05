@@ -16,13 +16,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/loops/Loops.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 

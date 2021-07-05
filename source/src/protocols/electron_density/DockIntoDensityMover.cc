@@ -13,25 +13,15 @@
 /// @author Frank DiMaio
 
 #include <protocols/electron_density/DockIntoDensityMover.hh>
-#include <protocols/electron_density/util.hh>
 
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragmentIO.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/util.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
@@ -40,16 +30,11 @@
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/scoring/electron_density/util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
@@ -59,34 +44,29 @@
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/fourier/SHT.hh>
 
-#include <ObjexxFCL/format.hh>
 
 #include <protocols/electron_density/DockIntoDensityMover.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/electron_density/util.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
 
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+#include <core/io/StructFileRepOptions.hh> // AUTO IWYU For StructFileRepOptions
+#include <core/scoring/electron_density/xray_scattering.hh> // AUTO IWYU For OneGaussianScattering, get_A
 
 
 

@@ -17,19 +17,15 @@
 #include <protocols/ligand_docking/Rotate.hh>
 #include <protocols/ligand_docking/DistributionMap.hh>
 
-#include <basic/datacache/DataMap.hh>
-#include <core/pose/util.hh> // includes Pose.hh
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/pose/chains_util.hh>
 
 // Utility Headers
-#include <numeric/random/random.hh>
-#include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
 
-#include <algorithm>
 
 #include <utility/excn/Exceptions.hh>
 

@@ -35,7 +35,6 @@
 #include <algorithm>
 #include <set>
 
-#include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <basic/options/option.hh>
@@ -43,6 +42,9 @@
 
 //Auto Headers
 #include <core/conformation/signals/ConnectionEvent.hh>
+
+#include <core/io/HeaderInformation.hh> // AUTO IWYU For HeaderInformation
+
 //using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 

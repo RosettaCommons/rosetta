@@ -12,12 +12,9 @@
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
-#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/components/StructureDataObserver.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
@@ -30,6 +27,9 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <protocols/denovo_design/components/StructureData.hh> // AUTO IWYU For StructureData
 
 static basic::Tracer TR("StructureDataObserverTests");
 

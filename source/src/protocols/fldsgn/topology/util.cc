@@ -21,7 +21,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/dssp/StrandPairing.hh>
 #include <core/id/AtomID_Map.hh>
@@ -29,12 +28,9 @@
 #include <core/scoring/sasa.hh>
 
 // utility headers
-#include <utility/exit.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <iostream>
-#include <sstream>
 #include <basic/Tracer.hh>
 #include <map>
 

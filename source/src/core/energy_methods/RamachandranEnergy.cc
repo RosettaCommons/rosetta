@@ -36,9 +36,7 @@
 #include <utility/vector1.hh>
 
 //C++ header
-#include <cstdio>
 // amw remove me
-#include <iomanip>
 
 namespace core {
 namespace energy_methods {

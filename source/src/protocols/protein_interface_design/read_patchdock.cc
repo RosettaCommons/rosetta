@@ -24,13 +24,11 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <utility/io/izstream.hh>
 
 // Unit Headers
 
 // C++ headers
-#include <map>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -38,7 +36,8 @@
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <numeric/xyz.functions.hh>
+
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
 
 
 using namespace core;

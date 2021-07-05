@@ -16,29 +16,22 @@
 #include <core/energy_methods/RingClosureEnergyCreator.hh>
 
 // Package Headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/id/TorsionID.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // options
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
-#include <numeric/conversions.hh>
 #include <utility/vector1.hh>
 #include <numeric/deriv/distance_deriv.hh>
-#include <basic/Tracer.hh>
 
 //C++ header
-#include <cstdio>
 
 namespace core {
 namespace energy_methods {

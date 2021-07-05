@@ -13,7 +13,6 @@
 #include <protocols/qsar/scoring_grid/RepGrid.hh>
 #include <protocols/qsar/scoring_grid/RepGridCreator.hh>
 
-#include <protocols/qsar/qsarMap.fwd.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 
 #include <core/conformation/Residue.hh>
@@ -25,7 +24,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector0.hh>
 
 
 namespace protocols {

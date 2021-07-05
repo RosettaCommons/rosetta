@@ -41,7 +41,6 @@
 #include <basic/options/keys/PCS.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
@@ -52,6 +51,8 @@
 // Objexx headers
 
 // C++ headers
+
+#include <cmath> // MANUAL IWYU
 
 namespace protocols {
 namespace scoring {

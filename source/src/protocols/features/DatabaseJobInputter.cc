@@ -24,8 +24,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
@@ -34,9 +32,8 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // Boost Headers
 #include <boost/lexical_cast.hpp>
@@ -48,6 +45,8 @@
 // C++ headers
 #include <string>
 #include <sstream>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
 
 static basic::Tracer tr( "protocols.features.DatabaseJobInputter" );
 

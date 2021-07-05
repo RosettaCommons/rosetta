@@ -20,7 +20,6 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -35,28 +34,23 @@
 
 //option key includes
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Project Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <basic/datacache/DataMap.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 // External Headers
-#include <cppdb/frontend.h>
 
 // C++ Headers
 #include <string>
 #include <sstream>
 
-#include <utility/vector0.hh>
 
 //Auto Headers
-#include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 #include <protocols/rotamer_recovery/RRComparer.hh>
 // XSD XRW Includes

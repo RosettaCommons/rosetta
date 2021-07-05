@@ -27,12 +27,9 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
-#include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

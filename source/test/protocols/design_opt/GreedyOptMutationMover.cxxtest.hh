@@ -22,7 +22,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>

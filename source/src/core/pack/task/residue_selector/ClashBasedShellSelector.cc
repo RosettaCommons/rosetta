@@ -23,10 +23,6 @@
 #include <core/pack/task/residue_selector/ClashBasedShellSelectorCreator.hh>
 
 // Core headers
-#include <core/chemical/AtomType.hh>
-#include <core/conformation/find_neighbors.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/PointGraph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -36,18 +32,15 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/selection.hh>
-#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/xml_util.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/residue_selector/ResidueSelectorCreators.hh>
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -57,8 +50,9 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <boost/format.hpp>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // Serialization headers
 #ifdef SERIALIZATION

@@ -20,11 +20,9 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/Jump.hh>
-#include <numeric/xyzVector.hh>
 
 
 #include <utility/vector1.hh>
-#include <sstream>
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>

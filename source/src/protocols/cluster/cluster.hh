@@ -12,12 +12,13 @@
 #ifndef INCLUDED_protocols_cluster_cluster_hh
 #define INCLUDED_protocols_cluster_cluster_hh
 
+#include <protocols/cluster/cluster.fwd.hh>
+
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/rosetta_scripts/PosePropertyReporter.fwd.hh>
-#include <protocols/rosetta_scripts/PosePropertyReporter.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -29,8 +30,7 @@
 #include <utility>
 #include <vector>
 #include <algorithm>
-
-#include <utility/vector1.hh>
+#include <map>
 
 
 namespace protocols {

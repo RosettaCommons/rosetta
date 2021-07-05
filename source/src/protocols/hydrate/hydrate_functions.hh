@@ -15,43 +15,20 @@
 #define INCLUDED_protocols_hydrate_hydrate_functions_HH
 
 // Protocols
-#include <protocols/hydrate/Hydrate.hh>
-#include <protocols/moves/Mover.hh>
 
 // Core
-#include <core/chemical/AA.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/ResidueMatcher.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
-#include <core/pack/rotamer_set/WaterPackingInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh> //yumeng 03/20/13
-#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.fwd.hh> //yumeng 03/20/13
 
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 
 // Basic
-#include <basic/datacache/BasicDataCache.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 
 //wym
-#include <core/pack/rotamer_set/RotamerSets.hh>
 
 namespace protocols {
 namespace hydrate {

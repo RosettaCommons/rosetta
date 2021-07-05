@@ -12,13 +12,11 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-#include <core/sequence/Sequence.hh>
+#include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/DPScoringScheme.hh>
 
 #include <utility/exit.hh>
-#include <string>
 
 
 #include <utility/vector1.hh>

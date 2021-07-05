@@ -23,9 +23,6 @@
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/file/file_sys_util.hh>
-#include <basic/database/sql_utils.hh>
 
 #include <basic/Tracer.hh>
 

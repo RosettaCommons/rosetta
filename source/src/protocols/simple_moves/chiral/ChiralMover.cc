@@ -16,25 +16,20 @@
 // Package Headers
 
 // Project Headers
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/Patch.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 // Utility Headers
-#include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
+
+#include <numeric/conversions.hh> // AUTO IWYU For degrees, radians
+
 //#include <core/types.hh>
 
 // C++ Headers

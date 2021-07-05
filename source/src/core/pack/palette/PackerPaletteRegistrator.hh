@@ -15,7 +15,7 @@
 #define INCLUDED_core_pack_palette_PackerPaletteRegistrator_hh
 
 // Package headers
-#include <core/pack/palette/PackerPaletteFactory.hh>
+#include <core/pack/palette/PackerPaletteFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace core {

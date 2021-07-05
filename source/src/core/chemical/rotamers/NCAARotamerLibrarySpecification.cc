@@ -17,7 +17,6 @@
 
 // Utility headers
 #include <core/chemical/ResidueType.hh>
-#include <utility>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 

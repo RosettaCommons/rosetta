@@ -25,9 +25,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/sasa.hh> //Unfortunately, needed for total areas.
 
 //XSD includes
@@ -37,7 +35,7 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 static basic::Tracer TR( "protocols.simple_filters.BuriedSurfaceAreaFilter" );
 

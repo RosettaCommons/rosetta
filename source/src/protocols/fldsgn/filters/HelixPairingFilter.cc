@@ -18,11 +18,9 @@
 
 // Package Headers
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-#include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/parser/BluePrint.hh>
@@ -37,8 +35,6 @@
 // Parser headers
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #ifdef WIN32
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
@@ -49,6 +45,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.fldsgn.filters.HelixPairingFilter" );
 

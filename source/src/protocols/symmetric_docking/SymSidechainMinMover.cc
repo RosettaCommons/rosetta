@@ -24,7 +24,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -34,7 +34,8 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 
 

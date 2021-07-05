@@ -14,8 +14,8 @@
 #include <core/optimization/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/Multifunc.hh>
-#include <core/optimization/MinimizerMap.hh>
-#include <core/id/TorsionID.hh>
+#include <core/optimization/MinimizerMap.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

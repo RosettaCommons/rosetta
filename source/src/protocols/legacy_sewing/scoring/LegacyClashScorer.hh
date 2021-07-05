@@ -20,12 +20,10 @@
 #include <protocols/legacy_sewing/scoring/LegacyAssemblyScorer.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
+#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
 
 //Utility headers
-#include <utility/vector1.hh>
 
-#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

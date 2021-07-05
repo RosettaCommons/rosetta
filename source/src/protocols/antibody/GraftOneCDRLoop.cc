@@ -13,17 +13,17 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 #include <protocols/antibody/GraftOneCDRLoop.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/antibody/Ab_TemplateInfo.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/init_id_map.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
+
+#include <protocols/antibody/AntibodyInfo.hh> // AUTO IWYU For AntibodyInfo
+#include <core/scoring/rms_util.hh> // AUTO IWYU For superimpose_pose
 
 
 static basic::Tracer TRG( "protocols.antibody.GraftOneCDRLoop" );

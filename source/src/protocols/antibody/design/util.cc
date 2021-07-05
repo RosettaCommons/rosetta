@@ -22,7 +22,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -35,8 +34,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataCache.hh>
-#include <basic/datacache/CacheableData.hh>
+#include <basic/datacache/DataCache.fwd.hh>
 
 // Options
 #include <basic/options/option.hh>
@@ -45,12 +43,13 @@
 #include <boost/algorithm/string.hpp>
 #include <string>
 #include <utility/exit.hh>
-#include <iostream>
 #include <basic/Tracer.hh>
 
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 static basic::Tracer TR("protocols.antibody.design.util");
 

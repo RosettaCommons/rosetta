@@ -15,16 +15,13 @@
 #include <protocols/environment/claims/TorsionClaim.hh>
 
 // Package Headers
-#include <core/environment/LocalPosition.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/util.hh>
 #include <protocols/environment/claims/EnvLabelSelector.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
-#include <protocols/environment/claims/ClaimStrength.hh>
 
 #include <protocols/environment/ClientMover.hh>
-#include <protocols/environment/ProtectedConformation.hh>
 
 // Project Headers
 #include <core/id/TorsionID.hh>
@@ -37,6 +34,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Conformation
 
 // C++ headers
 

@@ -18,30 +18,18 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/init/init.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <basic/database/open.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
-#include <protocols/rna/denovo/util.hh>
 #include <core/fragment/rna/RNA_MatchType.hh>
 #include <core/fragment/rna/RNA_Fragments.hh>
 #include <core/fragment/rna/FragmentLibrary.hh>
@@ -50,7 +38,6 @@
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 
 #include <core/pose/copydofs/util.hh>
-#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
 
 // C++ headers
 #include <iostream>
@@ -58,12 +45,12 @@
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 using namespace core;
@@ -107,7 +94,6 @@ utility::vector1< Real > get_min_frag_rmsd( std::string const & in_file, core::f
 	using namespace core::import_pose;
 	using namespace core::chemical;
 	using namespace core::id;
-	using namespace core::import_pose::options;
 	using namespace core::fragment::rna;
 	using namespace core::pose::toolbox;
 	using namespace utility::file;

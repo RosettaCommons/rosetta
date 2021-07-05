@@ -31,8 +31,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 // C++ headers
 #include <string>

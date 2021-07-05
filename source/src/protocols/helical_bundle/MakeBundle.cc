@@ -20,35 +20,26 @@
 #include <protocols/helical_bundle/MakeBundleCreator.hh>
 #include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
-#include <numeric/crick_equations/BundleParams.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <utility/tag/Tag.hh>
 
 #include <numeric/constants.hh>
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <core/types.hh>
-#include <numeric/random/random.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/pose/init_id_map.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/conformation/parametric/Parameter.hh>
 #include <core/conformation/parametric/RealValuedParameter.hh>
 #include <utility/pointer/memory.hh>
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/helical_bundle/MakeBundleHelix.hh> // AUTO IWYU For MakeBundleHelix
+#include <protocols/helical_bundle/util.hh> // AUTO IWYU For add_attributes_for_other_helix_pa...
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation Conformation::ParametersSetOP
 
 namespace protocols {
 namespace helical_bundle {

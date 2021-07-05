@@ -21,8 +21,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

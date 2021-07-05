@@ -15,9 +15,8 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -25,7 +24,6 @@
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -34,11 +32,11 @@
 #include <utility/file/file_sys_util.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <iostream>
 
 //Auto Headers
-#include <core/io/silent/EnergyNames.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 static basic::Tracer TR("test.core.io.silent.symm_protein_silent");

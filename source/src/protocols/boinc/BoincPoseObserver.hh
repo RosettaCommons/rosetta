@@ -19,7 +19,7 @@
 // Unit headers
 #include <protocols/boinc/BoincPoseObserver.fwd.hh>
 
-#include <protocols/boinc/boinc_shmem.hh>
+#include <protocols/boinc/boinc_shmem.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/signals/ConformationEvent.fwd.hh>

@@ -31,11 +31,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 #include <core/id/AtomID_Map.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

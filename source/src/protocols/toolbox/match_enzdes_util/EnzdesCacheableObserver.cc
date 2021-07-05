@@ -18,7 +18,7 @@
 //package headers
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesSeqRecoveryCache.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.fwd.hh>
 
 //project headers
 #include <basic/Tracer.hh>
@@ -57,6 +57,9 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/utility.hpp>
+
+// Other headers
+#include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
 #endif // SERIALIZATION
 
 namespace protocols {

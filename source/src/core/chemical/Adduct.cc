@@ -16,7 +16,6 @@
 #include <core/chemical/Adduct.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/exit.hh>
 
 #ifdef    SERIALIZATION

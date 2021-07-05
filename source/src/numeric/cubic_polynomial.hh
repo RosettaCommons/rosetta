@@ -14,6 +14,8 @@
 #ifndef INCLUDED_numeric_cubic_polynomial_hh
 #define INCLUDED_numeric_cubic_polynomial_hh
 
+#include <numeric/cubic_polynomial.fwd.hh>
+
 #include <platform/types.hh>
 
 namespace numeric {

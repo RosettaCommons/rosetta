@@ -14,7 +14,8 @@
 #ifndef INCLUDED_protocols_md_Rattle_hh
 #define INCLUDED_protocols_md_Rattle_hh
 
-#include <protocols/md/MDConstants.hh>
+#include <protocols/md/Rattle.fwd.hh>
+
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -25,7 +26,6 @@
 #include <core/optimization/CartesianMinimizerMap.hh>
 
 #include <utility/vector1.hh>
-#include <cmath>
 
 namespace protocols {
 namespace md {

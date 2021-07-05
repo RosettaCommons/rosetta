@@ -40,6 +40,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
 
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
+
 static basic::Tracer tr( "protocols.jd2.SilentFileJobInputter" );
 
 namespace protocols {

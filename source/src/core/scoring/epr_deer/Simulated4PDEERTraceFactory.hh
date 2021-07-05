@@ -23,12 +23,10 @@
 #include <core/types.hh>
 
 #include <numeric/MathMatrix.hh>
-#include <numeric/MathVector.hh>
 
 #include <utility/vector1.hh>
 
 #include <map>
-#include <tuple>
 
 namespace core {
 namespace scoring {

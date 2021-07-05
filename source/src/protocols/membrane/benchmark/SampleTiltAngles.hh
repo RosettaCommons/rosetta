@@ -22,11 +22,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <protocols/filters/Filter.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // C++ headers
-#include <cstdlib>
 
 namespace protocols {
 namespace membrane {

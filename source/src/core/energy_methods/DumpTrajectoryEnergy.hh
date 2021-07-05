@@ -33,7 +33,7 @@
 
 // Package headers
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
@@ -43,7 +43,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <map>
 #include <string>
 #include <utility/vector1.hh>
 

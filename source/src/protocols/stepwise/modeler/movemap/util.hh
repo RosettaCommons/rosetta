@@ -16,8 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_movemap_util_HH
 #define INCLUDED_protocols_stepwise_modeler_movemap_util_HH
 
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <core/pose/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>

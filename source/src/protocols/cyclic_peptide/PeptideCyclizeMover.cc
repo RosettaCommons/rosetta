@@ -12,31 +12,15 @@
 /// @author Parisa Hosseinzadeh (parisah@uw.edu)
 
 //Core Headers
-#include <core/id/AtomID.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/func/FuncFactory.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <core/kinematics/FoldTree.hh>
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/CreateAngleConstraint.fwd.hh>
@@ -50,7 +34,6 @@
 
 //Numeric Headers
 #include <numeric/constants.hh>
-#include <numeric/xyzVector.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -64,10 +47,7 @@
 
 //Stream headers+basic headers
 #include <basic/Tracer.hh>
-#include <cstdio>
 #include <iostream>
-#include <cmath>
-#include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

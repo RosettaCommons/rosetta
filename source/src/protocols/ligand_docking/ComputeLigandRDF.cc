@@ -18,24 +18,15 @@
 #include <protocols/ligand_docking/rdf/RDFBase.hh>
 
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/orbitals/OrbitalsScore.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/etable/Etable.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/coulomb/Coulomb.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/orbitals/OrbitalType.hh>
 
 #include <core/id/AtomID.hh>
 
@@ -43,7 +34,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/jd2/util.hh>
 
 #include <basic/Tracer.hh>

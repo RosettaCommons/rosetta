@@ -14,8 +14,6 @@
 #define INCLUDED_protocols_features_feature_schemas_HH
 
 // Project headers
-#include <core/types.hh>
-#include <protocols/features/FeaturesReporter.fwd.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

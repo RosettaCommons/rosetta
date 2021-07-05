@@ -16,12 +16,8 @@
 #ifdef __ANTIBODY_GRAFTING__
 
 #include <protocols/antibody/grafting/scs_helper.hh>
-#include <protocols/antibody/grafting/exception.hh>
 
 #include <utility/vector0.hh>
-#include <utility/string_util.hh>
-#include <utility/exit.hh>
-#include <utility/file/file_sys_util.hh>
 #include <core/types.hh>
 #include <basic/database/open.hh>
 
@@ -32,7 +28,6 @@
 // C++ headers
 #include <map>
 #include <string>
-#include <fstream>
 
 #ifdef MULTI_THREADED
 

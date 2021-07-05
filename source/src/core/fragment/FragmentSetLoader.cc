@@ -23,12 +23,10 @@
 #include <basic/resource_manager/loader_schemas.hh>
 
 // utility headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 //C++ headers
-#include <istream>
 
 namespace core {
 namespace fragment {

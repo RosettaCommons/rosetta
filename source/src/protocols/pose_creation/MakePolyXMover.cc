@@ -22,14 +22,11 @@
 #include <core/select/residue_selector/util.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <string>
 
 #include <utility/string_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

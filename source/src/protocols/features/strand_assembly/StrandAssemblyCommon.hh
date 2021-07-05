@@ -15,79 +15,36 @@
 #define INCLUDED_protocols_features_strand_assembly_StrandAssemblyCommon_hh
 
 //Basic rosetta
-#include <basic/database/schema_generator/Column.hh>
-#include <basic/database/schema_generator/Constraint.hh>
-#include <basic/database/schema_generator/ForeignKey.hh>
-#include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/sql_utils.hh>
 
 //C library
-#include <math.h> // for round, floor, ceil, trunc, sqrt
 
 // c++
-#include <algorithm> // for avg,min,max
-#include <cmath> // for std::abs    // reference: http://www.cplusplus.com/reference/cmath/abs/
-#include <iosfwd>
-#include <numeric>
 //#include <stdio.h>     //for remove( ) and rename( )
 #include <stdlib.h> // for std::abs()
-#include <vector>
 
 //Core
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Atom.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/pose/Pose.fwd.hh> // for dssp application
-#include <core/pose/PDBInfo.hh> // maybe for PDBInfoCOP
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
-#include <core/scoring/ScoreFunctionFactory.hh> // maybe needed for "get_score_function" ?
-#include <core/types.hh>
 
 //DSSP
-#include <core/scoring/dssp/Dssp.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <cppdb/frontend.h>
 
 // for get_sw_can_by_sh_id, get_central_residues_in_each_of_two_edge_strands
-#include <vector>
 
 // for parse_my_tag
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <basic/datacache/DataMap.hh>
 
 // for string return
-#include <string>
 
 //for vector
-#include <numeric/xyzVector.hh>
-#include <core/id/NamedAtomID.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 
 //Others
-#include <numeric/xyz.functions.hh> // for torsion calculations
-#include <protocols/analysis/InterfaceAnalyzerMover.hh> // for SASA
 
 //Protocols
-#include <protocols/features/FeaturesReporter.hh>
 
 // Utility
-#include <utility/numbers.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/vector1.hh> // for utility::vector1<Column> primary_key_columns;
 
 // Utility: exception handling
-#include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

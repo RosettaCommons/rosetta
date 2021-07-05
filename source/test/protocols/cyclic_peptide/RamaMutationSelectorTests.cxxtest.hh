@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <test/util/pdb1ubq.hh>
 #include <cxxtest/TestSuite.h>
 
@@ -24,18 +22,18 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/RamaPrePro.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 
 // Protocol Headers
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("RamaMutationSelectorTests");
 

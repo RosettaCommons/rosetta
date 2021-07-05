@@ -33,16 +33,13 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 
-#include <core/io/silent/silent.fwd.hh>
 
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <utility/vector1.hh>
 
 
 //// C++ headers

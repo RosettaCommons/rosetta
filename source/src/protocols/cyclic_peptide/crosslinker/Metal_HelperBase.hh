@@ -28,7 +28,6 @@
 #include <core/types.hh>
 
 // Basic/Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <string>
 

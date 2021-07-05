@@ -22,14 +22,12 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tools/make_vector.hh>
 #include <protocols/features/util.hh>
 
@@ -40,7 +38,6 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -51,8 +48,6 @@
 #include <cppdb/frontend.h>
 
 // C++ Headers
-#include <cmath>
-#include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

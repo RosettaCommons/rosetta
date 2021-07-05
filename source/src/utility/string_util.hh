@@ -23,7 +23,6 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 
-#include <utility/stream_util.hh>
 
 // Boost headers
 #include <boost/algorithm/string/erase.hpp>
@@ -31,7 +30,6 @@
 // C++ headers
 #include <list>
 #include <set>
-#include <iosfwd>
 #include <string>
 #include <vector>
 #include <tuple>

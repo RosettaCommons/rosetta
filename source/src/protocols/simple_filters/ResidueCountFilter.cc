@@ -19,13 +19,10 @@
 #include <protocols/simple_filters/ResidueCountFilterCreator.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <protocols/filters/Filter.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 //Project Headers
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
@@ -39,6 +36,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace protocols {
 namespace simple_filters {

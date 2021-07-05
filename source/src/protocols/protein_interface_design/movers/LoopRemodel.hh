@@ -22,10 +22,8 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <protocols/protein_interface_design/movers/LoopRemodel.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>

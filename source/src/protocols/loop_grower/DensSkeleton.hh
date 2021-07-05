@@ -17,29 +17,17 @@
 
 #include <protocols/loop_grower/DensSkeleton.fwd.hh>
 
-#include <iosfwd>
 
-#include <protocols/moves/Mover.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
 
 //possibily duplicate includes here
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
-#include <core/conformation/symmetry/util.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/electron_density/util.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
-#include <boost/unordered/unordered_map.hpp>
 
 
 

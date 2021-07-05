@@ -12,7 +12,6 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/clusters/CDRClusterFeaturesCreator.hh>
-#include <protocols/antibody/clusters/CDRClusterFeatures.hh>
 
 
 namespace protocols {

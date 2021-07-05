@@ -24,7 +24,6 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

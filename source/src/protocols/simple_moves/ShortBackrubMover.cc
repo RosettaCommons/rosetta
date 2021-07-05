@@ -19,25 +19,18 @@
 #include <core/pose/Pose.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Parser headers
-#include <basic/datacache/DataMap.hh>
-#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
-#include <numeric/angle.functions.hh>
 #include <numeric/conversions.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/NumericTraits.hh>
 #include <numeric/xyz.functions.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

@@ -19,21 +19,16 @@
 #include <core/scoring/nmr/pre/PRESingleSet.hh>
 #include <core/scoring/nmr/pre/PRESingle.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
-#include <core/scoring/nmr/NMRDummySpinlabelEnsemble.hh>
-#include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/util.hh>
 #include <core/io/nmr/ParaIon.hh>
 #include <core/io/nmr/ParamagneticDatabaseHandler.hh>
-#include <core/io/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Basic headers
@@ -59,10 +54,8 @@
 #include <iomanip>
 #include <string>
 #include <algorithm>
-#include <numeric>
 
 // Boost headers
-#include <boost/algorithm/string.hpp>
 
 namespace core {
 namespace scoring {

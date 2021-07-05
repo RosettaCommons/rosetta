@@ -20,14 +20,9 @@
 #include <basic/datacache/CacheableData.hh>
 
 // utility headers
-#include <utility/VirtualBase.hh>
 
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <cassert>
-#include <cstddef>
 #include <iosfwd>
-
+#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers

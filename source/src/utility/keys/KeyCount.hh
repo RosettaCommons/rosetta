@@ -39,10 +39,10 @@ public: // Types
 
 
 	// STL/boost style
-	typedef  std::size_type  size_type;
+	typedef  std::size_t  size_type;
 
 	// Project style
-	typedef  std::size_type  Size;
+	typedef  std::size_t  Size;
 
 
 public: // Creation
@@ -65,8 +65,7 @@ public: // Creation
 	KeyCount( Size const count_a, Size const expected_count ) :
 		count_( count_a )
 	{
-	debug_assert( count_ == expected_count );
-		if ( this ); // Silly if to suppress unused variable warnings
+		debug_assert( count_ == expected_count );
 	}
 
 

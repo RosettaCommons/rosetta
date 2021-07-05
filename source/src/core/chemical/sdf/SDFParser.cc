@@ -25,7 +25,6 @@
 #include <istream>
 
 // C++ 11 support
-#include <utility/thread/backwards_thread_local.hh>
 
 
 namespace core {

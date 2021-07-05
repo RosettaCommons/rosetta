@@ -15,12 +15,16 @@
 #define INCLUDED_protocols_antibody_clusters_CDRCLUSTERMATCHER_HH
 
 #include <protocols/antibody/clusters/CDRClusterMatcher.fwd.hh>
-#include <protocols/antibody/clusters/CDRCluster.hh>
+#include <protocols/antibody/clusters/CDRCluster.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
+
+#include <protocols/antibody/clusters/CDRClusterEnum.hh> // AUTO IWYU For CDRClusterEnum
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace antibody {

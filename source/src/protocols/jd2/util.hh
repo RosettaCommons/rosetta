@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
+#include <utility/file/FileName.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 

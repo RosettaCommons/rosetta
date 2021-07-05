@@ -19,7 +19,7 @@
 
 // Package headers
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
+#include <core/scoring/constraints/ConstraintFactory.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -28,7 +28,6 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

@@ -20,7 +20,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>

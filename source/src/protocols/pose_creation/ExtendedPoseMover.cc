@@ -14,7 +14,6 @@
 #include <protocols/pose_creation/ExtendedPoseMover.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/tag/Tag.hh>
 
 // Project headers
@@ -27,14 +26,11 @@
 #include <protocols/loops/util.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
 
 // C/C++ headers
 #include <string>
 
-#include <utility/exit.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
@@ -44,9 +40,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
 #include <utility/excn/Exceptions.hh>
-#include <core/kinematics/Jump.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

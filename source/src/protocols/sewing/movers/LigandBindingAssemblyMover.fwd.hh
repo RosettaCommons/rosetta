@@ -1,4 +1,4 @@
-o// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -22,18 +22,18 @@ o// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-tr
 
 // Forward
 namespace protocols {
-	namespace sewing {
-	namespace movers {
+namespace sewing {
+namespace movers {
 
-	class LigandBindingAssemblyMover;
+class LigandBindingAssemblyMover;
 
-	typedef utility::pointer::shared_ptr< LigandBindingAssemblyMover > LigandBindingAssemblyMoverOP;
-	typedef utility::pointer::shared_ptr< LigandBindingAssemblyMover const > LigandBindingAssemblyMoverCOP;
+typedef utility::pointer::shared_ptr< LigandBindingAssemblyMover > LigandBindingAssemblyMoverOP;
+typedef utility::pointer::shared_ptr< LigandBindingAssemblyMover const > LigandBindingAssemblyMoverCOP;
 
 
 
-	} //protocols
-	} //sewing
+} //protocols
+} //sewing
 } //movers
 
 

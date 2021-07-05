@@ -27,7 +27,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/minimization_packing/MinMover.hh>
@@ -35,8 +34,9 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
-#include <utility/vector1.hh>
+
 
 
 

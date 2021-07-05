@@ -15,7 +15,6 @@
 #include <devel/init.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>

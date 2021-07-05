@@ -22,6 +22,6 @@
 // generated .cpp file.  This is that file for the protocols project.
 
 
-#endif INCLUDED_protocols_cxxtest_HH
+#endif // INCLUDED_protocols_cxxtest_HH
 
 

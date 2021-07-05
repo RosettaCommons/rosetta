@@ -24,21 +24,16 @@
 #include <utility/pointer/owning_ptr.hh>
 
 /// Project headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <iostream>
 
 static basic::Tracer TR("devel.denovo_design.BuildSheet.cxxtest");

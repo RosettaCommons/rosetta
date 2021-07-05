@@ -15,39 +15,25 @@
 
 // protocols
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/util.hh>
 
 
 // core
-#include <core/types.hh>
 #include <devel/init.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/import_pose/FullModelPoseBuilder.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
 
 // basic
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
@@ -58,7 +44,8 @@
 
 // C++ headers
 #include <iostream>
-#include <string>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
 
 using namespace protocols;
 using namespace basic::options;
@@ -78,11 +65,9 @@ resample_full_model_test()
 	using namespace core::scoring;
 	using namespace core::chemical;
 	using namespace core::conformation;
-	using namespace core::io::silent;
 	using namespace core::import_pose;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose;
-	using namespace core::pose::rna;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::monte_carlo;
 

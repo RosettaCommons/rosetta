@@ -21,15 +21,13 @@
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <core/pose/toolbox/AtomLevelDomainMap.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
 
 #include <protocols/rna/denovo/coarse/CoarseRNA_LoopCloser.fwd.hh>
-#include <protocols/rna/denovo/coarse/CoarseRNA_LoopCloser.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 
-#include <numeric/xyzVector.fwd.hh>
 
 #include <core/types.hh>
 

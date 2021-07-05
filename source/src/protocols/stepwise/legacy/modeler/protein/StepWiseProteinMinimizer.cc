@@ -16,21 +16,17 @@
 //////////////////////////////////
 #include <protocols/stepwise/legacy/modeler/protein/StepWiseProteinMinimizer.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
-#include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/movemap/util.hh>
-#include <protocols/stepwise/modeler/util.hh>
 
 //////////////////////////////////
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>

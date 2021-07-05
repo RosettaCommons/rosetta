@@ -17,7 +17,6 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pose/selection.hh>
 

@@ -22,7 +22,7 @@
 
 // Package Headers
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameList.hh>
 
 // Project Headers
@@ -32,10 +32,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
-#include <utility/io/izstream.fwd.hh>
 
 
 // Package Headers

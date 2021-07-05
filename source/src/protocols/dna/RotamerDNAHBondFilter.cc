@@ -18,7 +18,6 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
@@ -35,8 +34,9 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.dna.RotamerDNAHBondFilter" );
 

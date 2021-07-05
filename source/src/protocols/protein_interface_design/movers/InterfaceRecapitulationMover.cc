@@ -27,11 +27,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -45,8 +42,6 @@
 #include <map>
 #include <string>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>

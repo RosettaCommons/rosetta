@@ -16,19 +16,15 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
@@ -38,19 +34,17 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray3D.hh>
 
 // Numeric Headers
-#include <numeric/xyzVector.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
 
 // C++ Headers
-#include <algorithm>
 #include <utility/excn/Exceptions.hh>
 #include <map>
 // XSD XRW Includes

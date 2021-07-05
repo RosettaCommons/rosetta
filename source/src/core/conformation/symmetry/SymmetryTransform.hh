@@ -20,14 +20,9 @@
 #include <core/conformation/symmetry/SymmetryTransform.fwd.hh>
 
 // Unit Headers
-#include <core/conformation/symmetry/SymmData.fwd.hh>
 
 //core
 #include <core/types.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 
 //numeric
 #include <numeric/HomogeneousTransform.hh>
@@ -36,8 +31,6 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <map>
-#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

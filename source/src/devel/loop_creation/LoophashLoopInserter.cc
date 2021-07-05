@@ -35,17 +35,13 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
 
 //protocols
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
@@ -57,10 +53,11 @@
 #include <utility/string_util.hh>
 
 //numeric
-#include <numeric/random/random_permutation.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <sstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

@@ -19,7 +19,6 @@
 
 // Project headers
 //#include <core/chemical/ResidueTypeSet.hh>
-#include <core/types.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -28,11 +27,10 @@
 #include <core/pose/annotated_sequence.hh>
 
 
-#include <test/UTracer.hh>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
-#include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Error, Tracer, Warning
 
 
 using basic::Error;

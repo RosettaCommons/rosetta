@@ -16,32 +16,24 @@
 #include <protocols/design_opt/GreedyOptMutationMover.hh>
 #include <protocols/matdes/MatDesGreedyOptMutationMoverCreator.hh>
 #include <protocols/simple_filters/DeltaFilter.hh>
-#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
-#include <iostream>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <utility/vector0.hh>
-#include <core/pose/symmetry/util.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilter.hh>
@@ -49,19 +41,18 @@
 //For stored tasks
 #include <protocols/task_operations/STMStoredTask.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/import_pose/import_pose.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
-#include <basic/options/keys/OptionKeys.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/filters/BasicFilters.hh> // AUTO IWYU For CombinedFilter, CompoundFilter
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 namespace protocols {
 namespace matdes {

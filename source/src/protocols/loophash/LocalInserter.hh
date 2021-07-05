@@ -24,16 +24,13 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 //Protocols
-#include <protocols/loophash/BackboneDB.hh>
+#include <protocols/loophash/BackboneDB.fwd.hh>
 
 //Utility
 #include <utility/VirtualBase.hh>
 
 //C++
-#include <string>
-#include <vector>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace loophash {

@@ -17,13 +17,11 @@
 
 // Utility headers
 #include <core/conformation/symmetry/VirtualCoordinate.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
 
 namespace core {
 namespace conformation {

@@ -9,15 +9,11 @@
 #include <basic/options/option_macros.hh>
 
 
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/scoring/methods/saxs/PDDFEnergy.hh>
 
-#include <core/pose/Pose.hh>
 
 #include <devel/init.hh>
 #include <core/types.hh>

@@ -16,41 +16,20 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/ResidueMatcher.hh>
-#include <core/conformation/Conformation.hh>
 
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/func/CharmmPeriodicFunc.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 
 #include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/init/init.hh>
 
-#include <utility/file/file_sys_util.hh> //Add by Parin on May 04, 2011.
 
 //////////////////////////////////////////////////
 #include <basic/options/option.hh>
@@ -61,55 +40,29 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 ///////////////////////////////////////////////////
 #include <protocols/idealize/idealize.hh>
 
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/excn/Exceptions.hh>
-#include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 
-#include <core/pose/MiniPose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 
 
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/util.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/import_pose.hh>
 
 //////////////////////////////////////////////////////////
-#include <protocols/viewer/viewers.hh>
-#include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
-#include <protocols/stepwise/modeler/rna/sugar/VirtualSugarSampler.hh>
-#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_WorkingParametersSetup.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_Clusterer.hh>
 #include <protocols/stepwise/legacy/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -117,12 +70,8 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <algorithm>  //Test
-#include <cctype>
-#include <iomanip>
 #include <map>
 #include <cstdlib>
-#include <ctime>
 
 #ifdef WIN32
 #include <direct.h>
@@ -134,9 +83,11 @@
 #include <unistd.h>
 #endif
 
-#include <list>
 #include <cstdio>
-#include <cmath>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
+#include <core/scoring/constraints/ConstraintSet.hh> // AUTO IWYU For ConstraintSet
+#include <protocols/stepwise/modeler/rna/util.hh> // AUTO IWYU For rna, output_title_...
 
 using namespace core;
 using namespace protocols;

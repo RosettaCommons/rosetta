@@ -16,21 +16,16 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <basic/database/sql_utils.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 
 // External Headers
-#include <cppdb/frontend.h>
 
 // C++ Headers
 #include <set>

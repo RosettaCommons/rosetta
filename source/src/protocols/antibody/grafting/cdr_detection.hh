@@ -22,11 +22,9 @@
 #ifdef __ANTIBODY_GRAFTING__
 
 
-#include <protocols/antibody/grafting/antibody_sequence.hh>
+#include <protocols/antibody/grafting/antibody_sequence.fwd.hh>
 
 #include <basic/report.hh>
-#include <string> 
-#include <utility/json_spirit/json_spirit.h>
 
 /// @brief base class for CDR detection
 

@@ -21,22 +21,18 @@
 
 // project headers
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <utility/graph/DisjointSets.hh>
 #include <core/id/types.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>

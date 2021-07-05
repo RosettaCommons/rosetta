@@ -21,13 +21,11 @@
 #include <protocols/docking/DockTaskFactory.fwd.hh>
 
 // Package headers
-#include <protocols/docking/types.hh>
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/types.hh>
 #include <protocols/docking/DockingHighRes.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>

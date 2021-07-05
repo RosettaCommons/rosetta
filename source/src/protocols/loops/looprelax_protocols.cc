@@ -20,11 +20,9 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -33,7 +31,6 @@
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility>
-#include <utility/file/FileName.hh>
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
@@ -73,12 +70,13 @@
 
 
 #include <core/pose/variant_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D...
 
 
 

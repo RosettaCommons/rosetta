@@ -19,15 +19,13 @@
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/calc_taskop_movers/DesignRepackMover.hh>
+#include <protocols/calc_taskop_movers/DesignRepackMover.fwd.hh>
 
 
 // Unit headers

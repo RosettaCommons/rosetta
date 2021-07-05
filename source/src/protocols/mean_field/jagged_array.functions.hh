@@ -19,6 +19,8 @@
 // Unit headers
 #include <protocols/mean_field/jagged_array.hh>
 
+#include <utility/vector1.functions.hh> // AUTO IWYU For max, min
+
 namespace protocols {
 namespace mean_field {
 

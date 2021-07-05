@@ -24,7 +24,7 @@
 #include <core/scoring/sc/ElectrostaticSimilarityCalculator.fwd.hh>
 #include <core/scoring/sc/ShapeSimilarityCalculator.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/scoring/PoissonBoltzmannPotential.hh>
+#include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <utility/vector0.hh>

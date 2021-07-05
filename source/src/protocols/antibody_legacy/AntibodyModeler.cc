@@ -27,7 +27,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
@@ -37,7 +36,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/variant_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -49,14 +47,12 @@
 #include <basic/datacache/DiagnosticData.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 using namespace ObjexxFCL::format;
 
 #include <core/io/raw_data/ScoreMap.hh>
 #include <protocols/antibody_legacy/AntibodyClass.hh>
 #include <protocols/antibody_legacy/AntibodyModeler.hh>
 #include <protocols/docking/SidechainMinMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 //#include <protocols/evaluation/PoseEvaluator.hh>
 //#include <protocols/evaluation/RmsdEvaluator.hh>
 #include <protocols/loops/loops_main.hh>
@@ -78,7 +74,6 @@ using namespace ObjexxFCL::format;
 #include <protocols/moves/TrialMover.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 static basic::Tracer TR( "protocols.AntibodyModeler" );

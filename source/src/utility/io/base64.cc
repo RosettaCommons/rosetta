@@ -32,7 +32,6 @@ Note: this is version adapted for Rosetta. Original was taken from https://githu
 */
 
 #include <utility/io/base64.hh>
-#include <iostream>
 #include <cassert>
 
 namespace utility {

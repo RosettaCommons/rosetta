@@ -14,9 +14,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
-#include <utility/file/FileName.hh>
 #include <basic/database/open.hh>
-#include <iostream>
 #include <string>
 #include <utility/string_util.hh>
 #include <cppdb/frontend.h>
@@ -24,6 +22,8 @@
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorExternal.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
+
+#include <utility/sql_database/DatabaseSessionManager.hh> // AUTO IWYU For DatabaseSessionManager, session
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

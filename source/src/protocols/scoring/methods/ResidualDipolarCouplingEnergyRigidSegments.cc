@@ -24,13 +24,9 @@
 //#include <core/pose/datacache/CacheableDataType.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzVector.hh>
 
 
 //utility headers
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
 
@@ -38,7 +34,6 @@
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
 //C++ headers
-#include <iostream>
 
 #include <core/scoring/EnergyMap.hh>
 

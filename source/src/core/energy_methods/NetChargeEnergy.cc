@@ -20,29 +20,19 @@
 #include <core/scoring/netcharge_energy/NetChargeEnergySetup.hh>
 
 // Package headers
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <utility/numbers.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/aa_composition_energy/SequenceConstraint.hh>
 #include <core/scoring/netcharge_energy/NetChargeConstraint.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
 // Options system
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // File I/O
-#include <basic/database/open.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
 
 // Other Headers
 #include <basic/Tracer.hh>

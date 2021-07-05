@@ -17,7 +17,6 @@
 
 #include <string>
 #include <vector>
-#include <ostream>
 #include <sstream>
 #include <cmath>
 #include <cstdlib> //required by GCC 4.3.2

@@ -18,7 +18,7 @@
 // Package headers
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopsFileIO.hh>
+#include <protocols/loops/LoopsFileIO.fwd.hh>
 #include <protocols/loops/loops_main.hh>
 
 // Project headers
@@ -36,7 +36,6 @@
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/random/random.fwd.hh>
 #include <numeric/random/random_permutation.hh>
 
 /// ObjexxFCL headers
@@ -45,7 +44,6 @@
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

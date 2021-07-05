@@ -22,14 +22,15 @@
 #include <protocols/scoring/InterfaceInfo.fwd.hh>
 
 // Package headers
-#include <protocols/scoring/Interface.hh>
+#include <protocols/scoring/Interface.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
 
 
 #ifdef    SERIALIZATION

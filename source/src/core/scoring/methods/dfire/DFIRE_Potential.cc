@@ -14,14 +14,11 @@
 #include <basic/database/open.hh>
 #include <core/scoring/methods/dfire/DFIRE_Potential.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 
-#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 
-#include <numeric/xyzVector.hh>
 #include <boost/algorithm/string/trim.hpp>
 
 #include <utility/vector1.hh>

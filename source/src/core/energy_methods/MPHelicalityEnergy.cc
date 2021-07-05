@@ -28,9 +28,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 
-#include <core/conformation/Atom.hh>
 #include <core/id/AtomID.hh>
 
 #include <core/pose/util.hh>
@@ -40,23 +38,14 @@
 #include <core/scoring/ContextGraphTypes.hh>
 
 #include <utility/graph/Graph.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/membrane/MembraneData.hh>
 
 #include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
-#include <numeric/interpolation/spline/CubicSpline.hh>
-#include <numeric/MathMatrix.hh>
-#include <numeric/MathVector.srlz.hh>
-#include <map>
 #include <math.h>
 #include <set>
 

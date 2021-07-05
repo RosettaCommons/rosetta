@@ -28,6 +28,8 @@
 // C++ headers
 #include <string>
 
+#include <core/pose/ResidueIndexDescription.hh> // AUTO IWYU For ResidueIndexDescriptionPoseNum
+
 using namespace protocols::loops;
 
 class LoopsFileLoaderTest : public CxxTest::TestSuite {

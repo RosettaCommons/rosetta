@@ -14,7 +14,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <util/pose_funcs.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
@@ -26,10 +25,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 //class headers

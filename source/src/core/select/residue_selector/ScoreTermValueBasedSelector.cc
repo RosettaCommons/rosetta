@@ -35,6 +35,8 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+
 static basic::Tracer TR( "core.select.residue_selector.ScoreTermValueBasedSelector" );
 
 namespace core {

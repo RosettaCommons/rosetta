@@ -14,10 +14,10 @@
 // Package headers
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibraryCreator.hh>
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Program header
-#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/rotamers/CenrotRotamerLibrarySpecification.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>

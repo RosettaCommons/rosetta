@@ -24,7 +24,6 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
-#include <core/chemical/Bond.fwd.hh>
 
 namespace core {
 namespace chemical {

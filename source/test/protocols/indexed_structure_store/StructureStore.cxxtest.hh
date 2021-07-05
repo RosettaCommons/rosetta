@@ -11,15 +11,11 @@
 /// @brief Test suite for protocols/indexed_structure_store/*
 /// @author Alex Ford (fordas@uw.edu)
 
-#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <iterator>
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
-#include <util/pose_funcs.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
@@ -30,13 +26,14 @@
 #include <protocols/indexed_structure_store/StructureStore.hh>
 #include <protocols/indexed_structure_store/StructureStoreManager.hh>
 #include <protocols/indexed_structure_store/StructureStoreProvider.hh>
-#include <protocols/indexed_structure_store/JSONStructureStoreBackend.hh>
-#include <protocols/indexed_structure_store/utility.hh>
-#include <protocols/indexed_structure_store/vector_tools.hh>
 #include <protocols/indexed_structure_store/Datatypes.hh>
-#include <protocols/indexed_structure_store/Datatypes.json.hh>
+#include <protocols/indexed_structure_store/Datatypes.json.hh> // DO NOT AUTO-REMOVE
 
 #include <test/protocols/indexed_structure_store/utility.hh>
+
+#include <ndarray.h> // MANUAL IWYU
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <json.hpp> // AUTO IWYU For operator<<, json
 
 static basic::Tracer TR("core.indexed_structure_store.StructureStore.cxxtest");
 

@@ -27,9 +27,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/util.hh>
@@ -53,7 +52,6 @@
 #include <algorithm>
 
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

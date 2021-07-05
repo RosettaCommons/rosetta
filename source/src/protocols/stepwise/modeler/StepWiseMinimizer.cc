@@ -42,23 +42,22 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility>
 #include <utility/tools/make_vector1.hh>
-#include <utility/vector1.functions.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/file/file_sys_util.hh>
 #include <fstream>
 
 #include <utility/pointer/memory.hh>
+
+#include <core/pose/toolbox/AtomLevelDomainMap.hh> // AUTO IWYU For AtomLevelDomainMap
+#include <numeric/random/random.fwd.hh> // AUTO IWYU For uniform
 
 static basic::Tracer TR( "protocols.stepwise.modeler.StepWiseMinimizer" );
 using ObjexxFCL::format::F;

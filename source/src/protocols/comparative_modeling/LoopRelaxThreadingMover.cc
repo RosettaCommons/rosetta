@@ -19,7 +19,6 @@
 
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 
-#include <core/fragment/FragSet.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -28,7 +27,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/util.hh>
@@ -45,13 +44,11 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 
-#include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/StealSideChainsMover.hh>
 #include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/jd2/Job.hh>
-#include <utility/vector0.hh>
 
 namespace protocols {
 namespace comparative_modeling {

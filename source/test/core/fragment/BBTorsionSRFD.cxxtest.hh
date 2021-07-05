@@ -36,8 +36,6 @@
 #include <iostream>
 
 //Auto Headers
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <utility/vector1.hh>
 #include <utility/numbers.hh>
 
 using namespace core::fragment;

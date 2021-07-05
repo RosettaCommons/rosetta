@@ -16,7 +16,6 @@
 #include <cxxtest/TestSuite.h>
 #include <utility/recent_history_queue.hh>
 
-#include <iostream>
 
 using namespace utility;
 

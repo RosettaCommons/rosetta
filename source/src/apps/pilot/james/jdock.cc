@@ -22,7 +22,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/extra_pose_info_util.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
@@ -37,7 +36,6 @@
 #include <string>
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>

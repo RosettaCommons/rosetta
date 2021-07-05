@@ -26,7 +26,6 @@
 
 // Utility headers
 // we need it because of declarations in fwd.hh
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 // ObjexxFCL Headers
@@ -34,7 +33,6 @@
 
 //// C++ headers
 #include <string>
-#include <cmath>
 
 namespace core {
 namespace scoring {

@@ -30,6 +30,8 @@
 
 #include <set>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace features {
 

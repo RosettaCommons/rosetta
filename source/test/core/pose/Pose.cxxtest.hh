@@ -20,7 +20,6 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <basic/MetricValue.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -29,18 +28,12 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
 #include <core/pose/signals/GeneralEvent.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <test/util/pose_funcs.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/constants.hh>
@@ -56,6 +49,14 @@
 #include <basic/Tracer.hh>
 
 #ifdef SERIALIZATION
+#include <core/pose/metrics/CalculatorFactory.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <basic/MetricValue.hh>
+#include <test/util/pose_funcs.hh>
+
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

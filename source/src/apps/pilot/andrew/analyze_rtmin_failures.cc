@@ -1,27 +1,16 @@
 #include <devel/init.hh>
 //#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
-#include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 
-#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/ResidueKinWriter.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/id/AtomID.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/pack/dunbrack/RotamerLibrary.hh>
@@ -37,8 +26,9 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 // C++ headers
-#include <fstream>
 
 OPT_1GRP_KEY( Integer, rtminfail, residue_of_interest )
 
@@ -78,7 +68,6 @@ int main( int argc, char * argv [] )
 		using namespace utility::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
-		using namespace core::scoring::hbonds;
 		using namespace core::pack;
 		using namespace core::pack::task;
 		using namespace basic::options;

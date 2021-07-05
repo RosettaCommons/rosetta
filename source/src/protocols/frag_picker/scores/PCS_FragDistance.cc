@@ -27,12 +27,12 @@
 #include <utility/io/izstream.hh>
 
 // utils
-#include <ObjexxFCL/FArray1D.hh>
 //#include <core/util/prof.hh>
 
 
 #include <utility/vector1.hh>
 
+#include <cmath> // MANUAL IWYU
 
 namespace protocols {
 namespace frag_picker {

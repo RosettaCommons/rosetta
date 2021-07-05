@@ -20,19 +20,16 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/util.hh>
 //#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

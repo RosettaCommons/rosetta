@@ -17,8 +17,6 @@
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/CSTalosIO.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
-#include <utility/io/ozstream.hh>
 
 
 // option key includes
@@ -36,6 +34,7 @@
 #include <protocols/frag_picker/CS2ndShift.hh>
 #include <utility/vector1.hh>
 
+#include <cmath> // MANUAL IWYU
 
 namespace protocols {
 namespace frag_picker {

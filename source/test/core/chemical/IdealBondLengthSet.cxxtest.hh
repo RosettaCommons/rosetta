@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <core/chemical/IdealBondLengthSet.hh>
-#include <core/types.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -51,7 +50,7 @@ class IdealBondLengthSetTests : public CxxTest::TestSuite {
 
 		// note this reads the ideal_bond_length properties in the unit test directory
 		// not the rosetta_database
-		ideal_bond_length_set = new IdealBondLengthSet;
+		ideal_bond_length_set = utility::pointer::make_shared< IdealBondLengthSet >();
 		ideal_bond_length_set->read_file( "core/chemical/ideal_bond_lengths.txt" );
 	}
 
@@ -97,9 +96,9 @@ class IdealBondLengthSetTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( ideal_bond_length_set->get_bond_length("VIRT", "VIRT"), 1.569086, delta_percent);
 
 		//TS_ASSERT_THROWS(ideal_bond_length_set->get_bond_length("Fake", "Made-up");// code exits, doesn' throw exception uet
-		
+
 		TS_ASSERT_EQUALS(
-				ideal_bond_length_set->get_bond_length("CH2", "Narg")
+				ideal_bond_length_set->get_bond_length("CH2", "Narg"),
 				ideal_bond_length_set->get_bond_length("Narg", "CH2")
 		)
 	}

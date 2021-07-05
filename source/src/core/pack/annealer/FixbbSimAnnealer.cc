@@ -16,9 +16,7 @@
 
 // Package Headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <basic/Tracer.hh>
 
@@ -26,7 +24,6 @@
 #include <utility>
 #include <utility/exit.hh>
 
-#include <utility/exit.hh>
 
 #include <iostream>
 #include <fstream>
@@ -37,7 +34,9 @@
 
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+#include <core/pack/annealer/AnnealerObserver.hh> // AUTO IWYU For AnnealerObserver
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D
 
 using namespace ObjexxFCL;
 

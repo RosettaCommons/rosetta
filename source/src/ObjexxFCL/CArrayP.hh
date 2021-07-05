@@ -20,9 +20,9 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 
 // C++ Headers
-#include <algorithm>
 #include <cmath>
 
+#include <cassert> // MANUAL IWYU
 
 namespace ObjexxFCL {
 

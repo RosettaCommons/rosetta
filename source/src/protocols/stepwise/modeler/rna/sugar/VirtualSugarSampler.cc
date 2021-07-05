@@ -15,7 +15,6 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/modeler/rna/sugar/VirtualSugarSampler.hh>
-#include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
@@ -23,7 +22,7 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/PhosphateMove.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/sampler/rna/RNA_SuiteStepWiseSampler.hh>
@@ -32,11 +31,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -44,15 +39,9 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/util.hh> // needed for chain/gap-size.
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <numeric/conversions.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -62,7 +51,10 @@
 #include <basic/Tracer.hh>
 
 //Req'd on WIN32
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
+
+#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh> // AUTO IWYU For SugarModeling
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+#include <core/kinematics/Stub.hh> // AUTO IWYU For Stub, Stub::Matrix
 
 using namespace core;
 using namespace core::pose;

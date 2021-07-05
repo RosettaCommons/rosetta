@@ -19,7 +19,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/CompositionMover.fwd.hh>
 
-#include <utility/VirtualBase.hh>
 
 #include <string>
 

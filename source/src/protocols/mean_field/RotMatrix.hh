@@ -19,10 +19,9 @@
 #include <protocols/mean_field/RotMatrix.fwd.hh>
 
 // Package headers
-#include <protocols/mean_field/RotProb.hh>
+#include <protocols/mean_field/RotProb.fwd.hh>
 
 // Project headers
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -33,7 +32,12 @@
 
 
 // C++ headers
-#include <iosfwd>
+
+#ifdef WIN32
+#include <protocols/mean_field/RotProb.hh>
+#endif
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP
 
 namespace protocols {
 namespace mean_field {

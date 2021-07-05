@@ -15,20 +15,14 @@
 #define INCLUDED_protocols_wum_WorkUnitManager_hh
 
 #include <protocols/wum/WorkUnitManager.fwd.hh>
-#include <protocols/wum/WorkUnitBase.hh>
+#include <protocols/wum/WorkUnitBase.fwd.hh>
 #include <protocols/wum/WorkUnitList.hh>
 
-#include <utility>
 #include <utility/VirtualBase.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/wum/SilentStructStore.hh>
 
 #include <string>
-#include <vector>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

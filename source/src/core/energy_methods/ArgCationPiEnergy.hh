@@ -21,14 +21,12 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/memory.hh>
 
 
 namespace core {

@@ -20,7 +20,7 @@
 #include <protocols/pockets/DarcParticleSwarmMinimizer.fwd.hh>
 #include <protocols/pockets/Fingerprint.fwd.hh>
 #include <protocols/pockets/PocketGrid.hh>
-#include <core/optimization/Multifunc.hh>
+#include <core/optimization/Multifunc.fwd.hh>
 #include <core/optimization/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>

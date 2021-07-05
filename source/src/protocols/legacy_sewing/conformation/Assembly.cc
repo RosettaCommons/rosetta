@@ -23,61 +23,45 @@
 //Protocol headers
 #include <core/pose/Pose.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
 
-#include <core/sequence/SequenceProfile.hh>
-#include <core/sequence/MatrixScoringScheme.hh>
 #include <core/types.hh>
 
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
 
-#include <core/scoring/motif/motif_hash_stuff.hh>
-#include <core/scoring/motif/util.hh>
-#include <core/pose/motif/reference_frames.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 
 #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/xyzTransform.hh>
-#include <numeric/xyzTransform.io.hh>
 
 #include <utility/LexicographicalIterator.hh>
 #include <utility/vector1.hh>
 
 
 //temporary
-#include <core/scoring/Energies.hh>
-#include <core/scoring/TenANeighborGraph.hh>
+
+#include <protocols/legacy_sewing/sampling/SewGraph.hh> // AUTO IWYU For HashEdge, SewGraph, ModelNode, operator<<
 
 
 namespace protocols {

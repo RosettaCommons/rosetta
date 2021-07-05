@@ -21,8 +21,6 @@
 #include <basic/Tracer.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/init_id_map.hh>
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
 #include <basic/datacache/DataMap.hh>
@@ -35,7 +33,6 @@
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <utility/assert.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector0.hh>
 #include <utility/string_util.hh>
@@ -46,13 +43,15 @@
 // Boost Headers
 
 // C++ Headers
-#include <cmath>
 #include <utility/excn/Exceptions.hh>
-#include <algorithm>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/TaskOperationFeaturesCreator.hh>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 
 //Auto Headers

@@ -22,7 +22,6 @@
 
 #include <platform/types.hh>
 
-#include <iostream>
 
 using namespace utility;
 

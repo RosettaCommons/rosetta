@@ -31,7 +31,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -39,7 +39,6 @@
 #include <core/types.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/select/movemap/util.hh>
-#include <core/select/jump_selector/JumpIndexSelector.hh>
 
 // Numeric Headers
 #include <numeric/angle.functions.hh>
@@ -63,8 +62,7 @@
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 
@@ -77,6 +75,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
 
 
 using namespace core;

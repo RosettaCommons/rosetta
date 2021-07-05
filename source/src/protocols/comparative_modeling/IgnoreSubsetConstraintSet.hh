@@ -16,16 +16,13 @@
 
 #include <protocols/comparative_modeling/IgnoreSubsetConstraintSet.fwd.hh>
 
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 // C++ headers
 #include <set>
-#include <string>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

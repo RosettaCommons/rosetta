@@ -29,60 +29,45 @@
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResConnID.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/OrResidueSelector.hh>
 #include <core/select/residue_selector/PrimarySequenceNeighborhoodSelector.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
-#include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
-#include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/ResLvlTaskOperation.hh>
+#include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 static basic::Tracer TR( "protocols.fold_from_loops.NubInitioLoopClosureMover" );
 

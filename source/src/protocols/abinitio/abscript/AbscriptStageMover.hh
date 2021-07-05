@@ -18,22 +18,20 @@
 
 // Package headers
 #include <protocols/abinitio/abscript/StageID.hh>
-#include <protocols/abinitio/abscript/AbscriptMover.fwd.hh>
 #include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
-#include <protocols/environment/ClientMover.hh>
+#include <protocols/environment/ClientMover.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
+#include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
 
 // Utility Headers
-#include <utility/vector0.fwd.hh>
 
 // C++ Headers
 #include <set>

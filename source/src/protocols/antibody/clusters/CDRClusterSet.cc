@@ -19,8 +19,11 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataCache.hh>
+#include <basic/datacache/DataCache.fwd.hh>
 #include <basic/Tracer.hh>
+
+#include <protocols/antibody/clusters/CDRCluster.hh> // AUTO IWYU For CDRCluster
+#include <protocols/antibody/clusters/CDRClusterMatcher.hh> // AUTO IWYU For CDRClusterMatcher
 
 static basic::Tracer TR("protocols.antibody.clusters.CDRClusterSet");
 

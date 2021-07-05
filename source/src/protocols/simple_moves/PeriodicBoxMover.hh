@@ -24,25 +24,20 @@
 #include <protocols/simple_moves/PeriodicBoxMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/io/silent/SilentStruct.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
 // C++ Headers
 #include <string>
-#include <iosfwd>
+
+#include <core/io/silent/silent.fwd.hh> // AUTO IWYU For SilentStructOP
 
 namespace protocols {
 namespace simple_moves {

@@ -17,35 +17,15 @@
 #include <protocols/legacy_sewing/conformation/ContinuousAssembly.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/util/io.hh>
 
 //Protocol headers
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
-#include <core/conformation/Residue.functions.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
 
-#include <protocols/loops/Loop.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 
-#include <numeric/model_quality/rms.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyzTransform.hh>
 
-#include <utility/LexicographicalIterator.hh>
 #include <utility/vector1.hh>
 
 //Numeric headers

@@ -18,9 +18,7 @@
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -45,16 +43,13 @@
 #include <protocols/topology_broker/util.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
 
 // C++ headers
-#include <iostream>
 #include <string>
 
 // option key includes
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/rescore.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
@@ -65,8 +60,6 @@
 
 #include <core/pose/Pose.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "main" );

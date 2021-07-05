@@ -15,22 +15,19 @@
 #include <protocols/environment/claims/EnvLabelSelector.hh>
 
 // Package headers
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/environment/LocalPosition.hh>
 #include <protocols/environment/ProtectedConformation.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
-#include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+
+#include <core/environment/SequenceAnnotation.hh> // AUTO IWYU For SequenceAnnotation
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

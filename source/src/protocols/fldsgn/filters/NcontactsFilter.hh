@@ -30,15 +30,12 @@
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //// C++ headers
-#include <map>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

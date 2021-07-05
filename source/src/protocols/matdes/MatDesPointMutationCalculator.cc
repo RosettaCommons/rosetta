@@ -13,52 +13,39 @@
 //#include <algorithm >
 #include <protocols/matdes/MatDesPointMutationCalculator.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
-#include <core/pose/PDBInfo.hh>
-#include <fstream>
-#include <iostream>
-#include <numeric/random/random.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
-#include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/make_symmetric_task.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
-#include <utility/string_util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/minimization_packing/GreenPacker.hh>
-#include <core/pose/symmetry/util.hh>
 #include <protocols/simple_filters/TaskAwareScoreTypeFilter.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
 // Stored tasks
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <protocols/task_operations/STMStoredTask.hh>
-#include <core/pose/util.hh>
 
 //Auto Headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 #ifdef USEMPI
 #include <mpi.h>

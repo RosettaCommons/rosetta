@@ -15,6 +15,9 @@
 #include <protocols/splice/AlignEndsMoverCreator.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
+
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
+
 static basic::Tracer TR( "protocols.splice.AlignEndsMover" );
 #include <utility/tag/Tag.hh>
 

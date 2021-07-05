@@ -29,8 +29,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+
 // C++ headers
-#include <utility/assert.hh>
 
 static basic::Tracer TR( "protocols.residue_selectors.TaskSelector" );
 

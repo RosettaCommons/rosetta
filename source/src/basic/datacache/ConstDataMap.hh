@@ -18,11 +18,9 @@
 
 // Project headers
 #include <platform/types.hh>
-#include <iosfwd>
 // ObjexxFCL Headers
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 // Utility Headers

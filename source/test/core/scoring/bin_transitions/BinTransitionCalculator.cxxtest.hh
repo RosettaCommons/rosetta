@@ -14,7 +14,6 @@
 // Test headers:
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 // BinTransitionCalculator headers:
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
@@ -31,6 +30,8 @@
 #include <utility>
 #include <iostream>
 #include <iomanip>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 // --------------- Test Class --------------- //
 

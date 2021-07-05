@@ -13,25 +13,23 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <numeric/MathMatrix.hh>
-#include <numeric/MathMatrix_operations.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/linear_algebra/minimum_bounding_ellipse.hh>
 #include <numeric/linear_algebra/EllipseParameters.hh>
 #include <numeric/types.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Basic/utility Headers
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <core/types.hh> // AUTO IWYU For Real
 
 static basic::Tracer TR("minimum_bounding_ellipse");
 

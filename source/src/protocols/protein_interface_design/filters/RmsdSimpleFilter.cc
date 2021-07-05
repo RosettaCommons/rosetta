@@ -18,45 +18,29 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
 
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <numeric/model_quality/rms.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <algorithm>
-#include <list>
 
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 //Include Rosetta protocols
-#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/superimpose.hh>
-
-//Include Boost
-
-//Include ObjexxFCL
-
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
 
 namespace protocols {
 namespace protein_interface_design {

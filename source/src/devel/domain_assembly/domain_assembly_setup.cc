@@ -13,11 +13,9 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
@@ -27,9 +25,6 @@
 
 #include <utility/vector1.hh>
 
-#include <sstream>
-#include <iomanip>
-#include <iostream>
 #include <string>
 
 #include <devel/domain_assembly/DomainAssemblyReader.hh>

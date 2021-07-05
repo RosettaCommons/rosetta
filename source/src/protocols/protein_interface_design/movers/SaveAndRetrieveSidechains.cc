@@ -18,17 +18,13 @@
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/ref_pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
@@ -37,12 +33,13 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/datacache/DataMapObj.hh> // AUTO IWYU For DataMapObj
 
 namespace protocols {
 namespace protein_interface_design {

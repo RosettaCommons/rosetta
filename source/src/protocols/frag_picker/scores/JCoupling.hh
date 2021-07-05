@@ -24,7 +24,6 @@
 
 
 #include <protocols/frag_picker/JCouplingIO.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

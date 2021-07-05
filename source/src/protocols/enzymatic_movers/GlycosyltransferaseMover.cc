@@ -26,8 +26,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Basic headers
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 

@@ -21,7 +21,6 @@
 
 // Utility headers
 #include <utility/io/ozstream.hh>
-#include <utility/file/FileName.hh>
 
 // C++ headers
 #include <string>

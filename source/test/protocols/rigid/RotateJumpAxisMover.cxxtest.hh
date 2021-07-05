@@ -23,7 +23,6 @@
 // Project headers
 #include <core/types.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/kinematics/FoldTree.hh>

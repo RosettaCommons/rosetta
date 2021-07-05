@@ -22,7 +22,7 @@
 #include <protocols/frag_picker/Contact.hh>
 #include <protocols/frag_picker/ContactTypes.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 // type headers
 #include <core/types.hh>

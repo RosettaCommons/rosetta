@@ -21,26 +21,21 @@
 #include <core/pack/rotamer_set/rna_rotamer_building_functions.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/interaction_graph/SurfacePotential.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/rotamers/SingleBasicRotamerLibrary.hh>
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 // Project Headers
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/AbstractRotamerTrie.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <core/scoring/methods/Methods.hh>
@@ -50,15 +45,12 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 // Basic headers
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
@@ -70,7 +62,11 @@
 #include <string>
 #include <iostream>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 #ifdef    SERIALIZATION
+#include <core/conformation/AbstractRotamerTrie.hh>
+
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>

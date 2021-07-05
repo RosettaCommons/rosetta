@@ -22,7 +22,6 @@
 #include <utility/thread/backwards_thread_local.hh>
 
 // C++ headers
-#include <string>
 
 #ifdef MULTI_THREADED
 

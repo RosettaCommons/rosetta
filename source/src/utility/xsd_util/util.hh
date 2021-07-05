@@ -15,12 +15,10 @@
 #ifndef INCLUDED_utility_xsd_util_util_hh
 #define INCLUDED_utility_xsd_util_util_hh
 
-#include <iosfwd>
 #include <utility/vector1.hh>
 
 // LibXML includes
 #include <libxml/parser.h>
-#include <libxml/tree.h>
 
 // Platform includes
 #include <platform/types.hh>

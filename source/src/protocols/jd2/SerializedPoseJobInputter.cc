@@ -23,19 +23,16 @@
 
 ///Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/util.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-#include <utility/version.hh>
-#include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 
 ///C++ headers
 #include <string>
 
-#include <core/import_pose/import_pose.hh>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
 
 #ifdef SERIALIZATION
 // Cereal headers
@@ -44,6 +41,15 @@
 #include <cereal/types/list.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/details/helpers.hpp>
+
+// Needed just for the serialization build
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option.hh>
+#include <utility/string_util.hh>
+#include <utility/version.hh>
+#include <utility/io/ozstream.hh>
 #endif
 
 static basic::Tracer TR( "protocols.jd2.SerializedPoseJobInputter" );

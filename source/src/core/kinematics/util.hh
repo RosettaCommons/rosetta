@@ -20,7 +20,6 @@
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/types.hh>
 

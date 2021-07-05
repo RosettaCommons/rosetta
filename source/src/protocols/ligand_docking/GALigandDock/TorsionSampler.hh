@@ -19,7 +19,6 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <core/chemical/Bond.fwd.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 namespace protocols {
 namespace ligand_docking {

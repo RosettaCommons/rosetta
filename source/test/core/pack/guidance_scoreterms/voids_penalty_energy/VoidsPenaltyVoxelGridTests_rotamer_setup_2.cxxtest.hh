@@ -12,10 +12,7 @@
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
@@ -23,25 +20,22 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Protocols Headers (for convenience, for pose manipulation).
 //#include <protocols/simple_moves/MutateResidue.hh>
 
 // Utility, etc Headers
-#include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
 #include <map>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("VoidsPenaltyVoxelGridTests_rotamer_setup_2");
 

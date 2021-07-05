@@ -22,24 +22,21 @@
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 
 // Project Headers
-#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 
 // Package headers
 #include <core/scoring/memb_etable/MembEtable.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/conformation/Atom.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.hh> // DO NOT AUTO-REMOVE
 
 // C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace energy_methods {

@@ -15,25 +15,24 @@
 #ifndef INCLUDED_protocols_hbnet_HBNet_util_hh
 #define INCLUDED_protocols_hbnet_HBNet_util_hh
 
-#include <protocols/hbnet/HBNet.hh>
 #include <protocols/hbnet/HBNet.fwd.hh>
 
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/Graph.hh>
 
 #include <core/types.hh>
 //#include <core/graph/Graph.hh>
-#include <core/scoring/hbonds/graph/HBondGraph.hh>
-#include <core/scoring/hbonds/graph/AtomInfo.hh>
+#include <core/scoring/hbonds/graph/HBondGraph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/id/AtomID.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
 
 #include <utility/cxx_versioning_macros.hh>
+
+#include <protocols/hbnet/NetworkState.fwd.hh> // AUTO IWYU For NetworkState
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh> // AUTO IWYU For RotamerSet
+#include <core/pack/task/PackerTask.fwd.hh> // AUTO IWYU For PackerTask
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 namespace protocols {
 namespace hbnet {

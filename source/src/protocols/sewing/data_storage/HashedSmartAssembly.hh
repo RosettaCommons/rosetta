@@ -17,9 +17,10 @@
 
 #include <protocols/sewing/data_storage/HashedSmartAssembly.fwd.hh>
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
+
+#include <protocols/sewing/hashing/BasisMapGenerator.fwd.hh> // AUTO IWYU For BasisMapGeneratorOP
+
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace sewing {

@@ -13,9 +13,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
@@ -25,7 +23,6 @@
 
 
 // Utility headers
-#include <utility/vector1.hh>
 
 //Auto Headers
 

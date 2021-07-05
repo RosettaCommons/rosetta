@@ -26,11 +26,10 @@
 #define INCLUDED_basic_thread_manager_RosettaThreadManagerAdvancedAPIKey_hh
 
 #include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.fwd.hh>
-#include <basic/thread_manager/RosettaThreadManager.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
+
+class RosettaThreadManagerTests; // Forward declare of testing object for friendship
 
 namespace basic {
 namespace thread_manager {

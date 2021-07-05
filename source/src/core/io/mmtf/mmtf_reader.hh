@@ -18,28 +18,13 @@
 #include <core/io/StructFileReaderOptions.hh>
 
 // Package headers
-#include <core/io/pdb/pdb_reader.hh>  // TODO: Pull out pseudo-duplicated code and move to sfr_storage.cc.
 
 // When you move PDBReader and PoseUnbuilder, take these.
-#include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <iosfwd>
-#include <numeric/random/random.hh>
 
-#include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/Field.hh>
 #include <core/io/AtomInformation.hh>
-#include <core/io/HeaderInformation.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/io/StructFileRep.hh>
+#include <core/io/StructFileRep.fwd.hh>
 
-#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 
-#include <core/io/Remarks.hh>
 #include <core/io/mmtf/util.hh>
 
 // Project headers
@@ -48,25 +33,16 @@
 // Basic headers
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
-#include <utility/string_constants.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_map.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // External headers
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 #include <mmtf.hpp>
 
 // C++ headers
-#include <cstdlib>
-#include <cstdio>
-#include <algorithm>
 
 namespace core {
 namespace io {

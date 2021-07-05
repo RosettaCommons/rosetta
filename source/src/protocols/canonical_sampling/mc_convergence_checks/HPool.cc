@@ -15,21 +15,16 @@
 #include <protocols/toolbox/KCluster.hh>
 
 #include <basic/Tracer.hh>
-#include <protocols/toolbox/DecoySetEvaluation.hh>
 #include <protocols/toolbox/superimpose.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray3.hh>
 #include <ObjexxFCL/FArray2.hh>
-#include <ObjexxFCL/FArray1.hh>
 #include <ObjexxFCL/FArray2P.hh>
-#include <ObjexxFCL/FArray3P.hh>
 
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>

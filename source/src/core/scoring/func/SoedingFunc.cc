@@ -21,7 +21,6 @@
 // C++ Headers
 #include <iostream>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <cmath>

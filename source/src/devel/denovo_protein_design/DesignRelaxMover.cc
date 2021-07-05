@@ -25,7 +25,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
@@ -48,12 +48,9 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <utility>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 // C++ Headers

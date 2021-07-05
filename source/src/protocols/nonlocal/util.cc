@@ -29,15 +29,11 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/conformation/Residue.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/sequence/Sequence.hh>
@@ -47,7 +43,6 @@
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/comparative_modeling/ThreadingJob.hh>
 
 namespace protocols {
 namespace nonlocal {

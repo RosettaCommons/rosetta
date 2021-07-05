@@ -16,7 +16,6 @@
 /// @author Srivatsan Raman
 /// @author Frank DiMaio
 
-#include <core/pose/util.hh>
 #include <protocols/rbsegment_relax/FragInsertAndAlignMover.hh>
 #include <protocols/rbsegment_relax/RBSegmentRelax.hh>
 #include <protocols/rbsegment_relax/RBSegment.fwd.hh>
@@ -34,7 +33,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
@@ -44,10 +43,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <basic/options/option.hh>
@@ -59,12 +56,10 @@
 #include <basic/Tracer.hh>
 
 //Map
-#include <map>
 
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

@@ -12,7 +12,6 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/scoring/rms_util.hh>
@@ -32,22 +31,16 @@
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
-#include <basic/options/option_macros.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/file/FileName.hh>
 
 
 // C++ headers
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <string>
-#include <list>
 
 using namespace core;
 using namespace core::import_pose;

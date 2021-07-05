@@ -18,11 +18,9 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <numeric/xyzVector.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 

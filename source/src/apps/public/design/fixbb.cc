@@ -28,9 +28,7 @@
 //protocols library (Movers)
 #include <protocols/minimization_packing/MinPackMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
@@ -44,11 +42,8 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 

@@ -17,7 +17,6 @@
 #include <utility/graph/Graph.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/AtomTreeMultifunc.hh>
-#include <core/optimization/Multifunc.hh>
 #include <core/optimization/MinimizerMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -27,10 +26,8 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <basic/prof.hh>
 
-#include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 
 #include <utility>
-#include <utility/vector1.hh>
 
 
 namespace core {

@@ -27,7 +27,6 @@
 // option key includes
 
 //Auto Headers
-#include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>

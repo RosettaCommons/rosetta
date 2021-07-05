@@ -18,17 +18,14 @@
 #include <test/core/init_util.hh>
 #include <test/util/pdb1rpb.hh>
 
-#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
 
 // numeric headers
-#include <numeric/conversions.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

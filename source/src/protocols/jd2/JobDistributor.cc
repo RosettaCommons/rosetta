@@ -20,9 +20,6 @@
 
 // Package headers
 #include <protocols/jd2/BatchJobInputter.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pose/symmetry/util.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputter.hh>
@@ -43,7 +40,6 @@
 #include <protocols/moves/PyMOLMover.hh>
 
 // Utility headers
-#include <utility/sys_util.hh>
 #include <utility/thread/threadsafe_creation.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>

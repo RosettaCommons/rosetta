@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/screener/PoseSelectionScreener.hh>
 #include <protocols/stepwise/modeler/align/StepWiseClusterer.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <utility>

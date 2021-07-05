@@ -21,7 +21,6 @@
 #include <core/simple_metrics/util.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
 
@@ -29,7 +28,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/methods/Methods.hh> //for long range energies
 #include <core/scoring/LREnergyContainer.hh> //long range energies
 #include <core/scoring/ScoreFunction.hh>
@@ -39,11 +37,9 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-#include <utility/vector1.srlz.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -51,6 +47,7 @@
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
 
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>

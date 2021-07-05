@@ -17,25 +17,17 @@
 
 // Unit headers
 #include <core/io/pdb/Field.hh>
-#include <core/io/HeaderInformation.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
-#include <utility/vector1.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 
 // C++ headers
 #include <sstream>
-#include <vector>
 
 static basic::Tracer TR("core.io.pdb.Field.cxxtest");
 

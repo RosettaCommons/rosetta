@@ -25,30 +25,19 @@
 #include <core/scoring/lkball/LK_BallInfo.hh>
 
 // Package headers
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/MinimizationData.hh>
 
 // Project headers
 #include <core/conformation/residue_datacache.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <utility/graph/Graph.hh>
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/conformation/AbstractRotamerTrie.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/backtrace.hh>
+#include <utility/assert.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

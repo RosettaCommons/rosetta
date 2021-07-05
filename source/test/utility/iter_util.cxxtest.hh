@@ -17,7 +17,6 @@
 #include <utility/iter_util.hh>
 
 // C/C++ headers
-#include <iterator>
 #include <set>
 
 using namespace std;

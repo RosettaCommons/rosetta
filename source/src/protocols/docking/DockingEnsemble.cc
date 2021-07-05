@@ -21,21 +21,15 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 
 // Random number generator
-#include <numeric/random/random.hh>
 //
 #include <string>
-#include <sys/stat.h>
 
 #include <basic/Tracer.hh>
 
@@ -43,12 +37,10 @@
 #include <utility/io/ozstream.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 

@@ -20,7 +20,6 @@
 //Types
 #include <platform/types.hh>
 
-#include <utility/vector1.hh>
 
 // Use this for simple integer VD of verticies.
 typedef boost::adjacency_list< boost::listS, boost::vecS, boost::undirectedS > Graph;

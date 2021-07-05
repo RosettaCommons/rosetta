@@ -15,7 +15,8 @@
 
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
+
+#include <string> // AUTO IWYU For string
 
 
 namespace core {

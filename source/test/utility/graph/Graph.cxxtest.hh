@@ -20,7 +20,6 @@
 #include <utility/graph/Graph.hh>
 
 // C++ headers, for debugging your tests
-#include <sstream>
 
 #ifdef SERIALIZATION
 // Cereal headers

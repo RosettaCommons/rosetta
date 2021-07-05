@@ -14,16 +14,14 @@
 #define INCLUDED_protocols_simple_moves_ReportEffectivePKA_hh
 
 #include <protocols/moves/Mover.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <core/optimization/Multifunc.hh>
-#include <core/optimization/Minimizer.hh>
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 
 namespace protocols {
 namespace simple_moves {

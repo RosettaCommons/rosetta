@@ -25,17 +25,16 @@
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueRanges.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileData.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace fold_from_loops {

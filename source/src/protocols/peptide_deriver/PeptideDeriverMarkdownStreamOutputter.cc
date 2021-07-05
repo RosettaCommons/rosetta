@@ -24,14 +24,14 @@
 
 // Utility headers
 #include <utility/version.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/ocstream.hh>
 
 // External headers
 #include <boost/format.hpp>
 
 // C++ headers
 #include <string>
+
+#include <utility/io/orstream.hh> // AUTO IWYU For orstream
 
 static basic::Tracer TR( "protocols.peptide_deriver.PeptideDeriverMarkdownStreamOutputter" );
 

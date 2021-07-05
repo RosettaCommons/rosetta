@@ -14,18 +14,16 @@
 #include <protocols/nonlocal/UniformPolicy.hh>
 
 // C/C++ headers
-#include <utility/assert.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

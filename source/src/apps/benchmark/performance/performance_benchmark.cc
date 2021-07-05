@@ -16,7 +16,6 @@
 
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/Energies.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 
@@ -30,7 +29,6 @@
 #include <utility/exit.hh>
 #include <cstdio>
 
-#include <set>
 #include <fstream>
 
 #if  !defined(WINDOWS) && !defined(WIN32)
@@ -52,8 +50,6 @@ OptionCollectionBenchmark OptionCollection_("basic.options.OptionCollection");
 #include <apps/benchmark/performance/score.bench.hh>
 ScoreBenchmark Score_("core.scoring.Score");
 
-#include <apps/benchmark/performance/ScoreEach.bench.hh>
-#include <apps/benchmark/performance/ScoreAnalyticEtable.bench.hh>
 
 #include <apps/benchmark/performance/SmallMover.bench.hh>
 SmallMoverBenchmark SmallMover_("protocols.moves.SmallMover");
@@ -80,33 +76,19 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 //#include <apps/benchmark/performance/LigandDock.bench.hh>
 //LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-// AMW: there is a problem in SlideTogether as of 6/29/15
-// that kills the performance benchmarks if this is allowed to run
-//#include <apps/benchmark/performance/LigandDockScript.bench.hh>
-//LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
-
 #include <apps/benchmark/performance/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
-
-//This benchmark isn't really a good representation of ResidueType performance
-//#include <apps/benchmark/performance/ResidueType.bench.hh>
-//ResidueTypeBenchmark ResidueType_("core.chemical.ResidueType");
 
 #include <apps/benchmark/performance/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
 
-#include <apps/benchmark/performance/FastRelax.bench.hh>
-#include <apps/benchmark/performance/InteractionGraph.bench.hh>
 
 
 // option key includes
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 using basic::Error;

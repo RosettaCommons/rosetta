@@ -32,18 +32,14 @@
 #include <ObjexxFCL/FArray2A.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 //// C++ headers
 #include <cstdlib>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.simple_filters.SheetFilter" );

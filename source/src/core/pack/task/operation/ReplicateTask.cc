@@ -22,10 +22,9 @@
 
 #include <utility/exit.hh>
 
-#include <utility/tag/Tag.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
 
 
 namespace core {

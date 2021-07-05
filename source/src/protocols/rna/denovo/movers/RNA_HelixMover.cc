@@ -16,13 +16,11 @@
 #include <protocols/rna/denovo/movers/RNA_HelixMover.hh>
 #include <core/import_pose/RNA_BasePairHandler.hh>
 
-#include <protocols/rna/denovo/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-#include <basic/options/option.hh>
 
 
 //Relaxer stuff
@@ -49,11 +47,10 @@
 
 // option key includes
 
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/format.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 
 using namespace core;

@@ -19,10 +19,7 @@
 
 // Package headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzMatrix.io.hh>
-#include <iostream>
 
 
 // --------------- Test Class --------------- //

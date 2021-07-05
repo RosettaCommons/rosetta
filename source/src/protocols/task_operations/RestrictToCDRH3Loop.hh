@@ -24,7 +24,6 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers

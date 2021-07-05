@@ -17,17 +17,10 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/select/residue_selector/NotResidueSelector.fwd.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/hybridization/util.hh>
-#include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
 #include <protocols/fold_from_loops/movers/SplitAndMixPoseMover.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -36,7 +29,6 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <string>
 #include <boost/tuple/tuple.hpp>

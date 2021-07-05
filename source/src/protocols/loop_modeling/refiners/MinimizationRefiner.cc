@@ -21,7 +21,6 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // Protocols headers
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
@@ -29,7 +28,9 @@
 #include <iostream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 namespace protocols {
 namespace loop_modeling {

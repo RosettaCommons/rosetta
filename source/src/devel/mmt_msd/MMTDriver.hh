@@ -18,11 +18,9 @@
 #include <devel/mmt_msd/MMTDriver.fwd.hh>
 
 // Package headers
-#include <devel/mmt_msd/MMTReceiver.fwd.hh>
 
 // Core headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/ResfileReader.fwd.hh>
@@ -31,7 +29,6 @@
 #include <protocols/genetic_algorithm/GeneticAlgorithm.fwd.hh>
 #include <protocols/genetic_algorithm/Entity.fwd.hh>
 #include <protocols/genetic_algorithm/EntityRandomizer.fwd.hh>
-#include <protocols/multistate_design/MultiStatePacker.fwd.hh>
 
 #include <protocols/pack_daemon/DynamicAggregateFunction.fwd.hh>
 #include <protocols/pack_daemon/MultistateFitnessFunction.fwd.hh>
@@ -42,7 +39,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <algorithm>
 #include <list>
 #include <map>
 #include <set>

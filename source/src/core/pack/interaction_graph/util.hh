@@ -24,7 +24,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.fwd.hh>
 
 // STL headers:
 #include <iosfwd>

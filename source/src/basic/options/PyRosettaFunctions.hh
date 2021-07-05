@@ -14,9 +14,7 @@
 #ifndef INCLUDED_basic_options_PyRosettaFunctions_hh
 #define INCLUDED_basic_options_PyRosettaFunctions_hh
 
-#include <iosfwd>
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
 
 
 namespace basic {

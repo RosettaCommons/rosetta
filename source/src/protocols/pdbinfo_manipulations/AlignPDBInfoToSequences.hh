@@ -19,14 +19,15 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/json_utilities.hh>
+
+#include <json.hpp> // AUTO IWYU For json
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

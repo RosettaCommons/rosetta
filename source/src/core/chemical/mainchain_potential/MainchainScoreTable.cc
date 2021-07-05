@@ -26,7 +26,6 @@
 
 // Basic Headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 

@@ -30,8 +30,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pdb_writer.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -45,6 +44,8 @@
 
 #include <utility>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 //debug headers

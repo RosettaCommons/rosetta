@@ -19,16 +19,15 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/id/TorsionID.hh>
-#include <protocols/stepwise/modeler/util.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/id/TorsionID.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree, operator<<
 
 using namespace core;
 using namespace core::pose;

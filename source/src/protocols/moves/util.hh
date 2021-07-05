@@ -14,14 +14,12 @@
 #define INCLUDED_protocols_moves_util_HH
 
 // Project headers
-#include <core/types.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>

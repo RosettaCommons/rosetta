@@ -19,17 +19,13 @@
 #include <protocols/trRosetta/trRosettaOutputsBase.hh>
 
 // Core headers:
-#include <core/types.hh>
 
 // Basic headers
 #ifdef USE_TENSORFLOW
+#include <core/types.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.tmpl.hh>
 #endif //USE_TENSORFLOW
 
-// Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace trRosetta {

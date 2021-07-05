@@ -13,7 +13,6 @@
 /// @author James Thompson
 
 // C++ Headers
-#include <utility>
 #include <string>
 #include <sstream>
 
@@ -28,13 +27,10 @@
 #include <core/io/silent/ScoreJumpFileSilentStruct.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
-#include <core/conformation/Residue.fwd.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <utility/exit.hh>
 
 #include <utility/vector1.hh>
 

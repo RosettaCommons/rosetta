@@ -35,7 +35,6 @@
 #include <core/scoring/constraints/SiteConstraintResidues.hh>
 #include <core/scoring/constraints/FabConstraint.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
 

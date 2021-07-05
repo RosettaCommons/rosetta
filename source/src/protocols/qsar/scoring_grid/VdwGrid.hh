@@ -15,7 +15,6 @@
 
 #include <protocols/qsar/scoring_grid/VdwGrid.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

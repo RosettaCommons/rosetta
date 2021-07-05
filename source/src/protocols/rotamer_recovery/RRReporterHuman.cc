@@ -22,7 +22,6 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/CacheableString.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>

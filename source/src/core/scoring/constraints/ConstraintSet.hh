@@ -21,11 +21,11 @@
 // Package headers
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/aa_composition_energy/SequenceConstraint.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/constraints/DOF_Constraint.hh>
+#include <core/scoring/constraints/DOF_Constraint.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
 // Project headers
@@ -33,8 +33,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh> //for observing conformation length changes
@@ -46,6 +44,8 @@
 
 // C++ Headers
 #include <map>
+
+#include <core/id/DOF_ID.hh> // AUTO IWYU For DOF_ID
 
 #ifdef    SERIALIZATION
 #include <cereal/types/polymorphic.fwd.hpp>

@@ -29,9 +29,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh> //visualize
 #include <utility/exit.hh>
-#include <core/kinematics/Exceptions.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/FrameIterator.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <protocols/loops/Loop.hh>
@@ -46,7 +44,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-#include <sstream>
 #include <fstream>
 
 //#include <basic/options/option.hh>

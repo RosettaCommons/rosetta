@@ -14,12 +14,10 @@
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>
@@ -42,10 +40,8 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <protocols/jd2/util.hh>
-#include <ObjexxFCL/format.hh>
 
 // Jacob headers 120423/120817
-#include <core/pose/symmetry/util.hh>
 #include <utility/string_util.hh>
 
 #include <utility/vector0.hh>
@@ -58,6 +54,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace calc_taskop_filters {

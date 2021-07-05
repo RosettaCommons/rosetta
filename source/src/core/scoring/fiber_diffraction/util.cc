@@ -16,7 +16,6 @@
 #include <core/scoring/fiber_diffraction/util.hh>
 #include <core/scoring/fiber_diffraction/CentroidScatter.hh>
 #include <core/scoring/fiber_diffraction/FAScatter.hh>
-#include <core/pose/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -33,28 +32,16 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
 // Options
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 
 #include <numeric/statistics/functions.hh>
 #include <numeric/util.hh>

@@ -15,8 +15,6 @@
 #define INCLUDED_protocols_antibody_clusters_CDRCLUSTERFEATURESCREATOR_HH
 
 #include <protocols/features/FeaturesReporterCreator.hh>
-#include <core/types.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace antibody {

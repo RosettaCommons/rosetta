@@ -17,15 +17,10 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
-#include <core/id/AtomID.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 
-#include <utility/io/ozstream.hh>
 
 #include <utility/sys_util.hh>
 // XSD XRW Includes

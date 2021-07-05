@@ -13,25 +13,23 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Package headers
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <protocols/residue_selectors/HBondSelector.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
 
 // C++ headers
-#include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace protocols::residue_selectors;
 

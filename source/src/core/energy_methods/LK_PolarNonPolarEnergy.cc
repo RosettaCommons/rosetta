@@ -19,7 +19,6 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -32,11 +31,8 @@
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/types.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -45,7 +41,6 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
 
 #include <basic/Tracer.hh>

@@ -21,7 +21,7 @@
 // Core headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
@@ -30,10 +30,8 @@
 #include <core/id/SequenceMapping.hh>
 //Basic headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 // Utility headers
-#include <utility/fixedsizearray1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/Tag.hh>
 

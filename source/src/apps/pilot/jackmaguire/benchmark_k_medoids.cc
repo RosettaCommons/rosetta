@@ -14,23 +14,21 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/jd3.OptionKeys.gen.hh>
 
-#include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
-#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/KMedoids.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/KMedoidsOnTheFly.hh>
 
-#include <protocols/multistage_rosetta_scripts/cluster/metrics/JumpMetric.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/metrics/SequenceMetric.hh>
 
 #include <numeric/random/random.hh>
 
 #include <string>
 #include <chrono>
+
+#include <core/types.hh> // AUTO IWYU For Size
 
 static basic::Tracer TR( "apps.pilot.jackmaguire.BenchmarkKMedoids" );
 

@@ -23,14 +23,11 @@
 #include <protocols/environment/Environment.hh>
 
 #include <protocols/environment/claims/EnvClaim.fwd.hh>
-#include <protocols/environment/claims/VirtResClaim.fwd.hh>
 
 #include <core/environment/DofPassport.fwd.hh>
 
 // Project headers
-#include <core/conformation/Conformation.fwd.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -38,6 +35,8 @@
 
 // C++ Headers
 #include <stack>
+
+#include <protocols/environment/EnvClaimBroker.hh> // AUTO IWYU For EnvClaimBroker
 
 // ObjexxFCL Headers
 

@@ -17,27 +17,16 @@
 #include <protocols/cyclic_peptide/CreateDistanceConstraintCreator.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/func/FuncFactory.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/Func.hh>
 
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/id/AtomID.hh>
 
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>

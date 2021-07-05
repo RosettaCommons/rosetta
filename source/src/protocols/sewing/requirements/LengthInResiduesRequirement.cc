@@ -17,6 +17,9 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <protocols/sewing/data_storage/SmartAssembly.hh> // AUTO IWYU For SmartAssembly
+
 static basic::Tracer TR( "protocols.sewing.requirements.LengthInResiduesRequirement" );
 
 

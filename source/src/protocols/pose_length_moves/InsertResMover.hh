@@ -20,20 +20,17 @@
 
 #include <protocols/pose_length_moves/InsertResMover.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // C++ Headers
 #include <string>
-#include <map>
 // Utility Headers
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <numeric/xyzVector.hh>
 
 

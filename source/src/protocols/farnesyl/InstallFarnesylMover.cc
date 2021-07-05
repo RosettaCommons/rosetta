@@ -19,7 +19,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/conformation/Conformation.hh>

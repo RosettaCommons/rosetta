@@ -30,18 +30,13 @@
 // Project Headers
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
 
 #include <core/conformation/ResidueFactory.hh>
-#include <core/fragment/FragSet.hh>
 #include <core/id/AtomID.hh>
 
-#include <core/io/silent/silent.fwd.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -75,17 +70,15 @@
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 #include <protocols/loops/looprelax_protocols.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Refactored Kic headers
-#include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
-#include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
@@ -128,15 +121,14 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/MiniRelax.hh>
 #include <protocols/relax/util.hh>
-#include <utility/Bound.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/keys/SmallKeyVector.hh>
 #include <utility/options/BooleanOption.hh>
 #include <basic/options/option.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree, operator<<
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

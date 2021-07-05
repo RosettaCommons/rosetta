@@ -18,18 +18,15 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <core/pack/rotamer_trials.hh>
 
 //#include <protocols/minimization_packing/PackRotamersMover.hh> //I wish
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -45,6 +42,8 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::ResidueTypeCOPListConstIter
 
 
 // --------------- Test Class --------------- //

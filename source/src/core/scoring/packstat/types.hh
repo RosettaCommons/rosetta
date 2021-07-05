@@ -16,14 +16,16 @@
 #ifndef INCLUDED_core_scoring_packstat_types_hh
 #define INCLUDED_core_scoring_packstat_types_hh
 
+#include <core/scoring/packstat/types.fwd.hh>
+
 #include <numeric/xyzVector.hh>
 
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace core {
@@ -79,7 +81,6 @@ struct PosePackData : public utility::VirtualBase {
 	XYZs centers;
 	utility::vector1<std::string> labels;
 };
-typedef utility::pointer::shared_ptr<PosePackData> PosePackDataOP;
 
 
 } // namespace packstat

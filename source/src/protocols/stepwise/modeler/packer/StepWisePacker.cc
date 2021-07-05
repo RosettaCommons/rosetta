@@ -17,32 +17,21 @@
 #include <protocols/stepwise/modeler/packer/StepWisePacker.hh>
 #include <protocols/stepwise/modeler/packer/SideChainCopier.hh>
 #include <protocols/stepwise/modeler/packer/util.hh>
-#include <protocols/stepwise/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
 #include <basic/Tracer.hh>
 
 //GreenPacker
-#include <protocols/minimization_packing/GreenPacker.hh>
-#include <protocols/minimization_packing/GreenPacker.fwd.hh>
 
-#include <utility>
 #ifdef MULTI_THREADED
 #include <utility/pointer/memory.hh>
 #endif
@@ -52,8 +41,9 @@
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core;
 

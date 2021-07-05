@@ -19,16 +19,13 @@
 /// @author Gideon Lapidoth (glapidoth@gmail.com)
 
 // Unit Headers
-#include <core/pose/extra_pose_info_util.hh>
 #include <protocols/splice/SampleRotamersFromPDB.hh>
 #include <protocols/splice/SampleRotamersFromPDBCreator.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
@@ -38,24 +35,19 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
-#include <sstream>
 #include <string>
 #include <fstream>
-#include <stdlib.h>
 #include <map>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.fwd.hh>
 #include <protocols/splice/util.hh>
-#include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/util.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include "SampleRotamersFromPDB.hh"
 #include <core/import_pose/import_pose.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <boost/algorithm/string.hpp> //using this to parse up the rotamer db
 #include <utility/io/izstream.hh>
@@ -64,6 +56,9 @@
 
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::ResidueTypeC...
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace protocols {
 namespace splice {

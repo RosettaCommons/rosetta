@@ -15,11 +15,9 @@
 
 // Project headers
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -40,15 +38,12 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
-#include <core/scoring/constraints/SiteConstraint.hh>
 
 // Unit Headers
 #include <protocols/flexpep_docking/FlexPepDockingFlags.hh>
@@ -59,7 +54,6 @@
 #include <protocols/flexpep_docking/FlexPepDockingProtocolCreator.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
@@ -75,7 +69,6 @@
 #include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -96,28 +89,24 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/PCA.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 // Utility Headers
-#include <utility/file/FileName.hh>
+#include <utility/file/FileName.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/keys/Key3Vector.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
 #include <string>
-#include <set>
-#include <sstream>
-#include <cstdio>
 #include <algorithm>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR( "FlexPepDockingProtocol" );

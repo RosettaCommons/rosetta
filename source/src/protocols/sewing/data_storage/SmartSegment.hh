@@ -16,15 +16,13 @@
 #define INCLUDED_protocols_sewing_data_storage_SmartSegment_hh
 
 #include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
-#include <protocols/sewing/data_storage/SmartSewingResidue.hh>
+#include <protocols/sewing/data_storage/SmartSewingResidue.fwd.hh>
 #include <protocols/sewing/data_storage/Basis.hh>
 //Core Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <core/chemical/Atom.hh>
 
 #include <set>
 

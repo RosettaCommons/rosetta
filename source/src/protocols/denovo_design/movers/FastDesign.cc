@@ -21,7 +21,6 @@
 #include <protocols/constraint_generator/AddConstraints.hh>
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
 #include <protocols/constraint_generator/RemoveConstraints.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/task_operations/LimitAromaChi2Operation.hh>
 
@@ -32,11 +31,9 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 
 //Basic Headers
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -48,10 +45,11 @@
 #include <utility/pointer/memory.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 //C++ Headers
 

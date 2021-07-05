@@ -28,7 +28,6 @@
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -37,17 +36,13 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/types.hh>
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <iostream>
-#include <cstdlib>
 
 using namespace protocols::moves;
 

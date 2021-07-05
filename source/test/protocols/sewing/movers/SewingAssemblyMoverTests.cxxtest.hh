@@ -13,23 +13,18 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
-#include <test/protocols/sewing/extra_functions.hh>
 #include <protocols/sewing/movers/AssemblyMover.hh>
-#include <protocols/sewing/data_storage/SmartAssembly.hh>
-#include <protocols/sewing/data_storage/SmartSegment.hh>
 
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace protocols::sewing;
 

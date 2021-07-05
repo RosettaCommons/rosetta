@@ -20,7 +20,6 @@
 #include <utility/exit.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace qsar {

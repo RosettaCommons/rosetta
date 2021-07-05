@@ -22,6 +22,8 @@
 #include <string>
 #include <istream>
 
+#include <core/chemical/sdf/MolFileIOData.hh> // AUTO IWYU For MolFileIOAtom, MolFileIOBond, MolFileIOMolecule
+
 namespace core {
 namespace chemical {
 namespace sdf {

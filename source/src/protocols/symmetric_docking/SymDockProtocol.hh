@@ -45,6 +45,8 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <map> // AUTO IWYU For map
+
 namespace protocols {
 namespace symmetric_docking {
 

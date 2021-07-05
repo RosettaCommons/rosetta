@@ -24,14 +24,9 @@
 #include <core/scoring/nmr/NMRDataFactory.fwd.hh>
 
 // Package headers
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/BasicDataCache.fwd.hh>
-#include <core/scoring/nmr/pcs/PCSData.fwd.hh>
-#include <core/scoring/nmr/rdc/RDCData.fwd.hh>
-#include <core/scoring/nmr/pre/PREData.fwd.hh>
+#include <basic/datacache/CacheableData.fwd.hh>
 
 // Package headers
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
@@ -39,7 +34,6 @@
 
 // C++ headers
 #include <string>
-#include <map>
 
 namespace core {
 namespace scoring {

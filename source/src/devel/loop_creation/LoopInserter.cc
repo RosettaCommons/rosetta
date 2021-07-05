@@ -21,7 +21,6 @@
 
 
 //C++
-#include <set>
 
 namespace devel {
 namespace loop_creation {

@@ -32,13 +32,10 @@
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
 #include <core/pack/task/ResfileReader.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
@@ -51,7 +48,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <cmath>
 
 
@@ -61,7 +57,8 @@
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <utility/vector0.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 

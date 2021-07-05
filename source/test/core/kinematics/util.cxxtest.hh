@@ -18,7 +18,7 @@
 #include <test/core/kinematics/utilities.hh>
 
 // Unit Headers
-#include <core/kinematics/Edge.hh>
+#include <core/kinematics/Edge.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Package Header

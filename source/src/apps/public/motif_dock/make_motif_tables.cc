@@ -15,63 +15,32 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mh.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/pose/motif/reference_frames.hh>
-#include <core/pose/util.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/packing/compute_holes_score.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/sasa.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <devel/init.hh>
-#include <numeric/conversions.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
-#include <numeric/xyzVector.hh>
-#include <protocols/idealize/IdealizeMover.hh>
 // #include <protocols/sicdock/Assay.hh>
-#include <protocols/sic_dock/SICFast.hh>
-#include <protocols/sic_dock/util.hh>
 #include <protocols/sic_dock/read_biounit.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/constraint_movers/AddConstraintsToCurrentConformationMover.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/file/file_sys_util.hh>
-#include <numeric/geometry/hashing/SixDHasher.hh>
-#include <numeric/HomogeneousTransform.hh>
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 
 

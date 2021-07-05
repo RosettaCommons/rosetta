@@ -24,7 +24,6 @@
 #include <core/scoring/EnergyMap.hh>
 
 
-#include <core/kinematics/Jump.hh>
 
 namespace core {
 namespace scoring {

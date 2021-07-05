@@ -14,9 +14,7 @@
 // Unit headers
 #include <core/energy_methods/RNA_CoarseDistEnergy.hh>
 
-#include <core/scoring/methods/TwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
+#include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 #include <core/scoring/OneDDistPotential.hh>
 
 // Package headers
@@ -26,16 +24,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/pose/Pose.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
+#include <core/kinematics/MinimizerMapBase.fwd.hh>
 
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ResidueNeighborList.hh>
@@ -47,7 +40,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
+
+#include <core/energy_methods/RNA_CoarseDistEnergyCreator.hh> // AUTO IWYU For RNA_CoarseDistEnergyCreator
 
 static basic::Tracer TR( "core.energy_methods.RNA_CoarseDistEnergy" );
 

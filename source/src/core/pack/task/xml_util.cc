@@ -18,11 +18,8 @@
 #include <core/pack/task/xml_util.hh>
 
 // Core headers
-#include <core/types.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperationFactory.hh>
-#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
 #include <core/pack/palette/PackerPalette.hh>
 
 // Utility headers

@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -24,12 +22,13 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Basic/Utility Headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("DeNovoArchitectTests");
 

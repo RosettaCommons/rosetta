@@ -16,12 +16,11 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeConstraint.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
@@ -30,8 +29,6 @@
 
 //Auto Headers
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes

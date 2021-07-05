@@ -26,7 +26,6 @@
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
@@ -34,15 +33,11 @@
 // C++ Headers
 
 #include <utility/string_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/id/types.hh>
-#include <core/kinematics/Jump.hh>
 
 
 static basic::Tracer TR( "protocols.TaskOperations.RestrictResiduesToRepackingOperation" );

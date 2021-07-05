@@ -17,7 +17,7 @@
 /// Package headers
 #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/atom_tree_minimize.hh>
-#include <core/optimization/NumericalDerivCheckResult.hh>
+#include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 
 /// Project headers
 #include <basic/prof.hh>
@@ -25,7 +25,6 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/Ramachandran.hh>
@@ -38,7 +37,6 @@
 /// Utility headers
 #include <utility/string_util.hh>
 
-#include <utility/vector1.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>

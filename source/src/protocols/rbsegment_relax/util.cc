@@ -11,7 +11,6 @@
 /// @brief
 /// @author Frank DiMaio
 /// @author Srivatsan Raman
-#include <protocols/rbsegment_relax/RBSegmentMover.hh>
 #include <protocols/rbsegment_relax/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -23,40 +22,33 @@
 #include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 // Random number generator
-#include <numeric/xyzVector.io.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 
 #include <string>
 
 //Auto Headers
-#include <core/id/NamedAtomID.hh>
-#include <core/pose/variant_util.hh>
 #include <core/id/SequenceMapping.hh>
+
+#include <protocols/rbsegment_relax/RBSegment.hh> // AUTO IWYU For RBResidueRange, RBSegment, RB_lt
 
 
 namespace protocols {

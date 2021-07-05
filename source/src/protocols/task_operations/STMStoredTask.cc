@@ -14,14 +14,10 @@
 // Unit headers
 #include <protocols/task_operations/STMStoredTask.hh>
 
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
-#include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <core/chemical/ResidueConnection.hh>
+
+#include <core/pack/task/PackerTask.hh> // MANUAL IWYU
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

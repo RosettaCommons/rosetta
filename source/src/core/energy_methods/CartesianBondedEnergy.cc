@@ -22,27 +22,19 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/RestypeDestructionEvent.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/Element.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/AA.hh>
-#include <core/id/DOF_ID.hh>
+#include <core/id/DOF_ID.fwd.hh>
 #include <core/id/TorsionID.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/scoring/mm/MMBondAngleLibrary.hh>
-#include <core/scoring/mm/MMBondLengthLibrary.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -55,7 +47,6 @@
 #include <basic/database/open.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 
 // Numeric headers
@@ -64,14 +55,12 @@
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/deriv/distance_deriv.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
-#include <numeric/NumericTraits.hh>
 #include <numeric/angle.functions.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
 // options
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/optE.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 // C++ headers
@@ -84,6 +73,8 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <core/pose/PDBInfo.hh>
+
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh> // AUTO IWYU For CarbohydrateInfo
 
 // cutoff for reporting outliers
 constexpr int CUTOFF = -1;

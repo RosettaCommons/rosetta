@@ -21,7 +21,6 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -34,7 +33,6 @@
 //// C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

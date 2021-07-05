@@ -24,6 +24,8 @@
 #include <core/id/TorsionID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {

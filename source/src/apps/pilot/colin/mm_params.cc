@@ -20,10 +20,9 @@
 // Core Headers
 #include <devel/init.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/Atom.hh>
 
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>

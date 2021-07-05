@@ -17,7 +17,6 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

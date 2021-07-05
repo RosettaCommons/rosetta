@@ -20,15 +20,15 @@
 // Package headers
 #include <protocols/match/Matcher.hh>
 #include <protocols/match/MatcherTask.hh>
-#include <protocols/match/downstream/DownstreamBuilder.hh>
+#include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
 #include <protocols/match/output/DownstreamRMSEvaluator.hh>
 #include <protocols/match/output/MatchConsolidator.hh>
 #include <protocols/match/output/MatchOutputter.hh>
 #include <protocols/match/output/MatchProcessor.hh>
-#include <protocols/match/output/MatchEvaluator.hh>
-#include <protocols/match/output/MatchFilter.hh>
-#include <protocols/match/output/MatchGrouper.hh>
-#include <protocols/match/output/OutputWriter.hh>
+#include <protocols/match/output/MatchEvaluator.fwd.hh>
+#include <protocols/match/output/MatchFilter.fwd.hh>
+#include <protocols/match/output/MatchGrouper.fwd.hh>
+#include <protocols/match/output/OutputWriter.fwd.hh>
 #include <protocols/match/output/SameChiBinComboGrouper.hh>
 #include <protocols/match/output/SameRotamerComboGrouper.hh>
 #include <protocols/match/output/SameSequenceGrouper.hh>
@@ -54,14 +54,11 @@
 //#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <list>
 
-#include <utility/vector0.hh>
 
 
 namespace protocols {

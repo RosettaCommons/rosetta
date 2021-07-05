@@ -18,49 +18,31 @@
 #include <core/energy_methods/XtalMLEnergy.hh>
 
 // Unit headers
-#include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
 // Options
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/chemical/ChemicalManager.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 
 // Utility headers
-#include <basic/prof.hh>
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 
 // C++
-#include <iomanip>
 #include <string>
+
+#include <core/energy_methods/XtalMLEnergyCreator.hh> // AUTO IWYU For XtalMLEnergyCreator
 
 namespace core {
 namespace energy_methods {

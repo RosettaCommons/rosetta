@@ -15,7 +15,6 @@
 #include <core/select/util/burial_utilities.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 

@@ -17,12 +17,10 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/rings/RingConformer.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
 
 using namespace core;
 static basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerRingConformer" );

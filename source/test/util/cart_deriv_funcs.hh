@@ -14,6 +14,8 @@
 #ifndef INCLUDED_util_cart_deriv_funcs_HH
 #define INCLUDED_util_cart_deriv_funcs_HH
 
+#include <cxxtest/TestSuite.h>
+
 // Project headers
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
@@ -23,11 +25,8 @@
 #include <core/pose/init_id_map.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 #include <core/optimization/cartesian_minimize.hh>
 #include <core/optimization/CartesianMultifunc.hh>
@@ -37,7 +36,6 @@
 
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 
 // Basic headers

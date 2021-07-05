@@ -21,7 +21,6 @@
 #include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/AtomRefMapping.hh>
 
-#include <string>
 
 #include <rdkit/GraphMol/ROMol.h>
 

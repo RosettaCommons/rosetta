@@ -12,38 +12,26 @@
 /// @brief
 /// @author Tim Jacobs
 
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
 
 #include <protocols/features/helixAssembly/ConcurrencyTest.hh>
 
 //Core
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
 
 //Devel
-#include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
-#include <protocols/features/helixAssembly/HelicalFragment.hh>
 
 //Utility and basic
 #include <numeric/random/random.hh>
 #include <basic/database/sql_utils.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 //C++
 #include <string>
-#include <cmath>
 
 //External Headers
 #include <cppdb/frontend.h>
 
 //Basic
-#include <basic/Tracer.hh>
-#include <basic/options/util.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
@@ -51,6 +39,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/helixAssembly/ConcurrencyTestCreator.hh>
+
+#include <limits.h> // AUTO IWYU For INT_MAX
 
 namespace protocols {
 namespace features {

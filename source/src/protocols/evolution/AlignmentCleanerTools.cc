@@ -12,9 +12,8 @@
 
 #include <protocols/evolution/AlignmentCleanerTools.hh>
 #include <protocols/task_operations/ThreadSequenceOperation.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pose/symmetry/util.hh>

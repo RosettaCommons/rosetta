@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_denovo_design_filters_sspredictionfiltercreator_hh
 
 // Unit Headers
-#include <protocols/denovo_design/filters/SSPredictionFilter.fwd.hh>
 
 // Project headers
 #include <protocols/filters/Filter.fwd.hh>

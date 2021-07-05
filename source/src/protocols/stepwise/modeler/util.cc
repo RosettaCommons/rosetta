@@ -22,7 +22,6 @@
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -33,43 +32,30 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/init_id_map.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/methods/chainbreak_util.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzMatrix.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
-#include <utility/stream_util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <iostream>
 #include <fstream>
-#include <sstream>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 
 using namespace core;
 using namespace core::pose;

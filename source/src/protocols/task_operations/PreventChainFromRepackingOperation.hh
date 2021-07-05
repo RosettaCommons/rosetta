@@ -21,15 +21,13 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
 
 // C++ Headers
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

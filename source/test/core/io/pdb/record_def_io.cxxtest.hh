@@ -22,11 +22,9 @@
 #include <core/io/pdb/Field.hh>
 
 // Basic header
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 // C++ header
-#include <utility>
 #include <map>
 
 static basic::Tracer TR("core.io.pdb.record_def_io.cxxtest");

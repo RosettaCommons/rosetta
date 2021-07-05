@@ -8,21 +8,15 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
-#include <core/chemical/ChemicalManager.hh>
 
-#include <core/scoring/methods/EnergyMethod.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/energy_methods/SAXSEnergyCEN.hh>
 #include <core/energy_methods/SAXSEnergyFA.hh>
-#include <core/energy_methods/SAXSEnergyCreator.hh>
-#include <core/energy_methods/SAXSEnergyCreatorFA.hh>
 
 
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 
 #include <utility/excn/Exceptions.hh>

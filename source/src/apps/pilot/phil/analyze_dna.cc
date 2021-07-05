@@ -16,9 +16,7 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <core/scoring/dna/setup.hh>
-#include <core/scoring/dna/base_geometry.hh>
 #include <utility/excn/Exceptions.hh>
-#include <core/scoring/func/Func.hh>
 
 #include <protocols/dna/util.hh>
 
@@ -29,12 +27,9 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 
 
-#include <numeric/random/random.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 
 
 // // C++ headers
@@ -51,8 +46,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/scoring/constraints/Constraint.hh>
 
 
 using basic::Error;

@@ -20,10 +20,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <map>
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -20,10 +20,11 @@
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSelection.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/modeler/output_util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
+
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionCOP
 
 namespace protocols {
 namespace stepwise {

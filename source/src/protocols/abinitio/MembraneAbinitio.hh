@@ -34,7 +34,7 @@
 #include <core/scoring/MembranePotential.fwd.hh>
 
 #include <protocols/abinitio/Protocol.hh>
-#include <protocols/moves/TrialMover.hh>
+#include <protocols/moves/TrialMover.fwd.hh>
 
 #include <protocols/checkpoint/CheckPointer.hh>
 
@@ -42,8 +42,7 @@
 #include <string>
 
 #include <core/fragment/FragSet.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <utility/vector1.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 
 
 namespace protocols {

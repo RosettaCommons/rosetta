@@ -22,27 +22,13 @@
 // Unit headers
 #include <core/scoring/EnergyMap.hh>
 
-#include <test/UTracer.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
 #include <iostream>
-#include <limits>
-#include <sstream>
-#include <vector>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Error, Tracer, Warning
 
 
 using basic::Error;

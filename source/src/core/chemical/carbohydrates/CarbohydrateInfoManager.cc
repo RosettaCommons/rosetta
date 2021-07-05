@@ -17,17 +17,12 @@
 #include <core/chemical/carbohydrates/database_io.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
-#include <utility/io/util.hh>
 #include <utility/exit.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/Citation.fwd.hh>
 
 // C++ header
 #include <map>

@@ -32,7 +32,7 @@
 #include <core/chemical/RestypeDestructionEvent.fwd.hh>
 
 // Utility headers
-#include <numeric/interpolation/Histogram.hh>
+#include <numeric/interpolation/Histogram.fwd.hh>
 
 // C++ headers
 #include <map>

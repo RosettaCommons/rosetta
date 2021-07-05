@@ -15,14 +15,12 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/types.hh>
-#include <utility/graph/Graph.hh>
-#include <core/scoring/EnergyGraph.hh>
 
 // C++ headers, for debugging your tests
-#include <sstream>
 
 #ifdef SERIALIZATION
+#include <core/scoring/EnergyGraph.hh>
+
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

@@ -21,7 +21,6 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/sequence/util.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <protocols/pose_creation/ExtendedPoseMover.hh>
 
 // Utility headers
@@ -36,7 +35,9 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
+
 
 
 static basic::Tracer tr( "protocols.comparative_modeling.GenericJobInputter" );

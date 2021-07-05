@@ -25,21 +25,18 @@
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Project Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
 // Utility Headers
-#include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
@@ -51,11 +48,10 @@
 #include <basic/Tracer.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
 
 
 namespace protocols {

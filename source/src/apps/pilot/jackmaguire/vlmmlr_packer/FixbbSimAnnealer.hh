@@ -15,18 +15,15 @@
 #define INCLUDED_core_pack_annealer_FixbbSimAnnealer_jackmaguire_hh
 
 // Unit Headers
-#include <core/pack/annealer/FixbbSimAnnealer.fwd.hh>
 
 // Package Headers
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
-#include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
 // Utility headers
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>

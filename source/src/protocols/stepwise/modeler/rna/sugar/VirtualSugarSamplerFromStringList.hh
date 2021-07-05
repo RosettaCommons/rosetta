@@ -23,6 +23,8 @@
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {

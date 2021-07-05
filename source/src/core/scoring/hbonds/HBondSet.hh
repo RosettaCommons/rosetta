@@ -38,7 +38,6 @@
 #include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
 // C++
 #include <map> // what is the right header for std::pair ?

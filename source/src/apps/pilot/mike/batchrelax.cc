@@ -12,34 +12,26 @@
 
 
 // libRosetta headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/frag_picker/VallChunk.hh>
+#include <protocols/jd2/JobDistributor.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/rms_util.hh>
 
 #include <devel/init.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/match/Hit.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 
@@ -57,8 +49,6 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/batch_relax.OptionKeys.gen.hh>
 
-#include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "main" );

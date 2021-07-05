@@ -43,7 +43,6 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 #include <map>
 

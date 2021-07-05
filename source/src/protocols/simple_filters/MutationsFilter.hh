@@ -20,11 +20,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_filters/MutationsFilter.fwd.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/vector1.hh>
 #include <string>
 #include <map>
 

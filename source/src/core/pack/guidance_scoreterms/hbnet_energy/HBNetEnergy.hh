@@ -23,7 +23,7 @@
 
 // Package headers
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
@@ -31,14 +31,12 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/chemical/ResidueProperty.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
 // Utility headers
 
 // Project headers
 #include <core/types.hh>
-#include <map>
 #include <string>
 #include <utility/vector1.hh>
 

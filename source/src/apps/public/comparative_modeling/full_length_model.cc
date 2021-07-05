@@ -21,7 +21,6 @@
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/SWAligner.hh>
 #include <core/sequence/NWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
@@ -35,22 +34,19 @@
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
 #include <protocols/relax/MiniRelax.hh>
 
 #include <protocols/loops/loops_main.hh>
-#include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
 #include <protocols/comparative_modeling/StealSideChainsMover.hh>
 #include <protocols/comparative_modeling/RecoverSideChainsMover.hh>

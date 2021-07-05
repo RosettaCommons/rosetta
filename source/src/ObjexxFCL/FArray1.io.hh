@@ -16,14 +16,12 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1.hh>
+#include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/TypeTraits.hh>
 
 // C++ Headers
-#include <cstddef>
 #include <iomanip>
 #include <istream>
-#include <ostream>
 
 
 namespace ObjexxFCL {

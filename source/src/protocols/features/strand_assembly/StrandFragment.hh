@@ -14,17 +14,15 @@
 #ifndef INCLUDED_protocols_features_strand_assembly_STRANDFRAGMENT_HH
 #define INCLUDED_protocols_features_strand_assembly_STRANDFRAGMENT_HH
 
+#include <protocols/features/strand_assembly/StrandFragment.fwd.hh>
+
 //Core
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 
 //Utility
-#include <utility/vector1.fwd.hh>
 
 //C++ Headers
 #include <string>
-#include <vector>
-#include <map>
 
 namespace protocols {
 namespace features {

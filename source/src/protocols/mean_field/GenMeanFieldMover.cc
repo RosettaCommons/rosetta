@@ -19,11 +19,7 @@
 #include <protocols/mean_field/FlexBBDesignMeanField.hh>
 #include <protocols/mean_field/RotMatrix.hh>
 #include <protocols/mean_field/MeanFieldFactory.hh>
-#include <protocols/mean_field/AAProb.hh>
-#include <protocols/mean_field/RotProb.hh>
-#include <protocols/mean_field/jagged_array.functions.hh>
 #include <protocols/mean_field/AAMatrix.hh>
-#include <protocols/mean_field/ResHashMap.hh>
 
 // Project Headers
 #include <core/pack/task/PackerTask.hh>
@@ -32,10 +28,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
@@ -45,15 +39,11 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <cmath>
-#include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/file/FileName.hh>
-#include <utility/vector0.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/io/izstream.hh>
 
 // option keys
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mean_field.OptionKeys.gen.hh>
 #include <basic/options/option.hh>

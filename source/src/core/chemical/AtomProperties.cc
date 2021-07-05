@@ -25,7 +25,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <map>
 #include <iostream>
 
 

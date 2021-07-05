@@ -26,52 +26,38 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 
-#include <protocols/backrub/BackrubMover.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/PackerTask_.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/residue_selector/ClashBasedShellSelector.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/pack/task/operation/OperateOnResidueSubset.hh>
+#include <core/pack/task/operation/ResLvlTaskOperations.fwd.hh>
+#include <core/pack/task/operation/OperateOnResidueSubset.fwd.hh>
 #include <protocols/minimization_packing/BoltzmannRotamerMover.hh>
 
 // For fixing up the neighborhood
-#include <protocols/minimization_packing/MinPackMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Parser headers
-#include <basic/datacache/DataMap.hh>
-#include <utility/tag/Tag.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
-#include <numeric/angle.functions.hh>
-#include <numeric/conversions.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/xyz.functions.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/rigid/RigidBodyMover.hh> // AUTO IWYU For RigidBodyPerturbMover
+#include <protocols/simple_moves/ShortBackrubMover.hh> // AUTO IWYU For ShortBackrubMover
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 

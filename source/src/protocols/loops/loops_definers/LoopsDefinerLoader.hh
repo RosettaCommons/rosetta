@@ -17,8 +17,9 @@
 // Package Headers
 #include <protocols/parser/DataLoader.hh>
 
-#include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <string>
 
 namespace protocols {
 namespace loops {

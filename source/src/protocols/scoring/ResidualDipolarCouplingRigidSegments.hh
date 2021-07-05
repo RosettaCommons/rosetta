@@ -16,10 +16,8 @@
 
 #include <protocols/scoring/ResidualDipolarCouplingRigidSegments.fwd.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 #include <basic/datacache/CacheableData.hh>
-#include <numeric/numeric.functions.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ResidualDipolarCoupling.hh>

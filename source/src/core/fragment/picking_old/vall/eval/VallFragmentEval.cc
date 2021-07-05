@@ -18,7 +18,6 @@
 #include <core/fragment/picking_old/vall/scores/VallFragmentScore.hh>
 
 #include <core/fragment/picking_old/concepts/Extent.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

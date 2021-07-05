@@ -15,7 +15,6 @@
 
 #include <core/scoring/func/TopOutFunc.hh>
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
 
 #include <cmath>
 #include <sstream>

@@ -23,15 +23,14 @@
 // Package Headers
 
 // Project Headers
-#include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/JumpSRFD.hh>
 #include <core/fragment/JumpingFrame.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>

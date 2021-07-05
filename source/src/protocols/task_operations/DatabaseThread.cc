@@ -21,7 +21,6 @@
 #include <core/pose/Pose.hh>
 #include <utility/string_util.hh>
 
-#include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -35,7 +34,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <numeric/random/random.hh>
-#include <utility/vector0.hh>
 
 
 static basic::Tracer TR( "protocols.TaskOperations.DatabaseThread" );

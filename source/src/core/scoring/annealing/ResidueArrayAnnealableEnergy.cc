@@ -12,7 +12,6 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
-#include <core/types.hh>
 
 namespace core {
 namespace scoring {

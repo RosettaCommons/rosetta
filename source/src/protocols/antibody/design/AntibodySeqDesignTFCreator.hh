@@ -23,9 +23,8 @@
 #include <protocols/antibody/design/CDRSeqDesignOptions.fwd.hh>
 #include <protocols/antibody/task_operations/AddCDRProfilesOperation.fwd.hh>
 #include <protocols/task_operations/ConservativeDesignOperation.fwd.hh>
-#include <protocols/task_operations/ResidueProbDesignOperation.fwd.hh>
 
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -36,6 +35,8 @@
 #include <utility/vector1.hh>
 
 #include <map>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
 
 namespace protocols {
 namespace antibody {

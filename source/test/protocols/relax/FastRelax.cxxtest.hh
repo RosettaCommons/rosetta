@@ -30,11 +30,10 @@
 #include <core/chemical/ResidueType.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/parser/ScoreFunctionLoader.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 static basic::Tracer TR( "FastRelaxTests" );

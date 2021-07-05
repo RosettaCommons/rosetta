@@ -16,7 +16,6 @@
 #include <protocols/sewing/hashing/Hasher.hh>
 #include <protocols/sewing/data_storage/SmartSegment.hh>
 #include <basic/Tracer.hh>
-#include <utility/io/izstream.hh>
 static basic::Tracer TR( "protocols.sewing.hashing.AlignmentGenerator" );
 
 

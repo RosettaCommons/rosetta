@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_canonical_sampling_MultiTemperatureTrialCounter_hh
 
 // Unit Headers
-#include <protocols/canonical_sampling/TemperatureController.hh>
+#include <protocols/canonical_sampling/TemperatureController.fwd.hh>
 #include <protocols/moves/TrialCounter.hh>
 
 // Utility Headers

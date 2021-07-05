@@ -56,7 +56,6 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -84,7 +83,6 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 
 
-#include <protocols/rigid/RB_geometry.hh>
 
 
 #include <basic/options/option.hh>
@@ -101,23 +99,21 @@
 // Utility headers
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
 
 // C++ headers
 #include <iostream>
 #include <string>
-#include <sstream>
 
-#include <utility/vector0.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <protocols/loops/Loops.fwd.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 // Namespaces
 using namespace core;

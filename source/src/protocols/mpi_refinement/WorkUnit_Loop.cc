@@ -11,31 +11,19 @@
 /// @brief
 /// @author Hahnbeom Park: Generalized as a "Sampler" from "Loop Hasher"
 
-#include <protocols/mpi_refinement/WorkUnit_Sampler.hh>
 #include <protocols/mpi_refinement/WorkUnit_Loop.hh>
 #include <protocols/mpi_refinement/util.hh>
-#include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueSpanSelector.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
@@ -50,7 +38,6 @@
 #include <core/scoring/constraints/util.hh>
 
 #include <core/fragment/FragmentIO.hh>
-#include <protocols/loops/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // for LoopHash
@@ -59,14 +46,12 @@
 
 // for FragInsert
 #include <protocols/hybridization/CartesianSampler.hh>
-#include <core/pose/selection.hh>
 
 // for PartialAbinitio
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/hybridization/FoldTreeHybridize.hh>
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.hh>
 #include <protocols/hybridization/AllResiduesChanged.hh>
 
@@ -77,12 +62,19 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <numeric/random/random.hh>
 
 //Auto Headers
-#include <ObjexxFCL/string.functions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility> //for std::pair
+
+
+#include <protocols/hybridization/WeightedFragmentTrialMover.hh> // AUTO IWYU For WeightedFragmentTrialMover
+#include <protocols/loophash/LoopHashLibrary.hh> // AUTO IWYU For LoopHashLibrary
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> // AUTO IWYU For SwitchResidueTypeSetMover
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
+#include <core/scoring/rms_util.hh> // AUTO IWYU For CA_rmsd
+#include <numeric/numeric.functions.hh> // AUTO IWYU For mod
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

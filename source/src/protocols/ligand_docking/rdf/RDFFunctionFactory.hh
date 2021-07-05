@@ -23,9 +23,6 @@
 #include <protocols/ligand_docking/rdf/RDFFunctionCreator.fwd.hh>
 
 // Platform Headers
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>

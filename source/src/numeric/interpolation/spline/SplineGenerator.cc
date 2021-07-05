@@ -18,7 +18,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 #include <algorithm>
-#include <iostream>
 
 namespace numeric {
 namespace interpolation {

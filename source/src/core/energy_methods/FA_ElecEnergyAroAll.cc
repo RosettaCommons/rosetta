@@ -25,7 +25,6 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/RotamerSetBase.hh>
 

@@ -30,7 +30,6 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers

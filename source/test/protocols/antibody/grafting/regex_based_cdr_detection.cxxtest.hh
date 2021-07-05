@@ -25,6 +25,8 @@
 
 #include <fstream>
 
+#include <protocols/antibody/grafting/chothia_numberer.hh> // AUTO IWYU For AntibodyNumbering, AntibodyChainNumbering
+
 static basic::Tracer TR("protocols.antibody.grafting.regex_based_cdr_detection.cxxtest");
 
 using std::string;

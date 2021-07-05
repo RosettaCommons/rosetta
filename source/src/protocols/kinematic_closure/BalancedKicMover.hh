@@ -20,8 +20,7 @@
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/id/TorsionID_Range.hh>
+#include <core/id/TorsionID_Range.fwd.hh>
 
 // Protocol headers
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>

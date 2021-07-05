@@ -8,104 +8,45 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/util.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/kinematics/Edge.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/pack/min_pack.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/io/CrystInfo.hh>
-#include <core/pose/motif/reference_frames.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/Remarks.hh>
-#include <core/pose/util.hh>
-#include <core/pose/selection.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/MinimizationGraph.hh>
-#include <core/scoring/sasa.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/vdwaals/VDW_Energy.hh>
 #include <core/types.hh>
 #include <devel/init.hh>
 
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/SilentFileJobOutputter.hh>
-#include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/mpistream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
+#include <utility/file/FileName.fwd.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/fourier/FFT.hh>
-#include <numeric/constants.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
 // option includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core;
@@ -133,7 +74,6 @@ void
 get_interface_residues( core::pose::Pose & pose, utility::vector1< bool > &interface, core::Real K, bool proteindna = false) {
 	using namespace core;
 	using namespace core::scoring;
-	using namespace core::conformation::symmetry;
 
 	core::Real b=0.28;
 

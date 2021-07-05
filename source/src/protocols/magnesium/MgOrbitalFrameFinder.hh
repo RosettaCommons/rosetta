@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/magnesium/MgOrbitalFrameFinder.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 #include <numeric/UniformRotationSampler.fwd.hh>
 #include <numeric/xyzMatrix.fwd.hh>

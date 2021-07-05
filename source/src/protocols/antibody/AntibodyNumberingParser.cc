@@ -19,9 +19,7 @@
 #include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <iostream>
 #include <fstream>
-#include <boost/algorithm/string.hpp>
 
 #include <sstream>
 

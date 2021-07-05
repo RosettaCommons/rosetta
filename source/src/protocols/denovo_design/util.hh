@@ -42,7 +42,6 @@
 
 // C++ Headers
 #include <set>
-#include <list>
 #include <map>
 
 namespace protocols {

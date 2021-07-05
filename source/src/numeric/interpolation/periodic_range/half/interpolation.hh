@@ -27,12 +27,10 @@
 
 // Package headers
 #include <numeric/numeric.functions.hh>
-#include <numeric/NumericTraits.hh>
 #include <numeric/interpolation/interpolation.hh>
 
 // C++ headers
 #include <utility/assert.hh>
-#include <cmath>
 
 
 namespace numeric {

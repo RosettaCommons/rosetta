@@ -15,19 +15,13 @@
 
 //TODO add stat calc for bb orbitals and orbital-orbital interactions
 
-#include <basic/options/util.hh>
 #include <devel/init.hh>
 
 
-#include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <map>
 
-#include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
@@ -36,7 +30,6 @@
 #include <core/scoring/orbitals/OrbitalsStatistics.hh>
 
 #include <numeric/histograms/TwoDHistogram.hh>
-#include <core/chemical/orbitals/OrbitalType.hh>
 
 #include <utility/file/FileName.hh>
 

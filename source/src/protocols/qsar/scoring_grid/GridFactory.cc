@@ -11,7 +11,6 @@
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
-#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 
 //#include <protocols/qsar/qsarTypeManager.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
@@ -19,11 +18,10 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
+
+#include <protocols/qsar/scoring_grid/GridBase.hh> // AUTO IWYU For GridBase
 
 // Boost headers
 

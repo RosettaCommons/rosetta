@@ -20,13 +20,11 @@
 
 #include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

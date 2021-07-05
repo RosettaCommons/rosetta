@@ -32,8 +32,9 @@
 #include <core/id/DOF_ID.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/fixedsizearray1.fwd.hh>
+#include <utility/fixedsizearray1.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace stepwise {

@@ -24,7 +24,6 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
 

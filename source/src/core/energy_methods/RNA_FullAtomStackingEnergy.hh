@@ -28,7 +28,6 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
-#include <boost/unordered_map.hpp>
 
 
 namespace core {

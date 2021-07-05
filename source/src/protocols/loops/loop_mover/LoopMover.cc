@@ -44,7 +44,6 @@
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

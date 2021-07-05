@@ -18,14 +18,13 @@
 // Package headers
 #include <protocols/match/Hit.hh>
 #include <protocols/match/Matcher.hh>
-#include <protocols/match/upstream/ScaffoldBuildPoint.hh>
+#include <protocols/match/upstream/ScaffoldBuildPoint.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
 
 // Utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers

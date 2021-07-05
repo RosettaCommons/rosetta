@@ -8,12 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 #include <core/chemical/Elements.hh>
-#include <ostream>
 #include <map>
 #include <string>
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
-#include <utility/thread/backwards_thread_local.hh>
 
 namespace core {
 namespace chemical {

@@ -16,13 +16,10 @@
 
 // Package Headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
 //#include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.fwd.hh>
 
 //#include <core/conformation/membrane/MembraneInfo.hh>
 //#include <core/conformation/membrane/util.hh>
@@ -30,7 +27,6 @@
 //#include <core/conformation/membrane/Span.hh>
 //#include <protocols/membrane/util.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/membrane/MPLipidAccessibility.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
@@ -59,8 +55,6 @@
 //#include <core/membrane/hull.hh>
 
 // C++ headers
-#include <iostream>
-#include <cstdlib>
 
 static basic::Tracer TR( "apps.pilot.jkleman.mp_lipid_acc" );
 

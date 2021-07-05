@@ -17,7 +17,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <cmath>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <ObjexxFCL/format.hh>

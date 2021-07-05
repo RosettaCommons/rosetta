@@ -16,10 +16,9 @@
 #include <protocols/cyclic_peptide/RamaMutationSelectorCreator.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh> // for xml schema utility functions
 
 // Project headers
@@ -27,7 +26,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/RamaPrePro.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/conformation/Residue.hh>
 
@@ -40,7 +39,6 @@
 #include <numeric/angle.functions.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

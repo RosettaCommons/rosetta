@@ -18,12 +18,11 @@
 #include <protocols/metal_interface/AddZincSiteConstraints.fwd.hh>
 #include <protocols/metal_interface/MetalSiteResidue.fwd.hh>
 
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
+#include <core/scoring/constraints/AngleConstraint.fwd.hh>
+#include <core/scoring/constraints/DihedralConstraint.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 

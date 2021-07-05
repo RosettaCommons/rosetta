@@ -16,27 +16,19 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 
-#include <core/pose/Pose.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
 
 
-#include <numeric/random/random.hh>
 
 #include <core/io/ddg/PositionDdGInfo.hh>
 
 #include <utility/exit.hh>
-#include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 
 // C++ headers
 #include <cstdlib>
-#include <fstream>
-#include <iostream>
 #include <string>
 
 #include <utility/vector1.hh>

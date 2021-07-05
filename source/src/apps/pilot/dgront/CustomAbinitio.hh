@@ -12,8 +12,6 @@
 
 // Unit Headers
 #include <protocols/abinitio/ClassicAbinitio.hh>
-#include <basic/Tracer.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include "ApplicationContext.hh"

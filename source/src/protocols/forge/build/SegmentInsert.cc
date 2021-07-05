@@ -20,7 +20,7 @@
 #include <protocols/forge/methods/util.hh>
 
 // project headers
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 
@@ -29,9 +29,7 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/util.hh>
 #include <core/kinematics/constants.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
@@ -44,6 +42,8 @@
 #include <utility/vector1.hh>
 
 #include <algorithm>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D
 
 
 namespace protocols {

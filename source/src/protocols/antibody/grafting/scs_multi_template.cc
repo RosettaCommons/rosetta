@@ -16,7 +16,6 @@
 
 #ifdef __ANTIBODY_GRAFTING__
 
-#include <basic/Tracer.hh>
 
 #include <utility/pointer/memory.hh>
 

@@ -17,7 +17,6 @@
 #include <basic/Tracer.hh>
 
 // Utility includes
-#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "protocols.helical_bundle_predict.HBP_TemperatureScheduleGenerator" );
 

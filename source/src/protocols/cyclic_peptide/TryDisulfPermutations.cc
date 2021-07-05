@@ -21,12 +21,10 @@
 #include <protocols/cyclic_peptide/TryDisulfPermutationsCreator.hh>
 #include <utility/tag/Tag.hh>
 
-#include <numeric/constants.hh>
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 #include <core/conformation/Residue.hh>

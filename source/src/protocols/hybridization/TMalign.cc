@@ -28,7 +28,6 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>

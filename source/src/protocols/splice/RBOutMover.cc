@@ -15,7 +15,6 @@
 #include <protocols/splice/RBOutMoverCreator.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/tag/Tag.hh>
 
@@ -24,11 +23,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <core/sequence/SequenceProfile.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/simple_moves/CutChainMover.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <fstream>
 #include <algorithm>
 #include <vector>
@@ -37,7 +33,8 @@
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/toolbox/superimpose.hh>
 #include <protocols/splice/util.hh>
-#include <algorithm>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
 

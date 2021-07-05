@@ -18,7 +18,6 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
 
@@ -29,7 +28,6 @@
 
 // utility headers
 #include <basic/database/open.hh>
-#include <utility>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/string.functions.hh>

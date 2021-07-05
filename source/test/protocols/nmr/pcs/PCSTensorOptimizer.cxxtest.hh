@@ -18,12 +18,9 @@
 
 // Unit headers
 #include <core/scoring/nmr/pcs/PCSSingleSet.hh>
-#include <core/scoring/nmr/pcs/PCSSingle.hh>
-#include <core/scoring/nmr/pcs/PCSMultiSet.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
 #include <protocols/nmr/pcs/PCSTensorOptimizer.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -38,7 +35,6 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -47,10 +43,7 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
 #include <iostream>
-#include <iomanip>
-#include <utility>
 
 static basic::Tracer TR("protocols.nmr.pcs.PCSTensorOptimizer.cxxtest");
 
@@ -63,7 +56,6 @@ private:
 public:
 	/// @brief Setup Test
 	void setUp() {
-		using namespace core::io::nmr;
 		using namespace core::scoring::nmr::pcs;
 
 		// Initialize core & options system

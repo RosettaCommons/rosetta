@@ -13,7 +13,6 @@
 
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <protocols/recon_design/FindConsensusSequence.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -21,7 +20,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/conformation/Residue.hh>
 

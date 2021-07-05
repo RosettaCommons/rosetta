@@ -18,24 +18,19 @@
 
 // Package headers
 #include <protocols/jd3/chunk_library_inputters/ChunkLibraryInputSource.hh>
-#include <protocols/jd3/chunk_library_inputters/ChunkLibraryInputterFactory.hh>
 #include <protocols/jd3/chunk_library_inputters/chunk_library_inputter_schemas.hh>
 
 #include <core/import_pose/RNA_DeNovoSetup.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose_options.hh>
 #include <protocols/jd2/util.hh>
 
 //utility headers
-#include <utility/assert.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/tag/Tag.hh>

@@ -18,14 +18,14 @@
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/func/FuncFactory.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <basic/prof.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/func/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 

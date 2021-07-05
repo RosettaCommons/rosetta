@@ -30,7 +30,7 @@
 
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
@@ -56,11 +56,11 @@
 
 #include <protocols/docking/DockTaskFactory.hh>
 #include <utility/exit.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/moves/MonteCarlo.hh> // AUTO IWYU For MonteCarlo, MonteCarlo::Pose
 
 
 

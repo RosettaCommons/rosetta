@@ -15,7 +15,7 @@
 #include <protocols/jd3/job_results/PoseJobResult.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.hh> // DO NOT AUTO-REMOVE (needed for type traits)
 
 
 #ifdef    SERIALIZATION

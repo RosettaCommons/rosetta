@@ -16,10 +16,7 @@
 
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/rosetta_scripts/PosePropertyReporter.fwd.hh>
-#include <protocols/rosetta_scripts/PosePropertyReporter.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
@@ -28,6 +25,8 @@
 
 // C++ Headers
 #include <string>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For PoseOP
 
 
 namespace protocols {

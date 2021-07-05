@@ -16,7 +16,6 @@
 // numeric headers
 #include <numeric/random/random.hh>
 
-#include <utility/vector1.hh>
 
 // utility headers
 // ObjexxFCL headers

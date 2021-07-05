@@ -24,7 +24,6 @@
 #include <core/types.hh>
 
 // Utility header
-#include <utility/vector1.hh>
 
 // C++ headers
 

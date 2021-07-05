@@ -19,16 +19,12 @@
 #include <protocols/kinematic_closure/solution_pickers/SolutionPicker.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 
 // Protocol headers
-#include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
 
 // Utility headers
-#include <boost/noncopyable.hpp>
-#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace kinematic_closure {

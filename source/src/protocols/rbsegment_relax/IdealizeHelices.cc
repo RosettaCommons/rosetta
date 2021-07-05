@@ -15,57 +15,48 @@
 #include <protocols/rbsegment_relax/IdealizeHelices.hh>
 #include <protocols/rbsegment_relax/IdealizeHelicesCreator.hh>
 
-#include <protocols/loops/loops_main.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/io/Remarks.hh>
 #include <core/pose/util.hh>
 
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/symmetry/SetupNCSMover.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/CartesianMinimizer.hh>
 
 #include <numeric/random/random.hh>
 
-#include <protocols/hybridization/util.hh>
 #include <protocols/loops/util.hh>
-#include <protocols/moves/DsspMover.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
 #include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
-#include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/model_quality/rms.hh>
 
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/loops/Loops.hh> // AUTO IWYU For Loops
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A::IR, FArray1A, FArray1A<>::size_type
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D::IR
+#include <ObjexxFCL/FArray2A.hh> // AUTO IWYU For FArray2A::IR, FArray2A, FArray2A<>::size_type
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D::IR
 
 
 

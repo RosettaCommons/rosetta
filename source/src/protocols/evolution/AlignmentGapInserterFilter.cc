@@ -18,31 +18,16 @@
 #include <utility/tag/Tag.hh>
 #include <map>
 #include <algorithm>
-#include <numeric>
-#include <iterator>
 #include <fstream>
-#include <iostream>
-#include <boost/algorithm/string.hpp>
 #include <string>
 
 
 //Project Headers
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/sequence/util.hh>
-#include <core/sequence/SequenceAlignment.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/task_operations/ThreadSequenceOperation.hh>
 #include <protocols/evolution/AlignmentCleanerTools.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -59,6 +44,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/sequence/Sequence.hh> // AUTO IWYU For Sequence
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace protocols {
 namespace evolution {

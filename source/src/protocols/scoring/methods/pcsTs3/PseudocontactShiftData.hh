@@ -33,8 +33,8 @@
 #include <protocols/scoring/methods/pcsTs3/PseudocontactShiftData.fwd.hh>
 
 // Package headers
-#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.fwd.hh>
 #include <protocols/scoring/methods/pcsTs3/PseudocontactShiftTensor.fwd.hh>
+#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.hh>
 
 // Project headers
 #include <basic/datacache/CacheableData.hh>

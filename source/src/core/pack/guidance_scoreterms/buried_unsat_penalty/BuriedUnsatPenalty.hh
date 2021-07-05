@@ -28,16 +28,13 @@
 
 // Package headers
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/chemical/ResidueProperty.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
@@ -45,12 +42,11 @@
 
 // Project headers
 #include <core/types.hh>
-#include <map>
-#include <string>
 #include <utility/vector1.hh>
 
-// Forward declarations for friendship:
-#include <core/pack/guidance_scoreterms/buried_unsat_penalty/BuriedUnsatPenaltyTests.fwd.hh>
+// Forward declarations of test classes for friendship:
+class BuriedUnsatPenaltyTests;
+class BuriedUnsatPenaltySymmetricTests;
 
 namespace core {
 namespace pack {

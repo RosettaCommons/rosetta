@@ -19,7 +19,6 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // for parsing
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
 //#include <core/conformation/Interface.hh>

@@ -16,13 +16,11 @@
 #include <protocols/match/output/SameChiBinComboGrouper.hh>
 
 // Package headers
-#include <protocols/match/output/MatchGrouper.hh>
 #include <protocols/match/output/UpstreamHitCacher.hh>
 #include <protocols/match/Hit.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 

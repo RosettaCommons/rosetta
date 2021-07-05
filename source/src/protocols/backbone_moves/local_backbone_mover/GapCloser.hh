@@ -22,12 +22,13 @@
 #include <protocols/backbone_moves/local_backbone_mover/gap_solution_pickers/GapSolutionPicker.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
+
+class LocalBackboneMoverTests; // Forward declaration of test class for friendship
 
 namespace protocols {
 namespace backbone_moves {

@@ -17,7 +17,6 @@
 // Project headers
 #include <core/pose/Pose.hh>  // #INCLUDING POSE.HH IN CC FILES ONLY
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

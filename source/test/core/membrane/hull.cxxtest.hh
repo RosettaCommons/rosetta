@@ -20,18 +20,15 @@
 
 // Package Headers
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <core/conformation/membrane/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <string>
-#include <cmath>
+
+#include <numeric/xyzVector.hh> // MANUAL IWYU
 
 static basic::Tracer TR("core.membrane.hull.cxxtest");
 

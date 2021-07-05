@@ -26,7 +26,6 @@ CA  5 CA 71 HARMONIC 4.68 2.0
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -36,11 +35,9 @@ CA  5 CA 71 HARMONIC 4.68 2.0
 #include <core/id/AtomID.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <numeric/model_quality/rms.hh>
 
 #include <utility>
-#include <utility/string_util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -49,11 +46,12 @@ CA  5 CA 71 HARMONIC 4.68 2.0
 #include <core/id/SequenceMapping.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
+
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D::IR
 
 
 static basic::Tracer tr( "protocols.constraints_additional.BindingSiteConstraint" );

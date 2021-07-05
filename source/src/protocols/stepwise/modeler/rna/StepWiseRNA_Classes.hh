@@ -17,19 +17,12 @@
 #ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_Classes_HH
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_Classes_HH
 
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.fwd.hh>
 
-#include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
 #include <core/id/TorsionID.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
-#include <utility/vector1.hh>
-#include <protocols/moves/Mover.hh>
 #include <string>
-#include <map>
-#include <utility/exit.hh> //April 29, 2011
 
 
 #define O3I_C5I_PLUS_TWO_MAX_DIST 11.4226  //See ~/minirosetta/04_2010_Early_RUN/test/Apr_9_calculate_theortical_RNA_distance_O3i_C5iplus2/140_220 for detail.

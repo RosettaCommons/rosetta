@@ -23,10 +23,10 @@
 
 // Project headers
 #include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/MonteCarlo.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 
 // Basic headers
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
@@ -35,7 +35,6 @@
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 
 static basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopRefineInnerCycle" );
 using namespace core;

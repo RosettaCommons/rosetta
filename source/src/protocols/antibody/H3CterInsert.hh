@@ -22,7 +22,6 @@
 #include <protocols/antibody/H3CterInsert.fwd.hh>
 #include <core/fragment/FragData.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
-#include <protocols/loops/Loop.hh>
 #include <protocols/moves/Mover.hh>
 
 

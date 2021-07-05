@@ -26,7 +26,6 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/scoring/PolymerBondedEnergyContainer.hh>
 
-#include <utility/exit.hh>
 
 
 // option key includes

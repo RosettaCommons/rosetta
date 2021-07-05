@@ -17,45 +17,19 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/rigid_body/util.hh>
 #include <protocols/stepwise/sampler/rna/RNA_NucleosideStepWiseSampler.hh>
-#include <protocols/stepwise/modeler/output_util.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/util.hh>
-#include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/toolbox/rigid_body/util.hh>
-#include <protocols/stepwise/sampler/rigid_body/EulerAngles.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/id/TorsionID.hh>
 //////////////////////////////////
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/util.hh>
-#include <set>
-#include <numeric/conversions.hh>
-#include <numeric/NumericTraits.hh>
-#include <iostream>
 #include <fstream>
-#include <sstream>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <core/scoring/ScoreFunction.hh>
+
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> // AUTO IWYU For O3I_C5I_PLUS_ONE_MAX_DIST
+#include <protocols/stepwise/modeler/rna/rigid_body/FloatingBaseClasses.hh> // AUTO IWYU For compare_int_pair, BaseBin
+#include <iomanip> // AUTO IWYU For operator<<, setw, _Setw
 
 
 using namespace core;

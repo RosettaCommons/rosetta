@@ -20,26 +20,21 @@
 #include <core/scoring/nmr/rdc/RDCMultiSet.fwd.hh>
 
 // Package headers
-#include <core/io/nmr/AtomSelection.fwd.hh>
 #include <core/scoring/nmr/rdc/RDCSingleSet.fwd.hh>
 #include <core/scoring/nmr/rdc/RDCTensor.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
-#include <basic/svd/SVD_Solver.hh>
+#include <basic/svd/SVD_Solver.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -48,6 +43,8 @@
 // C++ headers
 #include <iosfwd>
 #include <string>
+
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For Matrix, NMR_VALUE_AVERAGING_TYPE, RDC_NORM_TYPE
 
 namespace core {
 namespace scoring {

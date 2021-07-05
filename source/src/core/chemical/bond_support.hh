@@ -16,7 +16,6 @@
 #ifndef INCLUDED_core_chemical_bond_support_hh
 #define INCLUDED_core_chemical_bond_support_hh
 
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>

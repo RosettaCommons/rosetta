@@ -19,14 +19,13 @@
 #include <protocols/denovo_design/architects/DeNovoArchitect.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/StructureData.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 
+#include <protocols/denovo_design/components/Segment.fwd.hh> // AUTO IWYU For SegmentCOPs
+
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace denovo_design {

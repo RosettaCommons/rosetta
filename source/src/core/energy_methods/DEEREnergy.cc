@@ -15,8 +15,6 @@
 /// @author  Diego del Alamo ( del.alamo@vanderbilt.edu )
 
 // Input headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/epr_deer.OptionKeys.gen.hh>
 
 // Unit headers
 #include <core/energy_methods/DEEREnergy.hh>
@@ -29,59 +27,37 @@
 #include <core/scoring/epr_deer/util.hh>
 
 // Package headers
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/select/util.hh>
-#include <core/scoring/AtomVDW.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/DenseEnergyContainer.hh>
-#include <core/scoring/LREnergyContainer.hh>
+#include <core/scoring/LREnergyContainer.fwd.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/types.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/HomogeneousTransform.hh>
 
 // ObjexxFCL headers
 // Objexx headers
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <string>
 #include <iostream>
-#include <sstream>
-#include <iomanip>
-#include <algorithm>
-#include <set>
-#include <stdlib.h>
-#include <algorithm>
-#include <time.h>
-#include <limits>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
 
 namespace core {
 namespace energy_methods {

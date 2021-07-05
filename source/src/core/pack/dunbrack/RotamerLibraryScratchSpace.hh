@@ -23,7 +23,6 @@
 #include <utility/VirtualBase.hh>
 
 #include <utility/fixedsizearray1.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

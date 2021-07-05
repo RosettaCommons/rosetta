@@ -20,14 +20,11 @@
 #include <core/id/AtomID.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Conformation.hh>
 
 static basic::Tracer TR( "core.scoring.constraints.SiteConstraintResidues" );
 

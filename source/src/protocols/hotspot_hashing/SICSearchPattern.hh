@@ -16,19 +16,13 @@
 #define INCLUDED_protocols_hotspot_hashing_SICSearchPattern_hh
 
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <core/types.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <core/kinematics/Stub.hh>
+#include <core/kinematics/Stub.fwd.hh>
 
 #include <protocols/sic_dock/SICFast.hh>
 #include <protocols/hotspot_hashing/SearchPattern.hh>

@@ -16,7 +16,6 @@
 #include <core/chemical/rotamers/PDBRotamerLibrarySpecificationCreator.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/exit.hh>
 
 #include <istream>

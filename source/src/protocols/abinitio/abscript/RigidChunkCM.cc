@@ -15,7 +15,6 @@
 #include <protocols/abinitio/abscript/RigidChunkCMCreator.hh>
 
 // Package headers
-#include <core/environment/DofPassport.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
 
@@ -29,13 +28,11 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Project headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.tmpl.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
 #include <core/pose/Pose.hh>
@@ -53,11 +50,9 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <numeric/random/random.hh>
-#include <numeric/numeric.functions.hh>
 #include <numeric/xyz.functions.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 // tracer
 #include <basic/Tracer.hh>
@@ -69,10 +64,11 @@
 // ObjexxFCL Headers
 
 //Req'd on WN32
-#include <basic/datacache/WriteableCacheableMap.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer tr( "protocols.abinitio.abscript.RigidChunkCM", basic::t_info );
 

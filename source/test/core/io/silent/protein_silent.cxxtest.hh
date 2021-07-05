@@ -20,7 +20,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/Residue.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
@@ -39,32 +38,8 @@
 #include <string>
 
 //Auto Headers
-#include <core/conformation/PointGraph.fwd.hh>
-#include <core/conformation/PointGraphData.fwd.hh>
-#include <core/conformation/symmetry/SymDof.fwd.hh>
-#include <core/conformation/symmetry/SymSlideInfo.fwd.hh>
-#include <core/conformation/symmetry/SymSlideInfo.hh>
-#include <core/conformation/symmetry/SymmData.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <utility/graph/UpperEdgeGraph.fwd.hh>
-#include <core/io/silent/EnergyNames.fwd.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
-#include <core/pose/MiniPose.fwd.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/scoring/ContextGraph.fwd.hh>
-#include <core/scoring/ContextGraphTypes.hh>
-#include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/scoring/NeighborList.fwd.hh>
-#include <core/scoring/TenANeighborGraph.fwd.hh>
-#include <core/scoring/TwelveANeighborGraph.fwd.hh>
-#include <core/scoring/methods/Methods.hh>
-#include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataCache.fwd.hh>
-#include <basic/datacache/DataCache.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS

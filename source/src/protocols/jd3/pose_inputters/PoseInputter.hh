@@ -28,10 +28,8 @@
 #include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
-#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers

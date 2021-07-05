@@ -26,10 +26,8 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/types.hh>
 
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

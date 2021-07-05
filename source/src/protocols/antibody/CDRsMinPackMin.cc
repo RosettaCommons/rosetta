@@ -17,20 +17,15 @@
 
 #include <protocols/antibody/CDRsMinPackMin.hh>
 
-#include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
@@ -39,12 +34,10 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/docking/SidechainMinMover.hh>
-#include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 
 static basic::Tracer TR( "protocols.antibody.CDRsMinPackMin" );

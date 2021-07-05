@@ -16,15 +16,11 @@
 
 // Unit headers
 #include <core/id/SequenceMapping.hh>
-#include <core/id/SequenceMapping.fwd.hh>
 
 // Project headers
-#include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/exit.hh>
 
 // C++ headers
 #include <string>

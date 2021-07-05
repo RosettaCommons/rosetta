@@ -18,18 +18,12 @@
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/Stub.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/chemical/AA.hh>
 
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
 #include <utility/VirtualBase.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray4D.hh>
 
 namespace core {
 namespace scoring {

@@ -22,7 +22,7 @@
 
 #include <protocols/relax/RelaxProtocolBase.hh>
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
@@ -39,7 +39,6 @@
 //// C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

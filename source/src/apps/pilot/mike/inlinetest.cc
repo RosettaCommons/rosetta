@@ -13,34 +13,20 @@
 
 // libRosetta headers
 #include <devel/init.hh>
-#include <utility/inline_file_provider.hh>
 
 // C++ headers
 //#include <cstdlib>
 // libRosetta headers
 #include <basic/options/option.hh>
-#include <devel/init.hh>
 // C++ headers
-#include <iostream>
-#include <string>
-#include <basic/Tracer.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 //Auto Headers
-#include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/relax_main.hh>
-#include <devel/init.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <iostream>
-#include <string>
-#include <cstdio>
 
 
 int

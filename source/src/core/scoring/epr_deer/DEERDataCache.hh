@@ -19,7 +19,7 @@
 // Unit headers
 #include <core/scoring/epr_deer/DEERDataCache.fwd.hh>
 #include <core/scoring/epr_deer/EPRSpinLabel.hh>
-#include <core/scoring/epr_deer/metrics/DEERData.hh>
+#include <core/scoring/epr_deer/metrics/DEERData.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -36,6 +36,8 @@
 // C++ headers
 #include <string>
 #include <map>
+
+#include <set> // AUTO IWYU For set
 
 namespace core {
 namespace scoring {

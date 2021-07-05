@@ -15,15 +15,10 @@
 #ifndef INCLUDED_core_scoring_fiber_diffraction_FiberDiffractionEnergy_hh
 #define INCLUDED_core_scoring_fiber_diffraction_FiberDiffractionEnergy_hh
 
-#include <core/energy_methods/FiberDiffractionEnergyCreator.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector0.hh>
@@ -31,7 +26,6 @@
 #include <numeric/xyzVector.hh>
 
 
-#include <string>
 
 namespace core {
 namespace energy_methods {

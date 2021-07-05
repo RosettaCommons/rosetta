@@ -30,8 +30,9 @@
 /// C++ headers
 /// TEMP
 
-#include <utility/vector0_bool.hh>
 #include <ObjexxFCL/FArray1A.fwd.hh>
+
+#include <utility/vector0.hh> // AUTO IWYU For vector0
 
 
 namespace protocols {

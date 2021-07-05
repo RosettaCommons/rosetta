@@ -13,13 +13,12 @@
 #ifndef INCLUDED_basic_database_sql_utils_HH
 #define INCLUDED_basic_database_sql_utils_HH
 
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/sql_database/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <platform/types.hh>
 
-#include <iosfwd>
 #include <vector>
 #include <cppdb/frontend.h>
 

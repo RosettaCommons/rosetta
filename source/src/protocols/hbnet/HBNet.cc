@@ -18,7 +18,6 @@
 
 // Utility headers
 #include <utility/io/ozstream.hh>
-#include <utility/numbers.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -27,11 +26,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/thread_manager/RosettaThreadManager.hh>
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
@@ -44,10 +40,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/io/Remarks.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/pack/hbonds/HBondGraph_util.hh>
@@ -55,9 +49,8 @@
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
-#include <core/pack/make_symmetric_task.hh>
 #include <core/pack/packer_neighbors.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
+#include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
@@ -71,7 +64,6 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -84,21 +76,13 @@
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/sasa.hh>
-#include <core/scoring/util.hh>
 
 #include <core/select/residue_selector/LayerSelector.hh>
-#include <core/select/residue_selector/ResidueNameSelector.hh>
 #include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/CachedResidueSubset.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
 
@@ -106,18 +90,16 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <protocols/pose_creation/MakePolyXMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/residue_selectors/StoreResidueSubsetMover.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 #include <numeric/random/random.hh>
+
+#include <protocols/hbnet/NetworkState.hh> // AUTO IWYU For NetworkState
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 //Currently Unused
 //#include <core/chemical/ResidueTypeSet.hh>

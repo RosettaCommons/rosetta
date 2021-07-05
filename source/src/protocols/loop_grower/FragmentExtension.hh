@@ -18,34 +18,19 @@
 
 #include <protocols/loop_grower/FragmentExtension.fwd.hh>
 
-#include <iosfwd>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/util/kinematics_util.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <map>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/sequence/Sequence.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/sequence/Sequence.fwd.hh>
 
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/loop_grower/LoopGrower.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
-#include <numeric/random/WeightedSampler.hh>
 
-#include <boost/unordered/unordered_map.hpp>
 #include <core/id/SequenceMapping.hh>
 
 

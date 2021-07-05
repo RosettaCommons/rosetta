@@ -32,14 +32,12 @@
 
 #include <basic/Tracer.hh>
 
-#include <algorithm>
 #include <iostream>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 
 
 namespace core {

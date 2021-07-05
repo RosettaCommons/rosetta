@@ -16,13 +16,11 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/types.hh>
 
-#include <utility/VirtualBase.hh>
 
 // C++ Headers
 
 #include <iostream>
 
-#include <utility/vector1.hh>
 
 
 #ifdef SERIALIZATION

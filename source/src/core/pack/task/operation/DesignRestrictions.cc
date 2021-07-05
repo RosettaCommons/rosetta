@@ -23,18 +23,17 @@
 
 // Project headers
 #include <core/chemical/AA.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <core/pack/task/operation/task_op_schemas.hh>
 
 static basic::Tracer TR( "core.pack.task.operation.DesignRestrictions" );
 

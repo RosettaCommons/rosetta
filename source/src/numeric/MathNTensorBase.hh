@@ -25,17 +25,11 @@
 // Package headers
 #include <numeric/types.hh>
 #include <numeric/MathNTensorBase.fwd.hh>
-#include <numeric/MathNTensor.fwd.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
 
 // C++ headers
-#include <math.h>
-#include <iosfwd>
-#include <memory>
 
 namespace numeric {
 

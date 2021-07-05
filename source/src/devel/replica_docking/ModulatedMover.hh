@@ -13,22 +13,18 @@
 #define INCLUDED_devel_replica_docking_ModulatedMover_hh
 
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/HamiltonianExchange.hh>
 #include <protocols/canonical_sampling/HamiltonianExchange.fwd.hh>
 
-#include <devel/replica_docking/TempInterpolator.hh>
 #include <devel/replica_docking/TempInterpolator.fwd.hh>
 
-#include <protocols/rigid/RigidBodyMover.fwd.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
 
-#include <utility/VirtualBase.hh>
+#include <core/id/TorsionID_Range.hh> // AUTO IWYU For TorsionID_Range
+#include <map> // AUTO IWYU For map, map<>::value_compare
+
 
 
 namespace devel {

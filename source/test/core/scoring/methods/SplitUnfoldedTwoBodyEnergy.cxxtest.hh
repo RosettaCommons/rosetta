@@ -17,7 +17,6 @@
 // Unit headers
 #include <core/energy_methods/SplitUnfoldedTwoBodyEnergy.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>
@@ -27,14 +26,10 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 //Auto Headers
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
-#include <utility/vector1.hh>
 
 
 

@@ -15,7 +15,6 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
-#include <test/util/rosettascripts.hh>
 #include <test/util/pdb1rpb.hh>
 
 // Unit header
@@ -26,15 +25,13 @@
 //#include <core/scoring/ScoreFunctionFactory.hh>
 
 // project headers
-#include <core/types.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 //class OldAddCst : public protocols::relax::FastRelax {
 //public:

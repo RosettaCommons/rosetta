@@ -21,7 +21,6 @@
 
 // Project headers
 #include <protocols/jumping/JumpSample.hh>
-#include <protocols/abinitio/TemplateJumpSetup.hh>
 
 
 // C++ Headers

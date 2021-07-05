@@ -12,16 +12,14 @@
 
 // Unit headers
 #include <protocols/splice/RBInMover.hh>
-#include <protocols/splice/RBOutMover.hh>
 #include <protocols/splice/RBInMoverCreator.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 static basic::Tracer TR( "protocols.splice.RBInMover" );
 #include <core/pose/extra_pose_info_util.hh>
 #include <utility/tag/Tag.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
@@ -30,11 +28,8 @@ static basic::Tracer TR( "protocols.splice.RBInMover" );
 #include <core/pose/Pose.hh>
 #include <string>
 //#include <sstream>
-#include <core/pose/util.hh>
-#include <algorithm>
 #include <utility/stream_util.hh>
 #include <utility/io/izstream.hh>
-#include <protocols/protein_interface_design/movers/SetAtomTree.hh>
 #include <boost/algorithm/string.hpp>
 #include <protocols/simple_moves/CutChainMover.hh>
 

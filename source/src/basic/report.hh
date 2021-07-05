@@ -18,7 +18,6 @@
 #include <basic/report.fwd.hh>
 
 #include <utility/json_spirit/json_spirit_value.h>
-#include <utility/json_spirit/json_spirit_writer_options.h>
 
 #include <string>
 #include <sstream>

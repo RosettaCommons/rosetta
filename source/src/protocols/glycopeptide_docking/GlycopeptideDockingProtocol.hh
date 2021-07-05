@@ -25,9 +25,7 @@
 // Unit headers
 #include <protocols/glycopeptide_docking/GlycopeptideDockingProtocol.fwd.hh>
 #include <protocols/glycopeptide_docking/GlycopeptideDockingFlags.fwd.hh>
-#include <protocols/glycopeptide_docking/utils.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/PyMOLMover.fwd.hh>
 
 // Protocol headers
 #include <protocols/constraint_movers/ConstraintSetMover.fwd.hh>
@@ -36,13 +34,9 @@
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/excn/Exceptions.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>

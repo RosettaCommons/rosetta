@@ -21,10 +21,11 @@
 #include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <ObjexxFCL/FArray1.fwd.hh> // AUTO IWYU For FArray1_int
 
 namespace core {
 namespace pack {

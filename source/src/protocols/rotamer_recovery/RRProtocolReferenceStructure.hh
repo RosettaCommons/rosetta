@@ -25,10 +25,8 @@
 // Platform Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

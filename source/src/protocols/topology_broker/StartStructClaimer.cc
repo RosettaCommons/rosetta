@@ -25,7 +25,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/util.hh>
 #include <core/fragment/FragData.hh>
@@ -45,7 +45,6 @@
 #include <numeric/random/random.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
 
 //// C++ headers

@@ -38,7 +38,6 @@
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
 

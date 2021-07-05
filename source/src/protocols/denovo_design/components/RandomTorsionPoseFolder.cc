@@ -20,7 +20,6 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 // Basic/Utililty headers
 #include <basic/Tracer.hh>

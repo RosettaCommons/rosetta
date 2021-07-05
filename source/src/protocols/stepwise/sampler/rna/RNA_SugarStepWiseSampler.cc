@@ -17,16 +17,16 @@
 
 // Package headers
 #include <core/id/TorsionID.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/pose/Pose.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 using namespace core;
 using namespace core::chemical::rna;

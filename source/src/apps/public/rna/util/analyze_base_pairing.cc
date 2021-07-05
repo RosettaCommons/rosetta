@@ -17,21 +17,11 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/energy_methods/RNA_ChemicalMappingEnergy.hh>
-#include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/pose/rna/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
+#include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
@@ -39,41 +29,24 @@
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/align/util.hh>
-#include <core/io/rna/RNA_DataReader.hh>
-#include <core/pose/PDBInfo.hh>
 
-#include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
-#include <protocols/moves/SimulatedTempering.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
-#include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 
-#include <core/id/TorsionID.hh>
-#include <protocols/recces/sampler/MC_OneTorsion.hh>
-#include <utility/io/ozstream.hh>
 
 // C++ headers
 #include <iostream>
 #include <string>
 
 // option key includes
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh> // AUTO IWYU For modeler,
+#include <protocols/stepwise/sampler/rna/RNA_KinematicCloser.fwd.hh> // AUTO IWYU For rna,
+#include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh> // AUTO IWYU For data,
 
 using namespace core::pose;
 using namespace basic::options;

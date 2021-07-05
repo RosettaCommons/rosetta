@@ -18,28 +18,19 @@
 
 //core
 #include <core/pose/Pose.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 //protocols
-#include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
 //basic
 #include <basic/Tracer.hh>
-#include <basic/MetricValue.hh>
 
 //numeric
-#include <numeric/random/random.hh>
 
 //utility
 #include <utility>

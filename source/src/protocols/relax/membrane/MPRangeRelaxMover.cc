@@ -25,7 +25,7 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -34,19 +34,14 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <protocols/membrane/util.hh>
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // XSD XRW Includes
@@ -54,7 +49,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "protocols.relax.membrane.MPRangeRelaxMover" );
 

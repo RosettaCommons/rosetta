@@ -18,7 +18,6 @@
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/protein_interface_design/movers/PlacementAuctionMover.fwd.hh>
 #include <utility/vector1.hh>

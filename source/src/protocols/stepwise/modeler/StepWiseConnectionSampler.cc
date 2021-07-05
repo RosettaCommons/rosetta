@@ -19,27 +19,20 @@
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.hh>
 #include <protocols/stepwise/modeler/protein/loop_close/util.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
-#include <protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.hh>
-#include <protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.hh>
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh>
-#include <protocols/stepwise/modeler/rna/o2prime/O2PrimePacker.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/util.hh>
 #include <protocols/stepwise/modeler/rna/rigid_body/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/legacy/screener/RNA_AtrRepScreener.hh>
-#include <protocols/stepwise/screener/BaseBinMapUpdater.hh>
 #include <protocols/stepwise/screener/BaseCentroidScreener.hh>
 #include <protocols/stepwise/screener/BulgeApplier.hh>
-#include <protocols/stepwise/screener/CentroidDistanceScreener.hh>
 #include <protocols/stepwise/screener/PartitionContactScreener.hh>
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryScreener.hh>
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryResidueBasedScreener.hh>
@@ -50,13 +43,10 @@
 #include <protocols/stepwise/screener/AlignRMSD_Screener.hh>
 #include <protocols/stepwise/screener/PoseSelectionScreener.hh>
 #include <protocols/stepwise/screener/ProteinCCD_ClosureScreener.hh>
-#include <protocols/stepwise/legacy/screener/ProteinAtrRepScreener.hh>
-#include <protocols/stepwise/screener/ResidueContactScreener.hh>
 #include <protocols/stepwise/screener/SampleApplier.hh>
-#include <protocols/stepwise/screener/Scorer.hh>
 #include <protocols/stepwise/screener/StubApplier.hh>
 #include <protocols/stepwise/screener/StubDistanceScreener.hh>
-#include <protocols/stepwise/screener/StepWiseScreener.hh>
+#include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
 #include <protocols/stepwise/screener/TagDefinition.hh>
 #include <protocols/stepwise/screener/VDW_BinScreener.hh>
 #include <protocols/stepwise/StepWiseSampleAndScreen.hh>
@@ -68,37 +58,29 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerRingConformer.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
-#include <protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/util.hh>
 #include <protocols/stepwise/sampler/rna/util.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
-#include <protocols/magnesium/util.hh>
 #include <protocols/toolbox/rigid_body/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <core/types.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <utility/tools/make_vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <basic/Tracer.hh>
 
 //Req's on WIN32
-#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
+
+#include <protocols/stepwise/modeler/align/StepWiseClusterer.hh> // AUTO IWYU For StepWise...
+#include <numeric/conversions.hh> // AUTO IWYU For radians
 
 static basic::Tracer TR( "protocols.stepwise.modeler.StepWiseConnectionSampler" );
 

@@ -23,13 +23,13 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/palette/NoDesignPackerPalette.hh>
 
 #include <core/scoring/rms_util.tmpl.hh>
 
-#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 
 // Utility Headers
@@ -41,7 +41,6 @@
 #include <algorithm>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes

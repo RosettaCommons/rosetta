@@ -17,10 +17,12 @@
 
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
 
-#include <core/conformation/ResidueMatcher.hh>
+#include <core/conformation/ResidueMatcher.fwd.hh>
 
 #include <core/types.hh>
-#include <utility/vector1_bool.hh>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 // utility headers
 

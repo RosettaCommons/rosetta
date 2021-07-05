@@ -20,7 +20,6 @@
 #include <protocols/filters/FilterCreator.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <string>

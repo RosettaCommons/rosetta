@@ -26,10 +26,10 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
-#include <utility/vector1_bool.hh>
 #include <numeric/xyzVector.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace fldsgn {

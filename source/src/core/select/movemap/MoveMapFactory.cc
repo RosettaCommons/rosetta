@@ -38,7 +38,6 @@
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector1.hh>
 
 static basic::Tracer TR( "core.select.movemap.MoveMapFactory" );
 

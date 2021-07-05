@@ -13,18 +13,14 @@
 // Unit headers
 #include <protocols/simple_moves/PSSM2BfactorMover.hh>
 #include <protocols/simple_moves/PSSM2BfactorMoverCreator.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <basic/datacache/DataMap.hh>
-#include <core/kinematics/FoldTree.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/sequence/SequenceProfile.hh>

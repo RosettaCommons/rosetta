@@ -17,7 +17,7 @@
 #define INCLUDED_core_import_pose_BasePairStepLibrary_HH
 
 #include <utility/VirtualBase.hh>
-#include <core/pose/rna/BasePairStep.hh>
+#include <core/pose/rna/BasePairStep.fwd.hh>
 #include <core/import_pose/libraries/BasePairStepLibrary.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -37,6 +37,12 @@ namespace libraries {
 class BasePairStepSequence: public utility::VirtualBase {
 
 public:
+
+#ifdef IWYU_SCAN
+	BasePairStepSequence() = default;
+#else
+	BasePairStepSequence() = delete;
+#endif
 
 	//constructor
 	BasePairStepSequence( char const nt_i, char const nt_i_next, char const nt_j, char const nt_j_next, core::Size const num_bulge = 0 );

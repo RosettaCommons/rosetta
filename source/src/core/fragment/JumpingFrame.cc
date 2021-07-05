@@ -27,7 +27,6 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
-#include <utility/vector1.hh>
 
 
 // Utility headers

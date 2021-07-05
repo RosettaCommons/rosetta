@@ -21,8 +21,9 @@
 #include <protocols/legacy_sewing/sampling/LegacyGivenPathAssemblyMover.fwd.hh>
 #include <protocols/legacy_sewing/sampling/LegacyAssemblyMover.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 //Protocol headers
-#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

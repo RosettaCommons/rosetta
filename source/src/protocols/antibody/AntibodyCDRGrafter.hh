@@ -19,14 +19,13 @@
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
-#include <protocols/grafting/CCDEndsGraftMover.hh>
-#include <protocols/grafting/AnchoredGraftMover.hh>
+#include <protocols/grafting/CCDEndsGraftMover.fwd.hh>
+#include <protocols/grafting/AnchoredGraftMover.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/vector1.hh>

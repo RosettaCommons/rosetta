@@ -35,7 +35,6 @@
 #include <numeric/deriv/angle_deriv.hh>
 
 #include <utility>
-#include <utility/vector1.hh>
 #include <utility/assert.hh>
 
 #ifdef SERIALIZATION

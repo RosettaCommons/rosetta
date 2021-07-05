@@ -21,6 +21,8 @@
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
+#include <core/id/AtomID_Map.hh> // AUTO IWYU For AtomID_Map
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>

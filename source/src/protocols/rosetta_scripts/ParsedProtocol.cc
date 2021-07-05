@@ -20,16 +20,13 @@
 // Project Headers
 #include <basic/datacache/DataMapObj.hh>
 #include <basic/datacache/DataMap.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/simple_metrics/SimpleMetric.hh>
 #include <core/simple_metrics/util.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/filters/BasicFilters.hh>
 #include <protocols/moves/ResId.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/NullMover.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/FilterFactory.hh>
 
@@ -38,21 +35,15 @@
 
 // Package Headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 // JD2 headers
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/util.hh>
 
 // Utility Headers
@@ -67,12 +58,12 @@
 #include <numeric/random/random_permutation.hh>
 
 // C++ headers
-#include <map>
 #include <string>
-#include <algorithm>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/citation_manager/CitationCollectionBase.hh> // AUTO IWYU For CitationCollectionList
 
 namespace protocols {
 namespace rosetta_scripts {

@@ -21,8 +21,11 @@
 #endif
 
 // Utility headers:
-#include <utility/fixedsizearray1.hh>
 #include <utility/pointer/memory.hh>
+
+#ifdef USE_TENSORFLOW
+#include <utility/fixedsizearray1.hh>
+#endif
 
 static basic::Tracer TR( "protocols.trRosetta.trRosettaOutputs_v1" );
 

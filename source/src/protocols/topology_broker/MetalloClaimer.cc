@@ -16,7 +16,6 @@
 #include <protocols/topology_broker/MetalloClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/claims/SequenceClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
@@ -26,7 +25,7 @@
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <protocols/jumping/ResiduePairJumpSetup.hh>
 #include <protocols/jumping/ResiduePairJump.hh>
@@ -50,7 +49,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.topo_broker", basic::t_info );

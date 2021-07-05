@@ -30,7 +30,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/DOF_ID.hh>
+#include <core/id/DOF_ID.fwd.hh>
 
 
 #ifdef WIN32
@@ -48,6 +48,8 @@
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 #include <numeric/xyzVector.hh>
+
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
 
 namespace core {
 namespace pack {

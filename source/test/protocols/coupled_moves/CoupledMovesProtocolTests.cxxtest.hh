@@ -13,22 +13,15 @@
 #define INCLUDED_protocols_coupled_moves_CoupledMovesProtocolTests_CXXTEST_HH
 
 // Core headers
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/residue_selector/ClashBasedShellSelector.hh>
-#include <core/pack/task/operation/ClashBasedRepackShell.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 //#include <core/pose/PDBInfo.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
 //#include <core/conformation/Conformation.hh>
 //#include <core/kinematics/FoldTree.hh>
 
 // Protocol headers
 #include <protocols/coupled_moves/CoupledMovesProtocol.hh>
-#include <protocols/coupled_moves/CoupledMovesProtocolCreator.hh>
 
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
@@ -39,6 +32,8 @@
 
 // C++ headers
 #include <iostream>
+
+#include <numeric/random/random.hh> // AUTO IWYU For uniform
 
 static basic::Tracer TR("CoupledMovesProtocolTests_cxxtest");
 

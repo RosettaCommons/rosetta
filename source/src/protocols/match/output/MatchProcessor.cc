@@ -20,8 +20,8 @@
 #include <protocols/match/output/MatchFilter.hh>
 #include <protocols/match/output/UpstreamDownstreamCollisionFilter.hh>
 #include <protocols/match/output/OutputWriter.hh>
-#include <protocols/match/output/MatchEvaluator.hh>
-#include <protocols/match/output/MatchScoreWriter.hh>
+#include <protocols/match/output/MatchEvaluator.fwd.hh>
+#include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
 //Project headers
 #include <basic/Tracer.hh>
@@ -30,7 +30,6 @@
 // Utility headers
 #include <utility/exit.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

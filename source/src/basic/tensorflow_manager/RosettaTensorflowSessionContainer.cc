@@ -13,15 +13,14 @@
 
 // Project headers:
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
-#include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.hh>
 
 // Basic headers:
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
-// Utility headers:
-#include <utility/pointer/memory.hh>
+#ifdef USE_TENSORFLOW
+#include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
+#endif
 
 static basic::Tracer TR( "basic.tensorflow_manager.RosettaTensorflowSessionContainer" );
 

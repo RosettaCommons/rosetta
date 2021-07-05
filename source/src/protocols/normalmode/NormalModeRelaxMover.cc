@@ -17,29 +17,22 @@
 #include <protocols/normalmode/NormalModeRelaxMoverCreator.hh>
 
 //Option
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 //
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
 
 // Pose stuffs
 #include <core/pose/Pose.hh>
-#include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 //Relax, optimization
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/util.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -53,7 +46,6 @@
 #include <core/io/silent/SilentStruct.hh>
 
 // Rosetta scripts
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -68,6 +60,9 @@
 
 //can't figure out how to feed a random number generator to the shuffle func
 #include <random>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

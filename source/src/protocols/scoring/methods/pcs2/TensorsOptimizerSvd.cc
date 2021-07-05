@@ -42,7 +42,6 @@
 #include <utility/exit.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
 
 // Objexx headers
 
@@ -51,6 +50,7 @@
 #include <protocols/scoring/methods/pcs2/TensorsOptimizer.hh>
 #include <utility/vector1.hh>
 
+#include <cmath> // MANUAL IWYU
 
 namespace protocols {
 namespace scoring {

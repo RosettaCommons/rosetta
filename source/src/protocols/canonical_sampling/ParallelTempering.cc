@@ -18,41 +18,23 @@
 
 
 // protocols headers
-#include <basic/datacache/DataMap.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverFactory.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/internal_util.hh>
 
 // core headers
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
 
 // utility headers
-#include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // basic headers
 #include <basic/prof.hh>
@@ -63,6 +45,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#ifdef USEMPI
+#include <protocols/jd2/internal_util.hh>
+#endif
 
 static basic::Tracer tr( "protocols.canonical_sampling.ParallelTempering" );
 

@@ -22,7 +22,7 @@
 
 // Project Headers
 #include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
@@ -30,18 +30,15 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // AMW DEBUG
-#include <core/conformation/Residue.hh>
 
-#include <numeric/random/random.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/movers/BackrubDDMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.fwd.hh>
 
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>

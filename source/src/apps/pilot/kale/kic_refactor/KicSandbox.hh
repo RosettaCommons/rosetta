@@ -6,7 +6,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
-#include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
+#include <protocols/loop_modeling/samplers/LegacyKicSampler.fwd.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
@@ -22,7 +22,6 @@
 #include <devel/init.hh>
 
 // C++ headers {{{1
-#include <iosfwd>
 // }}}1
 
 // Options {{{1

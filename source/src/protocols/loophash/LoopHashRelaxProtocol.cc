@@ -12,40 +12,24 @@
 /// @author Mike Tyka
 
 #include <protocols/loophash/LoopHashRelaxProtocol.hh>
-#include <protocols/loophash/LoopHashMap.hh>
-#include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <utility>
-#include <utility/string_util.hh>
 #include <protocols/relax/FastRelax.hh>
 //#include <protocols/match/Hit.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <utility/exit.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
-#include <protocols/loophash/LocalInserter.hh>
-#include <protocols/loophash/BackboneDB.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loophash/LocalInserter.fwd.hh>
 
-#include <numeric/geometry/hashing/SixDHasher.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
@@ -54,30 +38,21 @@
 
 #include <iostream>
 #include <string>
-#include <cstdio>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/lh.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++ headers
 //#include <cstdlib>
-#include <iostream>
-#include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
 #endif

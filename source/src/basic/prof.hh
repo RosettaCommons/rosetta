@@ -20,7 +20,6 @@
 #include <time.h>                                    // for clock
 #include <basic/options/keys/run.OptionKeys.gen.hh>  // for profile
 #include <basic/options/option.hh>                   // for OptionCollection
-#include <iosfwd>                                    // for string
 #include <string>                                    // for allocator
 #include <utility/options/BooleanOption.hh>          // for BooleanOption
 #include <utility/vector1.hh>                        // for vector1

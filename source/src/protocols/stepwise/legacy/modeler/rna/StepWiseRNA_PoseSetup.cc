@@ -20,13 +20,10 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <protocols/rna/util.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/rna/util.hh>
@@ -39,8 +36,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
-#include <core/pose/full_model_info/util.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/copydofs/util.hh>
@@ -50,17 +45,14 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <core/io/silent/BinarySilentStruct.hh> //Feb 24, 2011, FARFAR start_silent_file.
 
 #include <utility/exit.hh>
-#include <ctime>
 
 #include <string>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
 
 using namespace core;
 using core::Real;

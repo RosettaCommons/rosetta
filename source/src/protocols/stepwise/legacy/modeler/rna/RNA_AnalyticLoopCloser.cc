@@ -17,15 +17,12 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Info.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -35,11 +32,9 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>

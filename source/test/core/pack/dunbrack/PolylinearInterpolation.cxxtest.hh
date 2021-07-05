@@ -14,10 +14,7 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
@@ -25,11 +22,8 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pack/dunbrack/DunbrackEnergy.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/MinimizationData.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/atom_tree_minimize.hh>
 #include <core/optimization/AtomTreeMultifunc.hh>
@@ -45,7 +39,6 @@
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
-#include <numeric/conversions.hh>
 #include <numeric/angle.functions.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/stream_util.hh>

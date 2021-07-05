@@ -19,10 +19,12 @@
 //Project Headers
 #include <basic/Tracer.hh>
 #include <fstream>
-#include <iostream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For core,
+
 namespace protocols {
 namespace simple_filters {
 

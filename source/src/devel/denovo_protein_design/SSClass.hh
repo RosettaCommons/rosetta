@@ -18,9 +18,10 @@
 //#include <iosfwd>
 // Utility Headers
 
-#include <utility/vector1_bool.hh>
 #include <ostream>
 #include <functional>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace devel {

@@ -17,9 +17,13 @@
 // Class headers
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzMatrix.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 
 #include <list>
+#include <vector>
+
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
+#include <core/types.hh> // AUTO IWYU For Real, Size
 
 namespace protocols {
 namespace hybridization {

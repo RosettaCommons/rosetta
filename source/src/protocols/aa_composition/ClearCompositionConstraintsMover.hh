@@ -16,15 +16,11 @@
 #define INCLUDED_protocols_aa_composition_ClearCompositionConstraintsMover_hh
 
 #include <protocols/aa_composition/ClearCompositionConstraintsMover.fwd.hh>
-#include <core/scoring/aa_composition_energy/AACompositionConstraint.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

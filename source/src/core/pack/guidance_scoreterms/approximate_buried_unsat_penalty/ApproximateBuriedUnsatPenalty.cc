@@ -25,7 +25,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
@@ -33,7 +32,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #ifdef MULTI_THREADED
 #include <basic/options/option.hh>
@@ -41,11 +39,9 @@
 #endif
 
 #include <utility/vector1.hh>
-#include <utility/pointer/memory.hh>
 #include <basic/datacache/ConstDataMap.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
-#include <boost/format.hpp>
 
 
 namespace core {

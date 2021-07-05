@@ -16,25 +16,23 @@
 #include <protocols/jd2/EmptyPoseJobInputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
-#include <core/pose/symmetry/util.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/sequence/util.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <utility/vector1.hh>
 
 // C/C++ headers
 #include <string>
 
 // Utility headers
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
+
 
 
 static basic::Tracer tr( "protocols.jd2.EmptyPoseJobInputter" );

@@ -71,14 +71,13 @@
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <protocols/abinitio/MembraneAbinitio.hh>
 #include <protocols/abinitio/FoldConstraints.hh>
-#include <protocols/abinitio/KinematicTaskControl.hh>
 #include <protocols/abinitio/LoopJumpFoldCst.hh>
 #include <protocols/abinitio/DoubleLayerKinematicAbinitio.hh>
 #include <protocols/abinitio/Templates.hh>
 #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>
 #include <protocols/abinitio/StrandConstraints.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/abinitio/Protocol.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/jumping/SheetBuilder.hh>
@@ -104,7 +103,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/MetricValue.hh>
 #include <basic/options/option.hh>
@@ -124,7 +122,6 @@
 #include <basic/options/keys/trRosetta.OptionKeys.gen.hh>
 #include <basic/tensorflow_manager/util.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/util.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -133,7 +130,6 @@
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <protocols/pose_metric_calculators/ClashCountCalculator.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -143,7 +139,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/sequence/util.hh>
@@ -153,13 +149,10 @@
 #include <protocols/evaluation/TimeEvaluator.hh>
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
 #include <protocols/simple_filters/PoseMetricEvaluator.hh>
-#include <protocols/evaluation/util.hh>
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/relax/loop_closure/FASelectSlidingWindowLoopClosure.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Exceptions.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/simple_filters/RGFilter.hh>
 #include <protocols/simple_filters/COFilter.hh>
 #include <protocols/simple_filters/SheetFilter.hh>
@@ -167,7 +160,6 @@
 #include <protocols/simple_filters/SAXSScoreFilter.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/simple_moves/RepulsiveOnlyMover.hh>
-#include <protocols/forge/methods/util.hh>
 
 #include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.hh>
 
@@ -186,7 +178,6 @@
 #include <basic/citation_manager/CitationCollection.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 #include <utility>
 #include <vector>
@@ -195,7 +186,6 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameList.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/func/FuncFactory.hh>
@@ -204,8 +194,11 @@
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/util.hh>
-#include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/scoring/ScoreFunction.hh> // MANUAL IWYU
+
+#include <protocols/abinitio/ResolutionSwitcher.hh> // AUTO IWYU For ResolutionSwi...
 
 using namespace ObjexxFCL::format;
 

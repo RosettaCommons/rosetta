@@ -18,14 +18,8 @@
 #include <numeric/interpolation/polycubic_catmull_rom.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 
-#include <core/types.hh>
 
-#include <utility/io/izstream.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <numeric/constants.hh>

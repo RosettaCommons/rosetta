@@ -17,20 +17,16 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/conformation/residue_datacache.hh>
-#include <core/pack/optimizeH.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -38,40 +34,35 @@
 #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.hh>
 #include <core/scoring/etable/Etable.hh>
-#include <core/scoring/elec/FA_ElecEnergy.hh>
 #include <core/energy_methods/CartesianBondedEnergy.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/constants.hh>
 
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/types.hh>
 
-#include <protocols/relax/FastRelax.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/random/random.functions.hh>
 #include <numeric/random/random.hh>
 #include <utility/vector1.hh>
 
-#include <basic/options/util.hh> // HACK
 #include <basic/options/option.hh> // HACK
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/optimization/MinimizerMap.hh> // AUTO IWYU For MinimizerMap
+#include <core/scoring/constraints/ConstraintSet.hh> // AUTO IWYU For ConstraintSet
+#include <core/scoring/electron_density/util.hh> // AUTO IWYU For interp_spline, interp_dspline
+#include <core/scoring/etable/coulomb/Coulomb.hh> // AUTO IWYU For Coulomb
+#include <core/scoring/hbonds/hbonds_geom.hh> // AUTO IWYU For get_hb_acc_chem_type, get_hb_do...
+#include <core/scoring/lkball/LK_BallEnergy.hh> // AUTO IWYU For LK_BallEnergy
 
 //////////////////////////////
 namespace protocols {

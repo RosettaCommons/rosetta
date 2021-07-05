@@ -13,19 +13,13 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #include <core/scoring/netcharge_energy/NetChargeConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/scoring/netcharge_energy/NetChargeEnergySetup.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/deriv/dihedral_deriv.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -38,7 +32,6 @@
 
 #include <utility/exit.hh>
 
-#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

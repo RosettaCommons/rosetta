@@ -26,9 +26,7 @@
 #include <devel/init.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/PDBInfo.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
@@ -40,7 +38,6 @@
 
 // option key includes
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 

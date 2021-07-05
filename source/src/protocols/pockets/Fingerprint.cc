@@ -19,38 +19,34 @@
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <core/types.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/conversions.hh>
 #include <utility/io/ozstream.hh>
 
 // Utility Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <ostream>
 #include <string>
 #include <sstream>
 #include <cmath>
-#include <map>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <numeric/random/random.fwd.hh>
+
+#ifdef USEOPENCL
+#include <core/optimization/ParticleSwarmMinimizer.hh>
+#endif
 
 using namespace core;
 using namespace core::scoring;

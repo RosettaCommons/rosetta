@@ -22,11 +22,10 @@
 #include <core/types.hh>
 
 // package headers
-#include <core/fragment/BBTorsionSRFD.hh>
+#include <core/fragment/BBTorsionSRFD.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/picking_old/concepts/Librarian.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.hh>
-#include <core/fragment/picking_old/vall/VallResidue.hh>
 #include <core/fragment/picking_old/vall/eval/VallFragmentEval.hh>
 #include <core/fragment/picking_old/vall/gen/VallFragmentGen.hh>
 
@@ -34,7 +33,6 @@
 #include <basic/Tracer.hh>
 
 // utility headers
-#include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
 #include <functional>

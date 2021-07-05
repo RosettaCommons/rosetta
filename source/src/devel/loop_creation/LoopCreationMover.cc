@@ -18,7 +18,6 @@
 
 //Basic
 #include <basic/MetricValue.hh>
-#include <basic/datacache/DiagnosticData.hh>
 
 //Core
 #include <core/pose/Pose.hh>
@@ -27,7 +26,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -47,7 +45,6 @@
 #include <protocols/jd2/util.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
 #include <protocols/filters/BasicFilters.hh>
@@ -58,24 +55,21 @@
 //Devel
 #include <devel/loop_creation/LoopInserter.hh>
 #include <devel/loop_creation/LoopCloser.hh>
-#include <devel/loop_creation/KICLoopCloser.hh>
 
 //Utility
 #include <utility>
-#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-#include <utility/sort_predicates.hh>
 
 //Basic
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
+
+#include <sstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

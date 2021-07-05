@@ -11,7 +11,6 @@
 #include <ostream>
 #include <cstdlib>
 #include <devel/init.hh>
-#include <utility>
 #include <protocols/noesy_assign/FragsToAtomDist.fwd.hh>
 #include <protocols/noesy_assign/FragsToAtomDist.hh>
 #include <basic/Tracer.hh>

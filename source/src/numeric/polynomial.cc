@@ -24,9 +24,7 @@
 #include <numeric/types.hh>
 
 // C++ headers
-#include <iostream>
 #include <string>
-#include <cmath>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -40,6 +38,7 @@
 #endif // SERIALIZATION
 
 #include <sstream>
+#include <cmath>
 
 namespace numeric {
 

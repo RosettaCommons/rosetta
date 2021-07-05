@@ -19,7 +19,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/simple_moves/SetupMetalsMover.hh>
 // Project Headers
-#include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

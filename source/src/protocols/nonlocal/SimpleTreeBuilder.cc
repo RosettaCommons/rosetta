@@ -17,7 +17,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

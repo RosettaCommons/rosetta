@@ -17,9 +17,7 @@
 #include <protocols/simple_moves/FoldTreeFromMotif.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
 
 namespace protocols {
 namespace simple_moves {

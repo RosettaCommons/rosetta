@@ -18,10 +18,9 @@
 #include <core/id/PartialAtomID.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/RotamerSetBase.hh>
 
 #include <basic/Tracer.hh>

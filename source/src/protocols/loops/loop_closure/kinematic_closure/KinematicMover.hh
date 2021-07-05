@@ -23,7 +23,7 @@
 
 // Package Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -35,7 +35,8 @@
 // Utility headers
 #include <utility/LexicographicalIterator.hh>
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
+
+#include <map> // AUTO IWYU For map
 
 #ifdef PYROSETTA
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>

@@ -15,7 +15,7 @@
 #include <core/scoring/util.hh>
 
 // Package headers
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
@@ -28,7 +28,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/string_util.hh>
-#include <utility/vector1.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -38,7 +37,6 @@
 
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 static basic::Tracer TR( "core.scoring.utils" );
 

@@ -13,20 +13,15 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Project headers
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // For the core_init_w_additional_options call.
 #include <test/core/init_util.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/options/keys/all.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 

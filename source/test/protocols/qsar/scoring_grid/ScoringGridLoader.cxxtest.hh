@@ -20,7 +20,6 @@
 #include <protocols/qsar/scoring_grid/ScoringGridLoader.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Test utility headers

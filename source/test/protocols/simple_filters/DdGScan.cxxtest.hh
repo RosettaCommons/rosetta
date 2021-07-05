@@ -26,17 +26,12 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/conformation/Residue.hh>
 
 // Utility Headers
-#include <utility/file/FileName.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("protocols.simple_filters.DdGScan.cxxtest.hh");

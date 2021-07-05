@@ -26,7 +26,6 @@
 
 //Utility Headers
 #include <utility/assert.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 // Numeric Headers
@@ -34,13 +33,11 @@
 #include <numeric/numeric.functions.hh>
 
 // Basic Headers
-#include <basic/prof.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 // External Headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 
 using namespace ObjexxFCL;

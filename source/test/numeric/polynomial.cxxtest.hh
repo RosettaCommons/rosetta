@@ -100,7 +100,7 @@ public:
 				3 /*degree*/,
 				coefs);
 			TS_ASSERT(false);
-		} catch {}
+		} catch (...) {}
 
 		try{
 			// max_val < min_val
@@ -116,7 +116,7 @@ public:
 				3 /*degree*/,
 				coefs);
 			TS_ASSERT(false);
-		} catch {}
+		} catch (...) {}
 
 		try{
 			// coefficients are empty
@@ -134,9 +134,11 @@ public:
 				3 /*degree*/,
 				empty_coefs);
 			TS_ASSERT(false);
-		} catch {}
+		} catch (...) {}
 
 		try{
+			utility::vector1< core::Real > empty_coefs;
+
 			// degree != degree of passed in coefficients
 			core::scoring::hbonds::Polynomial_1d p(
 				"test_polynomial",
@@ -150,7 +152,7 @@ public:
 				2 /*degree*/,
 				empty_coefs);
 			TS_ASSERT(false);
-		} catch {}
+		} catch (...) {}
 
 	}
 

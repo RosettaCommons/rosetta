@@ -21,7 +21,6 @@
 
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 

@@ -14,17 +14,12 @@
 
 
 #include <core/scoring/OneDDistPotential.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/pose/Pose.hh>
 #include <utility/tools/make_vector1.hh>
 #include <numeric/MathNTensor_io.hh>
-#include <numeric/interpolation/interpolation.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <utility/numbers.hh> // for isfinite
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 static basic::Tracer TR( "core.scoring.OneDDistPotential" );
 

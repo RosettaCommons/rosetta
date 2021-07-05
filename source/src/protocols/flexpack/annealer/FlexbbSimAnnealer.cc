@@ -27,7 +27,6 @@
 
 /// Utility headers
 #include <utility>
-#include <utility/exit.hh>
 
 /// Numeric headers
 #include <numeric/numeric.functions.hh>
@@ -37,7 +36,6 @@
 /// C++ headers
 #include <iostream>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

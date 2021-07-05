@@ -16,7 +16,6 @@
 #include <protocols/denovo_design/task_operations/ConsensusLoopDesignOperationCreator.hh>
 
 // package headers
-#include <protocols/denovo_design/util.hh>
 #include <protocols/parser/BluePrint.hh>
 
 // core headers

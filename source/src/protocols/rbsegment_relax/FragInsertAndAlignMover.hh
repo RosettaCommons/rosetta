@@ -17,7 +17,7 @@
 
 // Rosetta Headers
 // FIX THESE #INCLUDES! EVIL!
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 
 // Utility Headers
 

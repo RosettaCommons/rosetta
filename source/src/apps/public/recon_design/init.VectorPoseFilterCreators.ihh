@@ -11,5 +11,7 @@
 /// @brief  Creator #includes for Filters for init
 /// @author Alex Sevy alex.sevy@gmail.com
 
+#include <protocols/filters/FilterFactory.hh>
+
 //VectorPoseFilterCreator #includes
 #include <protocols/recon_design/FitnessFilterCreator.hh>

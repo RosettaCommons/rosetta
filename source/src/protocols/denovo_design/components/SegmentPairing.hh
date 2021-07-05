@@ -24,11 +24,9 @@
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace denovo_design {

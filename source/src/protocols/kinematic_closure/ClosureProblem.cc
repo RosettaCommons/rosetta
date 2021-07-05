@@ -16,17 +16,13 @@
 #include <protocols/kinematic_closure/internal.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
-#include <protocols/kinematic_closure/perturbers/Perturber.hh>
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/util/kinematics_util.hh>
@@ -40,7 +36,6 @@
 #include <numeric/conversions.hh>
 #include <numeric/kinematic_closure/closure.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 

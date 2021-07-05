@@ -18,7 +18,6 @@
 #include <protocols/match/downstream/ScoringSecMatchRPE.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 

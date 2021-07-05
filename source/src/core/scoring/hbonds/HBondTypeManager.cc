@@ -21,7 +21,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/vector1_bool.hh>
 
 // C++ headers
 #include <map>

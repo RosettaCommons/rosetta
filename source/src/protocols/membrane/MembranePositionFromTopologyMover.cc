@@ -30,25 +30,19 @@
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/membrane/SetMembranePositionMover.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/Residue.hh>
 #include <protocols/membrane/util.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

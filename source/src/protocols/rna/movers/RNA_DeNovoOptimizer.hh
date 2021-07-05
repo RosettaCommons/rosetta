@@ -22,6 +22,8 @@
 #include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace rna {
 namespace movers {

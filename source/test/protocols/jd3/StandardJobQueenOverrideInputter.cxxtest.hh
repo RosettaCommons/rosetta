@@ -24,14 +24,11 @@
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/InputSource.hh>
-#include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/pose_inputters/pose_inputter_schemas.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.hh>
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
-#include <protocols/jd3/pose_inputters/PDBPoseInputter.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 // basic headers
 #include <basic/options/option.hh>
@@ -39,11 +36,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKey.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/options/keys/StringOptionKey.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -52,7 +46,6 @@
 // Boost headers
 
 // C++ headers
-#include <sstream>
 #include <algorithm>
 
 using namespace utility::tag;

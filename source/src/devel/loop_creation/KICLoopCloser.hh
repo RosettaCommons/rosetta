@@ -20,7 +20,6 @@
 #include <devel/loop_creation/LoopCloser.hh>
 
 //protocols
-#include <protocols/loops/Loop.hh>
 
 namespace devel {
 namespace loop_creation {

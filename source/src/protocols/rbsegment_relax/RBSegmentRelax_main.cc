@@ -17,16 +17,14 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <core/types.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/loops/loops_main.hh>
@@ -35,17 +33,12 @@
 #include <protocols/rbsegment_relax/RBSegmentRelax.hh>
 #include <protocols/rbsegment_relax/RBSegmentRelax_main.hh>
 
-#include <core/io/silent/SilentStructFactory.hh>
 
-#include <protocols/boinc/boinc.hh>  // required for boinc build
 
 // C++ headers
-#include <fstream>
-#include <iostream>
 #include <string>
 
 // option key includes
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
@@ -53,7 +46,6 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/io/silent/SilentStruct.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/rbsegment_relax/RBSegment.hh>
 #include <basic/options/option.hh>

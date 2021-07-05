@@ -21,33 +21,27 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <core/id/AtomID.hh>
 
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FragData.hh> //to get secondary structure
 #include <core/fragment/SecstructSRFD.hh> //to get secondary structure
 #include <core/fragment/FragID_Iterator.hh>
 
-#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
-#include <core/id/SequenceMapping.hh>
 
 #include <core/fragment/SecondaryStructure.hh>
-#include <protocols/jumping/JumpSample.hh>
 
 
 //numeric headers
-#include <numeric/random/random.hh>
 
 // ObjexxFCL Headers
 
@@ -57,7 +51,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -65,6 +58,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 
 static basic::Tracer tr( "protocols.abinitio.Templates" );

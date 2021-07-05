@@ -17,7 +17,7 @@
 //External
 
 // Project Headers
-#include <protocols/features/FeaturesReporter.hh>
+#include <protocols/features/FeaturesReporter.fwd.hh>
 
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/BatchFeatures.hh>
@@ -32,11 +32,9 @@
 #include <protocols/features/ResidueConformationFeatures.hh>
 #include <protocols/features/JobDataFeatures.hh>
 #include <protocols/features/DatabaseFilters.hh>
-#include <protocols/features/FeaturesReporterFactory.hh>
 #include <protocols/features/util.hh>
 #include <protocols/jd2/util.hh>
 #include <basic/options/option.hh>
-#include <basic/database/sql_utils.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Platform Headers
@@ -45,13 +43,11 @@
 #include <core/scoring/Energies.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // External Headers
-#include <cppdb/frontend.h>
 
 // C++ Headers
 #include <string>

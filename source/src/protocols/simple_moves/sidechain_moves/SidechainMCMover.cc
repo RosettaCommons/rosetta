@@ -18,10 +18,8 @@
 #include <basic/prof.hh>
 
 // Core Headers
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -38,11 +36,9 @@
 
 
 // C++ Headers
-#include <ostream>
 #include <sstream>
 
 #include <utility/string_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

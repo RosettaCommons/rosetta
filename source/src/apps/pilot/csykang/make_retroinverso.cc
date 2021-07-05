@@ -16,8 +16,6 @@
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/backtrace.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -34,9 +32,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/TorsionID.hh>
 #include <core/types.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/AtomID_Map.hh>
@@ -49,12 +45,9 @@
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/ResidueLevelTask.hh>
 
 // unit headers
 #include <protocols/relax/FastRelax.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 
 // numeric headers
 #include <numeric/xyzVector.hh>

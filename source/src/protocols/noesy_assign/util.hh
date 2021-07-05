@@ -20,10 +20,8 @@
 
 // Project Headers
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 //Auto Headers
 //// C++ headers

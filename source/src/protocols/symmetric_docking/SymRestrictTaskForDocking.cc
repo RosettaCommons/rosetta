@@ -14,15 +14,13 @@
 #include <protocols/symmetric_docking/SymRestrictTaskForDocking.hh>
 
 #include <core/pack/task/PackerTask.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 // Symmetry
 
 
 #include <protocols/scoring/Interface.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <utility>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

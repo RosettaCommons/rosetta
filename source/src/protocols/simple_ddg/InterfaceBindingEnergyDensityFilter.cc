@@ -18,7 +18,7 @@
 // Package headers
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 #include <protocols/simple_ddg/DdgFilter.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Project headers

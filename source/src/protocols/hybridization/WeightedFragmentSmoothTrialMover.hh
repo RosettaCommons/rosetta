@@ -15,22 +15,16 @@
 #define INCLUDED_protocols_hybridization_WeightedFragmentSmoothTrialMover_hh
 
 #include <protocols/hybridization/WeightedFragmentSmoothTrialMover.fwd.hh>
-#include <protocols/simple_moves/SmoothFragmentMover.hh>
+#include <protocols/simple_moves/SmoothFragmentMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameList.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/types.hh>
-#include <basic/prof.hh>
 
 #include <numeric/random/WeightedSampler.hh>
-#include <numeric/random/random.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 namespace protocols {

@@ -16,30 +16,23 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 // Unit headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/util.hh>
 
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 #include <core/chemical/AA.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/variant_util.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace std;
 

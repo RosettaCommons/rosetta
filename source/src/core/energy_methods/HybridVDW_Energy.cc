@@ -26,7 +26,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
 

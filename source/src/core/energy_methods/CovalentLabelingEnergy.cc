@@ -13,27 +13,17 @@
 #include <core/energy_methods/CovalentLabelingEnergy.hh>
 #include <core/energy_methods/CovalentLabelingEnergyCreator.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
 #include <core/pose/Pose.hh>
-#include <basic/prof.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 
 #include <utility/io/izstream.hh>
-#include <utility/file/FileName.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <utility/vector1.hh>
 #include <numeric/NumericTraits.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 namespace core {
 namespace energy_methods {

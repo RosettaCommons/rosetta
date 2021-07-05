@@ -19,14 +19,10 @@
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/string_util.hh>
-#include <protocols/filters/BasicFilters.hh>
-#include <limits>
 #include <protocols/calc_taskop_filters/OperatorFilter.hh>
-#include <protocols/calc_taskop_filters/RelativePoseFilter.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/calc_taskop_filters/RelativePoseFilter.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

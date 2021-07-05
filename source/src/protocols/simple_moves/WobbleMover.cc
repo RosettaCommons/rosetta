@@ -17,13 +17,12 @@
 #include <protocols/simple_moves/GunnCost.hh>
 
 // Project Headers
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
@@ -31,7 +30,6 @@
 // Utility headers
 #include <numeric/random/random.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++ headers

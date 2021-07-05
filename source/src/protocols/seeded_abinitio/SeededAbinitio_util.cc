@@ -17,15 +17,12 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <core/conformation/Residue.hh>
 //#include <core/chemical/ResidueTypeSet.hh>
 //#include <core/chemical/ResidueTypeSet.fwd.hh>
 //#include <core/conformation/ResidueFactory.hh>
-#include <core/kinematics/FoldTree.hh>
 
 
 #include <core/id/SequenceMapping.hh>
@@ -33,15 +30,13 @@
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 
-#include <core/types.hh>
 #include <basic/Tracer.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/selection.hh>
 #include <utility/vector1.hh>
 
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/option.hh>
@@ -51,29 +46,17 @@
 //
 //#include <core/scoring/rms_util.hh>
 
-#include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 
 
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
-#include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
 
 // C++ headers
-#include <map>
-#include <algorithm>
 
 static basic::Tracer TR( "seeded_abinitio.SeededAbinitio_util" );
 

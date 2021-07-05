@@ -17,21 +17,18 @@
 #include <core/energy_methods/YHHPlanarityEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
 #include <numeric/constants.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
 
 

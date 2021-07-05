@@ -8,14 +8,14 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 #include <protocols/sic_dock/designability_score.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For min, max
 
 namespace protocols {
 namespace sic_dock {

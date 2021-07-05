@@ -24,9 +24,10 @@
 #include <protocols/forge/remodel/ResidueVicinityRCG.hh>
 
 // utility includes
-#include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <protocols/filters/Filter.fwd.hh> // AUTO IWYU For FilterCollectionOP, FilterCOP
 
 namespace devel {
 namespace enzdes {

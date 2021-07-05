@@ -23,7 +23,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>

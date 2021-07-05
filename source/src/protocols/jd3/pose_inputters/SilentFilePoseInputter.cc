@@ -17,12 +17,10 @@
 
 // Package headers
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
-#include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
 #include <protocols/jd3/pose_inputters/pose_inputter_schemas.hh>
 
 ///Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
@@ -30,7 +28,6 @@
 ///Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/vector1.hh>
@@ -47,7 +44,6 @@
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/pose/symmetry/util.hh>
 
 static basic::Tracer tr( "protocols.jd3.SilentFilePoseInputter" );
 

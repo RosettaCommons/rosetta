@@ -16,7 +16,7 @@
 #include <protocols/quantum_annealing/ExternalPackerResultLoaderCreator.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/interaction_graph/util.hh>
 
 // Basic/Utility headers

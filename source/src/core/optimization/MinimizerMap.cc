@@ -41,12 +41,13 @@
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 // C++ headers
-#include <cstdlib>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
+
+#include <core/optimization/DOF_Node.hh> // AUTO IWYU For DOF_Node, operator<
 
 
 namespace core {

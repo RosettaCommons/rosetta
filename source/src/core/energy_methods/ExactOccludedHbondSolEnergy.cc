@@ -55,32 +55,15 @@
 // C++ Headers
 #include <cmath>
 #include <iostream>
-#include <iomanip>
 #include <map>
 #include <vector>
 
 //Auto Headers
-#include <platform/types.hh>
-#include <core/chemical/ResConnID.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/FArray3D.hh>
 #include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/Bound.hh>
-#include <utility/string_util.hh>
-#include <utility/vector0_bool.hh>
-#include <utility/file/FileName.hh>
-#include <utility/keys/SmallKeyVector.hh>
 #include <utility/options/BooleanOption.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

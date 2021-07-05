@@ -24,12 +24,8 @@
 #include <core/sequence/SequenceProfile.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 
 #include <core/conformation/Residue.hh>
 

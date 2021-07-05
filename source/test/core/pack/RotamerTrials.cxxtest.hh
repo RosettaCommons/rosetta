@@ -16,7 +16,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
@@ -32,13 +31,15 @@
 
 #include <core/types.hh>
 
-#include <numeric/angle.functions.hh>
 #include <numeric/conversions.hh>
 
 #include <test/UTracer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <iomanip> // AUTO IWYU For operator<<, setprecision
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using basic::Error;

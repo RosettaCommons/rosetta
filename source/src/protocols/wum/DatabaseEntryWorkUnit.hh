@@ -23,8 +23,7 @@
 #include <protocols/wum/WorkUnitBase.hh>
 
 //Utility and basic
-#include <basic/database/sql_utils.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 //C++
 #include <string>

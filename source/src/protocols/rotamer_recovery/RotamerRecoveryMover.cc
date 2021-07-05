@@ -31,26 +31,23 @@ namespace rotamer_recovery {
 
 
 // Unit Headers
-#include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
-#include <protocols/rotamer_recovery/RRProtocol.hh>
+#include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
-#include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/rotamer_recovery/RRReporter.hh>
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Option System Headers
 #include <basic/options/option.hh>
@@ -59,22 +56,16 @@ namespace rotamer_recovery {
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
-#include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
 
 // Numeric Headers
 
 // C++ Headers
-#include <algorithm>
 #include <iostream>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector0.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

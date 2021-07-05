@@ -17,7 +17,6 @@
 #define INCLUDED_protocols_denovo_design_components_test_utils_hh
 
 // Unit headers
-#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 
 // Protocol headers
@@ -28,7 +27,6 @@
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
-#include <basic/Tracer.hh>
 
 // C++ Headers
 

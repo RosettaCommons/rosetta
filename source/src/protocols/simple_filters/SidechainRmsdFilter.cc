@@ -14,9 +14,8 @@
 #include <protocols/simple_filters/SidechainRmsdFilter.hh>
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
 
-#include <utility>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
@@ -24,18 +23,12 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/ref_pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AA.hh>
 #include <core/scoring/rms_util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

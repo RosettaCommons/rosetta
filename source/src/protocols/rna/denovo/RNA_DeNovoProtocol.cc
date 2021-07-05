@@ -18,13 +18,9 @@
 #include <protocols/rna/denovo/RNA_DeNovoProtocolCreator.hh>
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
-#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
-#include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <core/import_pose/RNA_BasePairHandler.hh>
 #include <core/import_pose/RNA_DeNovoParameters.hh>
 #include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
-#include <protocols/rna/denovo/movers/RNA_Relaxer.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <protocols/rna/setup/RNA_MonteCarloJobDistributor.hh>
 #include <protocols/rna/setup/RNA_CSA_JobDistributor.hh>
@@ -34,28 +30,19 @@
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 
 // Package headers
-#include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/extra_pose_info_util.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -63,14 +50,11 @@
 #include <core/io/silent/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <utility/file/file_sys_util.hh>
-#include <numeric/MathNTensor.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -95,8 +79,12 @@
 #include <iostream>
 
 //Auto Headers
-#include <protocols/viewer/GraphicsState.hh>
 #include <utility/vector1.hh>
+
+#include <utility/tag/XMLSchemaGeneration.hh> // MANUAL IWYU
+
+#include <protocols/moves/mover_schemas.hh> // AUTO IWYU For xsd_type_definition_w_attributes
+#include <fstream> // AUTO IWYU For operator<<, basic_ostream, endl
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +110,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::format;
 using namespace core;
 using namespace core::pose::rna;
 using namespace core::import_pose;

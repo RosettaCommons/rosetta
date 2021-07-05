@@ -19,7 +19,7 @@
 #include <core/chemical/rings/RingConformerManager.fwd.hh>
 
 // Package headers
-#include <core/chemical/rings/RingConformer.fwd.hh>
+#include <core/chemical/rings/RingConformer.hh> // DO NOT AUTO-REMOVE
 #include <core/chemical/rings/RingSaturationType.hh>
 
 // Project headers

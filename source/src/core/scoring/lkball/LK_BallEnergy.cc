@@ -11,7 +11,6 @@
 /// @brief  Orientation dependent variant of the LK Solvation using
 /// @author Phil Bradley
 
-#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
 
 
 // Unit headers
@@ -22,10 +21,8 @@
 // Package headers
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/NeighborList.hh>
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/MinimizationData.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/DerivVectorPair.hh>
@@ -40,30 +37,20 @@
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 
-#include <core/scoring/constraints/AngleConstraint.hh>
 
-#include <basic/options/util.hh> // HACK
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <basic/prof.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
 
-#include <utility/vector1.functions.hh>
 
 //trie
-#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/trie/CPDataCorrespondence.hh>
 #include <core/scoring/trie/RotamerDescriptor.hh>
 #include <core/scoring/trie/RotamerTrie.hh>
@@ -78,8 +65,12 @@
 #include <core/scoring/etable/etrie/TrieCountPair1BC4.hh>
 #include <core/scoring/etable/etrie/TrieCountPair1BC3.hh>
 #include <core/scoring/etable/etrie/TrieCountPairAll.hh>
-#include <core/scoring/etable/etrie/TrieCountPairNone.hh>
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
+
+#include <core/scoring/lkball/lkbtrie/LKBAtom.hh> // AUTO IWYU For LKBAtom
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh> // AUTO IWYU For LKBTrieEvaluator
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
+#include <numeric/numeric.functions.hh> // AUTO IWYU For square
 
 
 #ifdef WIN32

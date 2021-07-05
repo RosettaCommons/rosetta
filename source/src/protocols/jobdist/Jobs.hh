@@ -18,7 +18,6 @@
 
 #include <protocols/jobdist/Jobs.fwd.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <map>
 #include <iosfwd>

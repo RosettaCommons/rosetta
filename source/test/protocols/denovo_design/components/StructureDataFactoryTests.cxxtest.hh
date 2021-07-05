@@ -13,15 +13,12 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
 #include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Protocol Headers
-#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-#include <protocols/denovo_design/util.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 
 // Core Headers
@@ -39,7 +36,8 @@
 #include <utility/tag/Tag.hh>
 
 // Boost Headers
-#include <boost/algorithm/string/replace.hpp>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("StructureDataFactoryTests");
 

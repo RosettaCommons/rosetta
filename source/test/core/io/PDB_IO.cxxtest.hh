@@ -29,7 +29,8 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
-#include <fstream>
+
+#include <core/io/StructFileRepOptions.hh> // AUTO IWYU For StructFileRepOptions
 
 static basic::Tracer TR("core.io.PDB_IO.cxxtest");
 

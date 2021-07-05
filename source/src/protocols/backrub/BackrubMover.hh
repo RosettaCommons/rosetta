@@ -24,17 +24,15 @@
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Protocols Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <protocols/backrub/BackrubSegment.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
-#include <utility/keys/Key3Vector.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Numeric Headers
@@ -43,9 +41,10 @@
 // C++ Headers
 #include <map>
 
-#include <utility/vector0_bool.hh>
 #include <utility/vector1.hh>
 #include <numeric/NumericTraits.hh>
+
+#include <utility/vector0.hh> // AUTO IWYU For vector0
 
 
 namespace protocols {

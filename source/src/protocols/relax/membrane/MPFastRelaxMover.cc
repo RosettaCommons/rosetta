@@ -27,10 +27,8 @@
 #include <protocols/relax/util.hh>
 
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
-#include <protocols/membrane/util.hh>
 
 // Package Headers
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -43,18 +41,14 @@
 #include <core/pose/util.hh>
 #include <core/types.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <utility>
-#include <utility/tag/Tag.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

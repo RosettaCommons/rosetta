@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <protocols/kinematic_closure/types.hh>
-#include <protocols/kinematic_closure/ClosureSolution.hh>
+#include <protocols/kinematic_closure/ClosureSolution.fwd.hh>
 
 // Utility headers
 #include <boost/iterator/iterator_facade.hpp>

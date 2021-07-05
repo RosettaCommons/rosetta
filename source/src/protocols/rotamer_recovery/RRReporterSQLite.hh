@@ -21,12 +21,10 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
-#include <protocols/features/ReportToDB.hh>
+#include <protocols/features/ReportToDB.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <string>

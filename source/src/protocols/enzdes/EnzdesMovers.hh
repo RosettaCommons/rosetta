@@ -18,10 +18,9 @@
 #include <protocols/enzdes/EnzdesMovers.fwd.hh>
 
 // Unit headers
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Package headers
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
@@ -39,6 +38,8 @@
 #include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
 
 
 //Utility Headers

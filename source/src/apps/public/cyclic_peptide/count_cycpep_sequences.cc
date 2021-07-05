@@ -24,17 +24,16 @@
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
 
 // Boost headers
 #include <boost/integer/common_factor_rt.hpp>
 
 // C++ headers
-#include <cmath> //For std::pow
+
+#include <cmath> // MANUAL IWYU
 
 static basic::Tracer TR( "apps.public.cyclic_peptide.count_cycpep_sequences" );
 static const std::string errmsg( "Error in count_cycpep_sequence application:  " );

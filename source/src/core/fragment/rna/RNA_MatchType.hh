@@ -11,13 +11,10 @@
 
 // ObjexxFCL Headers
 
-#include <core/types.hh>
 // you cannot #include yourself #include <protocols/rna/denovo/fragments/RNA_MatchType.hh>
 
 // C++ Headers
-#include <vector>
 
-#include <utility/vector1.hh>
 
 
 /////////////////////////////////////////////////////////////////////////////////////

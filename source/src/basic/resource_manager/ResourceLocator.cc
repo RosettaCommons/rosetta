@@ -13,7 +13,6 @@
 
 //unit headers
 #include <basic/resource_manager/ResourceLocator.hh>
-#include <utility>
 
 namespace basic {
 namespace resource_manager {

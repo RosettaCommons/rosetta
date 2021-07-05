@@ -18,8 +18,9 @@
 
 #include <utility/VirtualBase.hh>
 #include <core/scoring/loop_graph/Loop.fwd.hh>
-#include <core/scoring/types.hh>
 #include <iosfwd>
+
+#include <core/types.hh> // AUTO IWYU For Size
 
 namespace core {
 namespace scoring {

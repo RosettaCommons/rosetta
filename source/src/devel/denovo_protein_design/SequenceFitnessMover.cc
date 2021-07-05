@@ -17,11 +17,9 @@
 
 // Unit Headers
 #include <devel/denovo_protein_design/SequenceFitnessMover.hh>
-#include <devel/denovo_protein_design/SequenceFitnessMover.fwd.hh>
 
 // Package Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/Mover.fwd.hh> //MoverOP
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -30,7 +28,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
 
 
 #include <basic/options/option.hh>
@@ -41,14 +38,12 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/exit.hh>
 
 // option key includes
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <protocols/relax/FastRelax.hh>
-#include <utility/vector1.hh>
 
 
 // C++ Headers

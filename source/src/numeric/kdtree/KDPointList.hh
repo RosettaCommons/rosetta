@@ -16,9 +16,11 @@
 #define INCLUDED_numeric_kdtree_KDPointList_hh
 
 #include <numeric/types.hh>
-#include <numeric/kdtree/KDPoint.hh>
+#include <numeric/kdtree/KDPoint.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 namespace numeric {
 namespace kdtree {

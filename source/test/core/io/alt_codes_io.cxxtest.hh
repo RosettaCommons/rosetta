@@ -24,7 +24,6 @@
 #include <basic/Tracer.hh>
 
 // C++ header
-#include <utility>
 
 static basic::Tracer TR( "core.io.alt_codes_io.cxxtest" );
 

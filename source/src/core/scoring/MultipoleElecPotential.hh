@@ -18,7 +18,6 @@
 #include <core/scoring/MultipoleElecPotential.fwd.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 #include <basic/datacache/CacheableData.hh>
 #include <core/scoring/DerivVectorPair.hh>
@@ -30,10 +29,8 @@
 //#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
 //#include <core//.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 

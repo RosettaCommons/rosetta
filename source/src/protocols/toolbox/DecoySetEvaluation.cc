@@ -53,6 +53,9 @@
 #include <core/id/NamedStubID.hh>
 #include <utility/vector1.hh>
 
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For RealOptionKey, OptionKeys, options, FileOpt...
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
+
 OPT_1GRP_KEY( Real, dist_cst, max_dist )
 OPT_1GRP_KEY( Real, dist_cst, sd )
 OPT_1GRP_KEY( Real, dist_cst, ub_fact )

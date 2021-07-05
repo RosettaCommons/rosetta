@@ -22,7 +22,6 @@
 
 // Package Header
 #include <protocols/fldsgn/topology/StrandPairing.fwd.hh>
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 
 // Proeject Header
 #include <core/id/AtomID.fwd.hh>
@@ -33,6 +32,8 @@
 
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <ostream> // AUTO IWYU For operator<<, basic_ostream, ostream, bas...
 
 namespace protocols {
 namespace fldsgn {

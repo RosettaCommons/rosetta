@@ -16,7 +16,6 @@
 #include <protocols/topology_broker/TemplateJumpClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 
 #ifdef WIN32
@@ -24,10 +23,7 @@
 #endif
 
 // Project Headers
-#include <core/pose/Pose.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/fragment/FragSet.hh>
-#include <protocols/jumping/JumpSetup.hh>
+#include <protocols/jumping/JumpSetup.fwd.hh>
 #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>
 #include <core/scoring/dssp/PairingsList.hh>
@@ -49,7 +45,8 @@
 #include <fstream>
 
 #include <utility/vector1.hh>
-#include <boost/algorithm/string/erase.hpp>
+
+#include <protocols/abinitio/Templates.hh> // AUTO IWYU For Templates
 
 
 // option key includes

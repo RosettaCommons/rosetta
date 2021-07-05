@@ -22,11 +22,9 @@
 #include <core/types.hh>
 #include <core/id/PartialAtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <iosfwd>
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/mainchain_potential/MainchainScoreTable.fwd.hh>
@@ -34,9 +32,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
-#include <numeric/interpolation/spline/BicubicSpline.hh>
 
 #include <map>
 

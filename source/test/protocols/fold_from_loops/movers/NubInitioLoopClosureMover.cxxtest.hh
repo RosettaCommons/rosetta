@@ -14,37 +14,25 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/rosettascripts.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/util/pdb1rpb.hh>
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pose/variant_util.hh>
 
 #include <protocols/fold_from_loops/movers/LabelPoseFromResidueSelectorMover.hh>
 #include <protocols/fold_from_loops/movers/NubInitioLoopClosureMover.hh>
 #include <protocols/fold_from_loops/filters/RmsdFromResidueSelectorFilter.hh>
 
-#include <protocols/moves/Mover.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FragData.hh>
 #include <core/fragment/FragmentIO.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 
-#include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Utility Headers
-#include <utility/file/FileName.hh>
 #include <basic/Tracer.hh>
 
 using namespace protocols::fold_from_loops::movers;

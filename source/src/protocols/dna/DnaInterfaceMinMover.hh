@@ -16,13 +16,11 @@
 
 #include <protocols/dna/DnaInterfaceMinMover.fwd.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <protocols/dna/DnaInterfaceFinder.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -16,19 +16,15 @@
 #include <test/core/init_util.hh>
 
 // Program headers
-#include <core/chemical/residue_io.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>

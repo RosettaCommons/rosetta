@@ -18,22 +18,17 @@
 #define INCLUDED_core_energy_methods_DEEREnergy_hh
 
 // Unit headers
-#include <core/scoring/epr_deer/metrics/DEERData.hh>
-#include <core/scoring/epr_deer/DEERDataCache.hh>
-#include <core/scoring/epr_deer/EPRSpinLabel.hh>
+#include <core/scoring/epr_deer/DEERDataCache.fwd.hh>
+#include <core/scoring/epr_deer/EPRSpinLabel.fwd.hh>
 #include <core/energy_methods/DEEREnergy.fwd.hh>
-#include <core/energy_methods/DEEREnergyCreator.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/DenseEnergyContainer.hh>
-#include <core/scoring/LREnergyContainer.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 
@@ -41,11 +36,12 @@
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
-#include <string>
+
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh> // AUTO IWYU For EnergyMethodOptions
+#include <map> // AUTO IWYU For map
 
 namespace core {
 namespace energy_methods {

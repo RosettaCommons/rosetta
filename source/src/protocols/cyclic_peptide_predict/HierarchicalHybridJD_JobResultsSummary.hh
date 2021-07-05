@@ -19,17 +19,13 @@
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_ResultsSummaryBase.hh>
 
 // Package Headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Project Headers
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <cstdio>
 
 namespace protocols {
 namespace cyclic_peptide_predict {

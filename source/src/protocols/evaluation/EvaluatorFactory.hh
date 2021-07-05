@@ -23,20 +23,15 @@
 #include <protocols/evaluation/EvaluatorCreator.fwd.hh>
 
 // Platform Headers
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 // C++ Headers
-#include <map>
+#include <string>
 
-#include <utility/vector1.hh>
+#include <vector> // AUTO IWYU For vector
 
 namespace protocols {
 namespace evaluation {

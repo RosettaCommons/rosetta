@@ -21,12 +21,11 @@
 #include <protocols/mean_field/FlexBBDesignMeanField.hh>
 
 
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 
 
-#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace mean_field {

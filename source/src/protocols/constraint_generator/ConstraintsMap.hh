@@ -23,11 +23,10 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
+#include <string>
 
 #ifdef    SERIALIZATION // 1
 #include <cereal/access.fwd.hpp> // 5

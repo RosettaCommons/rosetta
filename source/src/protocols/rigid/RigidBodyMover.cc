@@ -21,13 +21,10 @@
 
 // Package headers
 #include <protocols/rigid/RB_geometry.hh>
-#include <core/pose/PDBInfo.hh>
 // Rosetta Headers
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/conformation/Residue.hh>
@@ -40,37 +37,23 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/id/TorsionID_Range.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 #include <numeric/xyz.functions.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <string>
-#include <core/id/TorsionID_Range.hh>
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
-#include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 
 

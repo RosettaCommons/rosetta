@@ -19,17 +19,12 @@
 #include <devel/init.hh>
 
 // Package Headers
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loodo.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <protocols/sic_dock/util.hh>
 

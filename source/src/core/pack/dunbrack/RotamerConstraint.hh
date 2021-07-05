@@ -24,12 +24,9 @@
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.hh> // DO NOT AUTO-REMOVE needed for member variable.
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
-#include <utility/vector1_bool.hh>
 #include <utility/vector1.hh>
 
 

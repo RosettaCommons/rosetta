@@ -19,17 +19,14 @@
 #define INCLUDED_core_conformation_find_neighbors_hh
 
 // Package Headers
-#include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/find_neighbors.fwd.hh>
 #include <core/types.hh>
-#include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
 
 
 // Numeric headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzTriple.hh>
-#include <numeric/xyzVector.fwd.hh>
 
 #include <numeric/geometry/hashing/xyzStripeHashWithMeta.hh>
 
@@ -40,19 +37,18 @@
 //#include <utility/pointer/access_ptr.hh>
 
 // boost headers
-#include <boost/unordered_map.hpp>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <cmath>
-#include <cstdlib>
 #include <limits>
 #include <map>
 #include <vector>
 
 #include <utility/vector1.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/prof.hh>
+
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
+#include <boost/container_hash/extensions.hpp> // AUTO IWYU For hash_combine
 
 
 namespace core {

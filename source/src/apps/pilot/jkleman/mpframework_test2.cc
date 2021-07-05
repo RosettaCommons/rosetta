@@ -15,21 +15,14 @@
 #include <devel/init.hh>
 
 // Package Headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/util.hh>
 
 // Utility Headers
 #include <core/types.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
@@ -39,8 +32,6 @@
 #include <numeric/util.hh>
 
 // C++ headers
-#include <iostream>
-#include <cstdlib>
 
 static basic::Tracer TR( "apps.pilot.jkleman.mpframework_test2" );
 

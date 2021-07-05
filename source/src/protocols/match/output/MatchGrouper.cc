@@ -16,10 +16,8 @@
 #include <protocols/match/output/MatchGrouper.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <list>
 
 namespace protocols {
 namespace match {

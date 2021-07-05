@@ -23,7 +23,6 @@
 
 // Package Headers
 #include <core/environment/FoldTreeSketch.hh>
-#include <core/environment/LocalPosition.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
 

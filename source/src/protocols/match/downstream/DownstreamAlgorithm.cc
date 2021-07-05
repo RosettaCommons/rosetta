@@ -18,9 +18,9 @@
 // Package headers
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/Matcher.hh>
-#include <protocols/match/downstream/ActiveSiteGrid.hh>
+#include <protocols/match/downstream/ActiveSiteGrid.fwd.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
-#include <protocols/match/downstream/DownstreamBuilder.hh>
+#include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
 
 //Project header
 #include <core/conformation/Residue.hh>

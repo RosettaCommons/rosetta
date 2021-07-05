@@ -19,7 +19,7 @@
 // Package headers
 
 // Project headers
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -35,18 +35,19 @@
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
 //Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/options/option.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

@@ -18,7 +18,6 @@
 // Unit headers
 #include <protocols/evolution/NucleotideMutation.hh>
 #include <protocols/evolution/NucleotideMutationCreator.hh>
-#include <core/pose/symmetry/util.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -26,7 +25,6 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -34,34 +32,29 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/NucleotideTools.hh>
 
 
 #include <utility/vector1.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <sstream>
 #include <core/chemical/AA.hh>
 
-#include <core/import_pose/import_pose.hh>
-#include <protocols/task_operations/ThreadSequenceOperation.hh>
 
 #include <numeric/numeric.functions.hh>
-#include <utility/vector0.hh>
 #include <map>
 #include <cmath>
 
-#include <ctime>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

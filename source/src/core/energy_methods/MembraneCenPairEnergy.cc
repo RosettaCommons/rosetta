@@ -35,7 +35,6 @@
 
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/MembraneTopology.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

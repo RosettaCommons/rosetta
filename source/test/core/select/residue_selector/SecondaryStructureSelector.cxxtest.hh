@@ -13,17 +13,13 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/core/select/residue_selector/DummySelectors.hh>
 
 // Package headers
 #include <core/select/residue_selector/SecondaryStructureSelector.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 // Utility headers
@@ -35,6 +31,9 @@
 
 // C++ headers
 #include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, cerr
 
 using namespace core::select::residue_selector;
 

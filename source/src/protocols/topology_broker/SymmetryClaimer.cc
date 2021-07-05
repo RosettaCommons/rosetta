@@ -18,33 +18,26 @@
 #include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/claims/SymmetryClaim.hh>
 #include <protocols/topology_broker/claims/SequenceClaim.hh>
-#include <protocols/topology_broker/Exceptions.hh>
-#include <protocols/topology_broker/TopologyBroker.hh>
 
 // Project Headers
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/excn/Exceptions.hh>
 
 //// C++ headers
 #include <sstream>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 #include <utility/vector1.hh>
 
 

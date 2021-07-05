@@ -23,23 +23,18 @@
 #include <core/types.hh>
 
 // Project headers
-#include <core/chemical/ResidueType.fwd.hh>
 
 // Numeric headers
 #include <numeric/random/random.fwd.hh>
 #include <numeric/angle.functions.hh>
 
-#include <basic/interpolate.hh>
-#include <basic/basic.hh>
 
 // Utility headers
 #include <utility/fixedsizearray1.hh>
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1_bool.hh>
-#include <cmath>
-#include <cstdlib>
-#include <iosfwd>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace core {

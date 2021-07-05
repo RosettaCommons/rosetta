@@ -16,7 +16,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
 
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
@@ -24,7 +23,7 @@
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/Jobs.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/select/residue_selector/InterGroupInterfaceByVectorSelector.hh>

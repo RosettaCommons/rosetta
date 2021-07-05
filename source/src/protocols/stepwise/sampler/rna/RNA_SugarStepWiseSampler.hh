@@ -20,7 +20,8 @@
 // Package headers
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/id/DOF_ID_Map.hh>
+
+#include <core/id/DOF_ID.hh> // AUTO IWYU For DOF_ID
 
 namespace protocols {
 namespace stepwise {

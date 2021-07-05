@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/database/open.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/RestypeDestructionEvent.hh>
@@ -43,6 +43,8 @@
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
 #include <basic/datacache/CacheableData.hh>
+
+#include <numeric/interpolation/Histogram.hh> // AUTO IWYU For Histogram
 
 // Numeric headers
 //#include <numeric/deriv/distance_deriv.hh>

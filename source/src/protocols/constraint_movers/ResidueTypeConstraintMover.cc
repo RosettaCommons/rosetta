@@ -16,15 +16,12 @@
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 //Auto Headers
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes

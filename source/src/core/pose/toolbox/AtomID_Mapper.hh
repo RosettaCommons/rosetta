@@ -19,8 +19,8 @@
 #include <utility/VirtualBase.hh>
 #include <core/pose/toolbox/AtomID_Mapper.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/NamedAtomID.fwd.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>

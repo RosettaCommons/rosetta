@@ -17,13 +17,11 @@
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/UltraLightResidue.hh>
 
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/json_spirit/json_spirit_value.h>

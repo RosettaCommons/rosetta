@@ -15,7 +15,6 @@
 #define INCLUDED_basic_database_schema_generator_Column_HH
 
 // Unit Headers
-#include <iosfwd>                                              // for string
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
 #include <basic/database/schema_generator/Column.fwd.hh>
 #include <basic/database/schema_generator/DbDataType.fwd.hh>   // for DbData...

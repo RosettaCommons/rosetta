@@ -23,9 +23,8 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -40,14 +39,10 @@
 #include <utility/string_util.hh>
 
 // C++ headers
-#include <cmath>
 #include <iostream>
-#include <iomanip>
-#include <algorithm>
 #include <string>
 
 // Boost headers
-#include <boost/algorithm/string.hpp>
 
 namespace core {
 namespace scoring {

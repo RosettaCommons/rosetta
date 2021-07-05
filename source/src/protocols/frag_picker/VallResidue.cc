@@ -22,13 +22,11 @@
 // boost headers
 
 // utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/exit.hh>
 
 // C++ headers
 #include <cstdio>
 #include <iostream>
-#include <sstream>
 
 // Tracer
 #include <basic/Tracer.hh>

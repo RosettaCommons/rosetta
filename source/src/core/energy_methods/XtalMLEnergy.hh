@@ -16,24 +16,16 @@
 #define INCLUDED_core_scoring_cryst_XtalMLEnergy_hh
 
 // Package headers
-#include <core/energy_methods/XtalMLEnergyCreator.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AA.hh>
 
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <string>
 

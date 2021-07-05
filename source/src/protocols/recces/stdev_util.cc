@@ -13,11 +13,9 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <protocols/recces/stdev_util.hh>
-#include <protocols/recces/sampler/MC_Any.hh>
 #include <protocols/recces/sampler/MC_Comb.hh>
 #include <protocols/recces/sampler/MC_Loop.hh>
 #include <protocols/recces/sampler/MC_OneTorsion.hh>
-#include <protocols/recces/sampler/rna/MC_RNA_OneJump.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
 #include <protocols/recces/options/RECCES_Options.hh>

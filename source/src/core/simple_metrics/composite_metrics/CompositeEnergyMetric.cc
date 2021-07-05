@@ -33,12 +33,9 @@
 
 // Basic/Utility headers
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 
 
 // XSD Includes

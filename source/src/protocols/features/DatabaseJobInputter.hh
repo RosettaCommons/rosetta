@@ -19,7 +19,7 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/features/DatabaseJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <protocols/jd2/JobsContainer.hh>
+#include <protocols/jd2/JobsContainer.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

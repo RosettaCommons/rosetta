@@ -19,10 +19,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/sequence/util.hh>
@@ -32,7 +30,6 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/annotated_sequence.hh>
 
 OPT_1GRP_KEY( File, out, pdbfname )

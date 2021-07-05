@@ -26,7 +26,6 @@
 
 #include <numeric/constants.hh>
 #include <numeric/conversions.hh>
-#include <numeric/types.hh>
 
 // C++ headers
 #include <cmath>

@@ -13,14 +13,13 @@
 #include <protocols/kinematic_closure/solution_pickers/RandomSolutions.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
 
 // C++ headers
 #include <iostream>
-#include <sstream>
 
 
 namespace protocols {

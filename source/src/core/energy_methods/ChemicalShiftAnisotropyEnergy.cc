@@ -26,10 +26,8 @@
 //#include <core/pose/datacache/CacheableDataType.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
 #include <numeric/xyzVector.hh>
 
-#include <core/id/NamedAtomID.hh>
 
 //utility headers
 #include <utility/vector1.hh>
@@ -37,17 +35,11 @@
 #include <basic/Tracer.hh>
 
 //Objexx headers
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <utility/io/ozstream.hh> //for dump_weights
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/csa.OptionKeys.gen.hh>
 
 //C++ headers
-#include <iostream>
 
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>

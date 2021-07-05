@@ -18,19 +18,14 @@
 // Unit headers
 #include <protocols/cyclic_peptide/crosslinker/SquarePyramidalMetal_Helper.fwd.hh>
 #include <protocols/cyclic_peptide/crosslinker/SquarePlanarMetal_Helper.hh>
-#include <protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.hh>
-#include <protocols/cyclic_peptide/crosslinker/Metal_HelperBase.hh>
 
 // Protocol headers
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/types.hh>
 
 // Basic/Utility headers
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace cyclic_peptide {

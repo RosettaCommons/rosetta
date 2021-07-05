@@ -19,7 +19,6 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>
-#include <core/types.hh>
 
 
 // Project headers

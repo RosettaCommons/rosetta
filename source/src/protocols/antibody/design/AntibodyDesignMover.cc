@@ -25,7 +25,6 @@
 #include <protocols/antibody/constraints/ParatopeEpitopeSiteConstraintMover.hh>
 #include <protocols/antibody/constraints/CDRDihedralConstraintMover.hh>
 
-#include <protocols/antibody/constraints/util.hh>
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/GeneralAntibodyModeler.hh>
 #include <protocols/antibody/design/AntibodySeqDesignTFCreator.hh>
@@ -33,24 +32,18 @@
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/design/AntibodyDesignEnumManager.hh>
 #include <protocols/antibody/design/NativeAntibodySeq.hh>
-#include <protocols/viewer/viewers.hh>
 
 // Core Includes
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataCache.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/conformation/Conformation.hh>
 
 // Protocol Includes
 #include <protocols/jd2/util.hh>
@@ -58,14 +51,9 @@
 #include <protocols/monte_carlo/MonteCarloInterface.hh>
 
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
-#include <protocols/moves/DsspMover.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/DeleteChainsMover.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <protocols/grafting/AnchoredGraftMover.hh>
-#include <protocols/grafting/util.hh>
-#include <protocols/forge/methods/chainbreak_eval.hh>
-#include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
@@ -81,20 +69,26 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 //Utility
-#include <cmath>
 #include <basic/Tracer.hh>
-#include <utility/py/PyAssert.hh>
 #include <map>
 #include <iterator>
-#include <boost/algorithm/string.hpp>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <protocols/antibody/clusters/CDRCluster.hh> // AUTO IWYU For CDRCluster
+#include <protocols/minimization_packing/MinMover.hh> // AUTO IWYU For MinMover, MinMover::Mini...
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
+
+#ifdef GL_GRAPHICS
+#include <protocols/moves/DsspMover.hh>
+#include <protocols/viewer/viewers.hh>
+#endif
 
 static basic::Tracer TR("protocols.antibody.design.AntibodyDesignMover");
 

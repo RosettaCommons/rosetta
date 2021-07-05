@@ -15,17 +15,14 @@
 
 // Unit Headers
 #include <protocols/rigid/UniformRigidBodyMover.fwd.hh>
-#include <protocols/environment/ClientMover.hh>
 
 // Package headers
-#include <protocols/environment/claims/EnvClaim.hh>
 
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
 // C++ Headers
 

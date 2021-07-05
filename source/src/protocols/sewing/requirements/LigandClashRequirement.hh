@@ -23,12 +23,11 @@
 #include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
 #include <protocols/sewing/data_storage/SmartSewingResidue.fwd.hh>
 #include <protocols/sewing/data_storage/LigandResidue.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/types.hh>
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 #include <string>
 

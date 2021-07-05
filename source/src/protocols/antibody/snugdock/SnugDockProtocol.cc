@@ -33,14 +33,12 @@
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
-#include <numeric/xyzVector.string.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/options/option.hh>
@@ -56,7 +54,6 @@
 #include <core/select/util/interface_vector_calculate.hh>
 
 // constraints
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -71,6 +68,8 @@
 
 // C++ headers
 #include <set>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.antibody.SnugDockProtocol" );
 

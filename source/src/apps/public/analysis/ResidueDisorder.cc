@@ -14,21 +14,15 @@
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/io/izstream.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
-#include <core/scoring/ScoreType.hh>
 #include <utility/io/ozstream.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 static basic::Tracer TR( "apps.public.analysis.ResidueDisorder" );
 

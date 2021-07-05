@@ -15,6 +15,8 @@
 #ifndef INCLUDED_numeric_interpolation_spline_Interpolator_hh
 #define INCLUDED_numeric_interpolation_spline_Interpolator_hh
 
+#include <numeric/interpolation/spline/Interpolator.fwd.hh>
+
 #include <numeric/types.hh>
 
 #include <utility/json_spirit/json_spirit_value.h>

@@ -22,15 +22,10 @@
 // Package headers
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
-#include <basic/mpi/MessageListenerFactory.hh>
-#include <basic/mpi/MessageListener.hh>
-#include <basic/mpi/util.hh>
 #include <basic/mpi/mpi_enums.hh>
-#include <protocols/jd2/JobInputter.hh>
-#include <protocols/jd2/LargeNstructJobInputter.hh>
 
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -38,19 +33,20 @@
 
 #include <utility/exit.hh>
 #include <utility/assert.hh>
-#include <utility/mpi_util.hh>
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#ifdef USEMPI
-#include <basic/options/keys/jd2.OptionKeys.gen.hh>
-#endif
 
 // C++ headers
 #include <string>
 
-//Auto Headers
-#include <utility/vector1.hh>
+#ifdef USEMPI
+#include <utility/mpi_util.hh>
+#include <basic/mpi/util.hh>
+#include <basic/mpi/MessageListenerFactory.hh>
+#include <basic/mpi/MessageListener.hh>
+#include <basic/options/keys/jd2.OptionKeys.gen.hh>
+#endif
 
 
 static basic::Tracer TR( "protocols.jd2.MPIWorkPoolJobDistributor" );

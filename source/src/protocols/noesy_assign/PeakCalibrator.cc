@@ -34,6 +34,9 @@
 #include <utility/vector1.hh>
 #include <utility/numbers.hh>
 
+#include <core/id/NamedAtomID.hh> // AUTO IWYU For NamedAtomID
+#include <protocols/noesy_assign/CrossPeak.hh> // AUTO IWYU For CrossPeak
+
 static basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
 using core::Real;

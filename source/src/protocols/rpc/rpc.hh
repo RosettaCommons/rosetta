@@ -21,14 +21,10 @@
 #include <core/types.hh>
 
 #include <utility/json_spirit/json_spirit_value.h>
-#include <utility/json_spirit/json_spirit_reader.h>
-#include <utility/json_spirit/json_spirit_writer.h>
 
 #include <string>
-#include <vector>
 #include <sstream>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace rpc {

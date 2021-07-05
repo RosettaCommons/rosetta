@@ -24,10 +24,7 @@
 
 // Package Headers
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
-#include <core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

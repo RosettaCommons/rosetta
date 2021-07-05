@@ -40,8 +40,6 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
-#include <utility/thread/threadsafe_creation.hh>
-#include <utility/options/BooleanVectorOption.hh>
 
 // C++ Headers
 #include <vector>
@@ -50,7 +48,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Boost headers
-#include <boost/algorithm/string/erase.hpp>
 
 static basic::Tracer TR_DS( "core.pack.interaction_graph.RotamerDots.DotSphere" );
 static basic::Tracer TR_RD( "core.pack.interaction_graph.RotamerDots.RotamerDots" );

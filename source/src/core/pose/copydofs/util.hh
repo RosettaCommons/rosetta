@@ -16,12 +16,10 @@
 #ifndef INCLUDED_core_pose_copydofs_util_HH
 #define INCLUDED_core_pose_copydofs_util_HH
 
-#include <core/pose/copydofs/CopyDofs.fwd.hh>
 #include <core/pose/copydofs/CopyDofsInfo.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.fwd.hh>
 
 namespace core {
 namespace pose {

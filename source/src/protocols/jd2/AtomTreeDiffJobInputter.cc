@@ -34,6 +34,8 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
+
 
 static basic::Tracer tr( "protocols.jd2.AtomTreeDiffJobInputter" );
 

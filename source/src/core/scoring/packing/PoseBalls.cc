@@ -25,8 +25,6 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

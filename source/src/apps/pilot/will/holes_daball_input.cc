@@ -15,10 +15,8 @@
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/packing/PoseBalls.hh>
-#include <core/scoring/packing/HolesParamsRes.hh>
 
 
-#include <core/id/AtomID_Map.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
@@ -28,12 +26,9 @@
 #include <utility/io/izstream.hh>
 
 
-#include <sstream>
-#include <fstream>
 
 
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
 
 

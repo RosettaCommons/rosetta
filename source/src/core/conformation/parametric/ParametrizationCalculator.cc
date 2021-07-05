@@ -32,6 +32,8 @@
 // Utility Headers
 #include <utility/vector1.hh>
 
+#include <core/conformation/parametric/Parameters.hh> // AUTO IWYU For Parameters
+
 
 #ifdef SERIALIZATION
 // Utility serialization headers

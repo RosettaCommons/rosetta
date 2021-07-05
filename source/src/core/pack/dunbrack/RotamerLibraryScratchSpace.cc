@@ -13,7 +13,6 @@
 
 // Unit headers
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <utility/vector1.hh>
 
 // Package headers
 

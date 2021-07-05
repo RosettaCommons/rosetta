@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Project headers
-#include <core/id/TorsionID.hh>
+#include <core/id/TorsionID.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>

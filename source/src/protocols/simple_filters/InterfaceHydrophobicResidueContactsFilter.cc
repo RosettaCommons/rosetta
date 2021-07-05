@@ -38,6 +38,8 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+
 
 namespace protocols {
 namespace simple_filters {

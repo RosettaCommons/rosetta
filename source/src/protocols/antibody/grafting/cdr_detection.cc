@@ -20,7 +20,6 @@
 #include <basic/report.hh>
 #include <protocols/antibody/grafting/antibody_sequence.hh>
 #include <string>
-#include <utility/json_spirit/json_spirit.h>
 
 #ifdef __ANTIBODY_GRAFTING__
 

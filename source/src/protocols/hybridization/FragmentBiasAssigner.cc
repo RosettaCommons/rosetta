@@ -18,14 +18,9 @@
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/EnergyGraph.hh>
 
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FragSet.hh>
@@ -36,16 +31,16 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/electron_density/util.hh>
 
-#include <numeric/random/random.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <numeric/zscores.hh>
 
 #include <utility/vector1.hh>
 
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loops_main.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 namespace protocols {
 namespace hybridization {

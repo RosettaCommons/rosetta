@@ -22,7 +22,7 @@
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
 #include <protocols/noesy_assign/PeakCalibrator.hh>
-#include <protocols/noesy_assign/ResonanceList.hh>
+#include <protocols/noesy_assign/ResonanceList.fwd.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
 
 // Project Headers
@@ -32,7 +32,6 @@
 #include <core/id/Exceptions.hh>
 
 // for switching residue type set to centroid
-#include <core/chemical/ChemicalManager.fwd.hh>
 // for error output
 #include <core/chemical/ResidueType.hh>
 
@@ -41,15 +40,11 @@
 #include <basic/prof.hh>
 
 //// C++ headers
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 #include <protocols/noesy_assign/PeakAssignment.hh>
 
 

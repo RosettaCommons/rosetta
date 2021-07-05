@@ -20,16 +20,11 @@
 #include <protocols/constraint_filters/ConstraintScoreCutoffFilterCreator.hh>
 
 // Package Headers
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -37,16 +32,12 @@
 #include <protocols/jd2/util.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/scoring/EnergyGraph.hh>
 
 
 //// C++ headers

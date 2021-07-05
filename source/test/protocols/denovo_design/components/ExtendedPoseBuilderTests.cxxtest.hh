@@ -13,8 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
 // this should be the only protocols file that includes this cc file
@@ -34,7 +32,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>

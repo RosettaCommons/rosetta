@@ -14,19 +14,12 @@
 /// @author Mike Tyka
 
 // C++ Headers
-#include <cmath>
-#include <cstdlib>
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <list>
 #include <string>
-#include <map>
-#include <sstream>
 
 // mini headers
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
 
@@ -39,16 +32,13 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/raw_data/DisulfideFile.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymDof.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/NamedStubID.hh>
@@ -64,17 +54,14 @@
 #include <numeric/model_quality/rms.hh>
 
 // option key includes
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <boost/lexical_cast.hpp>
 
 #include <utility/vector1.hh>
-#include <utility/stream_util.hh>
 #include <utility/Binary_Util.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.io.hh>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer tr( "core.io.silent" );
 

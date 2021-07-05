@@ -17,17 +17,13 @@
 
 #include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
 
-#include <protocols/sewing/data_storage/SmartSegment.hh>
+#include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
 #include <protocols/sewing/data_storage/LigandSegment.fwd.hh>
 #include <protocols/sewing/data_storage/LigandResidue.fwd.hh>
 #include <protocols/sewing/hashing/hasher_data.hh>
-#include <protocols/sewing/hashing/BasisMapGenerator.hh>
-#include <protocols/sewing/hashing/Hasher.hh>
 #include <core/pose/Pose.fwd.hh>
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <numeric/random/random.hh>
 
 namespace protocols {
 namespace sewing {

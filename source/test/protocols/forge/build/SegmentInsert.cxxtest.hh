@@ -29,19 +29,10 @@
 
 #include <numeric/angle.functions.hh>
 
-#include <cmath>
 #include <string>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
-#include <core/kinematics/AtomPointer.hh>
-#include <core/kinematics/DomainMap.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
-#include <utility/io/icstream.fwd.hh>
-#include <utility/io/ocstream.fwd.hh>
-#include <numeric/BodyPosition.fwd.hh>
-#include <numeric/Quaternion.fwd.hh>
 
 
 class SegmentInsertTests : public CxxTest::TestSuite

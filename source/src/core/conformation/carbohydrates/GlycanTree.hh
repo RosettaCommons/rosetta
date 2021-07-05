@@ -19,18 +19,17 @@
 #include <core/conformation/carbohydrates/GlycanTree.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <core/conformation/carbohydrates/GlycanNode.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 
-#include <core/id/SequenceMapping.hh>
 
 // C++ headers
 #include <map>
-#include <utility>
-#include <vector>
+
+#include <core/conformation/signals/LengthEvent.fwd.hh> // AUTO IWYU For LengthEvent
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -17,8 +17,6 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <protocols/legacy_sewing/hashing/Hasher.hh>
-#include <test/core/init_util.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -26,18 +24,15 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 /// Project headers
 
 //Core headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
 
 //Devel headers
-#include <devel/init.hh>
+
+#include <protocols/legacy_sewing/conformation/Model.hh> // AUTO IWYU For Model, get_5_ss_models_from_db, write_model_file
 
 // --------------- Test Class --------------- //
 using namespace protocols::legacy_sewing;

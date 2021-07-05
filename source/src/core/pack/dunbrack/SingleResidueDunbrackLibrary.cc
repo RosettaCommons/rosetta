@@ -26,10 +26,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/MutableResidueType.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/pack/task/PackerTask_.hh>
 
@@ -40,7 +38,6 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
-#include <core/pack/task/PackerTask.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -51,6 +48,8 @@
 // Numeric headers
 #include <numeric/random/random.hh>
 
+#include <core/pack/dunbrack/PeptoidDOFReporters.hh> // MANUAL IWYU
+#include <core/pack/dunbrack/StandardDOFReporters.hh> // MANUAL IWYU
 
 namespace core {
 namespace pack {

@@ -19,21 +19,17 @@
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/NeighborList.tmpl.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/scoring/ResidueNeighborList.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
 
 #include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
@@ -41,8 +37,6 @@
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/conformation/RotamerSetBase.hh>
@@ -57,7 +51,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <iostream>
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES

@@ -17,7 +17,7 @@
 #include <protocols/calc_taskop_filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 static basic::Tracer TR( "protocols.simple_moves.ResetBaselineMover" );
 #include <utility/tag/Tag.hh>

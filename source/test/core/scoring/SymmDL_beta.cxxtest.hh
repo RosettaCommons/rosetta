@@ -15,35 +15,23 @@
 #include <cxxtest/TestSuite.h>
 #include <test/util/pdb1rpb.hh>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 #include <test/util/symmetry_funcs.hh>
 
 // Unit headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 #include <core/chemical/AA.hh>
 
 //Minimizer
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace std;
 

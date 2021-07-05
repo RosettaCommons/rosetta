@@ -5,8 +5,8 @@
 *      Author: bcorreia
 */
 
-#ifndef FOLDFROMLOOPS_FUNCTIONS_HH_
-#define FOLDFROMLOOPS_FUNCTIONS_HH_
+#ifndef INCLUDED_FOLDFROMLOOPS_FUNCTIONS_HH_
+#define INCLUDED_FOLDFROMLOOPS_FUNCTIONS_HH_
 
 #include <core/types.hh>
 

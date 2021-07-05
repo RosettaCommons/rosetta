@@ -15,14 +15,12 @@
 #ifndef INCLUDED_protocols_cryst_spacegroup_symmops4_hh
 #define INCLUDED_protocols_cryst_spacegroup_symmops4_hh
 
-#include <protocols/cryst/CheshireCell.hh>
+#include <protocols/cryst/CheshireCell.fwd.hh>
 
 // Rosetta core includes:
-#include <core/types.hh>
 #include <core/kinematics/RT.fwd.hh>
 
 // Rosetta numeric includes:
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {

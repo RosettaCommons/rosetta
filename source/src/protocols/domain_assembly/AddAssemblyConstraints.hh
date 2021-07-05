@@ -18,10 +18,8 @@
 #include <protocols/domain_assembly/AddAssemblyConstraints.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <core/types.hh>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

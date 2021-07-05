@@ -24,14 +24,10 @@
 #include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
 

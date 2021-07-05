@@ -12,8 +12,6 @@
 
 // Unit headers
 #include <protocols/loop_modeler/LoopModeler.fwd.hh>
-#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship
-#include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/LoopBuilder.fwd.hh>
 #include <protocols/loop_modeling/LoopProtocol.fwd.hh>
@@ -25,11 +23,14 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 // Protocols headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionOP
+
+class LoopModelerTests; // Forward declaration of tests for friendship
 
 namespace protocols {
 namespace loop_modeler {

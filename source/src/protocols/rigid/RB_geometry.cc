@@ -19,7 +19,6 @@
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 // ObjexxFCL Headers

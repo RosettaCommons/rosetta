@@ -23,15 +23,12 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
 
 #include <basic/options/option_macros.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/conformation/Residue.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -51,9 +48,7 @@
 
 #include <devel/init.hh>
 
-#include <numeric/random/random.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
@@ -65,18 +60,14 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 
-#include <protocols/pockets/PocketGrid.hh>
 
 #include <protocols/relax/ClassicRelax.hh>
-#include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 

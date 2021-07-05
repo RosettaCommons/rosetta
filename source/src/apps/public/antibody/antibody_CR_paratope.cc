@@ -12,15 +12,12 @@
 /// @author Oana Lungu
 
 
-#include <basic/MetricValue.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <devel/init.hh>
 
@@ -29,7 +26,6 @@
 
 #include <string>
 #include <utility/excn/Exceptions.hh>
-#include <utility/file/FileName.hh>
 
 #include <basic/options/option.hh>
 

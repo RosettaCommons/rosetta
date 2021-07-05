@@ -16,8 +16,6 @@
 
 // Package headers
 #include <core/id/PartialAtomID.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

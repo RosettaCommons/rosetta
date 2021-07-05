@@ -18,7 +18,6 @@
 // Numeric headers
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/kinematic_closure/vector.hh>
 
 namespace protocols {
 namespace kinematic_closure {

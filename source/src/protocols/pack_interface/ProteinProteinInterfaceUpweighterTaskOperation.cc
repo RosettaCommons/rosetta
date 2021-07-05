@@ -18,20 +18,14 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <basic/options/option.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
-#include <utility/pointer/access_ptr.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

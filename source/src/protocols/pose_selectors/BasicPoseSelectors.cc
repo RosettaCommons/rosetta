@@ -22,16 +22,13 @@
 #include <protocols/rosetta_scripts/PosePropertyReporterFactory.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/filters/FilterFactory.hh>
 
 // Utility Headers
 #include <basic/datacache/DataMap.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/sort_predicates.hh>
@@ -39,6 +36,9 @@
 
 // C++ Headers
 #include <string>
+
+#include <protocols/rosetta_scripts/PosePropertyReporter.hh> // AUTO IWYU For PosePropertyReporter
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
 
 static basic::Tracer TR( "protocols.pose_selectors.BasicPoseSelectors" );
 

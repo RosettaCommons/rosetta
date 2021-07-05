@@ -15,20 +15,19 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
-#include <core/chemical/sdf/MolFileIOData.hh>
+#include <core/chemical/sdf/MolFileIOData.fwd.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
 
 // Unit Headers
 #include <core/chemical/MutableResidueType.hh>
 
-#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/rotamers/StoredRotamerLibrarySpecification.hh>
 
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 
-#include <core/chemical/AtomICoor.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -36,7 +35,6 @@
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
 

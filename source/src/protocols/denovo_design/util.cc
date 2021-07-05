@@ -17,13 +17,10 @@
 #include <protocols/denovo_design/util.hh>
 
 //Project Headers
-#include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/Segment.hh>
-#include <protocols/denovo_design/components/SegmentPairing.hh>
 
 //Protocol Headers
-#include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
@@ -38,22 +35,22 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/energy_methods/LinearChainbreakEnergy.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 //Boost/ObjexxFCL Headers
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 //C++ Headers
 

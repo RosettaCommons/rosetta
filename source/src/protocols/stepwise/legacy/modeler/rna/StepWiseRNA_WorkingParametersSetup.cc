@@ -22,27 +22,17 @@
 #include <protocols/stepwise/modeler/output_util.hh>
 
 //////////////////////////////////
-#include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh> // AMW added
-#include <core/chemical/ResidueTypeFinder.hh> // AMW added
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/scoring/func/FadeFunc.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <basic/Tracer.hh>
 
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -50,7 +40,6 @@
 
 #include <utility>
 #include <utility/exit.hh>
-#include <ctime>
 
 #include <string>
 

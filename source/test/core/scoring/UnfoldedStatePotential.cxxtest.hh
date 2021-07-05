@@ -17,7 +17,6 @@
 // Unit headers
 #include <core/scoring/UnfoldedStatePotential.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>
@@ -35,7 +34,6 @@
 
 //Auto Headers
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

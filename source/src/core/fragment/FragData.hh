@@ -28,7 +28,6 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1_bool.hh>
 #include <utility/VirtualBase.hh>
 
 // C/C++ headers

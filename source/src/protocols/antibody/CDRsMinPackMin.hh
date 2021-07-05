@@ -18,20 +18,16 @@
 #ifndef INCLUDED_protocols_antibody_CDRsMinPackMin_hh
 #define INCLUDED_protocols_antibody_CDRsMinPackMin_hh
 
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/CDRsMinPackMin.fwd.hh>
-#include <protocols/antibody/RefineBetaBarrel.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

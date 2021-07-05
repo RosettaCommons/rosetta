@@ -20,31 +20,28 @@
 #include <core/scoring/nmr/pre/PREMultiSet.fwd.hh>
 
 // Package headers
-#include <core/scoring/nmr/pre/PRESingle.fwd.hh>
 #include <core/scoring/nmr/pre/PRESingleSet.fwd.hh>
 #include <core/scoring/nmr/NMRSpinlabel.fwd.hh>
 #include <core/scoring/nmr/NMRGridSearch.fwd.hh>
 #include <core/io/nmr/ParaIon.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyz.functions.fwd.hh>
 
 // C++ headers
 #include <iosfwd>
 #include <string>
+
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For NMR_VALUE_AVERAGING_TYPE, PRE_RATE_TYPE
 
 namespace core {
 namespace scoring {

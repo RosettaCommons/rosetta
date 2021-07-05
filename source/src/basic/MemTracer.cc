@@ -18,7 +18,6 @@
 #include <ObjexxFCL/format.hh>  // for I
 #include <iomanip>              // for operator<<, setprecision
 #include <iosfwd>               // for ostream, stringstream, string
-#include <ostream>              // for operator<<, basic_ostream
 #include <string>               // for allocator, char_traits
 
 namespace basic {

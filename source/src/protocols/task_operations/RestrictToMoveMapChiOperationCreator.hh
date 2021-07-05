@@ -15,9 +15,7 @@
 #ifndef INCLUDED_protocols_task_operations_RestrictToMoveMapChiOperationCreator_hh
 #define INCLUDED_protocols_task_operations_RestrictToMoveMapChiOperationCreator_hh
 
-#include <core/pack/task/operation/TaskOperationCreator.hh>
 
-#include <string>
 
 
 namespace protocols {

@@ -22,8 +22,7 @@
 
 // Core Headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -33,23 +32,16 @@
 #include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <core/id/TorsionID.hh>
-#include <core/id/types.hh>
 
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
 #include <protocols/indexed_structure_store/FragmentStore.hh>
 
-#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <protocols/simple_moves/ConstrainToIdealMover.hh>
 
 
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -59,29 +51,19 @@
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/func/CircularSplineFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/sequence/ABEGOManager.hh>
 #include <core/sequence/SSManager.hh>
 
 #include <core/types.hh>
 
-#include <basic/datacache/DataMap.hh>
-#include <basic/datacache/DataCache.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/CacheableStringMap.hh>
 
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -90,23 +72,16 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/VirtualBase.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzTransform.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <Eigen/Core>
 
 #include <vector>
-#include <iostream>
 #include <sstream>
 #include <map>
-#include <set>
-#include <ctime>
 //output
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
@@ -114,6 +89,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh> // AUTO IWYU For GeneralizedKIC
 
 //#include <unistd.h>
 

@@ -21,7 +21,6 @@
 #include <core/fragment/picking_old/concepts/Library.hh>
 #include <core/fragment/picking_old/vall/VallSection.hh>
 
-#include <utility/vector1.hh>
 
 
 // utility headers

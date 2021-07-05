@@ -12,12 +12,11 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/energy_methods/LinearBranchEnergy.hh>
 #include <core/energy_methods/LinearBranchEnergyCreator.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

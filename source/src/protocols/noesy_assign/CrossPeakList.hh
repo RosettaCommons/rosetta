@@ -31,7 +31,6 @@
 
 // Utility headers
 // #include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <core/util/prof.hh>

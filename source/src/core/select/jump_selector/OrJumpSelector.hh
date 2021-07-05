@@ -21,12 +21,10 @@
 // Package headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/select/jump_selector/JumpSelectorCreator.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <list>

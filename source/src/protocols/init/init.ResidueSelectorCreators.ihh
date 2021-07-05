@@ -13,6 +13,7 @@
 
 //ResidueSelectorCreator #includes
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 #include <protocols/antibody/residue_selector/AntibodyRegionSelectorCreator.hh>
 #include <protocols/antibody/residue_selector/CDRResidueSelectorCreator.hh>

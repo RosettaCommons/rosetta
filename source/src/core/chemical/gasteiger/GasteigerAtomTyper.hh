@@ -22,7 +22,6 @@
 #include <core/chemical/Element.fwd.hh>
 
 #include <core/chemical/ResidueSubGraphTypes.hh> // For RealResidueGraph & RealResidueVD
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
 
 #include <core/types.hh>

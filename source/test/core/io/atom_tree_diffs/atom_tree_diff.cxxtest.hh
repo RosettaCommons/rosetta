@@ -16,9 +16,7 @@
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
@@ -26,11 +24,13 @@
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+#include <numeric/random/random.hh> // AUTO IWYU For rg, RandomGenerator
 
 
 static basic::Tracer TR("core.import_pose.atom_tree_diffs.atom_tree_diff.cxxtest");

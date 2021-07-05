@@ -14,8 +14,7 @@
 #ifndef INCLUDED_protocols_cyclic_peptide_PeptideCyclizeMover_hh
 #define INCLUDED_protocols_cyclic_peptide_PeptideCyclizeMover_hh
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -24,7 +23,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <set>
 
 #include <protocols/cyclic_peptide/PeptideCyclizeMover.fwd.hh>
 #include <protocols/moves/Mover.hh>

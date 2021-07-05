@@ -9,7 +9,6 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
@@ -43,7 +42,6 @@
 #include <protocols/ncbb/oop/OopRandomPuckMover.hh>
 #include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ncbb/NcbbDockDesignProtocol.hh>
 #include <protocols/ncbb/util.hh>
 #include <protocols/ncbb/NcbbDockDesignProtocolCreator.hh>

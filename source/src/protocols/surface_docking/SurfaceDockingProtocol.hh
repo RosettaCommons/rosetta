@@ -37,7 +37,6 @@
 
 // C++ Headers
 #include <string>
-#include <iosfwd>
 
 namespace protocols {
 namespace surface_docking {

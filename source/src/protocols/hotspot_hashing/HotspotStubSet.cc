@@ -23,7 +23,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 
 #include <core/kinematics/FoldTree.hh>
@@ -50,7 +49,6 @@
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 
 #include <protocols/cluster/APCluster.hh>
@@ -61,12 +59,11 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/BackboneStubLinearConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/rms_util.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/filters/BasicFilters.hh>
 
 
@@ -91,7 +88,6 @@
 #include <sstream>
 #include <map>
 #include <set>
-#include <utility/assert.hh>
 #include <algorithm>
 #include <cmath>
 
@@ -103,13 +99,12 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/variant_util.hh>
 #include <protocols/simple_ddg/DdgFilter.hh>
-#include <utility/vector0.hh>
 #include <basic/options/option.hh>
 
-#include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 

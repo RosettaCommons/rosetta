@@ -29,9 +29,8 @@
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 
-#include <utility>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/forge/methods/util.hh>
 
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
@@ -44,20 +43,18 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 
 //create option keys for loop movers
 
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

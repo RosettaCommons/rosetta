@@ -25,11 +25,9 @@
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -40,13 +38,10 @@
 
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 
-#include <utility/excn/Exceptions.hh>
 
 // C++ Headers
 #include <string>
-#include <cstdlib>
 #include <iostream>
 
 static basic::Tracer TR( "protocols.membrane.geometry.Embedding" );

@@ -38,16 +38,13 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 #ifdef PYROSETTA

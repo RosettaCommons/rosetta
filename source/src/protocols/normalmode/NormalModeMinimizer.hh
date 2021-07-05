@@ -16,20 +16,19 @@
 
 // Unit headers
 #include <protocols/normalmode/NormalModeMinimizer.fwd.hh>
-#include <protocols/normalmode/NormalModeMultiFunc.hh>
+#include <protocols/normalmode/NormalModeMultiFunc.fwd.hh>
 
 // Package headers
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/NumericalDerivCheckResult.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
+#include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 
 // Project headers
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>

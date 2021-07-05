@@ -21,13 +21,15 @@
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/Ab_TemplateInfo.fwd.hh>
 #include <protocols/antibody/GraftCDRLoopsProtocol.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/antibody/CDRsMinPackMin.fwd.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

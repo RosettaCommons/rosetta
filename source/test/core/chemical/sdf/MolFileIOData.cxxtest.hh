@@ -19,21 +19,15 @@
 #include <core/chemical/sdf/MolFileIOReader.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Atom.hh>
 
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/PoseResidueTypeSet.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/AtomProperties.hh>
 
 #include <core/chemical/icoor_support.hh>
@@ -42,8 +36,6 @@
 
 #include <core/types.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
 #include <core/chemical/sdf/mol_writer.hh>
 
 #include <numeric/model_quality/rms.hh>
@@ -51,15 +43,14 @@
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
-#include <ObjexxFCL/FArray2.io.hh>
 
-#include <boost/graph/mcgregor_common_subgraphs.hpp>
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 
 // C++ Headers
 #include <string>
-#include <set>
-#include <cmath>
+
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D::IR
 
 static basic::Tracer TR("core.chemical.sdf.MolfileIOData.cxxtest");
 

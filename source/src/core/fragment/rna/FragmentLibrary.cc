@@ -12,7 +12,6 @@
 #include <core/fragment/rna/FragmentLibrary.hh>
 #include <core/fragment/rna/TorsionSet.hh>
 
-#include <core/fragment/rna/RNA_Fragments.hh>
 #include <core/fragment/rna/FullAtomRNA_Fragments.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/types.hh>

@@ -17,25 +17,20 @@
 #include <protocols/docking/DockingEnsemble.hh>
 
 // Rosetta Headers
-#include <core/kinematics/MoveMap.hh>
 
 
 #include <core/pose/Pose.hh>
 
 #include <protocols/docking/ConformerSwitchMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMOLMover.hh>
 
 // Utility Headers
-#include <utility/tools/make_vector1.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 // C++ Headers
@@ -44,15 +39,10 @@
 
 //Utility Headers
 
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/random/random.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.docking.DockingLowResEnsemble" );

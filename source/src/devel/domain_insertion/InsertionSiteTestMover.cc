@@ -36,7 +36,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -45,7 +44,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSpanSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -53,7 +51,7 @@
 
 #include <devel/enzdes/EnzdesRemodelProtocol.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -67,6 +65,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <sstream>
 
 namespace devel {
 namespace domain_insertion {

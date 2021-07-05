@@ -17,17 +17,14 @@
 #ifndef INCLUDED_protocols_stepwise_protein_StepWiseProteinMinimizer_HH
 #define INCLUDED_protocols_stepwise_protein_StepWiseProteinMinimizer_HH
 
-#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/legacy/modeler/protein/StepWiseProteinMinimizer.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
-#include <map>
 
 namespace protocols {
 namespace stepwise {

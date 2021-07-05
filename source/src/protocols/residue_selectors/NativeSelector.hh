@@ -23,14 +23,12 @@
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
-#include <set>
 
 #ifdef    SERIALIZATION
 // Cereal headers

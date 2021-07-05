@@ -20,13 +20,11 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <core/types.hh>
 #include <protocols/simple_moves/VirtualRootMover.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/import_pose/import_pose.hh>
 
 

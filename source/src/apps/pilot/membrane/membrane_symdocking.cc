@@ -22,20 +22,15 @@
 
 // Project Headers
 #include <protocols/symmetric_docking/membrane/MPSymDockMover.hh>
-#include <protocols/moves/Mover.hh>
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
-#include <core/types.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <iostream>
 
 static basic::Tracer TR( "apps.pilot.membrane.membrane_symdocking" );
 

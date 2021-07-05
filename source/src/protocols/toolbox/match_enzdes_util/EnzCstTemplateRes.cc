@@ -35,7 +35,6 @@
 #include <utility/string_util.hh>
 #include <iostream>
 #include <string>
-#include <sstream>
 
 #include <basic/Tracer.hh>
 

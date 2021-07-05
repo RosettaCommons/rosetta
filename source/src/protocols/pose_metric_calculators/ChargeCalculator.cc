@@ -21,14 +21,11 @@
 
 // Utility headers
 //#include <core/util/Tracer.hh>
-#include <utility>
 #include <utility/exit.hh>
 #include <basic/MetricValue.hh>
 
 
-#include <utility/assert.hh>
 
-#include <utility/vector1.hh>
 
 
 using namespace core;

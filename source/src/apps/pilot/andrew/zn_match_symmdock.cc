@@ -9,66 +9,34 @@
 
 
 #include <devel/init.hh>
-#include <devel/znhash/ZnHash.hh>
 #include <devel/znhash/SymmZnMoversAndTaskOps.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/io/Remarks.hh>
 
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
-#include <core/pack/make_symmetric_task.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
 
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/symmetric_docking/SymDockingHiRes.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/RampingMover.hh>
 
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_task_operations/RestrictToInterface.hh>
 
-#include <protocols/enzdes/AddorRemoveCsts.hh>
-#include <protocols/enzdes/EnzdesMovers.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/string_util.hh>
 
 // option keys
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // C++ headers
-#include <fstream>
-#include <sstream>
 
 
 OPT_1GRP_KEY( String, zn_match_symmdock, zn_tworesidue_matches_list )

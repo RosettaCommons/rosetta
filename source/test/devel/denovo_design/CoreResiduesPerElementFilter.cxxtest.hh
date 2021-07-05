@@ -22,25 +22,18 @@
 // Project headers
 
 // Protocol headers
-#include <protocols/matdes/SymDofMover.hh>
-#include <protocols/moves/DsspMover.hh>
 
 // Core headers
-#include <core/kinematics/FoldTree.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Utility headers
-#include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
 // C++ headers
-#include <protocols/denovo_design/test_utils.hh>
 
 static basic::Tracer TR("devel.denovo_design.CoreResiduesPerElementFilter.cxxtest");
 

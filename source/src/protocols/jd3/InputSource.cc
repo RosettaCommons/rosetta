@@ -15,7 +15,6 @@
 #include <protocols/jd3/InputSource.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers

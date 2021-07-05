@@ -20,23 +20,18 @@
 #include <protocols/jd3/chunk_library/ChunkLibraryInnerLarvalJob.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/chunk_library_inputters/ChunkLibraryInputSource.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 // Basic headers
-#include <basic/datacache/ConstDataMap.fwd.hh>
 //#include <basic/resource_manager/JobOptions.fwd.hh>
 
 //C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

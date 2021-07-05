@@ -15,7 +15,7 @@
 // Unit Headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryMover.hh>
-#include <protocols/rotamer_recovery/RotamerRecovery.hh>
+#include <protocols/rotamer_recovery/RotamerRecovery.fwd.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 
 
@@ -25,18 +25,14 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility Headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 // c++ Headers
 #include <fstream>

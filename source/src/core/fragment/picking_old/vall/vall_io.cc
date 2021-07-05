@@ -31,7 +31,6 @@
 #include <sstream>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 #ifdef WIN32

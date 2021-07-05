@@ -27,58 +27,40 @@
 #include <protocols/membrane/symmetry/SymmetricAddMembraneMoverCreator.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <protocols/membrane/util.hh>
 
-#include <core/pose/PDBInfo.hh>
-#include <core/conformation/membrane/MembraneParams.hh>
 
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Package Headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 
-#include <utility/tag/Tag.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

@@ -18,11 +18,14 @@
 
 #include <utility/VirtualBase.hh>
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <set>
 #include <map>
+
+#include <core/types.hh> // AUTO IWYU For Size
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace stepwise {

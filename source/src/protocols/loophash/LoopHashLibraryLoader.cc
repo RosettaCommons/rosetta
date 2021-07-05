@@ -25,7 +25,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 //C++ headers
-#include <istream>
 
 namespace protocols {
 namespace loophash {

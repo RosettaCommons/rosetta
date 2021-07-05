@@ -27,6 +27,10 @@
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
+#include <cmath>
+
+#include <protocols/frag_picker/VallProvider.hh> // AUTO IWYU For VallProvider
+
 namespace protocols {
 namespace frag_picker {
 namespace scores {

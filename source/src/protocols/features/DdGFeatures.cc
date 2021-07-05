@@ -13,21 +13,13 @@
 
 // Unit Headers
 #include <protocols/features/DdGFeatures.hh>
-#include <protocols/features/util.hh>
 
 // Project Headers
-#include <protocols/filters/Filter.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -39,22 +31,21 @@
 #include <protocols/simple_ddg/DdGScan.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
 
 // C++ Headers
-#include <cmath>
 #include <utility/excn/Exceptions.hh>
 #include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/DdGFeaturesCreator.hh>
+
+#include <core/scoring/EnergyMap.fwd.hh> // AUTO IWYU For EnergyMap
 
 namespace protocols {
 namespace features {

@@ -11,7 +11,6 @@
 /// @brief
 
 #include <protocols/rna/movers/RNAIdealizeMover.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 #include <protocols/jd2/JobDistributor.hh>

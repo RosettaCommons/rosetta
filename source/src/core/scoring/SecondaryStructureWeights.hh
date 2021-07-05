@@ -15,6 +15,8 @@
 #ifndef INCLUDED_core_scoring_SecondaryStructureWeights_hh
 #define INCLUDED_core_scoring_SecondaryStructureWeights_hh
 
+#include <core/scoring/SecondaryStructureWeights.fwd.hh>
+
 #include <core/types.hh>
 
 

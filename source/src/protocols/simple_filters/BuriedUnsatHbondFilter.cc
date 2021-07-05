@@ -34,10 +34,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/MetricValue.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/scoring/Interface.hh>
-#include <protocols/scoring/InterfaceInfo.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/init_id_map.hh>
@@ -45,7 +44,6 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymDof.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <protocols/jd2/Job.hh>

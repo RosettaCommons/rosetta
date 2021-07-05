@@ -14,6 +14,8 @@
 #ifndef INCLUDED_core_select_residue_selector_ResidueSelectorFactory_HH
 #define INCLUDED_core_select_residue_selector_ResidueSelectorFactory_HH
 
+#include <core/select/residue_selector/ResidueSelectorFactory.fwd.hh>
+
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueSelectorCreator.fwd.hh>

@@ -21,16 +21,11 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
 
 // C++ headers
 #include <string>
-#include <map>
 
 //Auto Headers
 namespace core {

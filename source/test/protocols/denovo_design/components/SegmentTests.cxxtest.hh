@@ -20,7 +20,6 @@
 #include <protocols/denovo_design/components/Segment.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/util.hh>
 
 // Core headers
 

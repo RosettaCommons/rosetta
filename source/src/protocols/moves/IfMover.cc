@@ -25,7 +25,7 @@
 #include <utility/tag/Tag.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
 // Package headers
@@ -33,8 +33,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/util.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

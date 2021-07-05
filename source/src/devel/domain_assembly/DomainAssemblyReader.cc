@@ -19,6 +19,9 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
+
+#include <devel/domain_assembly/domain_assembly_setup.hh> // AUTO IWYU For DomainInfo
+
 using basic::Error;
 using basic::Warning;
 

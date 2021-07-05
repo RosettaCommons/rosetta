@@ -43,9 +43,7 @@
 #include <core/chemical/PoseResidueTypeSet.fwd.hh>
 
 #include <core/types.hh>
-#include <core/id/AtomID_Mask.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/AtomID_Map.fwd.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/PartialAtomID.fwd.hh>
@@ -64,14 +62,10 @@
 #include <core/conformation/carbohydrates/GlycanTreeSetObserver.fwd.hh>
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/Parameters.fwd.hh>
-#include <core/conformation/ConformationTests.fwd.hh> //Forward declaration of unit test class needed for friendship
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/signals/BufferedSignalHub.fwd.hh>
-#include <utility/signals/Link.fwd.hh>
 #include <utility/signals/PausableSignalHub.hh>
-#include <utility/vector1.fwd.hh>
 
 #include <basic/datacache/BasicDataCache.fwd.hh>
 
@@ -79,11 +73,15 @@
 
 #include <boost/iterator/indirect_iterator.hpp>
 
+#include <core/id/AtomID_Map.hh> // AUTO IWYU For AtomID_Map<>::Reference
+
 
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
+
+class ConformationTests; // Forward declaration of test class for friendship
 
 namespace core {
 namespace conformation {

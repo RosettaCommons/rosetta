@@ -37,12 +37,11 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 using namespace core;
+
+static basic::Tracer TR("protocols.membrane.UniformPositionMover.cxxtest");
 
 class UniformPositionMoverTest : public CxxTest::TestSuite {
 
@@ -142,8 +141,7 @@ private:
 		);
 
 		// Create a new Residue from rsd typeset of type VRT
-		ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-		ResidueType const & virt( *rsd_type_list[1] );
+		ResidueType const & virt( *residue_set->get_representative_type_name3("VRT") );
 		ResidueOP rsd( ResidueFactory::create_residue( virt ) );
 
 		// Append residue by jump, creating a new chain

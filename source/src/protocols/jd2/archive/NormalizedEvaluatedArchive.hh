@@ -23,21 +23,14 @@
 
 // Package headers
 #include <core/io/silent/silent.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 
 // Utility headers
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/exit.hh>
 
 // C++ headers
 #include <string>
-#include <list>
 
-#include <core/scoring/ResidualDipolarCoupling.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <utility/vector1.hh>
 
 

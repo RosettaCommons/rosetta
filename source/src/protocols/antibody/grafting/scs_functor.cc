@@ -13,6 +13,8 @@
 
 #include <protocols/antibody/grafting/util.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 #ifdef __ANTIBODY_GRAFTING__
 
 #include <protocols/antibody/grafting/scs_functor.hh>

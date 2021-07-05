@@ -18,10 +18,8 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 
 
-#include <string>
 
 //Auto Headers
 #include <utility/fixedsizearray1.hh>

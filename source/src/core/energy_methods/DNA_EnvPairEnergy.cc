@@ -13,27 +13,20 @@
 /// @author Amy Ticoll
 
 // C++ headers
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cmath>
 
 // Unit headers
 #include <core/energy_methods/DNA_EnvPairEnergy.hh>
 #include <core/energy_methods/DNA_EnvPairEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/dna/DirectReadoutPotential.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/types.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <ObjexxFCL/format.hh>
 #include <core/conformation/Residue.hh>
+
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
+#include <core/scoring/dna/DNA_EnvPairPotential.hh> // AUTO IWYU For DNA_EnvPairPotential
 
 
 //using namespace std;

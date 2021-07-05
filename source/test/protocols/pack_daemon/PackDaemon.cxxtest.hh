@@ -24,7 +24,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DoubleDensePDInteractionGraph.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -33,7 +33,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Protocols headers
@@ -45,6 +45,8 @@
 //Auto Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 //static basic::Tracer TR("PackDaemonTest.cxxtest");

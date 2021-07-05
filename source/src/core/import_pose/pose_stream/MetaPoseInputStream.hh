@@ -22,7 +22,6 @@
 
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 
-#include <utility/vector1.fwd.hh>
 
 
 namespace core {

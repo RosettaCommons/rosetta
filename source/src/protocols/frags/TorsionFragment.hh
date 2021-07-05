@@ -16,7 +16,7 @@
 // Rosetta Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // ObjexxFCL Headers

@@ -32,7 +32,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/io/util.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -45,26 +44,19 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <utility/version.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/util/disulfide_util.hh>
-#include <numeric/xyzVector.hh>
 #include <protocols/cyclic_peptide/PeptideCyclizeMover.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/DisulfideInsertionMover.hh>
-#include <protocols/relax/AtomCoordinateCstMover.hh>
 
 
 
@@ -74,7 +66,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/ocstream.hh>
@@ -84,12 +75,10 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // External headers
-#include <boost/format.hpp>
 
 // C++ headers
 #include <cassert>
 #include <string>
-#include <limits>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

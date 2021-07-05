@@ -15,28 +15,21 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/SWAligner.hh>
-#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragmentIO.hh>
 
-#include <devel/init.hh>
 
 #include <utility/vector1.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <numeric/constants.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
-#include <core/kinematics/Jump.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
@@ -44,17 +37,14 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <protocols/hybridization/util.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/Loops.hh>
 
 // C++ headers
-#include <iostream>
 #include <fstream>
 #include <string>
+
+#include <protocols/loops/Loop.hh> // AUTO IWYU For Loop
 
 OPT_KEY( String, pdb )
 OPT_KEY( IntegerVector, fragsizes )

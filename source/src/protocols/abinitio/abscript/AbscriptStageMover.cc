@@ -24,7 +24,6 @@
 
 #include <core/pose/Pose.hh>
 
-#include <protocols/moves/MoverFactory.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -32,10 +31,8 @@
 
 // Utility Headers
 #include <utility>
-#include <utility/vector0.hh>
 
 // Basic Headers
-#include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 //option includes
@@ -45,6 +42,8 @@
 
 // C++ Headers
 #include <algorithm>
+
+#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh> // AUTO IWYU For MaxSeqSepConstraintSet
 
 // ObjexxFCL Headers
 

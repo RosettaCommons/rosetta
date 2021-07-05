@@ -15,8 +15,9 @@
 
 #include <vector>
 #include <algorithm>
-#include <ndarray.h>
 #include <boost/range.hpp>
+
+#include <ndarray/initialization.h> // AUTO IWYU For external
 
 template <typename To, typename Collection, typename unop>
 std::vector<To> v_map(Collection src, unop op) {

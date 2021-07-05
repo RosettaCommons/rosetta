@@ -17,10 +17,8 @@
 //#include <core/init_util.hh>
 
 // Package Headers
-#include <numeric/random/random.hh>
 #include <numeric/random/random.functions.hh>
 
-#include <numeric/constants.hh>
 
 #include <utility/vector1.hh>
 

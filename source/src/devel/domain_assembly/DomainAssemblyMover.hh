@@ -26,13 +26,10 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 // STL Headers
-#include <iosfwd>
 #include <map>
 
-#include <utility/vector1.hh>
 
 
 namespace devel {

@@ -18,15 +18,14 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/util.hh>
@@ -35,13 +34,9 @@
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
-#include <numeric/numeric.functions.hh>
 
 //Auto Headers
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/id/AtomID_Mask.hh>
-#include <utility/fix_boinc_read.hh>
-#include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS

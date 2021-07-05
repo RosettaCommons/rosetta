@@ -6,7 +6,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <basic/options/option_macros.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -20,11 +19,12 @@
 
 #include <iostream>
 
-#include <future>
 #include <chrono>
 #include <ctime>
 //#include <cstdlib> // atexit
 #include <cmath>
+
+#include <thread> // AUTO IWYU For sleep_for
 
 using std::string;
 

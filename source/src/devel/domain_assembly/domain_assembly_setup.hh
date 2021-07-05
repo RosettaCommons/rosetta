@@ -9,6 +9,8 @@
 #ifndef INCLUDED_devel_domain_assembly_domain_assembly_setup_hh
 #define INCLUDED_devel_domain_assembly_domain_assembly_setup_hh
 
+#include <devel/domain_assembly/domain_assembly_setup.fwd.hh>
+
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 

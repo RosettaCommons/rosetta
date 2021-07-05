@@ -26,7 +26,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
@@ -34,11 +34,9 @@
 #include <core/pose/selection.hh>
 
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 
 namespace protocols {

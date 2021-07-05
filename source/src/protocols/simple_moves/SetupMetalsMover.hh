@@ -28,7 +28,6 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 #include <set>
 

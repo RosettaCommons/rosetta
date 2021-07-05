@@ -20,7 +20,8 @@
 #include <string>
 
 //Utility header
-#include <utility/io/util.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace core {

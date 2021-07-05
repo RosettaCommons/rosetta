@@ -15,23 +15,21 @@
 #include <core/pack/interaction_graph/DoubleDensePDInteractionGraph.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // STL Headers
 #include <list>
 #include <algorithm>
 #include <iostream>
-#include <utility/assert.hh>
 
 //Utility Headers
 
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
+
+#include <core/pack/rotamer_set/FixbbRotamerSets.hh> // AUTO IWYU For FixbbRotamerSets
 
 
 using namespace ObjexxFCL;

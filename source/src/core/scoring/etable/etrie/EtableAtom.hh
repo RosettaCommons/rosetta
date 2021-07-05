@@ -27,7 +27,6 @@
 #include <iosfwd>
 
 // Numceric Headers
-#include <numeric/xyzVector.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

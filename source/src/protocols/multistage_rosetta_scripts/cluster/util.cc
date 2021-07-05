@@ -15,7 +15,6 @@
 #include <protocols/multistage_rosetta_scripts/cluster/util.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 

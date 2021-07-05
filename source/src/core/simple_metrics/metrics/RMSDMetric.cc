@@ -24,9 +24,6 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/util.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/Atom.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/ref_pose.hh>
 #include <core/id/AtomID.hh>
@@ -34,7 +31,6 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/util.hh>
@@ -42,6 +38,8 @@
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 static basic::Tracer TR( "core.simple_metrics.metrics.RMSDMetric" );

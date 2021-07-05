@@ -10,33 +10,25 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/conformation/UltraLightResidue.hh>
-#include <protocols/qsar/scoring_grid/GridManager.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 #include <protocols/ligand_docking/Transform.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+
 //#include <test/core/init_util.hh>
 
 

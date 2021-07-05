@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Project headers
 #include <basic/resource_manager/ResourceLoader.hh>
@@ -21,7 +20,7 @@
 #include <basic/resource_manager/ResourceLoaderFactory.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers

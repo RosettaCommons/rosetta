@@ -18,18 +18,19 @@
 //#include <protocols/noesy_assign/MethylNames.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/FragsToAtomDist.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
-#include <core/id/NamedAtomID.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>
 
 // C++ headers
 #include <string>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <map> // AUTO IWYU For map, map<>::value_compare
 
 namespace protocols {
 namespace noesy_assign {

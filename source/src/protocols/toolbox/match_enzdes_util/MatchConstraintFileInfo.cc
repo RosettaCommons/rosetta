@@ -24,8 +24,6 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.srlz.hh>
-#include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/Pose.hh>
@@ -42,11 +40,8 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <sstream>
 
 #include <basic/Tracer.hh>
 

@@ -18,8 +18,12 @@
 #include <core/scoring/sasa/SasaMethod.fwd.hh>
 #include <utility/VirtualBase.hh>
 
-#include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+
+#include <string>
+
+#include <core/types.hh> // AUTO IWYU For Real, Size
 
 #ifdef    SERIALIZATION
 // Cereal headers

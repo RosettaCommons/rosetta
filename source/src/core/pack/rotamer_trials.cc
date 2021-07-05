@@ -26,7 +26,7 @@
 // Project headers
 #include <core/types.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -54,7 +54,6 @@
 #endif
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <utility/vector0.hh>
 
 
 namespace core {

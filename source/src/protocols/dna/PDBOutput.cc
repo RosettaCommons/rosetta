@@ -11,7 +11,6 @@
 /// @brief
 
 #include <protocols/dna/PDBOutput.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <protocols/dna/util.hh> // dna_full_name3
 #include <protocols/dna/DnaInterfaceFinder.hh>
@@ -38,11 +37,8 @@
 #include <utility/vector1.hh>
 
 #include <utility/file/file_sys_util.hh> // file_exists, create_directory
-#include <utility/file/gzip_util.hh>
 #include <utility/string_util.hh>
 
-#include <algorithm> // std::min
-#include <iostream>
 #include <fstream>
 
 // option key includes
@@ -51,9 +47,10 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #undef interface

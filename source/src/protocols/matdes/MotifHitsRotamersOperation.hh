@@ -18,7 +18,6 @@
 
 #include <protocols/matdes/MotifHitsRotamersOperation.fwd.hh>
 
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -26,7 +25,6 @@
 //#include <core/io/pdb/pose_io.hh>
 
 
-#include <iosfwd>
 
 #ifdef WIN32
 #include <utility/graph/Graph.hh>

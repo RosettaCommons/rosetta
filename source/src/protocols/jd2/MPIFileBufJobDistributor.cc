@@ -24,7 +24,7 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 #include <protocols/jd2/MpiFileBuffer.hh>
 #include <utility/io/ozstream.hh> //to toggle MPI rerouting
@@ -45,8 +45,6 @@
 #include <basic/prof.hh>
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
-#include <utility/string_util.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.jd2.MPIFileBufJobDistributor" );

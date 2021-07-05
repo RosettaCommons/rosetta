@@ -21,8 +21,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <basic/Tracer.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <set>
 
 namespace protocols {

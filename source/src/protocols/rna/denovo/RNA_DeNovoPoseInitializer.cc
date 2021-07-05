@@ -20,7 +20,6 @@
 #include <core/import_pose/libraries/RNA_LibraryManager.hh>
 #include <core/import_pose/RNA_DeNovoParameters.hh>
 #include <core/import_pose/RNA_BasePairHandler.hh>
-#include <protocols/rna/denovo/util.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <core/import_pose/libraries/ChunkSet.hh>
@@ -33,14 +32,13 @@
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
@@ -48,22 +46,13 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <basic/options/option.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <utility/tools/make_vector1.hh>
 
@@ -74,11 +63,11 @@
 
 // C++ headers
 #include <fstream>
-#include <iostream>
-#include <list>
 
 #include <utility/vector1.hh>
-#include <utility/stream_util.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray...
+#include <core/pose/rna/BasePairStep.hh> // AUTO IWYU For BasePairStep
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

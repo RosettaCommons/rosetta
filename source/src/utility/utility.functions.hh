@@ -18,9 +18,6 @@
 
 // C++ headers
 #include <algorithm>
-#include <utility/assert.hh>
-#include <cmath>
-#include <limits>
 
 
 namespace utility {

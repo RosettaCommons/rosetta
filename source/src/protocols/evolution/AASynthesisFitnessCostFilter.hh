@@ -19,7 +19,6 @@
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
 namespace evolution {

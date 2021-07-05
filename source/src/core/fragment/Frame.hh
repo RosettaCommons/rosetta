@@ -32,11 +32,11 @@
 #include <core/id/SequenceMapping.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
+
 #ifdef BOINC
 #include <utility/fix_boinc_read.hh>
-
 #endif
 
 #ifdef WIN32
@@ -49,7 +49,6 @@
 
 #include <core/types.hh>
 #include <core/fragment/FragData.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

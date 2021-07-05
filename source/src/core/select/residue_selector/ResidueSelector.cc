@@ -15,7 +15,7 @@
 #include <core/select/residue_selector/ResidueSelector.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

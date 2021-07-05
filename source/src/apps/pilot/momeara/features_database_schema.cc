@@ -13,21 +13,20 @@
 
 
 // Project Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/sql_utils.hh>
 
 // Platform Headers
 #include <devel/init.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/FeaturesReporterFactory.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/excn/Exceptions.hh>
 #include <core/types.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
+#include <iostream> // AUTO IWYU For cout, endl
 
 using std::string;
 using std::cout;

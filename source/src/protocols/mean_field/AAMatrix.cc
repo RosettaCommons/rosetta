@@ -37,6 +37,9 @@
 #include <cmath>
 #include <fstream>
 
+#include <protocols/mean_field/RotProb.hh> // MANUAL IWYU
+
+#include <protocols/mean_field/AAProb.hh> // AUTO IWYU For AAProb, operator<<
 
 namespace protocols {
 namespace mean_field {

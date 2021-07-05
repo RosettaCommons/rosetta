@@ -18,11 +18,10 @@
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/atomtype_support.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/bond_support.hh>
-#include <core/chemical/residue_io.hh>
 
 #include <numeric/conversions.hh>
 
@@ -36,6 +35,8 @@
 
 // C++ headers
 #include <map>
+
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 namespace core {
 namespace chemical {

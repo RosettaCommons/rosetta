@@ -13,12 +13,7 @@
 /// @detailed
 
 // Protocols Headers
-#include <protocols/jobdist/Jobs.hh>
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/InnerJob.hh>
 #include <protocols/hydrate/Hydrate.hh>
 
 // Core Headers

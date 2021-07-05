@@ -22,7 +22,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
-#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
@@ -31,11 +31,9 @@
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
 
 //// C++ headers
 

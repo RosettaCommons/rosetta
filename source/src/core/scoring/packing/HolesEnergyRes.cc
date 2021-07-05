@@ -15,35 +15,28 @@
 //Unit headers
 #include <core/scoring/packing/HolesEnergyRes.hh>
 
-#include <core/scoring/packing/PoseBalls.hh>
 
 //Package headers
 
 //#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
+#include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.hh>
+#include <basic/datacache/CacheableData.fwd.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/id/CacheableAtomID_MapVector.hh>
-#include <basic/options/option.hh>
 
 #include <core/scoring/packing/compute_holes_score_res.hh>
 
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
 //utility headers
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 //C++ headers
 #include <iostream>
 
-#include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 
 //Auto Headers

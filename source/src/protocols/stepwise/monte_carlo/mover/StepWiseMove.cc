@@ -20,7 +20,6 @@
 #include <map>
 #include <iostream>
 #include <utility/string_util.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
 #include <utility/pointer/memory.hh>
 

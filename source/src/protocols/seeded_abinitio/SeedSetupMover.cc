@@ -19,11 +19,11 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
@@ -47,7 +47,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

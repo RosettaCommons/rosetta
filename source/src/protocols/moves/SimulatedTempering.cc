@@ -15,7 +15,6 @@
 #include <protocols/moves/SimulatedTempering.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Numeric Headers

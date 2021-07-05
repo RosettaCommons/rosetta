@@ -19,13 +19,13 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerRingConformer.fwd.hh>
 
 // Package headers
-#include <protocols/stepwise/sampler/StepWiseSamplerOneValue.hh>
 
 // Project headers
-#include <core/id/TorsionID.hh>
 
 #include <core/chemical/rings/RingConformerSet.fwd.hh>
 #include <core/chemical/rings/RingConformer.hh>
+
+#include <protocols/stepwise/sampler/StepWiseSamplerSized.hh> // AUTO IWYU For StepWiseSamplerSized
 
 namespace protocols {
 namespace stepwise {

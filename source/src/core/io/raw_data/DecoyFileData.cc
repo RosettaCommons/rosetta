@@ -13,19 +13,16 @@
 /// @author James Thompson, Monica Berrondo
 
 // C++ Headers
-#include <iostream>
 #include <string>
 #include <map>
 
 // mini headers
 #include <utility/io/ozstream.hh>
 
-#include <basic/Tracer.hh>
 #include <core/io/raw_data/DecoyStruct.hh>
 #include <core/io/raw_data/DecoyFileData.hh>
 
 
-#include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
 namespace core {

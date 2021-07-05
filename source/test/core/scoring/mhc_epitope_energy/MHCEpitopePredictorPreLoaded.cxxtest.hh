@@ -23,7 +23,6 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopePredictorPreLoaded.cxxtest");

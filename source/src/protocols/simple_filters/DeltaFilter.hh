@@ -21,7 +21,8 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/simple_filters/DeltaFilter.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <protocols/moves/Mover.fwd.hh> // AUTO IWYU For MoverOP
 
 // Unit headers
 

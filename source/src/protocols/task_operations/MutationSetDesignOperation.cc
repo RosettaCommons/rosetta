@@ -20,9 +20,11 @@
 #include <numeric/random/WeightedSampler.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("protocols.task_operations.MutationSetDesignOperation");
 

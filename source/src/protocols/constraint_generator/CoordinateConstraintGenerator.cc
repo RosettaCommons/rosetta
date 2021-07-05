@@ -34,11 +34,12 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh> // AUTO IWYU For ConstraintGeneratorFactory
 
 static basic::Tracer TR( "protocols.constraint_generator.CoordinateConstraintGenerator" );
 

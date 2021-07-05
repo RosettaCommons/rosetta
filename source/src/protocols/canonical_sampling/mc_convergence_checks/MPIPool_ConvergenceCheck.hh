@@ -10,14 +10,17 @@
 #ifndef INCLUDED_protocols_canonical_sampling_mc_convergence_checks_MPIPool_ConvergenceCheck_hh
 #define INCLUDED_protocols_canonical_sampling_mc_convergence_checks_MPIPool_ConvergenceCheck_hh
 
-#include <protocols/moves/MonteCarloExceptionConverge.hh>
-#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/MPIPool_ConvergenceCheck.fwd.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray2D.hh>
+
+#ifdef USEMPI
+#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+
+#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#endif
 
 
 namespace protocols {

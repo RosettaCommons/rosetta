@@ -22,7 +22,6 @@
 #include <protocols/loophash/FastGapMover.hh>
 
 #include <utility/string_util.hh>
-#include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -33,7 +32,6 @@
 #include <map>
 #include <devel/init.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 

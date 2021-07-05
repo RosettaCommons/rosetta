@@ -15,10 +15,9 @@
 #include <core/pack/task/operation/EnableMultiCoolAnnealerCreator.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/Tracer.hh>
 

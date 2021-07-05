@@ -17,8 +17,7 @@
 #include <protocols/fldsgn/filters/SecondaryStructureCountFilterCreator.hh>
 
 // Project Headers
-#include <protocols/parser/BluePrint.hh>
-#include <core/conformation/Residue.hh>
+#include <protocols/parser/BluePrint.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
@@ -31,11 +30,9 @@
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <core/scoring/dssp/Dssp.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

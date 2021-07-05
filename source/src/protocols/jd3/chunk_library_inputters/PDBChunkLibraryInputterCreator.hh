@@ -22,8 +22,6 @@
 #include <protocols/jd3/chunk_library_inputters/ChunkLibraryInputter.fwd.hh>
 
 // utility headers
-#include <utility/options/keys/OptionKey.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers

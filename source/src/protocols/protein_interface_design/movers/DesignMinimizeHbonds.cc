@@ -31,7 +31,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -39,6 +38,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

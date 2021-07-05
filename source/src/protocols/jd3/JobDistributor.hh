@@ -20,16 +20,11 @@
 
 // Package headers
 #include <protocols/jd3/JobQueen.fwd.hh>
-#include <protocols/jd3/Job.fwd.hh>
-#include <protocols/jd3/JobResult.fwd.hh>
-#include <protocols/jd3/LarvalJob.fwd.hh>
 
 // Project headers
-#include <core/types.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace jd3 {

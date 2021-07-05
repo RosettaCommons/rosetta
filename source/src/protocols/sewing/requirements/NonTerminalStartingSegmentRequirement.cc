@@ -16,7 +16,6 @@
 #include <protocols/sewing/requirements/AssemblyRequirementFactory.hh>
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 static basic::Tracer TR( "protocols.sewing.requirements.NonTerminalStartingSegmentRequirement" );
 

@@ -29,7 +29,6 @@
 #include <core/sequence/MatrixScoringScheme.hh>
 #include <core/chemical/AA.hh>
 
-#include <utility/file/FileName.hh>
 
 // option key includes
 #include <basic/options/keys/OptionKeys.hh>
@@ -39,6 +38,8 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+
+#include <protocols/frag_picker/VallProvider.hh> // AUTO IWYU For VallProvider
 
 
 namespace protocols {

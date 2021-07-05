@@ -18,11 +18,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Atom.fwd.hh>
 #include <core/scoring/electron_density/util.hh>
-#include <core/scoring/electron_density/xray_scattering.hh>
 #include <core/scoring/electron_density/ElectronDensity.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -40,6 +38,8 @@
 #include <core/kinematics/RT.hh>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
+
+#include <core/scoring/fiber_diffraction/xray_scattering.fwd.hh> // AUTO IWYU For OneGaussianScattering
 
 
 namespace core {

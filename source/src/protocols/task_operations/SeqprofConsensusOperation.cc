@@ -37,7 +37,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <core/sequence/SequenceProfile.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
 
 #include <core/io/ddg/PositionDdGInfo.hh>
 
@@ -49,7 +49,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Boost headers
@@ -58,6 +57,9 @@
 #include <string>
 #include <functional>
 #include <vector>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer tr( "protocols.task_operations.SeqprofConsensusOperation" );
 

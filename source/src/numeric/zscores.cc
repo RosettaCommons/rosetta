@@ -12,12 +12,8 @@
 /// @author Jared Adolf-Bryfogle
 
 #include <numeric/types.hh>
-#include <utility/vector1.hh>
 
-#include <numeric/MathNTensorBase.hh>
-#include <numeric/MathNTensor.hh>
 
-#include <algorithm>
 #include <map>
 #include <cmath>
 

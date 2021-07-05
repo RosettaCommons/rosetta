@@ -17,14 +17,11 @@
 
 // Unit Headers
 #include <utility/VirtualBase.hh>
-#include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/BatchFeatures.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/exit.hh>
 
 // C++ Headers
 #include <string>

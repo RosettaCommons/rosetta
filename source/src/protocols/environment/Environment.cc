@@ -17,7 +17,6 @@
 #include <protocols/environment/ClientMover.hh>
 #include <protocols/environment/ProtectedConformation.hh>
 
-#include <protocols/environment/EnvExcn.hh>
 
 // Project headers
 #include <protocols/moves/MoverContainer.hh>
@@ -34,8 +33,6 @@
 #include <core/pose/variant_util.hh>
 
 #include <core/chemical/VariantType.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
 
 // tracer
 #include <basic/Tracer.hh>

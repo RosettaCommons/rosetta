@@ -17,7 +17,6 @@
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <map>
 
-#include <iosfwd>
 
 
 namespace core {

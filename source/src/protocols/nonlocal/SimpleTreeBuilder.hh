@@ -23,7 +23,6 @@
 // Package headers
 #include <protocols/nonlocal/TreeBuilder.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

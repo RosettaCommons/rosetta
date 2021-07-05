@@ -12,7 +12,6 @@
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_Backrub.hh>
-#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/motifs/IRCollection.hh>
 #include <protocols/motifs/Motif.hh>
 #include <protocols/motifs/MotifLibrary.hh>
@@ -34,11 +33,9 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <iostream>
 #include <map>
-#include <algorithm>
 
 #include <utility/vector1.hh>
 

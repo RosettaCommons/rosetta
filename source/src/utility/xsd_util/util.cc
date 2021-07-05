@@ -19,8 +19,6 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
 
 namespace utility {
 namespace xsd_util {

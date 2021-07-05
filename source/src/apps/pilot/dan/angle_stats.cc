@@ -11,7 +11,6 @@
 /// @author Daniel J. Mandell
 
 #include <protocols/viewer/viewers.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
@@ -24,7 +23,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
-#include <cmath>
 
 static basic::Tracer TR( "anglestats" );
 

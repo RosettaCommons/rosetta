@@ -33,7 +33,7 @@
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <utility/pointer/deep_copy.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace grafting {

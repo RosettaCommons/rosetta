@@ -25,6 +25,8 @@
 namespace protocols {
 namespace antibody {
 
+struct CDRDBPose;
+
 // Forward
 class AntibodyDatabaseManager;
 

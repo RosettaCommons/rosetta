@@ -17,8 +17,6 @@
 // protocol headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 #include <protocols/analysis/GlycanInfoMover.hh>
 
@@ -30,8 +28,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/string_util.hh>
 
 static basic::Tracer TR("glycan_info");
 

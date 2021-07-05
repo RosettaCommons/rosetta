@@ -18,18 +18,14 @@
 
 // Unit Headers
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/task/ResidueLevelTask.hh>
 
 // Package Headers
-#include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
 #include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
 
 // Project Headers
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -37,11 +33,13 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // STL Headers
 #include <iosfwd>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
+#include <utility/options/OptionCollection.fwd.hh> // AUTO IWYU For OptionCollection
 
 #ifdef PYROSETTA
 	#include <core/id/SequenceMapping.hh>

@@ -16,7 +16,7 @@
 
 #include <protocols/filters/FilterValueMetric.hh>
 #include <core/simple_metrics/metrics/CalculatorMetric.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>

@@ -22,29 +22,21 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 #include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 
 
 //Unit Headers
-#include <core/energy_methods/Fa_MbenvEnergy.hh>
 
 // Package Headers
 
-#include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 
 using namespace core;
 using namespace core::conformation;

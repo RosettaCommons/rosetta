@@ -17,12 +17,10 @@
 
 #include <numeric/xyzVector.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <protocols/antibody/snugdock/SnugDockProtocol.hh>
 #include <protocols/antibody/AntibodyInfo.hh>

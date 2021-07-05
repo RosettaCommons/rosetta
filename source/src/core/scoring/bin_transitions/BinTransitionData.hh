@@ -21,14 +21,13 @@
 
 //Other headers:
 #include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
-#include <core/conformation/Conformation.fwd.hh>
+#include <utility/vector1.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 //Ramachandran -- needed for sampling
-#include <core/scoring/Ramachandran.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/chemical/AA.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 #ifdef SERIALIZATION
 // Cereal headers

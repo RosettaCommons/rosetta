@@ -21,12 +21,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <numeric/interpolate.hh>
 #include <numeric/prob_util.hh>
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/FArray1D.hh>
@@ -39,7 +37,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/SecondaryStructure.hh>
@@ -53,30 +50,26 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/util/kinematics_util.hh>
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
-#include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/util.hh>
 #include <protocols/medal/util.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/nonlocal/BiasedFragmentMover.hh>
-#include <protocols/nonlocal/Policy.hh>
+#include <protocols/nonlocal/Policy.fwd.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
-#include <protocols/nonlocal/util.hh>
 #include <protocols/minimization_packing/SaneMinMover.hh>
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.hh>
 
 // Package headers
 #include <protocols/star/Extender.hh>
 #include <protocols/star/util.hh>
+
+#include <core/fragment/Frame.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace star {

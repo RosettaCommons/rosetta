@@ -16,23 +16,13 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/ref_pose.hh>
 #include <protocols/docking/metrics.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <algorithm>
-#include <list>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

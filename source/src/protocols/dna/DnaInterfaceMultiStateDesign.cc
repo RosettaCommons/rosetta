@@ -17,7 +17,7 @@
 
 // Package headers
 #include <protocols/dna/DnaChains.hh>
-#include <protocols/dna/DnaDesignDef.hh>
+#include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <protocols/dna/PDBOutput.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/RotamerDNAHBondFilter.hh>
@@ -25,24 +25,20 @@
 #include <protocols/multistate_design/MultiStatePacker.hh>
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh> // string_split
 #include <utility/tag/Tag.hh>
 
 // option key includes
@@ -53,12 +49,14 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

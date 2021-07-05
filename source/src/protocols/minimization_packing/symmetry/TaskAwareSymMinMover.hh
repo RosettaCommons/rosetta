@@ -16,13 +16,11 @@
 
 // Unit Headers
 #include <protocols/minimization_packing/symmetry/TaskAwareSymMinMover.fwd.hh>
-#include <protocols/minimization_packing/symmetry/TaskAwareSymMinMoverCreator.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
 //#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/Mover.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 // #include <protocols/rosetta_scripts/util.hh>
 
@@ -30,6 +28,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <core/types.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 // Utility Headers
 

@@ -32,12 +32,10 @@
 // C++ headers
 #include <set>
 #include <list>
-#include <iosfwd>
 
 #include <utility/vector1.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
+#include <numeric/xyzMatrix.hh> // DO NOT AUTO-REMOVE (needed for template instantiation)
+#include <numeric/xyzVector.fwd.hh>
 
 
 namespace protocols {

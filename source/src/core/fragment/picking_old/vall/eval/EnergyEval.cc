@@ -23,7 +23,6 @@
 
 //Auto Headers
 #include <core/fragment/picking_old/concepts/Extent.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

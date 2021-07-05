@@ -21,7 +21,6 @@
 #include <protocols/simple_task_operations/InterfaceTaskOperation.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
-#include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pose/Pose.hh>
@@ -31,11 +30,9 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 
 // option key includes
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -44,9 +41,7 @@
 #include <string>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <protocols/docking/DockingHighRes.hh>
-#include <utility/vector0.hh>
 
 
 

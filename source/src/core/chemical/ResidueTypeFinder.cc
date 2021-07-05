@@ -32,6 +32,8 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 using namespace basic::options;
 using utility::vector1;
 using utility::tools::make_vector1;

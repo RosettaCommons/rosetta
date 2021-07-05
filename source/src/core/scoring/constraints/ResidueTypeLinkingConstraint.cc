@@ -21,7 +21,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/chemical/AA.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>

@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -33,7 +33,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 
@@ -45,13 +45,8 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-#include <core/chemical/ResidueType.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/scoring/saxs/FormFactorManager.hh>
 
 
 //// C++ headers

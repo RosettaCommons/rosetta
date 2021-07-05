@@ -18,7 +18,7 @@
 
 // Package Headers
 #include <core/scoring/hbonds/types.hh>
-#include <core/scoring/hbonds/HBEvalTuple.hh>
+#include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>

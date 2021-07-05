@@ -28,7 +28,6 @@
 #include <protocols/jobdist/JobDistributors.hh> // keep first
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 #include <protocols/jobdist/Jobs.fwd.hh>
 
@@ -69,9 +68,7 @@
 
 //// C++ headers
 #include <string>
-#include <vector>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

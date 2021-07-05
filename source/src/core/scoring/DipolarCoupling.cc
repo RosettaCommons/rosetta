@@ -18,14 +18,12 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
 
 #include <basic/options/option.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -34,29 +32,24 @@
 #include <ObjexxFCL/format.hh>
 
 //C++ headers
-#include <iostream>
 #include <fstream>
 #include <string>
 
 /// Utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/dc.OptionKeys.gen.hh>
 
-#include <numeric/random/random.hh>
 // Numeric headers
-#include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 //membrane
-#include <core/scoring/Membrane_FAPotential.hh>
-#include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For sign
 
 static basic::Tracer tr( "core.scoring.DipolarCoupling" );
 

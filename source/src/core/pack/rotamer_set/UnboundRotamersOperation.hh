@@ -18,7 +18,6 @@
 
 #include <core/pack/rotamer_set/UnboundRotamersOperation.fwd.hh>
 
-#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

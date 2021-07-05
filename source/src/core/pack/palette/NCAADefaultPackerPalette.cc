@@ -26,9 +26,7 @@
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 namespace core {

@@ -33,16 +33,13 @@
 
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 
 
-#include <numeric/xyzVector.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <utility/vector1.hh>
 
-#include <core/scoring/Energies.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>

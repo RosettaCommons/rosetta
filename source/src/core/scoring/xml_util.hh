@@ -20,14 +20,11 @@
 // Unit headers
 
 // Project Headers
-#include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.fwd.hh>

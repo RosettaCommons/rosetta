@@ -13,45 +13,22 @@
 
 //#include <protocols/mpi_refinement/WorkUnit_Sampler.hh>
 #include <protocols/mpi_refinement/WorkUnit_Aggressive.hh>
-#include <protocols/mpi_refinement/util.hh>
-#include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/scoring/rms_util.hh>
 //#include <protocols/wum/SilentStructStore.hh>
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
-#include <basic/options/keys/frags.OptionKeys.gen.hh>
-#include <basic/options/keys/wum.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 //#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
 
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -63,7 +40,6 @@
 #include <protocols/normalmode/NormalModeRelaxMover.hh>
 #include <protocols/normalmode/NormalModeRelaxMover.fwd.hh>
 
-#include <core/pose/selection.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 
 //Auto Headers
@@ -71,10 +47,9 @@
 #include <numeric/random/random.hh>
 
 //Auto Headers
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility> //for std::pair
+
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> // AUTO IWYU For SwitchResidueTypeSetMover
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>

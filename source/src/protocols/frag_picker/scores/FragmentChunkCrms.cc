@@ -12,9 +12,7 @@
 ///// @author Lei Shi (shilei@uw.edu)
 
 #include <protocols/frag_picker/scores/FragmentChunkCrms.hh>
-#include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallResidue.hh>
-#include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #ifdef WIN32
@@ -34,7 +32,6 @@
 // utils
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <basic/prof.hh>
 
 //Auto Headers
 #include <core/id/NamedAtomID.hh>
@@ -43,19 +40,18 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <utility/io/izstream.hh>
 #include <iostream>
 #include <string>
 
 //Sequence alignment
-#include <basic/database/open.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/NWAligner.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/MatrixScoringScheme.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
+
+#include <protocols/frag_picker/FragmentPicker.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace frag_picker {

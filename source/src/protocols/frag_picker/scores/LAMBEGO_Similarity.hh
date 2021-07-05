@@ -19,8 +19,6 @@
 
 #include <protocols/frag_picker/VallChunk.fwd.hh>
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
-#include <utility/vector1_bool.hh>
-#include <iosfwd>
 
 #include <utility/vector1.hh>
 

@@ -24,6 +24,7 @@
 
 #include <utility/vector1.hh>
 
+#include <set> // MANUAL IWYU
 
 namespace protocols {
 namespace toolbox {

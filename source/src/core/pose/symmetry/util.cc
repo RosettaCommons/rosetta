@@ -19,7 +19,6 @@
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/MirrorSymmetricConformation.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -28,7 +27,6 @@
 #include <core/pose/chains_util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -51,12 +49,14 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/conformation/symmetry/SymmetryTransform.hh> // IWYU MANUAL
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 
 namespace core {
 namespace pose {

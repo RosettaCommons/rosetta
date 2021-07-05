@@ -19,7 +19,6 @@
 #include <protocols/moves/MoverCreator.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <string>

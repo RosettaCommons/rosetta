@@ -16,7 +16,6 @@
 #include <protocols/loop_modeling/samplers/LegacyKicSampler.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>

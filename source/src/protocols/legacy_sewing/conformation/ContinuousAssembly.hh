@@ -22,8 +22,6 @@
 
 //Unit headers
 #include <protocols/legacy_sewing/conformation/Assembly.hh>
-#include <protocols/legacy_sewing/sampling/LegacyAppendAssemblyMover.fwd.hh>
-#include <protocols/legacy_sewing/sampling/SewGraph.fwd.hh>
 
 //Core headers
 

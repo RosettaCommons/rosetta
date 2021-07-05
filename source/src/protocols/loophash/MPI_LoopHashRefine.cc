@@ -18,14 +18,11 @@
 #endif
 
 #include <protocols/loophash/MPI_LoopHashRefine.hh>
-#include <protocols/loophash/WorkUnit_LoopHash.hh>
-#include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -36,10 +33,8 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/util.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
@@ -60,7 +55,6 @@
 
 //Auto Headers
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
-#include <utility/vector1.hh>
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

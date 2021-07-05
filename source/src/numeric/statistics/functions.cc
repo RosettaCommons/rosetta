@@ -21,6 +21,8 @@
 #include <cfloat>
 #include <limits>
 
+#include <utility/sort.functions.hh> // AUTO IWYU For fractional_rank
+
 
 // defines for error functions
 using cmplx = std::complex<double>;

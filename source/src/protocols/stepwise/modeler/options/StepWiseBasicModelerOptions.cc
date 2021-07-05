@@ -15,15 +15,11 @@
 
 #include <protocols/stepwise/modeler/options/StepWiseBasicModelerOptions.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
 //Req'd on WIN32
-#include <utility/tag/Tag.hh>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

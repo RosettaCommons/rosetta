@@ -14,12 +14,8 @@
 #ifndef INCLUDED_core_scoring_cryst_util_hh
 #define INCLUDED_core_scoring_cryst_util_hh
 
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
-#include <iosfwd>
 
 
 namespace core {

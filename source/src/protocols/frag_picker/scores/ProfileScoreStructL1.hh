@@ -24,7 +24,7 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/scores/fragment_scoring_utilities.hh>
 
-#include <core/sequence/SequenceProfile.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
 
 namespace protocols {
 namespace frag_picker {

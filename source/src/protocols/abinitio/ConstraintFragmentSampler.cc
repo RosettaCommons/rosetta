@@ -33,10 +33,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <numeric/numeric.functions.hh>
-#include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_cst.OptionKeys.gen.hh>
@@ -44,14 +41,14 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 
 // Auto Headers
-#include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 
 #include <utility/vector1.hh>
+
+#include <protocols/moves/MonteCarlo.hh> // AUTO IWYU For MonteCarlo
 
 
 static basic::Tracer tr( "protocols.abinitio" );

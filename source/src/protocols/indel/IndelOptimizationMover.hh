@@ -10,17 +10,11 @@
 #ifndef INCLUDED_protocols_indel_IndelOptimizationMover_hh
 #define INCLUDED_protocols_indel_IndelOptimizationMover_hh
 
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 #include <protocols/indel/IndelOptimizationMover.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

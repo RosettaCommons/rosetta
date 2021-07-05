@@ -14,7 +14,6 @@
 #define INCLUDED_core_conformation_AtomGraphData_hh
 
 #include <core/conformation/PointGraphData.hh>
-#include <utility>
 
 namespace core {
 namespace conformation {

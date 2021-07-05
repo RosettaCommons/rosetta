@@ -37,7 +37,6 @@
 #include <basic/options/after_opts.hh>
 #endif
 
-#include <iostream>
 
 
 #ifdef BOINC

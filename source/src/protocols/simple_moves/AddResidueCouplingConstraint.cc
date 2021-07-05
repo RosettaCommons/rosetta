@@ -28,27 +28,16 @@
 
 #include <protocols/simple_moves/AddResidueCouplingConstraint.hh>
 #include <protocols/simple_moves/AddResidueCouplingConstraintCreator.hh>
-#include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/constraints/ResidueCouplingConstraint.hh>
-#include <core/scoring/constraints/KofNConstraint.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <numeric/MathNTensor_io.hh>
 #include <numeric/MathNTensor.hh>
-#include <utility/json_spirit/json_spirit.h>
-#include <utility/json_spirit/json_spirit_tools.hh>
 
 namespace protocols {
 namespace simple_moves {

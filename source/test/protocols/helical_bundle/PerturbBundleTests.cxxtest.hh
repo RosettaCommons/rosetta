@@ -13,10 +13,7 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 #include <test/util/rosettascripts.hh>
 
@@ -26,21 +23,16 @@
 #include <protocols/helical_bundle/parameters/BundleParameters.hh>
 #include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
 #include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
-#include <core/conformation/parametric/Parameters.hh>
-#include <core/conformation/parametric/ParametersSet.hh>
 #include <core/conformation/parametric/RealValuedParameter.hh>
 
 // Protocols Headers
-#include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Utility, etc Headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 

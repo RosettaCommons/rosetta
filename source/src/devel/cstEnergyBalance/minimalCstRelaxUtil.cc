@@ -14,7 +14,6 @@
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/types.hh>
@@ -25,7 +24,6 @@
 //#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <basic/Tracer.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -53,17 +51,13 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/comparative_modeling/ThreadingMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.fwd.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/cst_util.hh>
 
 //utilities
-#include <utility/options/keys/FileOptionKey.fwd.hh>
-#include <utility/options/keys/FileOptionKey.hh>
-#include <utility/options/keys/FileVectorOptionKey.fwd.hh>
-#include <utility/options/keys/FileVectorOptionKey.hh>
 
 
 #include <devel/cstEnergyBalance/minimalCstRelaxUtil.hh>
@@ -76,11 +70,9 @@
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 
 
-#include <fstream>
 #include <map>
 #include <set>
 #include <sstream>
-#include <ostream>
 
 #include <utility/vector1.hh>
 

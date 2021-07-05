@@ -19,7 +19,6 @@
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.fwd.hh>
 
 // Package Headers
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 
@@ -28,15 +27,14 @@
 #include <utility/io/izstream.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 
-#include <basic/basic.hh>
 
 // Numeric Headers
-#include <numeric/types.hh>
 #include <numeric/numeric.functions.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/random/random.fwd.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <core/chemical/AA.hh> // AUTO IWYU For AA
 
 namespace core {
 namespace pack {

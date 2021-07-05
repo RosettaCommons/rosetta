@@ -24,9 +24,7 @@
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverApplyingMover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
-#include <basic/datacache/DataMap.fwd.hh>
 
 // Forward
 namespace protocols {

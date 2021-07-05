@@ -19,40 +19,31 @@
 #include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
 
 #include <core/chemical/AA.hh>
-#include <utility/graph/Graph.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <utility/graph/Graph.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/make_symmetric_task.hh>
 
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileOptions.hh>
 
 // Test headers
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core;
 

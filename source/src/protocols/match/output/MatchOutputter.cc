@@ -21,11 +21,9 @@
 // Package headers
 #include <protocols/match/output/MatchProcessor.hh>
 #include <protocols/match/output/OutputWriter.hh>
-#include <protocols/match/output/MatchEvaluator.hh>
 #include <protocols/match/output/MatchScoreWriter.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers

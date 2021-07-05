@@ -13,10 +13,12 @@
 
 // Unit headers
 #include <protocols/multistage_rosetta_scripts/MRSJobSummary.hh>
-#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 #include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 
 #ifdef    SERIALIZATION
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
+
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
 

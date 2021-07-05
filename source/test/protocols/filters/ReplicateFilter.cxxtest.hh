@@ -20,7 +20,7 @@
 // Project Headers
 #include <core/types.hh>
 
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/filters/ReplicateFilter.hh>
 
 // Utility Headers

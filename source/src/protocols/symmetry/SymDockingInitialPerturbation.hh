@@ -27,11 +27,12 @@
 #include <utility/VirtualBase.hh>
 
 //utility
-#include <utility/vector1.hh>
 
 #include <core/conformation/symmetry/SymDof.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

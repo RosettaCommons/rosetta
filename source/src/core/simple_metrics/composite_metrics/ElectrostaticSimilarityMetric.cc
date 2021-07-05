@@ -26,22 +26,16 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/ref_pose.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/matdes.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
 
 
 // Utility headers
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
 // Parser headers
@@ -50,6 +44,8 @@
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/scoring/sc/ElectrostaticSimilarityCalculator.hh> // AUTO IWYU For ElectrostaticSimilari...
 
 
 //// C++ headers

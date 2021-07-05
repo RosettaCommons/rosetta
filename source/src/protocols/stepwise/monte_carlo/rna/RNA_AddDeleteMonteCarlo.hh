@@ -27,7 +27,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileOptions.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

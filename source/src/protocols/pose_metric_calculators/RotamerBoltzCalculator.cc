@@ -28,11 +28,9 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-#include <utility/stream_util.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <utility/graph/Graph.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -55,6 +53,9 @@
 
 //Auto Headers
 #include <protocols/score_filters/ScoreTypeFilter.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

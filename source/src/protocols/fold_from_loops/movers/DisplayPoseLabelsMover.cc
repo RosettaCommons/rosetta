@@ -13,7 +13,6 @@
 
 #include <protocols/fold_from_loops/movers/DisplayPoseLabelsMover.hh>
 #include <protocols/fold_from_loops/movers/DisplayPoseLabelsMoverCreator.hh>
-#include <protocols/fold_from_loops/utils/utils.hh>
 #include <protocols/fold_from_loops/selectors/ConstraintResidueSelector.hh>
 
 // Protocol headers
@@ -23,31 +22,29 @@
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/select/movemap/util.hh>
-#include <core/pose/selection.hh>
 #include <core/kinematics/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Basic/Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <string>
+#include <set>
+
+#include <protocols/moves/DsspMover.hh> // AUTO IWYU For DsspMover
+#include <iomanip> // AUTO IWYU For operator<<, setw, left
 
 static basic::Tracer TR( "protocols.fold_from_loops.DisplayPoseLabelsMover" );
 

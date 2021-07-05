@@ -21,6 +21,9 @@
 #include <protocols/simple_moves/CopyDofMover.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <map> // AUTO IWYU For map
+
 #ifdef WIN32
 #include <protocols/simple_moves/CopyDofMover.hh>
 #endif

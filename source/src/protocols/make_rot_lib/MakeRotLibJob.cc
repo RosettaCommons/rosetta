@@ -13,10 +13,9 @@
 
 // unit headers
 #include <protocols/make_rot_lib/MakeRotLibJob.hh>
-#include <protocols/make_rot_lib/MakeRotLibOptionsData.hh>
 
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/InnerJob.hh>
+#include <protocols/jd2/InnerJob.fwd.hh>
 #include <utility>
 
 namespace protocols {

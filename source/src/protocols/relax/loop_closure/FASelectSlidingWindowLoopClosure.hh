@@ -25,7 +25,6 @@
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 
 // Package Headers
-#include <protocols/moves/Mover.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -34,9 +33,8 @@
 
 #include <core/types.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/OrderedFragSet.hh>
 
 //#include <protocols/simple_moves/FragmentMover.hh>
 //#include <core/fragment/SecondaryStructure.hh>
@@ -45,12 +43,10 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace loops {

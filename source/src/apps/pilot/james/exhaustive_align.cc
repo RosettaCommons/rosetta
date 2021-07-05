@@ -13,56 +13,32 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-#include <basic/prof.hh>
-#include <basic/Tracer.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 #include <basic/options/option.hh>
 
-#include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/NWAligner.hh>
 #include <core/sequence/SWAligner.hh>
-#include <core/sequence/L1ScoringScheme.hh>
 #include <core/sequence/PairScoringScheme.hh>
-#include <core/sequence/MatrixScoringScheme.hh>
-#include <core/sequence/SimpleScoringScheme.hh>
 #include <core/sequence/ScoringSchemeFactory.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/CompositeScoringScheme.hh>
 
-#include <core/scoring/rms_util.hh>
 
-#include <core/pose/Pose.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 
-#include <protocols/comparative_modeling/ThreadingMover.hh>
 #include <protocols/comparative_modeling/AlignmentSet.hh>
-#include <protocols/jobdist/standard_mains.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <numeric/random/random.hh>
 
 // C++ headers
 #include <map>
-#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -70,7 +46,6 @@
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 

@@ -18,12 +18,9 @@
 #include <core/types.hh>
 
 
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/conformation/Residue.fwd.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
 
@@ -31,20 +28,13 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
 
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
 
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <basic/Tracer.hh>
 
 
-#include <utility>
+
 #include <utility/vector1.hh>
 
 // C++ headers

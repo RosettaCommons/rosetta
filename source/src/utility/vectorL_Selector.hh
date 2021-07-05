@@ -17,10 +17,11 @@
 
 
 // Unit headers
-#include <utility/vectorL.fwd.hh>
 
 // C++ headers
 #include <cstddef>
+
+#include <platform/types.hh> // AUTO IWYU For SSize, Size
 
 
 namespace utility {

@@ -33,7 +33,6 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/scoring/LREnergyContainer.hh>
@@ -45,11 +44,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 #include <string>
-#include <iostream>
 #include <fstream>
 
 using namespace basic::options::OptionKeys;

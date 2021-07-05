@@ -29,8 +29,6 @@
 
 // utility headers
 #include <utility>
-#include <utility/exit.hh>
-#include <utility/tag/Tag.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>

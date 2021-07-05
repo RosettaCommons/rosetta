@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_indexed_structure_store_Datatypes_hh
 
 #include <stdint.h>
-#include <math.h>
 #include <array>
 #include <limits>
 

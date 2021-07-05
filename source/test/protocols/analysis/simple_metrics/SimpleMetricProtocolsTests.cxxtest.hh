@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
@@ -40,7 +38,6 @@
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/option.hh>
 
 using namespace core::simple_metrics;

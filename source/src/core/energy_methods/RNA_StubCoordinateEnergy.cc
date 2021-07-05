@@ -18,7 +18,6 @@
 
 // Package headers
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/DenseEnergyContainer.hh>
 #include <basic/Tracer.hh>
 
@@ -28,7 +27,6 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -38,10 +36,8 @@
 
 // Utility headers
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
 
 //Auto Headers
-#include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

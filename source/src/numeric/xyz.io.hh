@@ -17,10 +17,6 @@
 
 
 // Package headers
-#include <numeric/xyzTriple.io.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/xyzMatrix.io.hh>
-#include <numeric/xyzTransform.io.hh>
 
 
 #endif // INCLUDED_numeric_xyz_io_HH

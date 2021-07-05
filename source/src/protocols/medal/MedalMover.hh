@@ -28,7 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
-#include <core/util/ChainbreakUtil.hh>
+#include <core/util/ChainbreakUtil.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 

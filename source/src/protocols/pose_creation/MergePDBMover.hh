@@ -16,16 +16,15 @@
 
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/pose_creation/MergePDBMover.fwd.hh>
 #include <utility/vector1.hh>
 
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 namespace protocols {
 namespace pose_creation {

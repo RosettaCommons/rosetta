@@ -19,14 +19,13 @@
 // package headers
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 #include <protocols/frag_picker/VallChunk.fwd.hh>
-#include <protocols/frag_picker/FragmentCandidate.hh>
+#include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 #include <utility/exit.hh>
 
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

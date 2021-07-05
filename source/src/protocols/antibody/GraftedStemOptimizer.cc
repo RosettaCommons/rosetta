@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/select/util.hh>
-#include <core/conformation/util.hh> //idealize
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
@@ -34,7 +33,8 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <protocols/moves/PyMOLMover.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 static basic::Tracer TRG( "protocols.antibody.GraftedStemOptimizer" );

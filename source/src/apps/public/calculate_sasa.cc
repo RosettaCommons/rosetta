@@ -17,22 +17,12 @@
 //#include <basic/options/option.hh>
 
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
 
-#include <core/optimization/Minimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
 #include <devel/init.hh>
@@ -41,27 +31,16 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <numeric/xyzVector.io.hh>
-#include <numeric/xyzMatrix.io.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
-#include <algorithm>
-#include <map>
-#include <cstdlib>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 

@@ -14,17 +14,16 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/io/pdb/pdb_writer.hh> // pose_from_pdb
 #include <basic/options/option.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -53,10 +52,8 @@ using utility::vector1;
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 
 
 using namespace core;

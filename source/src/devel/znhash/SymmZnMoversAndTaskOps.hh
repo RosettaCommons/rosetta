@@ -32,7 +32,6 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
@@ -50,7 +49,6 @@
 //#include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Boost headers
-#include <boost/unordered_map.hpp>
 
 #ifdef    SERIALIZATION
 // Cereal headers

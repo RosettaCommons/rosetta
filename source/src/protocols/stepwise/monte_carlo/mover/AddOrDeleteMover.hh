@@ -20,13 +20,15 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
-#include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.fwd.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh>
+
+#include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.fwd.hh> // AUTO IWYU For SubMotifLibraryCOP
 
 
 namespace protocols {

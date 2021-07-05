@@ -12,46 +12,28 @@
 /// @author Joaquin Ambia, Jason K. Lai
 
 // Protocols
-#include <protocols/hydrate/Hydrate.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/AtomTreeDiffJobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
 // Core
-#include <core/chemical/AtomType.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 #include <core/kinematics/MoveMap.hh> //yuemng 03/20/13
 #include <core/kinematics/FoldTree.hh>
@@ -60,26 +42,19 @@
 // Basic
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh> // wym  for hybrid specific water hbond energy
 #include <basic/datacache/BasicDataCache.hh>
 
 // Utility
-#include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 // Numeric
 #include <numeric/NumericTraits.hh>
 
 // C++
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <iterator>
 
@@ -88,12 +63,8 @@
 
 // wym
 #include <protocols/hydrate/hydrate_functions.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.hydrate.hydrate_functions" );
 

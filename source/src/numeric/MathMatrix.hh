@@ -41,8 +41,6 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <math.h>
-#include <iosfwd>
 #include <utility/assert.hh>
 
 namespace numeric {

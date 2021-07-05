@@ -9,11 +9,9 @@
 
 
 // Unit headers
-#include <devel/domain_assembly/RedesignDomainAssemblyMover.hh>
 
 // Project headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 #include <devel/init.hh>
 
@@ -22,6 +20,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+
+#include <devel/domain_assembly/DomainAssemblyMover.hh> // AUTO IWYU For DomainAssemblyMover
 
 static basic::Tracer TR( "apps.pilot.andrew.domain_assembly_jd2" );
 

@@ -19,10 +19,12 @@
 #include <utility/VirtualBase.hh>
 #include <core/import_pose/RNA_JumpMover.fwd.hh>
 #include <core/import_pose/libraries/RNA_JumpLibrary.fwd.hh>
-#include <core/pose/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/rna/BasePair.hh>
 #include <utility/vector1.hh>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
 
 namespace core {
 namespace import_pose {

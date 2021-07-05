@@ -16,7 +16,6 @@
 #include <protocols/task_operations/CrystalContactsOperationCreator.hh>
 
 // Project Headers
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -26,13 +25,15 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 #include <utility/vector1.hh>
+
+#include <set> // MANUAL IWYU
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For string_of
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 // C++ Headers
 

@@ -22,8 +22,6 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <utility/vector0.hh>
-#include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // Utility Headers
 

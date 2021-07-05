@@ -16,8 +16,8 @@
 #define INCLUDED_protocols_antibody_AntibodyFeatures_hh
 
 #include <protocols/features/InterfaceFeatures.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <protocols/antibody/metrics.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

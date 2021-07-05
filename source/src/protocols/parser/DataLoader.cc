@@ -14,7 +14,6 @@
 // Unit Headers
 #include <protocols/parser/DataLoader.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

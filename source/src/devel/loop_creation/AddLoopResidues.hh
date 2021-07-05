@@ -31,7 +31,6 @@
 #include <utility/vector1.hh>
 
 //C++
-#include <set>
 
 namespace devel {
 namespace loop_creation {

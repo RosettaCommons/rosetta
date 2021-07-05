@@ -21,14 +21,11 @@
 // Package headers
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/scoring/UnfoldedStatePotential.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 
 #include <utility/vector1.hh>
 

@@ -13,34 +13,26 @@
 /// @author Josh Friedman, jfried23@uw.edu, feb 2012
 
 
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/AtomTypeSet.hh>
 #include <core/types.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 
 #include <devel/dna/MotifLoopBuild.hh>
 #include <devel/dna/util_motif_loop.hh>
 #include <devel/enzdes/EnzdesRemodelProtocol.hh>
 #include <utility/file/FileName.hh>
 
-#include <protocols/match/BumpGrid.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/motifs/Motif.hh>
-#include <protocols/motifs/MotifDnaPacker.hh>
 #include <protocols/motifs/MotifLibrary.hh>
 #include <protocols/motifs/MotifSearch.hh>
 #include <protocols/motifs/motif_utils.hh>
 
-#include <protocols/dna/DnaDesignDef.hh>
+#include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/dna/DnaChains.hh>
 #include <protocols/dna/SeparateDnaFromNonDna.hh>
@@ -49,8 +41,6 @@
 #include <protocols/loops/looprelax_protocols.hh>
 //#include <protocols/loops/loop_mover/refine/LoopMover_Backrub.fwd.hh>
 
-#include <protocols/enzdes/EnzdesFixBBProtocol.hh>
-#include <protocols/enzdes/EnzdesBaseProtocol.hh>
 #include <protocols/motifs/IRCollection.hh>
 
 #include <basic/options/option.hh>
@@ -59,32 +49,24 @@
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
 #include <core/scoring/dna/BasePartner.hh>
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
 
 #include <devel/dna/MotifLoopBuildCreator.hh>
 
 #include <basic/Tracer.hh>
-#include <core/id/types.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <numeric/random/random.hh>
-#include <ctime>
 #include <algorithm>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer tr( "devel.dna.MotifLoopBuild" );
 

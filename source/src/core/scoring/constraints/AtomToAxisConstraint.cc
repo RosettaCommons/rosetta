@@ -14,18 +14,14 @@
 #include <core/scoring/constraints/AtomToAxisConstraint.hh>
 
 // Package Headers
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/Func.hh>
-#include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.fwd.hh>
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/kinematics/ShortestPathInFoldTree.hh>
 // Utility Headers
 #include <basic/Tracer.hh>
 
@@ -37,8 +33,9 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
-#include <utility>
 #include <utility/vector1.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Residue
 
 
 static basic::Tracer TR( "core.scoring.constraints.AtomToAxisConstraint" );

@@ -13,7 +13,7 @@
 
 // libRosetta headers
 #include <protocols/simple_moves/ScoreMover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -29,17 +29,13 @@
 
 // C++ headers
 #include <iostream>
-#include <string>
-#include <deque>
 
 // option key includes
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 

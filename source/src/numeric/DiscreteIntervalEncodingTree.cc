@@ -14,7 +14,6 @@
 // Unit headers
 #include <numeric/DiscreteIntervalEncodingTree.hh>
 
-#include <platform/types.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -22,6 +21,10 @@
 
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
+
+// Other headers
+#include <platform/types.hh>
+
 #endif // SERIALIZATION
 
 

@@ -15,7 +15,6 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 #include <core/types.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
@@ -24,32 +23,12 @@
 #include <core/sequence/PairScoringScheme.fwd.hh>
 
 //Auto Headers
-#include <platform/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/Sequence.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
 #include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/file/FileName.fwd.hh>
-#include <utility/io/izstream.fwd.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <limits>
-#include <string>
-#include <vector>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 static basic::Tracer TR("test.core.sequence.ScoringSchemes");

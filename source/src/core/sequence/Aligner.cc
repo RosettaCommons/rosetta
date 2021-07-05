@@ -27,7 +27,6 @@
 
 #include <utility/excn/Exceptions.hh>
 
-#include <utility/vector1.hh>
 
 #include <core/sequence/ScoringScheme.fwd.hh>
 

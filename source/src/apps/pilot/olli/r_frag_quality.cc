@@ -15,7 +15,6 @@
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragID_Iterator.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/OrderedFragSet.hh>
@@ -42,11 +41,9 @@
 
 
 #include <numeric/angle.functions.hh>
-#include <numeric/conversions.hh>
 
 #include <basic/options/option.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 #include <basic/options/option_macros.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -68,11 +65,13 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
+
+#include <protocols/jumping/PairingLibrary.hh> // AUTO IWYU For StandardPairingLibrary
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame, operator<<
 
 
 static basic::Tracer tr( "main" );

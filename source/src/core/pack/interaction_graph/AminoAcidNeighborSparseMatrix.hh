@@ -18,7 +18,7 @@
 #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1.hh>
+#include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2.hh>
 #include <ObjexxFCL/FArray2D.hh>

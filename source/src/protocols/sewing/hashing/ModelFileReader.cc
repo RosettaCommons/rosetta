@@ -15,7 +15,6 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <protocols/sewing/data_storage/SmartSewingResidue.hh>
 #include <protocols/sewing/data_storage/SmartSegment.hh>

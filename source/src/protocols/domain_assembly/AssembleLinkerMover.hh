@@ -18,8 +18,7 @@
 
 #include <protocols/moves/Mover.hh>
 
-#include <core/fragment/FragSet.hh>
-#include <utility>
+#include <core/fragment/FragSet.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 

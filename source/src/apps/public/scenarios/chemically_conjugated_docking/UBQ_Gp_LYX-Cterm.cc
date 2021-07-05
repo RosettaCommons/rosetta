@@ -12,37 +12,23 @@
 /// @author Steven Lewis and Hope Anderson
 
 // Project Headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 //movers
 #include <protocols/chemically_conjugated_docking/UBQ_GTPaseMover.hh>
 
-#include <protocols/moves/MoverFactory.hh>
 
 // Utility Headers
 #include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
-#include <utility/SingletonBase.hh>
-#include <basic/prof.hh>
 
 // C++ headers
 #include <string>
 
 // option key includes
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/chemically_conjugated_docking.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>

@@ -46,8 +46,6 @@
 
 //Symmetry Headers
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh> //to access symmetric pose data
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
 //movers
@@ -84,8 +82,6 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/FloppyTail.OptionKeys.gen.hh>
 
-#include <protocols/moves/MoverStatistics.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)

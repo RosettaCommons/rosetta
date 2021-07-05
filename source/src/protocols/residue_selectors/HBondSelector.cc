@@ -27,7 +27,6 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
@@ -36,15 +35,13 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/types.hh>
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
-#include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 #include <utility/serialization/serialization.hh>

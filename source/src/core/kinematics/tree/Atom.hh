@@ -37,15 +37,15 @@
 #include <numeric/xyzVector.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 
 #include <core/id/types.hh>
-#include <utility/vector0_bool.hh>
 
 #include <deque>
+
+#include <utility/vector0.hh> // AUTO IWYU For vector0
 
 #ifdef    SERIALIZATION
 // Cereal headers

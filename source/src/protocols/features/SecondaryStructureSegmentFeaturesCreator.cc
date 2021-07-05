@@ -15,10 +15,7 @@
 #include <protocols/features/SecondaryStructureSegmentFeaturesCreator.hh>
 
 // Package Headers
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/SecondaryStructureSegmentFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

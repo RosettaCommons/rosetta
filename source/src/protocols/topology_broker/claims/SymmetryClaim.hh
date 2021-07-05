@@ -25,20 +25,17 @@
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh> //for printing
 
 // Project Headers
-#include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/conformation/symmetry/SymmData.hh>
+#include <core/conformation/symmetry/SymmData.fwd.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/exit.hh>
-#include <utility/vector1.hh>
 
 //// C++ headers
 #include <string>
 #include <iosfwd>
+
+#include <ostream> // AUTO IWYU For operator<<, basic_ostream
 
 namespace protocols {
 namespace topology_broker {

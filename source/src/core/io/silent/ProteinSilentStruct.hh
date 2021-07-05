@@ -25,7 +25,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>

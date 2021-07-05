@@ -25,11 +25,10 @@
 
 // Basic Headers
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

@@ -16,15 +16,11 @@
 #include <protocols/constraint_generator/MembraneSpanConstraintGeneratorCreator.hh>
 #include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 // Core headers
-#include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <core/scoring/constraints/MembraneSpanConstraint.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost headers

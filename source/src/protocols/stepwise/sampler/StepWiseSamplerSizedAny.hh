@@ -21,6 +21,8 @@
 // Package headers
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace stepwise {
 namespace sampler {

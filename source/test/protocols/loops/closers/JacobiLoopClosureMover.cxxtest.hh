@@ -13,10 +13,7 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
@@ -26,8 +23,6 @@
 #include <protocols/moves/MoverFactory.hh>
 
 // Core Headers
-#include <core/chemical/ResidueConnection.hh>
-#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -36,6 +31,8 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 static basic::Tracer TR("JacobiLoopClosureMoverTests");
 

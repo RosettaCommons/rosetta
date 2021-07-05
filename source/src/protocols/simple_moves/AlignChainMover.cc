@@ -13,7 +13,7 @@
 // Unit headers
 #include <protocols/simple_moves/AlignChainMover.hh>
 #include <protocols/simple_moves/AlignChainMoverCreator.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.simple_moves.AlignChainMover" );

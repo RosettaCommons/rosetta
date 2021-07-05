@@ -14,14 +14,12 @@
 #ifndef INCLUDED_core_energy_methods_HRFDynamicsEnergy_hh
 #define INCLUDED_core_energy_methods_HRFDynamicsEnergy_hh
 
-#include <core/energy_methods/HRFDynamicsEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh> // AUTO IWYU For EnergyMethodOptions
 
 
 namespace core {

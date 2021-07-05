@@ -19,7 +19,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 

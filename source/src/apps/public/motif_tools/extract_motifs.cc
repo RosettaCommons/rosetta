@@ -26,7 +26,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/motifs/Motif.hh>
@@ -39,7 +38,6 @@
 
 
 //utilities
-#include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 

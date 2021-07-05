@@ -17,28 +17,26 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/sequence/util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/rna/util.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/types.hh>
 
 // External library headers
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -49,7 +47,6 @@
 
 
 //C++ headers
-#include <vector>
 #include <string>
 #include <sstream>
 

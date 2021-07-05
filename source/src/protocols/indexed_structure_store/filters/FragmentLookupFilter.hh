@@ -21,14 +21,12 @@
 // Package Headers
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 //#include <protocols/indexed_structure_store/FragmentLookup.fwd.hh>
 #include <protocols/indexed_structure_store/FragmentLookup.hh>
 #include <protocols/indexed_structure_store/FragmentStore.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
 

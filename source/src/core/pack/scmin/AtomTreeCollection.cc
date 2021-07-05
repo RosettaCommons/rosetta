@@ -25,19 +25,18 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/conformation/util.hh>
-#include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/constants.hh>
 //#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::ResidueTyp...
 
 
 namespace core {

@@ -18,8 +18,6 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-#include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 
 // utility headers
 #include <core/types.hh>
@@ -29,6 +27,8 @@
 #include <algorithm>
 
 #include <utility/vector1.hh>
+
+#include <protocols/frag_picker/quota/QuotaCollector.hh> // AUTO IWYU For QuotaCollector
 
 
 namespace protocols {

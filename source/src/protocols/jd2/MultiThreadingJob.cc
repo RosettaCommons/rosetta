@@ -11,13 +11,10 @@
 /// @author James Thompson
 
 #include <protocols/jd2/MultiThreadingJob.hh>
-#include <protocols/jd2/MultiThreadingJob.fwd.hh>
 
 
-#include <core/types.hh>
 
-#include <protocols/jd2/InnerMultiThreadingJob.hh>
-#include <utility/vector1.hh>
+#include <protocols/jd2/InnerMultiThreadingJob.fwd.hh>
 
 
 namespace protocols {

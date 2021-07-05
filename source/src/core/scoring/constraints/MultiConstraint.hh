@@ -28,12 +28,10 @@
 #include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/random.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 //Utility Headers
-#include <numeric/xyzVector.fwd.hh>
 
 // STL Headers
 #include <map>

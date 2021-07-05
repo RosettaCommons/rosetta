@@ -17,7 +17,6 @@
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/MoverStatus.hh>
@@ -32,8 +31,6 @@
 #include <protocols/moves/util.hh>
 
 // Basic headers
-#include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 #include <string>
 
@@ -44,6 +41,8 @@
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/citation_manager/CitationCollectionBase.hh> // AUTO IWYU For CitationCollectionList
 
 static basic::Tracer TR( "protocols.moves.MoverContainer" );
 

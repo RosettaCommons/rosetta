@@ -12,11 +12,14 @@
 /// @brief Copied verbatim from the Tensorflow website.  This is intended to be
 /// a quick test of whether we're properly linking the Tensorflow libraries.
 
-#include <tensorflow/c/c_api.h>
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
+
+#ifdef USE_TENSORFLOW
+#include <tensorflow/c/c_api.h>
+#endif
 
 static basic::Tracer TR( "apps.pilot.vmullig.tensorflow_test1" );
 

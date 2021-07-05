@@ -15,21 +15,21 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
 
 // package headers
-#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
+#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTarget.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 
 // Project headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/rotamer_set/bb_independent_rotamers.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 
 #include <basic/Tracer.hh>
 

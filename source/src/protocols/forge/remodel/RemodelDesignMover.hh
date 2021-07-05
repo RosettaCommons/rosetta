@@ -15,12 +15,12 @@
 #ifndef INCLUDED_protocols_forge_remodel_RemodelDesignMover_hh
 #define INCLUDED_protocols_forge_remodel_RemodelDesignMover_hh
 
+#include <protocols/forge/remodel/RemodelDesignMover.fwd.hh>
+
 //project headers
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/forge/remodel/RemodelData.hh>
 #include <protocols/forge/remodel/RemodelWorkingSet.hh>

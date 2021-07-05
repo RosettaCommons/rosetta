@@ -18,7 +18,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
@@ -27,11 +26,9 @@
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
-#include <core/id/SequenceMapping.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 //other
 #include <protocols/rosetta_scripts/util.hh>
@@ -40,33 +37,24 @@
 
 // C++ headers
 #include <string>
-#include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
 
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include  <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/util.hh>
 
 //parser
 #include <utility/tag/Tag.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/pose/ResidueIndexDescription.hh>
-#include <core/pose/ref_pose.hh>
 
 //loops
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/loops_main.hh>
 
 //util
 #include <utility/vector1.hh>

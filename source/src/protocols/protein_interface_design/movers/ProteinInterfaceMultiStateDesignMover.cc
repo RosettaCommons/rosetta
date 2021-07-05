@@ -22,8 +22,7 @@
 #include <protocols/multistate_design/MultiStatePacker.hh>
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
@@ -32,7 +31,6 @@
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -57,6 +55,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For Residue...
 
 
 namespace protocols {

@@ -25,27 +25,23 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 //#include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 //#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <core/scoring/dssp/PairingsList.fwd.hh>
 //#include <core/fragment/SecondaryStructure.fwd.hh>
-#include <core/scoring/dssp/StrandPairing.hh>
+#include <core/scoring/dssp/StrandPairing.fwd.hh>
 
 
 // ObjexxFCL Headers
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/exit.hh>
 
 
 //// C++ headers
 #include <string>
-#include <map>
 
 #include <utility/vector1.hh>
 

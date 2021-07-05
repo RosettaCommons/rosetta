@@ -32,24 +32,20 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
-#include <core/chemical/VariantType.hh>
 
-#include <core/id/DOF_ID.hh>
+#include <core/id/DOF_ID.fwd.hh>
 #include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
 
 #include <numeric/deriv/dihedral_deriv.hh>
 
 
 // Utility headers
 #include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
-#include <utility/tools/make_vector1.hh>
 
 
 // C++

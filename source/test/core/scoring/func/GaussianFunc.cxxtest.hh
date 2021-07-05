@@ -26,7 +26,6 @@
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

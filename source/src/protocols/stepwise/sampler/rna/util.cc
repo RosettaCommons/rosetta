@@ -16,7 +16,7 @@
 #include <protocols/stepwise/sampler/rna/util.hh>
 #include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_SuiteStepWiseSampler.hh>
-#include <protocols/stepwise/sampler/StepWiseSampler.hh>
+#include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <core/chemical/ResidueType.hh>

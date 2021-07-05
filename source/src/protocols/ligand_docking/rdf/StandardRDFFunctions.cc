@@ -14,7 +14,7 @@
 
 #include <protocols/ligand_docking/rdf/RDFFunctionFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/ScoreFunction.hh>

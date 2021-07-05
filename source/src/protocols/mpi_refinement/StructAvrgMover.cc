@@ -9,28 +9,24 @@
 
 #include <protocols/mpi_refinement/StructAvrgMover.hh>
 #include <protocols/mpi_refinement/util.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 
 #include <core/scoring/rms_util.hh>
-#include <numeric/model_quality/rms.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/pose/PDBInfo.hh> // AUTO IWYU For PDBInfo
 
 using namespace core;
 

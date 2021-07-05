@@ -29,12 +29,10 @@
 #include <core/scoring/ScoreType.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/docking/RigidBodyInfo.fwd.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 #include <string>
 

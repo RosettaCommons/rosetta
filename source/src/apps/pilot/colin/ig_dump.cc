@@ -34,7 +34,7 @@
 #include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -43,7 +43,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 
@@ -61,7 +61,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 
 
 static basic::Tracer TR( "apps.ig_dump" );

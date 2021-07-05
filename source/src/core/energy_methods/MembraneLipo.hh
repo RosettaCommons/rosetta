@@ -18,7 +18,6 @@
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 

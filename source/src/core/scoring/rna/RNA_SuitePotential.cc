@@ -34,6 +34,8 @@
 // Utility Headers
 #include <utility/io/izstream.hh>
 
+#include <core/pose/rna/RNA_SuiteName.hh> // AUTO IWYU For RNA_SuiteName, RNA_SuiteAssignment
+
 static basic::Tracer TR( "core.scoring.rna.RNA_SuitePotential", basic::t_info );
 
 using namespace boost::numeric;

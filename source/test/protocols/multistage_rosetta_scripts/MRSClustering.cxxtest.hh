@@ -12,10 +12,7 @@
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
 // Package headers
-#include <protocols/multistage_rosetta_scripts/cluster/KMedoids.hh>
 
-#include <protocols/multistage_rosetta_scripts/cluster/metrics/JumpMetric.hh>
-#include <protocols/multistage_rosetta_scripts/cluster/metrics/SequenceMetric.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.hh>
 
 #include <basic/Tracer.hh>
@@ -23,10 +20,11 @@
 
 #include <test/protocols/init_util.hh>
 
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 
 #ifdef SERIALIZATION
+#include <protocols/multistage_rosetta_scripts/cluster/metrics/SequenceMetric.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/metrics/JumpMetric.hh>
+
 // Utility headers
 #include <utility/vector1.srlz.hh>
 
@@ -43,7 +41,6 @@ static basic::Tracer TR("test.protocols.multistage_rosetta_scripts.MRSClustering
 
 using namespace protocols::multistage_rosetta_scripts;
 using namespace protocols::multistage_rosetta_scripts::cluster;
-using namespace protocols::multistage_rosetta_scripts::cluster::metrics;
 
 class MRSClusteringTests : public CxxTest::TestSuite {
 
@@ -83,6 +80,8 @@ public:
 
 	void test_sequence_serialization(){
 #ifdef SERIALIZATION
+		using namespace protocols::multistage_rosetta_scripts::cluster::metrics;
+
 		TR << "Running test_sequence_serialization" << std::endl;
 		SequenceMetric simple( "Jack Maguire Is Very Handsome");
 		std::string data = serialized_T< SequenceMetric >( simple );
@@ -95,6 +94,8 @@ public:
 
 	void test_jump_serialization(){
 #ifdef SERIALIZATION
+		using namespace protocols::multistage_rosetta_scripts::cluster::metrics;
+
 		TR << "Running test_jump_serialization" << std::endl;
 		utility::vector1< core::Real > dofs( 6, 8.5 );
 		JumpMetric simple( dofs );

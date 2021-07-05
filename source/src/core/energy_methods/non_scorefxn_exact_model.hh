@@ -19,14 +19,12 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/hbonds/types.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
-#include <core/energy_methods/ExactOccludedHbondSolEnergy.hh>
+#include <core/energy_methods/ExactOccludedHbondSolEnergy.fwd.hh>
 
 // Utility headers
 
 // C++ headers
-#include <map>
 
 namespace core {
 namespace energy_methods {

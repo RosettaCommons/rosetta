@@ -20,10 +20,8 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace recon_design {

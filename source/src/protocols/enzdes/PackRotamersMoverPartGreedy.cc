@@ -17,7 +17,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
@@ -27,7 +27,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/util.hh>
@@ -54,6 +53,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

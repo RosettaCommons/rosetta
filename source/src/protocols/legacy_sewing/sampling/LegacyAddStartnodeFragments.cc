@@ -15,18 +15,14 @@
 // Unit Headers
 #include <protocols/legacy_sewing/sampling/LegacyAddStartnodeFragments.hh>
 #include <protocols/legacy_sewing/sampling/LegacyAddStartnodeFragmentsCreator.hh>
-#include <protocols/legacy_sewing/conformation/DisembodiedAssembly.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/util/io.hh>
-#include <protocols/legacy_sewing/util/util.hh>
 
 #include <core/fragment/util.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/FrameIterator.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 
@@ -35,14 +31,10 @@
 //Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

@@ -18,7 +18,6 @@
 #include <protocols/denovo_design/components/IdealAbegoGenerator.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
 
 // Core headers
@@ -35,6 +34,8 @@
 // Boost headers
 #include <boost/algorithm/string/predicate.hpp>
 #include <numeric/random/random.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.denovo_design.connection.ConnectionArchitect" );
 

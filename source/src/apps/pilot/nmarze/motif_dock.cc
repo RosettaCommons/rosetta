@@ -12,30 +12,19 @@
 /// @author Nick Marze (nickmarze@gmail.com)
 
 
-#include <protocols/jd2/util.hh>
 #include <utility/excn/Exceptions.hh>
 //#include <utility/exit.hh>
 
 #include <devel/init.hh>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/exit.hh>
-#include <core/pose/PDBInfo.hh>
 #include <protocols/moves/Mover.hh>
-#include <utility/vector1.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/util.hh>
+#include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/internal_util.hh>
 
 static basic::Tracer TR( "apps.pilot.nmarze.motif_dock" );

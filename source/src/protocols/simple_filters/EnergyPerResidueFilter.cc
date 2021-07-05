@@ -16,26 +16,21 @@
 
 #include <protocols/filters/Filter.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/scoring/Energies.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
@@ -43,6 +38,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 namespace protocols {
 namespace simple_filters {

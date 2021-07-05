@@ -23,13 +23,10 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <utility/string_util.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
-#include <core/chemical/Elements.hh>
 #include <numeric/xyzVector.hh>
 //support type classes
-#include <core/chemical/icoor_support.hh>
 #include <core/chemical/bond_support.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/atomtype_support.hh>

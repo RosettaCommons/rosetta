@@ -18,14 +18,13 @@
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
-#include <utility/vector1.hh>
+#include <vector>
 
 namespace protocols {
 namespace hotspot_hashing {

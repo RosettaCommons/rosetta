@@ -28,12 +28,9 @@
 
 //// C++ headers
 #include <list>
+#include <string>
 
 // Parser headers
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

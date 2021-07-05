@@ -30,9 +30,6 @@
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.hh>
@@ -43,9 +40,11 @@
 
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <core/pose/datacache/CacheableDataType.hh> // AUTO IWYU For CacheableDataType, CacheableDataType::VDW_REP_SCR...
+#include <core/scoring/rms_util.hh> // AUTO IWYU For superimpose_pose
 
 static basic::Tracer TR( "protocols.scoring.VDW_GridEnergy" );
 

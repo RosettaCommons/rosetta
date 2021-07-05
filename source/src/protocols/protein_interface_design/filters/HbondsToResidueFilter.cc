@@ -19,58 +19,31 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <protocols/scoring/Interface.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/ScoreType.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/score_filters/ScoreTypeFilter.hh>
 //#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <basic/MetricValue.hh>
-#include <numeric/random/random.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/symmetry/util.hh>
 
 
 //Objectxxxx header
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
 
 // Utility Headers
 
 // Unit Headers
-#include <protocols/simple_ddg/ddG.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 
 // C++ headers
-#include <map>
 
 #include <core/select/residue_selector/util.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
-#include <protocols/simple_ddg/DdgFilter.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

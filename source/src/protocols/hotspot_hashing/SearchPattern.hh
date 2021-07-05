@@ -19,17 +19,14 @@
 #include <utility>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/exit.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <core/types.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/kinematics/RT.hh>
 
 #include <protocols/hotspot_hashing/SearchPattern.fwd.hh>
 

@@ -21,7 +21,6 @@
 #include <list>
 #include <algorithm>
 #include <iostream>
-#include <utility/assert.hh>
 
 //ObjexxFCL Headers
 #include <ObjexxFCL/FArray1A.hh>
@@ -29,8 +28,13 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-#include <basic/thread_manager/RosettaThreadManager.hh>
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+
+#include <core/pack/rotamer_set/RotamerSet.hh> // AUTO IWYU For RotamerSet
+
+#ifdef MULTI_THREADED
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#endif
 
 using namespace ObjexxFCL;
 

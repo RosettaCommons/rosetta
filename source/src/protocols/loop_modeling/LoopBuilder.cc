@@ -17,11 +17,9 @@
 // Core headers
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/conformation/util.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // Basic headers
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
@@ -39,14 +37,13 @@
 #include <protocols/loop_modeling/utilities/TrajectoryLogger.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/moves/mover_schemas.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Namespaces

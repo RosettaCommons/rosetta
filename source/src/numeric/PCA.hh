@@ -24,11 +24,11 @@
 //#include <numeric/linear_algebra/GeneralizedEigenSolver.hh>
 
 // External headers
-#include <Eigen/Dense>
-#include <Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h>
 
 // Utility headers
 #include <utility/vector1.hh>
+
+#include <Eigen/Eigenvalues> // AUTO IWYU For SelfAdjointEigenSolver
 
 namespace numeric {
 

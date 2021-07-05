@@ -16,7 +16,6 @@
 
 #include <core/energy_methods/Burial_v2EnergyCreator.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>

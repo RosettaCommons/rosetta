@@ -51,7 +51,7 @@
 #include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/LayerSelector.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/packing/surf_vol.hh>
@@ -60,11 +60,8 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/exit.hh>
-#include <utility/stream_util.hh>
 #include <utility/string_util.hh>
-#include <utility/assert.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 #include <basic/MetricValue.hh>
@@ -75,6 +72,8 @@
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 
 #include <boost/format.hpp>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 using namespace core;
 using namespace core::pose;

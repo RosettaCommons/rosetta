@@ -18,13 +18,11 @@
 
 //BinTransitionCalculator owning pointers header:
 #include <core/scoring/bin_transitions/BinTransitionCalculator.fwd.hh>
-#include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.fwd.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 
 //Other headers:
 #include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 

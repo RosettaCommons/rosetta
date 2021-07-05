@@ -37,11 +37,8 @@
 #include <utility/file/FileName.hh>
 
 // c++ headers
-#include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <string>
-#include <sstream>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>

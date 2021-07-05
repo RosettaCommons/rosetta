@@ -25,46 +25,27 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
-#include <core/scoring/Energies.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringMap.hh>
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 #include <utility/string_util.hh>
 
 // External headers
-#include <ObjexxFCL/format.hh>
 
 #include <map>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace core {
 namespace io {

@@ -28,7 +28,6 @@
 
 //utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 
 //c++ heades
 #include <list>

@@ -42,11 +42,9 @@
 #include <protocols/membrane/util.hh>
 
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBPoseMap.hh>
 
 #include <core/conformation/Conformation.hh>
 
-#include <core/conformation/membrane/MembraneParams.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
@@ -54,7 +52,6 @@
 #include <core/conformation/membrane/Span.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
 
-#include <protocols/moves/DsspMover.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 
@@ -66,11 +63,7 @@
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueProperty.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 
@@ -78,31 +71,24 @@
 #include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 
 #include <utility/tag/Tag.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 #include <core/pose/util.hh>
 #include <utility/string_util.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <map>
 
 #include <utility/tag/XMLSchemaGeneration.hh>

@@ -16,7 +16,6 @@
 
 #include <cstddef>
 #include <iosfwd>
-#include <ostream>
 
 namespace basic {
 

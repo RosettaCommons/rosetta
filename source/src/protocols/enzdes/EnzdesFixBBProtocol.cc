@@ -18,7 +18,7 @@
 #include <protocols/enzdes/EnzdesMovers.hh>
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
 #include <basic/options/option.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
@@ -31,8 +31,6 @@
 
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace enzdes {

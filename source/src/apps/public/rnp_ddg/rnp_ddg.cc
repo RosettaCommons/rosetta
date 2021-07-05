@@ -21,13 +21,11 @@
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/dssp/Dssp.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -40,29 +38,25 @@
 #include <core/chemical/ChemicalManager.hh>
 //Utility Headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
 //Numeric Headers
-#include <numeric/random/random.hh>
 //C++ Headers
-#include <iostream>
 #include <fstream>
 
 #include <devel/init.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 //#include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // New options for this application
 using namespace basic::options::OptionKeys;

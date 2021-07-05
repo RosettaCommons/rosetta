@@ -38,7 +38,6 @@
 #include <numeric/deriv/distance_deriv.hh>
 #include <numeric/deriv/angle_deriv.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/DerivVectorPair.hh>
@@ -49,7 +48,6 @@
 #include <core/pose/Pose.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/vector1.hh>

@@ -21,7 +21,6 @@
 #include <protocols/match/downstream/ActiveSiteGrid.hh>
 
 // Project headers
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 

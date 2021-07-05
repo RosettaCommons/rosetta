@@ -22,7 +22,6 @@
 #include <utility/file/FileName.hh>
 
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

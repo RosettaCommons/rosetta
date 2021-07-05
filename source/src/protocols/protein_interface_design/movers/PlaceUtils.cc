@@ -35,21 +35,19 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 
 //#include <protocols/docking/DockingProtocol.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 //#include <protocols/moves/ResidueMover.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>  // REQUIRED FOR WINDOWS
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/MoverStatus.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 // Utility Headers
 #include <utility/exit.hh>
 
 // Unit Headers
-#include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 
 #include <basic/options/option.hh>
@@ -62,13 +60,13 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <map>
-#include <algorithm>
 
 #include <utility/vector0.hh>
 
 //Auto Headers
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core::scoring;

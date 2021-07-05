@@ -178,7 +178,8 @@
 #include <core/chemical/ResidueProperties.hh>
 
 // C++ headers
-#include <fstream>
+
+#include <core/chemical/PatchOperation.hh> // AUTO IWYU For PatchOperation, patch_operation_from_patch_file_line
 
 
 #ifdef    SERIALIZATION

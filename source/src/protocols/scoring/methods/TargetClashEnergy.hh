@@ -17,15 +17,14 @@
 
 
 // Package headers
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/scoring/methods/TargetClashEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // context hashing
-#include <numeric/geometry/hashing/MinimalClashHash.hh>
+#include <numeric/geometry/hashing/MinimalClashHash.fwd.hh>
 
 #include <utility/vector1.hh>
 

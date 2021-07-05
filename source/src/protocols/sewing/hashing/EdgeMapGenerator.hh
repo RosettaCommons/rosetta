@@ -21,7 +21,6 @@
 //#include <protocols/sewing/conformation/Model.fwd.hh>
 #include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
 #include <protocols/sewing/hashing/hasher_data.hh> //Need this for HasherSettings
-#include <protocols/sewing/data_storage/SmartSewingResidue.fwd.hh>
 
 //Pretty sure this one doesn't actually exist yet . . .
 #include <protocols/sewing/hashing/Hasher.fwd.hh>
@@ -33,7 +32,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <iosfwd>
-#include <utility/vector1.fwd.hh>
 namespace protocols {
 namespace sewing {
 namespace hashing {

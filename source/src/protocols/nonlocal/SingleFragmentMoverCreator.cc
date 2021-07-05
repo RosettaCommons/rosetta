@@ -17,12 +17,9 @@
 #include <string>
 
 // Project headers
-#include <protocols/moves/Mover.fwd.hh>
 
 // Package headers
-#include <protocols/nonlocal/SingleFragmentMover.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

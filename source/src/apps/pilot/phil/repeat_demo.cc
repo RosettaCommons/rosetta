@@ -20,7 +20,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -28,7 +28,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/symmetry/util.hh>
 
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 #include <protocols/relax/FastRelax.hh>

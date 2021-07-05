@@ -17,15 +17,18 @@
 #define INCLUDED_numeric_model_quality_rms_HH
 
 #include <numeric/types.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <numeric/xyzMatrix.fwd.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray1A.hh>
-#include <ObjexxFCL/FArray2A.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
+#include <ObjexxFCL/FArray1A.fwd.hh>
+#include <ObjexxFCL/FArray2A.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <ObjexxFCL/FArray1.fwd.hh> // AUTO IWYU For FArray1
+#include <ObjexxFCL/FArray2.fwd.hh> // AUTO IWYU For FArray2
 
 namespace numeric {
 namespace model_quality {

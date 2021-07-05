@@ -15,8 +15,6 @@
 #include <devel/init.hh>
 
 #include <core/types.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/silent.fwd.hh>
 
 #include <protocols/jd2/archive/ArchiveManager.hh>
 #include <protocols/abinitio/IterativeAbrelax.hh>
@@ -24,16 +22,12 @@
 
 // Utility headers
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/file/file_sys_util.hh>
 
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>

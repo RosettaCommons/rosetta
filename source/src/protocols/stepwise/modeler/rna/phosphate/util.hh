@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_rna_phosphate_PhosphateUtil_HH
 #define INCLUDED_protocols_stepwise_modeler_rna_phosphate_PhosphateUtil_HH
 
-#include <protocols/stepwise/modeler/rna/phosphate/PhosphateMove.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/PhosphateMove.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>

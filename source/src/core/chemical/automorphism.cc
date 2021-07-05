@@ -14,9 +14,10 @@
 
 
 #include <core/chemical/automorphism.hh>
-#include <core/chemical/Atom.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 
 namespace core {

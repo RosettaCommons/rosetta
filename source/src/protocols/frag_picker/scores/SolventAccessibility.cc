@@ -18,11 +18,11 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
 #include <utility/vector1.hh>
 
+#include <cmath> // MANUAL IWYU
 
 namespace protocols {
 namespace frag_picker {

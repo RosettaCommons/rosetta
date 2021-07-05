@@ -14,7 +14,6 @@
 
 
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
-#include <core/pose/Pose.hh>
 #include <string>
 
 
@@ -23,6 +22,8 @@
 static basic::Tracer TR( "core.pose.rna.VDW_RepScreenInfo" );
 
 #ifdef    SERIALIZATION
+#include <core/pose/Pose.hh>
+
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
 #include <core/id/AtomID_Map.srlz.hh>

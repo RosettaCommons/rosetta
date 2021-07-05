@@ -15,13 +15,11 @@
 #include <core/pack/annealer/FixbbLinkingRotamerSimAnnealer.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
 
 #include <basic/Tracer.hh>
 
@@ -33,6 +31,10 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <core/pack/rotamer_set/FixbbRotamerSets.hh> // AUTO IWYU For FixbbRotamerSets
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D::IR
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 using namespace ObjexxFCL;
 

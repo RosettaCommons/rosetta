@@ -23,7 +23,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>

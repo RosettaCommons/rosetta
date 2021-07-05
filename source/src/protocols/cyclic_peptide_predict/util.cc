@@ -27,9 +27,6 @@
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 
@@ -38,7 +35,12 @@
 #include <utility/string_util.hh>
 
 // C++ headers
-#include <cstdio>
+
+#ifdef USEMPI
+#include <basic/options/option.hh>
+#include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#endif
 
 static basic::Tracer TR( "protocols.cyclic_peptide_predict.util" );
 

@@ -18,7 +18,6 @@
 #include <protocols/sewing/data_storage/SmartSegment.hh>
 //External headers
 #include <boost/unordered_map.hpp>
-#include <boost/functional/hash.hpp>
 #include <map>
 #include <set>
 // Utility headers

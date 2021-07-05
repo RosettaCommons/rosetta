@@ -19,9 +19,10 @@
 
 #include <vector>
 #include <iostream>
-#include <sstream>
 
 #include <test/UTracer.hh>
+
+#include <iomanip> // AUTO IWYU For operator<<, setprecision
 
 
 class RandomSystemTests : public CxxTest::TestSuite

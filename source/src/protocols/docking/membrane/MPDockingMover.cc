@@ -21,7 +21,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
@@ -32,12 +31,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMOLMover.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -50,12 +44,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/tag/Tag.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -63,6 +55,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer TR( "protocols.docking.membrane.MPDockingMover" );
 

@@ -18,7 +18,6 @@
 #include <core/io/NomenclatureManager.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 
 namespace core {

@@ -15,37 +15,27 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 // Mover headers
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMOLMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
@@ -61,23 +51,15 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/keys/StringVectorOptionKey.fwd.hh>
-#include <utility/options/keys/StringVectorOptionKey.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tools/make_vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
 #include <iostream>
-#include <sstream>
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces

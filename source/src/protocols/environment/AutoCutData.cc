@@ -23,6 +23,8 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
+#include <protocols/environment/AutoCutDataCreator.hh> // AUTO IWYU For AutoCutDataCreator
+
 // ObjexxFCL Headers
 
 static basic::Tracer tr( "protocols.environment.AutoCutData", basic::t_info );

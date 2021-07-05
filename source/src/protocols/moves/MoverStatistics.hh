@@ -31,6 +31,8 @@
 // Utility Headers
 #include <utility/VirtualBase.hh>
 
+#include <limits> // AUTO IWYU For numeric_limits
+
 namespace protocols {
 namespace moves {
 

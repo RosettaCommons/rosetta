@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/chemical/rotamers/RotamerLibrarySpecificationCreator.hh>
-#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.fwd.hh>
 
 
 // Program header

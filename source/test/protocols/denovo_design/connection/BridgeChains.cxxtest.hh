@@ -24,34 +24,20 @@
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
-#include <protocols/denovo_design/util.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/DsspMover.hh>
-#include <protocols/moves/Mover.hh>
 
 // Core headers
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/sequence/ABEGOManager.hh>
 
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <numeric/random/random.hh>
 
 // Boost headers
-#include <boost/algorithm/string.hpp>
 
 // unit test utility functions
 #include <protocols/denovo_design/test_utils.hh>

@@ -21,14 +21,14 @@
 #include <protocols/flexpack/interaction_graph/FlexbbInteractionGraph.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
 #include <protocols/flexpack/OtherContextScoreFunction.hh>
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 
 
 // Project headers
-#include <core/conformation/Residue.hh>
-#include <utility/graph/Graph.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/Energies.hh>

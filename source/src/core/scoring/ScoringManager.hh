@@ -95,7 +95,6 @@
 #include <core/scoring/orbitals/OrbitalsLookup.fwd.hh>
 
 #include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
 #include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
 #include <core/scoring/rna/TNA_SuitePotential.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>

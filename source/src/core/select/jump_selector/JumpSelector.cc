@@ -15,7 +15,7 @@
 #include <core/select/jump_selector/JumpSelector.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 namespace core {
 namespace select {

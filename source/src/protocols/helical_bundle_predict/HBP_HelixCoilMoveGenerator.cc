@@ -20,12 +20,10 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 // Protocols headers:
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
-#include <protocols/simple_moves/bb_sampler/SmallBBSampler.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/TorsionSetMover.hh>
 #include <protocols/backbone_moves/RandomizeBBByRamaPrePro.hh>

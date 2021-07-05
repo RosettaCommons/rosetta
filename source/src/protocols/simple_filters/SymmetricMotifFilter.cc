@@ -17,31 +17,20 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
 #include <core/conformation/Conformation.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-#include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/model_quality/rms.hh>
 
 #include <utility/string_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
@@ -52,6 +41,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A::IR, FArray1A, FArray1A<>::size_...
+#include <ObjexxFCL/FArray2A.hh> // AUTO IWYU For FArray2A::IR, FArray2A, FArray2A<>::size_...
 
 namespace protocols {
 namespace simple_filters {

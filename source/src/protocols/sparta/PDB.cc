@@ -13,7 +13,6 @@
 /******************************************************************************/
 
 // 01/25/2007, fix the probelm of missed ring atoms for ring current shifts calculation
-#include <boost/unordered_map.hpp>
 #include <protocols/sparta/PDB.hh>
 #include <fstream>
 #include <sstream>
@@ -24,7 +23,6 @@
 #include <protocols/sparta/constants.hh>
 
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #include <numeric/NumericTraits.hh>
 

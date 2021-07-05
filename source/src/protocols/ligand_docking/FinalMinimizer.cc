@@ -16,7 +16,7 @@
 #include <protocols/ligand_docking/FinalMinimizer.hh>
 #include <protocols/ligand_docking/FinalMinimizerCreator.hh>
 #include <protocols/ligand_docking/MoveMapBuilder.hh>
-#include <protocols/ligand_docking/InterfaceBuilder.hh>
+#include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 #include <protocols/ligand_docking/MinimizeBackbone.hh>
 
 //Project Headers
@@ -28,23 +28,18 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // Scripter Headers
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 

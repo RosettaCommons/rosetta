@@ -27,7 +27,6 @@
 // Core headers
 #include <utility/graph/Graph.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers

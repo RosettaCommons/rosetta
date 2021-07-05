@@ -24,19 +24,12 @@
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
 
 // Pakcage Headers
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/AqueousPoreParameters.hh>
 
 #include <core/types.hh>
 
-#include <numeric/interpolation/spline/SplineGenerator.hh>
-#include <numeric/interpolation/spline/SimpleInterpolator.hh>
 
 #include <numeric/MathMatrix.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
-#include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/cubic_polynomial.hh>
 
@@ -44,11 +37,9 @@
 #include <basic/database/open.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
-#include <utility>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-#include <cstdlib>
 #include <cmath>
 
 static basic::Tracer TR( "core.conformation.membrane.ImplicitLipidInfo" );

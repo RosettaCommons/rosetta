@@ -10,41 +10,25 @@
 
 #include <devel/init.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 //#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
-#include <core/pose/Pose.hh>
 
 #include <utility/string_util.hh>
 
-#include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 
 //Auto Headers
@@ -70,7 +54,6 @@ int main( int argc, char * argv [] )
 		using namespace core;
 		using namespace core::chemical;
 		using namespace core::id;
-		using namespace core::io::pdb;
 		using namespace core::pose;
 
 		using namespace basic::options;

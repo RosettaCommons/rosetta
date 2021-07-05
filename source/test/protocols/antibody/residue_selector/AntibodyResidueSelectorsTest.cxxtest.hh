@@ -12,33 +12,21 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/core/select/residue_selector/utilities_for_testing.hh>
 
 // Project Headers
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
-#include <protocols/antibody/task_operations/DisableCDRsOperation.hh>
-#include <protocols/antibody/task_operations/DisableAntibodyRegionOperation.hh>
-#include <protocols/antibody/task_operations/RestrictToCDRsAndNeighbors.hh>
-#include <protocols/antibody/task_operations/AddCDRProfilesOperation.hh>
-#include <protocols/antibody/task_operations/AddCDRProfileSetsOperation.hh>
 
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/residue_selector/CDRResidueSelector.hh>
 #include <protocols/antibody/residue_selector/AntibodyRegionSelector.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -48,16 +36,15 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
+#include <core/init_util.hh> // AUTO IWYU For core_init
+
 // Project Headers
 
 static basic::Tracer TR("protocols.antibody.residue_selector.AntibodyResidueSelectorsTest");
 
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;
-using namespace protocols::antibody::task_operations;
-using namespace protocols::antibody::design;
 using namespace protocols::antibody::residue_selector;
-using namespace core::pack::task::operation;
 
 using namespace core::pack::task;
 using utility::vector1;

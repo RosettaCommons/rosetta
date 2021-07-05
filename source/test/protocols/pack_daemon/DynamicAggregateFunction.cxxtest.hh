@@ -22,7 +22,7 @@
 
 // Core headers
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Protocols headers
@@ -32,11 +32,10 @@
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <sstream>
 
 //Auto Headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+#include <iostream> // AUTO IWYU For istringstream, operator<<, basic_ostream, endl
 
 
 //static basic::Tracer TR("PackDaemonTest.cxxtest");

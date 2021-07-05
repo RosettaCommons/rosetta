@@ -18,11 +18,10 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Index.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/schema_generator/Constraint.hh>
-#include <iosfwd>
+#include <basic/database/schema_generator/Constraint.fwd.hh>
 #include <string>
 
-#include <basic/database/schema_generator/Column.fwd.hh>
+#include <basic/database/schema_generator/Column.hh> // DO NOT AUTO-REMOVE
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.hh>
 

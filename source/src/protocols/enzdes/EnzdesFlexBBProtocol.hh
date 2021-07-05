@@ -18,7 +18,7 @@
 
 
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.fwd.hh>
 
 #include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>

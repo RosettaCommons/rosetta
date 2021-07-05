@@ -30,7 +30,6 @@
 #include <core/scoring/ScoreType.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
@@ -40,7 +39,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
-#include <numeric/xyzVector.hh>
 
 // Unit Headers
 #include <protocols/protein_interface_design/design_utils.hh>
@@ -49,9 +47,8 @@
 #include <core/pack/task/PackerTask.hh>
 
 // C++ headers
-#include <map>
 
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -61,6 +58,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace protocols::protein_interface_design;
 

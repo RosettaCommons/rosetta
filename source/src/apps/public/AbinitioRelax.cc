@@ -25,7 +25,6 @@
 
 // Citation manager:
 #include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>

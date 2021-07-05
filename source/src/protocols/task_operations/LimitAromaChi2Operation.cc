@@ -29,7 +29,6 @@
 
 
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #ifdef WIN32

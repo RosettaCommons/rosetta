@@ -18,7 +18,6 @@
 #include <core/pack/palette/PackerPaletteCreator.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <string>
 

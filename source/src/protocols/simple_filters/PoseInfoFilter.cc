@@ -23,7 +23,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

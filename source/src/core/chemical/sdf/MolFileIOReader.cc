@@ -14,7 +14,6 @@
 #include <core/chemical/sdf/MolFileIOData.hh>
 #include <core/chemical/sdf/SDFParser.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 

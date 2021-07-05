@@ -30,12 +30,9 @@
 // ObjexxFCL headers
 
 // C++ Headers
-#include <iostream>
 #include <fstream>
 
 #include <core/chemical/AtomType.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

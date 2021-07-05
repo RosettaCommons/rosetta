@@ -12,7 +12,6 @@
 // Unit headers
 #include <protocols/seeded_abinitio/CAcstGenerator.hh>
 #include <protocols/seeded_abinitio/CAcstGeneratorCreator.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <core/types.hh>
 #include <core/pose/selection.hh>
@@ -28,16 +27,16 @@
 #include <utility/tag/Tag.hh>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <utility/vector0.hh>
-#include <basic/options/keys/OptionKeys.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/constraints/ConstraintSet.hh> // AUTO IWYU For ConstraintSet
 
 
 namespace protocols {

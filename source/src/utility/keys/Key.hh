@@ -28,9 +28,6 @@
 #include <utility/keys/Key.fwd.hh>
 
 // Package headers
-#include <utility/keys/AutoKey.fwd.hh>
-#include <utility/keys/UserKey.fwd.hh>
-#include <utility/keys/KeyLess.fwd.hh>
 
 // C++ headers
 #include <cstddef>

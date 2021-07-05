@@ -20,17 +20,12 @@
 // Platform Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/conformation/Atom.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 
 // Basic Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 
 // Numeric Headers
-#include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/insert_statement_generator/RowData.hh>
@@ -41,7 +36,6 @@
 #include <basic/database/schema_generator/DbDataType.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/tag/Tag.hh>
@@ -50,7 +44,6 @@
 #include <string>
 #include <sstream>
 
-#include <cppdb/frontend.h>
 
 #include <basic/Tracer.hh>
 // XSD XRW Includes

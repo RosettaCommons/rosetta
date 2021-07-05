@@ -27,7 +27,6 @@ a given PDB. This protocol will be used to generate a VALL database of non-local
 //#include <basic/options/keys/OptionKeys.hh>
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/frags.OptionKeys.gen.hh>
-#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 //#include <utility/vector1.hh>
 

@@ -19,11 +19,14 @@
 
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/pack/task/ResfileReader.hh>
+#include <core/pack/task/ResfileReader.fwd.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <map> // AUTO IWYU For map
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace task_operations {

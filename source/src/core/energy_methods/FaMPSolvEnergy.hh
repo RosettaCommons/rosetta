@@ -22,8 +22,6 @@
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 
 // Project Headers
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 
 // Package headers
 #include <core/conformation/Atom.fwd.hh>
@@ -41,7 +39,6 @@
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace energy_methods {

@@ -18,14 +18,12 @@
 #include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
 
 // C++ headers
 #include <string>
-#include <iostream>
 
 //Auto Headers
 #include <utility/vector1.hh>

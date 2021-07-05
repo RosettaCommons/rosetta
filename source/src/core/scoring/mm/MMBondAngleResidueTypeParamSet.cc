@@ -25,18 +25,13 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // Numeric headers
 
 // C++ headers
 #include <string>
 #include <map>
-#include <iostream>
-#include <sstream>
-#include <utility/assert.hh>
 
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <utility/vector1.hh>

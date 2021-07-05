@@ -28,10 +28,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
-#include <utility/vector0.hh>
 
 // C++ headers
-#include <vector>
 
 
 static basic::Tracer TR( "protocols.TaskOperations.ThreadSequenceOperation" );

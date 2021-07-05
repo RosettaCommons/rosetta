@@ -14,7 +14,6 @@
 // Unit headers
 #include <protocols/protein_interface_design/movers/RandomMutation.hh>
 #include <protocols/protein_interface_design/movers/RandomMutationCreator.hh>
-#include <core/pose/symmetry/util.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 // Package headers
 #include <core/pose/Pose.hh>
@@ -26,18 +25,18 @@
 #include <numeric/random/random.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <utility/vector0.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

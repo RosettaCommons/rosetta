@@ -23,6 +23,8 @@
 
 #include <utility>
 
+#include <core/scoring/hbonds/graph/HBondGraph.hh> // AUTO IWYU For HBondGraph, HBondEdge, HBondNode
+
 namespace core {
 namespace pack {
 namespace hbonds {

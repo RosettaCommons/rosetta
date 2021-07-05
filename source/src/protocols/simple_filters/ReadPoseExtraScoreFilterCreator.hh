@@ -20,7 +20,6 @@
 #include <protocols/simple_filters/ReadPoseExtraScoreFilter.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <string>

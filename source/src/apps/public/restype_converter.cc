@@ -25,7 +25,7 @@
 #include <core/chemical/sdf/mol_writer.hh>
 #include <core/chemical/mmCIF/mmCIFParser.hh>
 
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 
@@ -40,7 +40,6 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 #include <basic/options/option_macros.hh>
 
 OPT_1GRP_KEY( StringVector, restype_convert, types )

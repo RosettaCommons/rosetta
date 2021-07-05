@@ -29,14 +29,10 @@
 #include <core/chemical/AtomProperties.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/Element.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/Orbital.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 #include <core/chemical/rna/RNA_Info.hh>
@@ -62,7 +58,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <numeric/conversions.hh>
 #include <numeric/xyzVector.io.hh>
 
 // C++ headers
@@ -70,6 +65,7 @@
 
 #ifdef    SERIALIZATION
 #include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
+#include <core/chemical/ElementSet.hh>
 
 // Utility serialization headers
 #include <numeric/xyz.serialization.hh>

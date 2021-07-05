@@ -28,7 +28,6 @@
 #include <core/scoring/ScoringManager.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
@@ -40,11 +39,9 @@
 
 // Utility Headers
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "core.scoring.membrane.MPTerminiPenalty" );
 

@@ -15,18 +15,16 @@
 
 // Core headers
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // RosettaScripts headers
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {
 namespace loop_modeling {

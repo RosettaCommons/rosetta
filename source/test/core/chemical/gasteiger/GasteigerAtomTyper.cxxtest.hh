@@ -17,14 +17,12 @@
 
 // Unit headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
-#include <core/chemical/Element.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/residue_io.hh>
 

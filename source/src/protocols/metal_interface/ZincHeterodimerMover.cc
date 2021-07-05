@@ -21,7 +21,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/kinematics/FoldTree.hh>
@@ -63,9 +62,9 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 

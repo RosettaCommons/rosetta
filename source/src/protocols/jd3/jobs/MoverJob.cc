@@ -19,7 +19,7 @@
 #include <protocols/moves/MoverContainer.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/simple_metrics/SimpleMetric.hh>
 
 // Basic/Utility headers

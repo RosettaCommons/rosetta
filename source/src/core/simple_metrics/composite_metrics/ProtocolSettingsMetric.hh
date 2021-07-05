@@ -20,7 +20,6 @@
 #include <core/simple_metrics/CompositeStringMetric.hh>
 
 // Core headers
-#include <core/types.hh>
 
 
 // Utility headers

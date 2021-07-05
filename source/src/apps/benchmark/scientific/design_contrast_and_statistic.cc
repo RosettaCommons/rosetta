@@ -15,7 +15,6 @@
 
 // C++ headers
 #include <fstream>
-#include <iostream>
 #include <cstdlib>
 
 // Unit Headers
@@ -34,9 +33,9 @@
 #include <basic/options/option.hh>
 
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -48,7 +47,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 
 

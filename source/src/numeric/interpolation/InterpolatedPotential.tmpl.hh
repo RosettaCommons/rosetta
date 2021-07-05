@@ -18,20 +18,11 @@
 #include <numeric/interpolation/InterpolatedPotential.hh>
 
 // Project Headers
-#include <numeric/interpolation/interpolation.hh>
 #include <numeric/numeric.functions.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
 
 // Utility Headers
-#include <iosfwd>
-#include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
-#include <utility/exit.hh>
 
-#include <cmath>
-#include <map>
-#include <algorithm>
 
 namespace numeric {
 namespace interpolation {

@@ -42,7 +42,8 @@
 #include <utility/vector1.hh>
 #include <string>
 
-#include <utility/vector0.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 
 static basic::Tracer TR( "protocols.task_operations.JointSequenceOperation" );

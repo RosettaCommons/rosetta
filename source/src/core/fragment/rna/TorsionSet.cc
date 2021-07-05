@@ -10,7 +10,6 @@
 
 // Rosetta Headers
 #include <core/fragment/rna/TorsionSet.hh>
-#include <core/fragment/rna/FragmentLibrary.hh>
 #include <core/chemical/rna/util.hh>
 #include <ObjexxFCL/StaticIndexRange.hh>
 

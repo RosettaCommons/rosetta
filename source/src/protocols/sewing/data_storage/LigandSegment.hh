@@ -20,6 +20,8 @@
 #include <protocols/sewing/data_storage/LigandResidue.fwd.hh>
 #include <protocols/sewing/data_storage/SmartSegment.hh>
 
+#include <map> // AUTO IWYU For map
+
 namespace protocols {
 namespace sewing {
 namespace data_storage {

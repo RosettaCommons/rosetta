@@ -17,9 +17,7 @@
 #include <devel/init.hh>
 
 // Project Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/util.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -55,12 +53,10 @@
 
 
 // C++ headers
-#include <sstream>
 #include <iostream>
 #include <string>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

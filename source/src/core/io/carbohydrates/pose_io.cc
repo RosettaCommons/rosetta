@@ -17,11 +17,9 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -30,14 +28,11 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/io/util.hh>
 
 // C++ headers
 #include <sstream>

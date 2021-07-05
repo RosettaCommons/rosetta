@@ -21,12 +21,9 @@
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 #include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
 
 #ifdef WIN32
 #include <utility/tag/Tag.hh>

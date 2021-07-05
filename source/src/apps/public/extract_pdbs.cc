@@ -13,13 +13,11 @@
 
 // libRosetta headers
 
-#include <core/types.hh>
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <devel/init.hh>
@@ -49,7 +47,6 @@
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
-#include <boost/algorithm/string/erase.hpp>
 
 #include <utility/excn/Exceptions.hh>
 

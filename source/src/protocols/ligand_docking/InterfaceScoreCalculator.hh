@@ -21,15 +21,16 @@
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 //// Project Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
+#include <protocols/qsar/scoring_grid/ScoreNormalization.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 
 
 #include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 ///////////////////////////////////////////////////////////////////////

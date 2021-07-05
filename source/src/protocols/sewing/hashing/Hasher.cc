@@ -13,7 +13,6 @@
 
 
 //External headers
-#include <boost/math/special_functions/round.hpp>
 
 //Project headers
 #include <protocols/sewing/hashing/Hasher.hh>
@@ -22,7 +21,6 @@
 //Protocols headers
 
 //Core headers
-#include <core/id/AtomID.hh>
 #include <core/conformation/Atom.hh>
 
 //Basic headers

@@ -13,8 +13,6 @@
 
 // includes
 #include <iostream>
-#include <fstream>
-#include <string>
 
 #include <devel/init.hh>
 
@@ -26,7 +24,6 @@
 #include <core/conformation/Residue.hh>
 
 // Mover headers
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 int main ( int argc, char* argv[] )

@@ -26,15 +26,12 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/sc/MolecularSurfaceCalculator.fwd.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator_Private.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/NumericTraits.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
@@ -44,12 +41,12 @@
 #include <cstdio>
 
 // C++ headers
-#include <iostream>
 #include <ostream>
 #include <fstream>
 #include <vector>
-#include <map>
 #include <string>
+
+#include <basic/gpu/Timer.hh> // AUTO IWYU For Timer
 
 static basic::Tracer TR( "core.scoring.sc.MolecularSurfaceCalculator" );
 

@@ -48,7 +48,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
-#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 
 //#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/option.cc.gen.hh>
@@ -65,14 +64,12 @@
 #include <iterator>
 
 //Debug headers
-#include <fstream> //testing
 
 #if (defined WIN32) //&& (!defined WIN_PYROSETTA)
 #include <windows.h>
 #endif
 
 //Auto Headers
-#include <protocols/checkpoint/CheckPointer.hh>
 //#include <protocols/jobdist/Jobs.hh>
 //#include <protocols/noesy_assign/CrossPeak.hh>
 #include <utility/vector1.hh>

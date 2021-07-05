@@ -34,7 +34,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
@@ -45,16 +44,12 @@
 #include <ObjexxFCL/format.hh>
 
 // // Numeric headers
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
 
 #include <basic/Tracer.hh>
 
 #include <core/optimization/CartesianMinimizerMap.hh>
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 using namespace ObjexxFCL::format;
 

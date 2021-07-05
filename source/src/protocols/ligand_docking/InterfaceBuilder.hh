@@ -28,10 +28,9 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 //// C++ headers
-#include <map>
 
 #include <protocols/ligand_docking/LigandArea.fwd.hh>
 

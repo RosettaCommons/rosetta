@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_legacy_sewing_conformation_Assembly_hh
 
 //Package headers
-#include <protocols/legacy_sewing/sampling/SewGraph.hh>
+#include <protocols/legacy_sewing/sampling/SewGraph.fwd.hh>
 #include <protocols/legacy_sewing/util/io.hh>
 
 //Unit headers
@@ -34,7 +34,6 @@
 #include <utility/vector1.hh>
 
 //Core headers
-#include <utility/graph/Graph.hh>
 #include <core/pose/Pose.fwd.hh>
 
 //C++ headers

@@ -21,24 +21,24 @@
 #include <core/pack/palette/xsd_util.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
-#include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
 #include <utility/vector0.hh>
 
 // STL headers
 #include <functional>
+
+#include <utility/thread/threadsafe_creation.hh> // AUTO IWYU For safely_create_load_once_object_by_OP, SAFELY...
 
 namespace core {
 namespace pack {

@@ -25,7 +25,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 /// Numeric headers
-#include <numeric/xyzVector.hh>
 
 // C++ headers
 #include <string>

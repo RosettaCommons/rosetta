@@ -15,11 +15,9 @@
 #define INCLUDED_protocols_frag_picker_scores_PValuedFragmentScoreManager_hh
 
 // package headers
-#include <protocols/frag_picker/scores/AdaptiveScoreHistogram.hh>
+#include <protocols/frag_picker/scores/AdaptiveScoreHistogram.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
-#include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-#include <protocols/frag_picker/FragmentPicker.fwd.hh>
 
 #include <utility/vector1.hh>
 

@@ -11,7 +11,6 @@
 /// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 
-#include <boost/range/algorithm.hpp>
 
 // Unit headers
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
@@ -24,16 +23,16 @@
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Conformation.hh>
 
 //Auto Headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <boost/range/algorithm/count.hpp> // AUTO IWYU For count
 
 
 namespace protocols {

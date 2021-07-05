@@ -19,14 +19,12 @@
 // #include <core/scoring/methods/LK_BallInfo.fwd.hh> ??
 
 // // Project headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/RestypeDestructionEvent.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
 // Utility headers
@@ -39,6 +37,8 @@
 #endif
 
 #include <map>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 #ifdef    SERIALIZATION
 // Cereal headers

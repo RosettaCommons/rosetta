@@ -16,7 +16,7 @@
 #include <devel/scientific_tests/PDBDiagnosticMoverCreator.hh>
 
 // Core headers
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -36,14 +36,10 @@
 #include <protocols/jd2/Job.hh>
 
 // option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/PDB_diagnostic.OptionKeys.gen.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <basic/options/option.hh>
 //#include <utility/excn/Exceptions.hh>
 

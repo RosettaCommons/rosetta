@@ -14,7 +14,6 @@
 #include <core/scoring/func/CircularPowerFunc.hh>
 #include <core/types.hh>
 #include <numeric/angle.functions.hh>
-#include <utility/assert.hh>
 
 // C++ Headers
 

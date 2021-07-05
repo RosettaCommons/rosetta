@@ -19,19 +19,13 @@
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
 
 // Package headers
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
 
 // Project headers
-#include <core/conformation/Residue.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 //#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

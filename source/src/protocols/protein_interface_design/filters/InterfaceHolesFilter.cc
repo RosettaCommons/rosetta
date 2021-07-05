@@ -12,7 +12,6 @@
 /// @author Jacob Corn (jecorn@u.washington.edu)
 #include <protocols/protein_interface_design/filters/InterfaceHolesFilter.hh>
 #include <protocols/protein_interface_design/filters/InterfaceHolesFilterCreator.hh>
-#include <protocols/filters/Filter.hh>
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -23,8 +22,6 @@
 #include <core/scoring/Energies.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

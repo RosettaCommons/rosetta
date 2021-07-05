@@ -15,10 +15,7 @@
 #include <protocols/abinitio/abscript/ConstraintPreparerCreator.hh>
 
 // Package headers
-#include <core/environment/DofPassport.hh>
-#include <protocols/environment/DofUnlock.hh>
 
-#include <protocols/environment/claims/EnvClaim.hh>
 
 // Project headers
 #include <utility/tag/Tag.hh>
@@ -31,7 +28,6 @@
 
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 
-#include <core/id/Exceptions.hh>
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loops.tmpl.hh>
@@ -46,10 +42,11 @@
 // ObjexxFCL Headers
 
 //Req'd on WIN32
-#include <basic/datacache/WriteableCacheableMap.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/constraints/ConstraintSet.hh> // AUTO IWYU For ConstraintSet
 
 static basic::Tracer tr( "protocols.abinitio.abscript.ConstraintPreparer", basic::t_info );
 

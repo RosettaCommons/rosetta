@@ -18,25 +18,16 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
 //Utility Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
 //Numeric Headers
-#include <numeric/random/random.hh>
 //C++ Headers
-#include <iostream>
 #include <fstream>
 
 #include <devel/init.hh>
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 
 // New options for this application
 using namespace basic::options::OptionKeys;

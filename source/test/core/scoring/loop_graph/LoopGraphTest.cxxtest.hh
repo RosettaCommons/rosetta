@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -22,16 +20,18 @@
 #include <core/scoring/loop_graph/LoopCycle.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 
-#include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("LoopGraphTest");
 

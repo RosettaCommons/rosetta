@@ -17,23 +17,18 @@
 
 // Unit headers
 #include <core/scoring/mm/MMBondAngleScore.fwd.hh>
-#include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
 
 // Project headers
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
 
 //#include <core/scoring/ScoringManager.hh>
 
 #include <core/types.hh>
 
 // Utility header
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <map>
 
 namespace core {
 namespace scoring {

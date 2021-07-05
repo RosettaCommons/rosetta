@@ -15,7 +15,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 
@@ -29,7 +28,10 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 using basic::Error;

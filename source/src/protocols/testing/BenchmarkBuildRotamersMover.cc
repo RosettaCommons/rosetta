@@ -15,19 +15,12 @@
 #include <protocols/testing/BenchmarkBuildRotamersMover.hh>
 #include <protocols/testing/BenchmarkBuildRotamersMoverCreator.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility Headers
-#include <utility/exit.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 
 // basic headers

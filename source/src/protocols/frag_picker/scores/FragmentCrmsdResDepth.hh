@@ -18,7 +18,7 @@
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
+#include <protocols/frag_picker/FragmentPicker.fwd.hh>
 
 // mini
 
@@ -29,8 +29,8 @@
 
 //Auto Headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <iosfwd>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

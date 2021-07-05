@@ -37,7 +37,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 using namespace core::kinematics;

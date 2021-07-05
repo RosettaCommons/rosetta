@@ -7,38 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#include <core/conformation/Conformation.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <numeric/angle.functions.hh>
-#include <numeric/conversions.hh>
 
 #include <basic/options/option.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 #include <basic/options/option_macros.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <sstream>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <basic/Tracer.hh>
 #include <devel/init.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-#include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 using namespace std;
 

@@ -16,13 +16,9 @@
 #include <protocols/nmr/pcs/PCSTensorOptimizer.hh>
 
 // Package headers
-#include <core/scoring/nmr/pcs/PCSSingle.hh>
 #include <core/scoring/nmr/pcs/PCSSingleSet.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
-#include <core/optimization/Multifunc.hh>
-#include <core/optimization/types.hh>
 #include <core/types.hh>
 
 // Basic headers

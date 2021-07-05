@@ -16,29 +16,15 @@
 #include <protocols/legacy_sewing/util/util.hh>
 
 //Protocol headers
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/analysis/LoopAnalyzerMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
-#include <basic/options/keys/lh.OptionKeys.gen.hh>
 
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
 
-//Package headers
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID, operator<
 
 
 namespace protocols {

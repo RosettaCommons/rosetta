@@ -60,7 +60,6 @@
 #include <core/kinematics/FoldTree.hh>
 
 
-#include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
 
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
@@ -95,14 +94,11 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
-#include <numeric/xyzVector.hh>
 #include <numeric/statistics/functions.hh>
 #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 //silent file stuff
 #include <core/io/silent/SilentStruct.hh>
@@ -130,8 +126,9 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace ObjexxFCL::format;
 
@@ -1195,7 +1192,6 @@ void IterativeOptEDriver::collect_rotamer_energies_from_slave_cpus()
 void
 IterativeOptEDriver::collect_decoy_discrimination_data()
 {
-	using namespace core::io::pdb;
 	using namespace core::pack::rotamer_set;
 	using namespace core::pose;
 	using namespace basic::options;

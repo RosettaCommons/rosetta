@@ -19,13 +19,9 @@
 // Package headers
 #include <core/id/PartialAtomID.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>

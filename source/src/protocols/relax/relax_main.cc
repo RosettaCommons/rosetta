@@ -38,15 +38,12 @@
 #include <protocols/moves/MoverContainer.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/relax/util.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.relax" );

@@ -21,12 +21,11 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/CubicSpline.hh>
-#include <core/conformation/membrane/Span.hh>
+#include <core/conformation/membrane/Span.fwd.hh>
 #include <map>
 
 //Objexx headers

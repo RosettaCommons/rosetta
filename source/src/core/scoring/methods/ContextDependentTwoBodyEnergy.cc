@@ -15,9 +15,7 @@
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 
 // Project Headers
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 
-#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

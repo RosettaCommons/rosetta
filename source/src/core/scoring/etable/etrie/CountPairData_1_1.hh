@@ -25,7 +25,6 @@
 #include <utility/assert.hh>
 
 // Utility headers
-#include <utility/assert.hh>
 
 namespace core {
 namespace scoring {

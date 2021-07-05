@@ -19,10 +19,10 @@
 #include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/FreePeptideMover.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 #include <numeric/xyzVector.hh>
+
+#include <protocols/backbone_moves/local_backbone_mover/types.hh> // AUTO IWYU For Real
 
 namespace protocols {
 namespace backbone_moves {

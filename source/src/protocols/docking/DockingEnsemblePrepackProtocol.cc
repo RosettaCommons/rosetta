@@ -27,7 +27,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -47,14 +46,11 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <utility/file/file_sys_util.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <protocols/jd2/JobDistributor.fwd.hh>
 
 
 using namespace protocols::moves;

@@ -19,12 +19,11 @@
 
 #include <core/scoring/constraints/ResidueCouplingConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/id/AtomID.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 #include <numeric/MathNTensor.hh>
-#include <numeric/MathNTensor_io.hh>
+
+#include <map> // AUTO IWYU For map
 
 namespace core {
 namespace scoring {

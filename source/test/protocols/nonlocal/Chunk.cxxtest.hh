@@ -26,7 +26,6 @@
 #include <memory>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 namespace {

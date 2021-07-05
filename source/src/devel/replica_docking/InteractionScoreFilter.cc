@@ -14,25 +14,22 @@
 #include <devel/replica_docking/InteractionScoreFilter.hh>
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
 #include <core/pose/Pose.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/MetricValue.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <utility/vector1.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Project Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/types.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
 
 namespace devel {
 namespace replica_docking {

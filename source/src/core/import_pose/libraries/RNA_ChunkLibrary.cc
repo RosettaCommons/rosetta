@@ -19,22 +19,15 @@
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <numeric/random/random.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/sequence/util.hh>
-#include <core/kinematics/Stub.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
 
 // ObjexxFCL Headers
@@ -45,7 +38,6 @@
 #include <iostream>
 
 #include <utility/vector1.hh>
-#include <utility/stream_util.hh>
 
 static basic::Tracer TR( "protocols.rna.denovo.libraries.RNA_ChunkLibrary" );
 

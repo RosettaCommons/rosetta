@@ -15,7 +15,6 @@
 #include <protocols/simple_moves/SaveSequenceToCommentsMoverCreator.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <utility/tag/Tag.hh>
 

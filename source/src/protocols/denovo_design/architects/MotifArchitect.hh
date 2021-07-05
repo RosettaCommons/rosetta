@@ -31,10 +31,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // Boost headers
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
-#include <set>
 
 namespace protocols {
 namespace denovo_design {

@@ -33,7 +33,6 @@
 
 #include <core/import_pose/import_pose.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

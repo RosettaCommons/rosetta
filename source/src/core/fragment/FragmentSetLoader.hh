@@ -22,12 +22,12 @@
 #include <basic/resource_manager/types.hh>
 
 //utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
 #include <iosfwd>
+#include <string>
 
 namespace core {
 namespace fragment {

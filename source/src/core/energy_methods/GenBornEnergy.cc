@@ -23,12 +23,10 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ContextGraphTypes.hh>
 
 #include <core/scoring/DenseEnergyContainer.hh>
 
 // Project headers
-#include <basic/datacache/CacheableData.hh>
 #include <basic/prof.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>

@@ -17,13 +17,11 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/pose/ResidueIndexDescription.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
 namespace protocols {

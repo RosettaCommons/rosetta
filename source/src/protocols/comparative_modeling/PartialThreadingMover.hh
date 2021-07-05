@@ -17,17 +17,13 @@
 #ifndef INCLUDED_protocols_comparative_modeling_PartialThreadingMover_HH
 #define INCLUDED_protocols_comparative_modeling_PartialThreadingMover_HH
 
-#include <core/types.hh>
 #include <core/pose/Pose.hh>
 
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -25,7 +25,6 @@
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 
 //C++
@@ -69,7 +68,7 @@ public:
 		Real dslf_ss_dst_max(3.0);
 		Real dslf_ss_dst_step(.0025);
 
-		scoring::constraints::FuncOP f( new SG_Dist_Func );
+		scoring::func::FuncOP f( new SG_Dist_Func );
 
 		UT << "X\tf(X)\tdf/dx\n";
 		for(Real x(dslf_ss_dst_min); x<=dslf_ss_dst_max; x+=dslf_ss_dst_step) {
@@ -89,7 +88,7 @@ public:
 		Real dslf_cs_ang_max(180);
 		Real dslf_cs_ang_step(.5);
 
-		scoring::constraints::FuncOP f(new CB_Angle_Func);
+		scoring::func::FuncOP f(new CB_Angle_Func);
 
 		UT << "X\tf(X)\tdf/dx\n";
 		for(Real x(dslf_cs_ang_min); x<=dslf_cs_ang_max; x+=dslf_cs_ang_step) {
@@ -110,7 +109,7 @@ public:
 		Real dslf_dih_max(180);
 
 
-		scoring::constraints::FuncOP f(new CBSG_Dihedral_Func);
+		scoring::func::FuncOP f(new CBSG_Dihedral_Func);
 
 		UT << "X\tf(X)\tdf/dx\n";
 		for(Real x(dslf_dih_min); x<=dslf_dih_max; x+=dslf_dih_step) {
@@ -129,7 +128,7 @@ public:
 		Real dslf_dih_step(1.8);
 		Real dslf_dih_max(180);
 
-		scoring::constraints::FuncOP f(new SGSG_Dihedral_Func);
+		scoring::func::FuncOP f(new SGSG_Dihedral_Func);
 		UT << "X\tf(X)\tdf/dx\n";
 		for(Real x(dslf_dih_min); x<=dslf_dih_max; x+=dslf_dih_step) {
 			Energy score( f->func(x*degrees_to_radians) );

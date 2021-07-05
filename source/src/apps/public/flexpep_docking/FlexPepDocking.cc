@@ -22,41 +22,26 @@
 // Mini-Rosetta headers
 #include <protocols/flexpep_docking/FlexPepDockingProtocol.hh>
 
-#include <core/io/raw_data/ScoreFileData.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/flexPepDocking.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableString.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 
 
 #include <devel/init.hh>
 
 // C++ headers
 //#include <cstdlib>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
 
 #include <basic/Tracer.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <utility/excn/Exceptions.hh>
 

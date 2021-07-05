@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/legacy/screener/ProteinAtrRepScreener.hh>
 #include <protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <utility>

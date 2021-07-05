@@ -16,7 +16,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 #include <test/util/pose_funcs.hh>
 
 // Unit header

@@ -16,7 +16,6 @@
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -32,13 +31,11 @@
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

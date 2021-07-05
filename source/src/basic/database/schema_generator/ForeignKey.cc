@@ -13,12 +13,12 @@
 /// @author Tim Jacobs
 
 #include <basic/database/schema_generator/ForeignKey.hh>
-#include <basic/database/schema_generator/Column.hh>
-#include <utility>
+#include <basic/database/schema_generator/Column.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
+
 
 static basic::Tracer TR( "utility.sql_database.ForeignKey" );
 

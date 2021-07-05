@@ -22,15 +22,11 @@
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Basic headers
 #include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 // Boost headers
 

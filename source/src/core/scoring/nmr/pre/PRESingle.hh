@@ -20,22 +20,22 @@
 
 // Package headers
 #include <core/io/nmr/AtomSelection.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/id/AtomID.fwd.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/json_spirit/json_spirit_value.h>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
+#include <core/scoring/nmr/types.hh> // AUTO IWYU For PRE_SPIN_TYPE
 
 namespace core {
 namespace scoring {

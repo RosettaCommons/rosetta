@@ -23,12 +23,11 @@
 #include <core/scoring/membrane/MPNonHelixPenalty.fwd.hh>
 
 // Project Headers
-#include <core/scoring/membrane/MembraneData.hh>
+#include <core/scoring/membrane/MembraneData.fwd.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/membrane/Span.fwd.hh>
 #include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -37,7 +36,6 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace scoring {

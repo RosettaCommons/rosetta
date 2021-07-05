@@ -19,7 +19,6 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/extra_pose_info_util.hh>
@@ -37,8 +36,9 @@
 
 #include <basic/Tracer.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 OPT_KEY( Boolean, rmsd_nosuper )
 OPT_KEY( Boolean, protein_align )

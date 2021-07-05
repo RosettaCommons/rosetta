@@ -15,15 +15,13 @@
 
 #include <protocols/stepwise/modeler/constraint_util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/SequenceMapping.hh>
 #include <basic/Tracer.hh>
+
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, basic_ostream<>::__ostre...
 
 using namespace core;
 

@@ -54,7 +54,6 @@
 #include <basic/Tracer.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -63,14 +62,13 @@
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
 // C++ headers
-#include <map>
 #include <vector>
 
 // option key includes
@@ -80,7 +78,6 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/vector0.hh>
-#include <utility/keys/Key3Vector.hh>
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
@@ -88,6 +85,7 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

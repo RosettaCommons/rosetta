@@ -30,6 +30,9 @@
 // C++ header
 #include <sstream>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh> // AUTO IWYU For RootData
+
 
 // Construct tracer.
 static basic::Tracer TR( "core.chemical.carbohydrates.database_io" );

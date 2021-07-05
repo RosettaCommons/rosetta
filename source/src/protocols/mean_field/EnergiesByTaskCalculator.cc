@@ -16,7 +16,6 @@
 
 // project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
@@ -31,10 +30,8 @@
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <cassert>
 
 #include <utility/vector1.hh>
-#include <set>
 
 using namespace core;
 using namespace core::pose;

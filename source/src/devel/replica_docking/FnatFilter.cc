@@ -15,14 +15,12 @@
 #include <devel/replica_docking/FnatFilterCreator.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/docking/metrics.hh>
 
 
@@ -32,10 +30,14 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/MetricValue.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
+
 // Project Headers
 
 

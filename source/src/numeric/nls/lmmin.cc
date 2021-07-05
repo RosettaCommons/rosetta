@@ -21,10 +21,8 @@
 //
 
 
-#include <cstdlib>
 #include <cstdio>
 #include <cmath>
-#include <cfloat>
 #include <new>
 #include <numeric/nls/lmmin.hh>
 

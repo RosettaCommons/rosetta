@@ -18,14 +18,13 @@
 #include <test/core/init_util.hh>
 #include <test/util/pdb1ubq.hh>
 #include <test/util/pdb1rpb.hh>
-#include <test/util/pose_funcs.hh>
 
 // Unit headers
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
 // Package headers
 #include <core/io/StructFileRep.hh>
-#include <core/io/AtomInformation.hh>
+#include <core/io/AtomInformation.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -33,7 +32,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 
 // Utility headers
@@ -42,6 +40,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+
+#include <core/io/HeaderInformation.hh> // AUTO IWYU For HeaderInformation, HeaderInformation::Authors
 
 static basic::Tracer TR("core.io.pose_to_sfr.PoseToStructFileRepConverterTests.cxxtest");
 

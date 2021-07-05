@@ -20,29 +20,19 @@
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/util.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/func/LinearPenaltyFunction.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/MembraneSpanConstraint.hh>
 
 // C++ Headers
-#include <cstdlib>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 static basic::Tracer TR( "protocols.membrane.AddMembraneSpanConstraint" );
 

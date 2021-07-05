@@ -10,9 +10,7 @@
 #include <devel/init.hh>
 
 // utility headers
-#include <utility/vector1.hh>
 
-#include <core/sequence/Sequence.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -27,13 +25,7 @@
 #endif
 
 #include <protocols/frag_picker/FragmentPicker.hh>
-#include <protocols/frag_picker/VallProvider.hh>
-#include <protocols/frag_picker/VallChunk.hh>
-#include <protocols/frag_picker/VallResidue.hh>
-#include <protocols/frag_picker/FragmentSelectingRule.hh>
-#include <protocols/frag_picker/VallChunkFilter.hh>
 
-#include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>

@@ -38,6 +38,10 @@
 
 #include <utility/vector1.hh>
 
+#include <ObjexxFCL/format.hh> // AUTO IWYU For F, I, format
+#include <ostream> // AUTO IWYU For operator<<, basic_ostream, ostream, endl
+#include <protocols/frag_picker/VallProvider.hh> // AUTO IWYU For VallProvider
+
 
 namespace protocols {
 namespace frag_picker {

@@ -35,11 +35,12 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
-#include <boost/functional/hash.hpp>         // for hash
 
 // C++ Headers
 #include <vector>
 #include <iosfwd>
+
+#include <boost/container_hash/extensions.hpp> // AUTO IWYU For hash
 
 
 #ifdef    SERIALIZATION

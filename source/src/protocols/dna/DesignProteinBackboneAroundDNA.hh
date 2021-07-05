@@ -19,14 +19,12 @@
 
 #include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
-#include <utility/vector1.fwd.hh>
 
 #include <string>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+#include <core/pose/Pose.hh> // AUTO IWYU For Mover::Pose
+
 
 
 namespace protocols {

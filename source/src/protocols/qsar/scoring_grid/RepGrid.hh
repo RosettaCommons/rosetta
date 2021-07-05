@@ -15,8 +15,6 @@
 
 #include <protocols/qsar/scoring_grid/RepGrid.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
-#include <utility/vector1.fwd.hh>
-#include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>

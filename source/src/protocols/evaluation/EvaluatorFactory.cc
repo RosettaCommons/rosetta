@@ -13,20 +13,17 @@
 
 // Unit Headers
 #include <protocols/evaluation/EvaluatorFactory.hh>
-#include <protocols/evaluation/PoseEvaluator.hh>
+#include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/evaluation/EvaluatorCreator.hh>
 
 // Package Headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 // Project Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector0.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // C++ Headers
 #include <sstream>

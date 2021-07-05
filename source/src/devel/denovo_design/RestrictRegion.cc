@@ -19,20 +19,15 @@
 // Project Headers
 #include <devel/denovo_design/task_operations/HighestEnergyRegion.hh>
 #include <devel/denovo_design/task_operations/DesignBySecondaryStructure.hh>
-#include <protocols/parser/BluePrint.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/task_operations/DesignAroundOperation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/IndependentBBTorsionSRFD.hh>
-#include <core/fragment/picking_old/vall/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Basic Headers
@@ -48,6 +43,10 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <sstream>
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 // ObjexxFCL Headers
 

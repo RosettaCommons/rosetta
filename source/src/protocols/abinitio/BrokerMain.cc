@@ -14,7 +14,6 @@
 // keep these headers first for compilation with Visual Studio C++
 
 // Package Headers
-#include <core/io/silent/SilentStruct.hh>
 #include <protocols/abinitio/AbrelaxMover.hh>
 
 // Project Headers
@@ -34,23 +33,15 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/frags.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/jumps.OptionKeys.gen.hh>
-#include <basic/options/keys/loopfcst.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/templates.OptionKeys.gen.hh>
 #include <basic/options/keys/chunk.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 
 // C/C++ headers
 #include <iostream>
 
-#include <utility/vector1.hh>
+#include <core/scoring/constraints/ConstraintFactory.hh> // AUTO IWYU For ConstraintFactory
+
 
 
 static basic::Tracer tr( "main" );

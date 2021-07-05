@@ -34,11 +34,9 @@
 
 // Utility headers
 #include <numeric/random/random.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 
 // C++ headers
-#include <list>
 
 #include <utility/io/ozstream.hh>
 #include <basic/Tracer.hh>

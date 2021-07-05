@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_denovo_design_components_StructureDataCreator_hh
 
 // Unit headers
-#include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <basic/datacache/WriteableCacheableDataCreator.hh>
 
 namespace protocols {

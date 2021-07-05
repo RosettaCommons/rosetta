@@ -33,8 +33,6 @@
 
 // Utility headers
 #include <core/types.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 
 namespace protocols {

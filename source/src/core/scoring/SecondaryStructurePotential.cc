@@ -19,7 +19,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <basic/database/open.hh>
 #include <utility/graph/DisjointSets.hh>
@@ -43,8 +42,6 @@
 #include <utility/vector1.hh>
 #include <basic/prof.hh>
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
 // C++ headers
@@ -60,6 +57,8 @@
 #include <core/scoring/SS_Killhairpins_Info.hh>
 #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <core/scoring/SecondaryStructureWeights.hh> // AUTO IWYU For SecondaryStructureWeights
 
 
 namespace core {

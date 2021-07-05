@@ -20,15 +20,11 @@
 #include <protocols/peptide_deriver/PeptideDeriverOutputter.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/filters/Filter.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <iosfwd>
 #include <string>
 
 namespace protocols {

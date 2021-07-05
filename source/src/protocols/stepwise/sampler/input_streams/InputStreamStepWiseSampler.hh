@@ -18,8 +18,8 @@
 
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 #include <protocols/stepwise/sampler/input_streams/InputStreamStepWiseSampler.fwd.hh>
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.fwd.hh>
+#include <protocols/stepwise/legacy/modeler/protein/StepWiseProteinPoseSetup.fwd.hh>
 
 namespace protocols {
 namespace stepwise {

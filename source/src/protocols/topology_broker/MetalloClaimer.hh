@@ -25,11 +25,10 @@
 #include <protocols/topology_broker/FragmentJumpClaimer.hh>
 #include <protocols/topology_broker/SequenceClaimer.hh>
 
-#include <protocols/jumping/ResiduePairJumpSetup.hh>
+#include <protocols/jumping/ResiduePairJumpSetup.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
 //#include <core/fragment/FragSet.hh>
 
 
@@ -38,13 +37,13 @@
 // Utility headers
 //#include <utility/io/util.hh>
 
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 //#include <iosfwd>
 #include <string>
 
-#include <utility/vector1.hh>
+
+#include <protocols/jumping/ResiduePairJump.fwd.hh> // AUTO IWYU For ResiduePairJumpOP
 
 
 namespace protocols {

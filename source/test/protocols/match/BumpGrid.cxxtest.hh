@@ -18,7 +18,6 @@
 #include <protocols/match/BumpGrid.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
@@ -33,7 +32,6 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <boost/unordered/unordered_map_fwd.hpp>
 
 
 using namespace protocols::match;

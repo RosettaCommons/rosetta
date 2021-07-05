@@ -20,10 +20,9 @@
 // Unit headers
 #include <core/energy_methods/FaMPEnvEnergy.hh>
 #include <core/energy_methods/FaMPEnvEnergyCreator.hh>
-#include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
+#include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
 
 // Project Headers
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 
@@ -33,7 +32,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/memb_etable/MembEtable.hh>
 
 #include <core/pose/Pose.hh>
@@ -47,7 +45,6 @@
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "core.energy_methods.FaMPEnvEnergy" );
 

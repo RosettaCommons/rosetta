@@ -17,16 +17,13 @@
 
 #include <protocols/antibody/LHRepulsiveRamp.hh>
 #include <basic/Tracer.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/Loop.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pose/util.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/docking/DockMCMCycle.hh>
+
+#include <protocols/moves/MonteCarlo.hh> // AUTO IWYU For MonteCarlo
 
 static basic::Tracer TR( "protocols.antibody.LHRepulsiveRamp" );
 

@@ -41,14 +41,12 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/simple_task_operations/InterfaceTaskOperation.hh>
+#include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
 
 #include <core/scoring/Energies.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/minimization_packing/RepackSidechainsMover.hh>
@@ -68,13 +66,11 @@
 #include <utility/file/FileName.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
-#include <utility/io/util.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/types.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -88,7 +84,6 @@
 // Numeric Headers
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
@@ -96,7 +91,6 @@
 
 #include <core/import_pose/import_pose.hh>
 //#include <protocols/jobdist/Jobs.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 // XSD XRW Includes

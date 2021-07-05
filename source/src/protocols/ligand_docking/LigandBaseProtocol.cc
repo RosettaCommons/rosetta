@@ -20,7 +20,7 @@
 
 #include <core/chemical/automorphism.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/VariantType.hh>
 
@@ -38,10 +38,8 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/palette/PackerPalette.hh>
 #include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -50,7 +48,6 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 //#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <basic/Tracer.hh>
@@ -73,13 +70,14 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/pose/variant_util.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/kinematics/tree/Atom.hh>
 #include <core/scoring/EnergyGraph.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

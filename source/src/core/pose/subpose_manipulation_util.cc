@@ -20,17 +20,12 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/MiniPose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
 
 // Project headers
 #include <core/chemical/rna/util.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 
@@ -38,18 +33,12 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers
-#include <cmath>
 #include <iostream>
-#include <algorithm>
-#include <numeric>
 
 // External headers
-#include <ObjexxFCL/string.functions.hh>
 
 namespace core {
 namespace pose {

@@ -21,6 +21,8 @@
 // Package headers
 #include <protocols/toolbox/SamplerPlusPlus.hh>
 
+#include <core/id/TorsionID.fwd.hh> // AUTO IWYU For TorsionID
+
 namespace protocols {
 namespace recces {
 namespace sampler {

@@ -19,22 +19,21 @@
 #include <core/select/residue_selector/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility Headers
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
 
 
 #ifdef    SERIALIZATION

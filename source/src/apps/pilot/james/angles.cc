@@ -16,7 +16,6 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/options/option.hh>
-#include <basic/database/open.hh>
 #include <devel/init.hh>
 
 #include <core/pack/dunbrack/RotamerLibrary.hh>

@@ -18,12 +18,8 @@
 #include <protocols/loops/loops_definers/LoopsStringDefiner.hh>
 
 // Package headers
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/util.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
 
 // basic headers
 #include <basic/datacache/DataMap.hh>

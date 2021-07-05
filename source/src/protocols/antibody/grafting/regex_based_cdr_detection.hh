@@ -21,10 +21,10 @@
 #ifdef __ANTIBODY_GRAFTING__
 
 
-#include <protocols/antibody/grafting/antibody_sequence.hh>
+#include <protocols/antibody/grafting/antibody_sequence.fwd.hh>
 #include <protocols/antibody/grafting/cdr_detection.hh>
 
-#include <basic/report.hh>
+#include <basic/report.fwd.hh>
 
 
 namespace protocols {

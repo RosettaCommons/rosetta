@@ -18,11 +18,8 @@
 
 // package headers
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-#include <protocols/frag_picker/FragmentPicker.fwd.hh>
 // mini
 #include <numeric/xyzVector.hh>
-#include <utility/vector1_bool.hh>
 #include <map>
 
 #include <utility/vector1.hh>

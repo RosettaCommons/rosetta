@@ -26,7 +26,7 @@
 
 // utility headers
 #include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace core {

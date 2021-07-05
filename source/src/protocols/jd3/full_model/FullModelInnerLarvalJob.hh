@@ -20,22 +20,17 @@
 #include <protocols/jd3/full_model/FullModelInnerLarvalJob.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/full_model_inputters/FullModelInputSource.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 // Basic headers
-#include <basic/datacache/ConstDataMap.fwd.hh>
 
 //C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

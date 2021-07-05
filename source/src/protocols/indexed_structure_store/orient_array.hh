@@ -10,8 +10,9 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_orient_array_HH
 #define INCLUDED_protocols_indexed_structure_store_orient_array_HH
 
-#include <ndarray.h>
 #include <protocols/indexed_structure_store/Datatypes.hh>
+
+#include <ndarray/initialization.h> // AUTO IWYU For ExternalInitializer, external
 
 namespace protocols { namespace indexed_structure_store {
 

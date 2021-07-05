@@ -23,8 +23,6 @@
 //parsing
 #include <utility>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -38,7 +36,6 @@
 // C++ headers
 
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>

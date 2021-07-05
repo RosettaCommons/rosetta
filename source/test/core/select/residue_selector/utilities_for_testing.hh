@@ -15,14 +15,11 @@
 #define INCLUDED_core_select_residue_selector_utilities_for_testing_HH
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 
 // Core headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>

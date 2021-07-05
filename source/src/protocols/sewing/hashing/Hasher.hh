@@ -20,17 +20,14 @@
 #include <protocols/sewing/hashing/Hasher.fwd.hh>
 #include <protocols/sewing/data_storage/Basis.hh>
 #include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
-#include <protocols/sewing/data_storage/SmartSewingResidue.fwd.hh>
 #include <protocols/sewing/hashing/hasher_data.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 
 //Core headers
 #include <core/types.hh>
-#include <core/conformation/Atom.hh>
+#include <core/conformation/Atom.fwd.hh>
 
 
 namespace protocols {

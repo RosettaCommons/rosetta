@@ -14,6 +14,8 @@
 #ifndef INCLUDED_protocols_frag_picker_scores_FragmentCrmsd_hh
 #define INCLUDED_protocols_frag_picker_scores_FragmentCrmsd_hh
 
+#include <protocols/frag_picker/scores/FragmentCrmsd.fwd.hh>
+
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
@@ -28,8 +30,6 @@
 
 //Auto Headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <iosfwd>
 
 
 namespace protocols {

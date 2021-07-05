@@ -17,8 +17,7 @@
 using namespace protocols::dna;
 
 #include <core/types.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -45,10 +44,8 @@ using xyzVec = numeric::xyzVector<core::Real>;
 // C++ headers
 #include <iostream>
 #include <string>
-#include <list>
 
 #include <utility/vector1.hh>
-#include <utility/options/IntegerVectorOption.hh>
 #include <numeric/random/random.fwd.hh>
 #include <ObjexxFCL/format.hh>
 

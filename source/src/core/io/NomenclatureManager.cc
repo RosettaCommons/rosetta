@@ -35,7 +35,6 @@
 
 // C++ headers
 #include <string>
-#include <boost/algorithm/string.hpp>
 
 
 // Construct tracer.

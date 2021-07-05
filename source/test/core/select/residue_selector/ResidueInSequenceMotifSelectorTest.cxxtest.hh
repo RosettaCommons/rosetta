@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 #include <test/core/select/residue_selector/utilities_for_testing.hh>
 
@@ -27,12 +25,12 @@
 #include <core/select/residue_selector/ResidueInSequenceMotifSelector.hh>
 #include <core/select/residue_selector/GlycanSequonsSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/util.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-#include <utility/string_util.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("ResidueInSequenceMotifSelectorTest");
 

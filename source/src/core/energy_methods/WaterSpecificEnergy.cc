@@ -17,27 +17,15 @@
 #include <core/energy_methods/WaterSpecificEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/scoring/hbonds/HBEvalTuple.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.hh>
 
 // Options header
 #include <basic/options/option.hh>

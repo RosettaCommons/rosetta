@@ -15,7 +15,6 @@
 #ifndef INCLUDED_protocols_viewer_triangle_hh
 #define INCLUDED_protocols_viewer_triangle_hh
 
-#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.hh>
 
 #include <core/types.hh>

@@ -16,9 +16,6 @@
 #include <protocols/jd3/JobGenealogist.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
-#include <utility/vector1.functions.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.jd3.JobGenealogist" );

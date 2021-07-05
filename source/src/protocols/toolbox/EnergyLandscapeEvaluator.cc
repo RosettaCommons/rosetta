@@ -17,7 +17,6 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility>
 
 // C headers
 #include <cmath>

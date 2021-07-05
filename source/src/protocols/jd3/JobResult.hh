@@ -22,13 +22,8 @@
 
 //utility headers
 #include <utility/VirtualBase.hh>
-#include <core/types.hh>
 
 //C++ headers
-#include <string>
-#include <list>
-#include <map>
-#include <set>
 
 
 #ifdef    SERIALIZATION

@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_comparative_modeling_features_SSFeature_HH
 #define INCLUDED_protocols_comparative_modeling_features_SSFeature_HH
 
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/comparative_modeling/features/ResidueFeature.hh>

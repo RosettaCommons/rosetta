@@ -11,7 +11,6 @@
 #include <devel/cycles/ReindexingMover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 
 #include <numeric/random/random.hh>
 

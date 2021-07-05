@@ -43,8 +43,6 @@
 #include <core/import_pose/import_pose.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 
 
 static basic::Tracer tr( "main" );

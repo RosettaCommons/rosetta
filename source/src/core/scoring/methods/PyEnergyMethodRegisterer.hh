@@ -15,12 +15,10 @@
 #ifndef INCLUDED_core_scoring_methods_PyEnergyMethodRegisterer_hh
 #define INCLUDED_core_scoring_methods_PyEnergyMethodRegisterer_hh
 
-#include <core/scoring/methods/EnergyMethodCreator.hh>
+#include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 
 // Package headers
 #include <core/scoring/ScoringManager.hh>
-#include <utility/factory/WidgetRegistrator.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 
 namespace core {

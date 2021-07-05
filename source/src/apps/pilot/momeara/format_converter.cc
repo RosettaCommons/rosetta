@@ -18,14 +18,11 @@
 
 // Platform Headers
 #include <devel/init.hh>
-#include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 
 

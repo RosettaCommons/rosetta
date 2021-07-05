@@ -22,7 +22,7 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/scoring/aa_composition_energy/AACompositionConstraint.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Protocols headers
 #include <protocols/aa_composition/ClearCompositionConstraintsMover.hh>

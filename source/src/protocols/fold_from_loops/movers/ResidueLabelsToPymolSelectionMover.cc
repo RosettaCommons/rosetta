@@ -23,7 +23,7 @@
 #include <core/pose/PDBInfo.hh>
 
 // Basic/Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>

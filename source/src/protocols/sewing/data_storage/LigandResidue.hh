@@ -20,8 +20,13 @@
 #include <protocols/sewing/data_storage/LigandSegment.fwd.hh>
 #include <protocols/sewing/hashing/hasher_data.hh>
 #include <protocols/sewing/hashing/LigandBindingResPlacer.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+
+#ifdef PYROSETTA
+#include <core/select/residue_selector/ResidueSelector.hh>
+#endif
+
 namespace protocols {
 namespace sewing {
 namespace data_storage {

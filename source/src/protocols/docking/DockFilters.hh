@@ -30,7 +30,6 @@
 #include <protocols/score_filters/ScoreCutoffFilter.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // C++ headers
 

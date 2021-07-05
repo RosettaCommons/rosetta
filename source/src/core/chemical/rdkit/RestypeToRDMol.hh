@@ -19,7 +19,7 @@
 #define INCLUDED_core_chemical_rdkit_RestypeToFragment_hh
 
 
-#include <core/chemical/MutableResidueType.hh>
+#include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/AtomRefMapping.hh>
 
 #include <rdkit/GraphMol/RWMol.h>

@@ -20,17 +20,16 @@
 
 // Protocol Headers
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
 // Core Headers
 #include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 //C++ Headers
 

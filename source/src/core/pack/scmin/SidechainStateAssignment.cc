@@ -18,7 +18,6 @@
 #include <core/pack/scmin/AtomTreeCollection.hh>
 
 
-#include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 
 

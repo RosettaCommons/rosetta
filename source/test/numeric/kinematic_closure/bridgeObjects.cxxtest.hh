@@ -22,8 +22,6 @@
 #include <numeric/kinematic_closure/dixon.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/bridgeObjects_nonredundant.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-#include <numeric/linear_algebra/GeneralizedEigenSolver.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -34,7 +32,6 @@
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers

@@ -26,50 +26,27 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/task_operations/RestrictResiduesToRepackingOperation.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMOLMover.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/import_pose/import_pose.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 
 // XSD Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 #include <string>
-#include <list>
 #include <cmath>
 
 static basic::Tracer TR( "protocols.glycopeptide_docking.GlycopeptideDockingLowResRefinement" );

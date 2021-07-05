@@ -33,7 +33,6 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <list>
 
 #include <core/id/AtomID.fwd.hh>
 //#include <protocols/match/Hit.fwd.hh>

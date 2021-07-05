@@ -5,16 +5,13 @@
 #define INCLUDED_devel_replica_docking_AddEncounterConstraintMover_hh
 
 #include <devel/replica_docking/AddEncounterConstraintMover.fwd.hh>
-#include <protocols/docking/types.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 #include <protocols/scoring/InterfaceInfo.fwd.hh>
 
 

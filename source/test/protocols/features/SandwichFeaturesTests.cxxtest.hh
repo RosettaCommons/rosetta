@@ -14,10 +14,8 @@
 // Test Headers
 #include <test/core/init_util.hh>
 #include <cxxtest/TestSuite.h>
-#include <util/pose_funcs.hh>
 
 // Unit Headers
-#include <protocols/features/ProteinResidueConformationFeatures.hh>
 #include <protocols/features/ResidueFeatures.hh>
 #include <protocols/features/ResidueSecondaryStructureFeatures.hh>
 #include <protocols/features/SecondaryStructureSegmentFeatures.hh>
@@ -27,30 +25,26 @@
 // Project Headers
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/sql_database/types.hh>
 #include <utility/file/file_sys_util.hh>
 
 // Boost Headers
-#include <limits>
 
 // External Headers
-#include <cppdb/frontend.h>
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
 #include <utility/tag/Tag.fwd.hh> // for parse_my_tag
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 static basic::Tracer tr("protocols.features.SandwichFeaturesTests.cxxtest");
 

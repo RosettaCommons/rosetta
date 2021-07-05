@@ -41,6 +41,8 @@
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
+#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh> // AUTO IWYU For MMBondAngleResidueTypeParamSet
+
 
 namespace core {
 namespace scoring {

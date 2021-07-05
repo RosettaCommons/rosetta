@@ -16,11 +16,9 @@
 #define INCLUDED_core_scoring_elec_util_hh
 
 // Unit Headers
-#include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
 #include <core/scoring/elec/CPRepMapType.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // C++ headers
 

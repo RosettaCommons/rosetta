@@ -29,7 +29,6 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/build_pose_as_is.hh> //reading remarks
 
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -43,7 +42,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/func/Func.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
@@ -61,11 +59,12 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 #include <core/pose/variant_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

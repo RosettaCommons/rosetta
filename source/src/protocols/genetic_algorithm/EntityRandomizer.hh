@@ -22,7 +22,6 @@
 #include <utility/vector1.hh>
 
 
-#include <algorithm> // std::copy
 
 namespace protocols {
 namespace genetic_algorithm {

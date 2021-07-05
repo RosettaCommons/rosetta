@@ -16,15 +16,15 @@
 
 #include <protocols/tcr/TCRmodel.fwd.hh>
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
-#include <protocols/tcr/TCRseqInfo.hh>
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <iosfwd>
-#include <protocols/antibody/grafting/antibody_sequence.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <set>
+
+#include <list> // AUTO IWYU For list
+
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {

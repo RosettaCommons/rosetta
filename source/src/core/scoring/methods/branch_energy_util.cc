@@ -18,8 +18,6 @@
 #include <utility/vector1.hh>
 
 #include <core/types.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 
 
 namespace core {

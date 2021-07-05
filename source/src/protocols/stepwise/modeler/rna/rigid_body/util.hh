@@ -17,13 +17,14 @@
 #ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_FloatingBaseSamplerUtil_HH
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_FloatingBaseSamplerUtil_HH
 
-#include <protocols/stepwise/modeler/rna/rigid_body/FloatingBaseClasses.hh>
+#include <protocols/stepwise/modeler/rna/rigid_body/FloatingBaseClasses.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <protocols/stepwise/sampler/rigid_body/EulerAngles.fwd.hh>
+
+#include <map> // AUTO IWYU For map
 
 // What if we needed something finer or else there's just no way
 // probably don't have to do 16 A for centroid though

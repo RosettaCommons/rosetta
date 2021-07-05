@@ -25,14 +25,12 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/sequence/ABEGOManager.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
@@ -44,9 +42,7 @@
 #include <numeric/xyz.functions.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
-#include <vector>
 #include <iostream>
 
 #include <core/id/AtomID.hh>

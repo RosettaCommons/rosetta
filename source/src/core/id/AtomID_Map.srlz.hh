@@ -15,14 +15,10 @@
 #define INCLUDED_core_id_AtomID_Map_SRLZ_HH
 
 // Unit headers
-#include <core/id/AtomID_Map.hh>
 
 // Package headers
-#include <core/id/AtomID.hh>
-#include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 #ifdef SERIALIZATION
 #include <cereal/cereal.hpp>

@@ -22,21 +22,13 @@
 #include <test/core/init_util.hh>
 #include <core/types.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 
 
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
 
-#include <test/util/pose_funcs.hh>
 
 //Auto Headers
-#include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 class PoseRNAUtilTests : public CxxTest::TestSuite {

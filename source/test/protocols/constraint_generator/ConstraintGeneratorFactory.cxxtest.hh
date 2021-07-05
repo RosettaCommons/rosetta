@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Protocol headers
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
@@ -26,7 +25,6 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Boost headers
 
@@ -34,7 +32,6 @@
 
 using namespace protocols::constraint_generator;
 
-class DummyConstraintGeneratorCreator;
 class DummyConstraintGenerator : public ConstraintGenerator {
 public:
 	DummyConstraintGenerator():

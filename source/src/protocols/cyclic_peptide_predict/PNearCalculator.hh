@@ -23,7 +23,6 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 namespace protocols {

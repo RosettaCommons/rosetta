@@ -19,34 +19,21 @@
 #include <core/scoring/epr_deer/util.hh>
 
 // Package headers
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Atom.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/select/util.hh>
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/types.hh>
 
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <basic/options/option.hh>
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/epr_deer.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -54,16 +41,13 @@
 #include <utility/excn/Exceptions.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/HomogeneousTransform.hh>
 
 #include <boost/algorithm/string.hpp>
 
 // C++ headers
-#include <stdlib.h>
 #include <iostream>
-#include <set>
 
 namespace core {
 namespace scoring {

@@ -13,16 +13,12 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Protocol Headers
 #include <protocols/denovo_design/architects/BetaSheetArchitect.hh>
-#include <protocols/denovo_design/components/ExtendedPoseBuilder.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/components/SheetDB.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -31,6 +27,8 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 // Boost Headers
 

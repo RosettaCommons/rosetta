@@ -28,7 +28,6 @@
 #include <core/energy_methods/LinearChainbreakEnergy.hh>
 #include <core/energy_methods/ChainbreakEnergy.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

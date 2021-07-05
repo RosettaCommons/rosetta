@@ -20,7 +20,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/rna/RNA_SuitePotential.hh>
+#include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
 #include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Project headers

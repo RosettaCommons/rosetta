@@ -21,7 +21,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/OrderedFragSet.hh>
@@ -34,7 +34,6 @@
 
 // Utility headers
 #include <utility>
-#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/util.hh>
@@ -44,7 +43,8 @@
 #include <string>
 #include <vector>
 
-#include <utility/vector0.hh>
+#include <protocols/jumping/PairingLibrary.hh> // AUTO IWYU For StandardPairingLibrary
+
 
 
 static basic::Tracer tr( "protocols.abinitio.Templates" );

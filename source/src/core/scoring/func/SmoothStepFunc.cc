@@ -16,10 +16,8 @@
 
 #include <core/types.hh>
 
-#include <utility/VirtualBase.hh>
 #include <cmath>
 
-#include <utility/vector1.hh>
 #include <sstream>
 
 #ifdef SERIALIZATION

@@ -18,32 +18,19 @@
 #include <test/util/pose_funcs.hh>
 #include <test/util/deriv_funcs.hh>
 
-#include <core/types.hh>
 
 // Unit headers
 #include <core/scoring/methods/MMLJEnergyIntra.hh>
 
 // Package headers
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <utility/graph/Graph.hh>
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/conformation/AbstractRotamerTrie.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 
 using basic::Error;

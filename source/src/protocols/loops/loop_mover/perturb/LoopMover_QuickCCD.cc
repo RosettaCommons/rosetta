@@ -18,14 +18,12 @@
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCDCreator.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
 //// Rosetta Headers
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -34,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/pose/symmetry/util.hh>
@@ -48,11 +46,9 @@
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 
 //Utility Headers
-#include <numeric/random/random.hh>
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -156,7 +152,6 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	using namespace protocols::simple_moves;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace numeric::random;
 
 	tr().Info << "***** CCD CLOSURE *****" << std::endl;
 	bool debug = option[ basic::options::OptionKeys::loops::debug ]();

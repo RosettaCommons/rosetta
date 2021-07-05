@@ -13,7 +13,6 @@
 /// @author Hahnbeom Park and Frank DiMaio
 
 #include <protocols/ligand_docking/GALigandDock/LigandConformer.hh>
-#include <protocols/ligand_docking/GALigandDock/RotamerData.hh>
 #include <protocols/ligand_docking/GALigandDock/TorsionSampler.hh>
 
 #include <core/kinematics/FoldTree.hh>
@@ -26,16 +25,11 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.functions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 #include <numeric/random/random_xyz.hh>
 #include <numeric/conversions.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
 
 #include <ObjexxFCL/format.hh>

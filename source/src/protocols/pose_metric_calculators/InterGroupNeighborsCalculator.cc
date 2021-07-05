@@ -15,13 +15,10 @@
 #include <protocols/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 #include <protocols/toolbox/CalcInterNeighborGroup.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/MetricValue.hh>
 
-#include <core/conformation/PointGraph.hh>
-#include <core/conformation/find_neighbors.hh>
-#include <utility/graph/Graph.hh>
 
 //Utility headers
 //#include <basic/options/option.hh>
@@ -36,8 +33,6 @@
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/conformation/PointGraphData.hh>
-#include <utility/graph/UpperEdgeGraph.hh>
 #include <utility/vector1.hh>
 
 

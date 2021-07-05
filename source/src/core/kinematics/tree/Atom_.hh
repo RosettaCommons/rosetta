@@ -22,7 +22,6 @@
 #include <core/id/AtomID.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 
 #ifdef    SERIALIZATION

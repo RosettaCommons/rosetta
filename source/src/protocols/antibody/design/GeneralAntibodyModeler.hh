@@ -15,8 +15,6 @@
 #define INCLUDED_protocols_antibody_design_GeneralAntibodyModeler_hh
 
 #include <protocols/antibody/design/GeneralAntibodyModeler.fwd.hh>
-#include <protocols/antibody/design/AntibodySeqDesignTFCreator.fwd.hh>
-#include <protocols/antibody/design/CDRSeqDesignOptions.fwd.hh>
 
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
@@ -35,6 +33,8 @@
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/VirtualBase.hh>
+
+#include <core/types.hh> // AUTO IWYU For Real, Size
 
 namespace protocols {
 namespace antibody {

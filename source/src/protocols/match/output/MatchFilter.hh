@@ -24,7 +24,6 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 
-#include <iterator>
 #include <string>
 
 namespace protocols {

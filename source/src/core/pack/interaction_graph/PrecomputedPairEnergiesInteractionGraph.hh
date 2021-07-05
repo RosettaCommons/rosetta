@@ -22,7 +22,6 @@
 // Package Headers
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.fwd.hh>
 
 // Core Headers
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
@@ -32,7 +31,6 @@
 // Utility Headers
 
 // Basic Headers
-#include <basic/thread_manager/RosettaThreadAssignmentInfo.fwd.hh>
 
 namespace core {
 namespace pack {

@@ -18,12 +18,10 @@
 // Package headers
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
-#include <core/conformation/Residue.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
@@ -34,7 +32,8 @@
 #include <utility/pointer/memory.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

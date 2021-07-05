@@ -19,9 +19,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/ScoringManager.hh>
 

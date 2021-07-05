@@ -8,11 +8,10 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 // Unit headers
-#include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/pivot_pickers/LoopPivots.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>

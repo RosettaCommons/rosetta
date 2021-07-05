@@ -21,18 +21,15 @@
 #define INCLUDED_utility_signals_PausableSignalHub_hh
 
 // type headers
-#include <platform/types.hh>
 
 // unit headers
 #include <utility/signals/PausableSignalHub.fwd.hh>
 #include <utility/signals/BufferedSignalHub.hh>
-#include <utility/assert.hh>
 
 // boost headers
 
 // C++ headers
 #include <iostream>
-#include <vector>
 
 
 namespace utility {

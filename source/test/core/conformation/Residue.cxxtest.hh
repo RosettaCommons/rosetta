@@ -18,7 +18,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
-#include <core/conformation/PseudoBond.hh>
+#include <core/conformation/PseudoBond.fwd.hh>
 
 // Project headers
 #include <core/id/AtomID.hh>
@@ -43,6 +43,8 @@
 #include <basic/Tracer.hh>
 
 #ifdef SERIALIZATION
+#include <core/conformation/PseudoBond.hh>
+
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

@@ -22,8 +22,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ header
 #include <string>

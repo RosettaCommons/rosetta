@@ -15,17 +15,11 @@
 #include <devel/init.hh>
 
 // Core Headers
-#include <core/chemical/ResidueType.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
@@ -36,17 +30,15 @@
 #include <protocols/jobdist/standard_mains.hh>
 
 // Platform Headers
-#include <platform/types.hh>
 
 // option key includes
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
 //C++ Headers
-#include <cmath>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 
 static basic::Tracer TR( "pilot_apps.score_protein_ligand_interactions" );

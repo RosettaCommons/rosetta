@@ -23,6 +23,8 @@
 // C++ Headers
 #include <ostream>
 
+#include <utility/assert.hh> // AUTO IWYU For debug_assert
+
 namespace protocols {
 namespace environment {
 namespace claims {

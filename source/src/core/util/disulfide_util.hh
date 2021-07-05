@@ -24,7 +24,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
 

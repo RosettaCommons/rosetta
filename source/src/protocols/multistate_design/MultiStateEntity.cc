@@ -18,10 +18,8 @@
 #include <protocols/multistate_design/SingleStateEntityData.hh>
 
 #include <core/types.hh>
-#include <basic/MetricValue.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>

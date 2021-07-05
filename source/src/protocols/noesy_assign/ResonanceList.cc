@@ -51,7 +51,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 #include <deque>
 #include <sstream>

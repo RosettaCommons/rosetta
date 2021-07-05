@@ -13,29 +13,17 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/util/deriv_funcs.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/util/pdb1lnt.hh>
 #include <test/core/init_util.hh>
 
 // Package headers
-#include <core/scoring/rna/RNA_FullAtomStackingEnergy.hh>
-#include <core/scoring/etable/coulomb/Coulomb.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyMap.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("core.scoring.elec.FullAtomStackingEnergy.cxxtest");
@@ -64,7 +52,7 @@ public:
 	/// @brief fa_stack derivative check.
 	/// Setup for minimization using a move map that says "minimize all bb and sc torsions"
 	/// Make sure that start_score matches start_func.
-	/// disabled -- guaranteed to fail until we fix fa_stack 
+	/// disabled -- guaranteed to fail until we fix fa_stack
 	void dont_test_fastack_deriv_check_w_full_torsional_flexibility()
 	{
 		using namespace core;

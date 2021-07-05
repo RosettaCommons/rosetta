@@ -21,10 +21,8 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <protocols/rna/movers/ErraserMinimizerMover.hh>
-#include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -45,11 +43,10 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
@@ -58,7 +55,8 @@
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.rna.movers.ERRASER2Protocol" );
 

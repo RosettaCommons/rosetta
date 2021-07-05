@@ -15,8 +15,10 @@
 #define INCLUDED_protocols_mpi_refinement_Scheduler_hh
 
 #include <core/types.hh>
-#include <protocols/wum/SilentStructStore.hh>
+#include <protocols/wum/SilentStructStore.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map, _Rb_tree_const_iterator
 
 namespace protocols {
 namespace mpi_refinement {

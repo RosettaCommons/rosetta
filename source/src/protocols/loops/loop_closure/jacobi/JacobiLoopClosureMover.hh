@@ -27,10 +27,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/jacobian/SeriesJacobians.fwd.hh>
-#include <numeric/HomogeneousTransform.fwd.hh>
-#include <numeric/MathMatrix.hh>
 #include <numeric/constants.hh>
-#include <numeric/xyzVector.hh>
 
 // Basic/Utility headers
 //#include <basic/datacache/DataMap.fwd.hh>

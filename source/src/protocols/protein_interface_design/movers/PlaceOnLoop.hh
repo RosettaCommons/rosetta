@@ -18,12 +18,10 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>

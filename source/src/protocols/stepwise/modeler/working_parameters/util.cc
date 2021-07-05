@@ -16,27 +16,19 @@
 #include <protocols/stepwise/modeler/working_parameters/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
-#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_WorkingParametersSetup.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/movemap/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/stepwise/sampler/rna/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/util.hh>
 #include <utility/tools/make_vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <utility/string_util.hh>
-#include <utility/stream_util.hh>
 
 #include <basic/Tracer.hh>
 

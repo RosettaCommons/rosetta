@@ -23,34 +23,31 @@
 
 // Unit headers
 #include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
-#include <core/scoring/etable/etrie/EtableAtom.hh>
-#include <core/scoring/etable/etrie/CountPairData_1_2.hh>
-#include <core/scoring/etable/EtableOptions.hh>
 
 // Package headers
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/conformation/AbstractRotamerTrie.hh>
+#include <core/conformation/AbstractRotamerTrie.fwd.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 // Utility headers
-#include <utility/vector1.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

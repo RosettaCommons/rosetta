@@ -13,33 +13,22 @@
 
 #include <protocols/fold_from_loops/movers/LabelPoseFromResidueSelectorMover.hh>
 #include <protocols/fold_from_loops/movers/LabelPoseFromResidueSelectorMoverCreator.hh>
-#include <protocols/fold_from_loops/utils/utils.hh>
 
 // Protocol headers
-#include <protocols/rosetta_scripts/util.hh>
 
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/pose/selection.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Basic/Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>

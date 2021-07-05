@@ -14,6 +14,8 @@
 #include <protocols/sewing/data_storage/HashedSmartAssembly.hh>
 #include <basic/Tracer.hh>
 
+#include <protocols/sewing/hashing/BasisMapGenerator.hh> // AUTO IWYU For BasisMapGenerator
+
 static basic::Tracer TR( "protocols.sewing.data_storage.HashedSmartAssembly" );
 
 

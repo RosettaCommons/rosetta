@@ -27,7 +27,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <protocols/jumping/JumpSetup.hh>
+#include <protocols/jumping/JumpSetup.fwd.hh>
 #include <protocols/jumping/JumpSample.hh>
 
 // ObjexxFCL Headers
@@ -37,9 +37,7 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 //// C++ headers

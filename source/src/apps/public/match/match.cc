@@ -17,7 +17,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/id/AtomID.hh>
@@ -37,15 +36,12 @@
 #include <protocols/match/MatcherTask.hh>
 
 #include <protocols/match/output/ProcessorFactory.hh>
-#include <protocols/match/output/MatchProcessor.hh>
+#include <protocols/match/output/MatchProcessor.fwd.hh>
 
 
-#include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/string_util.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>

@@ -24,7 +24,7 @@
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 #include <utility/excn/Exceptions.hh>
 

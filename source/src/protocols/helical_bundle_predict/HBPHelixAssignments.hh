@@ -26,12 +26,13 @@
 #include <core/id/TorsionID.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // STL headers
 #include <map>
+
+class HBPHelixAssignmentsTests; //Forward declaration of test class for friendship.
 
 namespace protocols {
 namespace helical_bundle_predict {

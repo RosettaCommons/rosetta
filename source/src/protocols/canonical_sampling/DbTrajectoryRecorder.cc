@@ -18,21 +18,18 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
 // Protocol headers
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/tools/make_vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
@@ -43,7 +40,6 @@
 #include <basic/Tracer.hh>
 
 // External headers
-#include <cppdb/frontend.h>
 
 // MPI headers
 #ifdef USEMPI

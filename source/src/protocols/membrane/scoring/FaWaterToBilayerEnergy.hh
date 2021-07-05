@@ -22,17 +22,13 @@
 #include <protocols/membrane/scoring/MEnvAtomParams.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <core/conformation/Atom.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 namespace protocols {
 namespace membrane {

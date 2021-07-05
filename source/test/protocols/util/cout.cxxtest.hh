@@ -14,13 +14,10 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 
-#include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -32,7 +29,10 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 static basic::Tracer TR("protocol.util.cout.cxxtest");

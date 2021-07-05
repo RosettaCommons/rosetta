@@ -23,10 +23,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace hotspot_hashing {

@@ -20,16 +20,15 @@
 #include <core/pose/Pose.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 // Basic headers
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationManager.hh>
+
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
 
 
 namespace protocols {

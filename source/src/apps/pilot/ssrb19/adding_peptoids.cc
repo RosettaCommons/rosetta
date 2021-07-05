@@ -1,14 +1,11 @@
 // Package Headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 //Project Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -21,7 +18,6 @@
 
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 
 // iostream

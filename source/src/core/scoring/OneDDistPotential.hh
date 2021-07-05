@@ -17,11 +17,8 @@
 #define INCLUDED_core_scoring_OneDDistPotential_HH
 
 #include <utility/VirtualBase.hh>
-#include <core/kinematics/Jump.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/OneDDistPotential.fwd.hh>
 #include <core/types.hh>
-#include <utility/vector1.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 #include <numeric/MathNTensor.hh>
 #include <numeric/interpolation/polycubic_catmull_rom.hh>

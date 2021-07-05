@@ -19,21 +19,17 @@
 #include <core/types.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/string_util.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -22,7 +22,6 @@
 #include <platform/types.hh> // ssize_t
 
 // C++ headers
-#include <cstddef> // std::size_t
 
 
 namespace numeric {

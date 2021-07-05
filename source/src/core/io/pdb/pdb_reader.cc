@@ -25,7 +25,6 @@
 #include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactoring is complete.
 #include <core/io/HeaderInformation.hh>
 #include <core/io/Remarks.hh>
-#include <core/io/NomenclatureManager.hh>
 
 // Utility headers
 #include <utility/string_constants.hh>
@@ -35,13 +34,14 @@
 #include <basic/Tracer.hh>
 
 // External headers
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ header
 #include <algorithm>
 #include <sstream>
 #include <map>
+
+#include <core/io/AtomInformation.hh> // AUTO IWYU For AtomInformation
 
 
 static basic::Tracer TR( "core.io.pdb.pdb_reader" );

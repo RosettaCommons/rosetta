@@ -11,7 +11,6 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // C/C++ headers
-#include <iostream>
 #include <string>
 
 // Utility headers
@@ -25,7 +24,7 @@
 // Project headers
 #include <protocols/star/StarAbinitio.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/viewer/viewers.hh>
 
 const std::string ERROR_PREFIX = "Failed to specify required option ";

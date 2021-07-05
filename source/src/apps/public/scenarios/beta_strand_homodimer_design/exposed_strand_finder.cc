@@ -17,14 +17,12 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/vector1.hh>
 // core headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -34,21 +32,19 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 //#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
 //#include <core/scoring/etable/BaseEtableEnergy.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 //#include <core/scoring/etable/CoarseEtableEnergy.hh>
-#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
 
 //Numeric headers
-#include <numeric/xyzVector.hh>
 
 //Basic headers
 #include <basic/MetricValue.hh>
@@ -70,12 +66,10 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-#include <cmath>
 #include <utility>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
-#include <utility/vector0.hh>
 
 
 static basic::Tracer TR( "apps.public.beta_strand_homodimer_design.exposed_strand_finder" );

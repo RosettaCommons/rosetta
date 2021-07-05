@@ -26,9 +26,7 @@
 #include <utility/string_util.hh>
 
 
-#include <utility/assert.hh>
 #include <iostream>
-#include <sstream>
 
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>

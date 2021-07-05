@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
-#include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -26,7 +25,6 @@
 #include <core/chemical/types.hh>
 
 
-#include <numeric/xyzVector.fwd.hh>
 
 
 #include <ObjexxFCL/FArray3D.fwd.hh>

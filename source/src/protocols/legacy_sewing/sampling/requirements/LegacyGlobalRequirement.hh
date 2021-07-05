@@ -18,16 +18,13 @@
 //Unit headers
 #include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalRequirement.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <core/types.hh>
 
 //Package headers
 #include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
 
 //Utility headers
 #include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

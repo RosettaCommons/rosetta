@@ -14,23 +14,18 @@
 // devel headers
 #include <devel/init.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/chemical/AtomType.hh>
 
 // protocol headers
 // protocol headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -43,12 +38,13 @@
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
 #include <cmath>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer TR("glycan_clash_check");
 

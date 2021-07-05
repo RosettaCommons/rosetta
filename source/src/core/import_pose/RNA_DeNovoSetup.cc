@@ -18,17 +18,14 @@
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 #include <core/import_pose/RNA_HelixAssembler.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/func/FadeFunc.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/io/rna/RNA_DataReader.hh>
@@ -47,21 +44,18 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
-#include <ObjexxFCL/format.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/io/izstream.hh>
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 
 static basic::Tracer TR( "core.import_pose.RNA_DeNovoSetup" );
 using utility::vector1;

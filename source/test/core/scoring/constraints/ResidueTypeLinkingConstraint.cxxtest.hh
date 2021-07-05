@@ -17,15 +17,14 @@
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-#include <test/util/deriv_funcs.hh>
 
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+
+#include <core/scoring/Energies.hh> // AUTO IWYU For Energies, Energies::EnergyMap
 
 #ifdef SERIALIZATION
 #include <core/id/AtomID.hh>

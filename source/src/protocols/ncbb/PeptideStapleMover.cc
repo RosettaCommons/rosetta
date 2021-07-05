@@ -31,7 +31,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
 

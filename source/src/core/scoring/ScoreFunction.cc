@@ -22,7 +22,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <istream>
 
 // External headers
 #include <boost/algorithm/string/join.hpp>
@@ -37,7 +36,6 @@
 #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -52,7 +50,6 @@
 #include <core/scoring/methods/FreeDOF_Options.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <core/scoring/rna/RNA_EnergyMethodOptions.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
@@ -84,8 +81,8 @@
 // Utility headers
 #include <utility/io/izstream.hh>
 #include <utility/io/GeneralFileManager.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKeyList.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/vector1.hh>
 
 // ObjexxFCL Headers

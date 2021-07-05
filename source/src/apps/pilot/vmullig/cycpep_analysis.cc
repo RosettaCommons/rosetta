@@ -14,25 +14,17 @@
 
 
 //General includes
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
-#include <core/import_pose/import_pose.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <numeric/angle.functions.hh>
 
-#include <utility/vector1.hh>
-#include <cstdio>
 
 //Tracer:
 static basic::Tracer TR( "apps.pilot.vmullig.cycpep_analysis" );

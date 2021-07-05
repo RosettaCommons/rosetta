@@ -13,7 +13,7 @@
 
 #include <protocols/stepwise/monte_carlo/mover/VaryLoopLengthMover.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -21,7 +21,8 @@
 #include <protocols/stepwise/modeler/util.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
+
+#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh> // AUTO IWYU For StepWiseMove, BOND_TO_PREVIOUS, ADD_LOOP_RES
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.VaryLoopLengthMover" );
 

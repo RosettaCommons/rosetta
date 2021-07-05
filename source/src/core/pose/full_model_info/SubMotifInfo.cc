@@ -19,7 +19,6 @@
 // Project headers
 
 // Utility headers
-#include <utility>
 #include <utility/vector1.hh>
 
 // C++

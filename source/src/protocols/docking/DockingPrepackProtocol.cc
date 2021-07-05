@@ -18,20 +18,14 @@
 
 // Package headers
 #include <protocols/docking/util.hh>
-#include <protocols/docking/metrics.hh>
 #include <protocols/docking/DockTaskFactory.hh>
 #include <protocols/docking/SidechainMinMover.hh>
-#include <protocols/docking/DockingInitialPerturbation.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/util.hh>
 
-#include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -41,7 +35,6 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -50,12 +43,9 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/file/file_sys_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

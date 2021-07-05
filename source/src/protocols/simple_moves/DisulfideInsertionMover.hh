@@ -23,11 +23,13 @@
 
 // core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 
 // utility headers
 #include <utility/tag/Tag.fwd.hh>
+
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For Residue
 
 namespace protocols {
 namespace simple_moves {

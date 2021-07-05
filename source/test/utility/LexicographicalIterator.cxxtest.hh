@@ -18,7 +18,6 @@
 #include <cxxtest/TestSuite.h>
 
 /// C++ headers
-#include <iostream>
 
 
 class LexicographicalIteratorTests : public CxxTest::TestSuite {

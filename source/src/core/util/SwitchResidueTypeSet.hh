@@ -23,7 +23,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

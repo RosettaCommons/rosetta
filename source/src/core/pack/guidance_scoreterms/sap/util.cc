@@ -15,7 +15,6 @@
 #include <core/pack/guidance_scoreterms/sap/SapConstraintOptions.hh>
 #include <core/pack/guidance_scoreterms/sap/SapConstraintHelper.hh>
 
-#include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -26,9 +25,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
-#include <chrono>
-#include <thread>
+
 
 namespace core {
 namespace pack {

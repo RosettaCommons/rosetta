@@ -17,19 +17,16 @@
 // Unit headers
 
 // Project Headers
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <string>
-#include <set>
 
 #include <numeric/types.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <numeric/xyzMatrix.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <ObjexxFCL/FArray2D.fwd.hh> // AUTO IWYU For FArray2D
 
 namespace protocols {
 namespace seeded_abinitio {

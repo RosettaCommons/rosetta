@@ -18,8 +18,6 @@
 #include <protocols/loops/loops_definers/LoopsDefinerCreator.hh>
 #include <protocols/loops/loops_definers/LoopsExplicitDefinerCreator.fwd.hh>
 
-#include <core/types.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

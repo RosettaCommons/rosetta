@@ -19,12 +19,11 @@
 // Package headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
-#include <numeric/MathNTensor.hh>
+#include <numeric/MathNTensor.fwd.hh>
 
 // C++ headers
 #include <utility/assert.hh>
 #include <utility/fixedsizearray1.hh>
-#include <cmath>
 
 
 namespace numeric {

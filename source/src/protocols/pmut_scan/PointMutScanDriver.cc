@@ -28,8 +28,8 @@
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 
@@ -38,10 +38,8 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
@@ -54,7 +52,6 @@
 #include <protocols/task_operations/RestrictToNeighborhoodOperation.hh>
 
 // Utility Headers
-#include <utility>
 #include <utility/file/FileName.hh>
 
 // Numeric Headers
@@ -76,11 +73,10 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <core/conformation/PointGraphData.hh> // MANUAL IWYU
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

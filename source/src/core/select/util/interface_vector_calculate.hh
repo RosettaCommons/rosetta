@@ -19,7 +19,7 @@
 #include <core/types.hh>
 #include <set>
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace select {

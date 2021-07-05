@@ -18,7 +18,6 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
@@ -29,7 +28,6 @@
 
 // Project headers
 #include <core/id/AtomID.hh>
-#include <core/id/TorsionID.hh>
 #include <core/types.hh>
 
 // Utility headers
@@ -40,7 +38,8 @@
 #include <basic/Tracer.hh>
 
 // Numeric headers
-#include <numeric/xyz.functions.hh>
+
+#include <numeric/NumericTraits.hh> // AUTO IWYU For NumericTraits
 
 
 // Construct tracer.

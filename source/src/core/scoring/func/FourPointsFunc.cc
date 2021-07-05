@@ -13,7 +13,6 @@
 
 #include <core/scoring/func/FourPointsFunc.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 

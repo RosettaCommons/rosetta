@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_pose_selectors_ClusterPoseSeletor_hh
 
 // Unit Headers
-#include <protocols/rosetta_scripts/PoseSelector.fwd.hh>
 #include <protocols/rosetta_scripts/PoseSelector.hh>
 #include <protocols/rosetta_scripts/PosePropertyReporter.fwd.hh>
 
@@ -25,13 +24,11 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ Headers
 #include <string>
-#include <vector>
 
 namespace protocols {
 namespace pose_selectors {

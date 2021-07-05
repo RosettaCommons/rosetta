@@ -19,11 +19,10 @@
 #include <protocols/docking/types.hh>
 
 // Project headers
-#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 
 namespace protocols {

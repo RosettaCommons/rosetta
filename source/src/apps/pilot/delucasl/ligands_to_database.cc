@@ -15,13 +15,10 @@
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/ResidueType.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/sql_utils.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
 #include <basic/options/option_macros.hh>

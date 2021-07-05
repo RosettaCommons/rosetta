@@ -16,21 +16,19 @@
 
 // Unit Headers
 #include <protocols/toolbox/rotamer_set_operations/RigidBodyMoveRotSetOps.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
 
 //Project headers
-#include <core/kinematics/Stub.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/hotspot_hashing/SearchPattern.hh>
+#include <protocols/hotspot_hashing/SearchPattern.fwd.hh>
 #include <protocols/hotspot_hashing/SearchPatternRotSetOp.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/kinematics/Stub.hh> // AUTO IWYU For Stub
 
 
 namespace protocols {

@@ -24,24 +24,18 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/jd2/util.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/pointer/memory.hh>
 
 // C++ Headers
 #include <iostream>
-#include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
-#include <utility/excn/Exceptions.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

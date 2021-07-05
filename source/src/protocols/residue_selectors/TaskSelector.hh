@@ -21,7 +21,6 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/types.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>

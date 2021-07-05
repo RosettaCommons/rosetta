@@ -16,75 +16,36 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMultifunc.hh>
-#include <core/optimization/symmetry/SymMinimizerMap.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/atom_tree_minimize.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/pose/util.hh>
 
-#include <core/scoring/electron_density/util.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 #include <devel/init.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 
-#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
-#include <core/scoring/constraints/util.hh>
 
 #include <utility/excn/Exceptions.hh>
 
 
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -92,7 +53,6 @@
 
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
 using basic::Error;
 using basic::Warning;

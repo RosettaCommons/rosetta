@@ -18,7 +18,7 @@
 
 
 // Package headers
-#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/IOTraits.hh>
 
 // C++ headers

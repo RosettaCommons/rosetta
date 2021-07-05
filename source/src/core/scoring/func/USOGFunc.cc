@@ -13,18 +13,15 @@
 // Package headers
 #include <core/scoring/func/USOGFunc.hh>
 #include <core/scoring/func/Func.hh>
-#include <core/scoring/constraints/util.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers
-#include <algorithm>
 #include <cmath>
 #include <iostream>
 

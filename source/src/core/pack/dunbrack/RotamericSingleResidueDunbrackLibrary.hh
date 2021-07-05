@@ -17,11 +17,9 @@
 
 // Unit Headers
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.fwd.hh>
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.fwd.hh>
 
 // Package Headers
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/ResidueDOFReporter.fwd.hh>
 
@@ -30,7 +28,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray1D.hh> // DO NOT AUTO-REMOVE
 #include <ObjexxFCL/FArray2D.hh>
 //#include <ObjexxFCL/FArray3D.hh>
 

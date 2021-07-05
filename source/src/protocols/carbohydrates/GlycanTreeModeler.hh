@@ -20,11 +20,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/minimization_packing/MinMover.fwd.hh>
-#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
-#include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>

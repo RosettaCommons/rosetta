@@ -16,16 +16,14 @@
 #include <protocols/relax/loop/LoopRelaxMover.fwd.hh>
 
 #include <core/types.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/LoopsFileIO.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <string>
 

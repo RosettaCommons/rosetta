@@ -15,14 +15,11 @@
 // Unit headers
 #include <core/io/pdb/RecordCollection.hh>
 #include <core/io/pdb/record_def_io.hh>
-#include <core/io/pdb/Field.hh>
 
 // Project header
-#include <core/types.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
-#include <utility/exit.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

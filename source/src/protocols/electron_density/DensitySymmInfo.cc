@@ -12,22 +12,16 @@
 #include <protocols/electron_density/DensitySymmInfo.hh>
 
 
-#include <ObjexxFCL/format.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
 
-#include <protocols/electron_density/util.hh>
 
-#include <utility/tag/Tag.hh>
 
-#include <numeric/random/random.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 
 #include <basic/Tracer.hh>
 
-#include <ObjexxFCL/format.hh>
+
+#include <core/scoring/electron_density/ElectronDensity.hh> // AUTO IWYU For ElectronDensity
 
 static basic::Tracer TR( "protocols.electron_density.DensitySymmInfo" );
 

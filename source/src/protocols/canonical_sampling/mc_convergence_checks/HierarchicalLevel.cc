@@ -19,21 +19,16 @@
 
 
 #include <ObjexxFCL/FArray2D.hh>
-#include <protocols/toolbox/DecoySetEvaluation.hh>
 #include <protocols/toolbox/superimpose.hh>
 
 #include <utility>
 #include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/prof.hh>
 
-#include <set>
 #include <list>
-#include <sstream>
 #include <fstream>
-#include <iostream>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -43,7 +38,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
 
 //this is actually only for debugging
 #ifdef USEMPI

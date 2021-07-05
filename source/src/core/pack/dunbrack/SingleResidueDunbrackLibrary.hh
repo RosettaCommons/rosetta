@@ -19,7 +19,6 @@
 
 // Package Headers
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/chemical/AA.hh>
 

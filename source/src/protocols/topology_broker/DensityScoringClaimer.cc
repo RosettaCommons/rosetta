@@ -22,15 +22,12 @@
 #include <protocols/topology_broker/claims/LegacyRootClaim.hh>
 #include <protocols/topology_broker/claims/JumpClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
-#include <protocols/topology_broker/TopologyBroker.hh>
-#include <protocols/topology_broker/SequenceNumberResolver.hh>
 
 
 // Project Headers
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 
@@ -42,7 +39,6 @@
 //// C++ headers
 
 #include <protocols/jumping/JumpSetup.fwd.hh>
-#include <utility/vector1.hh>
 
 
 // option key includes

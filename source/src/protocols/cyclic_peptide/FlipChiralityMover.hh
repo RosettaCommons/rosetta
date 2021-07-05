@@ -19,16 +19,14 @@
 // Package headers
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <set>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/cyclic_peptide/FlipChiralityMover.fwd.hh>

@@ -14,7 +14,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
@@ -43,11 +42,9 @@
 #include <numeric/deriv/distance_deriv.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/scoring/hbonds/HBEvalTuple.hh>
-#include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
 
 using namespace core;

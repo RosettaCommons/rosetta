@@ -14,14 +14,14 @@
 #include <protocols/environment/DofUnlock.hh>
 
 // Package headers
-#include <protocols/environment/ProtectedConformation.hh>
-#include <protocols/environment/EnvExcn.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
 
 // tracer
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Conformation
+#include <core/environment/DofPassport.hh> // AUTO IWYU For DofPassport
 
 // C++ Headers
 

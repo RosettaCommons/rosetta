@@ -21,8 +21,6 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace denovo_design {

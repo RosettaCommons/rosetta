@@ -20,12 +20,11 @@
 #include <core/io/StructFileReaderOptions.hh>
 
 // Project headers
-#include <core/import_pose/import_pose.hh>
 
 // Utility headers
-#include <utility/backtrace.hh>
+#include <utility/assert.hh>
 #include <utility/keys/VariantKey.hh>
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKey.hh>
 
 // basic headers

@@ -17,11 +17,8 @@
 // Package Headers
 #include <numeric/random/WeightedSampler.hh>
 
-#include <numeric/constants.hh>
 
 #include <vector>
-#include <iostream>
-#include <sstream>
 
 
 class WeightedSamplerTests : public CxxTest::TestSuite

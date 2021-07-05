@@ -29,7 +29,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 
 
@@ -43,12 +43,9 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/util.hh>
 #include <basic/Tracer.hh>
 
@@ -62,6 +59,10 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+
+#include <protocols/abinitio/KinematicControl.hh> // AUTO IWYU For KinematicControl, CoordinateConstraintKC
+#include <protocols/jumping/JumpSetup.hh> // AUTO IWYU For Interval, operator<<, BaseJumpSetup
+#include <core/fragment/SecondaryStructure.hh> // AUTO IWYU For SecondaryStructure
 
 
 static basic::Tracer tr( "protocols.general_abinitio", basic::t_info );

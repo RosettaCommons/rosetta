@@ -17,32 +17,26 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 
 // Core Headers
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 //Protocol Headers
 #include <protocols/backrub/BackrubProtocol.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/CentroidRelax.hh>
-#include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
@@ -50,7 +44,6 @@
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 #include <protocols/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
@@ -59,13 +52,13 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility>
-#include <utility/file/FileName.hh>
 #include <sstream>
+
+#include <protocols/simple_moves/ReturnSidechainMover.hh> // AUTO IWYU For ReturnSidechainMover
 
 static basic::Tracer TR( "antibody.design.GeneralAntibodyModeler" );
 namespace protocols {

@@ -22,6 +22,8 @@
 // Utility headers
 #include <basic/options/option_macros.hh>
 
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For RealOptionKey, RealVectorOptionKey, BooleanOptionKey, IntegerOpt...
+
 //Auto Headers
 OPT_1GRP_KEY( Real, noesy_weights, chemshift )
 //OPT_1GRP_KEY( Real, noesy_weights, network_high )

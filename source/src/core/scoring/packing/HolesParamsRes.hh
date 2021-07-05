@@ -16,10 +16,7 @@
 
 #include <core/types.hh>
 
-#include <basic/database/open.hh>
 
-#include <utility/io/izstream.hh>
-#include <utility/exit.hh>
 
 
 #include <utility/vector1.hh>

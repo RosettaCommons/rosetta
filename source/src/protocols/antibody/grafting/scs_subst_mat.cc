@@ -19,22 +19,14 @@
 #include <protocols/antibody/grafting/scs_subst_mat.hh>
 
 // #include <protocols/antibody/grafting/chothia_numberer.hh>
-#include <protocols/antibody/grafting/scs_functor.hh>
 
 #include <core/sequence/MatrixScoringScheme.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/execute.hh>
 
-#include <basic/options/keys/antibody.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
-#include <utility/string_util.hh>
 //#include <utility/stream_util.hh>
 
-#include <algorithm>
-#include <fstream>
-#include <locale>
 
 namespace protocols {
 namespace antibody {

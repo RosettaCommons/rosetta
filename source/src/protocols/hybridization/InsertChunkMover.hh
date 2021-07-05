@@ -17,16 +17,11 @@
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/util/kinematics_util.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <numeric/xyz.functions.hh>
 
-#include <set>
 
 namespace protocols {
 namespace hybridization {

@@ -23,15 +23,15 @@
 
 //// C++ headers
 #include <string>
-#include <vector>
 
-#include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
-#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <utility/vector1.hh>
-#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
+#include <protocols/rna/denovo/movers/RNA_FragmentMover.fwd.hh>
+#include <protocols/rna/denovo/movers/RNA_Minimizer.fwd.hh>
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.fwd.hh>
+
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionCOP
 
 
 namespace protocols {

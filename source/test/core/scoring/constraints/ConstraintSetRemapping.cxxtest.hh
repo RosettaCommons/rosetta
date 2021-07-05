@@ -33,7 +33,7 @@
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -46,12 +46,6 @@
 
 //Auto Headers
 #include <core/chemical/VariantType.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/kinematics/AtomPointer.fwd.hh>
-#include <core/kinematics/AtomWithDOFChange.fwd.hh>
-#include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
-#include <core/scoring/func/CircularHarmonicFunc.fwd.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.fwd.hh>
 #include <utility/vector1.hh>
 
 

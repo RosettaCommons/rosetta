@@ -19,14 +19,11 @@
 #include <core/scoring/func/GaussianChainQuadrupleFunc.hh>
 #include <core/scoring/func/GaussianChainGeneralFunc.hh>
 #include <core/types.hh>
-#include <utility>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 // C++ Headers
 #include <iostream>
-#include <cmath>
 
 //////////////////////////////////////////////////////////////////////////
 // ---------------------------------

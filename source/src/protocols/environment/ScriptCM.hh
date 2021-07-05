@@ -21,8 +21,8 @@
 #include <protocols/environment/ClientMover.hh>
 
 // Package headers#
-#include <protocols/moves/MoveMapMover.hh>
-#include <protocols/environment/claims/EnvClaim.hh>
+#include <protocols/moves/MoveMapMover.fwd.hh>
+#include <protocols/environment/claims/EnvClaim.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

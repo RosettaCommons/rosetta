@@ -16,26 +16,21 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
-#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
-#include <core/pack/palette/PackerPalette.hh>
+#include <core/pack/palette/PackerPalette.fwd.hh>
 #include <core/pack/palette/PackerPaletteFactory.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/init/init.hh>
-#include <core/id/AtomID.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
@@ -50,7 +45,6 @@
 
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
 #include <protocols/rna/denovo/util.hh>
@@ -58,29 +52,23 @@
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <sstream>
 
 // option key includes
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
-#include <ObjexxFCL/DynamicIndexRange.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

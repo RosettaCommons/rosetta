@@ -25,7 +25,6 @@
 #include <basic/Tracer.hh>
 
 // C++ header
-#include <map>
 
 static basic::Tracer TR("core.chemical.rings.ring_conformer_io.cxxtest");
 

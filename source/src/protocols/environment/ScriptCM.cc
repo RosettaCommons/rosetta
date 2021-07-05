@@ -30,13 +30,14 @@
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
-#include <numeric/random/random.hh>
 
 // tracer
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/environment/claims/EnvClaim.hh> // IWYU MANUAL
 
 #ifdef WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>

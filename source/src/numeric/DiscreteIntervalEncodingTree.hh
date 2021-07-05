@@ -16,8 +16,8 @@
 #ifndef INCLUDED_numeric_DiscreteIntervalEncodingTree_HH
 #define INCLUDED_numeric_DiscreteIntervalEncodingTree_HH
 
-// Unit headers
-// #include <numeric/DiscreteIntervalEncodingTree.fwd.hh>
+//Unit headers
+#include <numeric/DiscreteIntervalEncodingTree.fwd.hh>
 
 // Utility headers
 #include <utility/assert.hh>

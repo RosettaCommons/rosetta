@@ -16,12 +16,10 @@
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 

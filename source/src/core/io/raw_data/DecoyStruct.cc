@@ -13,9 +13,7 @@
 /// @author James Thompson, Monica Berrondo
 
 // C++ Headers
-#include <vector>
 #include <string>
-#include <map>
 
 // mini headers
 
@@ -23,15 +21,16 @@
 #include <core/io/raw_data/DecoyStruct.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 #include <numeric/model_quality/rms.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D::IR
 
 
 namespace core {

@@ -20,31 +20,24 @@
 #include <protocols/stepwise/modeler/util.hh>
 
 //////////////////////////////////
-#include <core/fragment/Frame.hh>
 #include <core/types.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/util.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/util.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <numeric/angle.functions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
-#include <ObjexxFCL/format.hh>
 
 #include <string>
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 
 #include <utility/numbers.hh>
 #include <basic/Tracer.hh>

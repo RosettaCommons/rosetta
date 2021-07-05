@@ -15,7 +15,6 @@
 #ifdef WIN32
 #define _USE_MATH_DEFINES
 #endif
-#include <cmath>
 
 
 #include <devel/inv_kin_lig_loop_design/Protocol.hh>
@@ -46,8 +45,9 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
 
 #define REPORTCYCLES1(c0,m0)                    " Cycles:\t" << c0 << "/" << m0
 #define REPORTCYCLES2(c0,m0,c1,m1)              " Cycles:\t" << c0 << "/" << m0 << "\t" << c1 << "/" << m1

@@ -15,42 +15,17 @@
 #include <core/scoring/cryst/PhenixInterface.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/pose/Pose.fwd.hh>
 
-#include <core/conformation/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/scoring/cryst/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/fourier/FFT.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/statistics/functions.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 
-#include <basic/options/keys/cryst.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 
 // Python interpreter
 #ifdef WITH_PYTHON
@@ -63,13 +38,8 @@
 #endif
 
 // C++ headers
-#include <iostream>
-#include <fstream>
-#include <limits>
-#include <sstream>
 
 #ifndef WIN32
-#include <unistd.h>
 #endif
 
 namespace core {

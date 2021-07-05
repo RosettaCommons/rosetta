@@ -28,7 +28,6 @@
 #include <fstream>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 namespace protocols {

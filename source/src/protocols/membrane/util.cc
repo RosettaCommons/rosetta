@@ -45,24 +45,16 @@
 
 // Package Headers
 #include <protocols/moves/DsspMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -74,7 +66,6 @@
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #include <numeric/conversions.hh>
@@ -84,7 +75,6 @@
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <algorithm>
 #include <string>
 #include <cstdlib>
 #include <cmath>

@@ -20,12 +20,10 @@
 #include <core/select/residue_selector/util.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/pose/selection.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 
 // Utility Headers
@@ -34,7 +32,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 
 #ifdef    SERIALIZATION

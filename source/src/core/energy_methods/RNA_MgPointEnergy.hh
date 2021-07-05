@@ -21,7 +21,6 @@
 // Package headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

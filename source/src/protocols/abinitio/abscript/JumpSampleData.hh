@@ -15,7 +15,6 @@
 
 // Unit Headers
 #include <protocols/abinitio/abscript/JumpSampleData.fwd.hh>
-#include <protocols/abinitio/abscript/JumpSampleDataCreator.hh>
 
 // Package headers
 

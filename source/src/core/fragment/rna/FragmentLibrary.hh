@@ -16,6 +16,8 @@
 
 #include <core/fragment/rna/FragmentLibrary.fwd.hh>
 #include <core/fragment/rna/FullAtomRNA_Fragments.hh>
+#include <core/fragment/rna/TorsionSet.hh>
+
 #include <core/types.hh>
 #include <vector>
 #include <utility/VirtualBase.hh>

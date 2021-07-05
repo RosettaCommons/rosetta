@@ -28,7 +28,6 @@
 
 #include <numeric/xyzVector.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 

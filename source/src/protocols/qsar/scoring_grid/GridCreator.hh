@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_qsar_scoring_grid_GridCreator_HH
 #define INCLUDED_protocols_qsar_scoring_grid_GridCreator_HH
 
-#include <core/types.hh>
 #include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
 
 // Utility headers

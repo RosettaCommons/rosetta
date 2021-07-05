@@ -20,18 +20,12 @@
 
 // core headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/select/util.hh>
-#include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -43,12 +37,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/simple_filters/BuriedUnsatHbondFilter.hh>
-#include <protocols/simple_filters/ShapeComplementarityFilter.hh>
 
 // numeric headers
-#include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -57,13 +47,14 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/options/OptionCollection.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/memory.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 #define PACKER_ITER 1
 

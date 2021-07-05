@@ -16,14 +16,12 @@
 #define INCLUDED_protocols_indexed_structure_store_StructureStoreProvider_HH
 
 // Utility Headers
-#include <platform/types.hh>
 
 #include <utility/VirtualBase.hh>
 
 #include <protocols/indexed_structure_store/StructureStoreProvider.fwd.hh>
-#include <protocols/indexed_structure_store/StructureStore.hh>
+#include <protocols/indexed_structure_store/StructureStore.fwd.hh>
 
-#include <vector>
 #include <string>
 
 namespace protocols

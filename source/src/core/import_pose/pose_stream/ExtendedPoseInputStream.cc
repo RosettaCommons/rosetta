@@ -17,16 +17,13 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/ExtendedPoseInputStream.hh>
 
 // C++ headers
-#include <string>
 
 #include <utility/exit.hh>
 
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

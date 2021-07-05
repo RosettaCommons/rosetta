@@ -28,7 +28,6 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/types.hh>
-#include <protocols/relax/util.hh>
 
 
 // C++ headers

@@ -12,7 +12,7 @@
 
 #include <protocols/features/DatabaseStatements.hh>
 
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/database/sql_utils.hh>
 
@@ -21,7 +21,6 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
-#include <utility/vector1.hh>
 
 #include <sstream>
 

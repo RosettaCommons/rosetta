@@ -26,7 +26,6 @@
 
 // project headers
 #include <core/types.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 
@@ -36,11 +35,9 @@
 
 // utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // numeric headers
-#include <numeric/xyzVector.fwd.hh>
 #include <numeric/random/random.fwd.hh>
 
 // C++ Headers

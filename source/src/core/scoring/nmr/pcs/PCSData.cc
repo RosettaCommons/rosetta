@@ -16,15 +16,12 @@
 #include <core/scoring/nmr/pcs/PCSData.hh>
 
 // Package headers
-#include <core/scoring/nmr/NMRDataFactory.hh>
 #include <core/scoring/nmr/pcs/PCSMultiSet.hh>
 #include <core/scoring/nmr/pcs/PCSSingleSet.hh>
-#include <core/scoring/nmr/pcs/PCSSingle.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
 #include <core/io/nmr/util.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -33,7 +30,6 @@
 #include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/conformation/Residue.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -48,17 +44,10 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 // C++ headers
-#include <cmath>
 #include <string>
-#include <iostream>
-#include <sstream>
 #include <fstream>
-#include <utility>
-#include <algorithm>
 #include <numeric>
 
 namespace core {

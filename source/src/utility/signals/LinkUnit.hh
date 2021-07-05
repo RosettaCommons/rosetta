@@ -25,7 +25,6 @@
 
 // package headers
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/assert.hh>
 
 namespace utility {

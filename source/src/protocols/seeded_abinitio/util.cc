@@ -14,24 +14,20 @@
 // Unit headers
 
 // Project Headers
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <string>
-#include <set>
 
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/model_quality/rms.hh>
+#include <numeric/xyzMatrix.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/seeded_abinitio/util.hh>
 #include <protocols/toolbox/superimpose.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D::IR
 
 
 namespace protocols {

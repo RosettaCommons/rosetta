@@ -37,7 +37,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility>
 #include <utility/excn/Exceptions.hh>
 //#include <utility/io/izstream.hh>
 //#include <utility/io/ozstream.hh>
@@ -48,8 +47,9 @@
 //// C++ headers
 #include <fstream>
 
-#include <core/id/SequenceMapping.hh>
 #include <utility/vector1.hh>
+
+#include <core/scoring/constraints/ConstraintSet.hh> // AUTO IWYU For ConstraintSet
 
 
 // option key includes

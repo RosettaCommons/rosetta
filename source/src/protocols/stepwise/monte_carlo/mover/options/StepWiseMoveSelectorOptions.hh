@@ -20,11 +20,12 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/VirtualBase.hh>
+
+#include <string>
 
 #if defined(WIN32) || defined(PYROSETTA)
 #include <utility/tag/Tag.hh>

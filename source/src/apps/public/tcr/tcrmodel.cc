@@ -24,7 +24,6 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>

@@ -15,17 +15,18 @@
 #ifndef INCLUDED_protocols_task_operations_ConservativeDesignOperation_hh
 #define INCLUDED_protocols_task_operations_ConservativeDesignOperation_hh
 
-#include <protocols/task_operations/ConservativeDesignOperationCreator.hh>
 #include <protocols/task_operations/ConservativeDesignOperation.fwd.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace protocols {

@@ -15,14 +15,12 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueen_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueen_HH
 
-#include <utility/VirtualBase.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJobQueen.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/TagManager.hh>
 #include <protocols/jd3/strong_types.hh>
 
 //JD3
-#include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJob.fwd.hh>
 #include <protocols/jd3/JobGenealogist.hh>
@@ -35,19 +33,15 @@
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>
 #include <protocols/jd3/job_summaries/StandardPoseJobSummary.hh>
 #include <protocols/jd3/output/OutputSpecification.fwd.hh>
-#include <protocols/jd3/strong_types.hh>
 
-#include <protocols/moves/Mover.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
-#include <basic/datacache/DataMap.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/tag/XMLSchemaValidation.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 
 #include <unordered_map>
-#include <boost/functional/hash.hpp>
+
+#include <boost/container_hash/extensions.hpp> // AUTO IWYU For hash_combine
 
 #ifdef    SERIALIZATION
 // Cereal headers

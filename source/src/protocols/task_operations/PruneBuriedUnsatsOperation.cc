@@ -20,7 +20,7 @@
 #include <protocols/task_operations/PruneBuriedUnsatsOperation.hh>
 #include <protocols/task_operations/PruneBuriedUnsatsOperationCreator.hh>
 
-#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>

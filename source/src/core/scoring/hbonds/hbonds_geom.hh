@@ -28,7 +28,6 @@
 #include <core/conformation/Residue.fwd.hh>
 
 
-#include <numeric/constants.hh>
 
 
 namespace core {

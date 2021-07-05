@@ -17,7 +17,7 @@
 #define INCLUDED_core_chemical_rotamers_RotamerLibrarySpecificationRegistrator_hh
 
 // Package headers
-#include <core/chemical/rotamers/RotamerLibrarySpecificationFactory.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecificationFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace core {

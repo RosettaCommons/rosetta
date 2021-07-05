@@ -33,9 +33,7 @@
 #include <rdkit/GraphMol/FMCS/FMCS.h>
 #include <rdkit/GraphMol/SmilesParse/SmilesParse.h>
 #include <rdkit/GraphMol/SmilesParse/SmartsWrite.h>
-#include <rdkit/GraphMol/FileParsers/FileParsers.h>
 #include <rdkit/GraphMol/Descriptors/MolDescriptors.h>
-#include <rdkit/GraphMol/MolPickler.h>
 
 namespace core {
 namespace chemical {

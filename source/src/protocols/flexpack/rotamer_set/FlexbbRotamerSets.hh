@@ -38,7 +38,6 @@
 #include <core/types.hh>
 
 /// Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSet.fwd.hh>
 #include <utility/vector1.hh>

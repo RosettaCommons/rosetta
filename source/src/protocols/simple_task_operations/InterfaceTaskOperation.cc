@@ -14,7 +14,7 @@
 #include <protocols/simple_task_operations/InterfaceTaskOperation.hh>
 
 #include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 

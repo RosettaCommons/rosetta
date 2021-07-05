@@ -17,7 +17,6 @@
 #include <utility/exit.hh>
 #include <utility/file/FileName.fwd.hh>
 
-#include <string>
 
 #include <utility/vector1.hh>
 

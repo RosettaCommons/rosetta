@@ -19,7 +19,6 @@
 #include <utility/graph/ArrayPool.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 //Types
 #include <platform/types.hh>

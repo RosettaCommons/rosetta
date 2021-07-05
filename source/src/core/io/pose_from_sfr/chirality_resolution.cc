@@ -24,18 +24,10 @@
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
-#include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ElementSet.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/Element.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -46,8 +38,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
 // Numeric headers
@@ -55,16 +45,12 @@
 #include <numeric/numeric.functions.hh>
 
 // External headers
-#include <ObjexxFCL/format.hh>
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/mcgregor_common_subgraphs.hpp>
 #include <boost/graph/graphviz.hpp>
 
 // C++ headers
-#include <fstream>
 #include <sstream>
-#include <cstdlib>
-#include <cstdio>
 #include <cctype>
 #include <utility>
 

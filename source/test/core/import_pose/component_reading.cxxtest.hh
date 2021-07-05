@@ -24,7 +24,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
 
 static basic::Tracer TR("core.io.pdb.component_reading.cxxtest");
 

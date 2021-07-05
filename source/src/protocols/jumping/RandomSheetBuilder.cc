@@ -57,10 +57,8 @@
 //#include <numeric/numeric.functions.hh>
 
 //// C++ headers
-#include <cstdlib>
 
-#include <core/fragment/SecondaryStructure.hh>
-#include <utility/vector0.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
 #include <utility/vector1.hh>
 
 //#include <string>

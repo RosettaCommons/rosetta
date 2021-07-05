@@ -17,26 +17,21 @@
 
 // Package headers
 #include <core/select/residue_selector/util.hh>
-#include <core/select/util.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/simple_metrics/util.hh>
 #include <core/simple_metrics/PerResidueRealMetric.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

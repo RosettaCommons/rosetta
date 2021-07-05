@@ -18,49 +18,26 @@
 
 #include <core/types.hh>
 
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <core/scoring/electron_density/util.hh>
 
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
-#include <core/scoring/constraints/util.hh>
+#include <protocols/moves/Mover.hh> // AUTO IWYU For Mover
 
-#include <utility/excn/Exceptions.hh>
 
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
+
+
 
 namespace protocols {
 namespace cryst {

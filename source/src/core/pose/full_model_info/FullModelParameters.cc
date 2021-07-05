@@ -14,7 +14,6 @@
 
 
 #include <core/pose/full_model_info/FullModelParameters.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -31,6 +30,8 @@
 #include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "core.pose.full_model_info.FullModelParameters" );
 

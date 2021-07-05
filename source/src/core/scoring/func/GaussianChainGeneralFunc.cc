@@ -14,8 +14,6 @@
 
 #include <core/scoring/func/GaussianChainGeneralFunc.hh>
 #include <core/types.hh>
-#include <utility>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <numeric/constants.hh>
 #include <basic/Tracer.hh>

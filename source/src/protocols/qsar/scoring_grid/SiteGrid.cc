@@ -17,17 +17,12 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/UltraLightResidue.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/id/AtomID.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tools/make_vector.hh>
 #include <utility/json_spirit/json_spirit_value.h>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/io/mpistream.hh>
 
 #include <utility/string_util.hh>
 

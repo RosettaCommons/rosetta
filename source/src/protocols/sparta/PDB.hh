@@ -15,9 +15,7 @@
 #ifndef PDB_H
 #define PDB_H
 
-#include <vector>
 #include <map>
-#include <algorithm>
 #include <boost/unordered_map.hpp>
 
 #include <utility/vector0.hh>
@@ -25,7 +23,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -19,17 +19,11 @@
 // Project headers
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/ContextGraphTypes.hh>
-#include <core/scoring/DenseEnergyContainer.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.fwd.hh>
-#include <core/id/AtomID.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
@@ -38,11 +32,13 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <basic/datacache/CacheableData.hh>
 #include <basic/prof.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+
+#include <core/scoring/facts/FACTSPose.hh> // AUTO IWYU For FACTSPoseInfo
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D
 
 
 namespace core {

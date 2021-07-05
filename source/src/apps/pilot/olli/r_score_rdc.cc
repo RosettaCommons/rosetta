@@ -28,7 +28,6 @@
 //#include <core/scoring/constraints/BoundConstraint.hh>
 #include <protocols/jd2/NoOutputJobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/util.hh>
 //for derivative check
 #include <core/kinematics/MoveMap.hh>

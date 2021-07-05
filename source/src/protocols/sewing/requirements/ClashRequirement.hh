@@ -17,14 +17,13 @@
 
 #include <protocols/sewing/requirements/ClashRequirement.fwd.hh>
 #include <protocols/sewing/requirements/AssemblyRequirement.hh>
-#include <protocols/sewing/data_storage/SmartAssembly.hh>
-#include <protocols/sewing/data_storage/SmartSegment.hh>
-#include <protocols/sewing/data_storage/SmartSewingResidue.hh>
-#include <core/conformation/Residue.fwd.hh>
+#include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
+#include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
+#include <protocols/sewing/data_storage/SmartSewingResidue.fwd.hh>
 // Utility headers
 #include <core/types.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For AttributeList
 
 namespace protocols {
 namespace sewing {

@@ -28,22 +28,17 @@ static basic::Tracer TR( "protocols.pose_creation.MergePDBMover" );
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/select/residue_selector/AndResidueSelector.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/select/residue_selector/OrResidueSelector.hh>
 #include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/InterGroupInterfaceByVectorSelector.hh>
-#include <core/select/residue_selector/SymmetricalResidueSelector.hh> //need this?
 //need this for symmetry interface detection
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/AddPDBInfoMover.hh>
 
-#include <core/select/residue_selector/util.hh>
 
-#include <core/pack/make_symmetric_task.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -62,31 +57,21 @@ static basic::Tracer TR( "protocols.pose_creation.MergePDBMover" );
 #include <core/pose/init_id_map.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/selection.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/select/util.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/SequenceMapping.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/rms_util.hh>
-#include <numeric/xyzVector.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/superimpose.hh>
 #include <protocols/simple_moves/CopyRotamerMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>

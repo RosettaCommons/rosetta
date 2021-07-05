@@ -36,13 +36,11 @@
 #else
 #endif
 
-#include <core/io/silent/silent.fwd.hh>
 
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
 #include <utility/vector1.hh>

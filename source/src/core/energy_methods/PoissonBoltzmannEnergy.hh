@@ -28,7 +28,6 @@
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.fwd.hh>
 #include <utility/vector1.hh>
 
 #include <string>

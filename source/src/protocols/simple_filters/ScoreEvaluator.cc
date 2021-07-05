@@ -23,7 +23,6 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Project Headers
-#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -46,7 +45,6 @@ static basic::Tracer tr( "protocols.evaluation.Score" );
 
 #include <protocols/simple_filters/RDC_Evaluator.hh>
 #include <protocols/evaluation/util.hh>
-#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

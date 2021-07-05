@@ -18,7 +18,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <utility/assert.hh>
 #include <utility/exit.hh>
 
 namespace devel {

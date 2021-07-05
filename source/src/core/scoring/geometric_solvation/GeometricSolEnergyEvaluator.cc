@@ -20,7 +20,7 @@
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
@@ -40,28 +40,24 @@
 
 // Project headers
 #include <core/chemical/types.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/types.hh>
 
 // Utility headers
 #include <ObjexxFCL/format.hh>
-#include <numeric/xyz.io.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray3D.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "core.scoring.geometric_solvation.GeometricSolEnergyEvaluator" );
 

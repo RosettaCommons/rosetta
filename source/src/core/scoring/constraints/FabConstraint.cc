@@ -14,8 +14,7 @@
 /// @author Krishna Kilambi (kkpraneeth@jhu.edu, April 2012)
 
 #include <core/scoring/constraints/FabConstraint.hh>
-#include <core/scoring/func/FuncFactory.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/scoring/func/ConstantFunc.hh>
 #include <core/scoring/func/ConstantFunc.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -25,7 +24,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 #include <basic/Tracer.hh>

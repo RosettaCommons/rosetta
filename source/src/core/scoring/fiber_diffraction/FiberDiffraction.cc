@@ -13,12 +13,10 @@
 
 // Unit Headers
 #include <core/scoring/fiber_diffraction/FiberDiffraction.hh>
-#include <core/scoring/fiber_diffraction/util.hh>
 
 // Project headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
@@ -33,6 +31,7 @@
 // C++ headers
 #include <fstream>
 
+#include <cmath> // MANUAL IWYU
 
 namespace core {
 namespace scoring {

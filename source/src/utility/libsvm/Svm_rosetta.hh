@@ -17,14 +17,14 @@
 #ifndef INCLUDED_utility_libsvm_Svm_rosetta_hh
 #define INCLUDED_utility_libsvm_Svm_rosetta_hh
 #include <utility/libsvm/Svm_rosetta.fwd.hh>
-#include <utility/libsvm/Svm.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 // type headers
 #include <platform/types.hh>
 // aaaa WinPyRosetta
 #include <string>
+
+struct svm_model; // Forward declaration
 
 namespace utility {
 namespace libsvm {

@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/UnfoldedStatePotential.hh>
 #include <core/scoring/ScoringManager.hh>

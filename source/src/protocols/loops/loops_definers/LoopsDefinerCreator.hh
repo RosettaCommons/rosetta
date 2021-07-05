@@ -19,13 +19,12 @@
 #include <protocols/loops/loops_definers/LoopsDefinerCreator.fwd.hh>
 
 // Project headers
-#include <core/types.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#include <string>
 
 namespace protocols {
 namespace loops {

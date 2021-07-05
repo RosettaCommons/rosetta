@@ -14,7 +14,6 @@
 
 // Unit header or inline function header
 #include <protocols/sewing/scoring/LigandAssemblyScorer.hh>
-#include <protocols/sewing/scoring/AssemblyScorerCreator.hh>
 // NOTE: This file should have NO dependencies other than its header.
 
 

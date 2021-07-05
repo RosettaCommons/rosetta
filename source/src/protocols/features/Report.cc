@@ -15,8 +15,6 @@
 #include <protocols/features/Report.hh>
 #include <utility/VirtualBase.hh>
 
-#include <protocols/features/FeaturesReporter.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

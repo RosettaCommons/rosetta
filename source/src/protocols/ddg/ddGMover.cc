@@ -19,7 +19,6 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <protocols/scoring/Interface.hh> //added ek for interface ddgs
 
 #include <core/scoring/Energies.hh>
@@ -38,13 +37,12 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -63,26 +61,24 @@
 
 
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
 
 //new includes for rotamer constraints
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 #include <sys/stat.h>
 
 #include <basic/Tracer.hh>
 
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.moves.ddGMover" );
 

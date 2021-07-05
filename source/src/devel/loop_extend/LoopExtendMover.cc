@@ -24,14 +24,13 @@
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/loops/loops_main.hh>
 
-#include <utility/vector1.hh>
 
 
 //movers

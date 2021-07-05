@@ -28,12 +28,11 @@
 #include <core/io/silent/SilentEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/filters/Filter.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -368,6 +367,12 @@ struct ValueEvaluator
 		LARGER,
 		EQUALS
 	};
+
+#ifdef IWYU_SCAN
+	ValueEvaluator() = default;
+#else
+	ValueEvaluator() = delete;
+#endif
 
 	ValueEvaluator( CompareMode const mode, core::Real const cutoff );
 	~ValueEvaluator();

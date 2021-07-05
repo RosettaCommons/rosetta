@@ -31,9 +31,9 @@
 #define INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftData_hh
 
 // Package headers
-#include <protocols/scoring/methods/pcsTs4/PseudocontactShiftInput.fwd.hh>
 #include <protocols/scoring/methods/pcsTs4/PseudocontactShiftTensor.fwd.hh>
 #include <protocols/scoring/methods/pcsTs4/PseudocontactShiftData.fwd.hh>
+#include <protocols/scoring/methods/pcsTs4/PseudocontactShiftInput.hh>
 
 // Project headers
 #include <basic/datacache/CacheableData.hh>

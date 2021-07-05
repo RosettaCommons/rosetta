@@ -19,13 +19,10 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/types.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
 

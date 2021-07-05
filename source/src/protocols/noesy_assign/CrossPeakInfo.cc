@@ -38,12 +38,11 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
-#include <utility/vector1.hh>
 // Third-party Headers
-#include <boost/functional/hash.hpp>
+
+#include <boost/container_hash/extensions.hpp> // AUTO IWYU For hash_value
 
 
 static basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );

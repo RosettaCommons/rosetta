@@ -32,17 +32,17 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationManager.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/string_util.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer TR( "protocols.calc_taskop_movers.CreateSequenceMotifMover" );
 

@@ -20,15 +20,10 @@
 
 // C++ Headers
 #include <algorithm>
-#include <cmath>
-#include <cstdlib>
-#include <utility>
 #include <vector>
-#include <list>
 #include <string>
-#include <sstream>
-#include <map>
 #include <iosfwd>
+#include <sstream>
 
 // mini headers
 #include <basic/Tracer.hh>
@@ -66,17 +61,10 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 
-#include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
 #include <utility/vectorL.hh>
-#include <utility/vectorL_bool.hh>
 
 #include <numeric/model_quality/rms.hh>
 #include <numeric/xyzVector.hh>

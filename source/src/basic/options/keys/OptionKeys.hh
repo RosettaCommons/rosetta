@@ -89,7 +89,7 @@ namespace OptionKeys {
 
 /// @brief Lookup functors
 typedef  OptionKey  KeyType;
-#include <utility/keys/KeyLookup.functors.hh>
+#include <utility/keys/KeyLookup.functors.hh> // DO NOT AUTO-REMOVE (not an include, code injection)
 
 
 } // namespace OptionKeys

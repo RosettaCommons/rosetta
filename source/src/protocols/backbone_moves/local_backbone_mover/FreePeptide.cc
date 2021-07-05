@@ -21,9 +21,10 @@
 #include <numeric/alignment/QCPKernel.hh>
 
 // Core headers
-#include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
+
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
 
 static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.FreePeptide" );
 

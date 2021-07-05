@@ -11,7 +11,6 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-#include <utility/VirtualBase.hh>
 
 #include <core/scoring/func/SOGFunc.hh>
 #include <core/scoring/func/SOGFunc_Impl.hh>

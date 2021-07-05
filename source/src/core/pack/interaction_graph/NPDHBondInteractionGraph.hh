@@ -21,7 +21,7 @@
 
 // Package headers
 #include <core/pack/interaction_graph/AdditionalBackgroundNodesInteractionGraph.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/LinearMemoryInteractionGraph.hh>
 
 // Project Headers
@@ -51,9 +51,6 @@
 #include <utility/graph/Graph.hh>
 
 //ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1.io.hh> // needed to stream operator of FArray1Dint, line 4738 - DO NOT AUTOREMOVE!
-#include <ObjexxFCL/format.hh> // needed for I() - DO NOT AUTOREMOVE!
 
 //C++ Headers
 #include <vector>

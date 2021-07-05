@@ -22,12 +22,7 @@
 #include <protocols/constraint_generator/util.hh>
 
 // Core headers
-#include <core/id/SequenceMapping.hh>
-#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/func/SOGFunc.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
@@ -35,7 +30,6 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

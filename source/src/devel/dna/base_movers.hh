@@ -16,13 +16,12 @@
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <devel/cartesian_frags/DNA_FragLib.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace devel {

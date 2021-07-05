@@ -32,7 +32,6 @@
 #include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>

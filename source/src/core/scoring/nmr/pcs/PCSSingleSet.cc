@@ -29,7 +29,6 @@
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Basic headers
@@ -44,9 +43,6 @@
 #include <utility/fixedsizearray1.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/HomogeneousTransform.hh>
 #include <numeric/constants.hh>
 #include <numeric/nls/lmmin.hh>
 #include <numeric/random/random.hh>
@@ -59,13 +55,14 @@
 #include <cmath>
 #include <limits>
 #include <iostream>
-#include <iomanip>
 #include <algorithm>
 #include <string>
 #include <numeric>
 
 // Boost headers
 #include <boost/algorithm/string.hpp>
+
+#include <numeric/xyzMatrix.hh> // MANUAL IWYU
 
 namespace core {
 namespace scoring {

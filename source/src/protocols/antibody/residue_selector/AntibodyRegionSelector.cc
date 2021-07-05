@@ -14,14 +14,11 @@
 // Unit headers
 #include <protocols/antibody/residue_selector/AntibodyRegionSelector.hh>
 #include <protocols/antibody/residue_selector/AntibodyRegionSelectorCreator.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/antibody/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Utility Headers
@@ -31,7 +28,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>

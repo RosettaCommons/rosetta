@@ -19,38 +19,23 @@
 #include <basic/options/option.hh>
 
 // option key includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 //Fiber diffraction modules
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/chemical/AA.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <numeric/random/random.hh>
 
 // C++ headers
 //#include <cstdlib>
-#include <iostream>
 #include <string>
 
 #include <basic/Tracer.hh>
-#include <numeric/util.hh>
 //#include <math.h>
 
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/sys_util.hh>
+
+#include <fstream> // AUTO IWYU For operator<<, basic_ostream, endl, basic_ostr...
+
 // option key includes
 
 

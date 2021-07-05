@@ -19,10 +19,8 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
-#include <utility/vector1.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/protein_interface_design/read_patchdock.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

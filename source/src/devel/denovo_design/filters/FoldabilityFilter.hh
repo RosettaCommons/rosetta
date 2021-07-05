@@ -24,27 +24,21 @@
 
 // Protocol headers
 #include <protocols/filters/Filter.hh>
-#include <protocols/fldsgn/topology/HelixPairing.fwd.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.fwd.hh>
-#include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
-#include <protocols/parser/BluePrint.fwd.hh>
 
 // Core headers
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/sc/MolecularSurfaceCalculator.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator.fwd.hh>
 
 // C++ headers
 #include <string>
 
-#include <core/io/silent/silent.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For Residue
+#include <protocols/moves/Mover.fwd.hh> // AUTO IWYU For MoverOP
 
 
 namespace devel {

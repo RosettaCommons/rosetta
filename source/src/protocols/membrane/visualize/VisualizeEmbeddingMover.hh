@@ -24,8 +24,7 @@
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/Embedding.hh>
+#include <protocols/membrane/geometry/Embedding.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 
@@ -33,7 +32,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
 
 namespace protocols {
 namespace membrane {

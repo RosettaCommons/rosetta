@@ -16,7 +16,6 @@
 #include <protocols/legacy_sewing/sampling/requirements/LegacySegmentDsspRequirement.hh>
 #include <protocols/legacy_sewing/sampling/requirements/LegacySegmentDsspRequirementCreator.hh>
 #include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementFactory.hh>
-#include <utility>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 //Utility headers
@@ -24,6 +23,8 @@
 #include <utility/string_util.hh>
 #include <string>
 #include <basic/Tracer.hh>
+
+#include <protocols/legacy_sewing/conformation/Model.hh> // AUTO IWYU For SewSegment
 
 namespace protocols {
 namespace legacy_sewing  {

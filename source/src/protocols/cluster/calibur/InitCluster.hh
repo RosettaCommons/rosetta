@@ -13,17 +13,11 @@
 #ifndef external_calibur_InitCluster_HH
 #define external_calibur_InitCluster_HH
 
-#include <vector>
-#include <stdlib.h>
-#include <string.h>
-#include <iosfwd>
-#include <math.h>
-#include <assert.h>
 #ifndef PYROSETTA
-#include <time.h>
+#include <time.h> // DO NOT AUTO-REMOVE
 #endif
 #if !defined(__WIN32__) && !defined(WIN32)
-#include <sys/resource.h>
+#include <sys/resource.h> // DO NOT AUTO-REMOVE
 #endif
 #include <core/types.hh>
 

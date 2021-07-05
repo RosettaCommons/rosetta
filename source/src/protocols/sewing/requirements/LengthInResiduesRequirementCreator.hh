@@ -19,7 +19,6 @@
 #include <protocols/sewing/requirements/LengthInResiduesRequirementCreator.fwd.hh>
 
 // Package Headers
-#include <protocols/sewing/requirements/LengthInResiduesRequirement.fwd.hh>
 
 namespace protocols {
 namespace sewing  {

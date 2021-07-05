@@ -17,6 +17,8 @@
 #include <protocols/cyclic_peptide/CreateAngleConstraint.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace cyclic_peptide {
 

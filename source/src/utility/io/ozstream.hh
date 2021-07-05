@@ -37,6 +37,7 @@
 // Utility headers
 #include <utility/io/zipstream.hpp>
 #include <utility/io/mpistream.hh>
+#include <utility/io/mpistream.ipp> // Needed for template instantiation
 
 // C++ headers
 #include <fstream>

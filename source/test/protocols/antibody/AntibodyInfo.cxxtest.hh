@@ -14,15 +14,11 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/clusters/CDRCluster.hh>
 #include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 
@@ -37,6 +33,8 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace protocols::antibody;
 using utility::vector1;

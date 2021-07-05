@@ -24,7 +24,6 @@
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pose/Pose.hh>
@@ -47,7 +46,6 @@
 //for resfile reading
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 // C++ Headers
@@ -56,7 +54,6 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
 #include <basic/options/keys/OptionKeys.hh>

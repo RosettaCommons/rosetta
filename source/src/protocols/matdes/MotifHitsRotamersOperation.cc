@@ -22,8 +22,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <utility>
-#include <utility/io/ozstream.hh>
 #include <numeric/xyzTransform.hh>
 
 namespace protocols {

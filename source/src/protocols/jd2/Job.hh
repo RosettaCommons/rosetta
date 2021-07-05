@@ -31,7 +31,6 @@
 #include <map>
 #include <set>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

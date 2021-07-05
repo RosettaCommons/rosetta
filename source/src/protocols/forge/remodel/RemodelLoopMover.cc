@@ -24,20 +24,15 @@
 #include <protocols/forge/methods/util.hh>
 
 //datacache
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 
 // project headers
 #include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/io/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/fragment/FragData.hh>
@@ -51,17 +46,13 @@
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <core/scoring/Energies.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/conformation/ResidueFactory.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 
@@ -96,7 +87,6 @@
 //#include <basic/options/keys/Remodel.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 
@@ -115,15 +105,16 @@
 #include <utility>
 #include <utility/io/izstream.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 #include <utility/string_util.hh>
 
-#include <ObjexxFCL/string.functions.hh>
+
+#include <numeric/xyzMatrix.hh> // MANUAL IWYU
+
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 
 using namespace basic::options;
 

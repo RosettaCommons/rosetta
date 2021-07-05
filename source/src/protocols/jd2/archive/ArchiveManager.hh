@@ -17,16 +17,12 @@
 
 // Unit headers
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
-#include <protocols/jd2/archive/ArchiveBase.hh>
+#include <protocols/jd2/archive/ArchiveBase.fwd.hh>
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 
 // Package headers
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.fwd.hh>
-#include <core/io/silent/silent.fwd.hh>
 
 
-#include <protocols/moves/Mover.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 

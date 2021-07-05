@@ -13,50 +13,23 @@
 /// @author Kyle Barlow (kb@kylebarlow.com)
 
 // Project Headers
-#include <ObjexxFCL/FArray1D.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
-#include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/pack/make_symmetric_task.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/types.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <map>
-#include <numeric/random/random.hh>
 #include <protocols/jd2/util.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/scoring/Interface.hh>
-#include <protocols/simple_ddg/DdgFilter.hh>
 #include <protocols/simple_ddg/ddG.hh>
 //#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <string>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <protocols/simple_ddg/DdGScan.hh>
@@ -64,6 +37,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.simple_filters.DdGScan" );
 

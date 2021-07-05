@@ -17,7 +17,7 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/database/sql_utils.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/options/keys/task_operations.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
@@ -29,13 +29,15 @@
 #include <core/select/residue_selector/util.hh>
 #include <cppdb/frontend.h>
 
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/string_util.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 
 #include <algorithm>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.task_operations.ConservativeDesignOperation" );
 

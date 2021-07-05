@@ -23,69 +23,36 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/util.hh>
 
-#include <protocols/simple_moves/FragmentMover.hh>
 
-#include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <protocols/comparative_modeling/coord_util.hh>
 
-#include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <core/scoring/rms_util.hh>
-#include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/sequence/SequenceAlignment.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/Remarks.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/pose/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/func/ScalarWeightedFunc.hh>
-#include <core/scoring/func/SOGFunc.hh>
 
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/Energies.hh>
 
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/conformation/util.hh>
 
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FragData.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
@@ -93,18 +60,13 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 
-#include <utility/excn/Exceptions.hh>
-#include <utility/file/file_sys_util.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/model_quality/rms.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
@@ -112,9 +74,11 @@
 #include <boost/unordered/unordered_map.hpp>
 
 // parser
-#include <protocols/rosetta_scripts/util.hh>
 //#include <protocols/moves/DataMap.hh>
-#include <utility/tag/Tag.hh>
+
+#include <protocols/loops/Loop.hh> // AUTO IWYU For Loop
+#include <ObjexxFCL/FArray1A.hh> // AUTO IWYU For FArray1A::IR, FArray1A, FArray1A<>::size_...
+#include <ObjexxFCL/FArray2A.hh> // AUTO IWYU For FArray2A::IR, FArray2A, FArray2A<>::size_...
 
 namespace protocols {
 //namespace comparative_modeling {

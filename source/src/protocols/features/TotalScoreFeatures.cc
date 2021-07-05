@@ -13,7 +13,6 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -24,19 +23,14 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
-#include <basic/database/sql_utils.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tools/make_vector.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 // RosettaScripts headers
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
 
 // C++ headers
 #include <string>

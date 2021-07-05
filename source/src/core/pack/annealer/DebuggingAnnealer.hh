@@ -19,7 +19,6 @@
 #include <core/pack/annealer/DebuggingAnnealer.fwd.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 

@@ -21,10 +21,10 @@
 #include <protocols/environment/ClientMover.hh>
 
 // Package headers
-#include <protocols/environment/claims/EnvClaim.hh>
+#include <protocols/environment/claims/EnvClaim.fwd.hh>
 
 // Project headers
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/RT.hh> // for ::iterator
 

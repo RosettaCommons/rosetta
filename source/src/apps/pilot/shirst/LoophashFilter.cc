@@ -18,38 +18,31 @@
 #include <utility/excn/Exceptions.hh>
 //Scoring
 #include <core/scoring/MembraneTopology.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 //Pose
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 //Options
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/membrane.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 // numeric headers
-#include <numeric/xyzVector.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 #include <sstream>
 
 #include <devel/init.hh>
+
+#include <utility/vector0.hh> // AUTO IWYU For vector0
 
 static basic::Tracer tr( "apps.pilot.LoophashFilter" );
 

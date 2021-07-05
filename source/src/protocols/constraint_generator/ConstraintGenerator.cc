@@ -16,19 +16,12 @@
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
 
 // Protocol Headers
-#include <protocols/constraint_generator/ConstraintsManager.hh>
 
 // Core headers
-#include <core/id/SequenceMapping.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/ScalarWeightedFunc.hh>
 
 // Basic/Utility Headers
 #include <basic/Tracer.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 
 static basic::Tracer TR( "protocols.moves.ConstraintGenerator" );
 

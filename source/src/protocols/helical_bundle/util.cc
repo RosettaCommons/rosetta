@@ -25,13 +25,10 @@
 #include <utility/file/file_sys_util.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/tag/Tag.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
 
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -40,20 +37,15 @@
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <core/pose/util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/conversions.hh>
 #include <numeric/crick_equations/BundleParams.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <utility/io/ozstream.hh> // AUTO IWYU For ozstream
 
 
 

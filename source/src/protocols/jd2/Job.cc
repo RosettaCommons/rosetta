@@ -32,7 +32,6 @@
 #include <string>
 #include <ctime>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.jd2.Job" );

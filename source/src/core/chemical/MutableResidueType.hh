@@ -29,8 +29,6 @@
 
 // Package headers
 #include <core/chemical/MutableChiRecord.hh>
-#include <core/chemical/orbitals/ICoorOrbitalData.fwd.hh>
-#include <core/chemical/rings/RingConformerSet.fwd.hh>
 #include <core/chemical/rings/RingSaturationType.hh>
 
 #ifdef WIN32
@@ -41,6 +39,8 @@
 
 // Project headers
 #include <core/types.hh>
+
+#include <core/chemical/AtomType.fwd.hh> // AUTO IWYU For AtomType
 
 // Utility headers
 

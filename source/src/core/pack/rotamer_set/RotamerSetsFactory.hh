@@ -18,7 +18,6 @@
 #include <core/pack/rotamer_set/RotamerSetsFactory.fwd.hh>
 
 // Package headers
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -27,7 +26,8 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP
 
 
 namespace core {

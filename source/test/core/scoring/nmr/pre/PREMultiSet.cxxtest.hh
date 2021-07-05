@@ -22,13 +22,11 @@
 #include <core/scoring/nmr/pre/PRESingleSet.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
-#include <core/scoring/nmr/util.hh>
 #include <core/io/nmr/ParaIon.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
@@ -39,16 +37,13 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
 #include <iostream>
-#include <iomanip>
 #include <utility>
 
 static basic::Tracer TR("core.scoring.nmr.pre.PREMultiSet.cxxtest");

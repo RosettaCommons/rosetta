@@ -19,7 +19,6 @@
 #include <core/optimization/types.hh>
 
 #include <cmath>
-#include <iosfwd>
 
 namespace protocols {
 namespace md {

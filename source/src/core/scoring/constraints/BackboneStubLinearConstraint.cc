@@ -16,12 +16,11 @@
 #include <core/scoring/constraints/BackboneStubLinearConstraint.hh>
 
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/func/PeriodicFunc.hh>
 #include <basic/Tracer.hh>
 
 // used to make temporary alanines for gly cst's
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -34,7 +33,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

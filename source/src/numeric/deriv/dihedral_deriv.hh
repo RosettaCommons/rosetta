@@ -22,7 +22,6 @@
 #include <numeric/conversions.hh>
 #include <utility/assert.hh>
 
-#include <cfloat>
 
 namespace numeric {
 namespace deriv   {

@@ -19,11 +19,9 @@
 // Package Headers
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 
-#include <core/scoring/dssp/PairingsList.fwd.hh>
 #include <core/scoring/dssp/StrandPairing.hh>
 
 

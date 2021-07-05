@@ -14,14 +14,11 @@
 // Unit headers
 #include <core/import_pose/FullModelPoseBuilder.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/import_pose/import_pose_options.hh>
 
 // Project headers
 #include <core/types.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AA.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -30,20 +27,11 @@
 #include <core/pose/rna/util.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/io/pdb/pdb_reader.hh>
-#include <core/io/pdb/RecordType.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactor.
-#include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
-#include <core/io/mmcif/cif_reader.hh>
-#include <core/io/StructFileRep.hh>
-#include <core/io/StructFileRepOptions.hh>
 
-#include <core/io/pdb/pdb_reader.hh>
 
-#include <core/id/TorsionID.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -52,21 +40,16 @@
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/magnesium.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
+
 
 // External headers
-#include <ObjexxFCL/string.functions.hh>
-#include <cifparse/CifFile.h>
-#include <cifparse/CifParserBase.h>
 
 static basic::Tracer TR( "core.import_pose.util" );
 

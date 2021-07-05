@@ -14,12 +14,10 @@
 #include <devel/replica_docking/ModulatedMover.hh>
 #include <devel/replica_docking/ModulatedMoverCreator.hh>
 #include <devel/replica_docking/TempInterpolatorFactory.hh>
-#include <protocols/docking/RigidBodyInfo.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
-#include <core/pose/Pose.hh>
-#include <ObjexxFCL/format.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/excn/Exceptions.hh>
@@ -27,6 +25,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <devel/replica_docking/TempInterpolator.hh> // AUTO IWYU For TempFixValue, TempInterpolatorBase
+#include <protocols/canonical_sampling/HamiltonianExchange.hh> // AUTO IWYU For HamiltonianExchange
 
 
 static basic::Tracer tr( "devel.replica_docking.ModulatedMover" );

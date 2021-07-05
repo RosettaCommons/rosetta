@@ -21,24 +21,22 @@
 #include <core/pack/task/ResidueLevelTask.hh>
 
 // Package Headers
-#include <core/pack/palette/PackerPalette.hh>
-#include <core/pack/palette/DefaultPackerPalette.hh>
+#include <core/pack/palette/PackerPalette.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
+#include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh>
 #include <core/chemical/ResidueProperty.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/pointer/memory.hh>
 
 // STL Headers
 #include <iosfwd>
+
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For Residue
 
 
 #ifdef    SERIALIZATION

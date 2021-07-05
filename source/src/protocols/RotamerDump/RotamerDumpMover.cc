@@ -10,7 +10,6 @@
 /// @file   protocols/RotamerDump/RotamerDumpMover.cc
 /// @author Sam DeLuca
 
-#include <typeinfo>
 
 #include <protocols/RotamerDump/RotamerDumpMover.hh>
 
@@ -23,7 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -39,7 +38,6 @@
 
 #include <core/pose/Pose.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

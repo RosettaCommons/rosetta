@@ -32,13 +32,10 @@
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/types.hh>
-#include <core/chemical/AtomICoor.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/GlycanTree.hh>
@@ -48,9 +45,7 @@
 
 
 // Utility Headers
-#include <utility/string_constants.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
@@ -58,16 +53,15 @@
 #include <basic/Tracer.hh>
 
 // Numeric Headers
-#include <numeric/conversions.hh>
-#include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
 
 // External Headers
 #include <basic/basic.hh>
 
 // C++ Header
-#include <list>
 #include <utility>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // Construct tracer.
 static basic::Tracer TR( "core.pose.carbohydrates.util" );

@@ -26,7 +26,6 @@ CA  5 CA 71 HARMONIC 4.68 2.0
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.fwd.hh>

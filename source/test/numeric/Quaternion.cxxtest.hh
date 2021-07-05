@@ -19,7 +19,6 @@
 
 // Unit headers
 #include <numeric/Quaternion.hh>
-#include <numeric/Quaternion.io.hh>
 
 
 typedef ::numeric::Quaternion_double QD;

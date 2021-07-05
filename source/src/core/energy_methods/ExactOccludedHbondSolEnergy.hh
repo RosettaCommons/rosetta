@@ -21,13 +21,11 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/types.hh>
 #include <utility/SingletonBase.hh>

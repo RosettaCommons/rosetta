@@ -18,28 +18,20 @@
 #include <core/io/pose_from_sfr/chirality_resolution.fwd.hh> // For typedefs
 
 // Package headers
-#include <core/io/StructFileRep.fwd.hh>
 #include <core/io/ResidueInformation.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // Utility header
-#include <utility/vector1.hh>
 
 // Numeric header
-#include <numeric/xyzVector.hh>
 
 //External header
-#include <boost/bimap.hpp>
 
 // C++ headers
-#include <iosfwd>
-#include <map>
 #include <string>
 
 

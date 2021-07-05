@@ -14,7 +14,6 @@
 #include <utility/boinc/boinc_util.hh>
 
 // Project headers
-#include <utility/file/file_sys_util.hh>
 
 // External headers: BOINC
 #ifdef BOINC

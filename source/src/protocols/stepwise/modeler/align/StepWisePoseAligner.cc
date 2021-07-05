@@ -37,6 +37,8 @@
 
 #include <unordered_set>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 static basic::Tracer TR( "protocols.stepwise.modeler.align.StepWisePoseAligner" );
 using ObjexxFCL::format::F;
 using utility::tools::make_vector1;

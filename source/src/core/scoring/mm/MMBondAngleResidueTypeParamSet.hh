@@ -22,11 +22,8 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/mm/MMBondAngleLibrary.hh>
 
 // Utility header
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
@@ -35,7 +32,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
-#include <utility/vector1_bool.hh>
 #include <string>
 
 

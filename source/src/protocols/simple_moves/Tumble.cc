@@ -16,25 +16,18 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/util.hh>
 #include <core/select/residue_selector/ResidueSpanSelector.hh>
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/id/AtomID.hh>
 
 // task operation
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>

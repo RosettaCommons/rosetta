@@ -22,29 +22,21 @@
 
 // Options System
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
-#include <core/types.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <numeric/xyzVector.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <algorithm>
 
 static basic::Tracer TR( "membrane_scorefxn" );
 

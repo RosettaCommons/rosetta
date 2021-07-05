@@ -30,7 +30,6 @@
 //#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/assert.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>

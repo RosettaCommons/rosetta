@@ -19,10 +19,9 @@
 #include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 
 // Core headers
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/types.hh>
 
 namespace core {

@@ -13,20 +13,14 @@
 
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>  // REQUIRED FOR WINDOWS
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 #include <basic/database/open.hh>
-#include <iomanip>
 #include <iostream>
-#include <sstream>
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/numbers.hh>

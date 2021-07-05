@@ -14,10 +14,7 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/id/TorsionID.hh>
 #include <protocols/recces/RECCES_Mover.hh>
 #include <protocols/recces/options/RECCES_Options.hh>
 #include <protocols/recces/params/RECCES_Parameters.hh>
@@ -30,8 +27,6 @@
 
 // option key includes
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/recces.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>

@@ -40,10 +40,11 @@
 
 //Devel
 #include <protocols/features/strand_assembly/SandwichFeatures.fwd.hh>
-#include <protocols/features/strand_assembly/SandwichFragment.hh>
-#include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <protocols/features/FeaturesReporter.hh> // AUTO IWYU For FeaturesReporter
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionOP
 
 namespace protocols {
 namespace features {

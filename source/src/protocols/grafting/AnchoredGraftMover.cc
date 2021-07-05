@@ -26,50 +26,40 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 //Protocol Headers
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 //Option Headers
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 //Basic and Utility
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/rms_util.hh>
-#include <map>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
 
 static basic::Tracer TR( "protocols.grafting.AnchoredGraftMover" );
 namespace protocols {

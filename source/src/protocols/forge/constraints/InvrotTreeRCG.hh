@@ -24,7 +24,6 @@
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 #include <protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.fwd.hh>

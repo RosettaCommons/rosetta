@@ -18,12 +18,12 @@
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
-#include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
 #include <core/io/silent/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
 #include <utility/file/FileName.hh>
+
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For lead_zero_string_of
 
 static basic::Tracer TR( "protocols.rna.setup.RNA_MonteCarloJobDistributor" );
 

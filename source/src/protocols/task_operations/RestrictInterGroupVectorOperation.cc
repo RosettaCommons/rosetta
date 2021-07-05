@@ -20,22 +20,16 @@
 #include <core/select/util/interface_vector_calculate.hh>
 //#include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/selection.hh>
 // Utility Headers
 #include <core/types.hh>
-#include <utility>
-#include <utility/vector1_bool.hh>
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++ Headers
 
-#include <utility/vector0.hh>
 
 
 static basic::Tracer TR( "protocols.TaskOperations.RestrictInterGroupVectorOperation" );

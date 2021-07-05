@@ -14,10 +14,11 @@
 
 // Testing headers
 #include <cxxtest/TestSuite.h>
-#include <utility/vector1_bool.hh>
 
 // C++ headers
 #include <vector>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 // --- Types
 typedef  std::vector< bool >  std_vector_bool;

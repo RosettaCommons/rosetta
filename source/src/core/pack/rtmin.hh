@@ -32,7 +32,6 @@
 #include <basic/datacache/BasicDataCache.fwd.hh>
 
 // utility headers
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 

@@ -20,27 +20,19 @@
 
 // Core Headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
-#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <core/pose/PDBInfo.hh>
 
-#include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -48,12 +40,8 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/VirtualBase.hh>
 
 #include <iostream>
-#include <sstream>
-#include <map>
-#include <set>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

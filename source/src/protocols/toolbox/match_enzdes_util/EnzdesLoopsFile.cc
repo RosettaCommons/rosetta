@@ -24,7 +24,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/LexicographicalIterator.hh>
 
-#include <sstream>
 
 #include <utility/vector1.hh>
 

@@ -14,6 +14,7 @@
 #ifndef INCLUDED_core_scoring_packing_PoseBalls_hh
 #define INCLUDED_core_scoring_packing_PoseBalls_hh
 
+#include <core/scoring/packing/PoseBalls.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>

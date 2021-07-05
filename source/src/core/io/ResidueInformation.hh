@@ -29,6 +29,7 @@
 #include <map>
 #include <string>
 
+#include <numeric/xyzVector.hh> // DO NOT AUTO-REMOVE
 
 namespace core {
 namespace io {

@@ -17,22 +17,15 @@
 #include <core/energy_methods/MotifDockEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/DerivVectorPair.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/VariantType.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzTransform.hh>
-#include <numeric/deriv/distance_deriv.hh>
-#include <numeric/deriv/angle_deriv.hh>
 
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 #include <core/pose/motif/reference_frames.hh>

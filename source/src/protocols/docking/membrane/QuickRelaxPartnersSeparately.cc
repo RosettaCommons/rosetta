@@ -27,12 +27,10 @@
 #include <protocols/docking/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 #include <protocols/jd2/util.hh>
 
 // Package Headers
@@ -41,24 +39,19 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <protocols/docking/metrics.hh>
-#include <protocols/membrane/util.hh>
-#include <numeric/random/random.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "protocols.membrane.QuickRelaxPartnersSeparately" );
 

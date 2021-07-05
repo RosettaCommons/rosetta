@@ -18,7 +18,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

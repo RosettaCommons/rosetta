@@ -19,10 +19,8 @@
 #include <core/types.hh>
 
 // STL Headers
-#include <iostream>
 
 // Numceric Headers
-#include <numeric/xyzVector.hh>
 
 namespace core {
 namespace scoring {

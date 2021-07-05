@@ -17,18 +17,15 @@
 
 // Unit Headers
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.fwd.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
 
 // Package Headers
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 

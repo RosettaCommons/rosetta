@@ -12,7 +12,6 @@
 
 #include <string>
 
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

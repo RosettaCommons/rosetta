@@ -16,7 +16,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -33,12 +33,10 @@
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
 
 // STL Headers
-#include <map>
 #include <string>
 #include <vector>
 

@@ -12,7 +12,6 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -29,14 +28,12 @@
 #include <protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
 #endif
-#include <protocols/canonical_sampling/mc_convergence_checks/HPool.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -58,8 +55,6 @@
 #include <basic/prof.hh>
 
 #include <fstream>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/Fmath.hh>
 #ifdef USEMPI
@@ -70,8 +65,6 @@
 #include <protocols/viewer/viewers.hh>
 #endif
 
-#include <protocols/jd2/Job.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

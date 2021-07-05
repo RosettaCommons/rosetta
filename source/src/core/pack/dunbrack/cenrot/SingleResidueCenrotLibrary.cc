@@ -11,10 +11,7 @@
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
 
 // Package headers
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
 #include <core/id/PartialAtomID.hh>
 
 // Project headers
@@ -22,7 +19,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/chemical/ResidueType.hh>
-#include <utility/graph/Graph.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/Stub.hh>
@@ -42,18 +38,20 @@
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+#include <utility/io/ozstream.fwd.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
+#include <numeric/random/random.fwd.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
 // C++ headers
 #include <set>
-#include <tuple>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <numeric/xyz.functions.hh> // AUTO IWYU For angle_radians, dihedral_radians, x_rotation_...
 
 
 namespace core {

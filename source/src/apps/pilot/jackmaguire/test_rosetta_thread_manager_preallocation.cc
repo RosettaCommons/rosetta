@@ -15,26 +15,20 @@
 #include <devel/init.hh>
 
 // core headers
-#include <core/types.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <numeric/random/random.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 
 // multithreading headers
 #ifdef MULTI_THREADED
+#include <core/types.hh>
 #include <basic/thread_manager/RosettaThreadManager.hh>
 #include <basic/thread_manager/RosettaThreadPool.hh>
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+#include <iomanip>
 #endif //MULTI_THREADED
 
 #include <chrono>

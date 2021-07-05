@@ -38,32 +38,30 @@
 #include <core/pose/Pose.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/conformation/Residue.hh>
 
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 
-#include <core/pose/util.hh>
 #include <core/types.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 #include <string>
+
+#include <core/fragment/FragSet.hh> // AUTO IWYU For FragSet
+
 //#include <iostream>
 
 static basic::Tracer tr( "protocols.noesy_assign.FragsToAtomDist" );

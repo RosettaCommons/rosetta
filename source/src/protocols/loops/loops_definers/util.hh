@@ -16,10 +16,8 @@
 
 // Package headers
 #include <protocols/loops/loops_definers/LoopsDefiner.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
 
 // basic headers
 #include <basic/datacache/DataMap.fwd.hh>

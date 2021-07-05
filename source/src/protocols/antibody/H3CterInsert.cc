@@ -17,15 +17,9 @@
 
 #include <protocols/antibody/H3CterInsert.hh>
 
-#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
-#include <protocols/loops/loops_main.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
 #include <utility>
-#include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <core/pose/Pose.hh>
@@ -33,7 +27,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
 #include <basic/database/open.hh>
 
 

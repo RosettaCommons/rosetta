@@ -15,7 +15,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/ufv.OptionKeys.gen.hh>
@@ -25,16 +24,12 @@
 // utility headers
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
-#include <utility/options/keys/OptionKey.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/forge/build/ConnectRight.hh>
 #include <protocols/forge/build/RelativeConnectRight.hh>
@@ -44,10 +39,8 @@
 #include <protocols/forge/components/BDR.hh>
 #include <protocols/forge/remodel/RemodelMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/simple_filters/PoseMetricEvaluator.hh>
+#include <protocols/simple_filters/PoseMetricEvaluator.fwd.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMOLMover.hh>
 
 #include <devel/init.hh>
 

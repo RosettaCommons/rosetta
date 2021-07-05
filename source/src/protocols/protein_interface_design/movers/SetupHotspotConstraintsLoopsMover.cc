@@ -18,72 +18,40 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <complex>
 
-#include <protocols/moves/MoverStatus.hh>
-#include <core/types.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/pose/util.hh>
-#include <protocols/simple_filters/RmsdEvaluator.hh>
-#include <protocols/evaluation/EvaluatorFactory.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
-#include <protocols/loops/Loops.hh>
 
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 
-#include <core/kinematics/FoldTree.hh>
 
 
-#include <protocols/hotspot_hashing/HotspotStubSet.hh>
+#include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
-#include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMover.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/filters/BasicFilters.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 
-#include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <core/fragment/FragSet.hh>
 #include <utility/exit.hh>
 
-#include <core/scoring/electron_density/util.hh>
 
-#include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/util.hh>
-#include <protocols/moves/MoverContainer.hh>
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
-#include <iostream>
 #include <string>
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -91,7 +59,6 @@
 #endif
 
 //silly using/typedef
-#include <core/id/AtomID_Map.hh>
 
 #include <core/chemical/AA.hh>
 
@@ -99,31 +66,22 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/pack_rotamers.hh>
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-#include <protocols/relax/loop/LoopRelaxMover.hh>
 
-#include <core/import_pose/import_pose.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <utility/vector1.hh>
 #include <basic/options/option.hh>
 // Utility headers
-#include <basic/options/option_macros.hh>
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLeve...
 
 
 namespace protocols {

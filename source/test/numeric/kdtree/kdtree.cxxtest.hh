@@ -21,14 +21,14 @@
 
 #include <numeric/kdtree/util.hh>
 #include <numeric/kdtree/calc_distance.hh>
-#include <numeric/kdtree/construct_kdtree.hh>
 #include <numeric/kdtree/nearest_neighbors.hh>
 #include <numeric/kdtree/KDTree.hh>
 #include <numeric/kdtree/KDNode.hh>
 #include <numeric/kdtree/KDPointList.hh>
 #include <numeric/kdtree/KDNode.fwd.hh>
-#include <numeric/kdtree/HyperRectangle.hh>
 #include <numeric/kdtree/WrappedReal.hh>
+
+#include <numeric/kdtree/KDPoint.hh> // AUTO IWYU For KDPoint
 
 // --------------- Test Class --------------- //
 

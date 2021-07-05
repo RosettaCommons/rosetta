@@ -21,7 +21,6 @@
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/residue_support.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -34,11 +33,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/pack/task/TaskFactory.hh>
@@ -56,6 +52,8 @@
 
 // Utility header
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace core {

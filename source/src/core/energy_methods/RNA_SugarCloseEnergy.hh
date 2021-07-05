@@ -22,15 +22,15 @@
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
-#include <core/scoring/func/FadeFunc.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/scoring/func/Func.fwd.hh> // AUTO IWYU For FuncOP
 
 
 namespace core {

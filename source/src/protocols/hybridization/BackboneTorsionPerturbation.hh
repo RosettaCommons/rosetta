@@ -22,27 +22,22 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <protocols/simple_task_operations/InterfaceTaskOperation.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <core/optimization/AtomTreeMinimizer.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <utility/tag/Tag.fwd.hh>
 
 
 // Utility Headers
-#include <utility/vector1.hh>
 
 // Numeric Headers
 

@@ -19,7 +19,7 @@
 
 // Core headers
 
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -31,7 +31,6 @@
 #include <protocols/multistate_design/util.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
 namespace protocols {

@@ -10,9 +10,9 @@
 #ifndef INCLUDED_numeric_alignment_rmsd_calc_HH
 #define INCLUDED_numeric_alignment_rmsd_calc_HH
 
-#include <cstdlib>
-#include <ndarray.h>
 #include <numeric/types.hh>
+
+#include <ndarray/Array.h> // AUTO IWYU For Array
 
 namespace numeric
 {

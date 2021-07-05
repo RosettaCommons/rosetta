@@ -17,7 +17,6 @@
 #include <core/types.hh>
 
 #include <string>
-#include <vector>
 
 namespace core {
 namespace io {

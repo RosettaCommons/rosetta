@@ -23,18 +23,15 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.hh>
 
 #include <fstream>
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarSamplerFromStringList" );
 

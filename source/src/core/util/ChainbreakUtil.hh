@@ -13,12 +13,13 @@
 #ifndef INCLUDED_CORE_UTIL_CHAINBREAKUTIL_HH
 #define INCLUDED_CORE_UTIL_CHAINBREAKUTIL_HH
 
+#include <core/util/ChainbreakUtil.fwd.hh>
+
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 namespace core {
 namespace util {

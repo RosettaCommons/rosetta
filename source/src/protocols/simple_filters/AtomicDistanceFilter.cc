@@ -19,12 +19,8 @@
 #include <core/pose/Pose.hh>
 
 //parsing
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 #include <core/pose/selection.hh>
@@ -32,7 +28,6 @@
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes

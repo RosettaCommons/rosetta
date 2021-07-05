@@ -27,9 +27,8 @@
 #include <complex>
 #include <iomanip>
 #include <limits>
-#include <iosfwd>
 #include <string>
-#include <sstream>
+#include <sstream> // DO NOT AUTO-REMOVE Needed for inline function
 
 namespace ObjexxFCL {
 namespace format {

@@ -29,22 +29,21 @@
 // Package headers
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <platform/types.hh>
 #include <utility/numbers.hh>
 
 // C++ headers
 #include <utility/assert.hh>
 #include <cmath>
-#ifdef GL_GRAPHICS
-	#include <numeric/xyz.functions.hh>
-#endif
+#include <algorithm> // for std::max
 
-#include <ObjexxFCL/FArrayTraits.hh>
+#include <ObjexxFCL/FArrayTraits.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <cstdlib>
 
+#ifdef GL_GRAPHICS
+	#include <numeric/xyz.functions.hh>
+#endif
 #ifdef PYROSETTA
 	#include <numeric/xyz.functions.hh>
 #endif

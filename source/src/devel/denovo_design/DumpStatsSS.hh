@@ -18,9 +18,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 
@@ -29,7 +28,7 @@
 #include <protocols/parser/BluePrint.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
+#include <utility/io/ozstream.fwd.hh>
 
 namespace devel {
 namespace denovo_design {

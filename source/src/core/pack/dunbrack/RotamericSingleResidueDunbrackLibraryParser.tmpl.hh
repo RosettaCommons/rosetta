@@ -15,20 +15,14 @@
 #ifndef INCLUDED_core_pack_dunbrack_RotamericSingleResidueDunbrackLibraryParser_tmpl_hh
 #define INCLUDED_core_pack_dunbrack_RotamericSingleResidueDunbrackLibraryParser_tmpl_hh
 
-#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.fwd.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.fwd.hh>
 
 // Core headers
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 
 // Utility headers
-#include <utility/fixedsizearray1.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <iostream>
 
 namespace core {

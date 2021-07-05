@@ -16,11 +16,10 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/types.hh>
-#include <core/graph/Digraph.hh>
+#include <utility/graph/Digraph.hh>
 
 // C++ headers, for debugging your tests
-#include <sstream>
+#include <iostream>
 
 #ifdef SERIALIZATION
 // Cereal headers
@@ -28,7 +27,7 @@
 #include <cereal/types/polymorphic.hpp>
 #endif
 
-using namespace core::graph;
+using namespace utility::graph;
 
 
 // --------------- Test Class --------------- //

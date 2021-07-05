@@ -25,8 +25,6 @@
 // Utility headers
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <iostream>

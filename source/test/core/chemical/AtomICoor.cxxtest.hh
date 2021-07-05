@@ -18,7 +18,6 @@
 
 // Unit Headers
 #include <core/chemical/AtomICoor.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
@@ -28,13 +27,11 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <string>
 #include <ostream>
 
 //Auto Headers

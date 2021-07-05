@@ -16,7 +16,6 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <core/io/HeaderInformation.hh>
 
 // Program headers
 #include <core/io/StructFileRep.hh>
@@ -33,12 +32,10 @@
 #include <utility/vector1.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 
 // C++ headers
 #include <sstream>
-#include <vector>
 
 static basic::Tracer TR("core.io.HeaderInformationTests.cxxtest");
 

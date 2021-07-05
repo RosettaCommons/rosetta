@@ -21,21 +21,14 @@
 
 // core headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/kinematics/FoldTree.hh>
 
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
@@ -47,8 +40,7 @@
 #include <core/select/residue_selector/util.hh>
 
 // task operation
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <numeric/xyzVector.hh>
 
 // utility
@@ -58,7 +50,6 @@
 
 // option
 #include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

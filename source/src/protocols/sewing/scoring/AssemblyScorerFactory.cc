@@ -16,7 +16,7 @@
 
 // Package Headers
 #include <protocols/sewing/scoring/AssemblyScorerCreator.hh>
-#include <protocols/sewing/scoring/AssemblyScorer.hh>
+#include <protocols/sewing/scoring/AssemblyScorer.fwd.hh>
 #include <protocols/sewing/movers/AssemblyMover.hh>
 // Project Headers
 #include <basic/Tracer.hh>
@@ -25,14 +25,9 @@
 #include <sstream>
 
 //Utility Headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 // Boost headers
-#include <functional>
 
 
 

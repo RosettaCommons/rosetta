@@ -17,12 +17,8 @@
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorPreLoaded.fwd.hh>
-#include <utility/file/FileName.fwd.hh>
-#include <utility/vector1.hh>
 #include <map>
-#include <list>
 
-#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

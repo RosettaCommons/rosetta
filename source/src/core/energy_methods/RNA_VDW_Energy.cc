@@ -34,9 +34,7 @@
 
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
-#include <ObjexxFCL/format.hh>
 
 static basic::Tracer tr( "core.energy_methods.RNA_VDW_Energy" );
 

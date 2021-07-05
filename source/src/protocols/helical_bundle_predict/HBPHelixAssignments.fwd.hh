@@ -17,8 +17,6 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-class HBPHelixAssignmentsTests; //Forward declaration needed for friendship.
-
 // Forward
 namespace protocols {
 namespace helical_bundle_predict {

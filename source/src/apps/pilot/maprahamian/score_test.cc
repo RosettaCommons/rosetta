@@ -11,9 +11,7 @@
 // /// @brief  test application
 // /// @author Melanie Aprahamian
 
-#include <iostream>
 #include <string>
-#include <protocols/jd2/util.hh>
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 

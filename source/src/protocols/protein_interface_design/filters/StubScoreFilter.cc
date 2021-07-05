@@ -11,17 +11,13 @@
 #include <protocols/protein_interface_design/filters/StubScoreFilter.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/hotspot_hashing/HotspotStub.hh>
+#include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 #include <core/pose/ref_pose.hh>
-#include <numeric/xyzVector.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 
@@ -30,9 +26,6 @@
 #include <protocols/protein_interface_design/movers/PlacementMinimizationMover.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

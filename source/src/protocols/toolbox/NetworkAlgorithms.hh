@@ -23,16 +23,12 @@
 // Utility headers
 #include <utility>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 //// C++ headers
 #include <list>
+#include <string>
 
 // Parser headers
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace toolbox {

@@ -15,15 +15,11 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/core/select/residue_selector/utilities_for_testing.hh>
 
 // Package headers
 #include <core/select/residue_selector/CloseContactResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -31,7 +27,6 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 
 // Basic headers
@@ -40,6 +35,9 @@
 
 // C++ headers
 #include <string>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core::select::residue_selector;
 

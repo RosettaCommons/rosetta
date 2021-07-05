@@ -14,7 +14,8 @@
 #ifndef INCLUDED_utility_tools_make_vector1_hh
 #define INCLUDED_utility_tools_make_vector1_hh
 
-#include <utility/vector1.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 namespace utility {

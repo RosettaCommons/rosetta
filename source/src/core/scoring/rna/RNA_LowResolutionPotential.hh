@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
+#include <core/pose/rna/RNA_RawBaseBaseInfo.fwd.hh>
 
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
@@ -35,11 +35,9 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray4D.hh>
 #include <ObjexxFCL/FArray5D.hh>
 

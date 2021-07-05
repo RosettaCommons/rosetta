@@ -38,7 +38,6 @@
 //#include <core/options/util.hh>
 #include <devel/init.hh>
 //#include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
 //#include <core/conformation/ResidueFactory.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>

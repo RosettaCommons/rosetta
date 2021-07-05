@@ -17,13 +17,12 @@
 
 #include <protocols/sewing/requirements/NonTerminalStartingSegmentRequirement.fwd.hh>
 #include <protocols/sewing/requirements/AssemblyRequirement.hh>
-#include <protocols/sewing/data_storage/SmartAssembly.hh>
-#include <protocols/sewing/data_storage/SmartSegment.hh>
-#include <protocols/sewing/data_storage/SmartSewingResidue.hh>
+#include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
+#include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
+
 // Utility headers
-#include <core/types.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace sewing {

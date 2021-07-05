@@ -14,11 +14,14 @@
 #ifndef INCLUDED_core_sequence_DP_Matrix_hh
 #define INCLUDED_core_sequence_DP_Matrix_hh
 
+#include <core/sequence/DP_Matrix.fwd.hh>
+
 #include <core/types.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 ///////////////////////////////////////////////////////////////////////////////
 

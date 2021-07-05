@@ -28,13 +28,11 @@
 #include <core/scoring/loop_graph/evaluator/util.hh>
 #include <core/scoring/loop_graph/evaluator/SixDTransRotPotential.hh>
 
-#include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/tools/make_vector1.hh>
-#include <utility/json_spirit/json_spirit.h>
-#include <utility/json_spirit/json_spirit_tools.hh>
 #include <utility/excn/Exceptions.hh>
-#include <numeric/xyz.io.hh>
+
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "read_tensor" );
 

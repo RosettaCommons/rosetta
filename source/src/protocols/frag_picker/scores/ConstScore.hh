@@ -23,7 +23,6 @@
 
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

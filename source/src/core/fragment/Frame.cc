@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <core/id/SequenceMapping.hh>
 
@@ -31,7 +31,6 @@
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 
 #include <core/fragment/FragData.hh>

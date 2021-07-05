@@ -23,10 +23,9 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <iostream>
@@ -35,6 +34,8 @@
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
 #include <protocols/match/Hit.hh>
 #include <utility/vector1.hh>
+
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
 
 
 namespace protocols {

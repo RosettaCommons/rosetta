@@ -20,9 +20,10 @@
 #include <devel/loop_creation/LoopInserter.hh>
 
 //Protocols
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
-#include <protocols/loops/Loop.fwd.hh>
+#include <protocols/loophash/LoopHashLibrary.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <map> // AUTO IWYU For map
 
 
 //namespace protocols {

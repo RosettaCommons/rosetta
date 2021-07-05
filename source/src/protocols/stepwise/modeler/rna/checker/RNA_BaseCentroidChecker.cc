@@ -15,10 +15,8 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -27,7 +25,6 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <string>

@@ -30,7 +30,6 @@
 #include <basic/Tracer.hh>
 
 // utils
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>

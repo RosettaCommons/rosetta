@@ -23,55 +23,39 @@
 
 #include <protocols/toolbox/sample_around/util.hh>
 #include <protocols/toolbox/rigid_body/util.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/chemical/rna/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
 
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <utility/io/ozstream.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/init/init.hh>
 
-#include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <protocols/viewer/viewers.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/sample_around.OptionKeys.gen.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 
 #include <basic/Tracer.hh>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
 
 using namespace core;
 using namespace protocols;

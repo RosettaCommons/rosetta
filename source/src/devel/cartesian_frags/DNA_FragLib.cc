@@ -19,7 +19,6 @@
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/BasePartner.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>

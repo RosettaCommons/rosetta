@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -25,13 +23,14 @@
 #include <core/chemical/MutableResidueType.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 // Protocol Headers
 
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("core.chemical.PoseResidueTypeSet.cxxtest");
 

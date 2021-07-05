@@ -15,13 +15,10 @@
 #define INCLUDED_core_scoring_P_AA_ABEGO3_hh
 
 // Package headers
-#include <core/scoring/types.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
 //#include <core/sequence/ABEGOManager.hh>
 
 // Utility headers

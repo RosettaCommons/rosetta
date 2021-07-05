@@ -19,7 +19,6 @@
 
 // Package headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 

@@ -19,9 +19,7 @@
 // Package headers
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <basic/database/open.hh>
 

@@ -24,7 +24,6 @@
 #include <core/types.hh>
 
 // utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 #include <string>

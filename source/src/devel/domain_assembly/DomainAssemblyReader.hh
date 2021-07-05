@@ -15,7 +15,7 @@
 #define INCLUDED_devel_domain_assembly_DomainAssemblyReader_hh
 
 // Unit Headers
-#include <devel/domain_assembly/domain_assembly_setup.hh>
+#include <devel/domain_assembly/domain_assembly_setup.fwd.hh>
 
 // Package Headers
 
@@ -26,7 +26,6 @@
 #include <utility/VirtualBase.hh>
 
 // STL Headers
-#include <iosfwd>
 #include <map>
 
 #include <utility/vector1.hh>

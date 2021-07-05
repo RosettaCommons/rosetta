@@ -20,16 +20,11 @@
 #define MPI_ANY_SOURCE 0
 #endif
 
-#include <protocols/wum/WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager.hh>
 //  you cannot #include yourself #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <string>
-#include <vector>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -14,7 +14,6 @@
 #include <protocols/hbnet/HBNetTaskOperations.hh>
 #include <protocols/hbnet/ConstrainHBondNetworkCreator.hh>
 
-#include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
@@ -22,22 +21,17 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/datacache/CacheableObserverType.hh>
-#include <core/pose/datacache/ObserverCache.hh>
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
-#include <utility/pointer/access_ptr.hh>
 
 // utility includes
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

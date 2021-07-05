@@ -14,7 +14,7 @@
 // Unit header
 
 // Package headers
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace core {
 namespace pack {

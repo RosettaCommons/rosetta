@@ -13,26 +13,24 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
-#include <protocols/cyclic_peptide/CrosslinkerMover.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("CrosslinkerMoverTests");
 

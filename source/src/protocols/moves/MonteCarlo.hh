@@ -22,7 +22,7 @@
 // unit headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
-#include <protocols/moves/TrialCounter.hh>
+#include <protocols/moves/TrialCounter.fwd.hh>
 
 // package headers
 #include <core/pose/Pose.fwd.hh>
@@ -33,7 +33,6 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <map>
 
 #include <protocols/moves/MonteCarloExceptionConverge.fwd.hh>
 #include <utility/vector1.hh>

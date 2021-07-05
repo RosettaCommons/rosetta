@@ -15,14 +15,12 @@
 #define INCLUDED_protocols_frag_picker_quota_QuotaSelector_hh
 
 #include <protocols/frag_picker/quota/QuotaSelector.fwd.hh>
-#include <protocols/frag_picker/quota/QuotaCollector.hh>
-#include <protocols/frag_picker/quota/QuotaPool.hh>
+#include <protocols/frag_picker/quota/QuotaCollector.fwd.hh>
 
 #include <protocols/frag_picker/FragmentSelectingRule.hh>
 
 // package headers
-#include <protocols/frag_picker/FragmentCandidate.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
+#include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 
 // utility headers
 #include <core/types.hh>
@@ -31,6 +29,8 @@
 #include <set>
 
 #include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

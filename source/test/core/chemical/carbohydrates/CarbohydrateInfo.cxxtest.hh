@@ -17,7 +17,6 @@
 #include <test/core/init_util.hh>
 
 // Project headers
-#include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pose/Pose.hh>
@@ -25,8 +24,6 @@
 #include <core/import_pose/import_pose.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Numeric header
@@ -41,7 +38,6 @@ public:  // Standard methods //////////////////////////////////////////////////
 	{
 		using namespace core::pose;
 		using namespace core::import_pose;
-		using namespace basic::options;
 
 		core_init_with_additional_options( "-include_sugars -out:level 500" );
 

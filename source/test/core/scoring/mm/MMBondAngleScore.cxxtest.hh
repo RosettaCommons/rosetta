@@ -34,7 +34,6 @@
 
 //Auto Headers
 #include <core/chemical/MMAtomTypeSet.hh>
-#include <utility/keys/Key2Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
 
 

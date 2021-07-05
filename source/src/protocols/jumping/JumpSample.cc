@@ -28,7 +28,6 @@
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/JumpingFrame.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/JumpSRFD.hh>
@@ -45,7 +44,6 @@
 #include <utility/io/ozstream.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 #include <fstream>
 
@@ -57,6 +55,9 @@
 #include <core/pose/variant_util.hh>
 #include <protocols/jumping/JumpSample.hh>
 #include <utility/vector1.hh>
+
+#include <protocols/jumping/PairingLibrary.hh> // AUTO IWYU For PairingLibrary
+#include <core/fragment/FragData.hh> // AUTO IWYU For FragData
 
 #ifdef SERIALIZATION
 // Utility serialization headers

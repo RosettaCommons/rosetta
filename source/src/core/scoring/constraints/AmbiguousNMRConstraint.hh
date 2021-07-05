@@ -21,20 +21,14 @@
 // Unit header
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/ScoreType.hh>
 
-#include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 //Utility Headers
-#include <numeric/xyzVector.fwd.hh>
 
 // STL Headers
-#include <map>
 
-#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

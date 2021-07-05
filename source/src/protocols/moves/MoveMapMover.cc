@@ -17,7 +17,6 @@
 // Project headers
 
 // tracer
-#include <basic/Tracer.hh>
 
 // C++ Headers
 

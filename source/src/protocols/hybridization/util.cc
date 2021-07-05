@@ -15,28 +15,23 @@
 #include <protocols/hybridization/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/types.hh>
 
 #include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <protocols/constraint_movers/AddConstraintsToCurrentConformationMover.hh>
@@ -44,20 +39,15 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/func/USOGFunc.hh>
-#include <core/scoring/func/SOGFunc.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/PDBInfo.hh>
 
 // dynamic fragpick
-#include <protocols/moves/DsspMover.hh>
 #include <core/fragment/picking_old/vall/util.hh>
 
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -71,6 +61,10 @@
 #include <numeric/xyzVector.hh>
 
 #include <basic/Tracer.hh>
+
+#include <protocols/loops/Loop.hh> // AUTO IWYU For Loop
+#include <core/sequence/SequenceAlignment.hh> // AUTO IWYU For SequenceAlignment
+
 static basic::Tracer TR( "protocols.hybridization.util" );
 
 namespace protocols {

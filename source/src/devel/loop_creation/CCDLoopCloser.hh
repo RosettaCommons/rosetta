@@ -19,10 +19,8 @@
 #include <devel/loop_creation/LoopCloser.hh>
 
 //core
-#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
 
 //protocols
-#include <protocols/loops/Loop.hh>
 
 namespace devel {
 namespace loop_creation {

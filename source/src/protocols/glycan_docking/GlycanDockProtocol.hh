@@ -17,39 +17,27 @@
 // Unit headers
 #include <protocols/glycan_docking/GlycanDockProtocol.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMOLMover.fwd.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
 
 // Protocol headers
-#include <protocols/analysis/InterfaceAnalyzerMover.fwd.hh>
-#include <protocols/carbohydrates/LinkageConformerMover.fwd.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.fwd.hh>
-#include <protocols/docking/DockingInitialPerturbation.fwd.hh>
-#include <protocols/docking/util.hh>
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/rigid/RigidBodyMover.fwd.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.fwd.hh>
 
 // Core headers
-#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/types.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-
-// Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/excn/Exceptions.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/pointer/deep_copy.hh>
 
 #include <string>
+
+#include <protocols/docking/types.hh> // AUTO IWYU For DockJumps
+#include <protocols/moves/MonteCarlo.fwd.hh> // AUTO IWYU For MonteCarloOP
 
 namespace protocols {
 namespace glycan_docking {

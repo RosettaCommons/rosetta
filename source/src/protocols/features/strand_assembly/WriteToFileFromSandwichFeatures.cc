@@ -23,6 +23,14 @@
 
 #include <fstream>
 
+#include <numeric> // MANUAL IWYU
+#include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh> // AUTO IWYU For see_edge_or_core_or_loop_or_s...
+#include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh> // AUTO IWYU For WriteToDB_rkde, WriteToDB_rkd...
+#include <core/pose/PDBInfo.hh> // AUTO IWYU For PDBInfo
+#include <core/scoring/Energies.hh> // AUTO IWYU For Energies
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+#include <basic/database/sql_utils.hh> // AUTO IWYU For safely_prepare_statement, saf...
+
 namespace protocols {
 namespace features {
 namespace strand_assembly {

@@ -16,24 +16,19 @@
 
 // Unit Headers
 #include <protocols/noesy_assign/LabelResonance.fwd.hh>
-#include <protocols/noesy_assign/ProtonResonance.fwd.hh>
 #include <protocols/noesy_assign/Resonance.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/ResonanceList.fwd.hh>
-#include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
 
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
-#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 //// C++ headers
-#include <set>
 
 namespace protocols {
 namespace noesy_assign {

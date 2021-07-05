@@ -18,18 +18,15 @@
 #include <core/pose/selection.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
-#include <core/pack/task/TaskFactory.hh>
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/string_util.hh>
 
 
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -37,6 +34,8 @@
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 // C++ Headers
 

@@ -29,11 +29,9 @@
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
 #include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
 
-#include <core/scoring/etable/Etable.fwd.hh>
 //XRW_B_T1
 //#include <core/scoring/etable/CoarseEtableEnergy.fwd.hh>
 //XRW_E_T1
-#include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
 #include <core/scoring/methods/MMLJEnergyInter.fwd.hh>
 
 #include <core/scoring/hbonds/HBondEnergy.fwd.hh>

@@ -18,23 +18,18 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 // Utility headers
-#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/exit.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray3D.hh>
 
 // C++ headers
 #include <string>
-#include <map>
 
 //Auto Headers
 #include <core/kinematics/RT.hh>
-#include <utility/vector1_bool.hh>
 #include <numeric/xyzMatrix.hh>
 
 

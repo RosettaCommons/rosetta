@@ -21,11 +21,9 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

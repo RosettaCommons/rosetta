@@ -15,7 +15,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -29,13 +28,8 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <numeric/random/random.hh>
 #include <string>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <core/kinematics/Jump.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)

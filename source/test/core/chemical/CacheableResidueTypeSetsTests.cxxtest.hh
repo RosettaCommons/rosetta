@@ -13,22 +13,18 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <core/chemical/CacheableResidueTypeSets.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/chemical/residue_io.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("CacheableResidueTypeSetsTests.cxxtest");
 

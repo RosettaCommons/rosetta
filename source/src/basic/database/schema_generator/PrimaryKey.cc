@@ -14,7 +14,7 @@
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <utility>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/schema_generator/Column.hh>
 
 namespace basic {

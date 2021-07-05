@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
@@ -36,7 +36,6 @@
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 /// Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>

@@ -24,8 +24,6 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/GaussianChainFunc.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <basic/options/option.hh>
@@ -40,6 +38,8 @@
 #include <utility/vector1.hh>
 #include <utility/numbers.hh> // for is_finite
 #include <utility/tools/make_vector1.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
 

@@ -62,6 +62,8 @@ enum RPM_Type {
 };
 
 
+class MotifHashManager;
+
 }
 }
 }

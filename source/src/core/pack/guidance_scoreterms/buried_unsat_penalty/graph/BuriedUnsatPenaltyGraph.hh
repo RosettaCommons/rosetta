@@ -22,7 +22,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <numeric/xyzVector.hh>
 
 #include <utility/graph/Graph.hh>
 #include <utility/VirtualBase.hh>
@@ -30,9 +29,11 @@
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/types.hh>
 
-// Forward declarations for friendship:
-#include <core/pack/guidance_scoreterms/buried_unsat_penalty/BuriedUnsatPenaltyTests.fwd.hh>
-#include <core/pack/guidance_scoreterms/buried_unsat_penalty/graph/BuriedUnsatPenaltyGraphTests.fwd.hh>
+// Forward declarations of test classes for friendship:
+class BuriedUnsatPenaltyTests;
+class BuriedUnsatPenaltySymmetricTests;
+class BuriedUnsatPenaltyGraphTests;
+class BuriedUnsatPenaltyGraphSymmetricTests;
 
 #include <map>
 

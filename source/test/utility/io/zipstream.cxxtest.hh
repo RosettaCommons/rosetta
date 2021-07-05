@@ -16,11 +16,11 @@
 
 // Package headers
 #include <cxxtest/TestSuite.h>
-#include <utility/io/ocstream.hh>
-#include <utility/io/ozstream.hh>
 
 // C++ headers
 #include <iostream>
+
+#include <utility/io/orstream.hh> // AUTO IWYU For orstream
 
 
 // --- define helper functions in separate namespace

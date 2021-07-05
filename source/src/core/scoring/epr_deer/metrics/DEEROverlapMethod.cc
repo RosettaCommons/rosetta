@@ -12,22 +12,15 @@
 /// @author   Diego del Alamo ( del.alamo@vanderbilt.edu )
 
 // Unit headers
-#include <core/scoring/epr_deer/metrics/DEERData.hh>
-#include <core/scoring/epr_deer/metrics/DEERDistanceDistribution.hh>
 #include <core/scoring/epr_deer/metrics/DEEROverlapMethod.hh>
-#include <core/scoring/epr_deer/EPRSpinLabel.hh>
 #include <core/scoring/epr_deer/util.hh>
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
-
-#include <boost/math/special_functions/erf.hpp>
-
 // C++ headers
-#include <string>
 #include <map>
 #include <tuple>
+#include <cmath>
+
 
 namespace core {
 namespace scoring {

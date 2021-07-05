@@ -14,14 +14,12 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
 #include <protocols/task_operations/pHVariantTaskOperation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/chemical/ResidueType.hh>
 
@@ -32,6 +30,8 @@
 // Utility, etc Headers
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::Resid...
 
 static basic::Tracer TR("pHVariantTaskOperation");
 

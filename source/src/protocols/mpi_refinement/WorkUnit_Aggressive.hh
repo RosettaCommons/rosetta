@@ -17,11 +17,7 @@
 
 #include <protocols/mpi_refinement/WorkUnit_Sampler.hh>
 #include <protocols/wum/WorkUnitBase.hh>
-#include <protocols/normalmode/NormalModeRelaxMover.hh>
-#include <protocols/normalmode/NormalModeRelaxMover.fwd.hh>
 
-#include <utility/vector1.hh>
-#include <set>  // required for std::set
 
 namespace protocols {
 namespace mpi_refinement {

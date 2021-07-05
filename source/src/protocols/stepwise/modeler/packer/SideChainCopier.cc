@@ -18,10 +18,13 @@
 #include <core/conformation/Conformation.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/copydofs/util.hh>
-#include <core/scoring/constraints/util.hh>
 #include <basic/Tracer.hh>
-#include <utility>
+
+#include <protocols/stepwise/modeler/util.hh> // AUTO IWYU For make_variants_match
+
+#ifdef GL_GRAPHICS
+#include <core/scoring/constraints/util.hh>
+#endif
 
 static basic::Tracer TR( "protocols.stepwise.modeler.packer.SideChainCopier" );
 

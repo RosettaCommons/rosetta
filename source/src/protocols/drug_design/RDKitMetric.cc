@@ -21,7 +21,6 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 
 #include <core/simple_metrics/RealMetric.hh>
 #include <core/simple_metrics/util.hh>
@@ -32,9 +31,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 
 // XSD Includes

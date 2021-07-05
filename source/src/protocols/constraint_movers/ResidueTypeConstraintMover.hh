@@ -19,7 +19,6 @@
 
 #include <core/scoring/constraints/ResidueTypeConstraint.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <utility/vector1.hh>
 

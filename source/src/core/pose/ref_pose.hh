@@ -19,7 +19,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Project headers
-#include <core/types.hh>
 
 
 // Utility headers

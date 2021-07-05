@@ -14,13 +14,11 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -30,20 +28,18 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/pack_interface/ProteinProteinInterfaceUpweighterTaskOperation.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <core/types.hh>
 
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace core;
 

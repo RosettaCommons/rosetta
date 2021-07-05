@@ -16,10 +16,7 @@
 #include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
 #include <protocols/rna/denovo/movers/RNA_DeNovoMasterMover.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
-#include <core/fragment/rna/RNA_Fragments.hh>
-#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
 #include <core/import_pose/RNA_BasePairHandler.hh>
-#include <core/import_pose/libraries/RNA_JumpLibrary.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.hh>
 #include <core/import_pose/libraries/RNA_LibraryManager.hh>
 #include <core/import_pose/RNA_JumpMover.hh>
@@ -27,7 +24,7 @@
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
-#include <core/pose/toolbox/AtomLevelDomainMap.hh>
+#include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
@@ -40,6 +37,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <utility>
+
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
 
 static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_DeNovoMasterMover" );
 

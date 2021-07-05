@@ -24,7 +24,6 @@
 
 
 // Project Headers
-#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
@@ -36,7 +35,6 @@
 
 
 #include <protocols/evaluation/util.hh>
-#include <utility>
 #include <utility/vector1.hh>
 
 static basic::Tracer tr( "protocols.evalution.RMSD" );

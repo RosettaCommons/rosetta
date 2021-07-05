@@ -30,11 +30,12 @@
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <core/id/AtomID.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 ///////////////////////////////////////////////////////////////////////
 

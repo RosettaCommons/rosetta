@@ -18,7 +18,6 @@
 
 // Package headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loop_closure/ccd/RamaCheck.hh>
 #include <protocols/loops/loops_main.hh>
@@ -35,11 +34,9 @@
 // For RosettaScripts testing
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility header
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 // C++ header
 #include <iostream>

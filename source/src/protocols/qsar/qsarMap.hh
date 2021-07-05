@@ -21,7 +21,6 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
-#include <iosfwd>
 
 
 namespace protocols {

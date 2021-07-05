@@ -26,11 +26,9 @@
 #include <core/conformation/ResidueFactory.hh>
 
 #include <numeric/polynomial.hh>
-#include <core/scoring/hbonds/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/EnergyMap.hh>
@@ -39,7 +37,6 @@
 // Protocols headers
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/enzdes/EnzdesMovers.hh>
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -48,6 +45,8 @@
 #include <utility>
 #include <utility/FixedSizeLexicographicalIterator.hh>
 #include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For min
 
 
 #ifdef    SERIALIZATION

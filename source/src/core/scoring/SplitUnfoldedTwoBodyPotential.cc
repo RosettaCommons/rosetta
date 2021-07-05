@@ -14,9 +14,7 @@
 
 #include <core/scoring/SplitUnfoldedTwoBodyPotential.hh>
 
-#include <core/pose/Pose.hh>
 
-#include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 
 #include <core/scoring/ScoreType.hh>

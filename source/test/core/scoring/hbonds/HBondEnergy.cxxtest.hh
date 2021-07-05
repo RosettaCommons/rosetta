@@ -14,7 +14,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/util/deriv_funcs.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
@@ -26,7 +25,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/optimization/MinimizerOptions.hh>
@@ -47,50 +45,23 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/optimization/AtomTreeMinimizer.fwd.hh>
-#include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/SecondaryStructureWeights.hh>
-#include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
-#include <cassert>
 #include <cstddef>
-#include <iosfwd>
 #include <iostream>
-#include <limits>
-#include <map>
 #include <string>
-#include <vector>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 //Auto using namespaces
 namespace std { } using namespace std; // AUTO USING NS

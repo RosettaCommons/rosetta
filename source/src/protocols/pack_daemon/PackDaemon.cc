@@ -24,26 +24,20 @@
 #include <protocols/pack_daemon/util.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.fwd.hh>
 
-#ifdef USEMPI
-
-#endif
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/annealer/FASTERAnnealer.hh>
 #include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DoubleDensePDInteractionGraph.hh>
 #include <core/pack/interaction_graph/FASTERInteractionGraph.hh>
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.hh>
 //#include <core/pack/interaction_graph/LazyInteractionGraph.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSubsets.hh>
@@ -61,12 +55,14 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 #ifdef USEMPI
 #include <utility/mpi_util.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #endif
 
 

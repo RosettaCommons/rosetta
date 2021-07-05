@@ -19,7 +19,6 @@
 #include <protocols/sewing/requirements/AssemblyRequirementCreator.hh>
 
 // Package Headers
-#include <protocols/sewing/requirements/NonTerminalStartingSegmentRequirement.fwd.hh>
 
 namespace protocols {
 namespace sewing  {

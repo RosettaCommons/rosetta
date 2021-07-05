@@ -23,8 +23,6 @@
 #include <protocols/features/FeaturesReporterCreator.fwd.hh>
 
 // Platform Headers
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers

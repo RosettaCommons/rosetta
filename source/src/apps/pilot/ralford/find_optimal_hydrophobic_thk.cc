@@ -21,10 +21,9 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
@@ -40,17 +39,12 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/file/file_sys_util.hh>
 
 // basic headers
-#include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
-#include <basic/options/option_macros.hh>
+
+#include <utility/string_util.hh> // AUTO IWYU For string_split
 
 static basic::Tracer TR("find_optimal_hydrophobic_thk");
 

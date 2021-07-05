@@ -30,11 +30,8 @@
 #include <basic/options/option.hh>
 
 // Utility headers
-#include <util/pose_funcs.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>

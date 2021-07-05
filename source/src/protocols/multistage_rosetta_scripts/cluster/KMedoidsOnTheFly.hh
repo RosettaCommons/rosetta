@@ -18,10 +18,9 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_cluster_KMedoidsOnTheFly_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_KMedoidsOnTheFly_HH
 
-#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 #include <utility/vector1.hh>
 
-#include <core/types.hh>
 
 namespace protocols {
 namespace multistage_rosetta_scripts {

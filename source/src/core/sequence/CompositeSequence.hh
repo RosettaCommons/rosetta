@@ -21,7 +21,6 @@
 #include <core/types.hh>
 #include <core/sequence/Sequence.hh>
 
-#include <utility/file/FileName.fwd.hh>
 
 #include <utility/vector1.hh>
 

@@ -18,7 +18,6 @@
 
 #include <test/core/init_util.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/PackerTask_.hh>
@@ -27,21 +26,13 @@
 #include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
 
-#include <core/pack/task/ResfileReader.hh>
-#include <core/pack/pack_rotamers.hh>
 
 #include <string>
 #include <sstream> //stringstreams can convert integers into strings type-safely for comparisons en masse
 
 //Auto Headers
-#include <core/chemical/ResidueType.hh>
-#include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("core.pack.basic_design.cxxtest");

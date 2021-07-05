@@ -16,14 +16,12 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 //Auto Headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

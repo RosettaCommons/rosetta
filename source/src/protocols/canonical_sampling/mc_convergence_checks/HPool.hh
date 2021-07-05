@@ -14,12 +14,9 @@
 #ifndef INCLUDED_protocols_canonical_sampling_mc_convergence_checks_HPool_hh
 #define INCLUDED_protocols_canonical_sampling_mc_convergence_checks_HPool_hh
 
-#include <protocols/moves/MonteCarloExceptionConverge.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
-#include <protocols/toolbox/DecoySetEvaluation.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray2.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
+#include <ObjexxFCL/FArray2.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/canonical_sampling/mc_convergence_checks/HPool.fwd.hh>

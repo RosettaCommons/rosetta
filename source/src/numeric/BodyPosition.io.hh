@@ -18,7 +18,6 @@
 
 // Package headers
 #include <numeric/BodyPosition.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/xyzMatrix.io.hh>
 #include <numeric/IOTraits.hh>
 

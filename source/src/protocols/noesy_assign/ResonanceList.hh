@@ -20,11 +20,11 @@
 #include <protocols/noesy_assign/ResonanceList.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/Resonance.hh>
+#include <protocols/noesy_assign/Resonance.fwd.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
-#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers

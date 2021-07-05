@@ -16,7 +16,6 @@
 #include <cxxtest/TestSuite.h>
 
 #include <protocols/match/downstream/RigidLigandBuilder.hh>
-#include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/ClassicMatchAlgorithm.hh>
 #include <protocols/match/upstream/ProteinSCSampler.hh>
 #include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
@@ -27,28 +26,23 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
 
 // C++ headers
 #include <string>
-#include <iostream>
-#include <sstream>
 
 //Auto Headers
 #include <core/id/AtomID.hh>
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/Hit.hh>
 #include <utility/vector1.hh>
-#include <boost/unordered/unordered_map_fwd.hpp>
 
 
 using namespace protocols::match;

@@ -22,7 +22,6 @@
 #include <core/fragment/SingleResidueFragData.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C/C++
 #include <map>

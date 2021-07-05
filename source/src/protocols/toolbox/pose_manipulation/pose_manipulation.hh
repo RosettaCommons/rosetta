@@ -22,7 +22,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <utility/vector1.fwd.hh>
 //#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>

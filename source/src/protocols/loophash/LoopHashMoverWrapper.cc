@@ -34,10 +34,8 @@
 #include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LocalInserter.hh>
-#include <protocols/loophash/BackboneDB.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/string_util.hh>
@@ -50,9 +48,7 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

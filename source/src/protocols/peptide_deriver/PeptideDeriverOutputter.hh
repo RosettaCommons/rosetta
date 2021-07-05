@@ -23,8 +23,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>

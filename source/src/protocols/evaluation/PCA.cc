@@ -27,7 +27,6 @@
 // ObjexxFCL Headers
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -39,7 +38,6 @@
 #include <iostream>
 
 #include <core/id/AtomID.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

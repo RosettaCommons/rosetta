@@ -14,11 +14,9 @@
 /// @author Oliver Lange
 
 #include <core/scoring/func/Func.hh>
-#include <core/scoring/func/Func.fwd.hh>
 
 #include <core/types.hh>
 
-#include <utility/VirtualBase.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>

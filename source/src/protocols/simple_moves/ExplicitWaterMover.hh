@@ -20,23 +20,27 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/annealer/FixbbPwatSimAnnealer.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/thread/ReadWriteMutex.hh>
 
 #include <numeric/xyzVector.hh>
 
 // C++ Headers
 #include <string>
 #include <unordered_map>
+
+#include <cmath> // MANUAL IWYU
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP
+
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
 
 namespace protocols {
 namespace simple_moves {

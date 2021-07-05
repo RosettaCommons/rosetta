@@ -18,13 +18,11 @@
 #include <protocols/task_operations/StoreTaskMoverCreator.hh>
 
 //project headers
-#include <core/chemical/ResidueConnection.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/make_symmetric_task.hh>

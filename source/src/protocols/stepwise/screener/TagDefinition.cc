@@ -19,7 +19,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.screener.TagDefinition" );
 

@@ -27,10 +27,9 @@
 #include <protocols/abinitio/LoopJumpFoldCst.hh>
 
 // Package Headers
-#include <protocols/jumping/JumpSetup.hh>
-#include <protocols/abinitio/KinematicControl.hh>
-#include <protocols/abinitio/Protocol.hh>
-#include <protocols/abinitio/ResolutionSwitcher.hh>
+#include <protocols/jumping/JumpSetup.fwd.hh>
+#include <protocols/abinitio/KinematicControl.fwd.hh>
+#include <protocols/abinitio/Protocol.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -44,13 +43,10 @@
 
 // Utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

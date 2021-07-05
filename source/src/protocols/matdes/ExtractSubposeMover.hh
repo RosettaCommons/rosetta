@@ -16,14 +16,8 @@
 
 // Unit Headers
 #include <protocols/matdes/ExtractSubposeMover.fwd.hh>
-#include <protocols/matdes/ExtractSubposeMoverCreator.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

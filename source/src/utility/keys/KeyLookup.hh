@@ -37,7 +37,6 @@
 
 // Package headers
 #include <utility/keys/Key.hh>
-#include <utility/keys/NoClient.hh>
 #include <utility/keys/VariantKey.hh>
 
 // C++ headers
@@ -46,7 +45,6 @@
 #include <set>
 #include <string>
 #include <utility>
-#include <algorithm>
 
 
 namespace utility {

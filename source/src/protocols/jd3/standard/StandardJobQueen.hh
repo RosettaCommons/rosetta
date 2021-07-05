@@ -23,31 +23,26 @@
 #include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.fwd.hh>
 #include <protocols/jd3/JobOutputIndex.fwd.hh>
-#include <protocols/jd3/JobTracker.fwd.hh>
 #include <protocols/jd3/InnerLarvalJob.fwd.hh>
-#include <protocols/jd3/pose_inputters/PoseInputSource.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputter.fwd.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterCreator.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputSpecification.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.fwd.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.fwd.hh>
 #include <protocols/jd3/pose_outputters/SecondaryPoseOutputter.fwd.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.fwd.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJobTracker.fwd.hh>
 #include <protocols/jd3/standard/StandardInnerLarvalJob.fwd.hh>
 
 // project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/import_pose/import_pose_options.fwd.hh>
 
 //utility headers
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/options/keys/all.fwd.hh>
 
 // numeric headers
 #include <numeric/DiscreteIntervalEncodingTree.hh>
@@ -67,7 +62,6 @@
 //c++ headers
 #include <string>
 #include <map>
-#include <set>
 
 #ifdef    SERIALIZATION
 // Cereal headers

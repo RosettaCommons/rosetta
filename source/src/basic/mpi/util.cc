@@ -13,14 +13,14 @@
 
 #ifdef USEMPI
 #include <mpi.h>
+#include <utility/mpi_util.hh>
+#include <basic/mpi/mpi_enums.hh>
 #endif
 
 #include <basic/mpi/MessageListener.fwd.hh>
 #include <basic/mpi/util.hh>
-#include <basic/mpi/mpi_enums.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/mpi_util.hh>
 #include <utility/assert.hh>
 #include <utility/exit.hh>
 

@@ -16,15 +16,12 @@
 #include <protocols/hybridization/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/util/kinematics_util.hh>
 
 //#include <core/kinematics/FoldTree.hh>
 
@@ -34,26 +31,16 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
 #include <numeric/random/random.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
-#include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
 
 static basic::Tracer TR( "protocols.hybridization.InsertChunkMover" );
 

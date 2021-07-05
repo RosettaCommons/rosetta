@@ -14,32 +14,24 @@
 
 
 //////////////////////////////////
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh> //Dec 23, 2011
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>
-#include <protocols/stepwise/modeler/rna/rigid_body/util.hh>
 #include <protocols/toolbox/rigid_body/util.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.hh>
@@ -47,28 +39,23 @@
 
 #include <core/id/AtomID_Map.hh>
 
-#include <core/kinematics/MoveMap.hh>
 //#include <core/scoring/ScoreFunction.hh>
 
-#include <numeric/conversions.hh>
-#include <utility/tools/make_vector1.hh>
 #include <utility/numbers.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 
 #include <basic/Tracer.hh>
 
-#include <iostream>
 #include <fstream>
-#include <sstream>
-#include <ObjexxFCL/format.hh>
-#include <set>
 #include <ctime>
+
+#include <core/pose/datacache/CacheableDataType.hh> // AUTO IWYU For CacheableDataType
+#include <core/scoring/rms_util.hh> // AUTO IWYU For superimpose_pose
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

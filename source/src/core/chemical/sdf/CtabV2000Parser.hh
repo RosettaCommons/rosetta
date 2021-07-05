@@ -19,7 +19,7 @@
 #include <core/chemical/sdf/CtabV2000Parser.fwd.hh>
 #include <core/chemical/sdf/CtabParserBase.hh>
 
-#include <core/chemical/sdf/MolFileIOData.hh>
+#include <core/chemical/sdf/MolFileIOData.fwd.hh>
 
 #include <iosfwd>
 

@@ -14,24 +14,14 @@
 #include <devel/domain_assembly/RedesignDomainAssemblyMover.hh>
 
 // Package Headers
-#include <devel/domain_assembly/domain_assembly_setup.hh>
-#include <devel/domain_assembly/domain_assembly.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/selection.hh>
 
 #include <core/kinematics/MoveMap.hh>
-#include <core/util/kinematics_util.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -39,37 +29,28 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
-#include <core/pack/task/operation/ResLvlTaskOperation.hh>
+#include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/select/residue_selector/OrResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/InterGroupInterfaceByVectorSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/relax/FastRelax.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 // Utility Headers
-#include <utility/io/izstream.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
-#include <basic/Tracer.hh>
 
 // option key headers
 #include <basic/options/keys/DomainAssembly.OptionKeys.gen.hh>
@@ -77,7 +58,6 @@
 
 // C++ headers
 #include <iostream>
-#include <fstream>
 
 namespace devel {
 namespace domain_assembly {

@@ -11,79 +11,37 @@
 
 // Project Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/after_opts.hh>
 
-#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/scoring/sasa.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
 
 // C++ Headers
 #include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <ostream>
 #include <string>
-#include <sstream>
-#include <cmath>
-#include <map>
 
 //Auto Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/constraints/util.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
 using namespace core;
 using namespace core::pose::datacache;
-using namespace core::optimization;
 using namespace core::pose::metrics;
 using namespace core::scoring;
 using namespace core::scoring::constraints;
@@ -91,8 +49,6 @@ using namespace core::id;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace conformation;
-using namespace protocols::simple_moves;
-using namespace protocols::rigid;
 
 OPT_KEY( Real, cst_force_constant )
 OPT_KEY( Boolean, print_init )

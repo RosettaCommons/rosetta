@@ -17,7 +17,6 @@
 #include <protocols/simple_filters/NonSequentialNeighborsFilterCreator.hh>
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Conformation.hh>
-#include <numeric/xyzVector.hh>
 //Project Headers
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>

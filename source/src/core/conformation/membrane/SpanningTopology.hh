@@ -28,7 +28,6 @@
 
 // This ifdef is failing for Windows PyRosetta builds. Anyone with expertise?
 //#ifdef WIN32
-#include <core/conformation/membrane/Span.hh>
 //#endif
 
 // Package Header

@@ -21,13 +21,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
-#include <protocols/filters/Filter.hh>
-#include <protocols/filters/FilterFactory.hh>
-#include <protocols/filters/BasicFilters.hh>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/jd2/util.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>

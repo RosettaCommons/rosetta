@@ -19,11 +19,8 @@
 #include <protocols/environment/EnvExcn.hh>
 
 // Project headers
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/tree/BondedAtom.hh>
 
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -37,6 +34,8 @@
 
 // C++ Headers
 #include <algorithm>
+
+#include <utility/string_util.hh> // AUTO IWYU For to_string
 
 // ObjexxFCL Headers
 

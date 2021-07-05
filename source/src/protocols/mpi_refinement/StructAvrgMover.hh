@@ -15,11 +15,11 @@
 #define INCLUDED_protocols_mpi_refinement_StructAvrgMover_hh
 
 // Package headers
-#include <protocols/wum/SilentStructStore.hh>
+#include <protocols/wum/SilentStructStore.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
 

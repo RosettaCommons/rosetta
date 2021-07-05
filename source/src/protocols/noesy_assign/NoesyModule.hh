@@ -29,12 +29,10 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
-#include <protocols/noesy_assign/ResonanceList.fwd.hh>
 #include <string>
 
 

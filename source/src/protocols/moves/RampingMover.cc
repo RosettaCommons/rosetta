@@ -33,7 +33,6 @@
 // tracer
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
-#include <complex>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

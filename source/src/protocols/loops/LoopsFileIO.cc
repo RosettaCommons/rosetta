@@ -20,8 +20,6 @@
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -31,6 +29,9 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <fstream>
+
+#include <core/pose/ResidueIndexDescription.hh> // AUTO IWYU For ResidueIndexDescriptionPoseNum, RID_FileSource
+#include <utility/json_spirit/json_spirit_reader.h> // AUTO IWYU For read
 
 namespace protocols {
 namespace loops {

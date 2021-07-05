@@ -20,7 +20,8 @@
 #include <protocols/magnesium/MgScanner.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace magnesium {

@@ -19,19 +19,12 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/simple_metrics/SimpleMetric.hh>
-#include <core/simple_metrics/SimpleMetricFactory.hh>
-#include <core/select/util.hh>
 
-#include <utility/excn/Exceptions.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/tag/util.hh>
-#include <utility/string_util.hh>
-#include <basic/datacache/DataMap.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 static basic::Tracer TR( "core.simple_metrics.util" );
 

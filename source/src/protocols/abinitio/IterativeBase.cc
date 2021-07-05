@@ -33,12 +33,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ResidualDipolarCoupling.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/util.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -72,16 +67,11 @@
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/simple_filters/ScoreEvaluator.hh>
 #include <protocols/simple_filters/RDC_Evaluator.hh>
-#include <protocols/evaluation/util.hh>
-#include <protocols/loops/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
-#include <protocols/cluster/cluster.hh>
-#include <protocols/toolbox/Cluster.hh>
-#include <protocols/toolbox/Cluster.impl.hh>
 
 
 #include <core/fragment/SecondaryStructure.hh>
@@ -117,9 +107,12 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <protocols/noesy_assign/CrossPeakList.impl.hh>
-#include <utility/vector0.hh>
+#include <protocols/noesy_assign/CrossPeakList.impl.hh> // DO NOT AUTO-REMOVE (needed for template instantiation)
 #include <utility/vector1.hh>
+
+#include <protocols/abinitio/HedgeArchive.hh> // AUTO IWYU For HedgeArchive
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <basic/prof.hh> // AUTO IWYU For show_time, prof_show, DynamicProfileThis
 
 static basic::Tracer tr( "protocols.iterative" );
 static basic::MemTracer mem_tr;

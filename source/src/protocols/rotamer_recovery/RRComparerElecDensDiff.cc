@@ -16,25 +16,16 @@
 #include <protocols/rotamer_recovery/RRComparerElecDensDiff.hh>
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
-#include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <protocols/electron_density/util.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // C++ Headers
@@ -42,7 +33,6 @@
 #include <sstream>
 
 #include <core/pose/Pose.hh>
-#include <utility/vector1.hh>
 
 
 using std::string;

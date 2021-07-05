@@ -19,7 +19,6 @@
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobInputter.fwd.hh>
-#include <protocols/jd2/util.hh>
 
 // Project headers
 #include <protocols/evaluation/EvaluatorFactory.hh>
@@ -41,7 +40,6 @@
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-#include <algorithm>
 #include <cstdlib>
 
 ///C++ headers

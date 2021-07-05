@@ -16,17 +16,14 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/GlobalResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSetCache.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/Metapatch.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/thread/ReadWriteMutex.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

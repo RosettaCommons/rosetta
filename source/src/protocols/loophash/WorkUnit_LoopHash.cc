@@ -15,19 +15,14 @@
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
@@ -38,6 +33,8 @@
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <protocols/loophash/LoopHashLibrary.hh> // AUTO IWYU For LoopHashLibrary
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

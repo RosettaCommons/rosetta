@@ -24,10 +24,8 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 
 #include <core/conformation/util.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

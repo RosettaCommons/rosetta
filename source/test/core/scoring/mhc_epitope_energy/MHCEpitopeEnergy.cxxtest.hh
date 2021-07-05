@@ -23,7 +23,6 @@
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/optimization/MinimizerMap.hh>
@@ -38,7 +37,6 @@
 #include <test/util/pose_funcs.hh>
 #include <basic/database/open.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -49,6 +47,9 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopeEnergy.cxxtest");
 

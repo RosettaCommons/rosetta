@@ -20,13 +20,11 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

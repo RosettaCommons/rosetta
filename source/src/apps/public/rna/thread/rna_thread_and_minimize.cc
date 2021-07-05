@@ -15,49 +15,31 @@
 #include <protocols/rna/movers/RNAThreadAndMinimizeMover.hh>
 
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 #include <core/pose/rna/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/sequence/Sequence.hh>
-#include <core/sequence/util.hh>
-#include <utility/string_util.hh>
-#include <protocols/rna/denovo/util.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/constraint_movers/AddConstraintsToCurrentConformationMover.hh>
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 //#include <cstdlib>
-#include <utility/io/ozstream.hh>
-#include <fstream>
 #include <iostream>
 #include <string>
 
 // option key includes
 
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 #include <utility/excn/Exceptions.hh>

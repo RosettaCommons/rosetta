@@ -29,10 +29,10 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
+#include <numeric/xyzVector.hh> // DO NOT AUTO-REMOVE
 
 namespace core {
 namespace energy_methods {

@@ -15,28 +15,20 @@
 #ifndef INCLUDED_core_scoring_fiber_diffraction_FiberDiffractionEnergyDens_hh
 #define INCLUDED_core_scoring_fiber_diffraction_FiberDiffractionEnergyDens_hh
 
-#include <core/energy_methods/FiberDiffractionEnergyDensCreator.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray4D.hh>
 #include <core/id/AtomID.hh>
 
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/interpolation/spline/Interpolator.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
+#include <numeric/interpolation/spline/Interpolator.fwd.hh>
 
-#include <string>
 #include <complex>
 
 namespace core {

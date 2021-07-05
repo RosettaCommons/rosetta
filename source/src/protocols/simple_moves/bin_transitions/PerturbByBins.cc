@@ -22,26 +22,20 @@
 // Bin transition calculator headers:
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
-#include <core/scoring/bin_transitions/BinTransitionData.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AA.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 #include <numeric/random/random.hh>
 // XSD XRW Includes

@@ -15,7 +15,6 @@
 #ifndef INCLUDED_core_sequence_SWAligner_hh
 #define INCLUDED_core_sequence_SWAligner_hh
 
-#include <core/types.hh>
 #include <core/sequence/Aligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/Sequence.fwd.hh>

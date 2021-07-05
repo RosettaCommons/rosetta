@@ -22,7 +22,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

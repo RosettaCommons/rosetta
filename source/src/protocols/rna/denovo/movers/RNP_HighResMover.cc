@@ -16,26 +16,22 @@
 
 #include <protocols/rna/denovo/movers/RNP_HighResMover.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
-#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <protocols/rna/movers/RNA_LoopCloser.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/scoring/Energies.hh>
 
 
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -50,7 +46,6 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/random/random.hh>
 
 // External library headers
 
@@ -59,7 +54,6 @@
 #include <utility>
 #include <vector>
 #include <string>
-#include <sstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -69,9 +63,11 @@
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/format.hh>
+
+#include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh> // AUTO IWYU For RNA_FragmentMonteCarloOptions
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 using namespace core;

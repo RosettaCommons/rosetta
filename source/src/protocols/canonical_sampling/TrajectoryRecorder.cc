@@ -17,8 +17,7 @@
 #include <protocols/canonical_sampling/TrajectoryRecorder.hh>
 
 // Other project headers or inline function headers
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <utility/tag/Tag.hh>
@@ -26,14 +25,14 @@
 // External library headers
 
 // C++ headers
-#include <iomanip>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For BooleanOptionKey, IntegerOptionKey, Optio...
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
+
 static basic::Tracer tr( "protocols.canonical_sampling.TrajectoryRecorder" );
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // Operating system headers
 
 OPT_1GRP_KEY( Integer, trajectory, stride )

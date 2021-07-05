@@ -21,7 +21,6 @@
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
 #include <numeric/xyzTransform.hh>
 
 // C++ headers
@@ -33,6 +32,8 @@
 #include <utility/vector1.hh>
 #include <fstream>
 #include <iomanip>
+
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
 
 // @details: This data structure contains all data necessary to generate a
 // symmetrical system, score it and move it. It is used to initialize the

@@ -24,7 +24,7 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 #include <core/sequence/SequenceProfile.hh>
-#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
 
 #include <utility/vector1.hh>
 

@@ -21,6 +21,8 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <map> // AUTO IWYU For map
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {

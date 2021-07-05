@@ -25,7 +25,6 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
 //#include <core/scoring/sasa.hh>
@@ -41,7 +40,6 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/ubyte.hh>
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray1.hh>
 
 // Numeric Headers
 #include <numeric/constants.hh> // pi
@@ -53,7 +51,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ Headers
-#include <vector>
 #include <iostream>
 #include <algorithm>
 
@@ -61,6 +58,10 @@
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D
+
 static basic::Tracer TR( "protocols.vardist_solaccess" );
 
 using namespace ObjexxFCL::format;

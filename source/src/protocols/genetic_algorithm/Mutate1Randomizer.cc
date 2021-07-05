@@ -17,17 +17,13 @@
 // Package headers
 #include <protocols/genetic_algorithm/Entity.hh>
 
-#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 
-#include <numeric/random/random.fwd.hh>
 
-#include <algorithm> // std::copy
 
-#include <utility/exit.hh>
 
 using core::Size;
 

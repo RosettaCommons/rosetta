@@ -26,12 +26,12 @@
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileOptions.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
-#include <utility/file/FileName.fwd.hh>
 #include <utility/vector1.hh>
 
-//project headers
+#include <utility/options/keys/OptionKeyList.fwd.hh> // AUTO IWYU For OptionKeyList
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
+
 
 #ifdef    SERIALIZATION
 // Cereal headers

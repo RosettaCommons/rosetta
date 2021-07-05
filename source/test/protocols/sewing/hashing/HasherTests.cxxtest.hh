@@ -13,8 +13,6 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -25,12 +23,14 @@
 #include <protocols/sewing/hashing/Hasher.hh>
 #include <protocols/sewing/hashing/ModelFileReader.hh>
 #include <protocols/sewing/hashing/AlignmentGenerator.hh>
-#include <protocols/init_util.hh>
 #include <core/conformation/Atom.hh>
 #include <numeric/xyzVector.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
+
 using namespace protocols::sewing;
 
 static basic::Tracer TR("HasherTests");

@@ -19,11 +19,9 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MoverStatus.hh>
 //
 //// Rosetta Headers
 #include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -40,11 +38,9 @@
 #include <basic/Tracer.hh>
 
 //Utility Headers
-#include <numeric/random/random.hh>
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 
 // option key includes
@@ -52,12 +48,12 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/keys/Key3Vector.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 //Auto Headers
 

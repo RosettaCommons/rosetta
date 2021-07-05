@@ -27,7 +27,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pose/symmetry/util.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -36,29 +35,21 @@
 #include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LocalInserter.hh>
-#include <protocols/loophash/BackboneDB.hh>
-#include <protocols/relax/FastRelax.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/string_util.hh>
 
 
 #include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 
 #include <utility/sort_predicates.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/id/AtomID.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

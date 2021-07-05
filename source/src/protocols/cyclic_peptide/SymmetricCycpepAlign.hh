@@ -20,14 +20,12 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Basic/Utility headers
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
 

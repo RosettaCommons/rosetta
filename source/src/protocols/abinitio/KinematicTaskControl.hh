@@ -28,13 +28,12 @@
 #include <protocols/abinitio/KinematicTaskControl.fwd.hh>
 
 // Package Headers
-#include <protocols/abinitio/KinematicControl.hh>
+#include <protocols/abinitio/KinematicControl.fwd.hh>
 #include <protocols/abinitio/Protocol.hh>
-#include <protocols/checkpoint/CheckPointer.hh>
-#include <protocols/abinitio/ResolutionSwitcher.hh>
+#include <protocols/checkpoint/CheckPointer.fwd.hh>
+#include <protocols/abinitio/ResolutionSwitcher.fwd.hh>
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
 
@@ -44,13 +43,11 @@
 
 // Utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
 
 #include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

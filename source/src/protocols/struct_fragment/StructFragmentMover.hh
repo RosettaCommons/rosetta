@@ -20,18 +20,16 @@
 #include <protocols/struct_fragment/StructFragmentMover.fwd.hh>
 
 // Package Headers
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.hh>
 
 // Project Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/func/Func.fwd.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
 

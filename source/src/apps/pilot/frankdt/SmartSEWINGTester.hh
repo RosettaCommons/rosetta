@@ -18,7 +18,6 @@
 #include <apps/pilot/frankdt/SmartSEWINGTester.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 namespace apps {

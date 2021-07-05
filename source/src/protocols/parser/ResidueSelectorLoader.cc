@@ -22,15 +22,14 @@
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/string_util.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size
+
 
 namespace protocols {
 namespace parser {

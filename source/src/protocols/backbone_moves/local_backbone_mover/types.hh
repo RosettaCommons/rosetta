@@ -10,8 +10,6 @@
 #include <core/types.hh>
 
 
-class LocalBackboneMoverTests;
-
 namespace protocols {
 namespace backbone_moves {
 namespace local_backbone_mover {

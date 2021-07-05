@@ -19,7 +19,6 @@
 
 #include <core/pose/datacache/CacheableObserver.hh>
 #include <utility/vector1.hh>
-#include <iostream>
 
 
 #ifdef    SERIALIZATION

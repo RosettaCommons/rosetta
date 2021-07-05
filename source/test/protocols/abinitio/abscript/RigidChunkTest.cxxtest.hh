@@ -15,7 +15,6 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <core/id/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -24,17 +23,13 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <protocols/environment/Environment.hh>
-#include <protocols/environment/EnvExcn.hh>
 
-#include <protocols/filters/Filter.hh>
 
 #include <protocols/abinitio/abscript/RigidChunkCM.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <test/core/init_util.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <basic/Tracer.hh>
 
@@ -42,7 +37,6 @@
 // #include <utility/VirtualBase.hh>
 
 //C++ headers
-#include <iostream>
 
 static basic::Tracer TR("protocols.abinitio.abscript.RigidChunkTest.cxxtest");
 

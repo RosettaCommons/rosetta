@@ -23,7 +23,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <basic/Tracer.hh>

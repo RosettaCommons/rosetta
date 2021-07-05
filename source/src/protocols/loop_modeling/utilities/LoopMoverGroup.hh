@@ -16,13 +16,11 @@
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 
 // Protocols headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {

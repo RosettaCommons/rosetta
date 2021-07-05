@@ -18,7 +18,8 @@
 
 #include <utility/exit.hh>
 
-#include <utility/vector0_bool.hh>
+
+#include <utility/vector0.hh> // AUTO IWYU For vector0
 
 
 namespace core {

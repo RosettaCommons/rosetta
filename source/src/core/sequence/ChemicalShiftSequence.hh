@@ -19,7 +19,7 @@
 #include <core/sequence/ChemicalShiftSequence.fwd.hh>
 
 #include <core/types.hh>
-#include <core/sequence/Sequence.hh>
+#include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceProfile.hh>
 
 #include <utility/file/FileName.fwd.hh>

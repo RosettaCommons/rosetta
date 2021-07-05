@@ -29,9 +29,7 @@
 
 // C++ Headers
 #include <string>
-#include <set>
 
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 

@@ -32,7 +32,6 @@
 //#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/MetricValue.hh>
 
 //#include <core/chemical/ResidueType.hh>
 //#include <core/conformation/Residue.hh>
@@ -77,10 +76,6 @@
 // option key includes
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

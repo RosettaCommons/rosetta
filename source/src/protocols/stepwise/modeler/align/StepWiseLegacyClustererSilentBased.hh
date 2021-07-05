@@ -19,13 +19,11 @@
 
 #include <protocols/stepwise/modeler/align/StepWiseLegacyClustererSilentBased.fwd.hh>
 #include <protocols/stepwise/modeler/util.hh> // For PoseList. This is a bit silly.
-#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/types.hh>
 
@@ -34,6 +32,8 @@
 
 #include <map>
 #include <string>
+
+#include <core/io/silent/silent.fwd.hh> // AUTO IWYU For SilentStructOP
 
 namespace protocols {
 namespace stepwise {

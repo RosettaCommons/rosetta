@@ -17,7 +17,6 @@
 
 // C++ headers
 #include <iosfwd>
-#include <vector>
 
 namespace utility {
 

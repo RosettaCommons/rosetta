@@ -16,12 +16,10 @@
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -29,8 +27,9 @@
 #include <utility/file/file_sys_util.hh>
 
 //Auto Headers
-#include <core/io/silent/EnergyNames.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue Residue::ResidueType
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 static basic::Tracer TR("test.core.io.silent.PDBSilentStruct");

@@ -12,23 +12,18 @@
 
 // libRosetta headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rna/RNA_Motif.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/sequence/util.hh>
-#include <core/pose/subpose_manipulation_util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
+#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <devel/init.hh>
@@ -41,12 +36,9 @@
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/io/ozstream.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "rna_motif" );
 

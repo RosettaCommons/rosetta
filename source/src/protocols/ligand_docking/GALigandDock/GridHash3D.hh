@@ -17,10 +17,11 @@
 
 #include <core/types.hh>
 #include <core/conformation/Atom.hh>
-#include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/lkball/LK_BallInfo.hh>
 
 #include <unordered_map>
+
+#include <core/scoring/hbonds/types.hh> // AUTO IWYU For HBAccChemType, HBDonChemType
 
 namespace protocols {
 namespace ligand_docking {

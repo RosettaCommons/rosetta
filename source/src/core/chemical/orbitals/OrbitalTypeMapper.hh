@@ -15,13 +15,10 @@
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <map>
-#if WIN32
 #include <string>
-#endif
 
 
 namespace core {

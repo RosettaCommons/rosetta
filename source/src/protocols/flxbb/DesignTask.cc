@@ -18,22 +18,19 @@
 // Package Headers
 //#include <protocols/flxbb/DesignLayerOperation.hh>
 #include <protocols/flxbb/LayerDesignOperation.hh>
-#include <protocols/flxbb/FilterStructs.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/options/option.hh>
-#include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
 
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <utility>
 #include <utility/vector1.hh>
 
 

@@ -38,8 +38,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -52,7 +51,9 @@
 #include <utility/io/izstream.hh>
 
 #include <basic/Tracer.hh>
-#include <algorithm>
+
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
+
 namespace protocols {
 namespace jd2 {
 

@@ -10,7 +10,6 @@
 /// @brief
 /// @author James Thompson
 
-#include <core/types.hh>
 
 #include <core/id/NamedAtomID.hh>
 
@@ -18,7 +17,6 @@
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/StealLigandMover.hh>
 
-#include <utility>
 #include <utility/vector1.hh>
 
 

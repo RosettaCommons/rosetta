@@ -15,67 +15,39 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh> //Oct 22, 2011...Not sure why the code worked without this!
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/rigid_body/util.hh> //Sept 26, 2011
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/sampler/rigid_body/EulerAngles.hh>
-#include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
-#include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
 //////////////////////////////////
 
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
-#include <numeric/conversions.hh>
 #include <numeric/NumericTraits.hh>
 
 #include <utility/file/file_sys_util.hh>
 
 #include <basic/Tracer.hh>
 
-#include <iostream>
 #include <fstream>
-#include <sstream>
-#include <ObjexxFCL/format.hh>
-#include <set>
-#include <ctime>
 #include <map>
 
-#include <cstdio> //Sept 26, 2011
 
 //for process_mem_usage:
-#include <ios>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
+#include <core/scoring/rms_util.hh> // AUTO IWYU For rms_at_correspondi...
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For string_of
 
 
 using namespace core;

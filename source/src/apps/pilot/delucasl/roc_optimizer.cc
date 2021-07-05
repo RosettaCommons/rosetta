@@ -19,9 +19,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
-#include <basic/database/open.hh>
 
 
 #include <core/optimization/ParticleSwarmMinimizer.hh>
@@ -42,7 +40,7 @@
 #include <protocols/ligand_docking/SlideTogether.hh>
 #include <protocols/ligand_docking/InterfaceScoreCalculator.hh>
 #include <protocols/features/ProteinSilentReport.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 //protocol headers

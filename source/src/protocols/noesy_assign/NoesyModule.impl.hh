@@ -22,11 +22,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/exit.hh>
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
-#include <basic/prof.hh>
 
 #include <protocols/noesy_assign/CrossPeakList.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>

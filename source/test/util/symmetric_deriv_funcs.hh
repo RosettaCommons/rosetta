@@ -26,13 +26,11 @@
 #include <core/optimization/CartesianMinimizerMap.hh>
 #include <core/optimization/CartesianMultifunc.hh>
 #include <core/optimization/cartesian_minimize.hh>
-#include <core/optimization/symmetry/sym_atom_tree_minimize.hh>
 #include <core/optimization/symmetry/SymAtomTreeMultifunc.hh>
 #include <core/optimization/symmetry/SymMinimizerMap.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 static basic::Tracer TR_derivtest("util.symmetric_deriv_funcs");

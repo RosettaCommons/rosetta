@@ -16,7 +16,6 @@
 #include <core/pose/Pose.hh>
 #include <protocols/multistate_design/SingleStateFitnessFunction.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

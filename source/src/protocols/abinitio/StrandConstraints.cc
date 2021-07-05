@@ -20,7 +20,6 @@
 
 #include <core/pose/util.hh>
 
-#include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 
 

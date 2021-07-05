@@ -29,7 +29,6 @@
 #include <protocols/match/output/UpstreamHitCacher.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -39,7 +38,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
 #include <utility/vector1.hh>
-#include <iterator>
 
 
 namespace protocols {

@@ -17,14 +17,13 @@
 
 
 #include <core/pose/Pose.hh> /// Replace Pose objects with PoseOP objects to remove this header.
-#include <core/fragment/FragSet.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
 #include <devel/fold_from_loops/FoldFromLoopsMover.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace devel {

@@ -18,32 +18,26 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Stub.hh>
-#include <core/kinematics/Jump.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <numeric/xyzVector.hh>
 #include <string>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
 //#include <core/pose/Pose.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <basic/datacache/DataMap.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 
 namespace protocols {

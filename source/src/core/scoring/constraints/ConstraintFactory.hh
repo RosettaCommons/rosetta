@@ -15,6 +15,7 @@
 #define INCLUDED_core_scoring_constraints_ConstraintFactory_hh
 
 // Unit headers
+#include <core/scoring/constraints/ConstraintFactory.fwd.hh>
 
 // Package headers
 #include <core/scoring/constraints/Constraint.fwd.hh>
@@ -26,6 +27,7 @@
 
 // C++ Headers
 #include <map>
+#include <string>
 
 namespace core {
 namespace scoring {

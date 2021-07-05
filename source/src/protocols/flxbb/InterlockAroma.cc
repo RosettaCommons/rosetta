@@ -41,13 +41,15 @@
 #include <basic/datacache/DataMap.hh>
 
 
-#include <utility/vector0.hh>
 
 //Auto Headers
 #include <utility/graph/Graph.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 static basic::Tracer TR( "protocols.flxbb.InterlockAroma" );
 
 namespace protocols {

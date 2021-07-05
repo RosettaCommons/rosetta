@@ -14,38 +14,22 @@
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 #include <core/chemical/VariantType.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/ResFilters.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/antibody/H3RefineCCD.hh>
 #include <protocols/antibody/util.hh>
-#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -53,11 +37,12 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 #include <numeric/numeric.functions.hh>
+
+#include <protocols/antibody/AntibodyInfo.hh> // AUTO IWYU For AntibodyInfo
 
 static basic::Tracer TR( "protocols.antibody.H3RefineCCD" );
 

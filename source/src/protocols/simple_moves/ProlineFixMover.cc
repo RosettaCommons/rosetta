@@ -12,13 +12,11 @@
 /// @author
 
 // Unit Headers
-#include <protocols/moves/Mover.hh>
 
 // Package headers
 #include <protocols/simple_moves/ProlineFixMover.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -31,10 +29,7 @@
 #include <core/pack/task/TaskFactory.hh>
 
 // tracer
-#include <basic/Tracer.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 

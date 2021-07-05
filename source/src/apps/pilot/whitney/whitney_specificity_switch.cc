@@ -19,7 +19,6 @@
 // Core Headers
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -28,11 +27,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <basic/options/util.hh>
-#include <core/id/AtomID_Map.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
@@ -43,6 +39,8 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core;

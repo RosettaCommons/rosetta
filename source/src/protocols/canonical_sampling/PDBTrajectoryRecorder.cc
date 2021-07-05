@@ -22,12 +22,10 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
 #include <protocols/canonical_sampling/TemperingBase.hh>
 #include <core/io/raw_data/ScoreMap.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <utility/tag/Tag.hh>
 
 // External library headers
 

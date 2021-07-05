@@ -18,11 +18,10 @@
 
 // Package headers
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
-#include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
 #include <protocols/jd3/pose_inputters/pose_inputter_schemas.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 //#include <core/io/StructFileReaderOptions.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/import_pose_options.hh>
@@ -32,11 +31,9 @@
 #include <basic/Tracer.hh>
 
 //utility headers
-#include <utility/assert.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

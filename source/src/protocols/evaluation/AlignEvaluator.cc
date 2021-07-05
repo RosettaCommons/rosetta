@@ -11,22 +11,16 @@
 /// @author James Thompson
 
 #include <protocols/evaluation/AlignEvaluator.hh>
-#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
 
-#include <numeric/xyzVector.hh>
 
-#include <core/chemical/ResidueType.hh>
-#include <core/id/types.hh>
 #include <utility>
-#include <utility/vector1.hh>
 
 
 // C++ headers

@@ -21,7 +21,7 @@
 // C++ headers
 #include <algorithm>
 #include <cctype>
-#include <iostream> // PB fix gcc 4.2.1 error?
+#include <iostream> // DO NOT AUTO-REMOVE
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

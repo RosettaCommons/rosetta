@@ -15,7 +15,7 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.hh>
 
 //project headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 //utility headers
 #include <utility>

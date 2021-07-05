@@ -23,7 +23,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -33,14 +32,12 @@
 
 // Utility headers
 #include <utility/io/ozstream.hh>
-#include <utility/file/FileName.hh>
 
 // Option Headers
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 // Utility headers
@@ -48,7 +45,9 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/noesy_assign/NoesyModule.hh>
-#include <utility/vector1.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For RealOptionKey, OptionKeys,
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 
 static basic::Tracer tr( "protocols.iterative" );

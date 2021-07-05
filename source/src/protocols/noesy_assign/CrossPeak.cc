@@ -20,40 +20,37 @@
 #include <protocols/noesy_assign/ResonanceList.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/Exceptions.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/noesy_assign/PeakCalibrator.hh>
 
 // Project Headers
-#include <core/chemical/AA.hh>
 #include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 // Utility headers
 
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/exit.hh>
 // #include <utility/vector1.fwd.hh>
 // #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
-#include <basic/prof.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 // #include <core/options/keys/abinitio.OptionKeys.gen.hh>
 // #include <core/options/keys/run.OptionKeys.gen.hh>
 //#include <core/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
 #include <iostream>
-#include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <cmath>
+
+#include <protocols/noesy_assign/PeakAssignment.hh> // AUTO IWYU For PeakAssignment
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 static basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 

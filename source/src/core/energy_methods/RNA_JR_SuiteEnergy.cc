@@ -16,7 +16,6 @@
 #include <core/energy_methods/RNA_JR_SuiteEnergyCreator.hh>
 
 // Package Headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Project Headers

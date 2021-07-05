@@ -17,15 +17,13 @@
 #include <core/scoring/ChemicalShiftAnisotropy.fwd.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 #include <basic/datacache/CacheableData.hh>
-#include <numeric/numeric.functions.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 //Auto Headers
-#include <utility>
-#include <utility/vector1_bool.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

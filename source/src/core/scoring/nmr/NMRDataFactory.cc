@@ -16,7 +16,6 @@
 #include <core/scoring/nmr/NMRDataFactory.hh>
 
 // Package headers
-#include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/nmr/pcs/PCSData.hh>
@@ -24,7 +23,6 @@
 #include <core/scoring/nmr/pre/PREData.hh>
 
 // Package headers
-#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
@@ -33,7 +31,6 @@
 
 // C++ headers
 #include <string>
-#include <map>
 
 
 namespace core {

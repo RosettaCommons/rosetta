@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_ClusterMetricRegistrator_hh
 
 // Package headers
-#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.hh>
+#include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace protocols {

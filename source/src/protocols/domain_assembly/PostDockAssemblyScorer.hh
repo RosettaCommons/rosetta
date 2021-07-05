@@ -19,8 +19,6 @@
 #include <protocols/moves/Mover.hh>
 #include <string>
 
-#include <utility>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

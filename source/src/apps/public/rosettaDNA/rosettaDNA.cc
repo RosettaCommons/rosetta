@@ -14,13 +14,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/dna/PDBOutput.hh>
 #include <protocols/viewer/viewers.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/SequenceProfileConstraint.fwd.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 using namespace core;
 using namespace scoring;

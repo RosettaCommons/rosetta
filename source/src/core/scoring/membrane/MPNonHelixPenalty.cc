@@ -30,27 +30,21 @@
 #include <core/conformation/membrane/SpanningTopology.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/VariantType.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/conformation/membrane/Span.hh>
 #include <core/types.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility Headers
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "core.scoring.membrane.MPNonHelix" );
 

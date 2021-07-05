@@ -22,8 +22,6 @@
 
 // project headers
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>

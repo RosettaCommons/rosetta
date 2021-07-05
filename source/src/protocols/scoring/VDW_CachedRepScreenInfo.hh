@@ -16,16 +16,12 @@
 #ifndef INCLUDED_protocols_scoring_VDW_CachedRepScreenInfo_HH
 #define INCLUDED_protocols_scoring_VDW_CachedRepScreenInfo_HH
 
-#include <utility/VirtualBase.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
-#include <basic/datacache/BasicDataCache.hh>
 
 
 

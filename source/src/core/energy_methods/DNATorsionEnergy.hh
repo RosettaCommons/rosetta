@@ -23,13 +23,12 @@
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 //#include <core/scoring/dna/DNATorsionPotential.fwd.hh>
-#include <core/scoring/dna/DNATorsionPotential.hh>
+#include <core/scoring/dna/DNATorsionPotential.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 //#include <core/pack/task/PackerTask.hh>
 
-#include <map>
 
 // Utility headers
 

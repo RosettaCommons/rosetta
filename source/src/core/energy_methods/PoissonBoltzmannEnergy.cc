@@ -27,13 +27,10 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 // option

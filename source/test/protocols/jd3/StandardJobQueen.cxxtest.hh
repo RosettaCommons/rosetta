@@ -20,37 +20,29 @@
 #include <protocols/jd3/standard/StandardJobQueen.hh>
 
 // Package headers
-#include <protocols/jd3/JobQueen.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/pose_inputters/PDBPoseInputter.hh>
-#include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 #include <protocols/jd3/standard/PreliminaryLarvalJobTracker.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 #include <protocols/jd3/JobTracker.hh>
 
 // basic headers
 #include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKey.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/options/keys/StringOptionKey.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/string_util.hh>
 
 // Boost headers
 
 // C++ headers
-#include <sstream>
 #include <functional>
+
+#include <protocols/jd3/InputSource.hh> // AUTO IWYU For InputSource
 
 using namespace utility::tag;
 using namespace protocols::jd3;

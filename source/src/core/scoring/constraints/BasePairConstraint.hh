@@ -18,22 +18,18 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/BasePairConstraint.fwd.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/chemical/rna/util.hh>
 
 
 //Utility Headers
-#include <numeric/xyzVector.fwd.hh>
 
-#include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION

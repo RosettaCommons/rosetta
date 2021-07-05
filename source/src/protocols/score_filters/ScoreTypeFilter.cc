@@ -21,30 +21,18 @@
 //Project Headers
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <utility/exit.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
-#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option_macros.hh>
-#include <core/pose/util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

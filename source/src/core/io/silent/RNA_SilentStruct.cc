@@ -13,13 +13,10 @@
 /// @author James Thompson
 
 // C++ Headers
-#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>
-#include <sstream>
 
 // mini headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -39,17 +36,15 @@
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <numeric/model_quality/rms.hh>
 
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 

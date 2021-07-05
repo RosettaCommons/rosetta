@@ -15,6 +15,8 @@
 #ifndef INCLUDED_core_io_silent_SilentEnergy_hh
 #define INCLUDED_core_io_silent_SilentEnergy_hh
 
+#include <core/io/silent/SilentEnergy.fwd.hh>
+
 #include <core/types.hh>
 #include <string>
 

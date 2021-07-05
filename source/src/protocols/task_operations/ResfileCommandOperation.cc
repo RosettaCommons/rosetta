@@ -15,10 +15,9 @@
 #include <protocols/task_operations/ResfileCommandOperationCreator.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/util.hh>
 
@@ -32,8 +31,7 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <basic/datacache/DataMap.hh>
-#include <core/pack/task/operation/task_op_schemas.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 
 

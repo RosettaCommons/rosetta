@@ -16,7 +16,6 @@
 // Package headers
 
 // Project headers
-#include <utility>
 #include <utility/string_util.hh>
 
 

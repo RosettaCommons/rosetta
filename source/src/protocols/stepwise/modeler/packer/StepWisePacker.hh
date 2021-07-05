@@ -19,7 +19,6 @@
 
 #include <protocols/stepwise/modeler/packer/StepWisePacker.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/minimization_packing/GreenPacker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/types.hh>

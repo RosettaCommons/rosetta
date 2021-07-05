@@ -23,7 +23,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -39,17 +39,17 @@
 #include <core/chemical/AtomTypeSet.hh>
 
 // Utility Headers
-#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/tools/make_map.hh>
 
-#include <numeric/xyz.functions.hh>
 
 // C++ Headers
 #include <sstream>
 
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

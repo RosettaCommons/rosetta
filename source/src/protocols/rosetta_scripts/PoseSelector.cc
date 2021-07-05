@@ -16,19 +16,15 @@
 
 // Unit Headers
 #include <protocols/rosetta_scripts/PoseSelector.hh>
-#include <protocols/rosetta_scripts/PoseSelector.fwd.hh>
 
 // Package headers
 
 // Project headers
-#include <protocols/rosetta_scripts/PosePropertyReporter.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ Headers
-#include <string>
 
 static basic::Tracer TR( "protocols.rosetta_scripts.PoseSelector" );
 

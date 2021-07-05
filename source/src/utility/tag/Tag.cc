@@ -66,23 +66,26 @@
 
 #include <iostream>
 #include <cstdio>
-#include <boost/spirit/include/classic_core.hpp>
-#include <boost/spirit/include/classic_attribute.hpp>
-#include <boost/spirit/include/classic_closure.hpp>
-#include <boost/spirit/include/phoenix1_primitives.hpp>
-#include <boost/spirit/include/phoenix1_operators.hpp>
-#include <boost/spirit/include/phoenix1_functions.hpp>
-#include <boost/spirit/include/phoenix1_binders.hpp>
-#include <boost/spirit/include/phoenix1_casts.hpp>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <boost/spirit/include/classic_position_iterator.hpp> // for reporting where errors occur
-#include <boost/spirit/include/classic_functor_parser.hpp>
 
 #include <string>
 #include <sstream>
+
+#include <boost/spirit/home/classic/attribute.hpp> // AUTO IWYU For closure<>::context_t, closure
+#include <boost/spirit/home/classic/core/composite/actions.hpp> // AUTO IWYU For action
+#include <boost/spirit/home/classic/core/composite/alternative.hpp> // AUTO IWYU For alternative, operator|
+#include <boost/spirit/home/classic/core/composite/kleene_star.hpp> // AUTO IWYU For operator*, kleene_star
+#include <boost/spirit/home/classic/core/composite/optional.hpp> // AUTO IWYU For operator!
+#include <boost/spirit/home/classic/core/composite/positive.hpp> // AUTO IWYU For operator+
+#include <boost/spirit/home/classic/core/composite/sequence.hpp> // AUTO IWYU For operator>>, sequence
+#include <boost/spirit/home/classic/core/non_terminal/grammar.hpp> // AUTO IWYU For grammar
+#include <boost/spirit/home/classic/core/non_terminal/rule.hpp> // AUTO IWYU For abstract_parser, rule
+#include <boost/spirit/home/classic/iterator/position_iterator.hpp> // AUTO IWYU For file_position_base, position_iterator
+#include <boost/spirit/home/classic/phoenix/binders.hpp> // AUTO IWYU For bind
+#include <boost/spirit/home/classic/utility/functor_parser.hpp> // AUTO IWYU For functor_parser
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

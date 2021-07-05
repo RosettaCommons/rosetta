@@ -21,11 +21,11 @@
 #include <protocols/peptide_deriver/PeptideDeriverFilter.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
+
+#include <utility/io/orstream.fwd.hh> // AUTO IWYU For orstream
 
 namespace protocols {
 namespace peptide_deriver {

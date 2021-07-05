@@ -13,12 +13,9 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/select/residue_selector/utilities_for_testing.hh>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
@@ -34,7 +31,6 @@
 // Utility, etc Headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 static basic::Tracer TR("ResiduePropertySelectorTests");
 

@@ -18,17 +18,11 @@
 #include <protocols/jd3/JobSummary.fwd.hh>
 
 // Package headers
-#include <protocols/jd3/Job.fwd.hh>
 
 //utility headers
 #include <utility/VirtualBase.hh>
-#include <core/types.hh>
 
 //C++ headers
-#include <string>
-#include <list>
-#include <map>
-#include <set>
 
 
 #ifdef    SERIALIZATION

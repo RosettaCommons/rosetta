@@ -27,20 +27,16 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

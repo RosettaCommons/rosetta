@@ -27,7 +27,6 @@
 //Utility Headers
 
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <ObjexxFCL/FArray2A.fwd.hh>
 

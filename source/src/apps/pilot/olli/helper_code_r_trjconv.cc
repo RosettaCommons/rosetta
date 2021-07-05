@@ -8,9 +8,6 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 //Auto Headers
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.

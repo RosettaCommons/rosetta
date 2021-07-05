@@ -31,20 +31,16 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.fwd.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
-#include <core/pack/dunbrack/PeptoidDOFReporters.hh>
-#include <core/pack/dunbrack/StandardDOFReporters.hh>
+#include <core/pack/dunbrack/PeptoidDOFReporters.hh> // DO NOT AUTO-REMOVE needed for proper OP conversion
+#include <core/pack/dunbrack/StandardDOFReporters.hh> // DO NOT AUTO-REMOVE needed for proper OP conversion
 
 // Project Headers
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
-#include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/task/ResidueLevelTask.hh>
 
@@ -54,12 +50,10 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Boost Headers
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
@@ -77,7 +71,6 @@
 #include <utility/LexicographicalIterator.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
 #include <utility/vectorL.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -91,7 +84,6 @@
 #include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 #include <numeric/interpolation/spline/BicubicSpline.hh>
 #include <numeric/interpolation/spline/TricubicSpline.hh>
-#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
 #include <numeric/util.hh>
 #include <numeric/angle.functions.hh>
 
@@ -99,11 +91,12 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iosfwd>
 #include <list>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <numeric/interpolation/spline/PolycubicSpline.hh> // AUTO IWYU For PolycubicSpline
 
 namespace core {
 namespace pack {

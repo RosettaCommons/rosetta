@@ -14,8 +14,6 @@
 ///          is stored inside the Pose's datacache ObserverCache
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -30,6 +28,8 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/moves/PyMOLMover.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init, core_init_with_additional_options
 
 static basic::Tracer TR("PyMOLMoverTest");
 

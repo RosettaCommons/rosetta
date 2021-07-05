@@ -15,10 +15,8 @@
 #include <cxxtest/TestSuite.h>
 
 // basic headers
-#include <basic/Tracer.hh>
 
 // unit headers
-#include <core/scoring/constraints/MultiConstraint.hh>
 
 #ifdef SERIALIZATION
 #include <core/id/AtomID.hh>

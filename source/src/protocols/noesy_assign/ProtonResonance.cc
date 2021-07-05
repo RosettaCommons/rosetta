@@ -19,20 +19,16 @@
 #include <protocols/noesy_assign/Resonance.hh>
 #include <protocols/noesy_assign/ProtonResonance.hh>
 
-#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
 
 // Utility headers
-#include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
 //// C++ headers
-#include <string>
 
-#include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 
 static basic::Tracer tr( "protocols.noesy_assign.resonances" );

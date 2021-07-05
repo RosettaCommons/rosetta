@@ -24,9 +24,10 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 #include <ostream>
+
+#include <core/io/AtomInformation.hh> // AUTO IWYU For AtomInformation
 
 namespace core {
 namespace io {

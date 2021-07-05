@@ -16,7 +16,6 @@
 #include <protocols/jd2/util.hh>
 
 //Basic Headers
-#include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -24,13 +23,10 @@
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/string_util.hh>
-#include <utility/json_spirit/json_spirit_utils.h>
 #include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/tag/Tag.hh>
 #include <algorithm>
@@ -41,6 +37,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/ScreeningFeaturesCreator.hh>
+
+#include <basic/database/insert_statement_generator/RowData.hh> // AUTO IWYU For RowData
 
 namespace protocols {
 namespace features {

@@ -21,6 +21,8 @@
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
+#include <core/conformation/Conformation.fwd.hh> // AUTO IWYU For Conformation
+
 
 #ifdef    SERIALIZATION
 // Cereal headers

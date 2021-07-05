@@ -26,12 +26,9 @@
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <utility/exit.hh>
-#include <core/pose/util.hh>
-#include <iostream>
 #include <fstream>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.flexPepDocking.FlexPepDockingFlags" );

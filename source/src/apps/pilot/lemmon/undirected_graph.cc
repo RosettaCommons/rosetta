@@ -27,11 +27,9 @@
 /// @author Gordon Lemmon (glemmon@gmail.com)
 
 #include <boost/graph/undirected_graph.hpp>
-#include <boost/graph/property_iter_range.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/breadth_first_search.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
 //#include <boost/graph/graph_utility.hpp> // The print_graph function here is lame so I write my own
 #include <iostream>
 #include <utility/vector1.hh>

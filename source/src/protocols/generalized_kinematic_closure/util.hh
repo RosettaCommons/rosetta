@@ -15,25 +15,18 @@
 #define INCLUDED_protocols_generalized_kinematic_closure_util_hh
 
 // Unit Headers
-#include <protocols/moves/Mover.hh>
-#include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
-#include <protocols/generalized_kinematic_closure/perturber/GeneralizedKICperturber.hh>
-#include <protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.hh>
 
 // Scripter Headers
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Project Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.fwd.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
+#include <core/types.hh> // AUTO IWYU For Size, Real
 
 
 ///////////////////////////////////////////////////////////////////////

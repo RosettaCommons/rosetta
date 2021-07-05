@@ -16,7 +16,7 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
 #include <core/pose/selection.hh>
@@ -30,7 +30,8 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 // C++ headers
-#include <utility/assert.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 static basic::Tracer TR( "core.select.residue_selector.BondedResidueSelector" );
 

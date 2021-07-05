@@ -27,7 +27,6 @@
 // C++ headers
 #include <cstdlib>
 
-
 namespace utility {
 namespace io {
 

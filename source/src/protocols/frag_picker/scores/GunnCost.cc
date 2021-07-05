@@ -17,25 +17,19 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Numeric Headers
 #include <numeric/constants.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <numeric/numeric.functions.hh>
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzVector.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <cmath>
-#include <string>
 
 #include <core/id/AtomID.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace frag_picker {

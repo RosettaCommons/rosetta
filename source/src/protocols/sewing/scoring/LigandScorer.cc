@@ -32,16 +32,15 @@
 #include <core/scoring/func/Func.hh>
 
 #include <numeric/xyz.functions.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
 
 //Utility headers
 #include <basic/Tracer.hh>
-#include <numeric/xyzTransform.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+
 namespace protocols {
 namespace sewing  {
 namespace scoring {

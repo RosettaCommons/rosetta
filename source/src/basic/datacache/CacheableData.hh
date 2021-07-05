@@ -21,11 +21,6 @@
 // utility headers
 #include <utility/VirtualBase.hh>
 
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
 
 #ifdef    SERIALIZATION
 #include <cereal/types/polymorphic.hpp>

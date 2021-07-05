@@ -19,7 +19,6 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 
 //Project headers
-#include <core/conformation/Residue.fwd.hh>
 #include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>

@@ -14,11 +14,11 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
+#include <core/scoring/constraints/CoordinateConstraint.hh> // DO NOT AUTO-REMOVE
+
 // basic headers
-#include <basic/Tracer.hh>
 
 // unit headers
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 
 #ifdef SERIALIZATION
 #include <core/id/AtomID.hh>

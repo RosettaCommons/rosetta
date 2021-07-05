@@ -44,13 +44,13 @@
 
 #include <map>
 #include <set>
-#include <iosfwd>
 #include <string>
 
 
-#include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <core/io/silent/SilentStruct.fwd.hh> // AUTO IWYU For SilentStruct
 
 
 #ifdef BOINC

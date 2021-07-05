@@ -11,17 +11,13 @@
 /// @brief
 
 // libRosetta headers
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 
 
 // C++ headers
-#include <iostream>
-#include <string>
 
-#include <basic/Tracer.hh>
 
 // option key includes
 
@@ -30,7 +26,6 @@
 
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/relax_main.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 

@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <protocols/qsar/scoring_grid/PCSSingleGrid.hh>
-#include <protocols/qsar/qsarMap.hh>
+#include <protocols/qsar/qsarMap.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -38,7 +38,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
 #include <cmath>
 
 static basic::Tracer TR("protocols.qsar.scoring_grid.PCSSingleGrid.cxxtest");

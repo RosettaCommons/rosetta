@@ -48,14 +48,12 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/Energies.hh>
@@ -64,14 +62,12 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/xyzVector.hh>
 #include <core/chemical/AA.hh>
 #include <utility/vector1.hh>
-#include <protocols/neighbor/Neighborhood.hh>
 
 #include <string>
 #include <fstream>

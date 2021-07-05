@@ -29,11 +29,11 @@
 #include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/VirtualBase.fwd.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ Headers
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace rotamer_recovery {

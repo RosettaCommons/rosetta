@@ -18,15 +18,13 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <list>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

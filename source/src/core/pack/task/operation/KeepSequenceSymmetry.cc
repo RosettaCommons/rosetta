@@ -17,19 +17,15 @@
 #include <core/pack/task/operation/KeepSequenceSymmetryCreator.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.hh>
-#include <core/select/residue_selector/util.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector0.hh>
-#include <utility/string_util.hh>
 
 // Cpp Headers
 #include <string>

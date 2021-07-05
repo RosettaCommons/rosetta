@@ -28,7 +28,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh>
 
 
 // ObjexxFCL Headers

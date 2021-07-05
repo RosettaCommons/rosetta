@@ -22,8 +22,10 @@
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 
+#include <utility/options/keys/OptionKeyList.fwd.hh> // AUTO IWYU For OptionKeyList
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
+
 //project headers
-#include <core/pose/Pose.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

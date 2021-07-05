@@ -22,8 +22,6 @@
 #include <basic/datacache/DataMap.hh>
 
 // C/C++ headers
-#include <iostream>
-#include <iterator>
 #include <string>
 
 // External headers
@@ -43,7 +41,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/filters/Filter.hh>
 
 // Package Headers
@@ -52,17 +49,12 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <fstream>
-#include <utility/io/izstream.hh>
-#include <sstream>
-#include <core/pose/util.hh>
-#include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <protocols/calc_taskop_filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
 
 // Basic headers
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
 //////////////////////////////////////////////////

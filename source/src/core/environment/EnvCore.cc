@@ -17,7 +17,6 @@
 #include <core/environment/DofPassport.hh>
 
 // Project headers
-#include <utility>
 #include <utility/excn/Exceptions.hh>
 
 // tracer

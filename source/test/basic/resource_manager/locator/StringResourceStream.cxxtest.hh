@@ -12,16 +12,13 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Test Headers
-#include <test/core/init_util.hh>
 #include <cxxtest/TestSuite.h>
 #include <basic/Tracer.hh>
 
-#include <basic/resource_manager/locator/StringResourceStream.hh>
 
 // Utility headers
 
 // C++ headers
-#include <sstream>
 
 static basic::Tracer tr( "basic.resource_manager.locator.StringResourceStream.cxxtest");
 

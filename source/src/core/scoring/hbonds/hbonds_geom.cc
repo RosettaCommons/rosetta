@@ -21,13 +21,11 @@
 #include <core/scoring/hbonds/FadeInterval.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/hbonds/polynomial.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Info.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -37,7 +35,6 @@
 
 // Numeric headers
 #include <numeric/constants.hh>
-#include <numeric/conversions.hh>
 #include <numeric/deriv/distance_deriv.hh>
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
@@ -51,21 +48,15 @@
 
 
 // option key includes
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 // Numeric Headers
-#include <numeric/numeric.functions.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
 
 //Exception for NaN in hbonds.
 #include <utility/excn/Exceptions.hh>
 
 //Utility Headers
-#include <utility/sys_util.hh>
 #include <utility/py/PyAssert.hh>
 
 #include <core/chemical/AtomType.hh>
@@ -73,7 +64,8 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbtrie/HBAtom.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray3D.hh>
+
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
 
 using namespace ObjexxFCL::format;
 

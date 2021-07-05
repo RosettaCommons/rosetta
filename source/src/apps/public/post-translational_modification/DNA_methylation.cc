@@ -17,7 +17,6 @@
 
 #include <protocols/enzymatic_movers/DNAMethyltransferaseMover.hh>
 
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 // Utility headers

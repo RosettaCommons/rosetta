@@ -18,8 +18,6 @@
 // Package headers
 
 // Project headers
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/variant_util.hh>

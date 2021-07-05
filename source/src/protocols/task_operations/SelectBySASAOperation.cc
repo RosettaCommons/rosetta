@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
@@ -33,8 +32,6 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
-#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -43,6 +40,8 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/memory.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 // C++ Headers
 

@@ -17,7 +17,6 @@
 // Unit headers
 #include <core/scoring/methods/MMTorsionEnergy.fwd.hh>
 #include <core/scoring/mm/MMTorsionScore.hh>
-#include <core/scoring/mm/MMTorsionLibrary.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
@@ -30,7 +29,6 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <iosfwd>
 
 #include <utility/vector1.hh>
 

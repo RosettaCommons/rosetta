@@ -31,7 +31,6 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // C++ Headers
-#include <utility/vector1.hh>
 #include <algorithm>
 
 static basic::Tracer TR( "protocols.TaskOperations.SelectResiduesWithinChainOperation" );

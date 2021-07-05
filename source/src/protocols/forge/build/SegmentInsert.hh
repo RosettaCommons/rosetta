@@ -24,7 +24,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 
-#include <utility/vector1.hh>
 
 #include <protocols/forge/build/SegmentInsertConnectionScheme/SegmentInsertConnectionScheme_Enum.hh>
 

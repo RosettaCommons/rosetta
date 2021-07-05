@@ -16,12 +16,11 @@
 
 // Unit Headers
 #include <core/scoring/PointWaterPotential.fwd.hh>
-#include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/DerivVectorPair.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
@@ -30,7 +29,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
 
 #include <numeric/interpolation/spline/BicubicSpline.hh>
 

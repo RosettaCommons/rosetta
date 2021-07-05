@@ -18,48 +18,26 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
-#include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/rna/util.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 #include <core/id/AtomID.hh>
 
 //#include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
-#include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
 
-#include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
-#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
 
-#include <protocols/stepwise/modeler/rna/o2prime/O2PrimePacker.hh>
-#include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
 
 #include <protocols/minimization_packing/MinMover.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/angle.functions.hh>
-#include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 
 // Basic/Utility headers

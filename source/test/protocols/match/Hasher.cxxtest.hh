@@ -16,8 +16,6 @@
 #include <cxxtest/TestSuite.h>
 
 // Utility headers
-#include <utility/fixedsizearray1.hh>
-#include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
@@ -37,7 +35,6 @@
 //Auto Headers
 #include <protocols/match/Hit.hh>
 #include <utility/vector1.hh>
-#include <boost/unordered/unordered_map_fwd.hpp>
 
 
 // The code in namespace hash_examples are copy-righted under the boost liscense, as is

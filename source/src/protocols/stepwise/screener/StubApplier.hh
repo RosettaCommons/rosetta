@@ -18,7 +18,7 @@
 
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/StubApplier.fwd.hh>
-#include <core/kinematics/Stub.hh>
+#include <core/kinematics/Stub.fwd.hh>
 
 namespace protocols {
 namespace stepwise {

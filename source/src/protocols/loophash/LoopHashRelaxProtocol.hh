@@ -15,20 +15,12 @@
 #ifndef INCLUDED_protocols_loophash_LoopHashRelaxProtocol_hh
 #define INCLUDED_protocols_loophash_LoopHashRelaxProtocol_hh
 
-#include <protocols/loophash/LoopHashSampler.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
-#include <protocols/loophash/LocalInserter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <string>
-#include <vector>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -15,34 +15,23 @@
 #include <cxxtest/TestSuite.h>
 
 // Core Headers
-#include <core/pack/annealer/SequenceSymmetricAnnealer.hh>
+#include <core/pack/annealer/SequenceSymmetricAnnealer.fwd.hh>
 
-#include <core/chemical/AA.hh>
 
-#include <utility/graph/Graph.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 
 #include <core/import_pose/import_pose.hh>
 
 // Test headers
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 //Auto Headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <core/pack/task/operation/KeepSequenceSymmetry.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <protocols/task_operations/SetIGTypeOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
@@ -50,13 +39,14 @@
 #include <protocols/symmetry/SetupForSequenceSymmetryMover.hh>
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
-#include <protocols/task_operations/SetIGTypeOperation.hh>
 #include <core/pack/task/xml_util.hh> // For TASK_OPERATIONS_TAG
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
 #include <list>
 #include <basic/Tracer.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 static basic::Tracer TR( "core.pack.annealer.SequenceSymmetricAnnealer.cxxtest" );
 

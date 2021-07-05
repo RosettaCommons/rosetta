@@ -18,28 +18,17 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/select/residue_selector/util.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/import_pose/import_pose.hh>
 
 
-#include <algorithm>
-#include <list>
-#include <map>
 
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
 
 namespace protocols {
 namespace fold_from_loops {

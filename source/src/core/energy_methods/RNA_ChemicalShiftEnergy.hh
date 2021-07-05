@@ -17,13 +17,11 @@
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 
 // Utility headers

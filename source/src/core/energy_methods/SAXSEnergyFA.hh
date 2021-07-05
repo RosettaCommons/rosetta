@@ -16,69 +16,20 @@
 #define INCLUDED_core_scoring_saxs_SAXSEnergyFA_hh
 
 // Package headers
-#include <core/scoring/saxs/FormFactor.hh>
 #include <core/energy_methods/SAXSEnergyCreatorFA.hh>
 #include <core/energy_methods/SAXSEnergy.hh>
 
-#include <core/scoring/methods/WholeStructureEnergy.hh>
 
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
 
-#include <string>
 
-#include <platform/types.hh>
-#include <core/types.hh>
-#include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <core/conformation/RotamerSetBase.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
-#include <core/kinematics/MinimizerMapBase.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/methods/EnergyMethod.fwd.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
-#include <core/scoring/saxs/DistanceHistogram.fwd.hh>
-#include <core/scoring/saxs/DistanceHistogram.hh>
-#include <core/scoring/saxs/FormFactor.fwd.hh>
-#include <core/scoring/saxs/FormFactorManager.fwd.hh>
-#include <core/energy_methods/SAXSEnergyCreator.hh>
-#include <core/energy_methods/SAXSEnergyCreatorCEN.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <numeric/types.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/interpolation/spline/Interpolator.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
-#include <algorithm>
-#include <utility/assert.hh>
-#include <cstddef>
-#include <iosfwd>
-#include <limits>
-#include <map>
-#include <vector>
 
 
 namespace core {

@@ -20,7 +20,6 @@
 
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 
 

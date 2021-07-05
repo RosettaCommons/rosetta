@@ -20,12 +20,8 @@
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -34,7 +30,6 @@
 #include <utility/vector1.hh>
 
 // C++ header
-#include <string>
 
 
 class RotamerBuildingFunctionsTests : public CxxTest::TestSuite {

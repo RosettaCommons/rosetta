@@ -14,7 +14,6 @@
 
 #include <protocols/relax/Ramady.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
@@ -34,11 +33,9 @@
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 
 //Auto Headers
-#include <core/kinematics/Jump.hh>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

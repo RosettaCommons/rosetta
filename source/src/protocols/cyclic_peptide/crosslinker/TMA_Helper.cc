@@ -23,29 +23,22 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
-#include <core/kinematics/MoveMap.hh>
 
 // Protocols headers
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
-#include <protocols/cyclic_peptide/CreateAngleConstraint.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraint.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
 
 static basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TMA_Helper" );

@@ -18,7 +18,6 @@
 #endif
 
 // Unit headers
-#include <ctime>
 #include <core/init/init.hh>
 
 // Project Headers
@@ -33,8 +32,16 @@
 
 #include <core/chemical/rdkit/util.hh>
 
-#include <basic/random/RandomGeneratorSettings.hh>
 #include <basic/random/init_random_generator.hh>
+#include <numeric/random/random.hh>
+
+// Factories (for registration)
+#include <core/chemical/rotamers/RotamerLibrarySpecificationFactory.hh>
+#include <core/pack/palette/PackerPaletteFactory.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
+#include <core/select/jump_selector/JumpSelectorFactory.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <basic/resource_manager/ResourceLoaderFactory.hh>
 
 // Classes in core that must register with factories
 #include <core/init/score_function_corrections.hh>
@@ -83,7 +90,6 @@
 #include <core/energy_methods/DEPC_MS_EnergyCreator.hh>
 #include <core/energy_methods/RG_Energy_FastCreator.hh>
 #include <core/energy_methods/RG_LocalEnergyCreator.hh>
-#include <core/energy_methods/RNA_CoarseDistEnergy.hh>
 #include <core/energy_methods/SA_EnergyCreator.hh>
 #include <core/energy_methods/SSElementMotifContactEnergyCreator.hh>
 #include <core/energy_methods/D2H_SA_EnergyCreator.hh>
@@ -154,8 +160,6 @@
 #include <core/energy_methods/MultipoleElecEnergyCreator.hh>
 #include <core/energy_methods/SASAEnergyCreator.hh>
 #include <core/energy_methods/FACTSEnergyCreator.hh>
-#include <core/energy_methods/FACTSEnergyCreator.hh>
-#include <core/energy_methods/HybridVDW_EnergyCreator.hh>
 #include <core/energy_methods/LK_PolarNonPolarEnergyCreator.hh>
 #include <core/energy_methods/LK_hackCreator.hh>
 #include <core/scoring/lkball/LK_BallEnergyCreator.hh>
@@ -222,6 +226,7 @@
 #include <core/energy_methods/SurfEnergyCreator.hh>
 #include <core/energy_methods/RG_Energy_RNACreator.hh>
 #include <core/energy_methods/RNA_BulgeEnergyCreator.hh>
+#include <core/energy_methods/RNA_CoarseDistEnergyCreator.hh>
 #include <core/energy_methods/RNA_FullAtomStackingEnergyCreator.hh>
 #include <core/energy_methods/RNA_JR_SuiteEnergyCreator.hh>
 #include <core/energy_methods/RNA_LJ_BaseEnergyCreator.hh>
@@ -324,7 +329,6 @@
 #include <core/pack/palette/CustomBaseTypePackerPaletteCreator.hh>
 #include <core/pack/palette/DefaultPackerPaletteCreator.hh>
 #include <core/pack/palette/NoDesignPackerPaletteCreator.hh>
-#include <core/pack/palette/PackerPaletteCreator.hh>
 
 // for creating and registering JumpSelectors:
 #include <core/select/jump_selector/JumpSelectorRegistrator.hh>
@@ -339,7 +343,6 @@
 
 #ifndef __native_client__
 #ifndef WIN_PYROSETTA
-#include <platform/types.hh>
 #endif
 
 #if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__)
@@ -364,7 +367,6 @@
 #endif
 
 // STL headers
-#include <fstream>
 #include <sstream>
 #include <string>
 #include <cstring>
@@ -382,8 +384,8 @@
 #include <core/conformation/symmetry/SymmDataLoaderCreator.hh>
 #include <core/import_pose/PoseResourceLoaderCreator.hh>
 
-#include <core/init/init.ResourceLocatorCreators.ihh>
-#include <core/init/init.ResourceLocatorRegistrators.ihh>
+#include <core/init/init.ResourceLocatorCreators.ihh> // DO NOT AUTO-REMOVE
+#include <core/init/init.ResourceLocatorRegistrators.ihh> // DO NOT AUTO-REMOVE
 
 
 //#include <core/energy_methods/ElectronDensityLoaderCreator.hh>
@@ -402,13 +404,11 @@
 #include <basic/init.hh>
 
 #include <utility/version.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/CSI_Sequence.hh>
 #include <utility/crash_report.hh>
 #include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKeyList.hh>
 
 
 #ifdef UNICODE
@@ -887,7 +887,6 @@ static_assert( __cplusplus < 201703L, "The compiler is set up to run a version o
 #endif//NDEBUG
 #endif//WIN32
 
-using namespace numeric::random;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

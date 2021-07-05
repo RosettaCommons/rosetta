@@ -22,12 +22,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // Utility Headers

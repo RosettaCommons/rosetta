@@ -16,7 +16,6 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.hh>
-#include <protocols/stepwise/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/protein/MainChainTorsionSet.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 
@@ -25,9 +24,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>

@@ -16,63 +16,34 @@
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
 // When you move PDBReader and PoseUnbuilder, take these.
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/ResidueConnection.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
 #include <utility/version.hh>
-#include <numeric/random/random.hh>
 
-#include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/Field.hh>
-#include <core/io/HeaderInformation.hh>
 #include <core/io/StructFileRep.hh>
 #include <core/io/mmtf/ExtraDataEnum.hh>
 #include <core/io/mmtf/ExtraDataEnumManager.hh>
 #include <core/simple_metrics/SimpleMetricStruct.hh>
 
-#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 
-#include <core/io/Remarks.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/tools/make_map.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // External headers
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
-#include <msgpack.hpp>
-#include <mmtf.hpp>
 
 // C++ headers
-#include <cstdlib>
-#include <cstdio>
 #include <algorithm>
 #include <tuple>
 
@@ -80,6 +51,8 @@
 #include <basic/Tracer.hh>
 
 #include <core/io/mmtf/mmtf_writer.hh>
+
+#include <core/chemical/AA.hh> // AUTO IWYU For aa_from_name, is_aa_name_unknown, is_canonica...
 
 static basic::Tracer TR( "core.io.mmtf.mmtf_writer" );
 

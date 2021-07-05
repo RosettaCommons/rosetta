@@ -12,43 +12,23 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/rna/RNA_Info.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/rna/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/FullModelPoseBuilder.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/TorsionID.hh>
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <protocols/rna/denovo/util.hh>
-#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/rna/phosphate/PhosphateMover.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/MultiPhosphateSampler.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
-#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 //////////////////////////////////////////////////
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
@@ -59,19 +39,13 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-#include <numeric/xyz.functions.hh>
 
 //////////////////////////////////////////////////////////
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <string>
-#include <list>
 
 using namespace core;
 using namespace protocols;
@@ -96,10 +70,8 @@ screen_phosphates()
 	using namespace core::scoring;
 	using namespace core::id;
 	using namespace core::chemical;
-	using namespace core::chemical::rna;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
-	using namespace protocols::stepwise::monte_carlo;
 	using namespace protocols::stepwise::modeler::rna::phosphate;
 	using namespace utility::file;
 

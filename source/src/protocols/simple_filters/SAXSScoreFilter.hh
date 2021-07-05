@@ -20,7 +20,6 @@
 #include <core/energy_methods/SAXSEnergyFA.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

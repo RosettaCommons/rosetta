@@ -17,10 +17,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/id/TorsionID.hh>
-#include <core/pose/util.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -29,6 +26,8 @@
 
 #include <numeric/random/random.hh>
 #include <utility>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 
 using namespace core;

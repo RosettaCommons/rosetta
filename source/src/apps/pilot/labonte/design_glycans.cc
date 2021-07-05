@@ -20,7 +20,6 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <core/types.hh>

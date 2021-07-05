@@ -23,7 +23,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/jumping/util.hh>
 
 int main(int argc, char* argv[]) {

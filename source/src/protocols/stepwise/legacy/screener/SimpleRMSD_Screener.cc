@@ -14,12 +14,11 @@
 
 
 #include <protocols/stepwise/legacy/screener/SimpleRMSD_Screener.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
 #include <basic/Tracer.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.stepwise.legacy.screener.SimpleRMSD_Screener" );
 

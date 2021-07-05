@@ -13,7 +13,6 @@
 
 // Test Headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 // Package Headers

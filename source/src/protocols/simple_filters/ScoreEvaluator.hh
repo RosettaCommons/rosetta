@@ -26,13 +26,11 @@
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.hh>
 // Project Headers
-#include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/simple_filters/RDC_Evaluator.fwd.hh>
-#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

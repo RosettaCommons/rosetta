@@ -19,7 +19,6 @@
 
 /// Utility headers
 #include <utility>
-#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 

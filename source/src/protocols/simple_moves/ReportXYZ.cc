@@ -13,7 +13,7 @@
 // Unit headers
 #include <protocols/simple_moves/ReportXYZ.hh>
 #include <protocols/simple_moves/ReportXYZCreator.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.simple_moves.ReportXYZ" );
@@ -24,7 +24,6 @@ static basic::Tracer TR( "protocols.simple_moves.ReportXYZ" );
 #include <core/pose/Pose.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pose/util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/exit.hh>
 #include <protocols/moves/mover_schemas.hh>

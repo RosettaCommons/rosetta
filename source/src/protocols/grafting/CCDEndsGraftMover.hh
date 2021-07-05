@@ -16,15 +16,12 @@
 
 
 //Unit Headers
-#include <protocols/grafting/GraftMoverBase.hh>
 #include <protocols/grafting/AnchoredGraftMover.hh>
 #include <protocols/grafting/CCDEndsGraftMover.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 //Core
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 //Protocols
 #include <protocols/simple_moves/BackboneMover.fwd.hh>

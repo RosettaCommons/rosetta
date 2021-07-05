@@ -17,14 +17,11 @@
 #include <protocols/scoring/methods/TargetClashEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/ScoringManager.hh>
 
 //symmetry
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>

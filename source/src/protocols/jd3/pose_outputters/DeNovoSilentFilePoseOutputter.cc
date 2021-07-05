@@ -18,23 +18,20 @@
 //package headers
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/SilentFilePoseOutputSpecification.hh>
 #include <protocols/jd3/pose_outputters/pose_outputter_schemas.hh>
 #include <protocols/jd3/chunk_library/MoverAndChunkLibraryJob.hh>
 
 //project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/rna/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/io/StructFileRepOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
 // ObjexxFCL
-#include <ObjexxFCL/string.functions.hh>
 
 // basic headers
 #include <basic/options/option.hh>
@@ -45,12 +42,9 @@
 
 // Utility headers
 #include <utility/string_util.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

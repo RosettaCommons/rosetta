@@ -11,38 +11,30 @@
 /// @author jk
 
 #include <iostream>
-#include <iomanip>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <basic/options/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
 
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using namespace core;

@@ -20,25 +20,18 @@
 //#include <protocols/frag_picker/VallChunk.hh>
 //#include <protocols/frag_picker/VallProvider.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
 #include <utility/exit.hh>
@@ -49,7 +42,6 @@
 // C++ headers
 //#include <cstdlib>
 
-#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -58,12 +50,11 @@
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
-#include <boost/unordered/unordered_map.hpp>
 
+#include <cmath> // MANUAL IWYU
 
 using namespace core;
 using namespace kinematics;

@@ -22,8 +22,6 @@
 #include <core/pose/init_id_map.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
@@ -31,17 +29,15 @@
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/Stub.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh> //for changing the HIS tautomer
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
@@ -50,7 +46,6 @@
 #include <utility/file/FileName.hh>
 
 // Numeric Headers
-#include <numeric/xyzVector.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -65,7 +60,8 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/variant_util.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 //tracers

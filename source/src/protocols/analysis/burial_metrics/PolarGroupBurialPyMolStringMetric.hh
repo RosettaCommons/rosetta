@@ -19,7 +19,6 @@
 #include <core/simple_metrics/StringMetric.hh>
 
 // Core headers
-#include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers

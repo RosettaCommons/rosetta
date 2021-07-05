@@ -19,10 +19,8 @@
 //Project Headers
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

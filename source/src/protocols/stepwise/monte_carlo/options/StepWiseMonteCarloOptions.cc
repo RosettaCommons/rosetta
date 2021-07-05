@@ -19,9 +19,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
-#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>

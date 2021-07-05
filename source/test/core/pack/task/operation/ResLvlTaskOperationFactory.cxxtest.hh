@@ -13,22 +13,23 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Package headers
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-#include <core/pack/task/operation/ResLvlTaskOperation.hh>
+#include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationCreator.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <iostream> // AUTO IWYU For endl, basic_ostream, cout, ostream
 
 using namespace core::pack::task::operation;
 using namespace utility::tag;

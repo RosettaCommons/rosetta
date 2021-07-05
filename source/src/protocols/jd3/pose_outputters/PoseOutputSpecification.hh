@@ -20,10 +20,9 @@
 
 // Package headers
 #include <protocols/jd3/output/OutputSpecification.hh>
-#include <protocols/jd3/JobOutputIndex.hh>
+#include <protocols/jd3/JobOutputIndex.fwd.hh>
 
 // utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>

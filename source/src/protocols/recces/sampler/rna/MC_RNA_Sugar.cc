@@ -18,7 +18,7 @@
 #include <protocols/stepwise/sampler/rna/RNA_SugarStepWiseSampler.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <basic/Tracer.hh>
 

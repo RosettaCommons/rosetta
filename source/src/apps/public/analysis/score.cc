@@ -32,7 +32,6 @@
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>

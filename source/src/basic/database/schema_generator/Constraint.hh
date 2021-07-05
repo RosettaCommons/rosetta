@@ -17,7 +17,6 @@
 
 #include <basic/database/schema_generator/Constraint.fwd.hh>
 
-#include <iosfwd>                                              // for string
 #include <platform/types.hh>                                   // for Real
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
 #include <utility/VirtualBase.hh>

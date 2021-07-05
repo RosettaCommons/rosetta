@@ -23,13 +23,9 @@
 
 
 // Project headers
-#include <core/conformation/Residue.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 
@@ -40,6 +36,8 @@
 // C++
 #include <string>
 #include <map>
+
+#include <iostream> // AUTO IWYU For operator<<, endl, ostream, basic_ostream, cout
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

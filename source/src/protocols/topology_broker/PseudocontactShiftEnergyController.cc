@@ -33,8 +33,6 @@
 // Package Headers
 #include <protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh>
 // Project Headers
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 //TEMP
 
@@ -44,6 +42,8 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
+
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, basi...
 
 
 // ObjexxFCL Headers

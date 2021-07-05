@@ -18,7 +18,6 @@
 // Rosetta Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <basic/Tracer.hh>
 
 // Random number generator
@@ -29,6 +28,8 @@
 
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
 
 
 namespace protocols {

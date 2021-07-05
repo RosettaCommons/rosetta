@@ -15,19 +15,15 @@
 #include <core/sequence/sequence_motif.hh>
 
 // C/C++ headers
-#include <algorithm>
 #include <string>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 // Project headers
 #include <core/types.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <utility/string_util.hh>
 #include <string>

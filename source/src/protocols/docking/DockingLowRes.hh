@@ -40,8 +40,6 @@
 
 #include <string>
 
-#include <utility/vector1.hh>
-#include <iosfwd>
 
 #ifdef PYROSETTA
 #include <core/scoring/ScoreFunction.hh>

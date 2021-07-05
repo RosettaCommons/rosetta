@@ -13,12 +13,10 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 //#include <test/util/rosettascripts.hh>
 //#include <test/util/pose_funcs.hh>
 
 // Project Headers
-#include <core/types.hh>
 
 #include <protocols/simple_filters/ReadPoseExtraScoreFilter.hh>
 #include <core/pose/Pose.hh>

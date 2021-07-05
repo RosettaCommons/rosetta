@@ -13,58 +13,23 @@
 #ifndef INCLUDED_protocols_cryst_spacegroup_hh
 #define INCLUDED_protocols_cryst_spacegroup_hh
 
-#include <protocols/cryst/util.hh>
 #include <protocols/cryst/CheshireCell.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/io/CrystInfo.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/RT.hh>
 
 #include <core/types.hh>
-#include <core/pack/task/ResfileReader.hh>
 
-#include <protocols/viewer/viewers.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/mpistream.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <utility/excn/Exceptions.hh>
 
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
-#include <cmath>
 
-#include <iosfwd>
 #include <string>
-#include <queue>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/random/random.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/fourier/FFT.hh>
-#include <numeric/constants.hh>
 
 
 

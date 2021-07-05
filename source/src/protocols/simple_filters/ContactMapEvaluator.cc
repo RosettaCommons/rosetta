@@ -21,10 +21,10 @@
 #include <protocols/simple_filters/ContactMapEvaluator.hh>
 
 #include <ObjexxFCL/string.functions.hh>
-#include <boost/dynamic_bitset.hpp>
-#include <algorithm>
 
 #include <utility/vector1.hh>
+
+#include <boost/dynamic_bitset/dynamic_bitset.hpp> // AUTO IWYU For dynamic_bitset, operator&, dynamic_bitset<>::reference
 
 
 namespace protocols {

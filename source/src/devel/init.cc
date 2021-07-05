@@ -19,13 +19,10 @@
 // Factories
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
-#include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/parser/DataLoaderFactory.hh>
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
@@ -60,8 +57,8 @@
 #include <devel/replica_docking/WrapFilterAsEvaluatorCreator.hh>
 
 //ResidueSelector creators
-#include <core/select/residue_selector/ResidueSelectorCreators.hh>
 // Energy method creators
+#include <core/scoring/ScoringManager.hh>
 #include <devel/denovo_design/scoring/SideChainNeighborsEnergyCreator.hh>
 
 

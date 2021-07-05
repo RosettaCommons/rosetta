@@ -12,15 +12,13 @@
 /// @author Alex Ford (fordas@uw.edu)
 //
 #include <vector>
-#include <numeric>
 
-#include <boost/range/combine.hpp>
-#include <boost/range/algorithm.hpp>
-#include <boost/range/adaptors.hpp>
-#include <boost/range.hpp>
 
-#include <utility/backtrace.hh>
 #include <utility/exit.hh>
+
+#include <boost/range/adaptor/transformed.hpp> // AUTO IWYU For transformed_range, operator|, trans...
+#include <boost/range/algorithm/copy.hpp> // AUTO IWYU For copy
+
 #undef eigen_assert
 #define eigen_assert(x) \
 	runtime_assert(x)
@@ -30,32 +28,23 @@
 // Project headers
 #include <basic/Tracer.hh>
 
-#include <numeric/alignment/rmsd_calc.hh>
 
-#include <core/pose/xyzStripeHashPose.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/id/types.hh>
-#include <core/conformation/Residue.hh>
 
 #include <protocols/indexed_structure_store/Datatypes.hh>
-#include <protocols/indexed_structure_store/Datatypes.json.hh>
+#include <protocols/indexed_structure_store/Datatypes.json.hh> // DO NOT AUTO-REMOVE (needed for JSON templating)
 #include <protocols/indexed_structure_store/StructureStore.hh>
 #include <protocols/indexed_structure_store/search/QueryDatabase.hh>
-#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh>
-#include <protocols/indexed_structure_store/utility.hh>
+#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh> // DO NOT AUTO-REMOVE
 #include <protocols/indexed_structure_store/orient_array.hh>
 #include <protocols/indexed_structure_store/pose_utility.hh>
-#include <protocols/indexed_structure_store/vector_tools.hh>
 
 #include <protocols/indexed_structure_store/SegmentSequenceProfile.hh>
-#include <protocols/indexed_structure_store/SegmentSequenceProfile.json.hh>
+#include <protocols/indexed_structure_store/SegmentSequenceProfile.json.hh> // DO NOT AUTO-REMOVE
 
 #include <boost/range/irange.hpp>
 
-#include "ndarray.h"
-#include "ndarray/eigen.h"
 
 static basic::Tracer TR("protocols.indexed_structure_store.SegmentSequenceProfile");
 

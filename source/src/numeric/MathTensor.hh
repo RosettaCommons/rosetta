@@ -32,15 +32,11 @@
 
 // Package headers
 #include <numeric/types.hh>
-#include <numeric/MathVector.hh>
 #include <numeric/MathMatrix.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 
 // C++ headers
-#include <math.h>
-#include <iosfwd>
 
 namespace numeric {
 

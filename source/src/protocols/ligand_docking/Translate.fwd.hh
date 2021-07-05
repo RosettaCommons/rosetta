@@ -21,6 +21,8 @@
 namespace protocols {
 namespace ligand_docking {
 
+struct Translate_info;
+
 class Translate; // fwd declaration
 typedef utility::pointer::shared_ptr< Translate > TranslateOP;
 typedef utility::pointer::shared_ptr< Translate const > TranslateCOP;

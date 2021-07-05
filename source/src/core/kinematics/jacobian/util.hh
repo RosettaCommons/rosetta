@@ -20,7 +20,6 @@
 
 // Numeric headers
 #include <numeric/MathVector.hh>
-#include <numeric/MathMatrix.hh>
 #include <core/kinematics/jacobian/ModuleType1.hh>
 #include <core/kinematics/RT.fwd.hh>
 

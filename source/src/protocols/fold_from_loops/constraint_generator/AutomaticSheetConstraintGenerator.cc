@@ -16,23 +16,14 @@
 #include <protocols/fold_from_loops/constraint_generator/AutomaticSheetConstraintGeneratorCreator.hh>
 
 // Protocol headers
-#include <protocols/constraint_generator/AtomPairConstraintGenerator.hh>
 #include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 #include <protocols/constraint_generator/util.hh>
 
 // Core headers
-#include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/func/SOGFunc.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/SecondaryStructureSelector.hh>
 #include <core/select/residue_selector/util.hh>
@@ -40,10 +31,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>

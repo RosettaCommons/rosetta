@@ -16,7 +16,6 @@
 #include <protocols/kinematic_closure/perturbers/PerturberSet.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace kinematic_closure {

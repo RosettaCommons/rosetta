@@ -18,11 +18,6 @@
 #include <protocols/stepwise/modeler/util.hh>
 
 //////////////////////////////////
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameList.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/types.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
@@ -32,13 +27,8 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/chemical/ResidueType.hh>
 
-#include <numeric/angle.functions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
-#include <ObjexxFCL/format.hh>
 
 #include <string>
 
@@ -47,7 +37,6 @@
 #include <utility/tools/make_vector1.hh>
 
 
-#include <utility/numbers.hh>
 
 using core::Real;
 using core::Size;

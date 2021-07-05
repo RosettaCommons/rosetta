@@ -35,8 +35,7 @@
 // Package headers
 #include <utility/down_cast.hh>
 #include <utility/keys/Key.hh>
-#include <utility/keys/KeyLookup.hh>
-#include <utility/keys/NoClient.hh>
+#include <utility/keys/KeyLookup.hh> // DO NOT AUTO-REMOVE (needed for template expansion)
 
 // C++ headers
 #include <utility/assert.hh>

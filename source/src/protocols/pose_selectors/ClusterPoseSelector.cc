@@ -22,15 +22,12 @@
 #include <protocols/rosetta_scripts/PosePropertyReporterFactory.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/cluster/cluster.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/sort_predicates.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers

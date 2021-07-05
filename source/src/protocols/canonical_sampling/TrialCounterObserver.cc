@@ -20,14 +20,13 @@
 // Package Headers
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/string_util.hh>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
@@ -35,6 +34,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/canonical_sampling/ThermodynamicMover.hh> // AUTO IWYU For ThermodynamicMover
 
 static basic::Tracer tr( "protocols.canonical_sampling.TrialCounter" );
 

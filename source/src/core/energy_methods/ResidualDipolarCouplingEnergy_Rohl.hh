@@ -24,7 +24,6 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreType.hh>
 
 
 //Objexx headers

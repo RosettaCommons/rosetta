@@ -10,8 +10,7 @@
 /// @file   src/apps/pilot/delucasl/generate_ligand_start_position_file.cc
 /// @author Sam DeLuca
 
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/chains_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>

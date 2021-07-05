@@ -26,19 +26,8 @@
 // STL Headers
 #include <iosfwd>
 
-#include <platform/types.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
 #include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
 #include <utility/assert.hh>
-#include <cstddef>
-#include <limits>
-#include <vector>
 
 
 namespace core {

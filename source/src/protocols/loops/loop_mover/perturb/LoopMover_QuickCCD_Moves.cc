@@ -16,7 +16,6 @@
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_Moves.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD_MovesCreator.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
 
@@ -25,7 +24,6 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -52,7 +50,6 @@
 
 // C++ Headers
 #include <iostream>
-#include <map>
 #include <string>
 
 // option key includes

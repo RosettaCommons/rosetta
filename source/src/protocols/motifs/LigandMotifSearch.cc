@@ -22,7 +22,6 @@
 #include <protocols/motifs/motif_utils.hh>
 
 // Project Headers (protocols)
-#include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -58,7 +57,6 @@
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
 
-#include <numeric/xyzVector.hh>
 
 // C++ Headers
 #include <iostream>
@@ -68,6 +66,8 @@
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #undef interface

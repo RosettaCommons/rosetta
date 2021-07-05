@@ -13,10 +13,7 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
@@ -27,14 +24,12 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/util.hh>
 
-#include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>

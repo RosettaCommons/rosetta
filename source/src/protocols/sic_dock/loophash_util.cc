@@ -9,16 +9,17 @@
 
 #include <protocols/sic_dock/util.hh>
 #include <protocols/sic_dock/loophash_util.hh>
-#include <protocols/sic_dock/RigidScore.hh>
-#include <protocols/sic_dock/SICFast.hh>
-#include <core/pose/util.hh>
+#include <protocols/sic_dock/RigidScore.fwd.hh>
 #include <core/kinematics/RT.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <basic/Tracer.hh>
+
+#include <protocols/loophash/LoopHashLibrary.hh> // AUTO IWYU For LoopHashLibrary
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 static basic::Tracer TR( "protocols.sic_dock.loophash_util" );
 

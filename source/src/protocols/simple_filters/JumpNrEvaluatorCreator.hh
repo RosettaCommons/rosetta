@@ -17,10 +17,8 @@
 // Unit Headers
 #include <protocols/evaluation/EvaluatorCreator.hh>
 
-#include <protocols/evaluation/PoseEvaluator.hh>
+#include <protocols/evaluation/PoseEvaluator.fwd.hh>
 
-#include <core/types.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

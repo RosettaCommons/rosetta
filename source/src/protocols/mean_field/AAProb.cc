@@ -32,7 +32,6 @@
 
 // C++ headers
 #include <iostream>
-#include <iomanip>
 
 // Boost headers
 #include <boost/format.hpp>

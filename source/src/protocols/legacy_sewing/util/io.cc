@@ -16,7 +16,7 @@
 #include <protocols/legacy_sewing/util/io.hh>
 
 //Core headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
@@ -31,6 +31,11 @@
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
+
+#include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh> // AUTO IWYU For find_sheet
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/PDBInfo.hh> // AUTO IWYU For PDBInfo
+#include <utility/file/file_sys_util.hh> // AUTO IWYU For file_exists
 
 
 namespace protocols {

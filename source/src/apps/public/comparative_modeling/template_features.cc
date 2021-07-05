@@ -12,21 +12,16 @@
 /// @author James Thompson
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/Pose.fwd.hh>
 
 #include <core/sequence/util.hh>
 
 
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 
@@ -36,7 +31,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 

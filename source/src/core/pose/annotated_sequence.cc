@@ -19,7 +19,6 @@
 // Package Headers
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
 
@@ -29,7 +28,6 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
@@ -41,8 +39,6 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 

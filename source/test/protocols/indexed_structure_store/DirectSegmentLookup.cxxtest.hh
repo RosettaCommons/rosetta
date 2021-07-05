@@ -13,24 +13,19 @@
 //
 
 #include <algorithm>
-#include <iostream>
 #include <vector>
-#include <iterator>
 
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
-#include <util/pose_funcs.hh>
 
 #include <boost/range/combine.hpp>
 
 // Project headers
 #include <basic/Tracer.hh>
 
-#include <boost/range.hpp>
-#include <boost/range/adaptors.hpp>
 
-#include <numeric/xyz.json.hh>
+#include <numeric/xyz.json.hh> // DO NOT AUTO-REMOVE (needed for JSON templating)
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
@@ -41,17 +36,18 @@
 #include <protocols/indexed_structure_store/StructureStore.hh>
 #include <protocols/indexed_structure_store/StructureStoreManager.hh>
 #include <protocols/indexed_structure_store/search/QueryDatabase.hh>
-#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh>
-#include <protocols/indexed_structure_store/utility.hh>
-#include <protocols/indexed_structure_store/vector_tools.hh>
+#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh> // DO NOT AUTO-REMOVE
 #include <protocols/indexed_structure_store/Datatypes.hh>
-#include <protocols/indexed_structure_store/Datatypes.json.hh>
+#include <protocols/indexed_structure_store/Datatypes.json.hh> // DO NOT AUTO-REMOVE
 #include <protocols/indexed_structure_store/pose_utility.hh>
 
 #include <test/protocols/indexed_structure_store/utility.hh>
 
 #include <protocols/indexed_structure_store/DirectSegmentLookup.hh>
 #include <protocols/indexed_structure_store/movers/DirectSegmentLookupMover.hh>
+
+#include <json.hpp> // AUTO IWYU For json
+#include <ndarray/initialization.h> // AUTO IWYU For Array::Array<T, N, C>, copy
 
 static basic::Tracer TR("protocols.indexed_structure_store.DirectSegmentLookup.cxxtest");
 

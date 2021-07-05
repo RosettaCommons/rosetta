@@ -19,12 +19,9 @@
 // Package Headers
 
 // Project Headers
-#include <core/pose/Pose.hh>
 
-#include <core/kinematics/FoldTree.hh>
 
 #include <core/fragment/FrameList.hh>
-#include <core/fragment/Frame.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
@@ -47,7 +44,9 @@
 //// C++ headers
 #include <cstdlib>
 #include <string>
-#include <fstream>
+
+#include <protocols/jumping/PairingLibrary.hh> // AUTO IWYU For StandardPairingLibrary
+
 
 
 namespace protocols {

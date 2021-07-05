@@ -15,6 +15,7 @@
 #define INCLUDED_test_protocols_cyclic_peptide_AchiralResidueTypeTestHeaders_HH
 
 // Test headers
+#include <cxxtest/TestSuite.h>
 #include <test/util/pdb1ubq.hh>
 
 // Project Headers
@@ -28,6 +29,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/RamaPrePro.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/conformation/Residue.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>

@@ -23,26 +23,19 @@
 #include <protocols/loophash/WorkUnit_LoopHash.hh>
 #include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <ObjexxFCL/format.hh>
 /// ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
 
 #include <numeric/random/random.hh>
 
@@ -55,11 +48,8 @@
 #include <boost/lexical_cast.hpp>
 
 //Auto Headers
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector1.hh>
 
-#include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
 using namespace ObjexxFCL;
@@ -137,7 +127,6 @@ MPI_LoopHashRefine_Master::go()
 /// reintegration into the library
 void
 MPI_LoopHashRefine_Master::process_inbound_wus(){
-	using namespace protocols::loops;
 
 	check_library_expiry_dates();
 	TRDEBUG << "Finished checking library dates"<<std::endl;

@@ -14,14 +14,7 @@
 #define external_calibur_AdjacentList_HH
 
 #include <vector>
-#include <stdlib.h>
-#include <string.h>
-#include <iosfwd>
-#include <math.h>
-#include <assert.h>
-#include <time.h>
 #if !defined(__WIN32__) && !defined(WIN32)
-#include <sys/resource.h>
 #endif
 
 #include <core/types.hh>

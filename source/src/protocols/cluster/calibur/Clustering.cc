@@ -13,8 +13,6 @@
 //#define _DEBUG_NBORLIST_
 
 #include <vector>
-#include <cstdlib>
-#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -29,9 +27,12 @@
 #include <protocols/cluster/calibur/AdjacentList.hh>
 #include <protocols/cluster/calibur/InitCluster.hh>
 
-#include <utility/exit.hh> // for runtime_assert
 
 #include <core/types.hh>
+
+#include <protocols/cluster/calibur/PreloadedPDB.hh> // AUTO IWYU For PreloadedPDB, PreloadedPDB::ADVISED_THRESHOLD
+#include <protocols/cluster/calibur/SimPDB.hh> // AUTO IWYU For SimPDB, SimPDB::preloadPDB, SimPDB::preloadedPDB, SimPD...
+#include <string.h> // AUTO IWYU For strtok
 
 namespace protocols {
 namespace cluster {

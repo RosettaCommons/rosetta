@@ -14,21 +14,13 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/rosettascripts.hh>
-#include <test/util/pose_funcs.hh>
 
 // Project Headers
-#include <core/types.hh>
 
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 
 static basic::Tracer TR("protocols.constraint_movers.ConstraintSetMover.cxxtest.hh");
 

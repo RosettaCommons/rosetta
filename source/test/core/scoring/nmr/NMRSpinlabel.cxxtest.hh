@@ -20,25 +20,18 @@
 #include <core/scoring/nmr/NMRSpinlabel.hh>
 #include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.hh>
 #include <core/scoring/nmr/NMRDummySpinlabelEnsemble.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -47,8 +40,6 @@
 #include <string>
 #include <list>
 #include <iostream>
-#include <iomanip>
-#include <map>
 #include <algorithm>
 
 static basic::Tracer TR("core.scoring.nmr.NMRSpinlabel.cxxtest");

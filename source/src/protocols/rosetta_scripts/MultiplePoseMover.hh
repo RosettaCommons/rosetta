@@ -20,7 +20,6 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/PoseSelector.fwd.hh>
-#include <protocols/rosetta_scripts/PoseSelector.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Project headers
@@ -28,7 +27,6 @@
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers

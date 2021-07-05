@@ -14,24 +14,20 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/rosettascripts.hh>
-#include <test/util/pose_funcs.hh>
 
 // Project Headers
 #include <core/types.hh>
 
 #include <protocols/constraint_movers/CstInfoMover.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/ConstantConstraint.hh>
 #include <core/scoring/func/ConstantFunc.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 static basic::Tracer TR("protocols.constraint_movers.CstInfoMover.cxxtest.hh");
 

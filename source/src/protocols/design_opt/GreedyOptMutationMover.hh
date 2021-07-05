@@ -20,13 +20,11 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
 
-#include <protocols/filters/Filter.hh>
 
 namespace protocols {
 namespace design_opt {

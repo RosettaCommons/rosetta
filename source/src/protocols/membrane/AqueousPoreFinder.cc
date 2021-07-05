@@ -41,18 +41,15 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 #include <utility/string_util.hh>
 
 #include <utility/io/ozstream.hh>
-#include <utility/file/file_sys_util.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
 #include <ostream>
-#include <fstream>
 
 static basic::Tracer TR( "protocols.membrane.AqueousPoreFinder" );
 typedef utility::vector1< numeric::CubicPolynomial > piecewise_poly;

@@ -16,11 +16,10 @@
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
-#include <protocols/qsar/qsarMap.hh>
+#include <protocols/qsar/qsarMap.fwd.hh>
 
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/Pose.hh>
 

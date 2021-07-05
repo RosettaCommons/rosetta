@@ -21,7 +21,6 @@
 #include <numeric/kdtree/KDPoint.hh>
 
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
 #include <iostream>
 

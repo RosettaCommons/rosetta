@@ -12,11 +12,9 @@
 /// @author Alex Ford <fordas@uw.edu>
 
 #include <utility/exit.hh>
-#include <utility/file/PathName.hh>
 #include <utility/file/file_sys_util.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/indexed_structure_store.OptionKeys.gen.hh>
@@ -26,7 +24,6 @@
 #include <protocols/indexed_structure_store/FragmentLookup.hh>
 
 // H5-based backend declarations are guarded by #ifdef USEHDF5
-#include <protocols/indexed_structure_store/H5FragmentStoreBackend.hh>
 #include <protocols/indexed_structure_store/BinaryFragmentStoreBackend.hh>
 
 #include <utility/vector1.hh>

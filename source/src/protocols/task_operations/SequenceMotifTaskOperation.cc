@@ -19,13 +19,12 @@
 #include <core/pack/task/ResfileReader.hh>
 
 #include <core/pack/task/operation/task_op_schemas.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/sequence/sequence_motif.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -34,8 +33,9 @@
 #include <utility/string_util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-#include <basic/datacache/DataMap.hh>
-#include <core/pack/task/operation/task_op_schemas.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer TR( "protocols.task_operations.SequenceMotifTaskOperation" );
 

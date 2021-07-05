@@ -13,7 +13,6 @@
 
 // C++ Headers
 #include <string>
-#include <map>
 
 
 #include <protocols/boinc/util.hh>
@@ -26,26 +25,20 @@
 // Core Headers
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/LazySilentFilePoseInputStream.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
-#include <utility/io/izstream.hh>
 #include <utility/file/gzip_util.hh>
 #include <utility/file/file_sys_util.hh>
 

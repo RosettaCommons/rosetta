@@ -31,7 +31,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
-#include <numeric/xyz.functions.hh>
 //// C++ headers
 #include <string>
 #include <iostream>

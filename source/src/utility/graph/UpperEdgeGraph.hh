@@ -23,8 +23,9 @@
 // Utility Headers
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1.fwd.hh>
 #include <utility/assert.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace utility {
 namespace graph {

@@ -18,42 +18,17 @@
 
 #include <protocols/ncbb/oop/OopCreatorMover.fwd.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/pose/Pose.fwd.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/CircularHarmonicFunc.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
 
-#include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tools/make_vector1.hh>
-#include <utility/excn/Exceptions.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 namespace protocols {
 namespace ncbb {

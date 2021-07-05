@@ -16,22 +16,18 @@
 #define INCLUDED_protocols_rbsegment_relax_util_hh
 
 // Package headers
-#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/rbsegment_relax/RBSegment.fwd.hh>
-#include <protocols/rbsegment_relax/RBSegment.hh>
 
-#include <map>
 
-#include <numeric/xyzVector.hh>
 
-#include <utility/VirtualBase.hh>
 
-#include <numeric/conversions.hh>
-#include <numeric/xyzMatrix.hh>
+
+#include <protocols/loops/Loops.fwd.hh> // AUTO IWYU For Loops
+#include <core/id/SequenceMapping.fwd.hh> // AUTO IWYU For SequenceMapping
 
 
 namespace protocols {

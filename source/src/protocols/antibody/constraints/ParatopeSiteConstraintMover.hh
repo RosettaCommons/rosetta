@@ -16,7 +16,6 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
-#include <core/scoring/constraints/AmbiguousConstraint.fwd.hh>
 #include <core/scoring/constraints/SiteConstraint.fwd.hh>
 
 #include <protocols/antibody/constraints/ParatopeSiteConstraintMover.fwd.hh>
@@ -24,6 +23,8 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace antibody {

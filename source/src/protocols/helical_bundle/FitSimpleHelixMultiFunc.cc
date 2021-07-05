@@ -21,12 +21,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <numeric/model_quality/rms.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/optimization/Multifunc.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -34,7 +30,6 @@
 
 /// Utility headers
 #include <cmath>
-#include <utility>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 

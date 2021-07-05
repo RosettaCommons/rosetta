@@ -20,7 +20,6 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 #include <core/chemical/Element.hh>
-#include <core/types.hh>
 
 // Project headers
 #include <test/core/init_util.hh>

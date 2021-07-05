@@ -31,7 +31,7 @@
 //Basic and utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 //Numeric headers
 #include <numeric/angle.functions.hh>

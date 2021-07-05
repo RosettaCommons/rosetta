@@ -27,7 +27,6 @@
 
 // C++ headers
 #include <cstdlib>
-#include <iosfwd>
 
 
 #ifdef    SERIALIZATION

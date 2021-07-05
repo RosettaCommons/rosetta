@@ -13,38 +13,22 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // basic headers
-#include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 
 // C++ headers
-#include <sstream>
 
 // Filter creator headers
 
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilterCreator.hh>
 #include <protocols/enzdes/EnzFilterCreators.hh>
-#include <protocols/enzdes/EnzFilterCreators.hh>
-#include <protocols/enzdes/EnzFilterCreators.hh>
-#include <protocols/enzdes/EnzFilterCreators.hh>
-#include <protocols/enzdes/EnzFilterCreators.hh>
-#include <protocols/enzdes/EnzFilterCreators.hh>
-#include <protocols/enzdes/EnzFilterCreators.hh>
-#include <protocols/enzdes/EnzFilterCreators.hh>
 #include <protocols/enzdes/RemoveLigandFilterCreator.hh>
 #include <protocols/filters/CalculatorFilterCreator.hh>
 #include <protocols/filters/BasicFilterCreators.hh>
-#include <protocols/filters/BasicFilterCreators.hh>
 #include <protocols/filters/ContingentFilterCreator.hh>
-#include <protocols/filters/BasicFilterCreators.hh>
-#include <protocols/filters/BasicFilterCreators.hh>
-#include <protocols/filters/BasicFilterCreators.hh>
 #include <protocols/filters/ReplicateFilterCreator.hh>
-#include <protocols/filters/BasicFilterCreators.hh>
 #include <protocols/filters/TimeFilterCreator.hh>
 #include <protocols/calc_taskop_filters/RelativePoseFilterCreator.hh>
 #include <protocols/simple_filters/StemFinderFilterCreator.hh>

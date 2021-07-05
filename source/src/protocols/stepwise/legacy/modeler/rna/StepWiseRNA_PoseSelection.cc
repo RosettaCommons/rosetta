@@ -18,13 +18,13 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/rna/util.hh>
 #include <basic/Tracer.hh>
+
+#include <protocols/stepwise/modeler/output_util.hh> // AUTO IWYU For output_boolean
 
 using core::pose::sort_pose_by_score;
 using namespace protocols::stepwise::modeler;

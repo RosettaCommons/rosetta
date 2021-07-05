@@ -22,7 +22,6 @@
 
 // Unit headers
 #include <core/scoring/epr_deer/metrics/DEERData.fwd.hh>
-#include <core/scoring/epr_deer/EPRSpinLabel.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>

@@ -20,7 +20,6 @@
 
 
 #include <core/optimization/Multifunc.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

@@ -22,10 +22,9 @@
 #include <basic/Tracer.hh>
 
 #include <core/id/SequenceMapping.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/func/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -46,7 +45,6 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <core/conformation/membrane/Exceptions.hh>
 
 
 namespace core {

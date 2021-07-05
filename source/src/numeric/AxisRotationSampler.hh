@@ -16,12 +16,12 @@
 #define INCLUDED_numeric_axisrotationsampler_hh
 
 #include <numeric/conversions.hh>
-#include <numeric/constants.hh>
 #include <numeric/Quaternion.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/types.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace numeric {
 

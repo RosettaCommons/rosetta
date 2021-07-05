@@ -25,7 +25,6 @@
 // Project headers
 #include <core/conformation/Conformation.hh>
 #include <core/fragment/FragmentIO.hh>
-#include <core/fragment/FragSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
@@ -59,6 +58,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // C++ Headers
 

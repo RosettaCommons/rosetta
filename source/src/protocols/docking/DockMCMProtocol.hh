@@ -30,7 +30,6 @@
 #include <protocols/docking/DockFilters.fwd.hh>
 
 #include <protocols/docking/DockMCMCycle.fwd.hh>
-#include <utility/vector1.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 namespace protocols {

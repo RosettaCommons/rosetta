@@ -22,24 +22,21 @@
 
 
 // Package Headers
-#include <protocols/topology_broker/TopologyClaimer.hh> //for printing
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 
 
 // Project Headers
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/exit.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 //// C++ headers
 #include <string>
 #include <iosfwd>
+
+#include <ostream> // AUTO IWYU For operator<<, basic_ostream, basic_ostream<>::__os...
 
 
 namespace protocols {

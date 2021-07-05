@@ -21,8 +21,6 @@
 #include <core/pack/task/operation/ReplicateTask.hh>
 
 // Project headers
-#include <core/types.hh>
-#include <core/chemical/ResidueProperties.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -31,6 +29,8 @@
 
 // utility headers
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask, ResidueLevelTask::Resi...
 
 
 static basic::Tracer TR("test.core.pack.task.operation.TaskOperationsTests");

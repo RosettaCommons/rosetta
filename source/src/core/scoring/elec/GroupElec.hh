@@ -19,23 +19,23 @@
 //#include <core/scoring/elec/ElecAtom.hh>
 //#include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
-#include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/DerivVectorPair.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
 
 #include <cmath>
+
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For Residue
 
 namespace core {
 namespace scoring {

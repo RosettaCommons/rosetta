@@ -44,8 +44,6 @@
 #include <protocols/abinitio/AllResiduesChanged.hh>
 
 //for cenrot
-#include <protocols/moves/CompositionMover.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -63,8 +61,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/io/ozstream.hh>
 #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
@@ -75,7 +71,6 @@
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 #ifdef WIN32
 #include <ctime>
@@ -84,9 +79,9 @@
 //debug
 
 #include <protocols/moves/MonteCarlo.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <core/scoring/ScoreFunction.hh> // MANUAL IWYU
 
 static basic::Tracer tr( "protocols.abinitio" );
 

@@ -21,26 +21,19 @@
 #include <core/scoring/SASAPotential.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/MinimizationData.hh>
+#include <core/scoring/MinimizationData.fwd.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 //#include <core/scoring/ContextGraphTypes.hh>
 
 #include <core/scoring/DenseEnergyContainer.hh>
 
 // Project headers
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/prof.hh>
+#include <basic/datacache/BasicDataCache.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/conformation/RotamerSetBase.hh>
-#include <core/conformation/RotamerSetCacheableDataType.hh>
+#include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/conformation/Residue.hh>
 
-#include <numeric/xyz.io.hh>
 
 #include <utility/vector1.hh>
 

@@ -13,16 +13,17 @@
 
 // Unit Headers
 #include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
-#include <protocols/canonical_sampling/SimulatedTempering.hh>
 
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh> //Pretty output.
 #include <utility/io/ozstream.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
+
+#include <protocols/canonical_sampling/TemperatureController.hh> // AUTO IWYU For TemperatureController
+
 static basic::Tracer tr( "protocols.canonical_sampling.MultiTemperatureTrialCounter" );
 
 namespace protocols {

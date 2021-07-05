@@ -16,12 +16,9 @@
 #include <protocols/simple_filters/SSElementMotifContactFilter.hh>
 #include <protocols/simple_filters/SSElementMotifContactFilterCreator.hh>
 
-#include <numeric/xyzVector.hh>
 
 // Project Headers
 
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -31,33 +28,29 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/motif/reference_frames.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/scoring/motif/motif_hash_stuff.hh>
 #include <core/scoring/motif/util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoringManager.hh>
 
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <numeric/xyzTransform.hh>
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/simple_filters/AtomicContactFilter.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <set>
 #include <map>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 //// C++ headers
 static basic::Tracer TR("protocols.filters.SSElementMotifContactFilter");

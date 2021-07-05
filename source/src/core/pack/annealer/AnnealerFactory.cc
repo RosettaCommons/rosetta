@@ -22,10 +22,8 @@
 #include <core/pack/annealer/FixbbLinkingRotamerSimAnnealer.hh>
 #include <core/pack/annealer/MultiCoolAnnealer.hh>
 
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -33,10 +31,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
 namespace core {
 namespace pack {

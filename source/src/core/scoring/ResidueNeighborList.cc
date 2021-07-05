@@ -19,7 +19,6 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 // Project headers
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 
 /// Utility headers

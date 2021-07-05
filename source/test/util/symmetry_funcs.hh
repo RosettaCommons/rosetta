@@ -26,7 +26,6 @@
 #include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 /// @brief Given a pose, remove all disulfides in it.
 ///

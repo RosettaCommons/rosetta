@@ -14,9 +14,9 @@
 // Unit Headers
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
-#include <protocols/rotamer_recovery/RRProtocol.hh>
-#include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/rotamer_recovery/RRReporter.hh>
+#include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryCreator.hh>
 
 // Package Headers
@@ -30,9 +30,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
-#include <utility/vector0.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

@@ -9,11 +9,10 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -24,20 +23,16 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <core/scoring/rms_util.hh>
-#include <numeric/model_quality/rms.hh>
 
-#include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <cstdio>
 
 using namespace core;
 using namespace ObjexxFCL::format;

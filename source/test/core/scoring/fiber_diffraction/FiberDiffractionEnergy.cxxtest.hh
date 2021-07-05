@@ -14,31 +14,23 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 // Unit headers
-#include <core/energy_methods/FiberDiffractionEnergy.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <core/conformation/symmetry/SymmData.fwd.hh>
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 #include <sstream>
 #include <utility/excn/Exceptions.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/excn/Exceptions.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 static basic::Tracer TR("test.scoring.fiber_diffraction.FiberDiffractionEnergy");

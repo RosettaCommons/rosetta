@@ -13,10 +13,10 @@
 
 // Package headers
 #include <core/pack/dunbrack/SingleResidueDunbrackLibraryCreator.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Program header
-#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/rotamers/DunbrackRotamerLibrarySpecification.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>

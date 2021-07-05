@@ -17,7 +17,6 @@
 
 // package headers
 #include <core/io/external/PsiPredInterface.hh>
-#include <protocols/flxbb/utility.hh>
 #include <protocols/moves/DsspMover.hh>
 
 // project headers
@@ -29,13 +28,14 @@
 #include <protocols/parser/BluePrint.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/ss_prediction/SS_predictor.hh>
-#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/task_operations/DesignAroundOperation.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "devel.denovo_design.task_operations.DesignBySecondaryStructure" );
 

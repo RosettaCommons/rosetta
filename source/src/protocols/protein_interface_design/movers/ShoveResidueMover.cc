@@ -16,30 +16,20 @@
 #include <protocols/protein_interface_design/movers/ShoveResidueMoverCreator.hh>
 
 // Project headers
-#include <utility/graph/Graph.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/util.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/filters/BasicFilters.hh>
-#include <protocols/protein_interface_design/util.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
@@ -80,7 +70,6 @@ ShoveResidueMover::apply ( pose::Pose & pose )
 	//using namespace rotamer_set;
 	using namespace core::scoring;
 	using namespace core::pack::task;
-	using namespace core::pack::rotamer_set;
 	runtime_assert( shove_residues_ != nullptr );
 
 	for ( core::Size const resid : core::select::get_residues_from_subset( shove_residues_->apply(pose) ) ) {

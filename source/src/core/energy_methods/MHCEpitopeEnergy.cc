@@ -18,31 +18,20 @@
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
 
 // Package headers
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <utility/numbers.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/aa_composition_energy/SequenceConstraint.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeConstraint.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 
 // Options system
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // File I/O
-#include <basic/database/open.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -54,8 +43,8 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/memory.hh>
 
-#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.hh>
-#include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.hh>
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 
 namespace core {
 namespace energy_methods {

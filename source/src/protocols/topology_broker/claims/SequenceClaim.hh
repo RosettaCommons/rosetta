@@ -25,19 +25,17 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/sequence/AnnotatedSequence.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/exit.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 //// C++ headers
 #include <string>
 #include <iosfwd>
+
+#include <ostream> // AUTO IWYU For operator<<, basic_ostream, basic_ostream<>::__os...
 
 
 namespace protocols {

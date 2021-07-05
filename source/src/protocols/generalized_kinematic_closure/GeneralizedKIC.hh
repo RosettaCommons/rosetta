@@ -25,25 +25,20 @@
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/filters/ContingentFilter.fwd.hh>
-#include <protocols/filters/ContingentFilter.hh>
 
 // Project Headers
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.fwd.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 // Basic Headers
-#include <basic/citation_manager/CitationCollection.fwd.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
 
 
 ///////////////////////////////////////////////////////////////////////

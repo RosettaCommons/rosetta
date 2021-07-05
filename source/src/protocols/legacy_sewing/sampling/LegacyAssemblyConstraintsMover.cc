@@ -32,7 +32,6 @@
 #include <core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <protocols/task_operations/LinkResidues.hh>
 #include <protocols/symmetry/SetupNCSMover.hh>
 
 #include <basic/options/option.hh>
@@ -45,7 +44,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 // XSD XRW Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 namespace protocols {

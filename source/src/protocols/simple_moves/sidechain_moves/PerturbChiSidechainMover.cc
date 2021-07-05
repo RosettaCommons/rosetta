@@ -16,43 +16,22 @@
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMoverCreator.hh>
 
 // Procols Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/id/DOF_ID_Range.hh>
-#include <core/id/TorsionID.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pose/Pose.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
-#include <basic/prof.hh>
 
 // Numeric Headers
-#include <numeric/angle.functions.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 
 // Utility
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 
 // C++ Headers
-#include <sstream>
 #include <fstream>
-#include <utility/fixedsizearray1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

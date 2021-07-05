@@ -18,15 +18,13 @@
 // Core headers
 #include <core/simple_metrics/CompositeStringMetric.hh>
 #include <core/simple_metrics/util.hh>
-#include <core/simple_metrics/metrics/TimingProfileMetric.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Basic/Utility headers
 #include <basic/options/option.hh>
 #include <utility/options/keys/OptionKeys.hh>
-#include <utility/options/keys/OptionKey.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>

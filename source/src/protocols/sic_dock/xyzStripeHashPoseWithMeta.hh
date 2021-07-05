@@ -11,14 +11,11 @@
 #define INCLUDED_protocols_sic_dock_xyzStripeHashPoseWithMeta_hh
 
 #include <numeric/geometry/hashing/xyzStripeHashWithMeta.hh>
-#include <numeric/geometry/hashing/xyzStripeHash.hh>
 
 #include <protocols/sic_dock/xyzStripeHashPoseWithMeta.fwd.hh>
-#include <protocols/sic_dock/types.hh>
 #include <core/pose/xyzStripeHashPose.fwd.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>

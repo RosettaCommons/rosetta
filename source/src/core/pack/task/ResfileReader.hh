@@ -31,7 +31,6 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/excn/Exceptions.hh>
 

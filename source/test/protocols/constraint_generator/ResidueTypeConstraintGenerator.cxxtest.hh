@@ -13,33 +13,23 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/util/pdb1rpb.hh>
 
 // Protocol headers
 #include <protocols/constraint_generator/ResidueTypeConstraintGenerator.hh>
 
 // Core headers
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/OrResidueSelector.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Boost headers
 

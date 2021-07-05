@@ -13,24 +13,14 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
-#include <core/pack/guidance_scoreterms/voids_penalty_energy/VoidsPenaltyEnergy.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/LayerSelector.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -43,6 +33,8 @@
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR("VoidsPenaltyEnergyTests");
 

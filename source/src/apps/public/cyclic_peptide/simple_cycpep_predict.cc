@@ -24,53 +24,19 @@
 #endif
 
 //General includes
-#include <basic/options/option.hh>
-#include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
 #include <devel/init.hh>
-#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/PDBInfo.hh>
-#include <numeric/conversions.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <numeric/random/random.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
-#include <numeric/constants.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/Ramachandran.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/rosetta_scripts/ParsedProtocol.hh>
-#include <protocols/filters/BasicFilters.hh>
-#include <protocols/protein_interface_design/filters/HbondsToResidueFilter.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/scoring/Energies.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
 //Application-specific includes
 #ifdef USEMPI
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI.hh>
 #include <protocols/cyclic_peptide_predict/util.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #endif
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
 
-#include <utility/vector1.hh>
-#include <cstdio>
 
 //Tracer:
 static basic::Tracer TR( "apps.public.cyclic_peptide.simple_cycpep_predict" );

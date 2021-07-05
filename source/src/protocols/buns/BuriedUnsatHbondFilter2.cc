@@ -27,8 +27,7 @@
 #include <basic/MetricValue.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <utility/string_util.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

@@ -12,7 +12,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
-#include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/InnerLarvalJob.fwd.hh>
 
 #include <basic/Tracer.hh>
 
@@ -25,6 +25,12 @@ static basic::Tracer TR( "protocols.jd3.standard.PreliminaryLarvalJob" );
 
 // Cereal headers
 #include <cereal/types/polymorphic.hpp>
+
+// Other headers
+#include <protocols/jd3/InnerLarvalJob.hh>
+#include <protocols/jd3/pose_inputters/PoseInputter.hh>
+#include <utility/options/OptionCollection.hh>
+#include <utility/tag/Tag.hh>
 #endif // SERIALIZATION
 
 namespace protocols {

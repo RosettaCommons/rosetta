@@ -17,24 +17,16 @@
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <protocols/pockets/Fingerprint.hh>
 #include <protocols/pockets/PocketGrid.hh>
-#include <utility/exit.hh>
-#include <numeric/random/random.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/chemical/AtomType.hh>
 #include <ObjexxFCL/format.hh>
-#include <algorithm>
 #include <utility/vector1.hh>
 #include <cmath>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
+
+#include <numeric/constants.hh> // AUTO IWYU For pi_2
 
 namespace protocols {
 namespace pockets {

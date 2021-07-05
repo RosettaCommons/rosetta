@@ -16,23 +16,16 @@
 #include <protocols/jd2/Job.hh>
 
 ///Project headers
-#include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/io/raw_data/ScoreFileData.hh>
 #include <core/io/raw_data/ScoreMap.hh>
-#include <core/scoring/Energies.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/vector1.hh>
 
 ///Basic headers
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringMap.hh>
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>

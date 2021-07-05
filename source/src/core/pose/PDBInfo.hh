@@ -34,12 +34,11 @@
 #include <core/pose/PDBPoseMap.hh>
 
 #include <core/io/CrystInfo.hh>
-#include <core/io/HeaderInformation.hh>
+#include <core/io/HeaderInformation.fwd.hh>
 #include <core/io/Remarks.hh>
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/py/PyAssert.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 

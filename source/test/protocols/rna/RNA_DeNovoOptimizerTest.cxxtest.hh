@@ -13,16 +13,12 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/NamedAtomID.hh>
 
@@ -36,6 +32,11 @@
 #include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For initialize_pose_and_other_poses_from_com...
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("RNA_DeNovoOptimizerTest");
 

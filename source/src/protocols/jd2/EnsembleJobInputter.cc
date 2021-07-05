@@ -27,6 +27,9 @@
 #include <utility/io/util.hh>
 #include <utility/string_util.hh>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
+
 static basic::Tracer TR( "protocols.jd2.EnsembleJobInputter" );
 
 

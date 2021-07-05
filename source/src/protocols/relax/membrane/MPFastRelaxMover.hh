@@ -24,13 +24,12 @@
 #include <protocols/relax/membrane/MPFastRelaxMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project Headers
-#include <protocols/relax/RelaxProtocolBase.hh>
+#include <protocols/relax/RelaxProtocolBase.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace relax {

@@ -27,6 +27,8 @@
 #include <iostream>
 #include <iomanip>
 
+#include <ObjexxFCL/format.hh> // AUTO IWYU For I, RJ, format
+
 namespace protocols {
 namespace frag_picker {
 namespace quota {

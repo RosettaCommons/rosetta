@@ -19,12 +19,9 @@
 #include <core/id/DOF_ID_Range.fwd.hh>
 
 // Package headers
-#include <core/id/types.hh>
 #include <core/id/DOF_ID.hh>
 
 // C++ header
-#include <utility>
-#include <utility/assert.hh>
 
 #if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
 #undef min

@@ -15,14 +15,11 @@
 #define INCLUDED_protocols_loophash_MPI_LoopHashRefine_Master_hh
 
 #include <protocols/wum/SilentStructStore.hh>
-#include <protocols/wum/MPI_WorkUnitManager.hh>
 #include <protocols/loophash/MPI_LoopHashRefine.hh>
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <string>
-#include <vector>
 
 namespace protocols {
 namespace loophash {

@@ -32,10 +32,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -45,7 +44,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -66,7 +64,6 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -79,6 +76,8 @@
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace motifs {

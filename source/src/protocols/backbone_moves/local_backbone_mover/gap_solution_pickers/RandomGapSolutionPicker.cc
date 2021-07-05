@@ -16,7 +16,6 @@
 #include <numeric/random/random.hh>
 
 // STD
-#include <cstdlib>
 
 static basic::Tracer TR( "protocols.backbone_moves.local_backbone_mover.gap_solution_pickers.RandomGapSolutionPicker" );
 

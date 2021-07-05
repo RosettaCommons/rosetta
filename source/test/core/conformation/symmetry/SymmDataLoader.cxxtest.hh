@@ -21,7 +21,6 @@
 
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // Basic headers
@@ -29,6 +28,8 @@
 
 // C++ headers
 #include <sstream>
+
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
 
 using namespace basic::resource_manager;
 

@@ -20,10 +20,10 @@
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/UltraLightResidue.fwd.hh>
-#include <core/kinematics/Jump.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/vector1.hh>
-#include <vector>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

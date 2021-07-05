@@ -19,18 +19,17 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/assert.hh>
 #include <utility/excn/Exceptions.hh>
 
 //STL Headers
-#include <iostream>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
 
 // Boost Headers
 #include <utility/graph/unordered_object_pool.hpp>
-#include <boost/pool/pool.hpp>
+
+#include <boost/pool/object_pool.hpp> // AUTO IWYU For unordered_object_pool::construct
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

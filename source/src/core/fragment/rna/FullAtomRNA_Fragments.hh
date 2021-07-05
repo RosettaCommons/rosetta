@@ -24,13 +24,10 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/fragment/rna/RNA_MatchType.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>
 #include <map>
-#include <set>
-#include <vector>
 
 #include <utility/vector1.hh>
 

@@ -16,13 +16,11 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTarget.hh>
 
 //package headers
-#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNode.hh>
 
 //project headers
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 
 #include <basic/Tracer.hh>

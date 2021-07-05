@@ -24,7 +24,6 @@
 // no fwd here. The FrameIteratorWorker_ is really a HIDDEN detail. since this isn't a NODE header there is no danger of polluting the
 // header graph.
 // can't expect users of these classes to figure out that they have to include it, too.
-#include <core/fragment/FrameIteratorWorker_.hh>
 //#include <core/fragment/Frame.hh>
 //#include <core/fragment/FragID_Iterator.fwd.hh>
 
@@ -39,7 +38,6 @@
 
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameIteratorWorker_.fwd.hh>
-#include <utility/vector1.hh>
 
 
 /*

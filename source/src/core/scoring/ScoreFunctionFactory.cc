@@ -14,11 +14,10 @@
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/DockingScoreFunction.hh>
 #include <core/scoring/MinScoreScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/chemical/AA.hh>
 

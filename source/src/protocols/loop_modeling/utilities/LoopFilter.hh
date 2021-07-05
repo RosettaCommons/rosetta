@@ -16,11 +16,8 @@
 #include <protocols/loop_modeling/utilities/LoopFilter.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocols headers
-#include <protocols/loops/Loop.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 namespace protocols {

@@ -19,8 +19,6 @@
 #include <protocols/match/Hit.fwd.hh>
 
 // Utility headers
-#include <utility>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace match {

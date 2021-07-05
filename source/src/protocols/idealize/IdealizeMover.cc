@@ -21,7 +21,6 @@
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -52,14 +51,11 @@
 // Numeric headers
 
 // ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

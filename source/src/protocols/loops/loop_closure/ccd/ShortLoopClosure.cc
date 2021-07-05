@@ -35,9 +35,8 @@
 #include <core/fragment/FragID.hh>
 #endif
 
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <protocols/simple_moves/FragmentMover.fwd.hh>
 
 
 #include <protocols/moves/MonteCarlo.hh>

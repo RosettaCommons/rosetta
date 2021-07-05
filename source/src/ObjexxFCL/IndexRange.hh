@@ -16,15 +16,13 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/Star.hh>
+#include <ObjexxFCL/Star.fwd.hh>
 #include <ObjexxFCL/Dimension.fwd.hh>
 
 // C++ Headers
 #include <cassert>
-#include <cstddef>
 #include <iosfwd>
 #include <utility> // for swap
-#include <algorithm> // also for swap??
 
 namespace ObjexxFCL {
 

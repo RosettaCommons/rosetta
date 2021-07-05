@@ -61,7 +61,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <sstream>
 #include <fstream>
 #include <iomanip>
 #include <iostream>

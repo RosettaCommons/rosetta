@@ -28,7 +28,6 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AA.hh>
 #include <core/conformation/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 

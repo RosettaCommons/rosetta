@@ -14,14 +14,12 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceCoupling.hh>
 
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/file/FileName.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 #include <core/chemical/AA.hh>
 

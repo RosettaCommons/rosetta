@@ -26,15 +26,11 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // Utility headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 
 // Basic headers
 #include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 // C++ headers
 #include <iostream>

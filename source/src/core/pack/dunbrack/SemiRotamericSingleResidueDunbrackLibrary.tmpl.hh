@@ -35,35 +35,25 @@
 #include <ObjexxFCL/FArray3D.hh>
 
 // Basic Headers
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
-#include <utility/backtrace.hh>
+#include <utility/assert.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
 #include <utility/vectorL.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/options/BooleanOption.hh>
 #include <utility/numbers.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
 #include <numeric/MathNTensor.hh>
-#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
+#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh> // DO NOT AUTO-REMOVE needed for template initialization
 #include <numeric/util.hh>
 #include <numeric/types.hh>
-#include <numeric/internal/ColPointers.hh>
-#include <numeric/internal/ColVectors.hh>
-#include <numeric/internal/ColsPointer.hh>
-#include <numeric/internal/RowPointers.hh>
-#include <numeric/internal/RowVectors.hh>
-#include <numeric/internal/RowsPointer.hh>
 
 //Auto Headers
 #include <core/types.hh>
@@ -81,7 +71,9 @@
 #include <cmath>
 #include <iostream>
 #include <utility>
-#include <vector>
+
+#include <numeric/interpolation/spline/PolycubicSpline.hh> // AUTO IWYU For PolycubicSpline
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type
 
 
 namespace core {

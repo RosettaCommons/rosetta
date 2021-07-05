@@ -28,6 +28,9 @@ class EnzdesLoopsFile;
 typedef utility::pointer::shared_ptr< EnzdesLoopsFile > EnzdesLoopsFileOP;
 typedef utility::pointer::shared_ptr< EnzdesLoopsFile const > EnzdesLoopsFileCOP;
 
+class ResInteractions;
+class CstResInteractions;
+
 class EnzdesLoopInfo;
 typedef utility::pointer::shared_ptr< EnzdesLoopInfo > EnzdesLoopInfoOP;
 typedef utility::pointer::shared_ptr< EnzdesLoopInfo const > EnzdesLoopInfoCOP;

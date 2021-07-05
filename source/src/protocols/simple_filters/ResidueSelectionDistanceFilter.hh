@@ -20,7 +20,6 @@
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 

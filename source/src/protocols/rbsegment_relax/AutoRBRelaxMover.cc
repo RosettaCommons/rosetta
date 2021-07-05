@@ -14,7 +14,6 @@
 
 #include <core/types.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
@@ -45,9 +44,8 @@
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 
 
-#include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <numeric/random/random.hh>
 
@@ -62,7 +60,6 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <utility>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

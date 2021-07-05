@@ -22,8 +22,9 @@
 
 //utilities
 #include <devel/init.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For RealOptionKey, BooleanOptionKey, StringOptionKey
 
 
 // local options

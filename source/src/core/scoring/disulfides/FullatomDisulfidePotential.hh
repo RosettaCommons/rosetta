@@ -22,7 +22,7 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/CircularSigmoidalFunc.hh>
-#include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/DerivVectorPair.fwd.hh>
 
 // Project headers
 #include <core/types.hh>

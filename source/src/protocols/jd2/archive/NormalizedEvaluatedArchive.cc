@@ -27,15 +27,12 @@
 //#include <basic/datacache/BasicDataCache.hh>
 
 //#include <protocols/evaluation/EvaluatorFactory.hh>
-#include <protocols/evaluation/PoseEvaluator.hh>
 
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <numeric/util.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/prof.hh>
 
 //for DebugArchive
 
@@ -45,6 +42,8 @@
 //for setup_default_evaluators
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
+
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
 
 
 static basic::Tracer tr( "protocols.jd2.NormalizedEvaluatedArchive" );

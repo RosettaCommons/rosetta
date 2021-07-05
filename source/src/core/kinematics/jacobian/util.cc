@@ -16,7 +16,6 @@
 
 // Package headers
 #include <basic/Tracer.hh>
-#include <numeric/MathVector_operations.hh>
 #include <numeric/xyz.functions.hh>
 #include <core/kinematics/RT.hh>
 

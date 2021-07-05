@@ -30,7 +30,6 @@
 // // Utility headers
 #include <utility/io/izstream.fwd.hh>
 #include <utility/vector1.hh>
-#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 
 namespace core {
 namespace pack {

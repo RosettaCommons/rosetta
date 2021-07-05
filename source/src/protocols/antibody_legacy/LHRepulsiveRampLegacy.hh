@@ -22,13 +22,11 @@
 #include <protocols/antibody_legacy/LHRepulsiveRampLegacy.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/RepeatMover.fwd.hh>
 
 
 namespace protocols {

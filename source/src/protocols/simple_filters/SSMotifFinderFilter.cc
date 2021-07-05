@@ -20,10 +20,7 @@
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <fstream>
-#include <utility/io/izstream.hh>
-#include <sstream>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/kinematics/Jump.hh>
@@ -33,7 +30,6 @@
 //#include <boost/xpressive/xpressive.hpp>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/toolbox/superimpose.hh>
 #include <utility/vector1.hh>

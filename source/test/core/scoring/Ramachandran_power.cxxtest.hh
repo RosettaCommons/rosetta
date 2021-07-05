@@ -15,7 +15,6 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <core/conformation/ppo_torsion_bin.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
 

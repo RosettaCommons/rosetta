@@ -12,12 +12,10 @@
 /// @brief Sample torsions based on experimental distributions
 /// @author Guangfeng Zhou and Frank DiMaio
 
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/database/open.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <core/scoring/GenericBondedPotential.fwd.hh>
 #include <core/scoring/GenericBondedPotential.hh>
@@ -28,6 +26,10 @@
 
 
 #include <protocols/ligand_docking/GALigandDock/TorsionSampler.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 namespace protocols {

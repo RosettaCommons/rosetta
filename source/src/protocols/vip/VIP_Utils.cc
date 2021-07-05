@@ -17,7 +17,8 @@
 #include <core/scoring/packstat/types.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/simple_filters/PackStatFilter.hh>
-#include <basic/options/option.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 namespace protocols {
 namespace vip {

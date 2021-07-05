@@ -15,7 +15,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/json_spirit/json_spirit.h>
 #include <utility/json_spirit/json_spirit_writer_options.h>
 
 #include <core/pose/Pose.hh>
@@ -27,10 +26,8 @@
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilter.hh>
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilterCreator.hh>
 
-#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
 #include <iterator>
@@ -41,6 +38,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <utility/json_spirit/json_spirit_writer.h> // AUTO IWYU For write
 
 namespace protocols {
 namespace indexed_structure_store {

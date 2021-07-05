@@ -30,9 +30,7 @@
 // project headers
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/OrderedFragSet.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 

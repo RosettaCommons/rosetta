@@ -51,11 +51,9 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>

@@ -29,6 +29,8 @@
 
 #include <utility/vector1.hh>
 
+#include <protocols/noesy_assign/CrossPeak.hh> // AUTO IWYU For CrossPeak
+
 
 static basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 

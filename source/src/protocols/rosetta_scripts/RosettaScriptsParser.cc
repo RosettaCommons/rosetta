@@ -17,7 +17,7 @@
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
 // Package headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/parser/DataLoader.hh>
@@ -35,7 +35,6 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 
@@ -51,10 +50,9 @@
 #include <utility/pointer/memory.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // movers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/moves/NullMover.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -67,7 +65,6 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -79,7 +76,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <map>

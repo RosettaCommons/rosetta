@@ -15,15 +15,9 @@
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.hh>
 
 // Package Headers
-#include <basic/options/option.hh>
 #include <core/types.hh>
 
 // option key includes
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
 
 //numeric headers
 
@@ -31,7 +25,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <cstdio>
 
 static basic::Tracer TR( "protocols.cyclic_peptide_predict.HierarchicalHybridJD_JobResultsSummary" );
 

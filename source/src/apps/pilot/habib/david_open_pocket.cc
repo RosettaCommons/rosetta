@@ -14,7 +14,6 @@
 #include <iomanip>
 
 // Protocol Headers
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -27,29 +26,20 @@
 // Core Headers
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
-#include <core/id/AtomID_Map.hh>
 #include <protocols/pockets/PocketConstraint.hh>
-#include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/Energies.hh>
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
 
 // Utility Headers
@@ -61,11 +51,12 @@
 
 #include <utility/excn/Exceptions.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 using namespace core;
 using namespace basic::options;
 using namespace core::scoring;
-using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 
 OPT_KEY( Real, pocket_kT )

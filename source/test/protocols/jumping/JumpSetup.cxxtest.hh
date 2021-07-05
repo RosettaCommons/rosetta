@@ -25,23 +25,19 @@
 
 // project headers
 #include <core/kinematics/MoveMap.hh>
-#include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 
 
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FragID_Iterator.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 // utility headers
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 #include <utility/file/file_sys_util.hh>
@@ -72,10 +68,9 @@
 
 //Auto Headers
 #include <core/fragment/FragData.hh>
-#include <core/id/AtomID_Mask.hh>
-#include <core/io/silent/EnergyNames.fwd.hh>
-#include <utility/fix_boinc_read.hh>
 #include <utility/vector1.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
 
 // #include <numeric/random/random.hh>
 // #include <numeric/numeric.functions.hh>

@@ -52,6 +52,10 @@
 // CTPL
 #include <CTPL/ctpl_stl.h>
 
+#ifdef MULTI_THREADED
+#include <numeric/random/random.hh>
+#endif
+
 namespace protocols {
 namespace jd3 {
 namespace job_distributors {

@@ -23,51 +23,20 @@
 #include <protocols/moves/Mover.hh>
 // Protocol headers
 #include <protocols/glycopeptide_docking/GlycopeptideDockingFlags.fwd.hh>
-#include <protocols/glycopeptide_docking/utils.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
-#include <protocols/constraint_movers/ConstraintSetMover.fwd.hh>
 
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
-#include <protocols/simple_task_operations/RestrictToInterface.fwd.hh>
-#include <protocols/task_operations/RestrictResiduesToRepackingOperation.fwd.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/operation/TaskOperations.fwd.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.fwd.hh>
-#include <core/pack/task/operation/OperateOnResidueSubset.fwd.hh>
-#include <core/select/residue_selector/ResidueSpanSelector.fwd.hh>
-#include <core/select/residue_selector/NotResidueSelector.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
 #include <core/types.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreType.hh>
-
-
-// Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/excn/Exceptions.fwd.hh>
-
-// Numeric headers
-#include <numeric/random/random.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
-
-// Basic/Utility headers
-#include <basic/datacache/DataMap.fwd.hh>
-//#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
 
 #include <string>
 

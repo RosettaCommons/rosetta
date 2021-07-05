@@ -19,44 +19,11 @@
 
 // Package headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 
 // Utility headers
 #include <core/types.hh>
-
-// C++ headers
-#include <string>
-
-#include <platform/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/jd2/InnerJob.fwd.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.fwd.hh>
-#include <protocols/jd2/JobInputter.fwd.hh>
-#include <protocols/jd2/JobOutputter.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
-#include <utility/assert.hh>
-#include <cstddef>
-#include <iosfwd>
-#include <limits>
-#include <list>
-#include <map>
-#include <vector>
 
 
 namespace protocols {

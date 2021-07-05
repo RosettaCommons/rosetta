@@ -16,7 +16,7 @@
 
 #include <utility/options/OptionCollection.hh>                 // for Option...
 
-#include <basic/options/keys/OptionKeys.hh> // Convenience
+#include <basic/options/keys/OptionKeys.hh> // DO NOT AUTO-REMOVE (Convenience)
 
 #include <utility/options/BooleanOption.hh>        // for BooleanOption
 #include <utility/options/BooleanVectorOption.hh>  // for BooleanVectorOption
@@ -25,7 +25,6 @@
 #include <utility/options/IntegerOption.hh>        // for IntegerOption
 #include <utility/options/IntegerVectorOption.hh>  // for IntegerVectorOption
 #include <utility/options/Option.hh>               // for Option
-#include <utility/options/OptionCollection.hh>     // for OptionCollection
 #include <utility/options/PathOption.hh>           // for PathOption
 #include <utility/options/PathVectorOption.hh>     // for PathVectorOption
 #include <utility/options/RealOption.hh>           // for RealOption

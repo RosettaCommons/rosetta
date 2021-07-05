@@ -20,30 +20,22 @@
 // Protocols Headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/backrub/BackrubProtocol.hh>
-#include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 // Core Headers
-#include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.hh>
-#include <core/types.hh>
 
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
 
 // Platform Headers
-#include <platform/types.hh>
 
 // option key includes
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>

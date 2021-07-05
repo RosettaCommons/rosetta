@@ -13,16 +13,21 @@
 
 #include <protocols/antibody/grafting/util.hh>
 
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <core/scoring/constraints/ConstraintSet.hh> // AUTO IWYU For ConstraintSet
+#include <core/sequence/ScoringScheme.hh> // AUTO IWYU For ScoringScheme
+#include <basic/database/open.hh> // AUTO IWYU For full_name
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 #ifdef __ANTIBODY_GRAFTING__
 
 #include <protocols/tcr/util.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
-#include <protocols/tcr/TCRseqInfo.fwd.hh>
 #include <protocols/tcr/template_util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/execute.hh>
@@ -39,14 +44,12 @@
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/sequence/Sequence.hh>
 #include <utility/file/file_sys_util.hh>
 #include <fstream>
 
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
 static basic::Tracer TR( "protocols.tcr.util" );
 /// @brief MINSCORE const value with large negative number

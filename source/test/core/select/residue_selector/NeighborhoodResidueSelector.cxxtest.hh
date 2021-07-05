@@ -15,10 +15,8 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/core/select/residue_selector/DummySelectors.hh>
-#include <test/core/select/residue_selector/utilities_for_testing.hh>
 
 // Package headers
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
@@ -41,6 +39,9 @@
 
 // C++ headers
 #include <string>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core::select::residue_selector;
 

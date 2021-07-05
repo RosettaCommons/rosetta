@@ -10,24 +10,10 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/rms_util.hh>
 #include <devel/init.hh>
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
-#include <numeric/random/random.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 using namespace core::pose;

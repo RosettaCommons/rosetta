@@ -19,6 +19,8 @@
 #include <basic/Tracer.hh>
 #include <basic/random/init_random_generator.hh>
 
+#include <thread>
+
 static basic::Tracer TR( "basic.thread_manager.RosettaThread" );
 
 namespace basic {

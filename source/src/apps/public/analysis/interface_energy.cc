@@ -30,7 +30,6 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
@@ -38,7 +37,6 @@
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/methods/Methods.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -19,8 +19,6 @@
 #include <core/simple_metrics/StringMetric.hh>
 #include <core/simple_metrics/util.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -28,7 +26,7 @@
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSetsFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/interaction_graph/util.hh>
 
 // Protocols includes
@@ -36,7 +34,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
@@ -48,6 +46,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 #ifdef    SERIALIZATION
+#include <core/scoring/ScoreFunction.hh>
+
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
 

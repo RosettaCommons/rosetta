@@ -19,21 +19,23 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <boost/algorithm/string/predicate.hpp>//for comparing string case insensitive
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/task_operations/ProteinInterfaceDesignOperation.hh>
-#include <protocols/rosetta_scripts/util.hh>
+
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
+
 
 
 

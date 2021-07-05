@@ -16,7 +16,6 @@
 #include <protocols/stepwise/modeler/scoring_util.hh>
 #include <protocols/stepwise/modeler/constraint_util.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
-#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>

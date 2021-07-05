@@ -22,19 +22,13 @@
 
 // Package headers
 #include <core/id/AtomID_Map.hh>
-#include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/memory.hh>
 
 #include <unordered_map>
 

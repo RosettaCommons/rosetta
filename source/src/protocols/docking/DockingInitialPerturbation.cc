@@ -19,11 +19,8 @@
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingInitialPerturbationCreator.hh> // zhe
 #include <protocols/docking/DockingSlideIntoContactCreator.hh>
-#include <protocols/docking/metrics.hh>
 
 // Rosetta Headers
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
@@ -35,12 +32,10 @@
 
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 
 #include <core/conformation/Conformation.hh>
 
-#include <core/kinematics/FoldTree.hh>
 
 #include <basic/options/option.hh>
 
@@ -52,14 +47,11 @@
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>
 
 //Utility Headers
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <utility>
@@ -73,7 +65,6 @@
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

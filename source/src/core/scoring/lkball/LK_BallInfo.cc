@@ -19,12 +19,9 @@
 
 // // Project headers
 #include <core/chemical/RestypeDestructionEvent.hh>
-#include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/database/open.hh>
 
 
 // HACK
@@ -45,12 +42,8 @@
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 
 #include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
 
-#include <utility/io/izstream.hh>
-#include <utility/tools/make_vector1.hh>
 
-#include <sstream>
 
 // #include <utility/vector1.functions.hh> // HACK
 

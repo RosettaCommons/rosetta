@@ -28,7 +28,6 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <list>
 
 namespace protocols {
 namespace match {

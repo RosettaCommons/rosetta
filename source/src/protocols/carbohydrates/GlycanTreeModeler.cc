@@ -36,21 +36,18 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/GlycanTree.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/simple_metrics/metrics/TimingProfileMetric.hh>
 
 // Protocl headers
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/carbohydrates/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -59,8 +56,6 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <numeric/random/random.hh>
 

@@ -25,10 +25,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // Utility headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -36,7 +35,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 // Debugging output
-#include <utility/io/ozstream.hh>
 
 // External headers
 

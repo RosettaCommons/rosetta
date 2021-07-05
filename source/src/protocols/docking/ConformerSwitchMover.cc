@@ -18,16 +18,12 @@
 
 // Rosetta Headers
 #include <basic/datacache/CacheableStringFloatMap.hh>
-#include <core/id/types.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/types.hh>
 
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/docking/DockFilters.hh>
 #include <protocols/docking/DockingEnsemble.hh>
 #include <protocols/scoring/Interface.hh>
@@ -41,8 +37,6 @@
 #include <basic/Tracer.hh>
 
 
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/datacache/BasicDataCache.hh>
 

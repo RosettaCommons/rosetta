@@ -33,7 +33,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 

@@ -15,36 +15,28 @@
 #ifndef INCLUDED_protocols_features_helixAssembly_ConcurrencyTest_hh
 #define INCLUDED_protocols_features_helixAssembly_ConcurrencyTest_hh
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
 #include <protocols/features/helixAssembly/ConcurrencyTest.fwd.hh>
 
 //Core
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Atom.hh>
 
 //Devel
-#include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
-#include <protocols/features/helixAssembly/HelicalFragment.hh>
 
 //Utility and basic
-#include <basic/database/sql_utils.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 //C++
 #include <string>
-#include <math.h>
 
 //External Headers
-#include <cppdb/frontend.h>
 
 //Basic
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <protocols/features/FeaturesReporter.hh> // AUTO IWYU For FeaturesReporter
 
 namespace protocols {
 namespace features {

@@ -49,7 +49,6 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/GlobalResidueTypeSet.fwd.hh>
-#include <core/chemical/AtomTypeSet.fwd.hh>
 
 #ifdef MULTI_THREADED
 

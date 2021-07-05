@@ -15,7 +15,6 @@
 // -- IMPORTANT --
 // This has to come before boinc.hh or we get this error on VC++
 // '_read' : is not a member of 'std::basic_istream<_Elem,_Traits>'
-#include <utility/io/izstream.hh>
 
 
 #ifdef BOINC
@@ -40,18 +39,14 @@ If you got this message, something is wrong with your build settings.
 
 #include <protocols/jd2/Job.hh>
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <numeric/random/random.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/ozstream.hh>
 
 // C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 

@@ -19,7 +19,7 @@
 #include <basic/Tracer.hh>
 
 // Unit headers
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <protocols/enzdes/EnzFilters.hh>
 //#include <protocols/enzdes/AddorRemoveCsts.cc>
 
@@ -33,12 +33,13 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 
 // Package Headers
-#include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
-#include <utility/vector1.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 // --------------- Test Class --------------- //
 

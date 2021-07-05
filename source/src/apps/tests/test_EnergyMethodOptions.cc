@@ -21,7 +21,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // basic headers
-#include <basic/Tracer.hh>
 
 // c++ headers
 #include <iostream>

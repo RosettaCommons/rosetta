@@ -25,23 +25,18 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/sequence/SWAligner.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 
 
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 #include <map>
@@ -56,7 +51,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <utility/io/ozstream.hh>
 

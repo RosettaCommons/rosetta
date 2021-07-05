@@ -19,10 +19,11 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <boost/noncopyable.hpp>
 
 // C++ headers
 #include <string>
+
+#include <boost/core/noncopyable.hpp> // AUTO IWYU For noncopyable
 
 namespace protocols {
 namespace trajectory {

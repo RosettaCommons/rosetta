@@ -22,6 +22,6 @@
 // generated .cpp file.  This is that file for the apps project.
 
 
-#endif INCLUDED_apps_cxxtest_HH
+#endif // INCLUDED_apps_cxxtest_HH
 
 

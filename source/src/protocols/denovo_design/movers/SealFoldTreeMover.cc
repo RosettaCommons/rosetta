@@ -32,7 +32,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
+
+#include <protocols/denovo_design/components/FoldGraph.hh> // AUTO IWYU For FoldGraph
 
 static basic::Tracer TR( "protocols.denovo_design.movers.SealFoldTreeMover" );
 

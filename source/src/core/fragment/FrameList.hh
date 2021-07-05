@@ -19,17 +19,17 @@
 #include <core/fragment/FrameList.fwd.hh>
 
 // Package Headers
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ STL Headers
 
 #include <core/fragment/FragID.fwd.hh>
 #include <core/types.hh>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1 vector1<>::Size
 
 namespace core {
 namespace fragment {

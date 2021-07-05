@@ -20,12 +20,11 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility>
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
 
-#include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.RNA_ChainClosableGeometryStubBasedScreener" );
 

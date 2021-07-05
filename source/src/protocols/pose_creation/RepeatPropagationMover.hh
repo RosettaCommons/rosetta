@@ -17,8 +17,6 @@
 #define INCLUDED_protocols_simple_moves_RepeatPropagationMover_hh
 
 #include <protocols/pose_creation/RepeatPropagationMover.fwd.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 // Utility Headers
 #include <core/types.hh>
 #include <core/id/SequenceMapping.hh>

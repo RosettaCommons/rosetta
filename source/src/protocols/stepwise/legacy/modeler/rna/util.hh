@@ -19,8 +19,11 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
+
+#include <iostream> // AUTO IWYU For cout, ostream
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace stepwise {

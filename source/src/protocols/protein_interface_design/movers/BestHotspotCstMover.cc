@@ -18,22 +18,21 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <utility/tag/Tag.hh>
 
 #include <core/id/AtomID.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

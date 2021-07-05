@@ -31,12 +31,13 @@
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 
 #include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/legacy_sewing/sampling/SewGraph.hh> // AUTO IWYU For ModelNode, HashEdge
+
 
 namespace protocols {
 namespace legacy_sewing  {

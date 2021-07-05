@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // Unit headers
 #include <utility/tag/XMLSchemaGeneration.hh>

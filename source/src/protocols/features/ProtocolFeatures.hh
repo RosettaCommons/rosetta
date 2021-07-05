@@ -16,15 +16,12 @@
 
 // Unit Headers
 #include <utility/VirtualBase.hh>
-#include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ProtocolFeatures.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 // C++ Headers
 #include <string>

@@ -21,7 +21,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/Pose.fwd.hh>
 
 //C++ headers
 #include <string>

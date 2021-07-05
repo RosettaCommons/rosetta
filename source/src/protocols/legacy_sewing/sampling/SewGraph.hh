@@ -17,7 +17,6 @@
 
 //Unit headers
 #include <protocols/legacy_sewing/sampling/SewGraph.fwd.hh>
-#include <utility/VirtualBase.hh>
 
 //Package headers
 #include <protocols/legacy_sewing/hashing/Hasher.hh>
@@ -26,18 +25,13 @@
 #include <utility/graph/Graph.hh>
 
 //Protocol headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
 //Utility headers
-#include <utility/vector1.hh>
 
 //C++ headers
 #include <set>
 
 //External headers
-#include <boost/pool/poolfwd.hpp>
 
 namespace protocols {
 namespace legacy_sewing  {

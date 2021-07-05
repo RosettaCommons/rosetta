@@ -14,31 +14,15 @@
 #include <protocols/hybridization/DDomainParse.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/types.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/func/ScalarWeightedFunc.hh>
-#include <core/scoring/func/SOGFunc.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/pose/PDBInfo.hh>
 
 // symmetry
-#include <core/pose/symmetry/util.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pack/task/PackerTask.hh>
 
-#include <list>
+
+#include <protocols/loops/Loops.hh> // AUTO IWYU For Loops
 
 namespace protocols {
 //namespace comparative_modeling {

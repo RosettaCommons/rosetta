@@ -11,7 +11,6 @@
 /// @brief  A really simple mover that takes some data in through xml and appends it to the pose
 /// @author Sam DeLuca <Samuel.l.deluca@vanderbilt.edu)
 
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>

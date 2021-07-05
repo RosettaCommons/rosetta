@@ -16,50 +16,34 @@
 
 // Mini-Rosetta headers
 #include <ctime>
-#include <numeric/constants.hh>
-#include <numeric/random/random.hh>
 
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/excn/Exceptions.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/scoring/Interface.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
-#include <iostream>
 #include <string>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBInfo.fwd.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/pose_stream/util.hh>
 
 // option key includes
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cutoutdomain.OptionKeys.gen.hh>
 
 

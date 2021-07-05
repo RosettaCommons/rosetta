@@ -23,10 +23,8 @@
 
 #include <core/optimization/LineMinimizer.fwd.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 namespace core {
 namespace optimization {

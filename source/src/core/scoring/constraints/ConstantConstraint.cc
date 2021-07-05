@@ -18,7 +18,6 @@
 #include <core/id/AtomID.hh>
 
 #include <utility>
-#include <utility/vector1.hh>
 
 
 #ifdef SERIALIZATION

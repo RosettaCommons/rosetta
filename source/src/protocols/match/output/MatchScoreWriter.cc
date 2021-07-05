@@ -18,7 +18,6 @@
 // Project headers
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 // Basic headers

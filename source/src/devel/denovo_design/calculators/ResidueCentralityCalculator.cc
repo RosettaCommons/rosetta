@@ -20,17 +20,13 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
 
 //// C++ headers
-#include <ObjexxFCL/format.hh>
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer TR( "devel.denovo_design.calculators.ResidueCentralityCalculator" );

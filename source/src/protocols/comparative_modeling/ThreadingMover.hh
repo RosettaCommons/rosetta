@@ -23,7 +23,6 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
 // C++ headers

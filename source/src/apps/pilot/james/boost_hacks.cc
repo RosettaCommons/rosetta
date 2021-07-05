@@ -16,14 +16,17 @@
 
 //#include <boost/spirit/core.hpp>
 
-#include <boost/progress.hpp>
-#include <boost/spirit/include/classic_core.hpp>
-#include <boost/spirit/include/classic_push_back_actor.hpp>
 
 #include <iostream>
 #include <string>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <boost/spirit/home/classic/actor/push_back_actor.hpp> // AUTO IWYU For push_back_a, push_back_action
+#include <boost/spirit/home/classic/core/composite/actions.hpp> // AUTO IWYU For action
+#include <boost/spirit/home/classic/core/composite/kleene_star.hpp> // AUTO IWYU For kleene_star, operator*
+#include <boost/spirit/home/classic/core/composite/sequence.hpp> // AUTO IWYU For sequence, operator>>
+#include <boost/spirit/home/classic/core/primitives/numerics.hpp> // AUTO IWYU For real_parser, real_p
 
 using namespace boost::spirit::classic;
 

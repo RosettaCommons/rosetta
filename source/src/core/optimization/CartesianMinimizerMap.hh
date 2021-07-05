@@ -30,7 +30,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/scoring/DerivVectorPair.hh>
+#include <core/scoring/DerivVectorPair.hh> // DO NOT AUTO-REMOVE (needed for member variable)
 
 
 #include <utility/vector1.hh>

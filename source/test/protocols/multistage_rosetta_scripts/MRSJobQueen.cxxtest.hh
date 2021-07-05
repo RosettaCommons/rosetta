@@ -22,17 +22,13 @@
 #include <protocols/multistage_rosetta_scripts/TagManager.hh>
 
 // Package headers
-#include <protocols/jd3/standard/StandardJobQueen.hh>
 #include <protocols/jd3/standard/StandardInnerLarvalJob.hh>
-#include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/jobs/MoverJob.hh>
+#include <protocols/jd3/InnerLarvalJob.fwd.hh>
 #include <protocols/jd3/JobDigraph.hh>
-#include <protocols/jd3/JobResult.hh>
+#include <protocols/jd3/JobResult.fwd.hh>
 #include <protocols/jd3/LarvalJob.hh>
-#include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/job_results/PoseJobResult.hh>
 #include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 // Movers and Filters
 #include <protocols/relax/FastRelax.hh>
@@ -44,7 +40,6 @@
 // basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // core headers
@@ -52,8 +47,6 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <utility/options/keys/OptionKey.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 
 using namespace utility::tag;

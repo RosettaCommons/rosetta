@@ -16,7 +16,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/core/init_util.hh>
 
 // Unit headers
 #include <numeric/types.hh>
@@ -25,7 +24,6 @@
 //#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 //#include <numeric/MathVector_operations.hh>
 
-#include <basic/Tracer.hh>
 
 #include <cassert>
 

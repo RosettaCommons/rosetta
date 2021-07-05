@@ -12,34 +12,19 @@
 
 //Unit headers
 #include <protocols/legacy_sewing/conformation/Model.hh>
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
-#include <protocols/legacy_sewing/conformation/DisembodiedAssembly.hh>
 
 //Package headers
 #include <basic/Tracer.hh>
 
 //Protocol headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/util.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/sql_utils.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
-#include <protocols/minimization_packing/MinMover.hh>
 
 #include <protocols/features/ProteinSilentReport.hh>
 
-#include <core/conformation/Residue.functions.hh>
 
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -56,7 +41,6 @@
 #include <utility/io/izstream.hh>
 
 //Numeric headers
-#include <numeric/random/random.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

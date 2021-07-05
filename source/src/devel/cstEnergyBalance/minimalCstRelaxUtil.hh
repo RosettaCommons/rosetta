@@ -10,8 +10,8 @@
 /// @file  apps/pilot/brunette/minimalCstRelaxUtil.hh
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
-#ifndef MINIMAL_CST_RELAX_UTIL
-#define MINIMAL_CST_RELAX_UTIL
+#ifndef INCLUDED_MINIMAL_CST_RELAX_UTIL
+#define INCLUDED_MINIMAL_CST_RELAX_UTIL
 
 #include <core/types.hh>
 #include <set>

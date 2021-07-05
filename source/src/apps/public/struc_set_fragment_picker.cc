@@ -11,27 +11,20 @@
 /// @details
 ///
 
-#include <protocols/jobdist/Jobs.hh>
 #include <core/types.hh>
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <protocols/viewer/viewers.hh>
 #include <numeric/random/random.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
@@ -39,21 +32,19 @@
 // C++ headers
 #include <cstdlib>
 #include <string>
-#include <vector>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FragData.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <core/fragment/FragID_Iterator.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
+
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 static basic::Tracer tr( "struc_set_fragment_picker" );
 
 using namespace core;
-using namespace protocols;
 using namespace fragment;
 using namespace basic::options;
 

@@ -25,7 +25,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 

@@ -18,7 +18,6 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.fwd.hh>
-#include <protocols/stepwise/monte_carlo/mover/ResampleMoverCreator.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.fwd.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>

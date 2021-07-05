@@ -15,12 +15,10 @@
 #include <protocols/parser/DataLoaderFactory.hh>
 
 // Package Headers
-#include <protocols/parser/DataLoader.hh>
+#include <protocols/parser/DataLoader.fwd.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

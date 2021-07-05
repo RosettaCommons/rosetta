@@ -28,11 +28,10 @@
 #include <core/fragment/util.hh>
 
 // Package headers
-#include <protocols/nonlocal/Policy.hh>
+#include <protocols/nonlocal/Policy.fwd.hh>
 #include <protocols/nonlocal/SmoothPolicy.hh>
 #include <protocols/nonlocal/UniformPolicy.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

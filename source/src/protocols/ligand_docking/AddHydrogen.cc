@@ -18,9 +18,7 @@
 
 #include <core/types.hh>
 
-#include <basic/Tracer.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 
 #include <core/chemical/PatchOperation.hh>
 
@@ -31,13 +29,11 @@
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 
 

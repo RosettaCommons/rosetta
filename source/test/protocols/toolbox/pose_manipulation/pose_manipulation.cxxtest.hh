@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
 // Package headers
@@ -21,22 +20,20 @@
 
 // Project headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace core;
 using namespace protocols::toolbox::pose_manipulation;

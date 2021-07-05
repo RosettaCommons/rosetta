@@ -14,14 +14,8 @@
 #include <protocols/mpi_refinement/util.hh>
 #include <protocols/mpi_refinement/Clusterer.hh>
 #include <protocols/wum/SilentStructStore.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/pose/Pose.hh>
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>

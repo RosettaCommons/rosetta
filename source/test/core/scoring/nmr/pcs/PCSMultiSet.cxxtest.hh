@@ -23,34 +23,25 @@
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
 #include <iostream>
-#include <iomanip>
-#include <utility>
 
 static basic::Tracer TR("core.scoring.nmr.pcs.PCSMultiSet.cxxtest");
 

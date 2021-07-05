@@ -18,6 +18,7 @@
 
 // C++ headers
 #include <string>
+#include <iostream>
 
 class FileContentsMapTests : public CxxTest::TestSuite {
 

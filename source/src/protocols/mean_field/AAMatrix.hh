@@ -20,7 +20,7 @@
 
 // Package headers
 #include <protocols/mean_field/RotMatrix.fwd.hh>
-#include <protocols/mean_field/AAProb.hh>
+#include <protocols/mean_field/AAProb.fwd.hh>
 // Project headers
 #include <core/chemical/AA.hh>
 
@@ -34,7 +34,10 @@
 
 
 // C++ headers
-#include <iosfwd>
+
+#ifdef WIN32
+#include <protocols/mean_field/AAProb.hh>
+#endif
 
 namespace protocols {
 namespace mean_field {

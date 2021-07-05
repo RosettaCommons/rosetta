@@ -15,14 +15,12 @@
 
 #include <core/scoring/loop_graph/evaluator/SixDTransRotPotentialEvaluator.hh>
 #include <core/scoring/loop_graph/util.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/chemical/ResidueType.hh>
-#include <numeric/xyzVector.io.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/constants.hh>
 #include <utility/numbers.hh>

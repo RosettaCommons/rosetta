@@ -21,7 +21,6 @@
 
 //core headers
 #include <core/types.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -40,8 +39,6 @@
 #include <ObjexxFCL/Fmath.hh>
 
 //C++ headers
-#include <string>
-#include <map>
 #include <vector>
 
 #include <utility/vector1.hh>

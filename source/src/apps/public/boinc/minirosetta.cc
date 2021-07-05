@@ -20,7 +20,6 @@
 #endif // BOINC
 
 /// Must have this after BOINC stuff to avoid windows build error
-#include <core/io/silent/util.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/IterativeAbrelax.hh>
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
@@ -44,7 +43,6 @@
 #include <protocols/star/StarAbinitioMain.hh>
 
 #include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
@@ -57,7 +55,6 @@
 #include <core/io/pdb/pdb_writer.hh>
 #endif
 
-#include <core/types.hh>
 
 #include <devel/init.hh>
 
@@ -75,7 +72,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // option key includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>
@@ -83,7 +79,6 @@
 #include <protocols/checkpoint/Checkpoint.hh>
 #include <protocols/jd2/BOINCJobDistributor.hh>
 #include <protocols/relax/relax_main.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 class DummyMover : public protocols::moves::Mover {

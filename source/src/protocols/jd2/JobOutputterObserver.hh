@@ -17,7 +17,6 @@
 //project headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <utility/VirtualBase.hh>
 
 
 namespace protocols {

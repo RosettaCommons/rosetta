@@ -16,16 +16,14 @@
 
 
 //CHECK: inclusion ordering?
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/docking/types.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <list>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

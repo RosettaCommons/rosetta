@@ -19,26 +19,14 @@
 #include <protocols/simple_moves/sidechain_moves/SidechainMoverBase.hh>
 
 // protocols headers
-#include <protocols/backrub/BackrubMover.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <protocols/jd2/util.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverFactory.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // core headers
-#include <core/kinematics/MoveMap.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
@@ -53,9 +41,10 @@
 #include <numeric/random/random.hh>
 
 // utility headers
-#include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
+
+#include <protocols/canonical_sampling/TemperatureController.hh> // AUTO IWYU For TemperatureController
 
 // C++ Headers
 

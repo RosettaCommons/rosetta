@@ -22,10 +22,6 @@
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 
 static basic::Tracer TR("edge_file_generator");
 

@@ -28,14 +28,11 @@
 #include <core/scoring/ScoreFunction.hh>
 //#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
-#include <core/chemical/ResidueTypeSet.hh>
-#include <basic/options/option.hh> //needed to set option
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 #include <protocols/enzdes/EnzdesMovers.hh> // for testing rot_center
-#include <protocols/rigid/RigidBodyMover.hh>
 
 //minimization stuff
-#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 
@@ -43,12 +40,9 @@
 
 // option key includes
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
 
 using basic::Error;

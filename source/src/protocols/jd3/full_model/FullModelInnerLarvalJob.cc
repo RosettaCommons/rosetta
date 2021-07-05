@@ -15,11 +15,9 @@
 #include <protocols/jd3/full_model/FullModelInnerLarvalJob.hh>
 
 //C++ headers
-#include <string>
 #include <sstream>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

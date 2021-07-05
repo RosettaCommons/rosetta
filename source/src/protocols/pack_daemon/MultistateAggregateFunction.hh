@@ -23,7 +23,6 @@
 #include <protocols/genetic_algorithm/Entity.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/VirtualBase.hh>
 
 namespace protocols {

@@ -17,7 +17,6 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.hh>
@@ -29,7 +28,6 @@
 #include <core/chemical/AA.hh>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/LREnergyContainer.hh>
@@ -42,7 +40,6 @@
 // C++
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>

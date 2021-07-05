@@ -17,9 +17,7 @@
 #include <core/energy_methods/RNA_DataBackboneEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -36,7 +34,6 @@
 
 // Utility headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <utility/exit.hh>
 
 
 // C++

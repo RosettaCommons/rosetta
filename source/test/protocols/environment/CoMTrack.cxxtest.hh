@@ -12,9 +12,7 @@
 
 // Package headers
 
-#include <basic/Tracer.hh>
 
-#include <core/id/types.hh>
 
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/conformation/Residue.hh>
@@ -24,9 +22,7 @@
 
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/CoMTrackerCM.hh>
-#include <protocols/environment/EnvExcn.hh>
 
-#include <protocols/environment/claims/JumpClaim.hh>
 
 #include <protocols/abinitio/abscript/StructPerturberCM.hh>
 
@@ -35,10 +31,8 @@
 #include <test/core/init_util.hh>
 
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 //C++ headers
-#include <iostream>
 
 using namespace core;
 

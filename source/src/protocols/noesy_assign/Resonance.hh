@@ -29,7 +29,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/access_ptr.hh>
 //// C++ headers
 #include <deque>
 

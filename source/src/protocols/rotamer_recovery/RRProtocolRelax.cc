@@ -15,17 +15,14 @@
 #include <protocols/rotamer_recovery/RRProtocolRelax.hh>
 
 // Project Headers
-#include <protocols/rotamer_recovery/RRComparer.hh>
-#include <protocols/rotamer_recovery/RRReporter.hh>
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 
@@ -33,7 +30,8 @@
 #include <string>
 
 //Auto Headers
-#include <utility/vector1.hh>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 using std::string;
 using std::stringstream;

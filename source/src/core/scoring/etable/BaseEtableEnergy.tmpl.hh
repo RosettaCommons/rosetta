@@ -32,21 +32,19 @@
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/methods/Methods.hh>
 
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 
 //#include <core/scoring/etable/count_pair/CountPair1BC3.hh> // remove this
 //#include <core/scoring/etable/count_pair/CountPair1BC4.hh> // remove this
 //#include <core/scoring/etable/count_pair/CountPairIntraResC3.hh>
 //#include <core/scoring/etable/count_pair/CountPairIntraResC4.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 
 #include <core/scoring/trie/CPDataCorrespondence.hh>
-#include <core/scoring/trie/RotamerDescriptor.hh>
-#include <core/scoring/trie/RotamerTrie.hh>
+#include <core/scoring/trie/RotamerTrie.hh> // DO NOT AUTO-REMOVE
 #include <core/scoring/trie/TrieCollection.hh>
-#include <core/scoring/trie/TrieCountPairBase.hh>
+#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 #include <core/scoring/trie/trie.functions.hh>
 
 #include <core/scoring/etable/etrie/CountPairData_1_1.hh>
@@ -54,14 +52,13 @@
 #include <core/scoring/etable/etrie/CountPairData_1_3.hh>
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 #include <core/scoring/etable/etrie/EtableAtom.hh>
-#include <core/scoring/etable/etrie/TrieCountPair1BC3.hh>
+#include <core/scoring/etable/etrie/TrieCountPair1BC3.hh> // DO NOT AUTO-REMOVE
 #include <core/scoring/etable/etrie/TrieCountPair1BC4.hh>
-#include <core/scoring/etable/etrie/TrieCountPairAll.hh>
-#include <core/scoring/etable/etrie/TrieCountPairNone.hh>
+#include <core/scoring/etable/etrie/TrieCountPairAll.hh> // DO NOT AUTO-REMOVE
+#include <core/scoring/etable/etrie/TrieCountPairNone.hh> // DO NOT AUTO-REMOVE
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Energies.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/conformation/RotamerSetBase.hh>
@@ -72,6 +69,8 @@
 // option key includes
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+
+#include <core/scoring/etable/Etable.hh> // AUTO IWYU For Etable
 
 
 namespace core {

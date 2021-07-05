@@ -9,25 +9,22 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoringManager.fwd.hh>
 
 #include <core/chemical/VariantType.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <utility/pointer/owning_ptr.hh>
@@ -48,30 +45,25 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/ncbb/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 // Filter headers
 #include <basic/MetricValue.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
-#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
 #include <devel/init.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 
 // C++ headers
 #include <string>
 #include <sstream>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces

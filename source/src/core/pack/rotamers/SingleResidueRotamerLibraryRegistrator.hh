@@ -17,7 +17,7 @@
 #define INCLUDED_core_pack_rotamers_SingleResidueRotamerLibraryRegistrator_hh
 
 // Package headers
-#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace core {

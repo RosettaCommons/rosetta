@@ -49,7 +49,6 @@
 #include <iostream>
 
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

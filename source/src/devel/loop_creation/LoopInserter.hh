@@ -28,7 +28,6 @@
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++
-#include <set>
 
 namespace devel {
 namespace loop_creation {

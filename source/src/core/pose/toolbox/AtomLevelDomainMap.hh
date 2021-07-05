@@ -16,7 +16,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/types.hh>
@@ -26,9 +26,6 @@
 #include <map>
 #include <iostream>
 
-#if defined(WIN32) || defined(ANDROID)
-#include <core/id/AtomID.hh>
-#endif
 
 namespace core {
 namespace pose {

@@ -24,7 +24,7 @@
 
 // C++ headers
 #include <ostream>
-
+#include <ios>
 
 namespace utility {
 namespace io {

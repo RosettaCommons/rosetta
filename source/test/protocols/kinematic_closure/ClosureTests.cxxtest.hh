@@ -17,17 +17,15 @@
 
 // Unit headers
 #include <protocols/kinematic_closure/ClosureProblem.hh>
-#include <protocols/kinematic_closure/ClosureSolution.hh>
+#include <protocols/kinematic_closure/ClosureSolution.fwd.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
 
 // Protocol headers
 #include <protocols/loops/loops_main.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
 
 // C++ headers
 #include <vector>

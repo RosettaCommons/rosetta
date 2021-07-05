@@ -16,21 +16,17 @@
 #include <core/scoring/nmr/rdc/RDCData.hh>
 
 // Package headers
-#include <core/scoring/nmr/NMRDataFactory.hh>
 #include <core/scoring/nmr/rdc/RDCMultiSet.hh>
 #include <core/scoring/nmr/rdc/RDCSingleSet.hh>
 #include <core/scoring/nmr/rdc/RDCTensor.hh>
-#include <core/io/nmr/AtomSelection.hh>
 #include <core/io/nmr/util.hh>
 #include <core/scoring/nmr/util.hh>
 #include <core/scoring/nmr/rdc/parameters.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/id/AtomID.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
-#include <core/conformation/Residue.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -44,16 +40,10 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
 
 // C++ headers
-#include <cmath>
 #include <string>
-#include <iostream>
-#include <sstream>
 #include <fstream>
-#include <utility>
 #include <numeric>
 
 namespace core {

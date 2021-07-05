@@ -20,11 +20,10 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
-#include <protocols/loops/Loops.hh>
 
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
@@ -34,8 +33,11 @@
 #include <protocols/moves/ChangeFoldTreeMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/H3RefineCCD.fwd.hh>
+
+#include <protocols/antibody/AntibodyEnum.hh> // AUTO IWYU For CDRNameEnum
+#include <protocols/loops/Loop.hh> // AUTO IWYU For Loop
 
 
 namespace protocols {

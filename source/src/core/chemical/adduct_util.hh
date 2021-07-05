@@ -19,7 +19,6 @@
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
-#include <core/chemical/GlobalResidueTypeSet.fwd.hh>
 #include <core/chemical/Adduct.fwd.hh>
 
 // Project headers

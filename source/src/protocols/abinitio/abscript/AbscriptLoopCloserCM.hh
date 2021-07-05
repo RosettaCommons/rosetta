@@ -21,21 +21,20 @@
 
 // Project headers
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
-#include <core/conformation/Conformation.fwd.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <core/fragment/FragSet.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/fragment/FragSet.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // C++ Headers
 
 // ObjexxFCL Headers
 
 //Req'd on WIN32
-#include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
 namespace protocols {
 namespace abinitio {

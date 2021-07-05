@@ -16,7 +16,7 @@
 #define INCLUDED_core_scoring_methods_EnergyMethodRegistrator_hh
 
 // Package headers
-#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoringManager.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 namespace core {

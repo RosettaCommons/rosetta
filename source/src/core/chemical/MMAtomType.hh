@@ -23,7 +23,6 @@
 
 // C++ headers
 #include <string>
-#include <utility>
 
 namespace core {
 namespace chemical {

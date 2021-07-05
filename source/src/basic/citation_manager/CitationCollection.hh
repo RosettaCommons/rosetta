@@ -20,7 +20,6 @@
 #include <basic/citation_manager/Citation.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 
 namespace basic {

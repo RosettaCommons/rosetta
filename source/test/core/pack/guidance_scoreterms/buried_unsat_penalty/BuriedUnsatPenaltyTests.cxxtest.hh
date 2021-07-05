@@ -13,16 +13,12 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
 #include <core/pack/guidance_scoreterms/buried_unsat_penalty/BuriedUnsatPenalty.hh>
 #include <core/pack/guidance_scoreterms/buried_unsat_penalty/graph/BuriedUnsatPenaltyGraph.hh>
-#include <core/pack/guidance_scoreterms/buried_unsat_penalty/graph/BuriedUnsatPenaltyGraphContainer.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -32,7 +28,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/PackerTask_.hh>
-#include <core/pack/task/ResidueLevelTask.hh>
 #include <core/pack/task/ResidueLevelTask_.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>

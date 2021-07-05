@@ -22,7 +22,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/VirtualBase.hh>
 

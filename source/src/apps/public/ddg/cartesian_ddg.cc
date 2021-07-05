@@ -18,33 +18,22 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 
 #include <devel/init.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 
 #include <fstream>
-#include <iostream>
-#include <sstream>
 #include <cstdlib>
 #include <string>
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <protocols/ddg/ddGMover.hh>
-#include <protocols/scoring/Interface.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -53,7 +42,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
@@ -62,6 +50,9 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <basic/Tracer.hh>
+
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 //Auto Headers
 static basic::Tracer TR("apps.public.cartesian_ddg");

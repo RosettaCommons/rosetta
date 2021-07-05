@@ -19,17 +19,13 @@
 
 // Unit Headers
 #include <protocols/task_operations/RetrieveStoredTaskOperation.fwd.hh>
-#include <protocols/task_operations/RetrieveStoredTaskOperationCreator.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 // Utility Headers
-#include <core/types.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ Headers

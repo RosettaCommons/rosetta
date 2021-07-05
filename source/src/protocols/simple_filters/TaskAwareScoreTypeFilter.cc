@@ -18,8 +18,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -36,13 +35,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <protocols/jd2/util.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <ObjexxFCL/format.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

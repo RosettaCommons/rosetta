@@ -15,14 +15,11 @@
 
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 
-#include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 

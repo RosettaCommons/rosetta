@@ -16,19 +16,18 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
-#include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/TorsionID.hh>
-#include <core/pose/rna/RNA_SuiteName.hh>
+#include <core/id/TorsionID.fwd.hh>
+#include <core/pose/rna/RNA_SuiteName.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
+#include <utility/fixedsizearray1.fwd.hh>
 
 // ublas Headers
 #include <boost/numeric/ublas/vector.hpp>

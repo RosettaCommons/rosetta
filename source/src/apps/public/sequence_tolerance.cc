@@ -15,7 +15,6 @@
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/MetricCalculatorFitnessFunction.hh>
 #include <protocols/multistate_design/MultiStateEntity.hh>
-#include <protocols/multistate_design/SingleStateEntityData.hh>
 #include <protocols/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
 #include <protocols/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
@@ -23,6 +22,9 @@
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/pose_metric_calculators/SurfaceCalculator.hh>
 #include <protocols/pose_metric_calculators/MetricValueGetter.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 using namespace protocols::genetic_algorithm;
 using namespace protocols::multistate_design;
 
@@ -87,7 +89,6 @@ using namespace protocols::simple_pose_metric_calculators;
 #include <basic/options/option_macros.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <basic/MetricValue.hh>
 
 

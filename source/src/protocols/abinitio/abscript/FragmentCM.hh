@@ -18,8 +18,8 @@
 #include <protocols/environment/ClientMover.hh>
 
 // Package headers
-#include <protocols/simple_moves/FragmentMover.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Project headers
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>

@@ -1,43 +1,32 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/viewer/viewers.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <numeric/random/random_permutation.hh>
 #include <numeric/random/random.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/simple_moves/BBGaussianMover.hh>
 
 //options
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/bbg.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 
 #include <iostream>
 #include <string>
-#include <fstream>
-#include <sstream>
 
 
 static basic::Tracer TR( "fpd_bbg" );

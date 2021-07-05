@@ -35,6 +35,8 @@
 #include <basic/Tracer.hh>
 #include <map>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

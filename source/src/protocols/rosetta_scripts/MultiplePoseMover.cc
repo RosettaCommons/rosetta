@@ -23,7 +23,6 @@
 
 // C/C++ headers
 #include <iostream>
-#include <list>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -32,13 +31,10 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <protocols/filters/Filter.hh>
 
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/util.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 

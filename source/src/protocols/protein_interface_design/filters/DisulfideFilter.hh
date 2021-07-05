@@ -23,16 +23,13 @@
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
 
 #include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
-#include <utility/vector1.hh>
 
 
 // Unit headers

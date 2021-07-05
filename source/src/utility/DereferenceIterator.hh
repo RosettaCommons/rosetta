@@ -28,7 +28,8 @@
 
 // Unit headers
 //#include <utility/DereferenceIterator.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <iterator> // AUTO IWYU For bidirectional_iterator_tag
 
 namespace utility {
 /// @brief const_iterator class for SilentFileData container.

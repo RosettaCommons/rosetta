@@ -18,9 +18,8 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.SampleApplier" );
 

@@ -32,9 +32,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <numeric/random/random.hh>
 #include <numeric/random/random_xyz.hh>
-#include <numeric/xyzVector.io.hh>
 
 static basic::Tracer TR( "protocols.minimization_packing.PertMinMover" );
 

@@ -17,6 +17,8 @@
 
 #include <cstddef>  // for size_t
 
+#include <basic/datacache/CacheableData.hh> // MANUAL IWYU
+
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

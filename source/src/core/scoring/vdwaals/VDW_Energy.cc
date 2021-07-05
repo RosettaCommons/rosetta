@@ -28,7 +28,6 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 
-#include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/trie/trie.functions.hh>
 
 #include <core/scoring/vdwaals/VDWTrie.hh>
@@ -46,7 +45,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <basic/prof.hh>
 #include <core/id/AtomID.hh>
 
 // Basic headers

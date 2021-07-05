@@ -24,15 +24,11 @@
 // Utility Headers
 #include <numeric/HomogeneousTransform.hh>
 #include <numeric/xyz.functions.hh>
-#include <utility/exit.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 // Basic Headers
 #include <basic/database/sql_utils.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>

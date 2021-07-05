@@ -17,21 +17,12 @@
 
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/frag_picker/VallChunk.hh>
-#include <protocols/frag_picker/VallProvider.hh>
 
-#include <boost/unordered_map.hpp>
-#include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/util.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -49,20 +40,16 @@
 #include <protocols/moves/Mover.hh>
 #include <utility>
 #include <utility/exit.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/excn/Exceptions.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/BackboneDB.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <numeric/geometry/hashing/SixDHasher.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
@@ -71,7 +58,6 @@
 
 #include <iostream>
 #include <string>
-#include <cstdio>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -83,7 +69,6 @@
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer TR( "main" );

@@ -28,9 +28,12 @@
 #include <basic/Tracer.hh>
 
 #include <utility>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
+
 // C++ headers
 
 // option key includes

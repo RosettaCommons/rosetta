@@ -26,11 +26,9 @@
 // Project Headers
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cstdio>
 #include <string>
 #include <map>
 

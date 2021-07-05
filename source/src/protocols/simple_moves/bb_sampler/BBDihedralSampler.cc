@@ -13,7 +13,8 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)  and Jason W. Labonte (JWLabonte@jhu.edu)
 
 #include <protocols/simple_moves/bb_sampler/BBDihedralSampler.hh>
-#include <basic/Tracer.hh>
+
+#include <utility/exit.hh> // AUTO IWYU For utility_exit_with_message
 
 
 namespace protocols {

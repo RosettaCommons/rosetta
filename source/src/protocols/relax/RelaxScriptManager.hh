@@ -19,7 +19,6 @@
 #include <protocols/relax/RelaxScriptManager.fwd.hh>
 
 // Protocols headers
-#include <protocols/relax/FastRelax.hh>
 
 // Core headers
 #include <core/scoring/ScoreFunction.fwd.hh>

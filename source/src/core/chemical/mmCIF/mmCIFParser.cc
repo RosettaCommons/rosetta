@@ -15,25 +15,20 @@
 #include <core/chemical/mmCIF/mmCIFParser.hh>
 #include <core/types.hh>
 #include <string>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <basic/database/open.hh>
 #include <core/chemical/sdf/MolFileIOData.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
 
 //Utility functions
-#include <utility/string_util.hh>
 
 
 //external CIF includes
 #include <cifparse/CifFile.h>
 #include <cifparse/CifParserBase.h>
 
-#include <ctime>
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 
 
 namespace core {

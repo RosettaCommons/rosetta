@@ -16,19 +16,10 @@
 
 // Unit Headers
 #include <protocols/ligand_docking/HighResEnsemble.fwd.hh>
-#include <protocols/ligand_docking/HighResDocker.hh>
-#include <protocols/ligand_docking/FinalMinimizer.hh>
-#include <protocols/ligand_docking/ligand_options/Interface.fwd.hh>
-#include <protocols/ligand_docking/MinimizeLigand.fwd.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/MinimizeBackbone.hh>
 #include <protocols/ligand_docking/MoveMapBuilder.fwd.hh>
-#include <protocols/ligand_docking/TetherLigand.fwd.hh>
 
 // Package Headers
-#include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/ResidueTorsionRestraints.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pose/Pose.hh> // DO NOT AUTO-REMOVE needed for member variable
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -38,14 +29,11 @@
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 //#include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
 
 // STL Headers
-#include <map>
 #include <string>
-// AUTO-REMOVED #include <set>
 #include <vector>
 
 #include <utility/vector1.hh>

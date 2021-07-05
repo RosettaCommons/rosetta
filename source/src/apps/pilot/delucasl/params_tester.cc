@@ -12,8 +12,7 @@
 
 #include <devel/init.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <iostream>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 
 int main(int argc, char* argv[])

@@ -17,7 +17,6 @@
 #include <core/energy_methods/P_AA_EnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/P_AA.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>

@@ -25,7 +25,6 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <ctime>
 

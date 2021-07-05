@@ -18,22 +18,18 @@
 #include <core/pose/MiniPose.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <basic/database/open.hh>
-#include <core/id/DOF_ID_Map.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
-#include <numeric/constants.hh>
 
 //// C++ headers
 #include <string>
-#include <cmath>
 
 using namespace core::chemical::rna;
 

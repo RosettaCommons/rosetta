@@ -23,9 +23,9 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/types.hh> // AUTO IWYU For Real
 
 namespace protocols {
 namespace constraint_generator {

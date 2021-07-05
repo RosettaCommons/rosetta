@@ -16,13 +16,15 @@
 #define INCLUDED_core_scoring_fiber_diffraction_util_hh
 
 #include <core/scoring/fiber_diffraction/xray_scattering.hh>
-#include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <string>
+
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
+#include <map> // AUTO IWYU For map
 
 namespace core {
 namespace scoring {

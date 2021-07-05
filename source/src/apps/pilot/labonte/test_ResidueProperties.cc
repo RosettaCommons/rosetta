@@ -16,14 +16,12 @@
 // Package headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -32,7 +30,6 @@
 #include <devel/init.hh>
 
 // Utility header
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <iostream>

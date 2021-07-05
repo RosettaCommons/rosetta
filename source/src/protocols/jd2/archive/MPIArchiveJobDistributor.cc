@@ -22,9 +22,8 @@
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
 // Package headers
-#include <protocols/jd2/Job.hh>
 
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 #include <protocols/jd2/MpiFileBuffer.hh>
 #include <utility/io/ozstream.hh> //to toggle MPI rerouting
@@ -35,7 +34,6 @@
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
 #include <basic/prof.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -44,7 +42,7 @@
 
 // C++ headers
 #include <string>
-#include <basic/prof.hh>
+#include <basic/prof.fwd.hh>
 //Auto Headers
 #include <utility/vector1.hh>
 

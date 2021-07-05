@@ -24,7 +24,6 @@
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/UniformPositionMover.hh>
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>

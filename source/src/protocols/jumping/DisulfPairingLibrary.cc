@@ -23,16 +23,13 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/Stub.hh>
 
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/SingleResidueFragData.fwd.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/JumpSRFD.hh>
 #include <core/fragment/JumpingFrame.hh>
@@ -43,7 +40,6 @@
 #include <ObjexxFCL/FArray2A.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/io/izstream.hh>
 // #include <utility/io/ozstream.hh>
 // #include <numeric/numeric.functions.hh>
@@ -53,19 +49,16 @@
 // #include <basic/options/keys/OptionKeys.hh>
 
 // numeric headers
-#include <numeric/random/random.hh>
 
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <protocols/jumping/DisulfPairingsList.hh>
-#include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
-#include <utility/thread/threadsafe_creation.hh>
+
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D
 
 // Boost headers
 

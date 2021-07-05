@@ -21,12 +21,11 @@
 // Package Headers
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 
-#include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
 
 // Project Headers
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/util.hh>
@@ -37,17 +36,13 @@
 #include <core/scoring/ScoreType.hh>
 
 
-#include <core/kinematics/FoldTree.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 // ObjexxFCL Headers
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <basic/prof.hh>
-#include <utility>
 #include <utility/file/file_sys_util.hh>
 
-#include <core/id/SequenceMapping.hh>
 #include <utility/vector1.hh>
 
 

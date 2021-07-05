@@ -20,7 +20,7 @@
 #define INCLUDED_devel_residual_dipolar_coupling_RDC_energies_hh
 
 // Package headers
-#include <devel/residual_dipolar_coupling/RDC_main.hh>
+#include <devel/residual_dipolar_coupling/RDC_main.fwd.hh>
 
 //Core
 #include <core/types.hh>
@@ -28,14 +28,6 @@
 //Objexx headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
-
-
-// Utility headers
-#include <utility/pointer/owning_ptr.hh>
-
-//// C++ headers
-#include <string>
-#include <map>
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>

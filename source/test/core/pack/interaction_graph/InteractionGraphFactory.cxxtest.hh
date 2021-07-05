@@ -38,10 +38,9 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 //Auto Headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/graph/Graph.hh>
-#include <ObjexxFCL/FArray1.io.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 //using namespace core;

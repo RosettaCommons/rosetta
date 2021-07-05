@@ -27,13 +27,11 @@
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 
 
-#include <core/types.hh>
 #include <basic/Tracer.hh>
 
 #include <numeric/constants.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 using basic::Error;

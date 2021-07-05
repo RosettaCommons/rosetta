@@ -21,30 +21,21 @@
 #include <protocols/jd2/MPIMultiCommJobDistributor.hh>
 
 // Package headers
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
 
-#include <protocols/moves/Mover.hh>
 
-#include <protocols/jd2/MpiFileBuffer.hh>
-#include <utility/io/ozstream.hh> //to toggle MPI rerouting
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <utility/exit.hh>
 
 // Option headers
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
 
-#include <utility/vector1.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 
 static basic::Tracer tr( "protocols.jd2.MPIMultiCommJobDistributor" );

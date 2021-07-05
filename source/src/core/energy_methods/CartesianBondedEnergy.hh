@@ -20,17 +20,14 @@
 #include <core/scoring/methods/CartBondedParameters.hh>
 
 // Package headers
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/RestypeDestructionEvent.fwd.hh>
-#include <core/chemical/rings/RingConformer.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
 #include <core/types.hh>
 
 // boost

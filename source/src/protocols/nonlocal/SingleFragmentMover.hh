@@ -27,7 +27,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -39,7 +38,7 @@
 
 // Package headers
 #include <protocols/nonlocal/Chunk.hh>
-#include <protocols/nonlocal/Policy.hh>
+#include <protocols/nonlocal/Policy.fwd.hh>
 
 namespace protocols {
 namespace nonlocal {

@@ -16,10 +16,10 @@
 
 // project headers
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 
 #include <core/fragment/FrameIterator.hh>
-#include <utility/vector1.hh>
+
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 //Auto Headers
 #ifdef WIN32

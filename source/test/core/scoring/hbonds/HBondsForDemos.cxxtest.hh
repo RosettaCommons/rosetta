@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
@@ -21,10 +20,10 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 
 // Project headers
-#include <core/types.hh>
 
 //Auto Headers
-#include <core/scoring/hbonds/HBondOptions.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 using namespace core;

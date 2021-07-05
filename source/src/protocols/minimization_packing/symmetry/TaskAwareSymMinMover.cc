@@ -22,18 +22,15 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <core/chemical/ResidueConnection.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
 

@@ -26,17 +26,13 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <basic/datacache/CacheableData.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
 
 #include <protocols/scoring/InterfaceInfo.fwd.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace scoring {

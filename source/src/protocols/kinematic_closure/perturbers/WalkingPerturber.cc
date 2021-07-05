@@ -13,16 +13,13 @@
 #include <protocols/kinematic_closure/perturbers/WalkingPerturber.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Protocol headers
-#include <protocols/loops/Loop.hh>
 
 // Utility headers
-#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/kinematic_closure/vector.hh>
 
 
 namespace protocols {

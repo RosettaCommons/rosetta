@@ -18,7 +18,6 @@
 #include <core/energy_methods/DNA_ReferenceEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/dna/BasePartner.hh>
@@ -28,8 +27,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh> // HACK
 

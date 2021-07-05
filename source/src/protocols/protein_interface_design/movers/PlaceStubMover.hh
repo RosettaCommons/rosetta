@@ -16,17 +16,14 @@
 #include <protocols/protein_interface_design/movers/PlaceStubMover.fwd.hh>
 
 // Project Headers
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
-#include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMapObj.fwd.hh>
 // C++ headers
 
 // Unit headers

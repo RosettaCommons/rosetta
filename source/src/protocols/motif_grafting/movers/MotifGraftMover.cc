@@ -24,18 +24,14 @@
 #include <utility/vector1.hh>
 
 //Include Rosetta numeric
-#include <numeric/xyz.functions.hh>
-#include <numeric/MathMatrix_operations.hh>
 
 //Include Rosetta Tracer
 #include <basic/Tracer.hh>
 
 //Include Rosetta boost c_ap
-#include <boost/algorithm/string.hpp>
 
 //Include Rosetta XML tag reader
 #include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 
 //Include Rosetta Core Stuff
 #include <core/id/AtomID.hh>
@@ -61,7 +57,6 @@
 
 //Include Rosetta Mover protocols
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
@@ -82,6 +77,8 @@
 #include <protocols/moves/mover_schemas.hh>
 
 #include <utility/pointer/memory.hh>
+
+#include <numeric/geometry/hashing/MinimalClashHash.hh> // AUTO IWYU For MinimalClashHash
 
 /**@brief This is a protocol... **/
 namespace protocols

@@ -19,12 +19,10 @@
 
 // Unit Headers
 #include <protocols/generalized_kinematic_closure/perturber/GeneralizedKICperturber.hh>
-#include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
 #include <protocols/generalized_kinematic_closure/util.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
 #include <core/scoring/Ramachandran.hh>
@@ -32,22 +30,14 @@
 #include <core/scoring/ScoringManager.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/tag/Tag.hh>
 #include <core/id/AtomID.hh>
 
-#include <core/pose/util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
+#include <numeric/xyzVector.fwd.hh>
 #include <numeric/random/random.hh>
 #include <numeric/angle.functions.hh>
-#include <numeric/kinematic_closure/bridgeObjects.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-#include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 
 
@@ -58,9 +48,7 @@
 #include <protocols/simple_moves/BBGaussianMover.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-
 
 
 namespace protocols {

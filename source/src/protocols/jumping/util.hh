@@ -25,7 +25,6 @@
 #include <core/fragment/JumpingFrame.fwd.hh>
 
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

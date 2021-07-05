@@ -14,7 +14,6 @@
 #include <devel/cartesian_frags/CartesianFragment.hh>
 #include <devel/cartesian_frags/dna_util.hh>
 #include <devel/cartesian_frags/DNA_FragLib.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -34,7 +33,8 @@
 #include <numeric/constants.hh>
 
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
+
+#include <numeric/conversions.hh> // AUTO IWYU For radians
 
 
 // // // C++ headers

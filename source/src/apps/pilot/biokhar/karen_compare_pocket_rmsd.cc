@@ -11,38 +11,27 @@
 /// @author jk + dj
 
 #include <iostream>
-#include <iomanip>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AA.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/Energies.hh>
 
 #include <core/scoring/rms_util.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
 #include <string>
-#include <ObjexxFCL/string.functions.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <fstream> // AUTO IWYU For ifstream
+
 using namespace core;
 using namespace core::scoring;
 using namespace basic::options;

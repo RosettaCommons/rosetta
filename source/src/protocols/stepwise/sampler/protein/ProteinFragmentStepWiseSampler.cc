@@ -16,7 +16,6 @@
 #include <protocols/stepwise/sampler/protein/ProteinFragmentStepWiseSampler.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
-#include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/util.hh>
 

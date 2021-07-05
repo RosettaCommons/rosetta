@@ -18,7 +18,7 @@
 #include <protocols/forge/remodel/RemodelMover.fwd.hh>
 #include <protocols/forge/remodel/RemodelData.hh>
 #include <protocols/forge/remodel/RemodelWorkingSet.hh>
-#include <protocols/forge/remodel/RemodelDesignMover.hh>
+#include <protocols/forge/remodel/RemodelDesignMover.fwd.hh>
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
 
 // type headers
@@ -36,7 +36,6 @@
 #include <protocols/moves/Mover.hh>
 
 #include <basic/datacache/DataMap.fwd.hh> //parser
-#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 // utility headers
 #include <utility/vector1.hh>

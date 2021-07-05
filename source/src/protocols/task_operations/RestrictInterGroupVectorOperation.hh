@@ -25,7 +25,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

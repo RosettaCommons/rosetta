@@ -21,7 +21,6 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <basic/options/keys/OptionKeys.hh>
@@ -40,7 +39,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Conformation.hh>
 
 
 //// C++ headers

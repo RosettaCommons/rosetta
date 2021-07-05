@@ -32,10 +32,11 @@
 //
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/MathMatrix.hh>
 
 //std
 #include <string>
+
+#include <core/id/TorsionID_Range.hh> // MANUAL IWYU
 
 namespace protocols {
 namespace simple_moves {

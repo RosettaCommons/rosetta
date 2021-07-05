@@ -27,18 +27,16 @@
 #include <protocols/rna/denovo/movers/RNA_Relaxer.fwd.hh>
 #include <protocols/rna/denovo/movers/RNP_HighResMover.fwd.hh>
 #include <protocols/rna/denovo/movers/RNA_HelixMover.fwd.hh>
-#include <protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
-#include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/import_pose/options/RNA_FragmentMonteCarloOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
-#include <ObjexxFCL/format.hh>
+
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace rna {

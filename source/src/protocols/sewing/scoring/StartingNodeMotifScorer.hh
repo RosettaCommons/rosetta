@@ -23,11 +23,8 @@
 #include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
 
 //Core headers
-#include <core/scoring/motif/motif_hash_stuff.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 //Utility headers
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace sewing  {

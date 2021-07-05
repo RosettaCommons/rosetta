@@ -32,9 +32,9 @@
 
 #include <string>
 
+#include <protocols/jd2/JobsContainer.hh> // AUTO IWYU For JobsContainer
+
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
 
 
 static basic::Tracer tr( "protocols.jd2.PoseInputStreamJobInputter" );

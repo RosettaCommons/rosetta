@@ -25,8 +25,8 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
-#include <cmath>
 
+#include <cmath> // MANUAL IWYU
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

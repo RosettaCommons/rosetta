@@ -10,15 +10,12 @@
 /// @author Alex Ford (fordas@uw.edu)
 //
 
-#include <ndarray.h>
+#include <ndarray.h>  // DO NOT AUTO-REMOVE (needed for template insantiation)
 #include <utility/exit.hh>
 
-#include <json.hpp>
 
 #include <boost/format.hpp>
-#include <boost/range.hpp>
 #include <boost/range/combine.hpp>
-#include <boost/range/adaptors.hpp>
 
 
 #include <protocols/indexed_structure_store/Datatypes.hh>
@@ -36,6 +33,8 @@
 #include <core/id/types.hh>
 
 #include <basic/Tracer.hh>
+
+#include <boost/range/adaptor/indexed.hpp> // AUTO IWYU For indexed
 
 static basic::Tracer TR("core.indexed_structure_store.pose_utility");
 

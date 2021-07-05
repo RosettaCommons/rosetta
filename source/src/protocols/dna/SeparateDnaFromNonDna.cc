@@ -20,7 +20,6 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

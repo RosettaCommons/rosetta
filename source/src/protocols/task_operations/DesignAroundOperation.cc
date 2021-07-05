@@ -14,7 +14,6 @@
 // Unit Headers
 #include <protocols/task_operations/DesignAroundOperation.hh>
 #include <protocols/task_operations/DesignAroundOperationCreator.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
 // Project Headers
@@ -26,7 +25,6 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
@@ -39,7 +37,8 @@
 // C++ Headers
 #include <set>
 
-#include <utility/vector0.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 
 static basic::Tracer TR( "protocols.TaskOperations.DesignAroundOperation" );

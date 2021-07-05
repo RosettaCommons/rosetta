@@ -14,9 +14,6 @@
 
 #include <protocols/md/MDBase.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 
 // Option
 #include <basic/options/option.hh>
@@ -24,13 +21,10 @@
 //#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 // Silent store
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 
 // Constraints
 //#include <core/scoring/ScoreFunction.hh>
@@ -42,6 +36,8 @@
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <fstream>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 namespace protocols {
 namespace md {

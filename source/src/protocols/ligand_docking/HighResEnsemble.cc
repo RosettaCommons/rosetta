@@ -14,45 +14,24 @@
 // Unit Headers
 #include <protocols/ligand_docking/HighResEnsemble.hh>
 #include <protocols/ligand_docking/HighResEnsembleCreator.hh>
-#include <protocols/ligand_docking/InterfaceBuilder.hh>
-#include <protocols/ligand_docking/ligand_options/Interface.hh>
-#include <protocols/ligand_docking/MinimizeLigand.hh>
 #include <protocols/ligand_docking/MoveMapBuilder.hh>
-#include <protocols/ligand_docking/TetherLigand.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 
 //Options headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-#include <core/pack/task/ResfileReader.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
 // Project Headers
-#include <core/scoring/Energies.hh>
-#include <core/chemical/ResidueType.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <protocols/jd2/util.hh>
 
@@ -62,10 +41,6 @@
 #include <utility/string_util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/json_spirit/json_spirit_reader.h>
-#include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <core/kinematics/Edge.hh>
-#include <core/pack/task/PackerTask.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.hh>
@@ -76,20 +51,21 @@
 //STL headers
 #include <string>
 
-#include <set>
 
 //Auto Headers
-#include <protocols/ligand_docking/LigandArea.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
+
+#include <protocols/ligand_docking/FinalMinimizer.hh> // AUTO IWYU For FinalMinimizer
+#include <protocols/ligand_docking/HighResDocker.hh> // AUTO IWYU For HighResDocker
+#include <basic/datacache/DataMap.hh> // AUTO IWYU For DataMap
+#include <utility/file/gzip_util.hh> // AUTO IWYU For gzip
 
 namespace protocols {
 namespace ligand_docking {

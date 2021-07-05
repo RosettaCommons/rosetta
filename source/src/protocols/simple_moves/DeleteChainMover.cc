@@ -15,7 +15,6 @@
 #include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 
 // Core headers
-#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 
 // Utility headers

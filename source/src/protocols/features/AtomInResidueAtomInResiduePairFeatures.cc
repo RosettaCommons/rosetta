@@ -24,7 +24,6 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -37,7 +36,6 @@
 #include <ObjexxFCL/FArray5D.hh>
 
 // Numeric Headers
-#include <numeric/xyzVector.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -45,6 +43,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
 #include <protocols/features/AtomInResidueAtomInResiduePairFeaturesCreator.hh>
+
+#include <basic/database/schema_generator/Constraint.hh> // AUTO IWYU For GreaterThanConstraint
 
 //Auto Headers
 namespace protocols {

@@ -26,7 +26,6 @@
 #include <core/types.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/xyz.json.hh>
 
 // Basic headers

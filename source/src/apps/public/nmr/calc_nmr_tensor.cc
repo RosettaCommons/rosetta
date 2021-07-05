@@ -22,8 +22,6 @@
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/internal_util.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
 
 // Utility headers

@@ -16,10 +16,7 @@
 
 // Package Headers
 
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/strand_assembly/StrandBundleFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

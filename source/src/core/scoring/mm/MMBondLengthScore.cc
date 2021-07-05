@@ -16,20 +16,13 @@
 #include <core/scoring/mm/MMBondLengthLibrary.hh>
 
 // Project headers
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/scoring/ScoringManager.hh>
 
 // Utility header
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <iostream>
-#include <string>
 #include <map>
 
-#include <utility/vector1.hh>
 #include <utility/keys/Key2Tuple.hh>
 
 

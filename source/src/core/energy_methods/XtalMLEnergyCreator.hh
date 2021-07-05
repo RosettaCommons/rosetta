@@ -15,7 +15,6 @@
 #define INCLUDED_core_scoring_cryst_XtalMLEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
-#include <core/types.hh>
 
 namespace core {
 namespace energy_methods {

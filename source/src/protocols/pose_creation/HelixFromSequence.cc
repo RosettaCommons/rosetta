@@ -43,10 +43,8 @@
 
 #include <core/sequence/util.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
 
 static basic::Tracer TR( "protocols.membrane.HelixFromSequence" );

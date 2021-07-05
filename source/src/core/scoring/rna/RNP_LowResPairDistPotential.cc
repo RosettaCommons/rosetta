@@ -16,35 +16,22 @@
 #include <core/scoring/rna/RNP_LowResPairDistPotential.hh>
 
 // Package headers
-#include <core/scoring/NeighborList.tmpl.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/CountPairNone.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
 
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/io/izstream.hh>
 #include <basic/database/open.hh>
 #include <core/chemical/rna/util.hh>
 
 //Auto Headers
-#include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
 

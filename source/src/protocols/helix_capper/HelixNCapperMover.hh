@@ -11,7 +11,6 @@
 #define INCLUDED_protocols_helix_capper_HelixNCapperMover_HH
 
 #include <core/pose/Pose.hh>
-#include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/libsvm/Svm_rosetta.fwd.hh>
 #include <core/types.hh>
 

@@ -21,17 +21,13 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 
 // C++ headers
 #include <string>
-#include <map>
-#include <complex>
 namespace core {
 namespace scoring {
 namespace cryst {

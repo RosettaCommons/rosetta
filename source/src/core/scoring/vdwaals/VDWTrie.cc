@@ -30,6 +30,8 @@
 // C++ headers
 #include <iostream>
 
+#include <core/scoring/trie/RotamerTrie.hh> // MANUAL IWYU
+
 namespace core {
 namespace scoring {
 namespace vdwaals {

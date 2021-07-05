@@ -16,8 +16,6 @@
 #include <protocols/rna/movers/RNA_DeNovoOptimizer.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
 #include <core/import_pose/options/RNA_FragmentMonteCarloOptions.hh>
-#include <protocols/rna/denovo/util.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 

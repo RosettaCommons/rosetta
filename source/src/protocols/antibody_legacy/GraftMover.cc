@@ -23,7 +23,6 @@
 
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/id/types.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pack/task/PackerTask.hh>
@@ -47,7 +46,6 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -62,7 +60,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/variant_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/numeric.functions.hh>
 

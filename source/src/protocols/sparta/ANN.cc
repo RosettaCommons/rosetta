@@ -28,7 +28,6 @@
 #include <utility/vector0.hh>
 
 #include <protocols/sparta/GDB.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.sparta" );

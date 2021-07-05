@@ -14,7 +14,7 @@
 #include <protocols/kinematic_closure/perturbers/IdealizeNonPhiPsi.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <numeric/conversions.hh>

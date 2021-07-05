@@ -15,7 +15,6 @@
 
 #include <protocols/stepwise/modeler/rna/bulge/BulgeUnApplyMover.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
 #include <core/scoring/constraints/util.hh>

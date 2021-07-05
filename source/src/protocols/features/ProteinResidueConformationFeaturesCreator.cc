@@ -16,10 +16,7 @@
 
 // Package Headers
 
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/ProteinResidueConformationFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

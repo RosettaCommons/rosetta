@@ -14,8 +14,8 @@
 /// @brief  operate on multiple poses simultaneously. Only accessible through recon application.
 /// @author Alex Sevy (alex.sevy@gmail.com)
 
-#ifndef VectorPoseJOBDISTRIBUTOR_HH_
-#define VectorPoseJOBDISTRIBUTOR_HH_
+#ifndef INCLUDED_VectorPoseJOBDISTRIBUTOR_HH_
+#define INCLUDED_VectorPoseJOBDISTRIBUTOR_HH_
 
 #ifdef USEMPI
 #include <mpi.h>
@@ -25,9 +25,8 @@
 #include <protocols/jd2/VectorPoseJobDistributor.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 // #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
 

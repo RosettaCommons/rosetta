@@ -18,7 +18,6 @@
 
 // type headers
 #include <core/types.hh>
-#include <core/id/types.hh>
 
 // project headers
 #include <protocols/moves/Mover.hh>
@@ -29,15 +28,10 @@
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
-#include <core/pose/selection.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 
 // utility header
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option.hh>

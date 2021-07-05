@@ -13,10 +13,8 @@
 // Unit headers
 #include <protocols/pose_creation/LoadPDBMover.hh>
 #include <protocols/pose_creation/LoadPDBMoverCreator.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/tag/Tag.hh>

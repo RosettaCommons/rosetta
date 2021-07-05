@@ -31,7 +31,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/jd2/util.hh>
@@ -45,26 +44,24 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <protocols/membrane/util.hh>
-#include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+
 
 // C++ Headers
-#include <cstdlib>
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #undef small

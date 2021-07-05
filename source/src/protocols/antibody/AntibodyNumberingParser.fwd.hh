@@ -20,6 +20,8 @@
 namespace protocols {
 namespace antibody {
 
+struct AntibodyNumbering;
+
 class AntibodyNumberingParser;
 typedef utility::pointer::shared_ptr< AntibodyNumberingParser > AntibodyNumberingParserOP;
 typedef utility::pointer::shared_ptr< AntibodyNumberingParser const > AntibodyNumberingParserCOP;

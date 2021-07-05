@@ -21,7 +21,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -29,7 +28,6 @@
 // Package Headers
 #include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/claims/BBClaim.hh>
-#include <protocols/topology_broker/claims/CutClaim.hh>
 #include <protocols/topology_broker/claims/JumpClaim.hh>
 #include <protocols/topology_broker/claims/LegacyRootClaim.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
@@ -42,13 +40,11 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.topo_broker.membrane_topology", basic::t_info );

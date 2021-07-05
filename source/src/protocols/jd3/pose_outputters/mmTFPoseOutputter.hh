@@ -19,11 +19,9 @@
 #include <protocols/jd3/pose_outputters/mmTFPoseOutputter.fwd.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 //package headers
-#include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/LarvalJob.fwd.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
 
 #include <string>
 

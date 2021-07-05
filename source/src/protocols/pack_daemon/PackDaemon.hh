@@ -28,7 +28,6 @@
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.fwd.hh>
 #include <core/pack/interaction_graph/FASTERInteractionGraph.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSubsets.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/ResfileReader.fwd.hh>
@@ -50,6 +49,8 @@
 #include <boost/unordered_map.hpp>
 
 #include <utility/vector1.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP, RotamerSets, Rota...
 
 #ifdef WIN32
 #include <core/pack/task/PackerTask.hh>

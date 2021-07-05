@@ -24,7 +24,6 @@
 #include <core/kinematics/jacobian/ModuleType1.hh>
 #include <core/kinematics/jacobian/util.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerMap.hh>
@@ -35,7 +34,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <numeric/wrap_angles.hh>
 #include <numeric/MathMatrix_operations.hh>
 #include <numeric/MathVector_operations.hh>
 
@@ -48,6 +46,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
+
+#include <numeric/numeric.functions.hh> // AUTO IWYU For min
+#include <utility/fixedsizearray1.hh> // AUTO IWYU For fixedsizearray1
 
 static basic::Tracer TR( "protocols.loops.loop_closure.jacobi.JacobiLoopClosureMover" );
 

@@ -16,10 +16,9 @@
 #include <core/select/residue_selector/AsymmetricUnitSelectorCreator.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh> // for xml schema utility functions
 
 // Project headers
@@ -29,12 +28,11 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility Headers
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

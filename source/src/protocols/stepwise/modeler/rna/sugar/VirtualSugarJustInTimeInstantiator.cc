@@ -20,13 +20,11 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeSet.hh>
+#include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh> // for SYN
@@ -34,6 +32,8 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
+
+#include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh> // AUTO IWYU For SugarModeling
 
 ///////////////////////////////////////////////////////////////////////////////////
 //////////////////////Build previously virtualized sugar/////////////////////

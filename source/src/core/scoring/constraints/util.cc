@@ -41,7 +41,6 @@
 // option key includes
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 

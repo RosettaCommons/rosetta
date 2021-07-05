@@ -27,7 +27,6 @@
 
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

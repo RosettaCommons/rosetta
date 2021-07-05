@@ -21,7 +21,7 @@
 
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -134,7 +134,6 @@ VIP_Report::get_GOE_packstat_report(
 	utility::vector1<core::pose::Pose> & goe_relax
 ){
 	std::fstream output;
-	using namespace core::scoring::packstat;
 	//std::string filename;
 	//std::string filename0 = "Intermediate";
 

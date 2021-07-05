@@ -16,7 +16,7 @@
 
 // Package headers
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
@@ -25,10 +25,8 @@
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
 
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 
 // Project headers
-#include <core/pack/task/PackerTask.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -44,14 +42,11 @@
 #include <basic/Tracer.hh>
 
 // Numeric headers
-#include <numeric/xyz.functions.hh>
-#include <numeric/random/uniform.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/thread/threadsafe_creation.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -66,6 +61,9 @@
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
+
+#include <core/pack/dunbrack/PeptoidDOFReporters.hh> // MANUAL IWYU
+#include <core/pack/dunbrack/StandardDOFReporters.hh> // MANUAL IWYU
 
 /*
 rearrange the dunbrack arrays:

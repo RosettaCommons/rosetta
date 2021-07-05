@@ -13,29 +13,19 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/core/scoring/RamaPrePro_util.h>
+#include <test/core/scoring/RamaPrePro_util.hh>
 
 // Project Headers
-#include <core/scoring/RamaPrePro.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 // Protocol Headers
-#include <protocols/cyclic_peptide/FlipChiralityMover.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("RamaPreProTests_symmgly");
 

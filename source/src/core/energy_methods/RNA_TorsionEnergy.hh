@@ -20,9 +20,8 @@
 #include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 
 // Package headers
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

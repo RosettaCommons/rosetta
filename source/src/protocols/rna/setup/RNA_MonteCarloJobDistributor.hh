@@ -22,6 +22,8 @@
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.fwd.hh>
 #include <core/types.hh>
 
+#include <map> // AUTO IWYU For map
+
 namespace protocols {
 namespace rna {
 namespace setup {

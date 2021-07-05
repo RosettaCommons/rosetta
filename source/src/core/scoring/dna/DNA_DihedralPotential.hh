@@ -18,19 +18,13 @@
 #include <core/scoring/dna/DNA_DihedralPotential.fwd.hh>
 
 #include <core/types.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
-#include <utility/exit.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 #include <iosfwd>
-#include <map>
 
 namespace core {
 namespace scoring {

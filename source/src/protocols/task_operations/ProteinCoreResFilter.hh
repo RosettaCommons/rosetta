@@ -18,12 +18,12 @@
 #include <core/pack/task/operation/ResFilter.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
+
+#include <string>
 
 namespace protocols {
 namespace task_operations {

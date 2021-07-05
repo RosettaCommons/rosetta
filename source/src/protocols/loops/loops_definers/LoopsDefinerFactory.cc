@@ -16,18 +16,16 @@
 
 // Package headers
 #include <protocols/loops/loops_definers/LoopsDefinerCreator.hh>
-#include <protocols/loops/loops_definers/LoopsDefiner.hh>
+#include <protocols/loops/loops_definers/LoopsDefiner.fwd.hh>
 #include <protocols/loops/loops_definers/util.hh>
 
 // Package Headers
 #include <basic/Tracer.hh>
 
 // Project Headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
-#include <utility/thread/threadsafe_creation.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 
 // Boost headers

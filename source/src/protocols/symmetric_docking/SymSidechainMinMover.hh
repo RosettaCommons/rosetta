@@ -25,11 +25,9 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/minimization_packing/MinMover.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

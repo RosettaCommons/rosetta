@@ -21,11 +21,10 @@
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
-#include <core/fragment/SecondaryStructure.hh>
-#include <core/sequence/SequenceProfile.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
 
 // utility headers
-#include <utility/exit.hh>
 #include <string>
 #include <map>
 

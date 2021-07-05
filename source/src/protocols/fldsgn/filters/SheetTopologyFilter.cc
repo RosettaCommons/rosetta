@@ -18,15 +18,13 @@
 
 // Package Headers
 #include <protocols/denovo_design/components/SegmentPairing.hh>
-#include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-#include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/util.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -38,22 +36,22 @@
 #include <basic/Tracer.hh>
 
 // Parser headers
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 
 #include <utility/string_util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 //// C++ headers
 
 
 // TEMP
-#include <core/pose/PDBInfo.hh>
 
 static basic::Tracer tr( "protocols.fldsgn.filters.SheetTopologyFilter" );
 

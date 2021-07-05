@@ -20,18 +20,15 @@
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
-#include <utility/thread/threadsafe_creation.hh>
 #include <utility/vector1.hh>
 #include <basic/database/open.hh>
 

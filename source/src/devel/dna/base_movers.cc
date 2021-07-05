@@ -22,7 +22,6 @@
 #include <core/scoring/rms_util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 
@@ -40,7 +39,6 @@
 #include <utility/graph/UpperEdgeGraph.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 
 namespace devel {

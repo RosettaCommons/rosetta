@@ -20,9 +20,7 @@
 #include <core/types.hh>
 
 // C/C++ headers
-#include <iostream>
 #include <string>
-#include <sstream>
 
 //#include <basic/Tracer.hh>
 

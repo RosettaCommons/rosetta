@@ -17,20 +17,17 @@
 
 // Unit headers
 #include <core/scoring/facts/FACTSPotential.fwd.hh>
-#include <core/scoring/facts/FACTSResidue.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/RotamerSetBase.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

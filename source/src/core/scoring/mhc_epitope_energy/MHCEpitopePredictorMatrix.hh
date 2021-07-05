@@ -16,8 +16,6 @@
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.fwd.hh>
-#include <core/chemical/AA.hh>
-#include <utility/file/FileName.fwd.hh>
 #include <utility/vector1.hh>
 
 #include <utility/VirtualBase.hh>

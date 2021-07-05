@@ -25,11 +25,9 @@
 
 //// C++ headers
 #include <string>
-#include <vector>
 
-#include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
-#include <protocols/rna/denovo/movers/RNA_Minimizer.hh>
-#include <utility/vector1.hh>
+#include <protocols/rna/denovo/movers/RNA_FragmentMover.fwd.hh>
+#include <protocols/rna/denovo/movers/RNA_Minimizer.fwd.hh>
 
 
 namespace protocols {

@@ -8,14 +8,12 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 #include <core/pose/Pose.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/scoring/orbitals/OrbitalsScore.hh>
 #include <core/scoring/orbitals/OrbitalsScoreCreator.hh>
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
-#include <map>
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/deriv/distance_deriv.hh>
 
@@ -26,8 +24,6 @@
 
 #include <core/scoring/ScoringManager.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/orbitals/OrbitalType.hh>
-#include <core/scoring/ContextGraphTypes.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <basic/Tracer.hh>
@@ -36,13 +32,9 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
 
-#include <core/id/types.hh>
 #include <core/id/AtomID.hh>
-#include <core/kinematics/Jump.hh>
 
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 

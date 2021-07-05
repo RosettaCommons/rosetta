@@ -21,9 +21,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 //// C++ headers
-#include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

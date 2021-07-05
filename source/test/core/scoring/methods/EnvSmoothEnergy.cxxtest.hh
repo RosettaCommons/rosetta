@@ -17,13 +17,10 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <platform/types.hh>
 
 // Unit headers
-#include <core/energy_methods/EnvSmoothEnergy.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
 
 
 // Project headers
@@ -31,7 +28,6 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

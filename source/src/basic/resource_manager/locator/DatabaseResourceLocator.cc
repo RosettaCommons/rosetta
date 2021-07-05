@@ -21,20 +21,17 @@
 //project headers
 #include <basic/Tracer.hh>
 #include <basic/resource_manager/locator/StringResourceStream.hh>
-#include <basic/resource_manager/ResourceManager.hh>
 #include <basic/database/sql_utils.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 //External Headers
 #include <cppdb/frontend.h>
 
 //C++ headers
-#include <istream>
-#include <utility>
 
 namespace basic {
 namespace resource_manager {

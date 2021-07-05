@@ -23,9 +23,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -44,11 +41,11 @@
 
 //Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <basic/database/open.hh>
+
+#include <protocols/simple_moves/ReturnSidechainMover.hh> // AUTO IWYU For ReturnSidechainMover
 
 static basic::Tracer TR( "protocols.relax.CentroidRelax" );
 namespace protocols {

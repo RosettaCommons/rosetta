@@ -24,13 +24,11 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/NamedStubID.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <core/scoring/MembraneTopology.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // ObjexxFCL Headers
@@ -39,14 +37,11 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 
 

@@ -43,7 +43,6 @@
 #include <utility/graph/Graph.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 
 // C++ headers

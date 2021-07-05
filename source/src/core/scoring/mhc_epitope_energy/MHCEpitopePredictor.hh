@@ -17,11 +17,11 @@
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.fwd.hh>
 #include <basic/citation_manager/CitationCollectionBase.fwd.hh>
-#include <core/chemical/AA.hh>
-#include <utility/vector1.hh>
 #include <core/types.hh>
 
 #include <utility/VirtualBase.hh>
+
+#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers

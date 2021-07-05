@@ -12,22 +12,19 @@
 /// @author Sarel Fleishman (sarel@weizmann.ac.il)
 
 // Unit headers
-#include <core/pose/extra_pose_info_util.hh>
 #include <protocols/splice/SpliceSegment.hh>
 #include <core/sequence/SequenceProfile.hh>
 // Package headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
-#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
-#include <core/pose/util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 #include <iostream>
-#include <sstream>
-#include <utility/string_util.hh>
 #include <basic/database/open.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 #ifdef WIN32
 #include <dirent_windows.h>

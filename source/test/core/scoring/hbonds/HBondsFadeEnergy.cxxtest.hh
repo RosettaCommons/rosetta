@@ -13,11 +13,12 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 // Package headers
 #include <core/scoring/hbonds/hbonds_geom.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 static basic::Tracer TR("core.scoring.hbonds.HBondsFadeEnergy");
 

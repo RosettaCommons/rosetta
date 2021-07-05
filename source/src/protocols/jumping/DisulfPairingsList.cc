@@ -27,9 +27,7 @@
 
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/io/izstream.hh>
-#include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
 
@@ -42,7 +40,6 @@
 //// C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.jumping" );

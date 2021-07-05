@@ -20,7 +20,7 @@
 //Core
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
@@ -28,7 +28,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/types.hh>
@@ -47,6 +46,8 @@
 #include <utility/VirtualBase.hh>
 //Numeric
 #include <numeric/xyzVector.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For BooleanOptionKey, RealOptionKey, StringO...
 
 
 

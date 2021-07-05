@@ -26,7 +26,6 @@
 
 // C++ headers
 #include <string>
-#include <fstream>
 
 // Boost headers
 #include <functional>

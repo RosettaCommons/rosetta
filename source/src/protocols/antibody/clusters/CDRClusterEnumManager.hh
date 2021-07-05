@@ -17,14 +17,12 @@
 #include <protocols/antibody/clusters/CDRClusterEnumManager.fwd.hh>
 
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
-#include <protocols/antibody/AntibodyEnum.hh>
 
 #include <utility/VirtualBase.hh>
 
 #include <map>
 #include <string>
 #include <utility/vector1.hh>
-#include <core/types.hh>
 
 namespace protocols {
 namespace antibody {

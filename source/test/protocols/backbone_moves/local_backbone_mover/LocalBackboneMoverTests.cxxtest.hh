@@ -14,20 +14,14 @@
 
 // Test headers
 #include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <protocols/backbone_moves/local_backbone_mover/FreePeptide.hh>
 #include <protocols/backbone_moves/local_backbone_mover/GapCloser.hh>
-#include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/TranslationFreePeptideMover.hh>
-#include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/LongAxisRotationFreePeptideMover.hh>
-#include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/ShearFreePeptideMover.hh>
 #include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/CircularPermuteFreePeptideMover.hh>
 
 // Numeric Headers
-#include <numeric/xyzVector.io.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 
 // Core Headers

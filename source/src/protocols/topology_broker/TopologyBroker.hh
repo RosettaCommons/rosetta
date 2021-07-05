@@ -35,13 +35,10 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
-#include <core/conformation/symmetry/SymmData.hh>
 
 
 #ifdef __clang__
-#include <core/kinematics/ShortestPathInFoldTree.hh>
 #endif
 
 #include <core/pose/Pose.fwd.hh> /// FIX THIS
@@ -52,7 +49,6 @@
 #include <utility/vector1.hh>
 
 // C/C++ headers
-#include <utility/assert.hh>
 #include <string>
 
 #ifdef WIN32

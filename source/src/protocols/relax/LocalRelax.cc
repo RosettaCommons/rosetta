@@ -15,43 +15,19 @@
 #include <protocols/relax/LocalRelax.hh>
 #include <protocols/relax/LocalRelaxCreator.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/util.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Edge.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/io/CrystInfo.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/selection.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/electron_density/util.hh>
@@ -59,65 +35,35 @@
 #include <core/types.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/constraint_movers/ConstraintSetMover.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/mpistream.hh>
 #include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 #include <basic/datacache/DataMap.hh>
 
 #define foreach_ for
 
 // option includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <fstream>
-#include <iostream>
-#include <cmath>
 
-#include <sstream>
 #include <string>
-#include <queue>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+#include <core/pack/task/ResidueLevelTask_.hh> // AUTO IWYU For ResidueLevelTask_
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
 
 
 namespace protocols {

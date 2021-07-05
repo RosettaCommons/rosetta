@@ -16,7 +16,6 @@
 
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/util/deriv_funcs.hh>
 
 #include <core/types.hh>
 
@@ -27,19 +26,15 @@
 
 // Package headers
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 
 using basic::Error;

@@ -18,7 +18,8 @@
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 // C++ Headers

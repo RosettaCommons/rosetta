@@ -18,30 +18,19 @@
 
 //Project Headers
 #include <basic/Tracer.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/nmer/NMerPSSMEnergy.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <utility/exit.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <ObjexxFCL/format.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/conformation/Conformation.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/selection.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
 
 namespace protocols {
 namespace simple_filters {

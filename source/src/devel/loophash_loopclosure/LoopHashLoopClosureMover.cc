@@ -16,56 +16,43 @@
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
 
 // Project Headers
-#include <protocols/viewer/viewers.hh>
 #include <core/types.hh>
 
-#include <devel/init.hh>
 #include <basic/options/option.hh>
 
 // Utility Headers
 
 // Unit Headers
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/jobdist/Jobs.hh>
 
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/forge/build/Interval.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/forge/remodel/RemodelMover.hh>
-#include <protocols/forge/remodel/RemodelLoopMover.hh>
-#include <protocols/forge/methods/util.hh>
 
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 #include <utility/string_constants.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/io/izstream.hh>
 
 #include <basic/Tracer.hh>
 
-#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
 
 // C++ headers
 #include <string>
 #include <ctime>
 #include <sstream>
-#include <iostream>
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #include <io.h>
 #else
-#include <unistd.h>
 #endif
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <fstream> // AUTO IWYU For ofstream
 
 namespace devel {
 namespace loophash_loopclosure {

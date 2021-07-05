@@ -37,7 +37,6 @@
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 // Utility headers
-#include <utility/file/FileName.hh>
 #include <utility/assert.hh>
 
 // ObjexxFCL headers

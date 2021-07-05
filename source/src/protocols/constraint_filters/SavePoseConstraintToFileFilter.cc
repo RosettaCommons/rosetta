@@ -17,17 +17,12 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
 #include <fstream>
-#include <iostream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

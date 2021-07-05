@@ -15,26 +15,17 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_LigandAligner_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_LigandAligner_hh
 
-#include <protocols/ligand_docking/GALigandDock/LigandConformer.hh>
+#include <protocols/ligand_docking/GALigandDock/LigandConformer.fwd.hh>
 #include <protocols/ligand_docking/GALigandDock/GridScorer.hh>
 #include <core/types.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/scoring/func/SumFunc.hh>
-#include <core/scoring/func/TopOutFunc.hh>
-#include <core/scoring/func/ConstantFunc.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/excn/Exceptions.hh>
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
+
 
 namespace protocols {
 namespace ligand_docking {

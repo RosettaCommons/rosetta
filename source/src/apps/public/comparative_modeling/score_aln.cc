@@ -17,7 +17,6 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <basic/options/option.hh>
@@ -26,12 +25,10 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/ScoringSchemeFactory.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -41,15 +38,12 @@
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
 
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <numeric/model_quality/rms.hh>
@@ -63,10 +57,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/io/ozstream.hh>
-#include <ObjexxFCL/format.hh>
 
 ///////////////////////////////////////////////////////////////////////////////
 

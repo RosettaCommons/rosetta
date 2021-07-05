@@ -31,7 +31,6 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/pose/Pose.hh>
@@ -39,7 +38,6 @@
 
 // Numeric Headers
 #include <numeric/constants.hh>
-#include <numeric/conversions.hh>
 #include <numeric/angle.functions.hh>
 
 // Basic Header

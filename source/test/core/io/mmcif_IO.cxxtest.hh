@@ -16,18 +16,13 @@
 #include <test/core/init_util.hh>
 
 // Package Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/mmcif/cif_writer.hh>
-#include <core/io/mmcif/cif_reader.hh>
 #include <core/io/StructFileReaderOptions.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>

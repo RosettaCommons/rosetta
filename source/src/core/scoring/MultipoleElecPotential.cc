@@ -16,17 +16,13 @@
 #include <core/scoring/Energies.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -37,22 +33,17 @@
 #include <basic/prof.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/string_util.hh>
 
 #include <numeric/constants.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyz.io.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <boost/lexical_cast.hpp>
 
@@ -60,8 +51,10 @@
 #include <algorithm>
 #include <string>
 #include <fstream>
-#include <iostream>
 #include <map>
+
+#include <numeric/xyzMatrix.io.hh> // AUTO IWYU For operator<<
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "core.scoring.MultipoleElecPotential" );
 

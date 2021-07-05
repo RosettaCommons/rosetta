@@ -18,7 +18,6 @@
 //
 
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
-#include <protocols/simple_moves/DisulfideInsertionMover.hh>
 
 namespace protocols {
 namespace simple_moves {

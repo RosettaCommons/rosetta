@@ -15,27 +15,21 @@
 #define INCLUDED_core_import_pose_FullModelPoseBuilder_HH
 
 // Package headers
-#include <core/import_pose/import_pose_options.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
 
 // Utility headers
-#include <basic/Tracer.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
-#include <core/io/StructFileReaderOptions.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/sequence/Sequence.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
+#include <utility/vector1.hh>
+
 #include <tuple>
 
-#include <utility/vector1.hh>
 
 namespace core {
 namespace import_pose {

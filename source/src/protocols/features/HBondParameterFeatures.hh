@@ -22,8 +22,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers

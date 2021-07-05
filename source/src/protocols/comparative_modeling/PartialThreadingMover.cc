@@ -22,10 +22,8 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/util.hh>
 
-#include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
@@ -33,19 +31,14 @@
 #include <core/pack/pack_missing_sidechains.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // C++ headers
 #include <string>
 
-#include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 
 namespace protocols {
 namespace comparative_modeling {

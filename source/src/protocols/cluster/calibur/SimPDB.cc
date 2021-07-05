@@ -14,10 +14,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <iomanip>
 
 #include <map>
 #include <vector>
@@ -29,6 +25,8 @@
 #include <core/types.hh>
 
 #include <memory>
+
+#include <string.h> // AUTO IWYU For strdup
 
 namespace protocols {
 namespace cluster {

@@ -19,11 +19,9 @@
 #include <protocols/match/downstream/ClassicMatchAlgorithm.fwd.hh>
 
 // Package headers
-#include <protocols/match/BumpGrid.fwd.hh>
-#include <protocols/match/downstream/ActiveSiteGrid.fwd.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
-#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
+#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh> // DO NOT AUTO-REMOVE needed for member variable.
 
 // Project headers
 #include <core/types.hh>
@@ -31,7 +29,6 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -39,6 +36,8 @@
 
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
+
+#include <numeric/HomogeneousTransform.hh> // AUTO IWYU For HomogeneousTransform
 
 
 namespace protocols {

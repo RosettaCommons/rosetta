@@ -16,15 +16,10 @@
 #include <core/pose/Pose.hh>
 
 #include <utility/graph/Graph.hh>
-#include <core/conformation/find_neighbors.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
-#include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <basic/MetricValue.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -35,17 +30,13 @@
 
 #include <protocols/scoring/Interface.hh>
 //Utility headers
-#include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
 
 //C++ headers
 #include <iostream>
-#include <set>
-#include <iterator> // ostream_iterator
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>

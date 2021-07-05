@@ -17,7 +17,6 @@
 #include <core/scoring/func/CircularGeneral1D_Func.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ Headers

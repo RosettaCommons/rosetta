@@ -19,7 +19,6 @@
 #include <protocols/antibody/grafting/exception.hh>
 #include <protocols/antibody/grafting/chothia_numberer.hh>
 #include <protocols/antibody/grafting/scs_functor.hh>
-#include <protocols/antibody/grafting/util.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/execute.hh>
@@ -28,11 +27,9 @@
 #include <basic/options/option.hh>
 
 #include <utility/string_util.hh>
-#include <utility/stream_util.hh>
 
 #include <algorithm>
 #include <fstream>
-#include <locale>
 
 #include <utility/pointer/memory.hh>
 

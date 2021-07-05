@@ -22,7 +22,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>

@@ -16,12 +16,13 @@
 #define INCLUDED_protocols_sewing_requirements_LengthInResiduesRequirement_hh
 
 #include <protocols/sewing/requirements/LengthInResiduesRequirement.fwd.hh>
+#include <protocols/sewing/data_storage/SmartAssembly.fwd.hh>
 #include <protocols/sewing/requirements/AssemblyRequirement.hh>
-#include <protocols/sewing/data_storage/SmartAssembly.hh>
 #include <core/types.hh>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
+
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace sewing {

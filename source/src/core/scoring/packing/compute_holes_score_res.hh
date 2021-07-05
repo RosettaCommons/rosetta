@@ -15,16 +15,14 @@
 #ifndef INCLUDED_core_scoring_packing_compute_holes_score_res_hh
 #define INCLUDED_core_scoring_packing_compute_holes_score_res_hh
 
-#include <core/scoring/packing/PoseBalls.hh>
+#include <core/scoring/packing/PoseBalls.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/scoring/packing/HolesParamsRes.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

@@ -16,18 +16,13 @@
 #include <protocols/ligand_docking/ChainExistsFilterCreator.hh>
 
 
-#include <protocols/filters/Filter.hh>
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/chains_util.hh>
-#include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes

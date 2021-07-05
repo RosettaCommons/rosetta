@@ -8,39 +8,20 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 #include <string>
-#include <sstream>
-#include <fstream>
-#include <cmath>
-#include <vector>
-#include <cmath>
-#include <iostream>
 //#include "boost/filesystem.hpp"
 //#include <boost/algorithm/string.hpp>
 
-#include <basic/datacache/DataMap.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <devel/init.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/constants.hh>
-#include <numeric/HomogeneousTransform.hh>
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.hh>
 
-#include <core/id/AtomID_Map.hh>
 
-#include <core/conformation/Residue.hh>
 //#include <core/conformation/symmetry/SymmetricConformation.hh>
 //#include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -64,13 +45,8 @@
 //#include <core/pack/task/operation/TaskOperations.hh>
 //#include <core/pack/task/operation/util/interface_vector_calculate.hh>
 
-#include <core/pose/motif/reference_frames.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/Remarks.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/pose/init_id_map.hh>
-#include <core/pose/util.hh>
 
 //#include <core/scoring/EnergyGraph.hh>
 //#include <core/scoring/hbonds/HBondOptions.hh>
@@ -85,11 +61,8 @@
 //#include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/scoring/ScoreFunction.hh>
 
-#include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
 
@@ -120,7 +93,6 @@
 using namespace basic;
 using namespace core;
 using namespace core::pose;
-using namespace core::conformation::symmetry;
 using namespace ObjexxFCL;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

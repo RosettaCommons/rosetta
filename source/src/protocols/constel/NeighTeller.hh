@@ -11,15 +11,14 @@
 /// @brief A class to determine neighboring relationships between or among residues.
 /// @author Andrea Bazzoli
 
-#ifndef Included_NeighTeller_HH
-#define Included_NeighTeller_HH
+#ifndef INCLUDED_NeighTeller_HH
+#define INCLUDED_NeighTeller_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.fwd.hh>
 #include <iosfwd>
 
 namespace protocols {

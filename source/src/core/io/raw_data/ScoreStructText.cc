@@ -13,13 +13,11 @@
 /// @author Monica Berrondo
 
 // C++ Headers
-#include <map>
 
 // mini headers
 #include <core/pose/Pose.hh>
 #include <core/io/raw_data/ScoreStructText.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

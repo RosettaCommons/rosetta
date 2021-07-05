@@ -17,15 +17,12 @@
 // Unit headers
 #include <protocols/carbohydrates/GlycanTreeMinMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
 
 // Protocol headers
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Basic/Utility headers

@@ -28,13 +28,10 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
 #include <map>
-#include <iosfwd>
-
-#include <utility/vector1.hh>
+#include <string>
 
 
 #ifdef    SERIALIZATION

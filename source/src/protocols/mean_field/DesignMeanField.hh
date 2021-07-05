@@ -31,7 +31,10 @@
 
 
 // C++ headers
-#include <iosfwd>
+
+#ifdef PYROSETTA
+#include <protocols/mean_field/RotProb.hh>
+#endif
 
 namespace protocols {
 namespace mean_field {

@@ -21,11 +21,8 @@
 #include <protocols/denovo_design/architects/StructureArchitect.fwd.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/Segment.fwd.hh>
-#include <protocols/denovo_design/components/StructureData.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Basic/Utility headers
@@ -38,7 +35,8 @@
 // Boost headers
 
 // C++ headers
-#include <set>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace denovo_design {

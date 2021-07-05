@@ -13,14 +13,14 @@
 
 // Package headers
 #include <core/pack/rotamers/SingleNCAARotamerLibraryCreator.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Program header
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
-#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>
@@ -37,6 +37,9 @@
 
 // C++ headers
 #include <string>
+
+#include <core/pack/dunbrack/PeptoidDOFReporters.hh> // MANUAL IWYU
+#include <core/pack/dunbrack/StandardDOFReporters.hh> // MANUAL IWYU
 
 namespace core {
 namespace pack {

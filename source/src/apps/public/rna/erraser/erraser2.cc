@@ -33,11 +33,8 @@
 
 // protocols
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/util.hh>
 
 
 // core
@@ -46,20 +43,12 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <core/import_pose/FullModelPoseBuilder.hh>
 #include <protocols/rna/movers/ErraserMinimizerMover.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
@@ -74,7 +63,6 @@
 //#include <basic/options/keys/file.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // utility
@@ -87,11 +75,14 @@
 
 #include <core/id/AtomID.hh>
 
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <iostream>
 #include <string>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree, operator>>
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 using namespace protocols;
 using namespace basic::options;
@@ -393,7 +384,6 @@ void do_erraser2(
 	erraser_minimizer.minimize_protein( option[ minimize_protein ] );
 
 	using namespace core::scoring::constraints;
-	using namespace core::scoring::func;
 
 	if ( checkpoints_to_pass < 1 ) { // First pass: constrain P, initial FT
 		TR << "First pass preminimization..." << std::endl;

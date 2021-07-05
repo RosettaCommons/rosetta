@@ -20,7 +20,6 @@
 #include <utility/string_util.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
 
 using namespace core;
 static basic::Tracer TR( "protocols.stepwise.sampler.StepWiseSamplerOneTorsion" );

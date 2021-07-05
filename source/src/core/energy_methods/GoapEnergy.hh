@@ -32,11 +32,10 @@
 #include <cmath>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray5D.hh>
-#include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
 
-#include <stdio.h>
-#include <iosfwd>
+
+#include <numeric/xyzVector.hh> // AUTO IWYU For operator*, operator-
 
 namespace core {
 namespace energy_methods {

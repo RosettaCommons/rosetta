@@ -15,19 +15,11 @@
 
 #include <protocols/viewer/viewers.hh>
 #include <basic/Tracer.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/util.hh>
 #include <core/fragment/FragmentIO.hh>
-#include <core/fragment/BBTorsionSRFD.hh>
 
 //options
 #include <basic/options/option.hh>
@@ -36,12 +28,12 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
 #include <iostream>
 #include <string>
-#include <sstream>
+
+#include <core/fragment/FragSet.hh> // AUTO IWYU For FragSet
 
 
 OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)

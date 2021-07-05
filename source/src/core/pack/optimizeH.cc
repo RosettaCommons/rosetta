@@ -37,8 +37,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/id/AtomID_Map.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

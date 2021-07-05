@@ -23,15 +23,13 @@
 
 // option key includes
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #ifdef WIN32
 #include <utility/tag/Tag.hh>
 #endif
 
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 

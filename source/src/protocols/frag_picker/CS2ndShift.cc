@@ -36,6 +36,8 @@
 
 #include <utility/vector1.hh>
 
+#include <protocols/frag_picker/CSTalosIO.hh> // AUTO IWYU For CSTalosIO
+
 
 namespace protocols {
 namespace frag_picker {

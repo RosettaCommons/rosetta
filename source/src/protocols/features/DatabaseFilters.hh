@@ -25,7 +25,6 @@
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>

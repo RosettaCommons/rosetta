@@ -22,7 +22,6 @@
 #include <basic/Tracer.hh>
 
 #include <numeric/xyz.functions.hh>
-#include <numeric/trig.functions.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
 
 #include <utility/exit.hh>
@@ -31,7 +30,6 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
-#include <utility/vector1.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

@@ -17,33 +17,27 @@
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMasterMover.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/util.hh>
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 //Req'd on WIN32
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
+
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
 
 using namespace core;
 using namespace protocols::stepwise::monte_carlo::mover;

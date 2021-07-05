@@ -18,7 +18,6 @@
 
 #include <core/sequence/SequenceProfile.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
@@ -28,10 +27,7 @@
 #include <protocols/indexed_structure_store/StructureStore.hh>
 #include <protocols/indexed_structure_store/StructureStoreManager.hh>
 #include <protocols/indexed_structure_store/search/QueryDatabase.hh>
-#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh>
-#include <protocols/indexed_structure_store/vector_tools.hh>
-#include <protocols/indexed_structure_store/utility.hh>
-#include <protocols/indexed_structure_store/pose_utility.hh>
+#include <protocols/indexed_structure_store/search/QueryDatabase.json.hh> // DO NOT AUTO-REMOVE (needed for JSON templating)
 
 #include <protocols/indexed_structure_store/SegmentSequenceProfile.hh>
 #include <protocols/indexed_structure_store/movers/SegmentSequenceProfileMover.hh>
@@ -45,6 +41,9 @@
 #include <protocols/jd2/internal_util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::Tr...
 
 static basic::Tracer TR( "protocols.indexed_structure_store.movers.SegmentSequenceProfileMover" );
 

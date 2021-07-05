@@ -17,22 +17,15 @@
 
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.fwd.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
-#include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {

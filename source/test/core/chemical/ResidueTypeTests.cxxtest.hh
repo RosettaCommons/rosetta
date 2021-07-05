@@ -27,26 +27,21 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/GlobalResidueTypeSet.hh>
-#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/residue_support.hh>
 
 #include <core/chemical/sdf/mol_writer.hh>
-#include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <core/kinematics/Stub.hh>
 
-#include <utility/graph/RingDetection.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/bond_support.hh>
-#include <utility/graph/BFS_prune.hh>
 
 // Platform Headers
 #include <utility/vector1.hh>
@@ -59,7 +54,8 @@
 // C++ Headers
 #include <string>
 #include <ostream>
-#include <boost/graph/adjacency_list.hpp>
+
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 using std::endl;
 using std::string;

@@ -17,7 +17,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/util.hh>
@@ -32,7 +31,6 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
-#include <utility>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 

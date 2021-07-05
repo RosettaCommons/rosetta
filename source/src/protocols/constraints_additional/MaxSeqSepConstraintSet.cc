@@ -24,7 +24,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/scoring/func/XYZ_Func.hh>
@@ -44,20 +43,16 @@
 
 // Utility headers
 #include <utility>
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <numeric/numeric.functions.hh>
 
 #include <basic/Tracer.hh>
 
 
 //// C++ headers
 #include <cstdlib>
-#include <string>
 
-#include <core/id/SequenceMapping.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <utility/vector1.hh>
+
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
 
 
 static basic::Tracer tr( "protocols.constraints_additional.MaxSeqSepConstraintSet", basic::t_info );

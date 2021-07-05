@@ -14,50 +14,31 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/energy_methods/RNA_ChemicalMappingEnergy.hh>
-#include <core/pose/rna/RNA_DataInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/FullModelPoseBuilder.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/rna/denovo/RNA_DeNovoPoseInitializer.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/EtableEnergyCreator.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/etable/BaseEtableEnergy.hh>
-#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
@@ -71,9 +52,7 @@
 
 // option key includes
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
@@ -85,6 +64,8 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <core/pose/util.hh> // AUTO IWYU For remove_virtual_res...
 
 static basic::Tracer TR( "apps.public.rna.util.rna_score" );
 
@@ -389,7 +370,6 @@ void RNA_ScoreMover::apply( core::pose::Pose & pose ) {
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
-	using namespace core::import_pose::pose_stream;
 	using namespace core::import_pose;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;
@@ -546,7 +526,6 @@ my_main( void* )
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
-	using namespace core::import_pose::pose_stream;
 	using namespace core::import_pose;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;

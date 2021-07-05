@@ -15,9 +15,6 @@
 #ifndef  INCLUDED_protocols_antibody_AntibodyEnum_hh
 #define INCLUDED_protocols_antibody_AntibodyEnum_hh
 
-#include <utility/vector1.hh>
-#include <core/types.hh>
-#include <iosfwd>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // A collection of Enumerators + TypeDefs to the Antibody Namespace.

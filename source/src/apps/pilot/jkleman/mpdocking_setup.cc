@@ -23,6 +23,8 @@
 // Package headers
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
+
 static basic::Tracer TR( "apps.pilot.jkleman.mpdocking_setup" );
 
 ////////////////////////////////////////////////////////////////////////////////

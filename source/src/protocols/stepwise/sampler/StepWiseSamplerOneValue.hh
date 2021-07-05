@@ -21,6 +21,8 @@
 // Package headers
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 typedef utility::vector1<core::Real> ValueList;
 
 namespace protocols {

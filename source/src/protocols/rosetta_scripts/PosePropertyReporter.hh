@@ -18,9 +18,6 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/filters/Filter.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>

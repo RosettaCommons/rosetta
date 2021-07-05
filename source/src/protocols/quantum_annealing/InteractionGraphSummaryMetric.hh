@@ -18,7 +18,6 @@
 #include <core/simple_metrics/StringMetric.hh>
 
 // Core headers
-#include <core/types.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 

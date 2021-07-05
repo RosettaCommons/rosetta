@@ -16,38 +16,30 @@
 #include <core/energy_methods/RamaPreProEnergy.hh>
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <test/util/pdb1ubq.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/core/scoring/RamaPrePro_util.h>
+#include <test/core/scoring/RamaPrePro_util.hh>
 
 // Project Headers
-#include <core/scoring/RamaPrePro.hh>
 
 // Core Headers
 #include <core/id/PartialAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Protocol Headers
-#include <protocols/cyclic_peptide/FlipChiralityMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
 #include <sstream>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("RamaPreProTests");
 

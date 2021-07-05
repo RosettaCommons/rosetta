@@ -34,27 +34,17 @@
 // Package Headers
 #include <core/conformation/Conformation.hh>
 
-#include <core/kinematics/Stub.hh>
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/id/AtomID.hh>
 
-#include <core/conformation/util.hh>
 #include <core/types.hh>
 
-#include <numeric/MathMatrix.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
-#include <numeric/random/random.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>
-#include <cstdlib>
-#include <cmath>
 
 static basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
 

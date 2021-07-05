@@ -15,17 +15,14 @@
 /// @author TJ Brunette
 
 #include <devel/init.hh>
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/types.hh>
 #include <protocols/ss_prediction/SS_predictor.hh>
-#include <ctime>
 #include <iostream>
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>

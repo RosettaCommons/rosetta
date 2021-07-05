@@ -27,7 +27,6 @@
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 

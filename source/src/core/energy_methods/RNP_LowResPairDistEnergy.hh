@@ -21,13 +21,10 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-#include <core/pose/rna/RNA_RawBaseBaseInfo.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/kinematics/Stub.fwd.hh>
 #include <utility/vector1.hh>
 
 

@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <string>
-#include <map>
 
 namespace protocols {
 namespace ligand_docking {

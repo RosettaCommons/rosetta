@@ -46,10 +46,9 @@ To get the most out of this class, call:
 #include <protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh>
 
 // Package headers
-#include <protocols/jd3/Job.hh>
-#include <protocols/jd3/JobResult.hh>
-#include <protocols/jd3/JobSummary.hh>
 #include <protocols/jd3/strong_types.hh>
+
+#include <list> // AUTO IWYU For list
 
 #ifdef    SERIALIZATION
 // Cereal headers

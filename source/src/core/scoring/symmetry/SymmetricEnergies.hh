@@ -29,7 +29,6 @@
 
 // Numeric headers
 
-#include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 #ifdef    SERIALIZATION

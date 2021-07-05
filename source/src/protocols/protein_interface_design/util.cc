@@ -30,10 +30,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/filters/Filter.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
@@ -47,7 +44,6 @@ namespace protocols {
 namespace protein_interface_design {
 
 using namespace core::scoring;
-using namespace protocols::moves;
 using namespace core;
 using namespace std;
 using utility::vector1;

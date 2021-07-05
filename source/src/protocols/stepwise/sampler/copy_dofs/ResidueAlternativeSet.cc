@@ -14,9 +14,8 @@
 
 
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeSet.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <basic/Tracer.hh>
-#include <utility>
 
 static basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeSet" );
 

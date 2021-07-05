@@ -21,7 +21,6 @@
 #include <utility/excn/Exceptions.fwd.hh>
 
 // Package Headers
-#include <utility>
 #include <string>
 #include <iosfwd>
 #include <exception>

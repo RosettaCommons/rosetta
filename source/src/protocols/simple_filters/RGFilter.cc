@@ -23,7 +23,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/energy_methods/RG_Energy_Fast.hh>
 
 // ObjexxFCL Headers
@@ -31,7 +30,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
 
 
 //// C++ headers

@@ -19,6 +19,7 @@
 #include <sstream>
 #include <string>
 
+#include <iostream>
 
 class TagTests : public CxxTest::TestSuite {
 

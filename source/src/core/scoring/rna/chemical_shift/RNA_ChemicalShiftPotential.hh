@@ -20,7 +20,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
@@ -32,6 +31,9 @@
 
 // Utility headers
 #include <map>
+
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
+#include <core/kinematics/DomainMap.fwd.hh> // AUTO IWYU For DomainMap
 
 namespace core {
 namespace scoring {

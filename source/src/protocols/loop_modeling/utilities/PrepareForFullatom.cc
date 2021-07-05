@@ -14,28 +14,17 @@
 #include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
 
 // Protocol headers
-#include <protocols/moves/Mover.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/util.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 // Core headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/optimization/AtomTreeMinimizer.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // Utility headers
@@ -43,12 +32,9 @@
 
 // RosettaScripts headers
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 // Namespaces {{{1
 using namespace std;

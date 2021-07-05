@@ -20,8 +20,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <utility/mpi_util.hh>
-#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace recon_design {

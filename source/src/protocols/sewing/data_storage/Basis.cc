@@ -17,7 +17,6 @@
 #include <tuple>
 
 //External headers
-#include <boost/unordered_map.hpp>
 
 
 static basic::Tracer TR( "protocols.sewing.data_storage.Basis" );

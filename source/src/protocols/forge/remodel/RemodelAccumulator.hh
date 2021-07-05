@@ -15,13 +15,14 @@
 #ifndef INCLUDED_protocols_forge_remodel_RemodelAccumulator_hh
 #define INCLUDED_protocols_forge_remodel_RemodelAccumulator_hh
 
-#include <protocols/cluster/cluster.hh>
+#include <protocols/cluster/cluster.fwd.hh>
 //#include <protocols/forge/remodel/RemodelData.hh>
 #include <protocols/forge/remodel/RemodelWorkingSet.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <utility/vector1.hh>
+
+#include <protocols/moves/Mover.hh> // AUTO IWYU For Mover
 
 
 namespace protocols {

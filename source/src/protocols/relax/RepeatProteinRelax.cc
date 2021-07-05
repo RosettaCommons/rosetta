@@ -17,7 +17,6 @@
 
 
 // Project Headers
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -25,7 +24,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/chains_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -40,20 +38,17 @@
 #include <protocols/minimization_packing/MinMover.hh>
 // headers likely needed for movers
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <string>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 namespace protocols {

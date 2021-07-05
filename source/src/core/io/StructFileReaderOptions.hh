@@ -20,7 +20,6 @@
 #include <core/io/StructFileRepOptions.hh>
 
 // Basic headers
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>

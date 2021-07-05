@@ -18,7 +18,6 @@
 #include <protocols/jd3/pose_outputters/ScoreFileOutputter.hh>
 
 // Project headers
-#include <core/io/StructFileRepOptions.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -26,17 +26,15 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/Stub.hh>
+#include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 namespace protocols {
 namespace nonlocal {
 

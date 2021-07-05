@@ -15,7 +15,6 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/CompositeSequence.hh>
 
-#include <utility/pointer/owning_ptr.hh>
 
 
 #include <string>

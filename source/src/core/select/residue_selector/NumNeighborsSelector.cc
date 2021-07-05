@@ -19,13 +19,12 @@
 #include <core/select/residue_selector/util.hh>
 
 // Project headers
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/pose/Pose.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -33,7 +32,10 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+
+#include <core/conformation/PointGraphData.hh> // MANUAL IWYU
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -14,32 +14,23 @@
 
 //Unit Headers
 #include <protocols/simple_moves/WriteFiltersToPose.hh>
-#include <protocols/simple_filters/ReportFilterCreator.hh>
-#include <basic/datacache/DataMapObj.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/simple_moves/WriteFiltersToPoseCreator.hh>
 //Project Headers
-#include <basic/Tracer.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
 #include <protocols/moves/mover_schemas.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/filters/filter_schemas.hh>
 #include <map>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
+
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
+
 namespace protocols {
 namespace simple_moves {
 
 using namespace core;
-using namespace core::scoring;
 
 //using namespace ObjexxFCL::format;
 

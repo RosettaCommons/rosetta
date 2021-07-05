@@ -24,10 +24,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/rna/BasePair.hh>
+#include <core/pose/rna/BasePair.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <tuple>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace core {
 namespace import_pose {

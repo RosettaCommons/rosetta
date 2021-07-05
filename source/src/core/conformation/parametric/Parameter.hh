@@ -24,17 +24,15 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Numeric headers
 
 // C++ headers
-
+#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers

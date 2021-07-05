@@ -23,18 +23,13 @@ static basic::Tracer TR( "protocols.pose_creation.MergePDBatOverlapMover" );
 #include <utility/tag/Tag.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/TaskFactory.hh>
 
 #include <core/types.hh>
 
@@ -47,27 +42,18 @@ static basic::Tracer TR( "protocols.pose_creation.MergePDBatOverlapMover" );
 #include <core/pose/Pose.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/selection.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <core/select/util.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/SequenceMapping.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/rms_util.hh>
-#include <numeric/xyzVector.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/superimpose.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 

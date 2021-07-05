@@ -22,10 +22,11 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
 
 #include <core/id/AtomID.hh>
-#include <utility/vector1.hh>
+
+#include <core/conformation/Conformation.fwd.hh> // AUTO IWYU For Conformation
+
 
 
 #ifdef    SERIALIZATION

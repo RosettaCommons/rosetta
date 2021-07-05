@@ -14,9 +14,6 @@
 #include <protocols/abinitio/abscript/FragmentJumpCM.hh>
 
 // Package headers
-#include <core/environment/DofPassport.hh>
-#include <core/environment/LocalPosition.hh>
-#include <core/environment/LocalPosition.hh>
 
 #include <protocols/environment/claims/JumpClaim.hh>
 #include <protocols/environment/claims/TorsionClaim.hh>
@@ -25,7 +22,6 @@
 #include <protocols/abinitio/abscript/FragmentJumpCMCreator.hh>
 
 // Project headers
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/WriteableCacheableMap.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -34,17 +30,14 @@
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameList.hh>
-#include <core/fragment/Frame.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/abinitio/PairingStatistics.hh>
 #include <protocols/abinitio/TemplateJumpSetup.hh>
-#include <protocols/abinitio/Templates.hh>
 
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/JumpSample.hh>
@@ -59,7 +52,6 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
-#include <basic/datacache/DataMap.hh>
 
 // tracer
 #include <basic/Tracer.hh>

@@ -28,7 +28,8 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
+
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
 
 static basic::Tracer TR("LoopAnalyzerMoverTests");
 

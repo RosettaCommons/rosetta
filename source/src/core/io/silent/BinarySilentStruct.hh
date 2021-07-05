@@ -27,11 +27,10 @@
 #include <iosfwd>
 #include <string>
 
-#include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <utility/vector1.hh>
 
-#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.hh> // DO NOT AUTO-REMOVE
 
 
 namespace core {

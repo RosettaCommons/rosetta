@@ -22,17 +22,12 @@
 #include <core/conformation/Conformation.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/ref_pose.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <numeric/model_quality/rms.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -40,14 +35,10 @@
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/NamedAtomID.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <algorithm>
-#include <list>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -58,6 +49,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 namespace protocols {
 namespace protein_interface_design {
 namespace filters {

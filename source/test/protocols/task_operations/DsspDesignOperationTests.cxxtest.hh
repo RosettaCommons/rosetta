@@ -23,7 +23,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/annotated_sequence.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

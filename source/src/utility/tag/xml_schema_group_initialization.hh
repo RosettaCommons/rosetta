@@ -20,9 +20,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/backtrace.hh> // for debug_assert
 #include <utility/excn/Exceptions.hh>
 
 // Boost headers

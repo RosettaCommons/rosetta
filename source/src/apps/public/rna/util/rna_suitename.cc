@@ -15,7 +15,6 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -23,11 +22,8 @@
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <devel/init.hh>
-#include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <protocols/rna/denovo/util.hh>
 
@@ -36,10 +32,7 @@
 #include <string>
 
 // option key includes
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
 

@@ -18,18 +18,14 @@
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/chemical/rna/util.hh>
-#include <core/chemical/rna/RNA_Info.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <utility>

@@ -16,11 +16,12 @@
 #ifndef INCLUDED_protocols_magnesium_SampleGrid_HH
 #define INCLUDED_protocols_magnesium_SampleGrid_HH
 
-#include <protocols/moves/Mover.hh>
 #include <utility/VirtualBase.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/FArray3D.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace magnesium {

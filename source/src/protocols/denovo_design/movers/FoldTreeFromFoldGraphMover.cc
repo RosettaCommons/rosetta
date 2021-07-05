@@ -20,7 +20,6 @@
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-#include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -34,8 +33,6 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility>
-#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "protocols.denovo_design.movers.FoldTreeFromFoldGraphMover" );
 

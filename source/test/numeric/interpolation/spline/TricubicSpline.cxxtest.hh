@@ -18,12 +18,9 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <numeric/constants.hh>
 #include <numeric/MathTensor.hh>
 #include <numeric/interpolation/spline/TricubicSpline.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
 #include <numeric/interpolation/spline/CubicSpline.fwd.hh>
-#include <numeric/MathVector_operations.hh>
 
 
 // --------------- Test Class --------------- //

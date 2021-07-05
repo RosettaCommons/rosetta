@@ -22,16 +22,13 @@
 #include <core/simple_metrics/SimpleMetricData.hh>
 
 // utility
-#include <utility/string_util.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
 
 ///Basic headers
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
 #include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringIntegerMap.hh>
 #include <basic/datacache/CacheableStringMap.hh>
 
 

@@ -19,10 +19,8 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/membrane/TranslationRotationMover.hh>
-#include <protocols/membrane/util.hh>
+#include <protocols/membrane/TranslationRotationMover.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>

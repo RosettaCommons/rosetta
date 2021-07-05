@@ -16,17 +16,14 @@
 #include <core/pose/Pose.hh>
 
 // Protocol headers
-#include <protocols/loops/Loop.hh>
 
 // Utility headers
-#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/kinematic_closure/vector.hh>
 
 // C++ headers
-#include <algorithm>
 
+#include <cmath> // MANUAL IWYU
 
 namespace protocols {
 namespace kinematic_closure {

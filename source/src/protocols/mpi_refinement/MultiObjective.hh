@@ -15,20 +15,18 @@
 #define INCLUDED_protocols_mpi_refinement_MultiObjective_hh
 
 #include <protocols/mpi_refinement/MultiObjective.fwd.hh>
-#include <protocols/wum/SilentStructStore.hh>
-#include <protocols/wum/MPI_WorkUnitManager.hh>
+#include <protocols/wum/SilentStructStore.fwd.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <string>
-#include <vector>
 
 #include <utility/VirtualBase.hh>
 
-#include <core/kinematics/Jump.hh>
+
+#include <core/io/silent/SilentStruct.hh> // AUTO IWYU For SilentStruct
 
 namespace protocols {
 namespace mpi_refinement {

@@ -16,19 +16,12 @@
 #include <protocols/task_operations/ImportUnboundRotamersOperation.hh>
 #include <protocols/task_operations/ImportUnboundRotamersOperationCreator.hh>
 
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <utility/tag/Tag.hh>
 
 
-#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 #ifdef WIN32

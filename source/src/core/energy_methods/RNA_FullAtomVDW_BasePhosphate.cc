@@ -14,13 +14,11 @@
 // Unit Headers
 #include <core/energy_methods/RNA_FullAtomVDW_BasePhosphate.hh>
 #include <core/energy_methods/RNA_FullAtomVDW_BasePhosphateCreator.hh>
-#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/etable/BaseEtableEnergy.hh>
 
 // Package Headers
 #include <core/chemical/rna/util.hh>
-#include <core/chemical/rna/RNA_Info.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/types.hh>
 
@@ -28,21 +26,17 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <numeric/conversions.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/NeighborList.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-#include <ObjexxFCL/format.hh>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
+
 // C++
 
 static basic::Tracer TR( "core.energy_methods.RNA_FullAtomVDW_BasePhosphate" );

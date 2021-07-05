@@ -17,17 +17,15 @@
 #include <protocols/wum/WorkUnitBase.fwd.hh>
 
 //#include <protocols/wum/WorkUnitList.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 //#include <protocols/loops/BackboneDB.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <utility/VirtualBase.hh>
 
 #include <string>
 #include <vector>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

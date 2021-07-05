@@ -24,7 +24,6 @@
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/file/FileName.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 
 #include <iostream>

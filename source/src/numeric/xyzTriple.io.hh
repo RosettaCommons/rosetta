@@ -18,7 +18,7 @@
 
 
 // Package headers
-#include <numeric/xyzTriple.hh>
+#include <numeric/xyzTriple.fwd.hh>
 #include <numeric/IOTraits.hh>
 
 // C++ headers

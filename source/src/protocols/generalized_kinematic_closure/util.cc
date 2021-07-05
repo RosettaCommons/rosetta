@@ -12,34 +12,22 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Unit Headers
-#include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
-#include <protocols/generalized_kinematic_closure/GeneralizedKICCreator.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/tag/Tag.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/pose/carbohydrates/util.hh>
 
-#include <core/pose/util.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/kinematic_closure/bridgeObjects.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
+#include <numeric/xyzVector.fwd.hh>
 #include <numeric/conversions.hh>
 
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 
 

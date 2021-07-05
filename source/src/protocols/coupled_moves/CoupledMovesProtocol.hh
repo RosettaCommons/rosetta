@@ -17,27 +17,23 @@
 #define INCLUDED_protocols_coupled_moves_CoupledMovesProtocol_hh
 
 #include <protocols/coupled_moves/CoupledMovesProtocol.fwd.hh>
-#include <protocols/simple_moves/CoupledMover.hh>
+#include <protocols/simple_moves/CoupledMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/minimization_packing/BoltzmannRotamerMover.fwd.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/MinPackMover.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <ctime>
 #include <string>
-#include <iosfwd>
 
 //fragment
-#include <core/fragment/FragSet.hh>
-#include <protocols/loops/loops_main.hh>
 
 //KIC
-#include <protocols/kinematic_closure/perturbers/FragmentPerturber.hh>
-#include <protocols/kinematic_closure/perturbers/WalkingPerturber.hh>
+
+#include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh> // AUTO IWYU For PerturberOP
+#include <core/pack/task/PackerTask.fwd.hh> // AUTO IWYU For PackerTaskOP, PackerTaskCOP
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace coupled_moves {

@@ -13,14 +13,12 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/core/select/residue_selector/DummySelectors.hh>
 
 // Package headers
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
@@ -36,6 +34,10 @@
 
 // C++ headers
 #include <string>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, cerr, ost...
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 using namespace core::pack::task;
 using namespace core::pack::task::operation;

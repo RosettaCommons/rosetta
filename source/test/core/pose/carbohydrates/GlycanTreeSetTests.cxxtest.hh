@@ -13,21 +13,18 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 // Project Headers
-#include <core/conformation/carbohydrates/GlycanTreeSetObserver.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/GlycanTree.hh>
 #include <core/conformation/carbohydrates/GlycanNode.hh>
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/carbohydrates/util.hh>
@@ -36,17 +33,17 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/carbohydrates/util.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init_with_additional_options
 
 static basic::Tracer TR("GlycanTreeSetTests");
 
 //using namespace core::pose::carbohydrates;
 using namespace core::conformation::carbohydrates;
 using namespace core::import_pose;
-using namespace core::io::pdb;
 using namespace core::conformation;
 using namespace core::chemical;
 

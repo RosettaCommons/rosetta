@@ -15,12 +15,9 @@
 // Unit Headers
 #include <protocols/topology_broker/ClaimerMessage.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
-#include <protocols/topology_broker/claims/DofClaim.hh>
 
 #include <iostream>
 
-#include <utility>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

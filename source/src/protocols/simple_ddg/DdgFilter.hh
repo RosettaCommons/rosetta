@@ -21,10 +21,9 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/select/jump_selector/JumpSelector.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/select/jump_selector/JumpSelector.fwd.hh>
 
 namespace protocols {
 namespace simple_ddg {

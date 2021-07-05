@@ -17,7 +17,6 @@
 // Unit headers
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 
 // Basic headers

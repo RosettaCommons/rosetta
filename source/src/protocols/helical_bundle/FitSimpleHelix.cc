@@ -20,11 +20,9 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -33,7 +31,6 @@
 #include <core/pose/init_id_map.hh>
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

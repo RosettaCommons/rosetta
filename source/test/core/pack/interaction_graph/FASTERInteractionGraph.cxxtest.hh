@@ -19,16 +19,14 @@
 #include <core/pack/interaction_graph/FASTERInteractionGraph.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -41,6 +39,8 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 #define TEST_DELTA 1e-5
 

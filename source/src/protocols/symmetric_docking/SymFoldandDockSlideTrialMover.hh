@@ -21,7 +21,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 

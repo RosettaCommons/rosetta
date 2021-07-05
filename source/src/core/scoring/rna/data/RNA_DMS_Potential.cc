@@ -29,7 +29,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
 
 #include <numeric/conversions.hh>
@@ -45,6 +44,8 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
+
+#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh> // AUTO IWYU For PolycubicSpline::train
 
 static basic::Tracer TR( "core.scoring.rna.data.RNA_DMS_Potential" );
 

@@ -17,78 +17,30 @@
 
 
 // Unit headers
-#include <core/io/pdb/Field.hh>
-#include <core/io/HeaderInformation.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 
 // Package headers
 
-#include <core/io/StructFileRepOptions.hh>
 #include <core/io/StructFileRep.hh>
 //#include <core/io/pdb/file_data_fixup.hh>
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 #include <core/io/StructFileReaderOptions.hh>
-#include <core/io/NomenclatureManager.hh>
-#include <core/io/util.hh>
-#include <core/io/NomenclatureManager.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/NamedAtomID_Map.hh>
-#include <core/io/raw_data/DisulfideFile.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
-#include <core/chemical/types.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/parametric/Parameters.hh>
-#include <core/conformation/parametric/ParametersSet.hh>
-#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/pose/PDBInfo.hh>
 
-#include <core/pose/util.hh>
-#include <core/pose/ncbb/util.hh>
-#include <core/pose/init_id_map.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/cryst/util.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/string_util.hh>
-#include <utility/tools/make_vector1.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
@@ -97,10 +49,8 @@
 
 // C++ headers
 #include <fstream>
-#include <sstream>
-#include <cstdlib>
-#include <cstdio>
-#include <utility>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 
 namespace core {

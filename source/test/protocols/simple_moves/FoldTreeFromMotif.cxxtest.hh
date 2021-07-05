@@ -14,27 +14,24 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <protocols/rosetta_scripts/XmlObjects.hh>
 #include <protocols/simple_moves/FoldTreeFromMotif.hh>
 
 
-#include <core/types.hh>
 
 
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace core;
 

@@ -15,13 +15,11 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
 
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
-#include <core/types.hh>
 #include <core/scoring/constraints/Constraints.hh>
 
 #include <basic/Tracer.hh>
@@ -59,7 +57,7 @@ public:
 		HarmonicFuncOP hfunc( new HarmonicFunc( 5, 0.25 ));
 		AtomPairConstraintOP apc( new AtomPairConstraint(
 			core::id::AtomID( 1, 1 ),
-			core::id::AtomID( 2, 2 )
+			core::id::AtomID( 2, 2 ),
 			hfunc ));
 		Constraints csts1;
 		csts1.add_constraint( apc );
@@ -78,7 +76,7 @@ public:
 		HarmonicFuncOP hfunc( new HarmonicFunc( 5, 0.25 ));
 		AtomPairConstraintOP apc( new AtomPairConstraint(
 			core::id::AtomID( 1, 1 ),
-			core::id::AtomID( 2, 2 )
+			core::id::AtomID( 2, 2 ),
 			hfunc ));
 		Constraints csts1;
 		csts1.add_constraint( apc );
@@ -98,7 +96,7 @@ public:
 		HarmonicFuncOP hfunc( new HarmonicFunc( 5, 0.25 ));
 		AtomPairConstraintOP apc( new AtomPairConstraint(
 			core::id::AtomID( 1, 1 ),
-			core::id::AtomID( 2, 2 )
+			core::id::AtomID( 2, 2 ),
 			hfunc ));
 		Constraints csts1;
 		csts1.add_constraint( apc );
@@ -117,7 +115,7 @@ public:
 		HarmonicFuncOP hfunc( new HarmonicFunc( 5, 0.25 ));
 		AtomPairConstraintOP apc( new AtomPairConstraint(
 			core::id::AtomID( 1, 1 ),
-			core::id::AtomID( 2, 2 )
+			core::id::AtomID( 2, 2 ),
 			hfunc ));
 		Constraints csts1;
 		csts1.add_constraint( apc );
@@ -136,11 +134,11 @@ public:
 		HarmonicFuncOP hfunc( new HarmonicFunc( 5, 0.25 ));
 		AtomPairConstraintOP apc1( new AtomPairConstraint(
 			core::id::AtomID( 1, 1 ),
-			core::id::AtomID( 2, 2 )
+			core::id::AtomID( 2, 2 ),
 			hfunc ));
 		AtomPairConstraintOP apc2( new AtomPairConstraint(
 			core::id::AtomID( 1, 1 ),
-			core::id::AtomID( 2, 2 )
+			core::id::AtomID( 2, 2 ),
 			hfunc ));
 		Constraints csts1;
 		csts1.add_constraint( apc1 );
@@ -151,8 +149,8 @@ public:
 
 		csts2 = csts1; // assignment operator
 
-		TS_ASSERT_EQUALS( csts2->size(), 1 ); // the old constraint should be gone
-		TS_ASSERT_EQUALS( csts1.constraints()[ 1 ], csts2->constraints()[ 1 ] );
+		TS_ASSERT_EQUALS( csts2.size(), 1 ); // the old constraint should be gone
+		TS_ASSERT_EQUALS( csts1.constraints()[ 1 ], csts2.constraints()[ 1 ] );
 	}
 
 };

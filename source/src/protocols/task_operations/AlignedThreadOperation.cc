@@ -17,20 +17,17 @@
 
 #include <protocols/task_operations/ThreadSequenceOperation.hh>
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/io/izstream.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 
-#include <utility/vector0.hh>
 
 
 static basic::Tracer TR( "protocols.TaskOperations.AlignedThreadOperation" );

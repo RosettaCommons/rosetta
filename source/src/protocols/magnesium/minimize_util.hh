@@ -17,10 +17,10 @@
 #define INCLUDED_protocols_magnesium_minimize_util_HH
 
 #include <core/types.hh>
-#include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+
+#include <core/id/AtomID.hh> // AUTO IWYU For AtomID
 
 namespace protocols {
 namespace magnesium {

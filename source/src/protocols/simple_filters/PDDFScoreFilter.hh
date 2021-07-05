@@ -17,10 +17,9 @@
 
 #include <protocols/filters/Filter.hh>
 #include <protocols/simple_filters/PDDFScoreFilter.fwd.hh>
-#include <protocols/scoring/methods/saxs/PDDFEnergy.hh>
+#include <protocols/scoring/methods/saxs/PDDFEnergy.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -20,12 +20,9 @@
 
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/H3PerturbCCD.fwd.hh>

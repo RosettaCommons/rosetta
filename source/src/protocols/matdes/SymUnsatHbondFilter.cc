@@ -34,7 +34,6 @@
 #include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-#include <ObjexxFCL/format.hh>
 //#include <core/pose/symmetry/util.hh>
 #include <protocols/jd2/util.hh>
 
@@ -45,18 +44,13 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <basic/MetricValue.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/conformation/symmetry/SymDof.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/AtomID_Map.hh>
-#include <basic/MetricValue.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -64,6 +58,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 // C++ Headers
 

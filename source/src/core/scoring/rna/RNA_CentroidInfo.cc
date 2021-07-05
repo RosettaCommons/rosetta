@@ -17,7 +17,6 @@
 // Package headers
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 

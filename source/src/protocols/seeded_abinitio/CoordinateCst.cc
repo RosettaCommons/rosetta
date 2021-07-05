@@ -19,18 +19,13 @@
 #include <protocols/seeded_abinitio/CoordinateCst.hh>
 #include <protocols/seeded_abinitio/CoordinateCstCreator.hh>
 
-#include <core/scoring/func/Func.hh>
-#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
-#include <numeric/xyzVector.hh>
 
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/types.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -44,13 +39,11 @@
 #include <core/pose/Pose.hh>
 
 //pose
-#include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector0.hh>
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

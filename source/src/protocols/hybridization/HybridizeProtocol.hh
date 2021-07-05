@@ -15,24 +15,19 @@
 #define INCLUDED_protocols_hybridization_HybridizeProtocol_hh
 
 #include <protocols/hybridization/HybridizeProtocol.fwd.hh>
-#include <protocols/hybridization/FoldTreeHybridize.hh>
 
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/loops/Loops.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
-#include <core/sequence/SequenceAlignment.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <utility/file/FileName.hh>
-#include <utility/pointer/owning_ptr.hh>
 
-#include <basic/citation_manager/CitationCollection.fwd.hh>
+
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionOP
 
 namespace protocols {
 namespace hybridization {

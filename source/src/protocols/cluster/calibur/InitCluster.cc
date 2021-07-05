@@ -10,20 +10,16 @@
 /// @file apps/pilot/kalngyk/InitCluster.cc
 /// @author SC Li & YK Ng (kalngyk@gmail.com)
 
-#include <vector>
-#include <cstdlib>
-#include <cstring>
-#include <fstream>
-#include <iostream>
-#include <iomanip>
-#include <cmath>
-#include <cassert>
 #ifndef PYROSETTA
-#include <ctime>
 #endif
 
-#include <protocols/cluster/calibur/rmsd.hh>
 #include <protocols/cluster/calibur/InitCluster.hh>
+
+#if !defined(__WIN32__) && !defined(WIN32)
+#ifndef PYROSETTA
+#include <sys/resource.h> // AUTO IWYU For rusage, getrusage, RUSAGE_SELF
+#endif
+#endif
 
 namespace protocols {
 namespace cluster {

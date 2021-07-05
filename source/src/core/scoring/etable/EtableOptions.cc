@@ -19,7 +19,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/OptionCollection.hh>

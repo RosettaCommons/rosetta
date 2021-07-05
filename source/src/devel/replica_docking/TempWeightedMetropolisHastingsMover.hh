@@ -16,18 +16,13 @@
 #define INCLUDED_devel_replica_docking_TempWeightedMetropolisHastingsMover_hh
 
 // Unit Headers
-#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
 
 // zhe
 #include <devel/replica_docking/TempInterpolator.fwd.hh>
 
 // Project Headers
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 
 // Utility Headers
@@ -35,7 +30,6 @@
 #include <utility/vector1.hh>
 
 #include <protocols/canonical_sampling/ThermodynamicMover.fwd.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.fwd.hh>
 
 #ifdef WIN32
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>

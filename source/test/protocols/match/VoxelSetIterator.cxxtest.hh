@@ -17,20 +17,15 @@
 
 // Utility headers
 #include <utility/fixedsizearray1.hh>
-#include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
 #include <protocols/match/VoxelSetIterator.hh>
 
 // C++ headers
-#include <string>
-#include <iostream>
 
 
 //Auto Headers
-#include <utility/vector1.hh>
-#include <boost/unordered/unordered_map_fwd.hpp>
 
 
 // --------------- Test Class --------------- //

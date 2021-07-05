@@ -17,7 +17,6 @@
 
 // Package Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>

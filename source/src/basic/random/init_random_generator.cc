@@ -24,7 +24,6 @@
 // STL headers
 #include <ctime>
 #include <fstream>
-#include <sstream>
 #include <string>
 
 // Basic headers

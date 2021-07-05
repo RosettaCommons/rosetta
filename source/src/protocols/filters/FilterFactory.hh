@@ -20,13 +20,11 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 // Project headers
 
 // Utility Headers
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/SingletonBase.hh>
@@ -34,7 +32,6 @@
 // c++ headers
 #include <map>
 
-#include <utility/vector1.hh>
 
 #ifdef MULTI_THREADED
 #include <atomic>

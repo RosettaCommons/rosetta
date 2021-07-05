@@ -30,9 +30,7 @@
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
 //Utility Includes
@@ -54,6 +52,8 @@
 #include <map>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <protocols/jd2/JobInputter.hh> // AUTO IWYU For JobInputter
 
 static basic::Tracer TR( "apps.public.ligand_dock.select_best_unique_ligand_poses" );
 

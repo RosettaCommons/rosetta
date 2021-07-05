@@ -27,7 +27,6 @@
 #include <core/scoring/TenANeighborGraph.hh>
 
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>

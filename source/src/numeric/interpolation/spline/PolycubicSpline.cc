@@ -16,15 +16,11 @@
 /////////////////////////////////////////////////////////////////////////
 
 // Unit headers
-#include <numeric/interpolation/spline/TricubicSpline.hh>
 #include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
 
 // Package headers
 #include <numeric/types.hh>
-#include <numeric/interpolation/spline/CubicSpline.hh>
-#include <numeric/interpolation/spline/BicubicSpline.hh>
-#include <numeric/MathVector.hh>
-#include <numeric/MathMatrix.hh>
+#include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 #include <numeric/MathNTensor.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>

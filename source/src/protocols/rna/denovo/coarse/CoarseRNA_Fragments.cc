@@ -14,25 +14,22 @@
 
 
 #include <protocols/rna/denovo/coarse/CoarseRNA_Fragments.hh>
-#include <core/fragment/rna/RNA_FragmentHomologyExclusion.hh>
+#include <core/fragment/rna/RNA_FragmentHomologyExclusion.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/toolbox/AtomID_Mapper.hh>
 #include <protocols/rna/denovo/util.hh>
 #include <core/pose/rna/secstruct_legacy/RNA_SecStructLegacyInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/copydofs/util.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -45,13 +42,13 @@
 
 //C++ headers
 #include <utility>
-#include <vector>
 #include <string>
-#include <sstream>
 
 //Auto Headers
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 
 using namespace core;

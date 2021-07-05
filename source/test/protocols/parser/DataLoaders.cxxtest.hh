@@ -19,7 +19,6 @@
 // Package headers
 #include <protocols/parser/DataLoaderFactory.hh>
 #include <protocols/parser/ScoreFunctionLoader.hh>
-#include <protocols/parser/FragSetLoader.hh>
 #include <protocols/parser/TaskOperationLoader.hh>
 #include <protocols/parser/MoveMapFactoryLoader.hh>
 #include <protocols/parser/JumpSelectorLoader.hh>
@@ -40,7 +39,6 @@
 
 // C++ headers
 #include <string>
-#include <iostream>
 
 static basic::Tracer TR("protocols.jd2.parser.DataLoaders.cxxtest");
 ////////////////////////////////////////////////////////////////////////

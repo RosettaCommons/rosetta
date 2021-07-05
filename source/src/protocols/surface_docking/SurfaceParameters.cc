@@ -16,13 +16,13 @@
 #include <protocols/surface_docking/SurfaceParameters.hh>
 
 // Numeric Headers
-#include <numeric/xyz.io.hh>
 #include <numeric/xyzVector.hh>
 
 // Utility Headers
-#include <utility/exit.hh>
 // Basic Headers
 #include <basic/Tracer.hh>
+
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.surfaceDocking.SurfaceParameters" );
 

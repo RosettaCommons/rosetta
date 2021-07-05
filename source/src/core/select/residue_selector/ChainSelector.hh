@@ -29,7 +29,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <list>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -29,7 +29,6 @@
 
 // Utility headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>

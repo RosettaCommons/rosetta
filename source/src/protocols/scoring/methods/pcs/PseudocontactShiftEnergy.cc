@@ -53,7 +53,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -62,7 +61,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <sstream>
 #include <fstream>
 #include <iostream>
 #include <iomanip>

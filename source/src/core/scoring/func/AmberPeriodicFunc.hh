@@ -19,7 +19,6 @@
 
 #include <core/scoring/func/Func.hh>
 
-#include <utility/VirtualBase.hh>
 //#include <numeric/angle.functions.hh>
 
 

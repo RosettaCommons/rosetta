@@ -17,7 +17,6 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/func/Func.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>

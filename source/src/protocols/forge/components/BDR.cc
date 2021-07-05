@@ -25,10 +25,8 @@
 
 // project headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
@@ -54,7 +52,6 @@
 //Auto Headers
 #include <core/pose/annotated_sequence.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {

@@ -22,15 +22,13 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

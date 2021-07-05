@@ -16,9 +16,9 @@
 #include <protocols/flxbb/FlxbbDesign.hh>
 
 // Project headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/constraints/util.hh>
@@ -27,8 +27,6 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 using namespace basic::options;

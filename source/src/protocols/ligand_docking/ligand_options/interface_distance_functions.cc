@@ -17,7 +17,6 @@
 #include <basic/Tracer.hh>
 
 #include <core/conformation/Residue.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

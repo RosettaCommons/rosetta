@@ -18,32 +18,20 @@
 #include <protocols/task_operations/RetrieveStoredTaskOperation.hh>
 #include <protocols/task_operations/RetrieveStoredTaskOperationCreator.hh>
 
-#include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
-#include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/make_symmetric_task.hh>
-#include <core/pack/task/operation/ReplicateTask.hh>
-#include <core/pose/symmetry/util.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <protocols/task_operations/STMStoredTask.hh>
 
 // C++ Headers
-#include <utility/string_util.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/id/types.hh>
-#include <core/kinematics/Jump.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 

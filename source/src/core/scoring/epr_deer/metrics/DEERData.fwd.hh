@@ -27,6 +27,8 @@ namespace scoring {
 namespace epr_deer {
 namespace metrics {
 
+struct FittingInfo;
+
 class DEERData;
 
 typedef utility::pointer::shared_ptr< DEERData > DEERDataOP;

@@ -12,7 +12,6 @@
 
 // Unit headers
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.hh>
-#include <protocols/kinematic_closure/pivot_pickers/StandardPivots.fwd.hh>
 
 namespace protocols {
 namespace kinematic_closure {

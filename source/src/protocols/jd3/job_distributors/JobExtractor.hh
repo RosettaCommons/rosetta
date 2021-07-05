@@ -33,13 +33,11 @@
 #include <numeric/DiscreteIntervalEncodingTree.hh>
 
 // Utility headers
-#include <utility/heap.hh>
 
 // C++ headers
 #include <list>
 #include <map>
 #include <set>
-#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers

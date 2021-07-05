@@ -14,11 +14,9 @@
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 
 #include <devel/init.hh>
-#include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <string>
 
 
 // option key includes

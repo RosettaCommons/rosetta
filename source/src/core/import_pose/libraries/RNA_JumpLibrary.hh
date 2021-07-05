@@ -15,7 +15,6 @@
 #include <core/types.hh>
 #include <core/chemical/rna/util.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 // C++ Headers
 #include <string>
 #include <map>
@@ -34,6 +33,12 @@ public:
 	core::chemical::rna::BaseEdge edge1;
 	core::chemical::rna::BaseEdge edge2;
 	core::chemical::rna::BaseDoubletOrientation orientation;
+
+#ifdef IWYU_SCAN
+	BasePairType() = default; // Work around issue in IWYU
+#else
+	BasePairType() = delete;
+#endif
 
 	BasePairType( char const aa1_in, char const aa2_in,
 		core::chemical::rna::BaseEdge const edge1_in, core::chemical::rna::BaseEdge const edge2_in,

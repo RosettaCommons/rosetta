@@ -20,24 +20,20 @@
 #include <test/core/init_util.hh>
 
 // Package Headers
-#include <core/types.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/chemical/AtomType.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
 
 static basic::Tracer TR("core.conformation.membrane.MPDatabaseIO.cxxtest");
@@ -68,16 +64,13 @@ public: // test functions
 		TR << "Testing membrane protein centroid database attributes..." << std::endl;
 
 		// Residue type information
-		ResidueTypeSetCAP const & residue_set(
+		ResidueTypeSetCOP const & residue_set(
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )
 		);
 
 		// Create a membrane and embedding residue
-		ResidueTypeCOPs const & emb_list( residue_set->name3_map("EMB") );
-		ResidueTypeCOPs const & mem_list( residue_set->name3_map("MEM") );
-
-		ResidueType const & membrane( *mem_list[1] );
-		ResidueType const & embedding( *emb_list[1] );
+		ResidueType const & membrane( *residue_set->get_representative_type_name3("MEM") );
+		ResidueType const & embedding( *residue_set->get_representative_type_name3("EMB") );
 
 		ResidueOP mem( ResidueFactory::create_residue(membrane) );
 		ResidueOP emb( ResidueFactory::create_residue(embedding) );
@@ -111,16 +104,13 @@ public: // test functions
 		TR << "Testing membrane protein fullatom (fa_standard) database attributes..." << std::endl;
 
 		// Residue type information
-		ResidueTypeSetCAP const & residue_set(
+		ResidueTypeSetCOP const & residue_set(
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 		);
 
 		// Create a membrane and embedding residue
-		ResidueTypeCOPs const & emb_list( residue_set->name3_map("EMB") );
-		ResidueTypeCOPs const & mem_list( residue_set->name3_map("MEM") );
-
-		ResidueType const & membrane( *mem_list[1] );
-		ResidueType const & embedding( *emb_list[1] );
+		ResidueType const & membrane( *residue_set->get_representative_type_name3("MEM") );
+		ResidueType const & embedding( *residue_set->get_representative_type_name3("EMB") );
 
 		ResidueOP mem( ResidueFactory::create_residue(membrane) );
 		ResidueOP emb( ResidueFactory::create_residue(embedding) );

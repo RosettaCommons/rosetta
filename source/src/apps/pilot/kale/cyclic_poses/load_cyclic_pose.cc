@@ -18,16 +18,9 @@
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 
-#include <iomanip>
 
 // Namespaces {{{1
 

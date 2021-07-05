@@ -20,7 +20,6 @@
 #include <protocols/sewing/hashing/hasher_data.hh>
 #include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 namespace protocols {

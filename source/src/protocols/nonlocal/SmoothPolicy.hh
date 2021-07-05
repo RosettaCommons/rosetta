@@ -16,14 +16,12 @@
 // Project headers
 #include <core/types.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/Frame.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/simple_moves/GunnCost.hh>
 
 // Package headers
 #include <protocols/nonlocal/Policy.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

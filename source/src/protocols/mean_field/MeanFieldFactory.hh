@@ -18,7 +18,7 @@
 #include <protocols/mean_field/MeanFieldFactory.fwd.hh>
 
 // Package headers
-#include <protocols/mean_field/MeanField.hh>
+#include <protocols/mean_field/MeanField.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

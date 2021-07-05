@@ -24,7 +24,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
-#include <numeric/xyzVector.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/datacache/DataMapObj.hh>
@@ -35,8 +34,6 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/ResfileReader.hh>
-#include <core/pack/pack_rotamers.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -45,7 +42,6 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <core/chemical/ResidueType.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/moves/MoverStatus.hh>
 
@@ -68,15 +64,12 @@
 #include <numeric/random/random_permutation.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 // C++ headers
-#include <map>
 #include <algorithm>
 
-#include <core/chemical/AtomType.hh>
 #include <core/pose/variant_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -91,6 +84,10 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );

@@ -13,8 +13,6 @@
 #ifndef external_calibur_jacobi_HH
 #define external_calibur_jacobi_HH
 
-#include <cmath>
-#include <iosfwd>
 #include <core/types.hh>
 
 namespace protocols {

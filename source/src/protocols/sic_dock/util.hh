@@ -17,17 +17,11 @@
 #include <protocols/sic_dock/SICFast.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>
 #include <numeric/xyzTransform.hh>
-#include <core/kinematics/Stub.fwd.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/numeric.functions.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzTransform.hh>
-#include <numeric/xyzTriple.hh>
-#include <numeric/Quaternion.hh>
 
 
 namespace protocols {

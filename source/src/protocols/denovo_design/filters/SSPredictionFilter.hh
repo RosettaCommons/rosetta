@@ -21,10 +21,8 @@
 // Package headers
 
 // Project headers
-#include <core/conformation/Residue.fwd.hh>
 #include <core/io/external/PsiPredInterface.fwd.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/filters/FilterCreator.hh>
 #include <protocols/parser/BluePrint.fwd.hh>
 #include <protocols/ss_prediction/SS_predictor.fwd.hh>
 

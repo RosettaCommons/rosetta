@@ -23,7 +23,7 @@
 
 // Unit Headers
 #include <numeric/kinematic_closure/types.hh>
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
 // C++ Headers
 #include <iosfwd>

@@ -22,7 +22,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <map>
 
 // Utility Headers
 //#include <core/types.hh>

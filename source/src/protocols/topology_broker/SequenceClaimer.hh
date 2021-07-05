@@ -25,18 +25,17 @@
 #include <protocols/topology_broker/TopologyClaimer.hh>
 
 // Project Headers
-#include <core/sequence/Sequence.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 //#include <iosfwd>
 #include <string>
 
-#include <utility/vector1.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.fwd.hh> // AUTO IWYU For SequenceClaimOP
+
 
 
 namespace protocols {

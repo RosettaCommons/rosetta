@@ -19,8 +19,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
-#include <core/select/util/interface_vector_calculate.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/graph/Graph.hh>
@@ -31,29 +29,23 @@
 #include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 
 //Utility
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/LexicographicalIterator.hh>
 
 //Utility Headers
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/MetricValue.hh>
-#include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 
 #include <numeric/PCA.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
 
 //C++
 #include <string>
-#include <cmath>
 
 //External Headers
 #include <cppdb/frontend.h>
@@ -61,7 +53,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
-#include <protocols/features/ModelFeaturesCreator.hh>
+
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR("devel.sewing.ModelFeatures");
 

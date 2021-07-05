@@ -20,6 +20,7 @@
 
 // Package headers
 #include <protocols/mean_field/MeanField.hh>
+#include <protocols/mean_field/RotMatrix.hh>
 
 // Project headers
 
@@ -30,7 +31,11 @@
 
 
 // C++ headers
-#include <iosfwd>
+
+#ifdef PYROSETTA
+#include <protocols/mean_field/AAProb.hh>
+#include <protocols/mean_field/RotProb.hh>
+#endif
 
 namespace protocols {
 namespace mean_field {

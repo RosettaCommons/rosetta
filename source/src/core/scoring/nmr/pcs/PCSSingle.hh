@@ -24,13 +24,12 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh> // DO NOT AUTO-REMOVE -- needed for member function.
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

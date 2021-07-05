@@ -19,7 +19,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers:
-#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "protocols.cyclic_peptide_predict.HierarchicalHybridJD_ResultsSummaryBase" );
 

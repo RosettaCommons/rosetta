@@ -23,7 +23,6 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <map>
 

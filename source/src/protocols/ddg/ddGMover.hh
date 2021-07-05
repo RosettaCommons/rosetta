@@ -31,7 +31,6 @@
 #include <core/chemical/AA.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {

@@ -24,7 +24,6 @@
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -36,6 +35,8 @@
 // C++ headers
 #include <list>
 #include <iosfwd>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsCOP
 
 
 namespace protocols {

@@ -18,7 +18,6 @@
 // Package headers
 
 // Project headers
-#include <basic/interpolate.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -26,12 +25,10 @@
 #include <numeric/random/random.hh>
 
 #include <cmath>
-#include <iostream>
 
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 
-#include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 
 static basic::Tracer TR( "core.pack.dunbrack" );

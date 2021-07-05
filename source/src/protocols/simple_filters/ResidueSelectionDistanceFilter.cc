@@ -16,9 +16,8 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -27,7 +26,6 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <iostream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

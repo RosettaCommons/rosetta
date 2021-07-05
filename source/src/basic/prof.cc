@@ -21,7 +21,6 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
-#include <boost/algorithm/string.hpp>
 
 using namespace ObjexxFCL::format;
 

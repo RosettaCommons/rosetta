@@ -25,7 +25,6 @@
 #include <core/energy_methods/ExactOccludedHbondSolEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>

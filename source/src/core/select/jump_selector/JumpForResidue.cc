@@ -16,25 +16,24 @@
 #include <core/select/jump_selector/JumpForResidueCreator.hh>
 
 // Basic Headers
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Package headers
 #include <core/select/jump_selector/util.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
-#include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/types.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
-#include <utility/assert.hh>
+#include <set>
 
 namespace core {
 namespace select {

@@ -16,11 +16,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Atom.fwd.hh>
-#include <core/scoring/fiber_diffraction/util.hh>
-#include <core/scoring/fiber_diffraction/xray_scattering.hh>
 #include <core/scoring/fiber_diffraction/FiberDiffraction.fwd.hh>
 
 //C++ headers

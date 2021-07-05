@@ -21,7 +21,6 @@
 
 // Associated headers
 #include <protocols/energy_based_clustering/EnergyBasedClusteringOptions.hh>
-#include <protocols/energy_based_clustering/EnergyBasedClusteringTests.fwd.hh>
 
 // Core headers
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -33,15 +32,15 @@
 #include <protocols/cyclic_peptide/CycpepSymmetryFilter.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 
 //Numeric headers
 #include <numeric/xyzVector.fwd.hh>
 
 //STL headers
 #include <set>
+
+class EnergyBasedClusteringTests; // Forward declaration of test class for friendship
 
 namespace protocols {
 namespace energy_based_clustering {

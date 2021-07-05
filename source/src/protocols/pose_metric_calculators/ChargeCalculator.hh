@@ -22,7 +22,6 @@
 
 #include <set>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

@@ -27,7 +27,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>

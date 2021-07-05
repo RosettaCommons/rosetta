@@ -29,14 +29,11 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
-#include <vector>
 
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace abinitio {

@@ -11,55 +11,25 @@
 
 #include <iostream>
 #include <iomanip>
-#include <fstream>
-#include <ostream>
 #include <string>
 #include <sstream>
-#include <cmath>
-#include <map>
 
 // Protocol Headers
 #include <devel/init.hh>
-#include <protocols/pockets/Fingerprint.hh>
-#include <protocols/pockets/PocketGrid.hh>
 #include <protocols/pockets/PocketExemplarMultifunc.hh>
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <basic/options/option_macros.hh>
 
 // Utility Headers
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pose/PDBInfo.hh>
-#include <basic/Tracer.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <core/conformation/Conformation.hh>
 #include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
-#include <basic/options/option_macros.hh>
-#include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/conversions.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <protocols/simple_moves/SuperimposeMover.hh>
 
 
 using namespace core;

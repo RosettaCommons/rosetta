@@ -22,7 +22,7 @@
 #include <core/conformation/signals/LengthEvent.hh>
 
 // package headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/GeneralEvent.hh>
 #include <core/conformation/Conformation.hh>
 

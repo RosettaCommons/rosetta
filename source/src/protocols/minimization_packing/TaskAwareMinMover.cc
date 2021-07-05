@@ -27,7 +27,6 @@
 
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 
 // Utility Headers
@@ -37,8 +36,6 @@
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

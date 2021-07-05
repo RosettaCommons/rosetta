@@ -19,7 +19,7 @@
 
 // Project headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -36,7 +36,7 @@
 #include <list>
 #include <map>
 
-#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
 #ifdef PYROSETTA

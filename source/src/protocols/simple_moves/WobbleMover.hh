@@ -30,9 +30,7 @@
 #include <core/fragment/Frame.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

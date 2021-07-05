@@ -20,7 +20,6 @@
 #include <core/types.hh>
 #include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 #include <basic/datacache/DataMap.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/database/sql_utils.hh>
@@ -39,7 +38,6 @@
 #include <sstream>
 
 #include <utility/excn/Exceptions.hh>
-#include <utility/vector0.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

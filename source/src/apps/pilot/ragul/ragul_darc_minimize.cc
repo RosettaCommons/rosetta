@@ -11,20 +11,14 @@
 
 // Project Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/after_opts.hh>
 #include <utility/excn/Exceptions.hh>
-#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
@@ -32,9 +26,6 @@
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -50,38 +41,28 @@
 
 // C++ Headers
 #include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <ostream>
 #include <string>
-#include <sstream>
 #include <cmath>
-#include <map>
 
 //Auto Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
+
+#include <numeric/model_quality/rms.hh> // AUTO IWYU For rms_wrapper
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<...
 
 using namespace core;
 using namespace core::pose::datacache;

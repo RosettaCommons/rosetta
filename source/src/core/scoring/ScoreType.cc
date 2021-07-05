@@ -22,13 +22,11 @@
 // Utility headers
 
 // C++ headers
-#include <map>
 #ifdef WIN32
 #include <string>
 #endif
 #include <iostream>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

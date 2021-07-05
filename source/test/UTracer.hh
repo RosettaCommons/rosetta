@@ -15,19 +15,17 @@
 #ifndef INCLUDED_UTracer_HH
 #define INCLUDED_UTracer_HH
 
+#include <cxxtest/TestSuite.h> // For TS_FAIL
 #include <test/UTools.hh>
 
-#include <core/types.hh>
 #include <basic/Tracer.hh>
 //#include <utility/stream_util.hh>
 //#include <utility/vector1.hh>
 //#include <utility/exit.hh>
 
-#include <map>
 #include <sstream>
 #include <iostream>
 #include <fstream>
-#include <iomanip>
 
 namespace test {
 

@@ -17,7 +17,6 @@
 
 #include <core/types.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
-#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 

@@ -15,7 +15,6 @@
 #define INCLUDED_MasterFilter_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {

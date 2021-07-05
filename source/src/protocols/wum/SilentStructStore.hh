@@ -20,9 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <utility>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <string>
 #include <vector>

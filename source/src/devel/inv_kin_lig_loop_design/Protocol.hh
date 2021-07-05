@@ -18,13 +18,11 @@
 #include <vector>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <devel/inv_kin_lig_loop_design/Loop.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace devel {

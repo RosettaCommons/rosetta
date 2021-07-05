@@ -24,7 +24,6 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <utility/exit.hh>
 
 // C++ headers
@@ -34,7 +33,7 @@
 #include <protocols/calc_taskop_movers/DesignRepackMover.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 
 namespace protocols {

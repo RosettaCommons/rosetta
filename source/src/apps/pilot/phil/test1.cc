@@ -21,7 +21,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/OutputMovers.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -33,8 +33,6 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/viewer/visualize.hh>
 
-#include <core/init/init.hh>
-#include <devel/init.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/types.hh>
 #include <core/io/pdb/pdb_writer.hh>
@@ -56,9 +54,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -77,14 +73,12 @@
 #include <core/pack/rtmin.hh>
 #include <core/pack/min_pack.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -107,14 +101,11 @@
 #include <basic/random/init_random_generator.hh>
 
 // Utility headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
 // External headers
 #include <ObjexxFCL/format.hh>
@@ -124,6 +115,11 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+
+#include <numeric/conversions.hh> // AUTO IWYU For radians
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2...
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 ////////////////////////////////////////////////

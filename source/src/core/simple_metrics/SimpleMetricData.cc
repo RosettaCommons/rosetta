@@ -14,7 +14,6 @@
 // unit headers
 #include <core/simple_metrics/SimpleMetricData.hh>
 
-#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 
 // Core headers
@@ -23,9 +22,9 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 #include <basic/datacache/CacheableData.hh>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -36,9 +35,6 @@
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/utility.hpp>
-
-
-
 #endif // SERIALIZATION
 
 

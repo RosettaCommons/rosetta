@@ -13,12 +13,9 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-#include <test/util/pdb1rpb.hh>
 
 // Project Headers
 #include <protocols/quantum_annealing/InteractionGraphSummaryMetric.hh>
@@ -27,8 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>

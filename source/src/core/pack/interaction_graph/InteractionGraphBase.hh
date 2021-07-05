@@ -22,13 +22,12 @@
 // Package Headers
 
 #include <core/pack_basic/RotamerSetsBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 // STL Headers
 #include <iosfwd>
@@ -38,9 +37,13 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <utility/vector1_bool.hh>
 
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+
+#include <core/pack/task/PackerTask.fwd.hh> // AUTO IWYU For PackerTask
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunction
+#include <utility/graph/Graph.fwd.hh> // AUTO IWYU For GraphCOP
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace core {
 namespace pack {

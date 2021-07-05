@@ -21,6 +21,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/conformation/Atom.hh>
+
+#include <protocols/sewing/data_storage/SmartSewingResidue.hh> // AUTO IWYU For SmartSewingResidue
+
 static basic::Tracer TR( "protocols.sewing.requirements.ClashRequirement" );
 
 

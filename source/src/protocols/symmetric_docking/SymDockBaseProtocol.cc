@@ -20,7 +20,6 @@
 #include <basic/Tracer.hh>
 
 
-#include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 

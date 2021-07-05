@@ -25,7 +25,6 @@
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/import_pose/pose_stream/util.hh>
@@ -33,17 +32,13 @@
 #include <core/import_pose/PDBSilentStruct.hh>
 
 #include <core/io/pdb/pdb_writer.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
-#include <protocols/relax/MiniRelax.hh>
 
 #include <protocols/loophash/FastGapMover.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
@@ -57,17 +52,16 @@
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector0.hh>
 
 
 void restore_hack( core::pose::Pose & pose ) {
-	core::import_pose::PDBSilentStruct ss;
+	core::io::silent::SilentFileOptions sfo;
+	core::import_pose::PDBSilentStruct ss(sfo);
 
 	ss.fill_struct( pose );
-	ss.fill_pose( pose, *(core::chemical::rsd_set_from_cmd_line()) );
+	ss.fill_pose( pose, *(core::chemical::rsd_set_from_cmd_line().lock()) );
 }
 
 int
@@ -93,7 +87,7 @@ main( int argc, char* argv [] ) {
 		devel::init( argc, argv );
 
 		protocols::loophash::FastGapMover fast_gap;
-		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+		ResidueTypeSetCOP rsd_set = rsd_set_from_cmd_line().lock();
 		MetaPoseInputStream input = streams_from_cmd_line();
 		std::string sequence = core::sequence::read_fasta_file(
 			option[ in::file::fasta ]()[1]

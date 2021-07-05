@@ -27,6 +27,8 @@
 #include <utility/vector1.hh>
 #include <map>
 
+#include <protocols/moves/Mover.fwd.hh> // AUTO IWYU For MoverOP
+
 // Unit headers
 
 namespace protocols {

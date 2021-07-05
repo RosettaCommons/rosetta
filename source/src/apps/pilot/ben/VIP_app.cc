@@ -20,16 +20,13 @@
 #include <protocols/vip/VIP_Mover.hh>
 #include <basic/options/keys/cp.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 
 //utilities
-#include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
 
 //local options

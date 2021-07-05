@@ -16,10 +16,7 @@
 #include <core/pack/dunbrack/DunbrackEnergy.hh>
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
@@ -27,12 +24,10 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/MinimizationData.hh>
 
@@ -41,6 +36,8 @@
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 static basic::Tracer TR("DunbrackEnergyTests_peptoid");
 

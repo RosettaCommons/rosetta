@@ -23,7 +23,7 @@
 // Package headers
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 
@@ -32,13 +32,12 @@
 
 
 // C++ headers
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <cstdio>
-#include <memory>
 #include <stdexcept>
 #include <string>
+#include <array>
 
 #ifdef WIN32
 #define popen  _popen

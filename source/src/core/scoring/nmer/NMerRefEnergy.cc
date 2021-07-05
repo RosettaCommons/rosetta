@@ -20,7 +20,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/database/open.hh>
@@ -28,7 +27,6 @@
 
 // C++ Headers
 #include <string>
-#include <vector>
 
 // Utility Headers
 #include <utility/io/izstream.hh>

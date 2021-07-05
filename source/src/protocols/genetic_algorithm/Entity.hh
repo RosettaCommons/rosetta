@@ -29,12 +29,12 @@
 #include <utility/pointer/access_ptr.hh>
 
 // Boost headers
-#include <boost/functional/hash.hpp> // hash_range
 
 ///#include <ObjexxFCL/format.hh> // apl needed?
 
 // C++ headers
-#include <map>
+
+#include <boost/container_hash/extensions.hpp> // AUTO IWYU For hash_combine
 
 namespace protocols {
 namespace genetic_algorithm {

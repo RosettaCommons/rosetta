@@ -20,19 +20,13 @@
 #include <protocols/minimization_packing/MinMover.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/carbohydrates/util.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/kinematics/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/AndResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/io/StructFileRepOptions.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 // Basic/Utility headers
@@ -41,8 +35,6 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 #include <numeric/random/random.hh>
@@ -52,8 +44,6 @@
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <iostream>
-#include <sstream>
 #include <fstream>
 
 static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeMinMover" );

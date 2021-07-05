@@ -28,7 +28,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-#include <iostream>
 
 #include <utility/vector1.hh>
 

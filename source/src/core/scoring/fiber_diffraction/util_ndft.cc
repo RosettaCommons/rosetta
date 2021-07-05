@@ -14,7 +14,11 @@
 
 #include <core/scoring/fiber_diffraction/util_ndft.hh>
 #include <basic/Tracer.hh>
-#include <utility/sys_util.hh>
+
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D::IR
+#include <ObjexxFCL/FArray2D.hh> // AUTO IWYU For FArray2D, FArray2D<>::size_type, FArray2D::IR
+#include <ObjexxFCL/FArray3D.hh> // AUTO IWYU For FArray3D
+
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES

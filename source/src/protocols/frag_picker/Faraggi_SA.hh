@@ -22,7 +22,6 @@
 // project headers
 
 // C++ headers
-#include <map>
 
 namespace protocols {
 namespace frag_picker {

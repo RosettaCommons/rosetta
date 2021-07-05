@@ -24,7 +24,6 @@
 #include <protocols/jd2/archive/VarianceStatisticsArchive.fwd.hh>
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

@@ -15,7 +15,6 @@
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -29,14 +28,10 @@
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -45,7 +40,6 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 using namespace core;

@@ -32,9 +32,7 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility Headers
@@ -45,14 +43,13 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
 
 
 // C++ headers
-#include <cmath>
 #include <sstream>
 #include <ObjexxFCL/FArray3D.hh>
 

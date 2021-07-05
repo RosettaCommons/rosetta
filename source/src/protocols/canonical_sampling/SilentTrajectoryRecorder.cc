@@ -25,8 +25,6 @@
 #include <core/scoring/Energies.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
-#include <core/io/raw_data/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
@@ -34,11 +32,8 @@
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 // just for tracer output
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
 
 // External library headers
 #include <basic/options/option_macros.hh>
@@ -50,6 +45,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys, options, IntegerOptio...
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
 
 // Operating system headers
 

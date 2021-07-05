@@ -15,7 +15,7 @@
 
 #include <core/energy_methods/OtherPoseEnergy.hh>
 #include <core/energy_methods/OtherPoseEnergyCreator.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>

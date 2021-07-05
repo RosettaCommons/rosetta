@@ -17,9 +17,7 @@
 
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
 
-#include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/types.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -30,7 +28,6 @@
 
 // C++ Header
 #include <set>
-#include <iosfwd>
 #include <utility>
 
 namespace core {

@@ -15,16 +15,11 @@
 
 #include <protocols/antibody/snugdock/SnugDockProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/antibody.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
 #include <devel/init.hh>

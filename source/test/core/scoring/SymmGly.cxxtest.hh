@@ -14,10 +14,8 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 // Unit headers
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -26,16 +24,12 @@
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/AA.hh>
 
 //Minimizer
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace std;
 

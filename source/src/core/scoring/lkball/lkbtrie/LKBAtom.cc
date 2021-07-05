@@ -21,7 +21,6 @@
 #include <iostream>
 
 // Numceric Headers
-#include <numeric/xyzVector.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

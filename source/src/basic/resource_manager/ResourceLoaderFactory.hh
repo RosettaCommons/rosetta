@@ -14,17 +14,16 @@
 #ifndef INCLUDED_basic_resource_manager_ResourceLoaderFactory_hh
 #define INCLUDED_basic_resource_manager_ResourceLoaderFactory_hh
 
+#include <basic/resource_manager/ResourceLoaderFactory.fwd.hh>
+
 // Unit headers
 #include <basic/resource_manager/ResourceLoaderCreator.fwd.hh>
 #include <basic/resource_manager/ResourceLoader.fwd.hh>
 
 // Package headers
-#include <basic/resource_manager/ResourceManager.fwd.hh>
 
 //utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.hh>
 
 //C++ headers
 #include <list>

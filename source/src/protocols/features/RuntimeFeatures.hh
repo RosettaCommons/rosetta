@@ -23,10 +23,6 @@
 #include <utility/vector1.hh>
 
 // RosettaScripts headers
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 // C++ headers
 #include <string>

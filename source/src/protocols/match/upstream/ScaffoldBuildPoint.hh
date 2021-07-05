@@ -32,7 +32,6 @@
 // Numeric headers
 
 #include <protocols/match/Hit.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -20,7 +20,6 @@
 
 
 #include <core/sequence/SequenceCoupling.fwd.hh>
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

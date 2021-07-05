@@ -24,7 +24,7 @@
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
-#include <iosfwd>
+#include <sstream> // DO NOT AUTOREMOVE - needed for templated functions
 #include <map>
 #include <string>
 #include <sstream>

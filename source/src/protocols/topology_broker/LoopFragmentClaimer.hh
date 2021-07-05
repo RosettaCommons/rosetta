@@ -25,7 +25,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 //#include <core/fragment/LoopFragSet.hh>
 
 // ObjexxFCL Headers
@@ -35,13 +35,11 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 //#include <iosfwd>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

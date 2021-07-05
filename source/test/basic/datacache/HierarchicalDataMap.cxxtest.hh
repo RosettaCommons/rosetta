@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Project headers
 #include <basic/datacache/HierarchicalDataMap.hh>
@@ -27,7 +26,6 @@
 
 // C++ headers
 #include <iostream>
-#include <string>
 
 struct Widget;
 typedef utility::pointer::shared_ptr< Widget > WidgetOP;

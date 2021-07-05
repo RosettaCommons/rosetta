@@ -18,12 +18,11 @@
 // Unit headers
 #include <protocols/symmetric_docking/SymFoldandDockRbTrialMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 

@@ -16,7 +16,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
-#include <core/simple_metrics/SimpleMetric.hh>
 #include <core/simple_metrics/SimpleMetricData.hh>
 #include <core/simple_metrics/util.hh>
 

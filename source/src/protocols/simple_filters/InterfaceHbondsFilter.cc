@@ -26,11 +26,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <protocols/filters/filter_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 //hbonds headers
 #include <core/scoring/hbonds/hbonds.hh>

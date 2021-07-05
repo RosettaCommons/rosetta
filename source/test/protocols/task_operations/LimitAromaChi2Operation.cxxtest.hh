@@ -14,7 +14,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
 #include <test/core/init_util.hh>
 
@@ -22,20 +21,19 @@
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/graph/Graph.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <protocols/task_operations/LimitAromaChi2Operation.hh>
-#include <string>
+
+#include <core/pack/rotamer_set/RotamerSet.hh> // AUTO IWYU For RotamerSet
 
 
 using basic::Error;

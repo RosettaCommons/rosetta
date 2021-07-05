@@ -20,7 +20,6 @@
 #include <test/UTracer.hh>
 
 // Unit headers
-#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <core/scoring/methods/MMBondAngleEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -29,7 +28,7 @@
 // Project headers
 #include <test/core/init_util.hh>
 
-#include <core/kinematics/DomainMap.hh>
+#include <core/kinematics/DomainMap.fwd.hh>
 // Auto-header: duplicate removed #include <core/io/pdb/pdb_writer.hh>
 
 // Utility headers

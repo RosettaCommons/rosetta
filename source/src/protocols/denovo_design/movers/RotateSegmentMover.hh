@@ -21,7 +21,6 @@
 // Protocol headers
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/denovo_design/types.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Core headers
 #include <core/id/AtomID.fwd.hh>
@@ -29,7 +28,8 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace denovo_design {

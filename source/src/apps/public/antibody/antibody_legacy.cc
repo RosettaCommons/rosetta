@@ -14,16 +14,13 @@
 #include <protocols/jobdist/standard_mains.hh>
 
 // Rosetta Headers
-#include <basic/Tracer.hh>
 #include <devel/init.hh>
 
 #include <protocols/antibody_legacy/AntibodyModeler.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <core/fragment/FragData.hh>
 
 
 ////////////////////////////////////////////////////////

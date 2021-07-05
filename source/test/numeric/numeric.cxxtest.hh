@@ -22,6 +22,6 @@
 // generated .cpp file.  This is that file for the numeric project.
 
 
-#endif INCLUDED_numeric_cxxtest_HH
+#endif // INCLUDED_numeric_cxxtest_HH
 
 

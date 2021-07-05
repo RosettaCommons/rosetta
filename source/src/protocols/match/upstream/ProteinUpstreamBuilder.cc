@@ -30,7 +30,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <basic/Tracer.hh>
@@ -39,6 +38,7 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/LexicographicalIterator.hh>
+#include <numeric/xyz.functions.hh>
 
 #include <protocols/match/Hit.hh>
 #include <utility/vector1.hh>

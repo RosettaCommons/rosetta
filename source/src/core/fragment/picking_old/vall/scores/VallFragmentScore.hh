@@ -27,7 +27,6 @@
 #include <sstream>
 #include <iosfwd>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

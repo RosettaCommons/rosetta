@@ -20,11 +20,7 @@
 #include <utility>
 
 // Utility headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <numeric/util.hh>
-#include <numeric/xyzVector.hh>
 #include <numeric/random/DistributionSampler.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -32,27 +28,21 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
-#include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/util.hh>
 #include <protocols/loops/loops_main.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/util/kinematics_util.hh>
 
 #include <basic/Tracer.hh>
 

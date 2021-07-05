@@ -10,7 +10,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
@@ -19,6 +18,9 @@
 #include <utility/tools/make_vector1.hh>
 
 #include <algorithm>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+#include <numeric/random/random.hh> // AUTO IWYU For rg, RandomGenerator
 
 //Auto Headers
 

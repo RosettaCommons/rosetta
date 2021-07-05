@@ -15,23 +15,20 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/UltraLightResidue.hh>
-#include <core/chemical/ResidueType.hh>
-#include <protocols/qsar/scoring_grid/SiteGridCreator.hh>
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
-#include <protocols/qsar/qsarMap.hh>
-#include <utility/excn/Exceptions.hh>
-#include <test/core/init_util.hh>
+#include <protocols/qsar/qsarMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 static basic::Tracer TR("protocols.qsar.scoring_grid.SiteGrid.cxxtest");
 

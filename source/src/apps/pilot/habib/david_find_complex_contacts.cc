@@ -10,45 +10,31 @@
 /// @brief
 /// @author jk + dj
 
-#include <iostream>
-#include <iomanip>
 
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/AA.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 
-#include <core/scoring/rms_util.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
 #include <string>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <fstream> // AUTO IWYU For operator<<, ostringstream, basic_ostream, basic_ostream:...
 
 
 using namespace core;

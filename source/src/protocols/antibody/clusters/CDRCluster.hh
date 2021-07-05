@@ -16,12 +16,12 @@
 
 #include <protocols/antibody/clusters/CDRCluster.fwd.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
-#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 
-#include <protocols/antibody/AntibodyInfo.fwd.hh>
-#include <protocols/antibody/AntibodyEnumManager.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <protocols/antibody/AntibodyEnum.hh> // AUTO IWYU For CDRNameEnum
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 #ifdef    SERIALIZATION
 // Cereal headers

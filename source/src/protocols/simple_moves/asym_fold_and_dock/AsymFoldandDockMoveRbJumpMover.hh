@@ -20,10 +20,8 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 

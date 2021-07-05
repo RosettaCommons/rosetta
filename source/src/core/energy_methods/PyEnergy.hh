@@ -15,12 +15,8 @@
 #ifndef INCLUDED_core_energy_methods_PyEnergy_hh
 #define INCLUDED_core_energy_methods_PyEnergy_hh
 
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethodCreator.hh>
 
 // Package headers
-#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace energy_methods {

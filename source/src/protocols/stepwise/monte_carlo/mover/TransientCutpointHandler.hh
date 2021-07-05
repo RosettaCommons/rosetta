@@ -20,7 +20,8 @@
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace stepwise {

@@ -22,7 +22,6 @@
 #include <list>
 
 //Auto Headers
-#include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 namespace protocols {

@@ -24,9 +24,7 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -34,20 +32,16 @@
 #include <core/pose/full_model_info/util.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/full_model_info/SubMotifInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
-#include <utility/stream_util.hh>
 
 #include <basic/Tracer.hh>
 
 //Req'd on WIN32
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
 using namespace core;
 using namespace core::pose::full_model_info;

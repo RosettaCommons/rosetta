@@ -12,7 +12,6 @@
 /// @author Alex Ford (fordas@uw.edu)
 //
 // Test headers
-#include <iostream>
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 #include <util/pose_funcs.hh>
@@ -22,19 +21,11 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
 
 #include <core/pose/Pose.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <protocols/task_operations/PreventResiduesFromRepackingOperation.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>

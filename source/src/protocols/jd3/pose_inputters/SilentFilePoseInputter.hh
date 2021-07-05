@@ -20,7 +20,6 @@
 
 // package headers
 #include <protocols/jd3/pose_inputters/SilentFilePoseInputter.fwd.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -28,10 +27,13 @@
 #include <core/io/silent/SilentFileOptions.fwd.hh>
 
 //utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+
+#include <string>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 #ifdef    SERIALIZATION
 // Cereal headers

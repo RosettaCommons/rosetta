@@ -22,12 +22,10 @@
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.hh>
 
-#include <core/kinematics/Jump.hh>
 
 #include <utility/vector1.hh>
 
@@ -36,6 +34,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+
+#include <core/scoring/nv/NVlookup.hh> // AUTO IWYU For NVlookup
 
 
 namespace core {

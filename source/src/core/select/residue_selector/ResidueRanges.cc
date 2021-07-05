@@ -15,7 +15,7 @@
 #include <core/select/residue_selector/ResidueRanges.hh>
 
 // Core headers
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
 

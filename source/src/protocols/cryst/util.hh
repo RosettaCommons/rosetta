@@ -17,17 +17,9 @@
 
 #include <cmath>
 
-#include <iosfwd>
-#include <string>
 
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/random/random.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/fourier/FFT.hh>
-#include <numeric/constants.hh>
+
+#include <utility/exit.hh> // AUTO IWYU For utility_exit_with_message
 
 
 #define DEG2RAD 0.0174532925199433

@@ -27,7 +27,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers

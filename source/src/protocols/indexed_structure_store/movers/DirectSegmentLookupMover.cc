@@ -11,7 +11,6 @@
 
 #include <boost/format.hpp>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -34,6 +33,8 @@
 #include <protocols/moves/mover_schemas.hh>
 
 #include <basic/Tracer.hh>
+
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
 
 static basic::Tracer TR( "protocols::indexed_structure_store::movers::DirectSegmentLookupMover" );
 

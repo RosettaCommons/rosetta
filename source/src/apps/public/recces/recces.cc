@@ -18,11 +18,9 @@
 #include <protocols/recces/options/RECCES_Options.hh>
 #include <protocols/recces/params/RECCES_Parameters.hh>
 #include <protocols/recces/setup_util.hh>
-#include <protocols/recces/util.hh>
 #include <protocols/viewer/viewers.hh>
 
 // C++ headers
-#include <string>
 
 // option key includes
 #include <basic/options/option.hh>

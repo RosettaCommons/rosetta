@@ -30,9 +30,7 @@
 #include <string>
 
 //Auto Headers
-#include <core/id/AtomID_Mask.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <utility/vector1.hh>
 
 
 class RelativeConnectRightTests : public CxxTest::TestSuite

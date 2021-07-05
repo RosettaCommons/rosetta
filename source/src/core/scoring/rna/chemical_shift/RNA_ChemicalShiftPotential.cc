@@ -20,7 +20,6 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
 
 
 // Utility headers
@@ -36,7 +35,6 @@
 //#include <core/io/database/open.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
-#include <ObjexxFCL/format.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_Util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_RingCurrent.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_MagneticAnisotropy.hh>

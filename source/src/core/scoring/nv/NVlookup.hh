@@ -27,14 +27,13 @@
 //project headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
 
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //STL header
-#include <map>
-#include <vector>
+
+#include <numeric/interpolation/spline/Interpolator.hh> // AUTO IWYU For InterpolatorOP
 
 
 namespace core {

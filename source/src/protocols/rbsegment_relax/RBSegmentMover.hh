@@ -19,16 +19,12 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <protocols/rbsegment_relax/RBSegment.hh>
 #include <protocols/hybridization/util.hh>
 
 // C++ Headers
-#include <map>
 
-#include <utility>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>

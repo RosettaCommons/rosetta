@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_mpi_refinement_WorkUnit_Relax_hh
 
 #include <protocols/mpi_refinement/WorkUnit_Sampler.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace mpi_refinement {

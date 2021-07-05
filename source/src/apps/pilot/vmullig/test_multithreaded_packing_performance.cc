@@ -12,25 +12,13 @@
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 // devel headers
-#include <devel/init.hh>
 
 // protocol headers
 
 // core headers
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSetsFactory.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/options/OptionCollection.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -39,10 +27,23 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/thread_manager/RosettaThreadManager.hh>
 
 // C++ headers
-#include <chrono>
+
+#ifdef MULTI_THREADED
+#include <devel/init.hh>
+#include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSetsFactory.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <cmath>
+#endif
 
 static basic::Tracer TR("test_multithreaded_packing_performance");
 

@@ -14,20 +14,12 @@
 
 #include <protocols/tcr/modeling_util.hh>
 #include <protocols/tcr/util.hh>
-#include <protocols/tcr/grafting_util.hh>
-#include <protocols/tcr/TCRloopRefine.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
-#include <protocols/tcr/TCRmodel.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <core/import_pose/import_pose.hh>
 #include <protocols/antibody/util.hh>
-#include <protocols/grafting/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
-#include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
@@ -35,17 +27,16 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
-#include <protocols/relax/loop/LoopRelaxMover.hh>
-#include <protocols/loop_modeling/LoopProtocol.hh>
-#include <protocols/loop_modeling/types.hh>
-#include <protocols/kinematic_closure/KicMover.hh>
-#include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
-#include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 //option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
+
+#include <protocols/loops/Loops.hh> // AUTO IWYU For Loops
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <core/scoring/rms_util.hh> // AUTO IWYU For superimpose_pose
 
 static basic::Tracer TR( "protocols.tcr.modeling_util" );
 

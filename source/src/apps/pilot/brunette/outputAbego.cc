@@ -23,13 +23,10 @@
 // Core Headers
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
-#include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
@@ -43,8 +40,9 @@
 
 //basic & utility
 #include <utility/io/ozstream.hh>
-#include <iostream>
 #include <ObjexxFCL/format.hh>
+
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
 
 using namespace ObjexxFCL::format;
 using utility::vector1;

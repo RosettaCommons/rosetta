@@ -5,51 +5,36 @@
 // libRosetta headers
 #include <protocols/cryst/refinable_lattice.hh>
 
-#include <protocols/moves/PyMOLMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
 #include <utility/graph/Graph.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/vdwaals/VDW_Energy.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <protocols/minimization_packing/symmetry/SymMinMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <devel/init.hh>
 
 // neil stuff
-#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <basic/MetricValue.hh>
-#include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 
 #include <utility/tools/make_map.hh>
 
-#include <numeric/xyz.io.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/uniform.hh>
-#include <numeric/model_quality/rms.hh>
 
-#include <basic/options/keys/optimization.OptionKeys.gen.hh> // to confirm -new_sym_min
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer, Tracer::TracerProxy
 
 using namespace basic;
 using namespace core;

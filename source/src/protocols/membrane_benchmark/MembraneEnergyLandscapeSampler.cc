@@ -26,48 +26,38 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/ImplicitLipidInfo.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/file/file_sys_util.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #include <numeric/conversions.hh>
-#include <numeric/constants.hh>
 #include <numeric/xyzVector.io.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/down_cast.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <ostream>
-#include <fstream>
+
+#include <protocols/rosetta_scripts/util.hh> // AUTO IWYU For attributes_for_parse_score_...
+#include <utility/string_util.hh> // AUTO IWYU For string_split
 
 static basic::Tracer TR( "protocols.membrane_benchmark.MembraneEnergyLandscapeSampler" );
 

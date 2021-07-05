@@ -28,21 +28,16 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/MinimizationGraph.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 // // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
 // // Numeric headers
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
 
 #include <basic/Tracer.hh>
 
@@ -53,6 +48,8 @@
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
+
+#include <core/optimization/DOF_Node.hh> // AUTO IWYU For DOF_Node, DOF_Node::AtomIDs, DOF_Node::DOF_ID
 
 
 using namespace ObjexxFCL::format;

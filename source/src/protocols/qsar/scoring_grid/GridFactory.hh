@@ -16,16 +16,15 @@
 //Unit Headers
 #include <protocols/qsar/scoring_grid/GridFactory.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridCreator.hh>
-#include <utility/json_spirit/json_spirit_reader.h>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
 // c++ headers
 #include <map>
+
+#include <utility/json_spirit/json_spirit_value.h> // AUTO IWYU For mObject
 
 namespace protocols {
 namespace qsar {

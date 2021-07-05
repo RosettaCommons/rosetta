@@ -15,18 +15,17 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/SecondaryStructureEnergy.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>
 #include <core/pose/Pose.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <basic/options/option.hh>
+#include <core/scoring/Energies.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStruct.hh>
 
 // --------------- Test Class --------------- //
 
@@ -42,7 +41,7 @@ public:
 
 	Pose pose;
 	core::io::silent::SilentFileData sfd;
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	core::scoring::ScoreFunctionOP scorefxn;
 
 	// --------------- Fixtures --------------- //
@@ -66,7 +65,7 @@ public:
 		sfd.read_file( "core/scoring/methods/score3_in.silent_out" );
 		// ss energy calculations use centroid residue types
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-		scorefxn = new core::scoring::ScoreFunction;
+		scorefxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		scorefxn->set_weight( hs_pair, 1.0 );
 		scorefxn->set_weight( ss_pair, 1.0 );
 		scorefxn->set_weight( rsigma,  1.0 );

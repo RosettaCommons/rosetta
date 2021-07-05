@@ -14,7 +14,6 @@
 // libRosetta headers
 #include <protocols/sasa_scores/sasapack.hh>
 
-#include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/sasa.hh>
@@ -22,7 +21,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/chemical/VariantType.hh>
@@ -32,7 +30,6 @@
 
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>

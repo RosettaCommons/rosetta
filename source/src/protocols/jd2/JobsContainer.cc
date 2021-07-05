@@ -23,19 +23,15 @@
 #include <protocols/jd2/JobsContainer.hh>
 
 // Project headers
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/Job.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/sys_util.hh>
 #include <numeric/random/random_permutation.hh>
 
 // C++ headers
-#include <string>
-#include <ctime>
 
 #include <utility/vector1.hh>
 

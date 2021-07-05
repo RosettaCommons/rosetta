@@ -15,19 +15,18 @@
 
 #include <core/pose/toolbox/AtomID_Mapper.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/methods/chainbreak_util.hh>
 
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 static basic::Tracer TR( "core.pose.toolbox.AtomID_Mapper" );
 

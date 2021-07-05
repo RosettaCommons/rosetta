@@ -16,25 +16,21 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
 
 #include <core/types.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 
 
 

@@ -18,46 +18,24 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/RestypeDestructionEvent.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/RotamerSetBase.hh>
-#include <core/conformation/RotamerSetCacheableDataType.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/residue_io.hh>
 
-#include <basic/prof.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
-#include <cmath>
-#include <cstdio>
-#include <utility/assert.hh>
-#include <utility/assert.hh>
 #include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "core.scoring.FACTSPotential" );

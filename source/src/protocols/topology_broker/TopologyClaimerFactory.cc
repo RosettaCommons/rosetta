@@ -15,7 +15,6 @@
 #include <protocols/topology_broker/TopologyClaimerFactory.hh>
 
 // Package Headers
-#include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 #include <protocols/topology_broker/RigidChunkClaimer.hh>
 #include <protocols/topology_broker/ConstraintClaimer.hh>
@@ -51,8 +50,7 @@
 #include <string>
 
 // Utility headers
-#include <basic/Tracer.hh>
-#include <utility/vector1.hh>
+#include <basic/Tracer.fwd.hh>
 
 // Boost headers
 

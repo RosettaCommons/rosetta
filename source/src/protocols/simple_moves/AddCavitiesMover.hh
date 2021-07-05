@@ -16,7 +16,6 @@
 #ifndef INCLUDED_protocols_simple_moves_AddCavitiesMover_hh
 #define INCLUDED_protocols_simple_moves_AddCavitiesMover_hh
 
-#include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/CavityBall.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 
@@ -24,7 +23,6 @@
 
 
 #include <core/conformation/Residue.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

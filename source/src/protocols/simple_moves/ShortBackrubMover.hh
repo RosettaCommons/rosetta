@@ -22,13 +22,11 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/backrub/BackrubMover.hh>
+#include <protocols/backrub/BackrubMover.fwd.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

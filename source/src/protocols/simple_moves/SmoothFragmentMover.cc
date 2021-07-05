@@ -16,10 +16,8 @@
 // Package Headers
 
 // Project Headers
-#include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
 #include <basic/prof.hh>
 
@@ -28,12 +26,10 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/VirtualBase.hh>
 #include <numeric/random/random.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>

@@ -20,7 +20,6 @@
 
 // Unit Headers
 #include <protocols/membrane/SpinAroundPartnerMover.fwd.hh>
-#include <protocols/membrane/SpinAroundPartnerMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
@@ -28,15 +27,10 @@
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/Tracer.fwd.hh>
 
 namespace protocols {
 namespace membrane {

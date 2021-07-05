@@ -21,7 +21,6 @@
 #include <protocols/legacy_sewing/conformation/Assembly.hh>
 
 //Utility headers
-#include <utility>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>

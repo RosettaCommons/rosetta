@@ -14,14 +14,12 @@
 #define INCLUDED_devel_replica_docking_TempInterpolator_hh
 
 #include <core/types.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
-#include <numeric/types.hh>
 
 #include <utility/vector1.hh>
 
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 namespace devel {
 namespace replica_docking {

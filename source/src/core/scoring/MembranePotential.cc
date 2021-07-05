@@ -34,7 +34,6 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 
 #include <basic/database/open.hh>
 
@@ -66,7 +65,6 @@
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
 static basic::Tracer TR( "core.scoring.MembranePotential" );

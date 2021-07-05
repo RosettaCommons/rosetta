@@ -21,7 +21,6 @@
 #include <core/sequence/CompositeSequence.hh>
 #include <core/sequence/ChemicalShiftSequence.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

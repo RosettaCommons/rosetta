@@ -12,16 +12,15 @@
 /// @brief
 /// @author
 
-#ifndef DEVEL_INVKINLIGLOOPDESIGN_JUMPMANAGER_HH
-#define DEVEL_INVKINLIGLOOPDESIGN_JUMPMANAGER_HH
+#ifndef INCLUDED_DEVEL_INVKINLIGLOOPDESIGN_JUMPMANAGER_HH
+#define INCLUDED_DEVEL_INVKINLIGLOOPDESIGN_JUMPMANAGER_HH
 
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/Jump.hh>
 #include <devel/inv_kin_lig_loop_design/Loop.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+#include <core/kinematics/RT.hh> // AUTO IWYU For RT
+
 
 
 namespace devel {

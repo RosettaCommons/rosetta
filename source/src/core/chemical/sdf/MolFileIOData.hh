@@ -23,7 +23,6 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>      // for MMAtomTypeSetCOP
 
 #include <utility/VirtualBase.hh>
-#include <numeric/xyzVector.hh>
 
 #include <boost/graph/undirected_graph.hpp>
 

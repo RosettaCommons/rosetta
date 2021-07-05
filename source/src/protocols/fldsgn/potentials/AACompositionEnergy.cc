@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 #include <utility>
 #include <utility/vector1.hh>

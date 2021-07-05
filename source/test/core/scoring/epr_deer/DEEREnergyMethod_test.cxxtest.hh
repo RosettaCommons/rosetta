@@ -21,12 +21,13 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/types.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <numeric/xyzVector.hh>
 
 #include <map>
+
+#include <core/scoring/epr_deer/metrics/DEERData.hh> // AUTO IWYU For DEERData
 
 class DEEREnergyMethodTest : public CxxTest::TestSuite {
 public:

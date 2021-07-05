@@ -24,17 +24,16 @@
 #include <core/kinematics/FoldTree.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/vector1.hh>
 
 // External headers
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <string>
+
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For string_of
 
 namespace core {
 namespace pose {

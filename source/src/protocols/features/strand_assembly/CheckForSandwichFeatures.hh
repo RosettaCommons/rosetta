@@ -17,7 +17,10 @@
 //Devel
 //#include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/SandwichFragment.hh>
-#include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>
+
+#include <protocols/features/FeaturesReporter.fwd.hh> // AUTO IWYU For StructureID
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh> // AUTO IWYU For sessionOP
 
 namespace protocols {
 namespace features {

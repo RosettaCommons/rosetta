@@ -16,7 +16,6 @@
 
 // Core headers
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
-#include <core/types.hh>
 
 // Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -25,8 +24,6 @@
 
 // C++ headers
 #include <string>
-#include <list>
-#include <algorithm>
 
 namespace core {
 namespace select {

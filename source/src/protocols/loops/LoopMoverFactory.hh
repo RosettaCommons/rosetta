@@ -24,15 +24,12 @@
 #include <protocols/loops/LoopsFileIO.fwd.hh>
 
 // Platform Headers
-#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/factory/WidgetRegistrator.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
-#include <map>
+#include <string>
 
 namespace protocols {
 namespace loops {

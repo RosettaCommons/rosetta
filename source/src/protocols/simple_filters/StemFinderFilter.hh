@@ -21,7 +21,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <string>
 #include <utility/vector1.hh>
 

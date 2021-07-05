@@ -9,13 +9,11 @@
 
 #include <vector>
 #include <limits>
-#include <cstddef>
 
 #ifndef FLATLOOKUP_HH
 #define FLATLOOKUP_HH
 
 #include <numeric/types.hh>
-#include <vector>
 
 namespace numeric
 {

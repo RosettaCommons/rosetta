@@ -13,9 +13,7 @@
 #define INCLUDED_protocols_rna_denovo_RNA_DeNovoPoseInitializer_HH
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/import_pose/RNA_JumpMover.fwd.hh>
-#include <core/pose/rna/BasePairStep.hh>
 #include <core/import_pose/RNA_DeNovoParameters.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.fwd.hh>
@@ -25,9 +23,6 @@
 
 // C++ Headers
 #include <string>
-#include <map>
-#include <iosfwd>
-#include <list>
 
 #include <utility/vector1.hh>
 

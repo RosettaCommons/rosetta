@@ -10,18 +10,15 @@
 #include <protocols/loop_build/LoopBuildMover.hh>
 
 #include <basic/Tracer.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 
-#include <utility/exit.hh>
 
 #include <core/scoring/electron_density/util.hh>
 
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/util.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 
 #include <protocols/jd2/util.hh>
@@ -43,7 +40,6 @@
 #include <basic/options/option.hh>
 
 #include <protocols/loops/util.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
 #include <protocols/symmetry/SetupForSymmetryMover.hh>

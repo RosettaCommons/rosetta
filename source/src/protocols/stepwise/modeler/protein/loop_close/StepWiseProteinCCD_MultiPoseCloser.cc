@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_MultiPoseCloser.hh>
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.hh>
-#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 #include <core/pose/Pose.hh>
 #include <utility>

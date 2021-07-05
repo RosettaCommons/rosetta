@@ -20,14 +20,9 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashMap.hh>
-#include <protocols/loophash/BackboneDB.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <utility>
-#include <utility/vector1.hh>
 
 //Auto Headers
 

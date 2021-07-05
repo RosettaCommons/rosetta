@@ -23,9 +23,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/loops/Loop.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/loops/Loops.hh>
 // Utility headers
 
@@ -35,8 +33,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
-#include <set>
 
 //// C++ headers
 

@@ -18,24 +18,18 @@
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/design/ResnumFromStringsWithRangesSelector.hh>
 
-#include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <utility>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes

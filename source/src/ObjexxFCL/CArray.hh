@@ -19,7 +19,6 @@
 #include <ObjexxFCL/CArray.fwd.hh>
 
 // C++ Headers
-#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstddef>

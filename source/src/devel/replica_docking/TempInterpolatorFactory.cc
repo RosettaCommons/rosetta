@@ -14,19 +14,14 @@
 #include <devel/replica_docking/TempInterpolatorFactory.hh>
 #include <devel/replica_docking/TempInterpolator.hh>
 
-#include <protocols/canonical_sampling/TemperatureController.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
 

@@ -30,7 +30,6 @@
 #include <utility/VirtualBase.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <iostream>
 
 namespace protocols {

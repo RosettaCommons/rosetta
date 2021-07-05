@@ -16,7 +16,6 @@
 #include <core/scoring/nmr/NMRTensor.hh>
 
 // Project headers
-#include <core/types.hh>
 
 // Utility headers
 #include <utility/tools/make_vector.hh>

@@ -40,7 +40,6 @@
 // Numeric headers
 #include <numeric/constants.hh>
 
-#include <utility/vector1.hh>
 
 
 // Objexx headers

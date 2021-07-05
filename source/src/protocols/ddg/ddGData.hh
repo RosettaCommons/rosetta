@@ -14,16 +14,12 @@
 #include <protocols/ddg/ddGData.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 #include <fstream>
 
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-#include <map>
 
 
 namespace protocols {

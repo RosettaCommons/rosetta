@@ -16,7 +16,6 @@
 #include <utility/file/PathName.hh>
 
 // C++ headers
-#include <iostream>
 
 class PathNameTests : public CxxTest::TestSuite {
 

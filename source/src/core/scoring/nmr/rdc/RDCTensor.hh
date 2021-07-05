@@ -20,20 +20,16 @@
 // Unit headers
 #include <core/scoring/nmr/NMRTensor.hh>
 #include <core/scoring/nmr/rdc/RDCTensor.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 // C++ headers
 #include <string>

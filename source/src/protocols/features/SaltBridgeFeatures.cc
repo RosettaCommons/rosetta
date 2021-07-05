@@ -25,8 +25,6 @@
 #include <core/conformation/Residue.hh>
 
 // Basic Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 
 // Numeric Headers
@@ -43,7 +41,6 @@
 
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers

@@ -31,8 +31,6 @@
 
 // C++ headers
 #include <fstream>
-#include <ostream>
-#include <sstream>
 #include <string>
 
 // option key includes

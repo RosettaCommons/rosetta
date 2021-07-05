@@ -28,7 +28,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -36,7 +35,6 @@
 #include <ObjexxFCL/format.hh>
 
 //C++ headers
-#include <iostream>
 #include <fstream>
 #include <string>
 

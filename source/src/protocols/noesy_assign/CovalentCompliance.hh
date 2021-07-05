@@ -18,11 +18,11 @@
 //#include <protocols/noesy_assign/CovalentCompliance.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/FragsToAtomDist.hh>
+#include <protocols/noesy_assign/FragsToAtomDist.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>

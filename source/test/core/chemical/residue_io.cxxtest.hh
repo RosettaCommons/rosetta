@@ -17,22 +17,16 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/residue_io.hh>
 
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/MMAtomType.hh>
 
-#include <core/types.hh>
 
 // Platform Headers
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers

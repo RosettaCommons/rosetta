@@ -22,7 +22,6 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 
@@ -34,7 +33,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/scoring/InterfaceInfo.hh>
@@ -44,7 +42,6 @@
 #include <utility/tools/make_vector1.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 // C++ Headers
@@ -52,15 +49,12 @@
 
 //Utility Headers
 
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 #include <basic/Tracer.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

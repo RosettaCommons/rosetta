@@ -24,7 +24,6 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ppo_torsion_bin.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
 #include <basic/database/open.hh>
@@ -38,24 +37,19 @@
 #include <numeric/xyz.functions.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2A.hh>
 #include <ObjexxFCL/FArray4D.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // AS -- to get access to get_torsion_bin()
-#include <core/conformation/util.hh>
 
 // option key includes
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/vector1.hh>

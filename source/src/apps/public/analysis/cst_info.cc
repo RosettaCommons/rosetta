@@ -23,8 +23,6 @@
 #include <protocols/moves/MoverContainer.hh>
 
 // core headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -33,7 +31,6 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
 
 // utility headers
 #include <utility/excn/Exceptions.hh>

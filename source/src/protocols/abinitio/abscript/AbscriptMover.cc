@@ -16,25 +16,20 @@
 // Package headers
 #include <protocols/abinitio/abscript/AbscriptMoverCreator.hh>
 #include <protocols/abinitio/abscript/FragmentCM.hh>
-#include <protocols/abinitio/abscript/FragmentJumpCM.hh>
 #include <protocols/abinitio/abscript/AbscriptStageMover.hh>
 #include <protocols/abinitio/abscript/StagePreparer.hh>
 
-#include <protocols/environment/claims/EnvClaim.hh>
 
 // Project headers
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <core/fragment/FragmentIO.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/SecondaryStructure.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -51,8 +46,6 @@
 
 #include <protocols/jd2/util.hh>
 
-#include <protocols/jumping/JumpSetup.hh>
-#include <protocols/jumping/JumpSample.hh>
 
 #include <protocols/checkpoint/CheckPointer.hh>
 
@@ -79,6 +72,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/select/residue_selector/ResidueSelector.hh> // AUTO IWYU For ResidueSelector
 
 // C++ Headers
 

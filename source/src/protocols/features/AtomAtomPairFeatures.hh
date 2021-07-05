@@ -24,7 +24,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
@@ -34,6 +33,8 @@
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

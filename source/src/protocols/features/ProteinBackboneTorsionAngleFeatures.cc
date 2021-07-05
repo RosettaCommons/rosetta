@@ -16,7 +16,6 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>

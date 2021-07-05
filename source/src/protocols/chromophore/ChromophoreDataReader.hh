@@ -20,7 +20,6 @@
 #include <protocols/chromophore/ChromophoreDataReader.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>

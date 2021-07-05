@@ -17,13 +17,11 @@
 
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 #include <core/scoring/epr_deer/metrics/DEERData.hh>
 #include <core/scoring/epr_deer/DEERIO.hh>
 #include <core/scoring/epr_deer/EPRSpinLabel.hh>
 #include <core/scoring/epr_deer/util.hh>
-#include <core/scoring/epr_deer/metrics/DEERData.hh>
 #include <core/scoring/epr_deer/metrics/DEERDistanceDistribution.hh>
 #include <core/scoring/epr_deer/metrics/DEERDistanceDistribution.fwd.hh>
 #include <core/scoring/epr_deer/metrics/DEERDistanceBounds.hh>
@@ -32,40 +30,31 @@
 #include <core/scoring/epr_deer/metrics/DEERMiscMethod.hh>
 #include <core/scoring/epr_deer/metrics/DEERMiscMethod.fwd.hh>
 #include <core/scoring/epr_deer/metrics/DEEROverlapMethod.hh>
-#include <core/scoring/epr_deer/metrics/DEEROverlapMethod.fwd.hh>
 #include <core/scoring/epr_deer/metrics/DEERJaccardMethod.hh>
-#include <core/scoring/epr_deer/metrics/DEERJaccardMethod.fwd.hh>
 #include <core/scoring/epr_deer/metrics/DEERJSMethod.hh>
-#include <core/scoring/epr_deer/metrics/DEERJSMethod.fwd.hh>
 #include <core/scoring/epr_deer/metrics/DEERChiSqMethod.hh>
-#include <core/scoring/epr_deer/metrics/DEERChiSqMethod.fwd.hh>
 #include <core/types.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/constants.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/epr_deer.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 
 #include <fstream>
-#include <iostream>
-#include <sstream>
 #include <string>
 
 #include <boost/algorithm/string.hpp>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace core {
 namespace scoring {

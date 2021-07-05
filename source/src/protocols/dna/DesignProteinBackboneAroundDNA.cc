@@ -30,7 +30,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/dna/DnaDesignDef.hh>
+#include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -45,7 +45,6 @@
 #include <utility/vector1.hh>
 using utility::vector1;
 
-#include <sstream>
 #include <set>
 #include <iostream>
 
@@ -58,8 +57,6 @@ using utility::vector1;
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
-#include <utility/keys/Key3Vector.hh>
 #include <iterator>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

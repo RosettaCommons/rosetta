@@ -15,10 +15,12 @@
 #include <core/scoring/constraints/CstMinimizationData.hh>
 
 // Package headers
-#include <core/scoring/constraints/Constraints.hh>
+#include <core/scoring/constraints/Constraints.fwd.hh>
 #include <utility>
 
 #ifdef SERIALIZATION
+#include <core/scoring/constraints/Constraints.hh>
+
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
 

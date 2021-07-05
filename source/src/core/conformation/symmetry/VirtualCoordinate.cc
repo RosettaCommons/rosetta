@@ -15,7 +15,6 @@
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
 
 // C++ headers
-#include <iostream>
 
 // Utility header
 #include <utility/string_util.hh>

@@ -15,11 +15,9 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_DirectSegmentLookup_HH
 #define INCLUDED_protocols_indexed_structure_store_DirectSegmentLookup_HH
 
-#include <ndarray.h>
-#include <numeric/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/indexed_structure_store/StructureStore.fwd.hh>
 #include <protocols/indexed_structure_store/search/QueryDatabase.hh>
+#include <protocols/indexed_structure_store/Datatypes.hh>
 
 namespace protocols { namespace indexed_structure_store {
 

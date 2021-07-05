@@ -22,8 +22,8 @@
 #include <core/pose/Pose.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
-#include <basic/citation_manager/CitationCollectionBase.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -32,7 +32,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

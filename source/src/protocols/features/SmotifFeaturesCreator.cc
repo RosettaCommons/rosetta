@@ -15,10 +15,7 @@
 #include <protocols/features/SmotifFeaturesCreator.hh>
 
 // Package Headers
-#include <protocols/features/FeaturesReporterCreator.hh>
 
-#include <protocols/features/SmotifFeatures.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -23,7 +23,6 @@
 
 #include <numeric/xyzVector.hh>
 
-#include <iosfwd>
 #include <string>
 
 #ifdef    SERIALIZATION

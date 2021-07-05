@@ -40,7 +40,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "core.scoring.constraints" );

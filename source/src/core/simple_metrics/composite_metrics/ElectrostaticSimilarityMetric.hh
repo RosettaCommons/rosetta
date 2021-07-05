@@ -28,14 +28,12 @@
 #include <core/simple_metrics/CompositeRealMetric.hh>
 
 // Project Headers
-#include <core/scoring/sc/ElectrostaticSimilarityCalculator.hh>
+#include <core/scoring/sc/ElectrostaticSimilarityCalculator.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // Parser headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 

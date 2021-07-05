@@ -19,8 +19,6 @@
 #include <core/pose/Pose.fwd.hh>
 //#include <protocols/match/Hit.fwd.hh>
 //#include <protocols/match/SixDHasher.hh>
-#include <boost/unordered_map.hpp>
-#include <utility/VirtualBase.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
 #include <numeric/geometry/hashing/SixDHasher.hh>
@@ -30,7 +28,6 @@
 #include <map>
 
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace loophash {

@@ -22,8 +22,6 @@
 
 // Package headers
 #include <core/io/silent/silent.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 
 // Utility headers
@@ -36,7 +34,6 @@
 #include <list>
 #include <deque>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

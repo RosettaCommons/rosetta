@@ -13,10 +13,8 @@
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocols headers
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loop_modeling/LoopMover.fwd.hh>

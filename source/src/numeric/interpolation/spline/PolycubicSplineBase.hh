@@ -21,11 +21,8 @@
 #define INCLUDED_numeric_interpolation_spline_PolycubicSplineBase_hh
 
 #include <numeric/types.hh>
-#include <numeric/interpolation/spline/PolycubicSpline.fwd.hh>
 #include <numeric/interpolation/spline/PolycubicSplineBase.fwd.hh>
-#include <numeric/MathNTensor.hh>
 
-#include <utility>
 
 namespace numeric {
 namespace interpolation {

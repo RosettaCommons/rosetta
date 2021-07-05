@@ -19,11 +19,10 @@
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Protocol headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 namespace protocols {
 namespace canonical_sampling {

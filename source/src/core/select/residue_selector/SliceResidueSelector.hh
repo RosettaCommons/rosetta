@@ -18,7 +18,6 @@
 #include <core/select/residue_selector/SliceResidueSelector.fwd.hh>
 
 // Package headers
-#include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.fwd.hh>
 

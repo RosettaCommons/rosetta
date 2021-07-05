@@ -15,27 +15,24 @@
 #include <devel/replica_docking/LrmsdFilterCreator.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/docking/metrics.hh>
 
 
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/MetricValue.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
+#include <basic/options/option.hh> // AUTO IWYU For OptionCollection, option
+
 // Project Headers
 
 

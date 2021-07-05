@@ -26,11 +26,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/types.hh>
 #include <core/select/util/burial_utilities.hh>
-#include <core/id/AtomID.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/PackerTask_.hh>
 
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -39,7 +35,6 @@
 
 // Boost Headers
 #include <utility/graph/unordered_object_pool.hpp>
-#include <utility/pointer/memory.hh>
 #include <boost/pool/pool.hpp>
 
 static basic::Tracer TR( "core.pack.guidance_scoreterms.buried_unsat_penalty.graph.BuriedUnsatPenaltyGraph" );

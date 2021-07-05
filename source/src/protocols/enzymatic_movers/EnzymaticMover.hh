@@ -25,6 +25,8 @@
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 
 namespace protocols {
 namespace enzymatic_movers {

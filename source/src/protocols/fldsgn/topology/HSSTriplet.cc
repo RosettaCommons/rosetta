@@ -17,7 +17,6 @@
 
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <ostream>
 #include <utility/string_util.hh>
 #include <boost/lexical_cast.hpp>
 #include <numeric/xyzVector.hh>

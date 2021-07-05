@@ -14,25 +14,21 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/rosettascripts.hh>
-#include <test/util/pdb1rpb.hh>
 
 // Unit header
-#include <protocols/relax/AcceptToBestMover.hh>
 
 // project headers
 #include <core/types.hh>
 
-#include <basic/options/option.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#ifdef SERIALIZATION
+#include <protocols/relax/AcceptToBestMover.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/minimization_packing/MinMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
-#include <utility/vector1.hh>
+#include <core/pose/Pose.hh>
+#include <test/util/pdb1rpb.hh>
+#endif
 
 class AcceptToBestMoverTests : public CxxTest::TestSuite {
 

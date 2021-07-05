@@ -9,26 +9,20 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/id/AtomID_Map.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <basic/Tracer.hh>
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <string>
-#include <ObjexxFCL/Fmath.hh>
 #include <ObjexxFCL/format.hh>
 #include <numeric/numeric.functions.hh>
 #include <basic/options/option.hh>

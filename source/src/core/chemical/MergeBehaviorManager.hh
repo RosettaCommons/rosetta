@@ -18,12 +18,9 @@
 #include <core/chemical/MergeBehaviorManager.fwd.hh>
 
 // STL headers
-#include <list>
 
-#include <utility/exit.hh>
-#include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 #include <map>
+#include <string>
 
 namespace core {
 namespace chemical {

@@ -20,17 +20,15 @@
 #include <core/pose/datacache/CacheableObserver.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/StructureData.fwd.hh>
 
 // Core headers
-#include <core/conformation/signals/LengthEvent.hh>
+#include <core/conformation/signals/LengthEvent.fwd.hh>
 
 // Utility headers
 #include <utility/signals/Link.hh>
-#include <utility/vector1.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.fwd.hh>
 
 
 #ifdef    SERIALIZATION

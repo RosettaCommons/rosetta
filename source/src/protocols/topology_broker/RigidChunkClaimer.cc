@@ -28,7 +28,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/sequence/SequenceAlignment.hh>
+#include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.tmpl.hh>

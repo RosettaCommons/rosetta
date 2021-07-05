@@ -15,7 +15,6 @@
 #include <protocols/constraint_generator/DihedralConstraintGenerator.hh>
 #include <protocols/constraint_generator/DihedralConstraintGeneratorCreator.hh>
 #include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
-#include <protocols/constraint_generator/util.hh>
 
 
 
@@ -26,28 +25,24 @@
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
-#include <core/scoring/constraints/util.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 
 // Basic/Utility headers
 #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
 
 static basic::Tracer TR( "protocols.constraint_generator.DihedralConstraintGenerator" );
 

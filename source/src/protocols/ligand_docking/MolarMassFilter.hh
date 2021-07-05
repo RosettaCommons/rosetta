@@ -18,10 +18,8 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 
-#include <utility>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

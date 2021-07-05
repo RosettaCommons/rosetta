@@ -24,7 +24,6 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
-#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

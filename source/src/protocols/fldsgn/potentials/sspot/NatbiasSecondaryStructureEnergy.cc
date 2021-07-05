@@ -17,19 +17,14 @@
 
 // Package headers
 #include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/fldsgn/topology/StrandPairing.hh>
-#include <protocols/fldsgn/topology/HelixPairing.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
 #include <protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.hh>
 #include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.hh>
 #include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>

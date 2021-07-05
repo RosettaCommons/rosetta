@@ -17,31 +17,20 @@
 
 // Protocol Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 // Core headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/TaskFactory.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyGraph.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/types.hh>
 
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/options/option.hh>
@@ -50,14 +39,12 @@
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
-#include <utility/graph/Graph.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
 #include <fstream>
 

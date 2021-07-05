@@ -18,6 +18,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/id/DOF_ID.hh> // AUTO IWYU For DOF_ID
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
+
 static basic::Tracer TR( "core.pose.copydofs.CopyDofsInfo" );
 
 namespace core {

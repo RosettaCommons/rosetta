@@ -19,12 +19,11 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 
 namespace protocols {

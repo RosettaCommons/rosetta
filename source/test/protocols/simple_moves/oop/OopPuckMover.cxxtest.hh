@@ -15,11 +15,9 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 #include <core/chemical/GlobalResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -29,20 +27,18 @@
 #include <protocols/ncbb/oop/OopRandomSmallMover.hh>
 
 // Package headers
-#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 
 #include <numeric/xyz.functions.hh>
 
 //Auto Headers
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <utility/tools/make_vector1.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
 
 static basic::Tracer TR("protocols.simple_moves.oop.OopPuckMover.cxxtest");
 

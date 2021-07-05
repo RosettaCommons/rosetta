@@ -24,7 +24,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/conformation/Residue.hh>
 
@@ -32,7 +31,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 
 #include <protocols/ligand_docking/LigandArea.hh>
@@ -45,7 +44,7 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <ObjexxFCL/format.hh>
 
 // Numeric headers
@@ -61,10 +60,8 @@
 #include <basic/options/option_macros.hh>
 
 // C++ headers
-#include <iostream>
 #include <fstream>
 #include <string>
-#include <map>
 
 static basic::Tracer TR( "apps.public.nmr.ligand_transform_with_pcs" );
 

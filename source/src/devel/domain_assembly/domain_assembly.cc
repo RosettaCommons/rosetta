@@ -26,15 +26,13 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ResidueConnection.hh>
 
 #include <core/scoring/TenANeighborGraph.hh>
 
@@ -45,20 +43,16 @@
 #include <basic/database/open.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
 #include <protocols/rna/denovo/movers/RNA_FragmentMover.fwd.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <ObjexxFCL/FArray1D.hh>
 #include <core/chemical/ResidueType.hh>
 
 
 #include <devel/domain_assembly/domain_assembly.hh>
 
 #include <utility/vector1.hh>
-#include <sstream>
 #include <iomanip>
 #include <iostream>
-#include <fstream>
 #include <utility/io/izstream.hh>
 #include <string>
 
@@ -70,9 +64,7 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
 
 //Auto Headers
 #include <protocols/viewer/GraphicsState.hh>

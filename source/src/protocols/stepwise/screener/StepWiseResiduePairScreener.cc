@@ -15,7 +15,6 @@
 
 #include <protocols/stepwise/screener/StepWiseResiduePairScreener.hh>
 #include <protocols/stepwise/screener/util.hh>
-#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.stepwise.screener.StepWiseResiduePairScreener" );

@@ -18,11 +18,11 @@
 #include <numeric/linear_algebra/rgg.hh>
 
 // External Headers
-#include <Eigen/Dense>
 
 // C++ headers
-#include <string>
 #include <vector>
+
+#include <Eigen/Core> // AUTO IWYU For eigen_assert, Matrix, isMuchSmallerThan, Success, ComputationInfo
 
 namespace numeric {
 namespace linear_algebra {

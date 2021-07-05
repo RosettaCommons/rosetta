@@ -21,9 +21,6 @@
 #include <core/pose/Pose.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
 #include <basic/Tracer.hh>
 

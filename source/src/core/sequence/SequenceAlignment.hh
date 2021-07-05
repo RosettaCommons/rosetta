@@ -19,10 +19,8 @@
 #include <string>
 
 // External headers
-#include <boost/functional/hash.hpp>
 
 // Utility headers
-#include <utility/vector1_bool.hh>
 #include <utility/VirtualBase.hh>
 
 // Project headers
@@ -35,6 +33,8 @@
 #include <core/sequence/SequenceAlignment.fwd.hh>
 
 #include <utility/vector1.hh>
+
+#include <boost/container_hash/extensions.hpp> // AUTO IWYU For hash_combine
 
 
 namespace core {

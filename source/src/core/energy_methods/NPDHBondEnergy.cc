@@ -27,54 +27,29 @@
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 
-#include <core/scoring/hbonds/hbtrie/HBAtom.hh>
-#include <core/scoring/hbonds/hbtrie/HBCPData.hh>
-#include <core/scoring/hbonds/hbtrie/HBondTrie.fwd.hh>
-#include <core/scoring/hbonds/hbtrie/HBCountPairFunction.hh>
 
-#include <core/scoring/lkball/LK_BallEnergy.hh>
-#include <core/scoring/MinimizationData.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/trie/TrieCollection.hh>
-#include <core/scoring/trie/RotamerTrieBase.hh>
-#include <core/scoring/trie/RotamerTrie.hh>
-#include <core/scoring/trie/RotamerDescriptor.hh>
 
-#include <core/scoring/dssp/Dssp.hh>  // for helix-len-dep hbond strength
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/scoring/Membrane_FAPotential.hh>
-#include <core/scoring/MembranePotential.hh>
-#include <core/conformation/Conformation.hh>
 
-#include <core/conformation/membrane/MembraneInfo.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
 
-#include <core/scoring/ScoringManager.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/conformation/RotamerSetBase.hh>
-#include <core/chemical/rna/RNA_Info.hh>
 
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/CacheableData.hh>
 
 // Numeric Headers
-#include <numeric/numeric.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/id/types.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <utility/vector1.hh>
-#include <boost/unordered_map.hpp>
 
-#include <basic/Tracer.hh>
+#include <core/scoring/hbonds/constants.hh> // AUTO IWYU For MAX_R
+
+
 
 #ifdef SERIALIZATION
 // Project serialization headers

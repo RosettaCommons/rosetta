@@ -27,14 +27,12 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedStubID.hh>
 
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>

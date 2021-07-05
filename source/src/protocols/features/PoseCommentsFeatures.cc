@@ -15,20 +15,16 @@
 #include <protocols/features/PoseCommentsFeatures.hh>
 
 // Project Headers
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 //External
 
 // Platform Headers
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
 #include <core/types.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/tools/make_vector.hh>
 
 //Basic Headers
@@ -38,9 +34,6 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
-#include <basic/database/schema_generator/Constraint.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
@@ -52,7 +45,6 @@
 // C++ Headers
 #include <string>
 #include <map>
-#include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>

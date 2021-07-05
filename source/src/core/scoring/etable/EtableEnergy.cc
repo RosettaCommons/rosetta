@@ -19,8 +19,6 @@
 
 // Package headers
 #include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
-#include <core/scoring/etable/count_pair/CountPairGeneric.hh>
-#include <core/scoring/NeighborList.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoringManager.hh>
 

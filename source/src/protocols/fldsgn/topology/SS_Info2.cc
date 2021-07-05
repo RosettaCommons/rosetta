@@ -16,14 +16,11 @@
 
 /// Project headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/datacache/CacheableData.hh>
 
 /// C++ Headers
 #include <iostream>
-#include <utility>
-#include <utility/assert.hh>
 
 // Numeric
 #include <numeric/xyzVector.hh>

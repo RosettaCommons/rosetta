@@ -16,7 +16,6 @@
 
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/pdb/pdb_reader.hh>
 #include <core/io/StructFileReaderOptions.hh>
 

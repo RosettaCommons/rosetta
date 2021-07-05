@@ -15,8 +15,7 @@
 #include <protocols/simple_filters/ResidueDistanceFilterCreator.hh>
 
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>

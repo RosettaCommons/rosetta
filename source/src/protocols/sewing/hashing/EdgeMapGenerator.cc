@@ -19,7 +19,6 @@
 #include <protocols/sewing/data_storage/SmartSegment.hh>
 #include <protocols/sewing/hashing/ModelFileReader.hh>
 //#include <protocols/sewing/sampling/SewGraph.hh>
-#include <protocols/sewing/data_storage/SmartSewingResidue.hh>
 #include <protocols/sewing/data_storage/Basis.hh>
 //Basic headers
 #include <basic/Tracer.hh>
@@ -27,10 +26,13 @@
 #include <basic/options/keys/sewing.OptionKeys.gen.hh>
 
 //Utility headers
-#include <utility/mpi_util.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+
+#ifdef USEMPI
+#include <utility/mpi_util.hh>
+#endif
 
 static basic::Tracer TR( "protocols.sewing.hashing.EdgeMapGenerator" );
 

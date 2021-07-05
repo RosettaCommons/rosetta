@@ -17,14 +17,9 @@
 #include <protocols/simple_moves/ConcatenatePosesMover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <core/types.hh>
 
 // Utility Headers
-#include <numeric/xyzVector.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 using namespace core;

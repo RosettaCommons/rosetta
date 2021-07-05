@@ -46,6 +46,7 @@ warranty.
 
 #include <boost/format.hpp>
 
+#include <core/chemical/AtomTypeSet.hh> // MANUAL IWYU
 
 static basic::Tracer TR("core.scoring.atomic_depth.AtomicDepth");
 

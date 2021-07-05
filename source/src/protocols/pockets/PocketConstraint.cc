@@ -25,7 +25,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
-#include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>

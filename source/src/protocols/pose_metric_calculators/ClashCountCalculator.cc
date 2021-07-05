@@ -29,7 +29,6 @@
 #include <utility/exit.hh>
 #include <basic/MetricValue.hh>
 
-#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 

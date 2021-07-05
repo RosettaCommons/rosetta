@@ -15,35 +15,29 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <test/util/deriv_funcs.hh>
 
 // Unit headers
 #include <protocols/nmr/rdc/RDCEnergy.hh>
 #include <core/scoring/nmr/rdc/RDCData.hh>
-#include <core/scoring/nmr/NMRDataFactory.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
-#include <iostream>
-#include <utility>
+
+#include <basic/datacache/BasicDataCache.hh> // AUTO IWYU For Pose::BasicDataCache
 
 static basic::Tracer TR("protocols.nmr.rdc.RDCEnergy.cxxtest");
 

@@ -19,11 +19,6 @@
 #include <basic/Tracer.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
-#include <protocols/loophash/LoopHashMap.hh>
-#include <protocols/loophash/LoopHashLibrary.hh>
-#include <protocols/loophash/LocalInserter.hh>
-#include <protocols/loophash/BackboneDB.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 
@@ -35,7 +30,6 @@ static basic::Tracer TR("protocols.loophash.loophash.cxxtest");
 
 namespace {
 
-using namespace core::sequence;
 using core::Size;
 using core::Real;
 using core::pose::Pose;

@@ -16,9 +16,8 @@
 #include <protocols/stepwise/screener/RNA_ChainClosureScreener.hh>
 #include <protocols/stepwise/screener/util.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh>
-#include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/moves/CompositionMover.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/Tracer.hh>
 

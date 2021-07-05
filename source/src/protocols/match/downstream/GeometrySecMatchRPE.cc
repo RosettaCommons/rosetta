@@ -26,7 +26,6 @@
 #include <numeric/xyz.functions.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 
 // C++ headers

@@ -16,12 +16,11 @@
 #ifndef INCLUDED_basic_database_schema_generator_PrimaryKey_HH
 #define INCLUDED_basic_database_schema_generator_PrimaryKey_HH
 
-#include <basic/database/schema_generator/Column.fwd.hh>
+#include <basic/database/schema_generator/Column.hh> // DO NOT AUTO-REMOVE
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.hh>
 
 //C++ Header
-#include <iosfwd>
 
 namespace basic {
 namespace database {

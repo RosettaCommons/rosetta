@@ -18,7 +18,6 @@
 #include <cxxtest/TestSuite.h>
 #include <utility/keys/UserKey.hh>
 
-#include <platform/types.hh>
 
 
 // --- set up some helper classes, in their own namespace

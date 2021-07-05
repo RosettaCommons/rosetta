@@ -17,9 +17,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBPoseMap.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -41,7 +39,6 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
@@ -49,7 +46,6 @@
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loops_main.hh>
 
 //movers
 #include <protocols/moves/MonteCarlo.hh>
@@ -58,7 +54,6 @@
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/minimization_packing/TaskAwareMinMover.hh>
-#include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 #include <protocols/simple_moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
@@ -95,7 +90,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>

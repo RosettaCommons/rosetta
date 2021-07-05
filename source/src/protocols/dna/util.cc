@@ -42,6 +42,9 @@
 
 #include <utility/file/file_sys_util.hh> // file_exists, create_directory
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 using utility::vector1;
 #include <utility/vector0.hh>
 #include <utility/io/izstream.hh>
@@ -54,9 +57,7 @@ using utility::string_split;
 using xyzVec = numeric::xyzVector<core::Real>;
 
 
-#include <algorithm> // std::min
 #include <iostream>
-#include <sstream>
 
 // option key includes
 

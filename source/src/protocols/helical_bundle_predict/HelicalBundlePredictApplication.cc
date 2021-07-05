@@ -18,11 +18,9 @@
 // Core includes:
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
@@ -47,7 +45,6 @@
 #include <protocols/helical_bundle_predict/HBP_FinalFullatomRefinementMoveGenerator.hh>
 #include <protocols/helical_bundle_predict/HBP_TemperatureScheduleGenerator.hh>
 #include <protocols/helical_bundle_predict/HBP_SigmoidalTemperatureScheduleGenerator.hh>
-#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 
 // Basic includes:
@@ -55,7 +52,6 @@
 #include <basic/options/keys/helical_bundle_predict.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
@@ -65,6 +61,11 @@
 
 // Numeric includes:
 #include <numeric/random/random.hh>
+
+#ifdef USEMPI
+#include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.hh>
+#endif
 
 // Uncomment the following to debug the workings of this app.
 //#define DUMP_HBP_DEBUG_OUTPUT

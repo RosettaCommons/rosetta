@@ -17,7 +17,6 @@
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

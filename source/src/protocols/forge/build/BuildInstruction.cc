@@ -24,7 +24,6 @@
 
 // utility headers
 #include <utility>
-#include <utility/signals/Link.hh>
 
 // C++ headers
 #include <algorithm>
@@ -33,8 +32,6 @@
 #include <iterator>
 #endif
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace forge {

@@ -20,7 +20,6 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <iostream>
 
 namespace protocols {
 namespace fldsgn {

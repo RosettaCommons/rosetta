@@ -23,24 +23,22 @@
 //project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <protocols/task_operations/STMStoredTask.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
-#include <ObjexxFCL/format.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For string_of
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 // C++ Headers
 

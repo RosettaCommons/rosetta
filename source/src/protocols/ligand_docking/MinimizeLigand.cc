@@ -19,15 +19,12 @@
 // Unit Headers
 #include <protocols/ligand_docking/MinimizeLigand.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 // Utility Headers
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 

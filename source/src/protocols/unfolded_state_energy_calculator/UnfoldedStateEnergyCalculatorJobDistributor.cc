@@ -17,7 +17,7 @@
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorUtil.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Project headers
 #include <core/scoring/ScoreType.hh>
@@ -27,7 +27,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <algorithm>
 
 #include <basic/options/keys/OptionKeys.hh>
 

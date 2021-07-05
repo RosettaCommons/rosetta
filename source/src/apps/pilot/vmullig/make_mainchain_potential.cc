@@ -22,15 +22,11 @@
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/options/OptionCollection.hh>
 #include <utility/pointer/memory.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option_macros.hh>
 
 static basic::Tracer TR("make_mainchain_potential");
 

@@ -19,23 +19,24 @@
 
 // Unit Headers
 #include <protocols/legacy_sewing/sampling/LegacyRepeatAssemblyMover.fwd.hh>
-#include <protocols/legacy_sewing/sampling/LegacyGivenPathAssemblyMover.hh>
 
 //Package headers
-#include <protocols/legacy_sewing/conformation/Assembly.hh>
-#include <protocols/legacy_sewing/sampling/SewGraph.hh>
+#include <protocols/legacy_sewing/conformation/Assembly.fwd.hh>
+#include <protocols/legacy_sewing/sampling/SewGraph.fwd.hh>
 
 //Protocol headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/legacy_sewing/scoring/LegacyAssemblyScorer.hh>
-#include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementSet.hh>
+#include <protocols/legacy_sewing/scoring/LegacyAssemblyScorer.fwd.hh>
 
 //Utility headers
 #include <numeric/xyzTransform.fwd.hh>
 
 //Unit headers
-#include <protocols/legacy_sewing/sampling/LegacyRepeatAssemblyMover.fwd.hh>
+
+#include <protocols/legacy_sewing/sampling/LegacyAssemblyMover.hh> // AUTO IWYU For LegacyAssemblyMover
+#include <string> // AUTO IWYU For string
+#include <protocols/legacy_sewing/conformation/Model.fwd.hh> // AUTO IWYU For SewSegment
 
 
 namespace protocols {

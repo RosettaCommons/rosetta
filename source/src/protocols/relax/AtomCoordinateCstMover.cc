@@ -33,19 +33,18 @@
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <core/scoring/ScoreFunction.hh>
+
+#include <protocols/relax/util.hh> // AUTO IWYU For add_coordinate_constraint_func_atoms
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 
 static  basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );

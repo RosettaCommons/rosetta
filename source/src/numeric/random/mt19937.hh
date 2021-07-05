@@ -66,7 +66,6 @@
 #define INCLUDED_numeric_random_mt19937_hh
 
 #include <numeric/random/uniform.hh>
-#include <utility/VirtualBase.hh>
 #include <cstring>
 #include <iostream>
 
@@ -101,7 +100,6 @@ typedef unsigned long long uint64_t
 */
 
 
-#include <cstdio>
 
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
 #include <inttypes.h>

@@ -19,13 +19,14 @@
 #include <core/pose/MiniPose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/RNA_BasePairHandler.hh> // for MAX_BULGE_LENGTH
-#include <core/chemical/util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 #include <string>
+
+#include <core/pose/rna/BasePairStep.hh> // AUTO IWYU For BasePairStep
 
 static basic::Tracer TR( "core.import_pose.libraries.BasePairStepLibrary" );
 

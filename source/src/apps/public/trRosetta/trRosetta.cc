@@ -16,7 +16,6 @@
 #include <devel/init.hh>
 
 // protocol headers
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/trRosetta_protocols/movers/trRosettaProtocolMover.hh>
 
 
@@ -25,12 +24,13 @@
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/options/OptionCollection.hh>
-#include <basic/options/option_macros.hh>
 #include <basic/tensorflow_manager/util.hh>
+
+#ifdef USE_TENSORFLOW
+#include <protocols/jd2/JobDistributor.hh>
+#include <basic/options/option.hh>
+#endif
 
 static basic::Tracer TR("apps.public.trRosetta.trRosetta");
 

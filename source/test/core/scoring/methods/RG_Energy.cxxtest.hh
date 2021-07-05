@@ -17,7 +17,6 @@
 // Unit headers
 #include <core/energy_methods/RG_Energy_Fast.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/pose_funcs.hh>
@@ -27,7 +26,6 @@
 #include <core/scoring/ScoreFunction.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

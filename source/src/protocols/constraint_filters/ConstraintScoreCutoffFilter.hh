@@ -19,14 +19,13 @@
 // Unit Headers
 #include <protocols/constraint_filters/ConstraintScoreCutoffFilter.fwd.hh>
 #include <protocols/filters/Filter.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
 
-#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

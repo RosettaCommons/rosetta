@@ -22,8 +22,6 @@
 #include <protocols/moves/Mover.hh>
 
 //TAKE OUT!!!
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/membrane/MembraneInfo.fwd.hh>
 
 // Project Headers
 //#include <protocols/membrane/AddMembraneMover.fwd.hh>
@@ -34,12 +32,9 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
 
 namespace protocols {
 namespace docking {

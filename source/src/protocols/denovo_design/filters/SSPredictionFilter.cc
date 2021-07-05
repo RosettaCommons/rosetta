@@ -22,7 +22,6 @@
 
 // project headers
 #include <core/io/external/PsiPredInterface.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -37,7 +36,6 @@
 
 // C++ Headers
 #include <fstream>
-#include <cstdlib>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

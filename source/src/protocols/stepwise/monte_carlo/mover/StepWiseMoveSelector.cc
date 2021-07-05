@@ -19,10 +19,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh> // probably do not need RNA in here.
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <core/types.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/rna/util.hh> // Probably could get rid of RNA-specialized stuff here.
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -39,6 +36,8 @@
 
 #include <map>
 #include <numeric/random/random.hh>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMoveSelector" );
 

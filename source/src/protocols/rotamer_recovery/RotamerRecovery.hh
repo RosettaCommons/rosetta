@@ -27,7 +27,6 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 #ifdef PYROSETTA
 #include <core/pose/Pose.hh>

@@ -14,6 +14,7 @@
 #ifndef INCLUDED_basic_resource_manager_ResourceLocatorFactory_hh
 #define INCLUDED_basic_resource_manager_ResourceLocatorFactory_hh
 
+#include <basic/resource_manager/ResourceLocatorFactory.fwd.hh>
 
 //package headers
 #include <basic/resource_manager/ResourceLocatorCreator.fwd.hh>
@@ -21,7 +22,6 @@
 
 //utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //C++ headers

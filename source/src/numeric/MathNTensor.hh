@@ -37,8 +37,6 @@
 // Package headers
 #include <numeric/types.hh>
 #include <numeric/MathNTensor.fwd.hh>
-#include <numeric/MathTensor.hh>
-#include <numeric/MathVector.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathNTensorBase.hh>
 
@@ -46,11 +44,8 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
-#include <utility/pointer/memory.hh>
 
 // C++ headers
-#include <math.h>
-#include <iosfwd>
 #include <memory>
 
 namespace numeric {

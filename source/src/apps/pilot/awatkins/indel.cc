@@ -8,9 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 // Project Headers
-#include <utility/pointer/owning_ptr.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 // Filter headers
 #include <protocols/indel/IndelOptimizationMover.hh>
@@ -20,14 +18,9 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/Tracer.hh>
-#include <utility/exit.hh>
 
 // C++ headers
 #include <string>
-#include <sstream>
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
 // Namespaces

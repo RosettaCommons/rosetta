@@ -22,13 +22,11 @@
 #include <protocols/topology_broker/FragmentClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/TopologyClaimer.hh>
+#include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/kinematics/MoveMap.hh>
 
-#include <protocols/loops/Loops.hh>
 
 
 //#include <core/fragment/FragSet.hh>
@@ -43,14 +41,11 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 
-#include <utility/VirtualBase.hh>
-#include <set>
 
 //// C++ headers
 //#include <iosfwd>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

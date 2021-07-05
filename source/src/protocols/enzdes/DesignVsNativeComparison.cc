@@ -38,6 +38,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 
+#include <core/io/silent/SilentEnergy.hh> // AUTO IWYU For SilentEnergy
+
 
 static basic::Tracer tr( "protocols.enzdes.DesignVsNativeComparison" );
 

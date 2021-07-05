@@ -24,7 +24,6 @@
 #include <core/pose/Pose.hh>
 
 //numeric headers
-#include <numeric/numeric.functions.hh>
 #include <numeric/xyzVector.hh>
 
 
@@ -34,8 +33,6 @@
 #include <basic/Tracer.hh>
 
 //Objexx headers
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/io/ozstream.hh> //for dump_weights
 

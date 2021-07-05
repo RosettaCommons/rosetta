@@ -22,19 +22,16 @@
 #include <core/pose/Pose.fwd.hh>
 
 //#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
-#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
 // C++ Headers
 #include <string>
 #include <map>
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
-#include <ctime>
+#include <utility/tag/Tag.fwd.hh>
 #include <boost/range/algorithm/count.hpp>
 
 
@@ -45,10 +42,18 @@ struct Chain{
 public:
 	core::Real rmsd;
 	core::pose::PoseOP poseOP;
+
 	Chain(core::pose::PoseOP poseOP_i, core::Real rmsd_i){
 		rmsd = rmsd_i;
 		poseOP = poseOP_i;
 	}
+
+#ifdef IWYU_SCAN
+	Chain() = default;
+#else
+	Chain() = delete;
+#endif
+
 };
 
 class ConnectChainsMover : public protocols::moves::Mover {

@@ -17,7 +17,7 @@
 // Unit headers
 #include <protocols/membrane/scoring/FaWaterToBilayerEnergy.hh>
 #include <protocols/membrane/scoring/FaWaterToBilayerEnergyCreator.hh>
-#include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
+#include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
 
 // Project Headers
 #include <protocols/membrane/scoring/MEnvAtomParams.hh>
@@ -25,17 +25,14 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
-#include <core/conformation/Atom.hh>
 
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/EnergyMap.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 
@@ -43,13 +40,11 @@
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
-#include <utility>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "protocols.membrane.scoring.FaWaterToBilayerEnergy" );
 

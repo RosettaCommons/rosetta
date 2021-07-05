@@ -18,11 +18,9 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
 #include <string>
-#include <iosfwd>
 
 namespace protocols {
 namespace residue_optimization {

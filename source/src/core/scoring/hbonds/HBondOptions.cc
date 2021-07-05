@@ -37,10 +37,8 @@
 #include <string>
 #include <iostream>
 
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/vector1.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
 

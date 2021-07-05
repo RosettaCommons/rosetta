@@ -20,7 +20,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
-#include <utility/vector1.hh>
 
 class ScoreBenchmark : public PerformanceBenchmark
 {

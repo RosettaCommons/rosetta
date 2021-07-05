@@ -14,7 +14,6 @@
 // C++ headers
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/fixedsizearray1.hh>
 // Rosetta Headers
 #include <numeric/types.hh>
 

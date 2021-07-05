@@ -15,7 +15,6 @@
 #include <core/scoring/etable/etrie/EtableAtom.hh>
 
 // Project Headers
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 
@@ -23,9 +22,7 @@
 #include <iostream>
 
 // Numceric Headers
-#include <numeric/xyzVector.hh>
 
-#include <utility/vector1.hh>
 
 
 #ifdef    SERIALIZATION

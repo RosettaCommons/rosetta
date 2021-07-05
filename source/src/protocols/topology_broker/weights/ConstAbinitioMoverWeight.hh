@@ -33,7 +33,6 @@
 
 // Utility headers
 
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 //#include <iosfwd>

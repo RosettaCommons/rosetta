@@ -39,6 +39,8 @@
 //Auto Headers
 #include <core/pose/Pose.hh>
 
+#include <protocols/frag_picker/PhiPsiTalosIO.hh> // AUTO IWYU For PhiPsiTalosIO
+
 
 // C++
 

@@ -20,7 +20,6 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
 
 #include <string>
 

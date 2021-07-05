@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_pdbinfo_manipulations_AlignPDBInfoToSequencesUtil_HH
 
 // Core headers
-#include <core/sequence/Sequence.hh>
+#include <core/sequence/Sequence.fwd.hh>
 
 // Standard library headers
 #include <string>

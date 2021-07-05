@@ -20,8 +20,6 @@
 
 
 // Project headers
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/loops/Loop.hh>
 #include <core/pose/Pose.fwd.hh>
 
 

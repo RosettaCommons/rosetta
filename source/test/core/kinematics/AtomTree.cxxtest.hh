@@ -26,13 +26,10 @@
 #include <test/util/pose_funcs.hh>
 
 // Utility headers
-#include <basic/Tracer.hh>
 
 // C/C++
-#include <iostream>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

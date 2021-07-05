@@ -13,28 +13,22 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #ifdef WIN32
 #include <core/chemical/ResidueType.hh>
 #else
-#include <core/chemical/ResidueType.fwd.hh>
 #endif
 
 // Mover headers
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/ncbb/SecStructFinder.fwd.hh>
-#include <protocols/ncbb/SecStructFinderCreator.fwd.hh>
 
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
-#include <iosfwd>
-#include <cmath>
 
 namespace protocols {
 namespace ncbb {

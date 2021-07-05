@@ -15,19 +15,21 @@
 #ifndef INCLUDED_numeric_xyz_functions_PyRosetta_HH
 #define INCLUDED_numeric_xyz_functions_PyRosetta_HH
 
+#ifdef PYROSETTA
+
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 
 namespace numeric {
 
-#ifdef PYROSETTA
 inline void _rotation_axis_angle_instantiation_for_PyRosetta()
 {
 	xyzMatrix_double m;
 	rotation_axis_angle(m);
 }
-#endif
 
 } // namespace numeric
+
+#endif // PYROSETTA
 
 #endif // INCLUDED_numeric_xyz_functions_PyRosetta_HH

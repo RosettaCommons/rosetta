@@ -12,8 +12,6 @@
 /// @author Jared Adolf-Bryfogle, Brian Weitzner
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
@@ -29,10 +27,13 @@
 // Core Headers
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/rms_util.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 
 static basic::Tracer TR("protocols.grafting.GraftTest");

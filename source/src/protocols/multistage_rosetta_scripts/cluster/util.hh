@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_cluster_util_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_util_HH
 
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <string>
 

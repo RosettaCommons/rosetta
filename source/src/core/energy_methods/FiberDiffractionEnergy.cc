@@ -16,47 +16,31 @@
 #include <core/energy_methods/FiberDiffractionEnergy.hh>
 #include <core/scoring/fiber_diffraction/FiberDiffraction.hh>
 #include <core/scoring/fiber_diffraction/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
-#include <core/scoring/fiber_diffraction/xray_scattering.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/build_pose_as_is.hh>
 
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
 // Options
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 // Utility headers
-#include <basic/prof.hh>
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/sys_util.hh>
 
 // C++
-#include <iomanip>
 #include <string>
+
+#include <core/energy_methods/FiberDiffractionEnergyCreator.hh> // AUTO IWYU For FiberDiffractionEnergyCreator
+#include <core/scoring/EnergyMap.hh> // AUTO IWYU For EMapVector
+#include <fstream> // AUTO IWYU For operator<<, basic_ostream, endl, basic_ostre...
+
 //#include <sys/time.h>
 
 #ifdef WIN32

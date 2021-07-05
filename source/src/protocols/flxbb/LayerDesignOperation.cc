@@ -53,7 +53,6 @@
 #include <basic/Tracer.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>
 #include <core/pose/symmetry/util.hh>
-#include <basic/datacache/DataMap.hh>
 #include <protocols/parser/BluePrint.hh>
 
 // Utility Headers

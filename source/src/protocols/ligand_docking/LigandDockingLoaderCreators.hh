@@ -18,7 +18,6 @@
 #include <protocols/parser/DataLoaderCreator.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace ligand_docking {

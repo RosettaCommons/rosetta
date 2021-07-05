@@ -23,12 +23,11 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/io/silent/SilentEnergy.hh>
+#include <core/io/silent/SilentEnergy.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.fwd.hh>
 
 //Utility Headers
 

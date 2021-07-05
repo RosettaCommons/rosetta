@@ -25,7 +25,6 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/vector1_bool.hh>
 #include <list>
 #include <string>
 

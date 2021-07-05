@@ -14,7 +14,6 @@
 // Unit headers
 #include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -32,7 +31,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

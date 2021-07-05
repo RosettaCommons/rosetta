@@ -32,11 +32,8 @@
 #include <numeric/xyzVector.hh>
 
 // Package headers
-#include <core/chemical/types.hh>
 
 // Utility headers
-#include <utility>
-#include <utility/vector1_bool.hh>
 
 // C++ headers
 #include <iosfwd>

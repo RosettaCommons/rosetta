@@ -17,11 +17,10 @@
 #include <protocols/abinitio/abscript/ConstraintPreparer.fwd.hh>
 
 // Package headers
-#include <protocols/environment/ClientMover.hh>
 #include <protocols/abinitio/abscript/StagePreparer.hh>
 
 // Project headers
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 

@@ -29,16 +29,9 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/util.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/id/AtomID.hh>
-#include <core/chemical/AA.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/kinematics/MoveMap.hh>

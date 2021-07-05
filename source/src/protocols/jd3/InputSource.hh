@@ -20,15 +20,12 @@
 
 //project headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <map>
 #include <string>
 
 // Utility headers
-#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

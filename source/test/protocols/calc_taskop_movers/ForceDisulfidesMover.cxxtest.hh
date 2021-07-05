@@ -16,7 +16,6 @@
 #include <test/core/init_util.hh>
 #include <test/util/rosettascripts.hh>
 #include <test/util/schema_utilities.hh>
-#include <test/util/pose_funcs.hh>
 
 // Project Headers
 
@@ -28,6 +27,8 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 static basic::Tracer TR("protocols.calc_taskop_movers/ForceDisulfidesMover.cxxtest.hh");
 

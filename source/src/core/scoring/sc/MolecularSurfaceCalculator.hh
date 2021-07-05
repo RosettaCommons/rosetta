@@ -37,15 +37,12 @@
 
 //// C++ headers
 #include <vector>
-#include <string>
-#include <utility/vector1.hh>
 
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>
 #endif
 
 // OpenCL headers
-#include <basic/gpu/Timer.hh>
 #ifdef USEOPENCL
 #include <basic/gpu/GPU.hh>
 #endif

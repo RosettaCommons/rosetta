@@ -19,22 +19,20 @@
 #include <core/types.hh>
 
 //see if necessary
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 
 //probably necessary
-#include <core/pose/motif/reference_frames.hh>
 //secondary structure
-#include <core/scoring/dssp/Dssp.hh>
 //Probably necessary--see what functions are in here, might be useful
-#include <core/scoring/motif/util.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
 //maybe necessary
 #include <numeric/xyzTransform.hh>
+
+#include <core/chemical/ResidueTypeSet.hh> // AUTO IWYU For ResidueTypeSet
+
 //output zstream--see what we're using it for
-#include <utility/io/ozstream.hh>
 
 namespace protocols {
 namespace legacy_sewing {

@@ -15,12 +15,9 @@
 #include <protocols/viewer/marchingCubes.hh>
 
 // Utility headers
-#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/exit.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
-#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 

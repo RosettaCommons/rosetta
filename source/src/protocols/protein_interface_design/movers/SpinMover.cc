@@ -20,15 +20,12 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 #include <string>
 
 //#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

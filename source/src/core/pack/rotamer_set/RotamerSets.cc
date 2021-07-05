@@ -18,7 +18,6 @@
 
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -27,13 +26,10 @@
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
-#include <core/conformation/Conformation.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <utility/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -51,7 +47,6 @@
 
 // C++
 #include <fstream>
-#include <ctime>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>

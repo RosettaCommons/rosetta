@@ -14,27 +14,22 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/types.hh>
 
-#include <basic/database/open.hh>
-#include <basic/options/option.hh>
 
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 using namespace core;
 

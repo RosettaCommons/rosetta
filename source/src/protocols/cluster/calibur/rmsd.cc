@@ -11,7 +11,6 @@
 /// @author YK Ng & SC Li (kalngyk@gmail.com)
 
 
-#include <stdio.h>
 #include <math.h>
 #include <protocols/cluster/calibur/jacobi.hh>
 #include <protocols/cluster/calibur/cubic.hh>

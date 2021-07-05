@@ -16,7 +16,6 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 #include <util/pose_funcs.hh>
 
 #include <core/types.hh>

@@ -20,7 +20,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
-#include <core/scoring/rna/RNA_ScoringInfo.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

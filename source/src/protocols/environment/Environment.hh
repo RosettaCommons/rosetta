@@ -21,7 +21,6 @@
 
 // Package headers
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
 
 #include <core/environment/DofPassport.fwd.hh>
 
@@ -29,19 +28,17 @@
 
 #include <protocols/environment/ClientMover.fwd.hh>
 #include <protocols/environment/ProtectedConformation.fwd.hh>
-#include <protocols/environment/EnvClaimBroker.hh>
+#include <protocols/environment/EnvClaimBroker.fwd.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
 #include <string>
-#include <list>
 #include <set>
+
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
 
 // ObjexxFCL Headers
 

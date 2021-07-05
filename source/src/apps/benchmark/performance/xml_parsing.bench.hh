@@ -16,10 +16,8 @@
 #include <apps/benchmark/performance/performance_benchmark.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/vector1.hh>
 #include <string>
 #include <sstream>
-#include <iosfwd>
 
 class XMLParseBenchmark : public PerformanceBenchmark
 {

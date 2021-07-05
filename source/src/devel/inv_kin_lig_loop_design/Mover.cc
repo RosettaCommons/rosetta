@@ -24,10 +24,8 @@
 // #include <Util/Abng.hh>
 
 // Project headers
-#include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
@@ -38,7 +36,6 @@
 /// C++ header
 #include <cmath>
 
-#include <utility/vector1.hh>
 
 
 #define DEG2RAD (M_PI/180.0)

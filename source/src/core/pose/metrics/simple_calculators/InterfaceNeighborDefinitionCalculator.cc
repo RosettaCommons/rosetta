@@ -24,7 +24,6 @@
 #include <utility/string_util.hh>
 #include <basic/options/option.hh>
 
-#include <utility/assert.hh>
 
 // option key includes
 

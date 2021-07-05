@@ -23,7 +23,7 @@
 #include <protocols/loophash/LoopHashMap.hh>
 #include <utility/vector1.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <string>
 #include <vector>

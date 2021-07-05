@@ -17,12 +17,11 @@
 #define INCLUDED_protocols_stepwise_modeler_rna_StepWiseRNA_ModelerOptions_HH
 
 #include <protocols/stepwise/modeler/options/StepWiseRNA_ModelerOptions.fwd.hh>
-#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace stepwise {

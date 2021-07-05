@@ -16,10 +16,8 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueNameSelector.hh>
-#include <core/select/residue_selector/util.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
@@ -29,10 +27,11 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
-#include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <core/pack/task/operation/task_op_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer TR( "protocols.task_operations.pHVariantTaskOperation" );
 

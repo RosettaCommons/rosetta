@@ -17,7 +17,6 @@
 #include <cxxtest/TestSuite.h>
 #include <utility/heap.hh>
 
-#include <iostream>
 
 using namespace utility;
 

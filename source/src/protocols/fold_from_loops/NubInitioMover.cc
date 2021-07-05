@@ -23,7 +23,6 @@
 #include <protocols/fold_from_loops/movers/LabelPoseFromResidueSelectorMover.hh>
 #include <protocols/fold_from_loops/movers/DisplayPoseLabelsMover.hh>
 #include <protocols/fold_from_loops/movers/NubInitioLoopClosureMover.hh>
-#include <protocols/fold_from_loops/selectors/CutpointResidueSelector.hh>
 #include <protocols/fold_from_loops/utils/utils.hh>
 #include <protocols/fold_from_loops/utils/Nub.hh>
 
@@ -33,27 +32,18 @@
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PyMOLMover.hh>
-#include <protocols/simple_moves/DumpPdb.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <protocols/abinitio/FoldConstraints.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
-#include <protocols/loops/Exceptions.hh>
-#include <protocols/jumping/util.hh>
-#include <protocols/checkpoint/CheckPointer.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/SilentFileJobOutputter.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/util/disulfide_util.hh>
@@ -63,13 +53,10 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/select/residue_selector/AndResidueSelector.hh>
 #include <core/select/residue_selector/OrResidueSelector.hh>
@@ -81,15 +68,11 @@
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/ResLvlTaskOperation.hh>
+#include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/types.hh>
@@ -104,6 +87,8 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <string>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 namespace protocols {
 namespace fold_from_loops {

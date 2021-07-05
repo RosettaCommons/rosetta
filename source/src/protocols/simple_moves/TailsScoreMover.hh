@@ -19,9 +19,8 @@
 
 #include <core/types.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
 

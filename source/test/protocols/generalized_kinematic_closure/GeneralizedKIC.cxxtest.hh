@@ -18,20 +18,13 @@
 
 // GeneralizedKIC headers:
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
-#include <protocols/generalized_kinematic_closure/util.hh>
 
 // Other Rosetta libraries:
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/cyclic_peptide/FlipChiralityMover.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/annotated_sequence.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>

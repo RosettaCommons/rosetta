@@ -20,23 +20,18 @@
 
 // Package Headers
 
-#include <devel/replica_docking/InteractionScoreFilter.hh>
-#include <devel/replica_docking/InteractionScoreFilter.fwd.hh>
 // Project Headers
-#include <core/io/silent/SilentStruct.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // ObjexxFCL Headers
-#include <utility/tag/Tag.hh> // for test of tag
 //#include <devel/replica_docking/AddEncounterConstraintMover.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <basic/MemTracer.hh>
 
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
 
 // C++ headers
 

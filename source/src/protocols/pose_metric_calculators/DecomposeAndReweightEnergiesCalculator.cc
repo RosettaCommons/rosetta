@@ -26,7 +26,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
@@ -34,7 +33,6 @@
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 
 #include <utility/vector1.hh>
 #include <set>

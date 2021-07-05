@@ -10,7 +10,6 @@
 #include <protocols/motifs/MotifDnaPacker.hh>
 #include <protocols/motifs/MotifDnaPackerCreator.hh>
 
-#include <protocols/dna/typedefs.hh>
 #include <protocols/dna/DnaInterfacePacker.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
 #include <protocols/dna/DnaDesignDef.hh>
@@ -19,11 +18,9 @@
 #include <protocols/dna/DnaChains.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/WatsonCrickRotamerCouplings.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/motifs/motif_utils.hh>
 #include <protocols/motifs/MotifSearch.hh>
 #include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.hh>
-#include <protocols/motifs/Motif.hh> // REQUIRED FOR WINDOWS
 
 //#include <devel/blab/opte/sidechain_relax.hh>
 //#include <devel/blab/motif/MotifData.hh>
@@ -36,7 +33,6 @@
 
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Residue.hh>
@@ -60,20 +56,18 @@
 //#include <basic/tracer.hh>
 #include <basic/Tracer.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh> // lead_zero_string_of
 
 // c++ headers
-#include <vector> // for rot_to_pack
-#include <iostream>
 #include <sstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

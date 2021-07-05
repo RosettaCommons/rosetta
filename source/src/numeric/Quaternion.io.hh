@@ -17,7 +17,7 @@
 
 
 // Package headers
-#include <numeric/Quaternion.hh>
+#include <numeric/Quaternion.fwd.hh>
 #include <numeric/IOTraits.hh>
 
 // C++ headers

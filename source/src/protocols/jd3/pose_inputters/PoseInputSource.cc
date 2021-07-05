@@ -15,8 +15,6 @@
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
-#include <utility>
 
 
 #ifdef    SERIALIZATION

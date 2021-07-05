@@ -29,14 +29,15 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
 
 #include <protocols/match/Hit.hh>
 #include <utility/vector1.hh>
-#include <utility/options/StringVectorOption.hh>
+
+#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh> // AUTO IWYU For ExternalGeomSampler
+
 
 
 namespace protocols {

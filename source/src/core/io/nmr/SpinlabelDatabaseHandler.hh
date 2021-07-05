@@ -21,12 +21,10 @@
 // Project headers
 
 // Package headers
-#include <core/types.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
@@ -38,12 +36,14 @@ namespace nmr {
 
 class SpinlabelDatabaseEntry : public utility::VirtualBase {
 
-private: // Data
-
-	/// @brief Empty default constructor
-	SpinlabelDatabaseEntry();
-
 public: // Methods
+
+#ifdef IWYU_SCAN
+	SpinlabelDatabaseEntry() = default;
+#else
+	/// @brief No default constructor
+	SpinlabelDatabaseEntry() = delete;
+#endif
 
 	/// @brief Construct from full spinlabel name, 3-letter code,
 	///        1-letter code and radical atom name.

@@ -18,7 +18,6 @@
 #include <protocols/noesy_assign/CrossPeakList.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/CrossPeak.hh>
 #include <protocols/noesy_assign/DistanceScoreMover.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/jumping/JumpSample.hh>
@@ -29,15 +28,12 @@
 // Project Headers
 #include <core/types.hh>
 //#include <core/id/NamedAtomID.fwd.hh>
-#include <core/chemical/AA.hh>
 //#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -47,11 +43,7 @@
 //#include <core/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
-#include <list>
-#include <map>
-#include <cmath>
 
 
 namespace protocols {

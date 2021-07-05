@@ -17,24 +17,21 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
 
-#include <core/id/AtomID.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/Edge.hh>
 
 #include <core/types.hh>
 
 #include <list>
 
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/Loop.hh>
-#include <core/sequence/SequenceAlignment.hh>
+#include <core/sequence/SequenceAlignment.fwd.hh>
 
 #include <set>
+
+#include <numeric/xyzMatrix.fwd.hh> // AUTO IWYU For xyzMatrix
 
 namespace protocols {
 //namespace comparative_modeling {

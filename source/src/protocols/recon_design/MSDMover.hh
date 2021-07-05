@@ -23,9 +23,7 @@
 #include <protocols/moves/VectorPoseMover.hh>
 
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <utility/vector1.hh>
 

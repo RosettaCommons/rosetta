@@ -28,6 +28,8 @@
 
 #include <utility/vector1.hh>
 
+#include <map> // AUTO IWYU For map
+
 namespace protocols {
 namespace ub_e2c {
 

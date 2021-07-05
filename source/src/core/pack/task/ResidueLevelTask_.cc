@@ -19,33 +19,23 @@
 #include <core/pack/task/ResidueLevelTask_.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSetOperation.hh>
-#include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 
 //Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/pose/util.hh>
 
 // Objexx headers
 #include <ObjexxFCL/format.hh>
 
 //Utility Headers
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
 // basic headers
@@ -56,12 +46,15 @@
 
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
+
+#include <core/pack/palette/DefaultPackerPalette.hh> // AUTO IWYU For DefaultPackerPalette
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 #ifdef    SERIALIZATION
+#include <core/pack/rotamer_set/RotamerSetOperation.hh>
+
 // Project serialization headers
 #include <core/chemical/ResidueType.srlz.hh>
 

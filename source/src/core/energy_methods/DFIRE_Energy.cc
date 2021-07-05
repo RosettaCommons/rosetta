@@ -16,7 +16,7 @@
 
 // Package Headers
 #include <core/scoring/DenseEnergyContainer.hh>
-#include <core/scoring/LREnergyContainer.hh>
+#include <core/scoring/LREnergyContainer.fwd.hh>
 #include <core/scoring/methods/dfire/DFIRE_Potential.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>

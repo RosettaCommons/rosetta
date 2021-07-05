@@ -17,7 +17,6 @@
 #include <core/pack/dunbrack/cenrot/CenRotDunEnergyCreator.hh>
 
 // Package headers
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
@@ -26,7 +25,6 @@
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/deriv/dihedral_deriv.hh>
 
-#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/chemical/VariantType.hh>
 

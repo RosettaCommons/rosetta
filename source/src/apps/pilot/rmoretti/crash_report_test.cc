@@ -18,11 +18,8 @@
 #include <utility/crash_report.hh>
 #include <utility/excn/Exceptions.hh>
 #include <devel/init.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <thread>
-#include <chrono>
 #include <string>
 #include <list>
 

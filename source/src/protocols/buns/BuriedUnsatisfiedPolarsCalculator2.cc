@@ -23,7 +23,6 @@
 #include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -33,7 +32,6 @@
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 //#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/conformation/Residue.hh>
-#include <utility>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <numeric/conversions.hh>
@@ -43,14 +41,14 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/stream_util.hh>
 #include <utility/string_util.hh>
 #include <basic/MetricValue.hh>
 
-#include <utility/assert.hh>
 
 #include <core/chemical/AtomType.hh>
-#include <utility/vector1.hh>
+
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <numeric/xyz.functions.hh> // AUTO IWYU For angle_of
 
 static basic::Tracer TR( "protocols.buns.BuriedUnsatisfiedPolarsCalculator2" );
 

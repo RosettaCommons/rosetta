@@ -28,9 +28,7 @@
 #include <sstream>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 
-#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.moves.TrialMover" );

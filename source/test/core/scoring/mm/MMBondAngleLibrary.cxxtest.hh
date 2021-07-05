@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
-#include <core/scoring/ScoringManager.hh>
 
 // Project headers
 #include <test/core/init_util.hh>

@@ -13,6 +13,7 @@
 
 //Resource #includes
 #include <basic/resource_manager/ResourceLoaderRegistrator.hh>
+#include <basic/resource_manager/ResourceLoaderFactory.hh>
 
 #include <protocols/loophash/LoopHashLibraryLoaderCreator.hh>
 #include <protocols/loops/LoopsFileLoaderCreator.hh>

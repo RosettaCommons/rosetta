@@ -27,7 +27,6 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
 #include <protocols/loops/Loops.hh>
-#include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/forge/methods/util.hh>
@@ -62,7 +61,6 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragSet.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
@@ -73,12 +71,9 @@
 #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
@@ -87,6 +82,8 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

@@ -20,26 +20,20 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/moves/Mover.hh>
 
 
 // Numeric Headers
 #include <numeric/constants.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <numeric/numeric.functions.hh>
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzVector.hh>
 
 //// C++ headers
-#include <cstdlib>
 #include <string>
 
 #include <cmath>

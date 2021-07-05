@@ -18,9 +18,7 @@
 #include <protocols/denovo_design/architects/HelixArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
-#include <protocols/denovo_design/components/VectorSelector.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
-#include <protocols/denovo_design/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

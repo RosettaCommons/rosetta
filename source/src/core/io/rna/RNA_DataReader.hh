@@ -12,11 +12,9 @@
 
 #include <core/io/rna/RNA_DataReader.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/pose/rna/RNA_DataInfo.hh>
 #include <core/io/rna/RDAT.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
 

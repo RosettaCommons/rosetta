@@ -18,7 +18,8 @@
 // Package headers
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
 
-#include <utility/vector1.hh>
+#include <utility/exit.hh> // AUTO IWYU For utility_exit_with_message
+
 
 
 // Project headers

@@ -16,45 +16,24 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <protocols/scoring/Interface.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/ScoreType.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <utility/tag/Tag.hh>
 //#include <protocols/moves/ResidueMover.hh>
 //#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <basic/MetricValue.hh>
-#include <numeric/random/random.hh>
-#include <core/chemical/AtomType.hh>
 
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/symmetry/util.hh>
 
 //Objectxxxx header
-#include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <map>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-#include <ObjexxFCL/format.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
 
 
 namespace protocols {

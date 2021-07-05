@@ -21,30 +21,18 @@
 #include <protocols/denovo_design/filters/CavityVolumeFilter.fwd.hh>
 
 // Basic headers
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 
 // Project headers
 #include <protocols/filters/Filter.hh>
-#include <protocols/fldsgn/topology/HelixPairing.fwd.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.fwd.hh>
-#include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
-#include <protocols/parser/BluePrint.fwd.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/sc/MolecularSurfaceCalculator.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator.fwd.hh>
 
 //// C++ headers
 #include <string>
 
-#include <core/io/silent/silent.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

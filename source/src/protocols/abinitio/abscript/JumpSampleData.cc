@@ -21,7 +21,10 @@
 
 // Basic Headers
 #include <basic/Tracer.hh>
-#include <utility>
+
+#include <protocols/abinitio/abscript/JumpSampleDataCreator.hh> // AUTO IWYU For JumpSampleDataCreator
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For BadInput, CREATE_EXCEPTION
+
 
 //option includes
 

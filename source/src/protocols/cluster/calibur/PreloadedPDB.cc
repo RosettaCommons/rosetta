@@ -15,10 +15,6 @@
 #include <sstream>
 #include <fstream>
 
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <iomanip>
 
 #include <map>
 #include <vector>
@@ -28,6 +24,8 @@
 #include <protocols/cluster/calibur/pdb_util.hh>
 
 #include <utility/exit.hh> // for runtime_assert
+
+#include <protocols/cluster/calibur/SimPDB.hh> // AUTO IWYU For SimPDB
 
 namespace protocols {
 namespace cluster {

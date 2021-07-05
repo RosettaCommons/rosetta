@@ -26,8 +26,9 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <string>
 
 namespace protocols {
 namespace task_operations {

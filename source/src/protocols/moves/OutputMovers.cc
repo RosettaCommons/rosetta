@@ -17,7 +17,6 @@
 // Rosetta Headers
 #include <core/pose/Pose.hh> // REMOVE THIS ASAP! -- this have very obviously been cut and pasted...
 
-#include <protocols/moves/OutputMovers.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -26,7 +25,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <basic/Tracer.hh>
 #include <basic/prof.hh>
 
 // ObjexxFCL Headers
@@ -34,10 +32,8 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
-#include <map>
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

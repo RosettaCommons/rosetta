@@ -17,18 +17,14 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 // Project Headers
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
 
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
@@ -42,18 +38,16 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/hbonds/HBondTypeManager.hh>
 
 #include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -77,13 +71,12 @@
 #include <utility/vector1.hh>
 
 // External headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/FArray3D.hh>
 
 // C++ headers
 #include <string>
 #include <iostream>
-#include <fstream>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace core {

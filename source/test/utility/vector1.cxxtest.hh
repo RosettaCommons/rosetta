@@ -18,7 +18,7 @@
 
 // Utility header
 #include <utility/excn/Exceptions.hh>
-#include <utility/backtrace.hh>
+#include <utility/assert.hh>
 
 // C++ headers
 #include <vector>

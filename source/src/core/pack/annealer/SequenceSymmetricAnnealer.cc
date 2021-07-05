@@ -25,24 +25,22 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/select/residue_selector/CachedResidueSubset.hh>
-#include <core/select/residue_selector/util.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <numeric/random/random.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/cxx_versioning_macros.hh>
 
 // External headers
-#include <boost/function.hpp>
 
 //C++
 #include <fstream>
 #include <iostream>
 #include <utility>
 #include <unordered_set>
+
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D
 
 
 using namespace ObjexxFCL;

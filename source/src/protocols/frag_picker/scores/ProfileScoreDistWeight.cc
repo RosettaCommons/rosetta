@@ -38,6 +38,9 @@
 
 #include <utility/vector1.hh>
 
+#include <protocols/frag_picker/VallProvider.hh> // AUTO IWYU For VallProvider
+#include <core/fragment/SecondaryStructure.hh> // AUTO IWYU For SecondaryStructure
+
 
 namespace protocols {
 namespace frag_picker {

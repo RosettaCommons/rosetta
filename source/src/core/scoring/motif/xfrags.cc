@@ -11,62 +11,26 @@
 
 #include <core/scoring/motif/motif_hash_stuff.hh>
 
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/mh.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/pymol_chains.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/xyzStripeHashPose.hh>
+#include <core/pose/xyzStripeHashPose.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/dssp/StrandPairing.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/packing/compute_holes_score.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/sasa.hh>
-#include <numeric/conversions.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
-#include <numeric/xyzVector.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/fixedsizearray1.hh>
-#include <numeric/xyzTransform.hh>
 
 #include <numeric/geometry/hashing/SixDHasher.hh>
 
-#include <boost/unordered_set.hpp>
+#include <numeric/numeric.functions.hh> // AUTO IWYU For max, min
 
-#include <bitset>
+
 
 #ifndef _WIN32
-#include <pthread.h>
 #endif
 
 #define MAX_UINT16 65535

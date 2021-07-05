@@ -17,38 +17,20 @@
 #include <core/conformation/symmetry/SymmetryTransform.hh>
 
 // Package headers
-#include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/SymDof.hh>
-#include <core/id/types.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-#include <core/kinematics/RT.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <numeric/xyzMatrix.hh>
 
 // Utility headers
-#include <utility/exit.hh>
-#include <utility/vector1.functions.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // C++ headers
-#include <iostream>
 
 // core utilities
 #include <basic/Tracer.hh>
 
-#include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/kinematics/FoldTree.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

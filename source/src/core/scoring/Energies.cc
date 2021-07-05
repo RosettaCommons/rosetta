@@ -39,7 +39,6 @@
 #include <core/conformation/find_neighbors.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 
 #include <core/id/AtomID.hh>
@@ -58,7 +57,6 @@
 #include <utility/vector1.hh>
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
-#include <utility/graph/ArrayPool.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
 #include <core/scoring/EnergyGraph.hh>
 

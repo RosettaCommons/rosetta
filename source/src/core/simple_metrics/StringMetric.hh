@@ -23,7 +23,6 @@
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/types.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>

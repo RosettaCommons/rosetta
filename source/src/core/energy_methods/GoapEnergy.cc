@@ -19,33 +19,25 @@
 // Package headers
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/ScoringManager.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/database/open.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
-#include <numeric/deriv/angle_deriv.hh>
-#include <numeric/deriv/distance_deriv.hh>
-#include <numeric/deriv/dihedral_deriv.hh>
 
 // options
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // C++ headers
 #include <iostream>

@@ -19,13 +19,11 @@
 
 // Package Headers
 #include <protocols/noesy_assign/CrossPeakInfo.hh>
-#include <protocols/noesy_assign/ResonanceList.hh>
+#include <protocols/noesy_assign/ResonanceList.fwd.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/chemical/AA.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -38,7 +36,6 @@
 #include <string>
 //#include <list>
 //#include <map>
-#include <set>
 
 #ifndef WIN32
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>

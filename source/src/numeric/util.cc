@@ -18,8 +18,6 @@
 #include <numeric/MathNTensor.hh>
 
 #include <algorithm>
-#include <map>
-#include <cmath>
 
 namespace numeric {
 

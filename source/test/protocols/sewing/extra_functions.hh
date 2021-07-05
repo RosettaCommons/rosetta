@@ -18,9 +18,7 @@
 // Project Headers
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
 #include <protocols/sewing/data_storage/SmartSegment.hh>
-#include <protocols/sewing/data_storage/LigandSegment.hh>
 #include <protocols/sewing/data_storage/LigandResidue.hh>
-#include <protocols/sewing/hashing/ModelFileReader.hh>
 #include <protocols/sewing/hashing/AlignmentFileGeneratorMover.hh>
 #include <protocols/sewing/hashing/hasher_data.hh>
 

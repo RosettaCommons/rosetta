@@ -29,7 +29,6 @@
 #include <ObjexxFCL/FArray3D.hh>
 
 // C++
-#include <map>
 
 #ifdef    SERIALIZATION
 // Cereal headers

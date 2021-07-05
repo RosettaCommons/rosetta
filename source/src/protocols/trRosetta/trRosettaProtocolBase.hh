@@ -17,26 +17,16 @@
 #define INCLUDED_protocols_trRosetta_trRosettaProtocolBase_hh
 
 #include <protocols/trRosetta/trRosettaProtocolBase.fwd.hh>
-#include <protocols/trRosetta/trRosettaOutputsBase.fwd.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowProtocolBase.hh>
-#include <protocols/trRosetta/trRosettaMultipleSequenceAlignment.fwd.hh>
 
-// Basic headers
 #ifdef USE_TENSORFLOW
+#include <protocols/trRosetta/trRosettaMultipleSequenceAlignment.fwd.hh>
+#include <protocols/trRosetta/trRosettaOutputsBase.fwd.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.fwd.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.fwd.hh>
+#include <utility/vector1.hh>
 #endif //USE_TENSORFLOW
 
-// Core headers
-#include <core/types.hh>
-
-// Utility headers
-#include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
-
-// C++ headers
-#include <utility>
 
 namespace protocols {
 namespace trRosetta {

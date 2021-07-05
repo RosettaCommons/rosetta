@@ -14,7 +14,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/util/pose_funcs.hh>
-#include <test/UTracer.hh>
 #include <test/core/init_util.hh>
 
 // Unit headers
@@ -24,7 +23,7 @@
 // Package headers
 #include <utility/vector1.hh>
 #include <utility/keys/VariantKey.hh>
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKey.hh>
 #include <basic/options/util.hh>
 
@@ -32,6 +31,10 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Error, Tracer, Warning
+#include <utility/excn/Exceptions.hh> // AUTO IWYU For Exception
+#include <iostream> // AUTO IWYU For endl, basic_ostream, cerr, ostream
 
 using basic::Error;
 using basic::Warning;

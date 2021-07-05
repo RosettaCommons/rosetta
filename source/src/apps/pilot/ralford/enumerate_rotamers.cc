@@ -19,7 +19,6 @@
 
 // Package Headers
 #include <protocols/simple_moves/DumpSingleResidueRotamers.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 // Basic headers
@@ -27,8 +26,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <string>
 
 static basic::Tracer TR( "apps.pilot.ralford.enumerate_rotamers" );
 

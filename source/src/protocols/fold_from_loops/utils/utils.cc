@@ -19,7 +19,6 @@
 // Core headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/id/SequenceMapping.hh>
@@ -44,6 +43,8 @@
 #include <iterator>
 #include <algorithm>
 #include <iomanip>
+
+#include <core/kinematics/MoveMap.hh> // AUTO IWYU For MoveMap
 
 namespace protocols {
 namespace fold_from_loops {

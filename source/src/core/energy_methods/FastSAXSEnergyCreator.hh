@@ -15,9 +15,7 @@
 #define INCLUDED_core_scoring_saxs_FastSAXSEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
-#include <core/types.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

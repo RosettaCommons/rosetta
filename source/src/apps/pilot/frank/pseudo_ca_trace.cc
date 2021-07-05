@@ -10,28 +10,13 @@
 /// @file
 /// @brief
 
-#include <protocols/viewer/viewers.hh>
 
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 
-#include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/import_pose/import_pose.hh>
-#include <protocols/electron_density/util.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <core/optimization/Multifunc.hh>
-#include <core/optimization/Minimizer.hh>
 
-#include <basic/options/util.hh>
 #include <devel/init.hh>
 
 #include <boost/format.hpp>
@@ -39,18 +24,12 @@
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <ObjexxFCL/string.functions.hh>
-#include <core/kinematics/Jump.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // C++ headers
 #include <iostream>

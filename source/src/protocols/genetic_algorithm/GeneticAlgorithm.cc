@@ -30,7 +30,6 @@
 
 #include <numeric/random/random.fwd.hh>
 
-#include <boost/unordered_map.hpp>
 
 #include <algorithm> // std::copy
 #include <iostream>

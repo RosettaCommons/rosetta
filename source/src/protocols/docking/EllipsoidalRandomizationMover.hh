@@ -20,10 +20,10 @@
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <utility/vector1.hh>
+
+#include <numeric/xyzMatrix.hh> // AUTO IWYU For xyzMatrix
 
 namespace protocols {
 namespace docking {

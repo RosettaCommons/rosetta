@@ -22,9 +22,7 @@
 
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
 
-#include <utility/vector1.hh>
 
 #include <unordered_map>
 

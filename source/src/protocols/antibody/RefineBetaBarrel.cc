@@ -15,7 +15,6 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
@@ -23,20 +22,14 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/LHRepulsiveRamp.hh>
-#include <protocols/antibody_legacy/LHSnugFitLegacy.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
-#include <protocols/docking/DockingProtocol.hh>
-#include <protocols/docking/DockingHighRes.hh>
-#include <protocols/docking/util.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+
+#include <core/pack/task/TaskFactory.hh> // AUTO IWYU For TaskFactory
+
 
 static basic::Tracer TR( "protocols.antibody.RefineBetaBarrel" );
 

@@ -21,20 +21,18 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
 
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheablePoseRawPtr.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

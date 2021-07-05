@@ -28,8 +28,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/types.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 
 // Utility headers

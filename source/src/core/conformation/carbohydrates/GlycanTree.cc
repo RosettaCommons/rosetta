@@ -36,6 +36,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
+#include <core/id/SequenceMapping.hh> // AUTO IWYU For SequenceMapping
+
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

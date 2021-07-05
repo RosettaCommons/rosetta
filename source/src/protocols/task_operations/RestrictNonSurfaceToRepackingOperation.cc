@@ -24,18 +24,16 @@
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
-#include <set>
 
 #include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 static basic::Tracer TR( "protocols.TaskOperations.RestrictNonSurfaceToRepackingOperation" );

@@ -14,19 +14,16 @@
 // Core Headers
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Residue.hh>
 
 #include <protocols/jumping/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
 #include <devel/init.hh>
-#include <basic/Tracer.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/options/option_macros.hh>

@@ -16,45 +16,28 @@
 #include <core/scoring/RamaPrePro.hh>
 
 // Package Headers
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Project Headers
 #include <core/id/PartialAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResConnID.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/mainchain_potential/MainchainScoreTable.hh>
-#include <basic/basic.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Conformation.hh>
 
 // Numeric Headers
-#include <numeric/angle.functions.hh>
-#include <numeric/constants.hh>
-#include <numeric/MathMatrix.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
-#include <utility/io/izstream.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <boost/algorithm/string.hpp>
 
 
 namespace core {

@@ -19,12 +19,10 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
 // Parser headers
@@ -33,6 +31,9 @@
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+#include <core/scoring/sc/ElectrostaticComplementarityCalculator.hh> // AUTO IWYU For ElectrostaticComplementarityCalculator
+#include <utility/string_util.hh> // AUTO IWYU For to_string
 
 
 //// C++ headers

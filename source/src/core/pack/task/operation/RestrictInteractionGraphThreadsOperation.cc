@@ -15,19 +15,17 @@
 #include <core/pack/task/operation/RestrictInteractionGraphThreadsOperationCreator.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/pointer/memory.hh>
-#include <core/pack/task/operation/task_op_schemas.hh>
 
 static basic::Tracer TR( "core.pack.task.operation.RestrictInteractionGraphThreadsOperation" );
 

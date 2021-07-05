@@ -22,7 +22,6 @@
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 
 /// Package Headers
-#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/etrie/EtableAtom.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_1.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_2.fwd.hh>
@@ -30,10 +29,10 @@
 #include <core/scoring/etable/etrie/CountPairDataGeneric.fwd.hh>
 
 #include <core/scoring/elec/electrie/ElecAtom.fwd.hh>
-#include <core/scoring/elec/electrie/ElecTrieEvaluator.hh>
+#include <core/scoring/elec/electrie/ElecTrieEvaluator.fwd.hh>
 
 #include <core/scoring/lkball/lkbtrie/LKBAtom.fwd.hh>
-#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.hh>
+#include <core/scoring/lkball/lkbtrie/LKBTrieEvaluator.fwd.hh>
 
 #include <core/scoring/hbonds/hbtrie/HBAtom.fwd.hh>
 #include <core/scoring/hbonds/HBondEnergy.fwd.hh>
@@ -55,14 +54,14 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 // STL Headers
 #include <map>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 //Auto Headers
 namespace core {

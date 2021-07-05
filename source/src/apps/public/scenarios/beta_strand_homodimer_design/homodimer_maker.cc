@@ -16,14 +16,12 @@
 
 // Project Headers
 //#include <core/chemical/AA.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <numeric/xyzVector.io.hh>
 #include <numeric/xyzVector.hh>
 //#include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 //#include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
@@ -39,12 +37,10 @@
 //#include <core/scoring/ScoreType.hh>
 //#include <core/scoring/TenANeighborGraph.hh>
 
-#include <core/id/AtomID_Map.hh>
 //#include <core/id/AtomID_Map.Pose.hh>
 
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 
 #include <core/scoring/EnergyMap.hh>
 //#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
@@ -66,7 +62,7 @@
 
 // Job distributor
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
 
 // Utility Headers
@@ -80,7 +76,6 @@
 #include <string>
 
 //Auto Headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <utility/excn/Exceptions.hh>

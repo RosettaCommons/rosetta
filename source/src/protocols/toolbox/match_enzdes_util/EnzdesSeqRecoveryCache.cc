@@ -26,7 +26,6 @@
 
 // C++ headers
 #include <set>
-#include <string>
 
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>

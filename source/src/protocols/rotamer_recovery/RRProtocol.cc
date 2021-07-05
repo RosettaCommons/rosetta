@@ -20,7 +20,6 @@
 
 // C++ Headers
 
-#include <utility/vector1.hh>
 
 
 using std::string;

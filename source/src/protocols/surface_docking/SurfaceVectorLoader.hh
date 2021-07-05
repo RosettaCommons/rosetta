@@ -22,10 +22,9 @@
 
 //project headers
 #include <basic/resource_manager/ResourceLoader.hh>
-#include <basic/resource_manager/types.hh>
 
 //utility headers
-#include <utility/VirtualBase.hh>
+#include <utility/VirtualBase.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers

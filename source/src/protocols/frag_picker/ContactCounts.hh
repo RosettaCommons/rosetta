@@ -17,13 +17,11 @@
 // unit headers
 #include <protocols/frag_picker/ContactCounts.fwd.hh>
 
-#include <protocols/frag_picker/ContactTypes.hh>
 
 #include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 
-#include <string>
 #include <map>
 
 // C++ headers

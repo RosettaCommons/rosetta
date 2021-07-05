@@ -14,60 +14,33 @@
 
 // unit headers
 #include <protocols/forge/remodel/RemodelLigandHandler.hh>
-#include <protocols/forge/remodel/RemodelRotamerLinks.hh>
-#include <protocols/forge/methods/util.hh>
 
 // package headers
 
 // project headers
 #include <basic/Tracer.hh>
-#include <basic/MetricValue.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
-#include <core/util/disulfide_util.hh>
-#include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/io/Remarks.hh>
-#include <core/pose/util.hh> // for pdbinfo
-#include <core/id/AtomID.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_set/RotamerLinks.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/constraints_additional/BindingSiteConstraint.hh>
 
 // numeric headers
-#include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh> // DO NOT AUTO-REMOVE (needed for template instantation)
+#include <numeric/xyzMatrix.hh> // DO NOT AUTO-REMOVE (needed for template instantation)
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 //external
-#include <Eigen/Dense>
 
 // boost headers
 
 // C++ headers
 #include <iostream>
-#include <cmath>
 
 using namespace basic::options;
 

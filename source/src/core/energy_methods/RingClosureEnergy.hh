@@ -20,9 +20,7 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
 
 #include <utility/vector1.hh>
 

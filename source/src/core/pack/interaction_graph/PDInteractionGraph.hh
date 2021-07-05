@@ -19,7 +19,7 @@
 #include <core/pack/interaction_graph/PDInteractionGraph.fwd.hh>
 
 // Package Headers
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/interaction_graph/SparseMatrixIndex.hh>
 #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
@@ -34,7 +34,6 @@
 // Utility Headers
 
 // C++ Headers
-#include <list>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1A.hh>

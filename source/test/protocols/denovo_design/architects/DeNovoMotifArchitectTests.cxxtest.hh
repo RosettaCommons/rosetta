@@ -12,25 +12,20 @@
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <protocols/denovo_design/architects/MotifArchitect.hh>
-#include <protocols/denovo_design/components/Segment.hh>
-#include <protocols/denovo_design/components/StructureData.hh>
 
 // Core Headers
-#include <core/pose/Pose.hh>
 
 // Basic/Utility Headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
-#include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <iterator>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 static basic::Tracer TR("MotifArchitectBase");
 

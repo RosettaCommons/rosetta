@@ -26,9 +26,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <utility/assert.hh>
 #include <iostream>
-#include <sstream>
 
 #include <utility/vector1.hh>
 

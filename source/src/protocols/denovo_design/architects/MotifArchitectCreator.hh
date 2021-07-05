@@ -16,10 +16,8 @@
 
 // Package headers
 #include <protocols/denovo_design/architects/DeNovoArchitectCreator.hh>
-#include <protocols/denovo_design/architects/MotifArchitect.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ headers
 #include <string>

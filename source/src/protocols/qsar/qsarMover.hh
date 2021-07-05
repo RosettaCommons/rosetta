@@ -19,10 +19,8 @@
 
 #include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
 
-#include <core/types.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>

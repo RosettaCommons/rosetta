@@ -16,13 +16,9 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 
-#include <iosfwd>
 
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.hh>
 #include <map>
 
 

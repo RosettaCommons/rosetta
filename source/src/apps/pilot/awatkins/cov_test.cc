@@ -13,23 +13,16 @@
 
 // includes
 #include <iostream>
-#include <fstream>
-#include <string>
 
 #include <devel/init.hh>
 
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/ncbb/util.hh>
 
-#include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -37,58 +30,26 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/id/TorsionID.hh>
-#include <core/id/types.hh>
 
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/func/SumFunc.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 // Numeric Headers
 #include <numeric/conversions.hh>
 
 // Mover headers
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/PyMOLMover.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
-#include <protocols/minimization_packing/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/RandomTorsionMover.hh>
 #include <protocols/ncbb/a3b_hbs/A3BHbsPatcher.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/rigid/RB_geometry.hh>
 
-#include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <numeric/random/random.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 using namespace protocols;
 using namespace protocols::moves;

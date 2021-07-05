@@ -28,7 +28,6 @@
 #include <iosfwd>
 
 // Numceric Headers
-#include <numeric/xyzVector.hh>
 
 namespace core {
 namespace scoring {

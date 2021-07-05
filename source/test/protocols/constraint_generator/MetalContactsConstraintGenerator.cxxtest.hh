@@ -13,16 +13,14 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/protocols/init_util.hh>
 
 // Protocol headers
 #include <protocols/constraint_generator/MetalContactsConstraintGenerator.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/types.hh>
 // Basic headers
@@ -31,7 +29,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Boost headers
 
@@ -39,7 +36,6 @@
 // C++ headers
 
 using namespace core::scoring::constraints;
-using namespace core::scoring::func;
 using namespace protocols::constraint_generator;
 
 static basic::Tracer TR( "protocols.constraint_generator.MetalContactsConstraintGenerator.cxxtest.hh" );

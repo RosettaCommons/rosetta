@@ -18,8 +18,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-#include <core/types.hh>
-#include <utility/py/PyAssert.hh>
 #include <utility/string_util.hh>
 
 namespace protocols {

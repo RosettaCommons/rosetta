@@ -16,7 +16,6 @@
 #include <protocols/simple_moves/BBGaussianMoverCreator.hh>
 
 //core
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <basic/basic.hh>
@@ -37,7 +36,6 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
-#include <iostream>
 #include <sstream>
 
 #include <utility/vector1.hh>
@@ -45,6 +43,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <core/id/TorsionID_Range.hh> // MANUAL IWYU
 
 using namespace std;
 using namespace core;

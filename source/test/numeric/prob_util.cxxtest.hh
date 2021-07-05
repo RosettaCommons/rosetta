@@ -14,7 +14,6 @@
 #include <cxxtest/TestSuite.h>
 
 // C/C++ headers
-#include <iterator>
 #include <vector>
 
 // Utility headers

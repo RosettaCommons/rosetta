@@ -27,8 +27,6 @@
 #include <numeric/expression_parser/Arithmetic.hh>
 
 // Utility headers
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <string>

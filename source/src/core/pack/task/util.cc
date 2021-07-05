@@ -21,6 +21,8 @@
 
 #include <utility/string_util.hh>
 
+#include <utility/stream_util.hh> // MANUAL IWYU
+
 static basic::Tracer TR( "core.pack.task.util" );
 
 

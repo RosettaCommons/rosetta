@@ -31,16 +31,11 @@
 //Core
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/BBTorsionAndAnglesSRFD.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FragmentIO.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -48,20 +43,19 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 
 //protocols
 #include <protocols/loops/Loop.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
 
 //utility
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <sstream>
+#include <core/fragment/BBTorsionSRFD.hh> // AUTO IWYU For BBTorsionSRFD
+#include <core/fragment/Frame.hh> // AUTO IWYU For Frame
 
 
 namespace devel {

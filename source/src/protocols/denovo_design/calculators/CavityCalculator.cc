@@ -21,20 +21,15 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <basic/Tracer.hh>
-#include <core/conformation/Residue.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/simple_moves/AddCavitiesMover.hh>
 
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
 
 //// C++ headers
-#include <ObjexxFCL/format.hh>
 
 //Auto Headers
-#include <utility/excn/Exceptions.hh>
 
 
 static basic::Tracer TR( "protocols.denovo_design.calculators.CavityCalculator" );

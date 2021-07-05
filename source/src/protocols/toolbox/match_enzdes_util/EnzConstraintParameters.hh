@@ -38,7 +38,6 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
 #include <utility/vector1.hh>
-#include <iosfwd>
 
 
 //Utility Headers

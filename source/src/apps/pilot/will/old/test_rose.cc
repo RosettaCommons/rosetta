@@ -1,15 +1,11 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <protocols/sic_dock/Rose.hh>
-#include <sstream>
 #include <numeric/xyzTransform.hh>
 
 using std::string;

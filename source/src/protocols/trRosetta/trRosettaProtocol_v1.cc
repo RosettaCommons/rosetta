@@ -14,12 +14,12 @@
 
 // Project headers:
 #include <protocols/trRosetta/trRosettaProtocol_v1.hh>
-#include <protocols/trRosetta/trRosettaOutputs_v1.hh>
 
 // Basic headers:
 #include <basic/Tracer.hh>
 
 #ifdef USE_TENSORFLOW
+#include <protocols/trRosetta/trRosettaOutputs_v1.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.tmpl.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowManager.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.tmpl.hh>

@@ -19,7 +19,6 @@
 #include <protocols/sewing/requirements/DsspSpecificLengthRequirementCreator.fwd.hh>
 
 // Package Headers
-#include <protocols/sewing/requirements/DsspSpecificLengthRequirement.fwd.hh>
 
 namespace protocols {
 namespace sewing  {

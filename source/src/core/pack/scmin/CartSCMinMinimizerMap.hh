@@ -22,27 +22,20 @@
 #include <core/optimization/Multifunc.fwd.hh>
 
 // Package Headers
-#include <core/pack/scmin/AtomTreeCollection.hh>
+#include <core/pack/scmin/AtomTreeCollection.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/DOF_ID.hh>
+#include <core/id/DOF_ID.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
-#include <core/scoring/DerivVectorPair.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/DOF_Node.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
 
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 
 namespace core {

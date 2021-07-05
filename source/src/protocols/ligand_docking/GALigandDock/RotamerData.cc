@@ -14,13 +14,7 @@
 
 #include <protocols/ligand_docking/GALigandDock/RotamerData.hh>
 
-#include <utility/VirtualBase.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/lkball/LK_BallInfo.hh>
-#include <core/pose/Pose.hh>
-#include <numeric/Quaternion.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <map>

@@ -17,10 +17,7 @@
 #include <core/scoring/facts/FACTSPotential.hh>
 
 // Project headers
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
@@ -28,12 +25,8 @@
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -42,16 +35,12 @@
 #include <basic/prof.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <cmath>
-#include <cstdio>
-#include <utility/assert.hh>
-#include <utility/assert.hh>
 
 static basic::Tracer TR( "core.scoring.FACTSPotential" );
 

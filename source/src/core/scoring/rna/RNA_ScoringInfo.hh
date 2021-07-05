@@ -18,8 +18,6 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/Stub.fwd.hh>
 
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/pose/rna/RNA_RawBaseBaseInfo.hh>
@@ -31,7 +29,6 @@
 // Utility headers
 
 // Numceric Headers
-#include <numeric/xyzVector.fwd.hh>
 
 #include <utility/vector1.hh>
 

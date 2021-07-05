@@ -16,14 +16,12 @@
 #include <protocols/membrane/benchmark/SampleTiltAnglesCreator.hh>
 
 // Package Headers
-#include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/util.hh>
 
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 // Project Headers
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -35,7 +33,6 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -45,14 +42,11 @@
 
 #include <numeric/xyzVector.hh>
 
-#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <ostream>
 #include <fstream>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

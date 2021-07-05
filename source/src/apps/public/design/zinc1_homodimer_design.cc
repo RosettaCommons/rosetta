@@ -32,7 +32,7 @@
 #include <protocols/jobdist/Jobs.hh>
 
 #include <core/conformation/Conformation.hh>
-//#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -46,7 +46,7 @@
 // Symmetry Headers
 #include <protocols/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <core/conformation/symmetry/util.hh>
 //Constraint Headers
@@ -115,7 +115,7 @@ public:
 		} else {
 			Pose const designable_start_pose( pose );
 
-			for ( Size n(1); n <= basic::options::option[nstruct_iterations]; n++ ) {
+			for ( int n(1); n <= basic::options::option[nstruct_iterations]; n++ ) {
 				std::stringstream ss;
 				ss << n;
 				std::string n_string;
@@ -148,7 +148,7 @@ public:
 	setup ( Pose & pose ) {
 		//pose.dump_pdb("initial_mono_pose.pdb");
 
-		protocols::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::symmetry::SetupForSymmetryMover(); // according to symm definition file included as an option
+		protocols::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical( new protocols::symmetry::SetupForSymmetryMover ); // according to symm definition file included as an option
 		make_monomeric_input_pose_symmetrical->apply( pose );
 
 		//pose.dump_pdb("initial_symm_pose.pdb");
@@ -180,7 +180,7 @@ public:
 	virtual void
 	setup_metalsite( Pose const & pose ) {
 		TR << "Parsing metalsite... " << std::endl;
-		protocols::metal_interface::ZincSiteFinderOP find_zinc = new protocols::metal_interface::ZincSiteFinder();
+		protocols::metal_interface::ZincSiteFinderOP find_zinc( new protocols::metal_interface::ZincSiteFinder());
 		msr_ = find_zinc->find_zinc_site(pose);
 		TR << "metalsite 1. " << msr_[1]->get_seqpos() << std::endl;
 		TR << "metalsite 2. " << msr_[2]->get_seqpos() << std::endl;
@@ -193,7 +193,7 @@ public:
 	virtual void
 	setup_metalsite_constraints( Pose & pose ) {
 		TR << "Adding metalsite constraints..." << std::endl;
-		protocols::metal_interface::AddZincSiteConstraintsOP constraints_adder = new protocols::metal_interface::AddZincSiteConstraints( msr_ );
+		protocols::metal_interface::AddZincSiteConstraintsOP constraints_adder( new protocols::metal_interface::AddZincSiteConstraints( msr_ ) );
 		//constraints_adder->add_constraints( pose );
 
 		//Favor native residue
@@ -201,7 +201,7 @@ public:
 		Size const nres( pose.size() );
 		Real const favor_native_res_bonus( basic::options::option[fav_nat_bonus].value() );
 		for ( Size i=1; i<= nres;  ++i ) {
-			pose.add_constraint( new ResidueTypeConstraint( pose, i,  favor_native_res_bonus) );
+			pose.add_constraint( utility::pointer::make_shared< ResidueTypeConstraint >( pose, i,  favor_native_res_bonus) );
 		}
 
 		Pose copy( pose );
@@ -216,16 +216,16 @@ public:
 		using namespace basic::options;
 
 		TR << "Generating task factory..." << std::endl;
-		TaskFactoryOP task_factory = new TaskFactory();
-		task_factory->push_back(new operation::InitializeFromCommandline());
+		TaskFactoryOP task_factory( new TaskFactory() );
+		task_factory->push_back( utility::pointer::make_shared< operation::InitializeFromCommandline >() );
 		if ( option[ OptionKeys::packing::resfile ].user() ) { // probably will not be used
 			TR << "Reading resfile..." << std::endl;
-			task_factory->push_back( new operation::ReadResfile );
+			task_factory->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 		}
 		TR << "Restricting to interface..." << std::endl;
-		task_factory->push_back(new protocols::task_operations::RestrictToInterfaceOperation(1, 2));
+		task_factory->push_back( utility::pointer::make_shared< protocols::task_operations::RestrictToInterfaceOperation >(1, 2));
 
-		operation::PreventRepackingOP prevent_repack = new operation::PreventRepacking();
+		operation::PreventRepackingOP prevent_repack( new operation::PreventRepacking() );
 		TR << "Preventing repacking of residues ";
 		for ( core::Size i(1); i <= 4 /*msr_.size() - 1*/; ++i ) {
 			TR << msr_[i]->get_seqpos() << " ";
@@ -257,22 +257,22 @@ public:
 		//scorefxn->set_weight( angle_constraint, 2.0 );     // 10 angles (6 tetr + 4)
 		//scorefxn->set_weight( dihedral_constraint, 8.0 );  // 1 dihedral per His
 		scorefxn->set_weight( res_type_constraint, basic::options::option[fav_nat_bonus].value() );
-		sym_scorefxn_ = scorefxn->clone()
-			TR << "Score12 Scorefunction: " << *sym_scorefxn_ << std::endl;
+		sym_scorefxn_ = scorefxn->clone();
+		TR << "Score12 Scorefunction: " << *sym_scorefxn_ << std::endl;
 		no_constraints_scorefxn_for_ddG_calc_ = scorefxn->clone();
 
-		metal_scorefxn_ = new ScoreFunction;
+		metal_scorefxn_ = utility::pointer::make_shared< ScoreFunction >();
 		metal_scorefxn_->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
 		metal_scorefxn_->set_weight( angle_constraint, 2.0 );     // 10 angles (6 tetr + 4)
 		metal_scorefxn_->set_weight( dihedral_constraint, 8.0 );  // 1 dihedral per His
 
-		pair_scorefxn_ = new ScoreFunction;
+		pair_scorefxn_ = utility::pointer::make_shared< ScoreFunction >();
 		pair_scorefxn_->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
 
-		angle_scorefxn_ = new ScoreFunction;
+		angle_scorefxn_ = utility::pointer::make_shared< ScoreFunction >();
 		angle_scorefxn_->set_weight( angle_constraint, 2.0 );     // 10 angles (6 tetr + 4)
 
-		dihed_scorefxn_ = new ScoreFunction;
+		dihed_scorefxn_ = utility::pointer::make_shared< ScoreFunction >();
 		dihed_scorefxn_->set_weight( dihedral_constraint, 8.0 );  // 1 dihedral per His
 
 	}
@@ -282,11 +282,11 @@ public:
 	virtual void
 	setup_movemap_bb_chi( Pose & pose ) {
 		TR << "Making movemap..." << std::endl;
-		sc_move_map_ = new core::kinematics::MoveMap;
+		sc_move_map_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		sc_move_map_->set_chi(true);
 		sc_move_map_->set_bb(false);
 
-		sc_bb_move_map_ = new core::kinematics::MoveMap;
+		sc_bb_move_map_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 		sc_bb_move_map_->set_chi(true);
 		sc_bb_move_map_->set_bb(true);
 
@@ -315,23 +315,24 @@ public:
 	virtual void
 	setup_movers() {
 		using namespace protocols::symmetry;
+		using namespace protocols::minimization_packing;
 
 		TR << "Generating sym rottrials mover..." << std::endl;
-		sym_rottrials_mover_ = new RotamerTrialsMover;
+		sym_rottrials_mover_ = utility::pointer::make_shared< RotamerTrialsMover >();
 		sym_rottrials_mover_->task_factory( taskfactory_ );
 		sym_rottrials_mover_->score_function( softrep_sym_scorefxn_ );
 
 		TR << "Generating sym pack mover..." << std::endl;
-		sym_pack_mover_ = new PackRotamersMover;
+		sym_pack_mover_ = utility::pointer::make_shared<  PackRotamersMover >();
 		sym_pack_mover_->task_factory( taskfactory_ );
 		sym_pack_mover_->score_function( sym_scorefxn_ );
 
 		TR << "Generating softrep and score12 minmovers..." << std::endl;
-		softrep_min_mover_ = new MinMover( sc_move_map_, softrep_sym_scorefxn_ /*softrep + constraints*/, "lbfgs_armijo", 0.01, true );
-		sc_min_mover_ = new MinMover( sc_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
-		sc_bb_min_mover_ = new MinMover( sc_bb_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
+		softrep_min_mover_ = utility::pointer::make_shared< MinMover >( sc_move_map_, softrep_sym_scorefxn_ /*softrep + constraints*/, "lbfgs_armijo", 0.01, true );
+		sc_min_mover_ = utility::pointer::make_shared< MinMover >( sc_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
+		sc_bb_min_mover_ = utility::pointer::make_shared< MinMover >( sc_bb_move_map_, sym_scorefxn_ /*score12 + constraints*/, "lbfgs_armijo", 0.01, true );
 
-		interface_analyzer_ = new protocols::anchored_design::InterfaceAnalyzerMover( 2, false, centroid_scorefxn_for_ddG_calc_ );
+		interface_analyzer_ = utility::pointer::make_shared< protocols::analysis::InterfaceAnalyzerMover >( 2, false, centroid_scorefxn_for_ddG_calc_ );
 
 	}
 
@@ -350,15 +351,15 @@ public:
 
 		//create Z axis
 		axis const zaxis = cross_product( zinc-p1a, zinc-p1b );
-		zmover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, zaxis, zinc, true );
+		zmover_ = utility::pointer::make_shared< protocols::rigid::RollMover >( chain_begin, chain_end, -10, 10, zaxis, zinc, true );
 		//create Y axis
 		core::Angle const create_y_rot( angle_of(zinc-p1a, zinc-p1b) );
 		numeric::xyzMatrix< core::Real > z_rotation_matrix( numeric::rotation_matrix( zaxis, create_y_rot ) );
 		axis const yaxis = ( z_rotation_matrix*(zinc - p1a) );
-		ymover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, yaxis, zinc, true );
+		ymover_ = utility::pointer::make_shared< protocols::rigid::RollMover >( chain_begin, chain_end, -10, 10, yaxis, zinc, true );
 		//create X axis
 		axis const xaxis = cross_product(zaxis, yaxis);
-		xmover_ = new protocols::rigid::RollMover( chain_begin, chain_end, -10, 10, xaxis, zinc, true );
+		xmover_ = utility::pointer::make_shared< protocols::rigid::RollMover >( chain_begin, chain_end, -10, 10, xaxis, zinc, true );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,7 +379,7 @@ public:
 
 
 		Real x, y, z;
-		Real ddG_centroid;
+		//Real ddG_centroid;
 		for ( z = -10.0; z <= 10; z=z+10 ) {
 			zmover_->set_min_max_angles( z, z );
 
@@ -422,7 +423,7 @@ public:
 	virtual void
 	design_symmetric_homodimer_interface( Pose & pose ) {
 
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose , *sym_scorefxn_ , 0.6 );
+		protocols::moves::MonteCarloOP mc = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose , *sym_scorefxn_ , 0.6 );
 
 		for ( Size i(1); i <= lowres_symmetric_design_cycles_; ++i ) {
 			TR << "Lowres design cycle " << i << " out of " << lowres_symmetric_design_cycles_ << std::endl;
@@ -496,12 +497,12 @@ private:
 	core::kinematics::MoveMapOP sc_bb_move_map_;
 
 	protocols::minimization_packing::PackRotamersMoverOP sym_pack_mover_;
-	protocols::RotamerTrialsMoverOP sym_rottrials_mover_;
+	protocols::minimization_packing::RotamerTrialsMoverOP sym_rottrials_mover_;
 	protocols::minimization_packing::MinMoverOP softrep_min_mover_;
 	protocols::minimization_packing::MinMoverOP sc_min_mover_;
 	protocols::minimization_packing::MinMoverOP sc_bb_min_mover_;
 	protocols::moves::MonteCarloOP mc_;
-	protocols::anchored_design::InterfaceAnalyzerMoverOP interface_analyzer_;
+	protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
 
 	protocols::rigid::RollMoverOP zmover_;
 	protocols::rigid::RollMoverOP ymover_;
@@ -519,7 +520,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< zinc1_homodimer_design > zinc1_homodimer_designOP;
+typedef utility::pointer::shared_ptr< zinc1_homodimer_design > zinc1_homodimer_designOP;
 
 
 int
@@ -534,7 +535,7 @@ main( int argc, char* argv[] )
 		option.add( nstruct_iterations, "nstruct_iterations" ).def(1);
 
 		devel::init(argc, argv);
-		protocols::jd2::JobDistributor::get_instance()->go(new zinc1_homodimer_design( option[lowres_symmetric_design_cycles].value(), option[highres_symmetric_design_cycles].value(), option[gridsearch_rollmove_angles].value() ));
+		protocols::jd2::JobDistributor::get_instance()->go( utility::pointer::make_shared< zinc1_homodimer_design >( option[lowres_symmetric_design_cycles].value(), option[highres_symmetric_design_cycles].value(), option[gridsearch_rollmove_angles].value() ));
 		TR << "************************d**o**n**e**************************************" << std::endl;
 
 

@@ -13,7 +13,6 @@
 
 // Project headers
 #include <devel/init.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/glycopeptide_docking/GlycopeptideDockingProtocol.hh>
 
@@ -23,9 +22,6 @@
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/rings.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>

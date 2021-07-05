@@ -21,8 +21,6 @@
 
 // basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // unit headers
 #include <core/scoring/func/GaussianChainFunc.hh>
@@ -31,7 +29,6 @@
 
 #include <utility/tools/make_vector1.hh>
 
-#include <ObjexxFCL/format.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

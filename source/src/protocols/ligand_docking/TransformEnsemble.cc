@@ -21,42 +21,35 @@
 #include <protocols/qsar/scoring_grid/schema_util.hh>
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/chains_util.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/palette/NoDesignPackerPalette.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 
 #include <sstream>
 #include <utility>
 #include <utility/string_util.hh>
 
-#include <numeric/numeric.functions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_xyz.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/io/util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/map_util.hh>
-#include <vector>
 
 #include <ObjexxFCL/format.hh>
 #include <utility/io/ozstream.hh>
@@ -65,7 +58,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 

@@ -20,10 +20,7 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/types.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -31,9 +28,7 @@
 #include <basic/datacache/DataMap.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
 
 static basic::Tracer TR("protocols.membrane.MPLipidAccessibility.cxxtest");
 

@@ -18,18 +18,16 @@
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Edge.fwd.hh>
-#include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/id/AtomID_Map.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.fwd.hh>
 
 //Auto Headers
-#include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
+#include <map> // AUTO IWYU For map
 
 /////////////////////////////////////////////////////////////////////////////////
 // All functions for cutting/pasting/merging poses that happens

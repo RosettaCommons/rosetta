@@ -18,12 +18,10 @@
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <utility/graph/Graph.hh>
 #include <core/grid/CartGrid.hh>
-#include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -67,7 +65,6 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.io.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
@@ -76,7 +73,6 @@
 #include <utility/tools/make_vector1.hh>
 
 #include <fstream>
-#include <sstream>
 
 // option key includes
 
@@ -87,7 +83,6 @@
 
 #include <core/pose/Pose.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <utility/vector0.hh>
 
 namespace protocols {
 namespace ligand_docking {

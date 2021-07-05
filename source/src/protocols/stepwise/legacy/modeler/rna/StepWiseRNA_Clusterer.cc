@@ -14,7 +14,6 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_Clusterer.hh>
-#include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/legacy/modeler/rna/util.hh>
@@ -24,44 +23,29 @@
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/rna/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
 //#include <basic/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector1.hh>
-#include <utility/file/FileName.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 
 
-#include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <list>
 #include <ctime>
+
+#include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh> // AUTO IWYU For RNA_VDW_BinChecker
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
 
 using namespace core;
 using namespace core::chemical::rna;

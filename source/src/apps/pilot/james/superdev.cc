@@ -20,7 +20,6 @@
 #include <core/chemical/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
@@ -30,7 +29,6 @@
 #include <protocols/jobdist/not_universal_main.hh>
 
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <basic/options/option.hh>
@@ -42,7 +40,6 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <fstream>
 #include <algorithm>
 
 #include <utility/excn/Exceptions.hh>

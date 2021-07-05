@@ -19,9 +19,7 @@
 #include <core/scoring/nmr/pre/PREData.fwd.hh>
 
 // Package headers
-#include <core/scoring/nmr/NMRDataFactory.fwd.hh>
 #include <core/scoring/nmr/pre/PREMultiSet.fwd.hh>
-#include <core/scoring/nmr/pre/PRESingleSet.fwd.hh>
 
 // Project headers
 #include <basic/datacache/CacheableData.hh>
@@ -29,7 +27,6 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -37,7 +34,6 @@
 // C++ headers
 #include <iosfwd>
 #include <string>
-#include <algorithm>
 
 namespace core {
 namespace scoring {

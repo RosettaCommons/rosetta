@@ -15,39 +15,30 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/util/mpi_funcs.hh>
 
 // Unit headers
 #include <protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh>
 
 // Package headers
 #include <protocols/jd3/jobs/MoverJob.hh>
-#include <protocols/jd3/Job.hh>
+#include <protocols/jd3/Job.fwd.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/InnerLarvalJob.hh>
-#include <protocols/jd3/JobResult.hh>
+#include <protocols/jd3/JobResult.fwd.hh>
 #include <protocols/jd3/JobSummary.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
-#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
-#include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/output/OutputSpecification.hh>
-#include <protocols/jd3/output/ResultOutputter.hh>
-#include <protocols/jd3/jobs/MoverJob.hh>
-#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
+#include <protocols/jd3/output/ResultOutputter.fwd.hh>
 #include <protocols/jd3/job_summaries/StandardPoseJobSummary.hh>
 #include <test/protocols/jd3/DummyOutputter.hh>
 
 /// Project headers
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 //#include <core/scoring/ScoreFunction.hh>
 //#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/import_pose/import_pose_options.hh>
 
 //#include <core/pack/task/PackerTask.hh>
 //#include <core/pack/task/TaskFactory.hh>
@@ -61,20 +52,22 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/SimulateMPI.hh>
-#include <utility/mpi_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/file/file_sys_util.hh>
 
 // C++ headers
 #include <map>
-#include <sstream>
 #include <utility>
 #include <thread>
 #include <chrono>
 
 #ifdef SERIALIZATION
+#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
+#include <utility/SimulateMPI.hh>
+#include <utility/mpi_util.hh>
+#include <utility/file/file_sys_util.hh>
+#include <test/util/mpi_funcs.hh>
+
 // Utility headers
 #include <utility/vector1.srlz.hh>
 

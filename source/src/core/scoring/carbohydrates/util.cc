@@ -23,8 +23,6 @@
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/carbohydrates/util.hh>
-#include <core/pose/PDBInfo.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

@@ -16,14 +16,10 @@
 #include <protocols/topology_broker/TemplateFragmentClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/FrameList.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -39,7 +35,8 @@
 #include <basic/options/option.hh>
 
 #include <core/fragment/FragData.hh>
-#include <utility/vector1.hh>
+
+#include <protocols/abinitio/Templates.hh> // AUTO IWYU For Templates
 
 
 //// C++ headers

@@ -23,11 +23,9 @@
 
 #include <core/id/AtomID.hh>
 
-#include <protocols/rigid/RB_geometry.hh>
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
 // Utility Headers

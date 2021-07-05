@@ -18,7 +18,6 @@
 
 #include <basic/Tracer.fwd.hh>
 
-#include <cassert>                                // for assert
 #include <sstream>                                // for basic_stringbuf
 #include <utility/vector1.hh>                     // for vector1
 

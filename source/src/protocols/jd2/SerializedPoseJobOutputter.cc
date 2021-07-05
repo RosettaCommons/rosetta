@@ -14,32 +14,26 @@
 ///Unit headers
 #include <protocols/jd2/SerializedPoseJobOutputter.hh>
 #include <protocols/jd2/SerializedPoseJobOutputterCreator.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
 ///Project headers
-#include <core/pose/Pose.hh>
-#include <core/io/util.hh>
+#include <core/pose/Pose.fwd.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/file/file_sys_util.hh>
+#include <utility/io/ozstream.fwd.hh>
 #include <utility/pointer/memory.hh>
-#include <core/types.hh>
 #include <basic/options/option.hh>
 
 ///C++ headers
 #include <string>
-#include <map>
 #include <sstream>
 
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys
+
 // option key includes
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //utility headers
-#include <utility/vector1.hh>
-#include <utility/version.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers
@@ -48,6 +42,11 @@
 #include <cereal/types/list.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/details/helpers.hpp>
+
+// Needed just for the serialization build
+#include <core/pose/Pose.hh>
+#include <utility/version.hh>
+#include <utility/io/ozstream.hh>
 #endif
 
 static basic::Tracer TR( "protocols.jd2.SerializedPoseJobOutputter" );

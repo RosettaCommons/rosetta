@@ -35,7 +35,6 @@
 
 #include <protocols/noesy_assign/CrossPeak.fwd.hh>
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>
-#include <protocols/noesy_assign/ResonanceList.fwd.hh>
 
 
 namespace protocols {

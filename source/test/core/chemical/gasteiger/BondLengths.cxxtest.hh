@@ -18,9 +18,8 @@
 // Unit headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/bond_support.hh>
-#include <core/types.hh>
 
 // Project headers
 #include <test/core/init_util.hh>

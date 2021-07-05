@@ -19,21 +19,22 @@
 #include <protocols/helical_bundle_predict/HelicalBundlePredictApplication.fwd.hh>
 
 // Protocols headers
-#include <protocols/helical_bundle_predict/HBPHelixAssignments.hh>
 #include <protocols/helical_bundle_predict/HBP_TemperatureScheduleGenerator.fwd.hh>
 #include <protocols/helical_bundle_predict/HBP_MoveGenerator.fwd.hh>
-#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
+
+#ifdef USEMPI
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.fwd.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
+#endif
 
 namespace protocols {
 namespace helical_bundle_predict {

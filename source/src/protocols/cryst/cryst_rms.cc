@@ -10,64 +10,34 @@
 /// @file
 /// @brief
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/CrystInfo.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
 
 #include <protocols/cryst/spacegroup.hh>
 #include <protocols/cryst/refinable_lattice.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/mpistream.hh>
-#include <utility/string_util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <utility/excn/Exceptions.hh>
 
-#include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 
 // option includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <fstream>
-#include <iostream>
 #include <cmath>
 
-#include <sstream>
-#include <string>
-#include <queue>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/random/random.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/fourier/FFT.hh>
-#include <numeric/constants.hh>
 #include <numeric/model_quality/rms.hh>
+
+#include <core/conformation/symmetry/SymmetryInfo.hh> // AUTO IWYU For SymmetryInfo
+#include <core/pose/symmetry/util.hh> // AUTO IWYU For is_symmetric
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D, FArray1D<>::size_type, FArray1D...
 
 namespace protocols {
 namespace cryst {

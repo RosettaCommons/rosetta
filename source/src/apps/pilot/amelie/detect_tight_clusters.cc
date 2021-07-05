@@ -22,22 +22,17 @@
 #include <basic/Tracer.hh>
 //#include <core/id/AtomID_Map.Pose.hh>
 //#include <core/util/MetricValue.hh>
-#include <core/id/types.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
 // #include <core/optimization/AtomTreeMinimizer.hh> // needed?
 #include <protocols/minimization_packing/MinMover.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -58,14 +53,14 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 
-#include <ObjexxFCL/format.hh>
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 
 using namespace core;
 
@@ -79,8 +74,6 @@ using namespace core;
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
-#include <fstream>
-#include <stack>
 #include <map>
 
 // constants / parameters that probably won't change much:

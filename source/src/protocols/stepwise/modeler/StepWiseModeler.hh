@@ -18,15 +18,16 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.fwd.hh>
-#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/packer/StepWiseMasterPacker.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.fwd.hh>
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace protocols {
 namespace stepwise {

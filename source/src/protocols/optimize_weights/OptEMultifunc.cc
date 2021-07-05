@@ -18,7 +18,6 @@
 
 // Package headers
 #include <core/optimization/types.hh>
-#include <core/optimization/Multifunc.hh>
 #include <protocols/optimize_weights/OptEMultifunc.hh>
 
 // Project headers
@@ -38,7 +37,6 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/numbers.hh>
 
 /// ObjexxFCL headers
@@ -46,7 +44,6 @@
 
 // C++ headers
 #include <fstream>
-#include <ostream>
 
 // option key includes
 #include <basic/options/keys/optE.OptionKeys.gen.hh>

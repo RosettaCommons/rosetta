@@ -13,13 +13,14 @@
 
 #include <protocols/antibody/grafting/util.hh>
 
+#include <fstream> // AUTO IWYU For operator<<, basic_ostream, endl, basic_istream, ifstream
+
 #ifdef __ANTIBODY_GRAFTING__
 
 // Unit headers
 #include <protocols/antibody/grafting/regex_manager.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 
 // Basic headers

@@ -18,7 +18,6 @@
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 namespace basic {
 namespace datacache {

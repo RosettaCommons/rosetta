@@ -16,7 +16,6 @@
 
 // Protocol headers
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_ddg/AlaScan.hh>
 #include <protocols/simple_ddg/DdgFilter.hh>
 #include <protocols/toolbox/EnergyLandscapeEvaluator.hh>
 #include <protocols/pose_metric_calculators/RotamerBoltzCalculator.hh>
@@ -28,7 +27,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
 // Basic/Utility headers

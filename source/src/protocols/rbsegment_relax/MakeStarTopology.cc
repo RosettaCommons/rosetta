@@ -17,12 +17,7 @@
 
 #include <protocols/loops/loops_main.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
 
 #include <protocols/rbsegment_relax/util.hh>
@@ -31,15 +26,17 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
-#include <numeric/random/random.hh>
 
-#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
 
+#ifdef WIN32
+#include <protocols/rbsegment_relax/RBSegment.hh>
+#endif
 
 namespace protocols {
 namespace rbsegment_relax {

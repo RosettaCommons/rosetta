@@ -16,21 +16,21 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pose/util.hh>
-#include <numeric/random/random.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/CacheableStringMap.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/DiagnosticData.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <core/scoring/ScoreFunction.hh>
+
+#include <core/pose/datacache/CacheableDataType.hh> // MANUAL IWYU
+#include <basic/datacache/DiagnosticData.hh> // MANUAL IWYU
+#include <basic/datacache/CacheableStringMap.hh> // MANUAL IWYU
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 #ifdef SERIALIZATION
+#include <core/scoring/ScoreFunction.hh>
+
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

@@ -18,18 +18,15 @@
 
 
 // Project Headers
-#include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <utility/exit.hh>
 
 #include <string>
-#include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace simple_filters {

@@ -21,7 +21,8 @@
 
 // C++ Headers
 
-#include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 
 #ifdef    SERIALIZATION

@@ -20,10 +20,9 @@
 
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 #include <core/chemical/AA.hh>
 
 #include <utility/vector1.hh>

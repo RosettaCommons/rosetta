@@ -18,14 +18,13 @@
 #include <protocols/anchored_design/AnchorMoversData.hh>
 #include <protocols/analysis/LoopAnalyzerMover.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
-#include <protocols/loops/Loops.hh>
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -83,10 +82,8 @@
 #include <utility/exit.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 // C++ Headers
-#include <iostream>
 #include <sstream>
 #include <list>
 
@@ -95,9 +92,11 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.io.hh>
+
+#include <core/kinematics/Jump.hh> // AUTO IWYU For Jump
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask::Residu...
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

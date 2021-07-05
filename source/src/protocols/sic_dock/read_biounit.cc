@@ -12,34 +12,16 @@
 #define MAX_UINT8    255
 
 #include <protocols/sic_dock/read_biounit.hh>
-#include <protocols/sic_dock/types.hh>
 
 #include <basic/Tracer.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/packing/compute_holes_score.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/sasa.hh>
-#include <numeric/conversions.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
-#include <numeric/xyzVector.hh>
+
+#include <utility/string_util.hh> // AUTO IWYU For file_basename
 
 // static data
 static basic::Tracer TR( "protocols.sic_dock.read_biounit" );

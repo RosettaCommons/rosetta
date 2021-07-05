@@ -21,8 +21,6 @@
 #define INCLUDED_core_energy_methods_DEEREnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
-#include <core/types.hh>
-#include <utility/vector1.hh>
 
 namespace core {
 namespace energy_methods {

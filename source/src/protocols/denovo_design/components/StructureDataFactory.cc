@@ -42,6 +42,10 @@
 // Boost headers
 #include <boost/algorithm/string.hpp>
 
+#include <protocols/denovo_design/components/StructureData.hh> // MANUAL IWYU
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 static basic::Tracer TR( "protocols.denovo_design.components.StructureDataFactory" );
 
 namespace protocols {

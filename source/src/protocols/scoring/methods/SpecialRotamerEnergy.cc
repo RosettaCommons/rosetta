@@ -16,7 +16,6 @@
 #include <protocols/scoring/methods/SpecialRotamerEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Project headers

@@ -12,29 +12,26 @@
 /// @author Jim Havranek (havranek@biochem.wustl.edu)
 
 // Unit Headers
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/power_diagram/PowerDiagram.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/prof.hh>
 
 // Project Headers
 // Numeric headers
-#include <numeric/numeric.functions.hh>
 #include <numeric/xyzVector.io.hh>
 #include <numeric/constants.hh>
 
 // Utility headers
-#include <utility/exit.hh>
-#include <utility/string_util.hh>
 
 #include <ObjexxFCL/format.hh>
 
 #include <stack>
 #include <iterator>
-#include <functional>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+
 
 static basic::Tracer TR( "core.scoring.power_diagram.PowerDiagram" );
 

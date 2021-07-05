@@ -16,6 +16,8 @@
 
 #include <numeric/constants.hh>
 
+#include <numeric/random/random.fwd.hh> // AUTO IWYU For gaussian, uniform, numeric,
+
 namespace numeric {
 namespace random {
 

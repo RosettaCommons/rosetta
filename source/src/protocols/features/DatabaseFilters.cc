@@ -21,7 +21,6 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh> // for total_nr_jobs
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -31,7 +30,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>

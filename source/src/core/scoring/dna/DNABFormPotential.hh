@@ -16,22 +16,16 @@
 
 // Unit Headers
 #include <core/scoring/dna/DNABFormPotential.fwd.hh>
-#include <core/scoring/ProteinTorsion.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray4D.hh>
 
 namespace core {
 namespace scoring {

@@ -22,8 +22,8 @@
 #include <ostream>
 #include <string>
 
-#include <utility>
-#include <utility/assert.hh>
+
+#include <utility/assert.hh> // AUTO IWYU For debug_assert
 
 namespace core {
 namespace scoring {

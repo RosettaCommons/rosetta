@@ -23,8 +23,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

@@ -22,19 +22,15 @@
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
-#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
-#include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 
 
 namespace protocols {

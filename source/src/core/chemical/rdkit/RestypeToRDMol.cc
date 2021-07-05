@@ -28,14 +28,12 @@
 #include <rdkit/GraphMol/Bond.h>
 #include <rdkit/GraphMol/Conformer.h>
 #include <rdkit/GraphMol/MolOps.h>
-#include <rdkit/GraphMol/AtomIterators.h>
 #include <rdkit/GraphMol/SanitException.h>
-#include <rdkit/GraphMol/PeriodicTable.h>
 #include <rdkit/Geometry/point.h>
 #include <rdkit/GraphMol/SmilesParse/SmilesWrite.h> // For MolToSmiles
-#include <rdkit/GraphMol/SmilesParse/SmilesParse.h> // For SmilesToMol
-#include <rdkit/GraphMol/ChemReactions/Reaction.h>
-#include <rdkit/GraphMol/ChemReactions/ReactionParser.h>
+
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
+
 
 
 namespace core {

@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -42,6 +42,9 @@
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/utility.hpp>
+
+// Other headers
+#include <utility/tag/Tag.hh>
 #endif // SERIALIZATION
 
 namespace protocols {

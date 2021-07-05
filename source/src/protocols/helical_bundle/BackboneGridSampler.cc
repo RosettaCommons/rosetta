@@ -25,22 +25,13 @@
 #include <core/scoring/Energies.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 
-#include <numeric/constants.hh>
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <numeric/random/random.hh>
 #include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/pose/init_id_map.hh>
 #include <core/pose/variant_util.hh>
 #include <core/chemical/VariantType.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 
 //JD2:
 #include <protocols/jd2/util.hh>
@@ -55,6 +46,10 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/filters/Filter.hh> // AUTO IWYU For Filter
+#include <core/conformation/Conformation.hh> // AUTO IWYU For Pose::Conformation
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 namespace protocols {

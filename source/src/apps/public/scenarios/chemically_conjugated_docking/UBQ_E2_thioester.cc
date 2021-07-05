@@ -18,7 +18,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/PDBPoseMap.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -45,7 +44,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomType.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -88,7 +86,6 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <basic/prof.hh>
-#include <utility/vector0.hh>
 
 // C++ headers
 #include <string>
@@ -102,6 +99,10 @@
 #include <basic/options/keys/chemically_conjugated_docking.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 //tracers
 static basic::Tracer TR( "apps.public.scenarios.chemically_conjugated_docking.UBQ_E2_thioester" );
 

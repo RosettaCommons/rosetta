@@ -16,7 +16,6 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <test/UTracer.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -38,8 +37,9 @@
 #include <utility/file/file_sys_util.hh>
 
 //Auto Headers
-#include <core/io/silent/EnergyNames.fwd.hh>
 #include <utility/vector1.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 
 static basic::Tracer TR("test.core.io.silent.protein_silent");

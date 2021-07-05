@@ -22,15 +22,12 @@
 #include <utility/tag/Tag.hh>
 
 // Package Headers
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
-#include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/util.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/parser/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>

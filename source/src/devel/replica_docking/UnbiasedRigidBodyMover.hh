@@ -6,28 +6,18 @@
 #define INCLUDED_devel_replica_docking_UnbiasedRigidBodyMover_hh
 
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/HamiltonianExchange.hh>
-#include <protocols/canonical_sampling/HamiltonianExchange.fwd.hh>
 
-#include <devel/replica_docking/TempInterpolator.hh>
-#include <devel/replica_docking/TempInterpolator.fwd.hh>
 
-#include <protocols/rigid/RigidBodyMover.fwd.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/RigidBodyInfo.fwd.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <protocols/docking/types.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/VirtualBase.hh>
 
 
 namespace devel {

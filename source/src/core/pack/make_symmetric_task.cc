@@ -22,14 +22,10 @@
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-#include <core/id/AtomID.hh>
 
 // Package Headers
 #include <core/pose/symmetry/util.hh>
 
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <utility/vector1.hh>
 

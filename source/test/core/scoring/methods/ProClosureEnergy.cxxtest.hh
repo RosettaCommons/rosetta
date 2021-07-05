@@ -18,21 +18,18 @@
 // Unit headers
 #include <core/energy_methods/ProClosureEnergy.hh>
 
-#include <platform/types.hh>
 
 // Package Headers
 #include <test/util/pose_funcs.hh>
 #include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/kinematics/DomainMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/cyclic_peptide/PeptideStubMover.hh> //Convenience mover to build test peptide.
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

@@ -29,7 +29,6 @@
 // Package headers
 #include <utility/down_cast.hh>
 #include <utility/keys/Key.hh>
-#include <utility/keys/NoClient.hh>
 
 // C++ headers
 #include <utility/assert.hh>

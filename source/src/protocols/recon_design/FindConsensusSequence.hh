@@ -21,7 +21,7 @@
 #include <protocols/moves/VectorPoseMover.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>

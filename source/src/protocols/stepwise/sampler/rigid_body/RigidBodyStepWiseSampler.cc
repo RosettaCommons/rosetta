@@ -26,7 +26,6 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <basic/Tracer.hh>
-#include <numeric/NumericTraits.hh>
 #include <utility>
 
 ////////////////////////////////////////////////////////////////////////////////////////////

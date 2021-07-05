@@ -23,16 +23,13 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 
 // Project Headers
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
-#include <iostream>
 
 using namespace protocols;
 

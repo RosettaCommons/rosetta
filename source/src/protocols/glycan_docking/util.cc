@@ -15,7 +15,6 @@
 // Project Headers
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/carbohydrates/RingPlaneFlipMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
@@ -38,7 +37,6 @@
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/conformation/carbohydrates/util.hh>
@@ -47,7 +45,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/types.hh>
@@ -61,17 +58,14 @@
 
 // Basic Headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // Numeric Headers
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
 
 // Utility Headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>

@@ -34,9 +34,10 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector.hh>
-#include <utility/tools/make_vector1.hh>
-#include <utility/json_spirit/json_spirit.h>
 #include <utility/json_spirit/json_spirit_tools.hh>
+
+#include <utility/json_spirit/json_spirit_reader.h> // AUTO IWYU For read_or_throw
+#include <utility/json_spirit/json_spirit_writer.h> // AUTO IWYU For write
 
 namespace numeric {
 

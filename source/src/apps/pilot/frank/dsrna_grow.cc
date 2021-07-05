@@ -6,38 +6,28 @@
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/SilentFileJobOutputter.hh>
-#include <protocols/jd2/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/rna/denovo/util.hh>
 //#include <protocols/rna/movers/RNA_HelixAssembler.hh>
 #include <core/import_pose/RNA_HelixAssembler.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>

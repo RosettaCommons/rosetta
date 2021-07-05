@@ -19,7 +19,6 @@
 
 // c++ headers
 
-#include <core/types.hh>
 
 
 namespace core {

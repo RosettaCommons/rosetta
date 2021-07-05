@@ -13,9 +13,10 @@
 
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <core/scoring/func/SOGFunc.hh>
 #include <core/scoring/func/SOGFunc_Impl.hh>
 #include <core/types.hh>
+
+#include <core/scoring/func/SOGFunc.hh> // DO NOT AUTO-REMOVE
 
 #ifdef SERIALIZATION
 // Cereal headers

@@ -19,7 +19,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

@@ -12,13 +12,10 @@
 /// @author Jared Adolf-Bryfogle
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 #include <protocols/antibody/constraints/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
@@ -26,7 +23,6 @@
 #include <protocols/antibody/clusters/CDRClusterFeatures.hh>
 #include <protocols/antibody/clusters/CDRCluster.hh>
 #include <protocols/antibody/clusters/CDRClusterSet.hh>
-#include <protocols/antibody/constraints/util.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/FeaturesReporter.hh>
 
@@ -34,19 +30,16 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/sql_database/types.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/database/sql_utils.hh>
-#include <cppdb/frontend.h>
 
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;

@@ -17,7 +17,6 @@
 #include <core/scoring/func/GaussianChainGeneralFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // See GaussianChainFunc.cc for more information, including link to mathematical derivation.

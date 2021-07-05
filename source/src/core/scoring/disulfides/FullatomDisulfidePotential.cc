@@ -44,8 +44,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
-
-static basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );
+#include <core/scoring/DerivVectorPair.hh> // IWYU MANUAL
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -60,6 +59,8 @@ static basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );
 namespace core {
 namespace scoring {
 namespace disulfides {
+
+static basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );
 
 using namespace core;
 

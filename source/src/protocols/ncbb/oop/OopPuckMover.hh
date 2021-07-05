@@ -16,8 +16,6 @@
 #include <protocols/ncbb/oop/OopPuckMover.fwd.hh>
 #include <protocols/ncbb/oop/OopMover.hh>
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/Mover.hh>
 
 // Utility Headers
 #include <core/types.hh>

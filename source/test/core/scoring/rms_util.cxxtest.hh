@@ -17,16 +17,10 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/id/SequenceMapping.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/util.hh>
-#include <utility/vector1.hh>
 
 using core::Real;
 using core::Size;

@@ -29,13 +29,11 @@
 #include <core/pack/make_symmetric_task.hh>
 */
 // Core Headers
-#include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/CachedResidueSubset.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 
 // Utility Headers
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>

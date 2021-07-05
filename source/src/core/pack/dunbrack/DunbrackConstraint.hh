@@ -17,7 +17,6 @@
 #include <core/scoring/constraints/Constraint.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <utility/vector1.hh>

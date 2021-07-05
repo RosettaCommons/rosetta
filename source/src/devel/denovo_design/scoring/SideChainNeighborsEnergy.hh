@@ -14,13 +14,10 @@
 #ifndef INCLUDED_core_scoring_methods_SideChainNeighborsEnergy_hh
 #define INCLUDED_core_scoring_methods_SideChainNeighborsEnergy_hh
 
-#include <devel/denovo_design/scoring/SideChainNeighborsEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
 

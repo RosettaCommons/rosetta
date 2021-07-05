@@ -26,22 +26,21 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/types.hh>
-#include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 
+#include <protocols/forge/remodel/RemodelConstraintGenerator.hh> // AUTO IWYU For RemodelConstraintGenerator, GenericRemo...
+
 // option key includes
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 using basic::Error;
 using basic::Warning;
 

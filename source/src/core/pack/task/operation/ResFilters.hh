@@ -20,10 +20,9 @@
 #include <core/pack/task/operation/ResFilter.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
 #include <set>

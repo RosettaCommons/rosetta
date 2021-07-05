@@ -21,12 +21,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <basic/Tracer.hh>
-#include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <numeric/random/random_xyz.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -37,8 +33,10 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pose/symmetry/util.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR("protocols.matdes.SchemePlaceMotifsMover");
 

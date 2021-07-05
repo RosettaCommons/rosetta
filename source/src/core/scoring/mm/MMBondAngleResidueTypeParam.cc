@@ -15,7 +15,6 @@
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 
 // Project headers
-#include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
@@ -28,7 +27,6 @@
 #include <numeric/conversions.hh>
 #include <utility/string_util.hh>
 
-#include <core/chemical/MMAtomType.hh>
 #include <utility/vector1.hh>
 
 // C++ headers

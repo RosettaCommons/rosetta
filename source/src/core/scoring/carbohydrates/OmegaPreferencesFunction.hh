@@ -20,7 +20,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

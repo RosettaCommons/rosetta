@@ -19,27 +19,20 @@
 #include <protocols/antibody/metrics.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/antibody/AntibodyEnum.hh>
 
 // Basic
-#include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 
 // Core
 //#include <core/pose/metrics/simple_calculators/SasaCalculator2.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
-#include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/Energies.hh>

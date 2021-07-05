@@ -22,21 +22,14 @@
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/methods/util.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
 #include <core/types.hh>
 
 // C++ headers
-#include <iosfwd>
-#include <map>
 
-#include <utility/VirtualBase.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
 
 

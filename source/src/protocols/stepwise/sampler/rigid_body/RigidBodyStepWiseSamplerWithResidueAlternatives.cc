@@ -21,6 +21,8 @@
 #include <basic/Tracer.hh>
 #include <utility>
 
+#include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh> // AUTO IWYU For RigidBodyStepWi...
+
 static basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSamplerWithResidueAlternatives" );
 
 using namespace protocols::stepwise::sampler::copy_dofs;

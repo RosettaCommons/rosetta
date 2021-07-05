@@ -20,7 +20,6 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <core/scoring/dssp/Dssp.fwd.hh>
 
@@ -28,6 +27,8 @@
 #include <core/types.hh>
 
 // C++ Headers
+#include <string>
+
 namespace protocols {
 namespace splice {
 

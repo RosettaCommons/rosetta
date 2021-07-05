@@ -33,11 +33,10 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/MutableResidueConnection.hh>
 #include <utility/graph/RingDetection.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <boost/unordered_map.hpp>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/graph/BFS_prune.hh>
@@ -47,8 +46,9 @@
 
 #include <boost/graph/breadth_first_search.hpp>
 
-#include <algorithm>
-#include <boost/unordered_map.hpp>
+
+#include <core/chemical/AtomTypeSet.hh> // AUTO IWYU For AtomTypeSet
+#include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 namespace core {
 namespace chemical {

@@ -20,27 +20,19 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/TenANeighborGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>

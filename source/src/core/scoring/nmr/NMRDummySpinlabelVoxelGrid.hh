@@ -21,9 +21,8 @@
 #include <core/scoring/nmr/NMRDummySpinlabelVoxelGrid.fwd.hh>
 
 // Package headers
-#include <numeric/VoxelGrid.impl.hh>
+#include <numeric/VoxelGrid.impl.hh> // DO NOT AUTO-REMOVE (needed for templated instantiations)
 #include <core/scoring/nmr/NMRDummySpinlabelEnsemble.fwd.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -34,7 +33,8 @@
 #include <utility/VirtualBase.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
+
+#include <numeric/VoxelGrid.hh> // AUTO IWYU For VoxelGrid<>::Real, VoxelGrid, VoxelGrid<>::Vector
 
 namespace core {
 namespace scoring {

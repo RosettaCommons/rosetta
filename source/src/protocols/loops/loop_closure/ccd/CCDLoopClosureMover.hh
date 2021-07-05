@@ -30,12 +30,14 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/TorsionID.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 // C++ header
 #include <string>
+
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace loops {

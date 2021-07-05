@@ -25,17 +25,12 @@
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 
-#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.fwd.hh>
 
-#include <utility/graph/unordered_object_pool.hpp>
 #include <utility/graph/LowMemGraph.hh>
-#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
 
-#include <set>
-#include <algorithm>
 
 #include <boost/container/flat_set.hpp>
 

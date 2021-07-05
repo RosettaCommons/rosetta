@@ -21,14 +21,13 @@
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 //Utility Headers
-#include <utility/exit.hh>
 //Basic Headers
 #include <basic/Tracer.hh>
 //Numeric Headers
 #include <numeric/xyzVector.hh>
 //C++ Headers
-#include <cmath>
-#include <numeric/xyz.io.hh>
+
+#include <numeric/xyzVector.io.hh> // AUTO IWYU For operator<<
 
 
 static basic::Tracer TR( "protocols.SurfaceDocking.SurfaceOrientMover" );

@@ -19,23 +19,20 @@
 #include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementFactory.fwd.hh>
 
 // Package Headers
-#include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalRequirement.hh>
-#include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.hh>
-#include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementCreator.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacyGlobalRequirement.fwd.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.fwd.hh>
+#include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementCreator.fwd.hh>
 
 // Platform Headers
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 #include <utility/SingletonBase.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
+#include <string>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 
 namespace protocols {

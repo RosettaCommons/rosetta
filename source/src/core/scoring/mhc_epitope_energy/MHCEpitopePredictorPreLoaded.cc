@@ -14,13 +14,8 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/io/izstream.hh>
-#include <utility/file/FileName.hh>
-#include <basic/database/open.hh>
-#include <iostream>
 #include <string>
 #include <utility/string_util.hh>
-#include <cppdb/frontend.h>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <core/scoring/ScoringManager.hh>

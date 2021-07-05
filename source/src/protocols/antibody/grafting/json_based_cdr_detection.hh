@@ -25,9 +25,9 @@
 #ifdef _NLOHMANN_JSON_ENABLED_
 #include <protocols/antibody/grafting/cdr_detection.hh>
 
-#include <protocols/antibody/grafting/antibody_sequence.hh>
+#include <protocols/antibody/grafting/antibody_sequence.fwd.hh>
 
-#include <basic/report.hh>
+#include <basic/report.fwd.hh>
 #include <json.hpp>
 
 /// @brief new class to set the CDR sequence position information in AntibodySequence.sequence.cdr.* based on input json numbers. the input json is parsed using the json parsing tools in utility/json_utitlties.hh. JSON format is checked every time and exit with informative message is called if input JSON is misformatted.

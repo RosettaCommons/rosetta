@@ -21,8 +21,6 @@
 #include <devel/init.hh>
 
 // C++ headers
-#include <iostream>
-#include <string>
 
 #include <basic/Tracer.hh>
 
@@ -32,10 +30,8 @@
 
 //Auto Headers
 #include <protocols/relax/ClassicRelax.hh>
-#include <protocols/relax/util.hh>
 #include <protocols/relax/relax_main.hh>
 #include <protocols/viewer/viewers.hh>
-#include <basic/options/option_macros.hh>
 
 using basic::Error;
 using basic::Warning;

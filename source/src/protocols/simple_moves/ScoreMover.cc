@@ -25,7 +25,6 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/Energies.hh>
@@ -44,18 +43,14 @@
 
 // utility headers
 #include <utility>
-#include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/exit.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
 #include <iostream>
 #include <string>
 
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes

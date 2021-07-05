@@ -36,7 +36,6 @@
 // Utility headers
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 

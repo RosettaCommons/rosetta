@@ -18,16 +18,12 @@
 #include <protocols/simple_moves/WriteFiltersToPose.fwd.hh>
 
 // Project Headers
-#include <core/scoring/ScoreFunction.hh>
-#include <core/types.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <basic/datacache/DataMapObj.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/Mover.fwd.hh>
+
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace simple_moves {

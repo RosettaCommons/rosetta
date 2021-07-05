@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_indexed_structure_store_StructureStoreManager_hh
 
 #include <mutex>
-#include <deque>
 
 // Project headers
 #include <core/types.hh>
@@ -28,11 +27,8 @@
 #include <utility/SingletonBase.hh>
 
 // C++ headers
-#include <numeric/types.hh>
-#include <iosfwd>
 #include <map>
 #include <tuple>
-#include <utility/vector1.fwd.hh>
 
 namespace protocols
 {

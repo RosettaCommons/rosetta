@@ -17,10 +17,8 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
@@ -30,7 +28,6 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.CrosslinkerMoverHelper" );
 

@@ -19,11 +19,22 @@
 #include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 
 // Protocols headers
-#include <protocols/trRosetta/trRosettaOutputs_v1.hh>
 #include <protocols/trRosetta/trRosettaProtocol_v1.hh>
 
 // Core headers
-#include <core/id/AtomID.hh>
+#include <core/pose/Pose.fwd.hh>
+
+// Numeric headers
+
+// Basic/Utility headers
+#include <basic/Tracer.hh>
+#include <basic/tensorflow_manager/util.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/pointer/memory.hh>
+
+#ifdef USE_TENSORFLOW
+#include <protocols/trRosetta/trRosettaOutputs_v1.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -31,22 +42,12 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/func/SplineFunc.hh>
-
-// Numeric headers
 #include <numeric/constants.hh>
-
-// Basic/Utility headers
-#include <basic/Tracer.hh>
-#include <basic/tensorflow_manager/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/trRosetta.OptionKeys.gen.hh>
-#include <basic/citation_manager/CitationManager.hh>
-#include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/tag/XMLSchemaGeneration.hh>
-#include <utility/pointer/memory.hh>
 #include <utility/file/file_sys_util.hh>
+#endif
 
 static basic::Tracer TR( "protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator" );
 

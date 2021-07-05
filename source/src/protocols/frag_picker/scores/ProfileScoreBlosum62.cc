@@ -39,6 +39,9 @@
 
 #include <utility/vector1.hh>
 
+#include <cmath> // MANUAL IWYU
+#include <protocols/frag_picker/VallProvider.hh> // AUTO IWYU For VallProvider
+
 
 namespace protocols {
 namespace frag_picker {

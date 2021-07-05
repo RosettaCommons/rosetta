@@ -31,7 +31,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
-#include <numeric/random/random.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -43,11 +42,14 @@
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+
+#include <core/scoring/ScoreFunction.hh> // MANUAL IWYU
+
+#include <core/conformation/symmetry/SymmetryInfo.hh> // AUTO IWYU For SymmetryInfo
 
 static basic::Tracer tr( "protocols.topo_broker.fibril_modeling", basic::t_info );
 

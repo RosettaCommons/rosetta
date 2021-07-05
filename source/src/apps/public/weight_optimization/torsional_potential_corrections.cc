@@ -11,26 +11,14 @@
 /// @brief
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -40,9 +28,6 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/optimizeH.hh>
-#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/io/CrystInfo.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -61,51 +46,31 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/viewer/viewers.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 #include <utility>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/io/mpistream.hh>
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/NumericTraits.hh>
 #include <numeric/fourier/FFT.hh>
-#include <numeric/constants.hh>
-#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/format.hh>
 
-#include <devel/init.hh>
 
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <basic/datacache/CacheableString.hh>
 
 // option includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 //#include <boost/filesystem.hpp>
@@ -114,21 +79,16 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
-#include <cmath>
 
 #include <sstream>
 #include <string>
-#include <queue>
-#include <cstdarg>
 
 using namespace core;
-using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::pack;
 using namespace core::pack::task;
 using namespace core::pack::task::operation;
-using namespace protocols::moves;
 using namespace scoring;
 
 OPT_1GRP_KEY(String, tors, mode)

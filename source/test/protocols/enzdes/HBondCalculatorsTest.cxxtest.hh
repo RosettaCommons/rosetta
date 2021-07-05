@@ -27,12 +27,9 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/ChemicalManager.hh> //need for additional residue
-#include <core/chemical/ResidueTypeSet.hh>
-#include <basic/options/option.hh> //needed to set option
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
+#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
 #include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/pose_metric_calculators/PackstatCalculator.hh>
@@ -44,7 +41,6 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 
@@ -53,12 +49,12 @@
 
 // option key includes
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 using basic::Error;

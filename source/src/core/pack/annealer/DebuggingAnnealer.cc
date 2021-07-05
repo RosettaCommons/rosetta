@@ -15,17 +15,16 @@
 #include <core/pack/annealer/DebuggingAnnealer.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
-#include <ObjexxFCL/Fmath.hh>
 
 #include <utility>
 #include <utility/io/izstream.hh>
 
-#include <fstream>
-#include <istream>
 #include <iostream>
+
+#include <core/pack/rotamer_set/FixbbRotamerSets.hh> // AUTO IWYU For FixbbRotamerSets
+#include <ObjexxFCL/FArray1D.hh> // AUTO IWYU For FArray1D
 
 namespace core {
 namespace pack {

@@ -20,7 +20,6 @@
 #include <core/kinematics/AtomPointer.fwd.hh>
 
 // Project headers
-#include <core/types.hh>
 
 
 #endif // INCLUDED_core_kinematics_AtomPointer_HH

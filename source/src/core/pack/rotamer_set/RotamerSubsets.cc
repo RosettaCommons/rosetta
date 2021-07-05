@@ -19,12 +19,14 @@
 #include <core/pack/rotamer_set/RotamerSubset.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 
 // Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <ostream> // AUTO IWYU For operator<<, basic_ostream, basic_ostream<>::__ostream_type
 
 //Auto Headers
 //#include <utility/integer_mapping.hh>

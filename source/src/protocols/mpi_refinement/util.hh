@@ -11,50 +11,24 @@
 #define INCLUDED_protocols_mpi_refinement_utils_hh
 
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/pose/selection.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/conformation/Residue.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <protocols/wum/SilentStructStore.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/util/kinematics_util.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
+#include <protocols/wum/SilentStructStore.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
 
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AA.hh>
 
-#include <core/scoring/rms_util.hh>
-#include <numeric/model_quality/rms.hh>
 
-#include <cmath>
-#include <cstdlib> // atoi
-#include <algorithm> // for sort
-#include <iosfwd> // for ifstream
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
 
-#include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
-#include <boost/algorithm/string.hpp>
+
+#include <map> // AUTO IWYU For map
 
 namespace protocols {
 namespace mpi_refinement {

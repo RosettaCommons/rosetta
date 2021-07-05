@@ -22,7 +22,6 @@
 #include <protocols/flxbb/DesignTask.fwd.hh>
 #include <protocols/flxbb/FilterStructs.fwd.hh>
 #ifdef __clang__
-#include <protocols/flxbb/FilterStructs.hh>
 #endif
 
 // Project Headers
@@ -30,19 +29,17 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #ifdef WIN32

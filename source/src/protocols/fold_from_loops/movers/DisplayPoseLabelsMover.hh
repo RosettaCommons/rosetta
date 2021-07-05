@@ -19,14 +19,13 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/moves/DsspMover.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/movemap/MoveMapFactory.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>

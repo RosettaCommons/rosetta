@@ -21,7 +21,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
@@ -32,12 +31,10 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/AtomType.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
-#include <numeric/xyz.functions.fwd.hh>
 #include <numeric/conversions.hh>
 #include <core/scoring/sc/MolecularSurfaceCalculator.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -46,10 +43,8 @@
 #include <string>
 #include <algorithm>
 #include <iomanip>
-#include <ostream>
 #include <sstream>
 #include <cmath>
-#include <map>
 
 // Eigen header for SVD support
 #include <Eigen/SVD>
@@ -59,6 +54,8 @@
 
 //Auto Headers
 #include <numeric/random/random.fwd.hh>
+
+#include <core/pack/task/PackerTask.hh> // AUTO IWYU For PackerTask
 
 #ifdef SERIALIZATION
 // Utility serialization headers

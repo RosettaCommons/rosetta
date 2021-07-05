@@ -15,6 +15,8 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_LigandConformer_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_LigandConformer_hh
 
+#include <protocols/ligand_docking/GALigandDock/LigandConformer.fwd.hh>
+
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
@@ -23,10 +25,8 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <numeric/Quaternion.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <map>
-#include <protocols/ligand_docking/GALigandDock/TorsionSampler.hh>
+#include <protocols/ligand_docking/GALigandDock/TorsionSampler.fwd.hh>
 
 
 

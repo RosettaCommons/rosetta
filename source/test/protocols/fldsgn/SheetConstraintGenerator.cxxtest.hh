@@ -23,7 +23,6 @@
 // Devel headers
 
 // Protocol headers
-#include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
@@ -35,13 +34,14 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/stream_util.hh>
+
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
 
 // Boost headers
 

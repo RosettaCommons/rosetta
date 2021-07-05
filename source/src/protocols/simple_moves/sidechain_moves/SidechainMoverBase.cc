@@ -28,21 +28,13 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
-#include <basic/prof.hh>
 
 // Numeric Headers
-#include <numeric/angle.functions.hh>
-#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 
@@ -52,15 +44,16 @@
 #include <utility/exit.hh>
 
 // for debug ( temporary )
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
 
 
 // C++ Headers
-#include <sstream>
-#include <fstream>
 #include <utility/excn/Exceptions.hh>
-#include <utility/fixedsizearray1.hh>
+
+#include <core/pack/dunbrack/RotamerLibrary.hh> // MANUAL IWYU
+
+#include <core/id/TorsionID_Range.hh> // AUTO IWYU For TorsionID_Range
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 using namespace core;
 using namespace core::pose;
 

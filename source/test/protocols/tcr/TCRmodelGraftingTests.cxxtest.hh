@@ -12,16 +12,16 @@
 /// @author Ragul Gowthaman
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
 // Core Headers
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 // Protocol Headers
 #include <protocols/tcr/TCRmodel.hh>
 #include <protocols/tcr/grafting_util.hh>
 #include <basic/Tracer.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
+#include <protocols/tcr/util.hh> // AUTO IWYU For initialize_aho_numbers
 
 static basic::Tracer TR("protocols.tcr.TCRmodelGraftingTests");
 class TCRmodelGraftingTests : public CxxTest::TestSuite {

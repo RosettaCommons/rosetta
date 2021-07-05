@@ -17,8 +17,7 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <core/io/pdb/Field.hh>
-#include <core/io/pdb/pdb_reader.hh>
+#include <core/io/pdb/Field.fwd.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/StructFileRep.hh>
 #include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>

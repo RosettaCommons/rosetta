@@ -18,14 +18,12 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/Sequence.fwd.hh>
-#include <core/sequence/SequenceProfile.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <utility/vector1.hh>
 
 // #include <protocols/protein_interface_design/design_utils.hh>
 

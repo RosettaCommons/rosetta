@@ -24,7 +24,6 @@
 #include <protocols/enzdes/EnzFilters.fwd.hh>
 #include <protocols/jd2/SilentFileJobOutputter.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

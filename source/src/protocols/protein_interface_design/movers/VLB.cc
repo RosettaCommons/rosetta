@@ -20,7 +20,7 @@
 #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/build/Interval.hh>
 #include <protocols/forge/build/BuildManager.hh>
-#include <protocols/forge/build/BuildInstruction.hh>
+#include <protocols/forge/build/BuildInstruction.fwd.hh>
 #include <protocols/forge/build/Bridge.hh>
 #include <protocols/forge/build/ConnectRight.hh>
 #include <protocols/forge/build/GrowLeft.hh>

@@ -26,8 +26,6 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/pointer/memory.hh>
 #include <utility/numbers.hh>
 
 #ifdef    SERIALIZATION

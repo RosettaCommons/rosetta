@@ -32,7 +32,6 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 
 namespace protocols {

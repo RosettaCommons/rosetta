@@ -23,7 +23,6 @@
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -33,9 +32,7 @@
 
 #include <protocols/jd2/NoOutputJobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/loops/Loops.hh>
 #include <core/chemical/ResidueType.hh>
 // Utility headers
 #include <basic/options/option_macros.hh>
@@ -51,16 +48,14 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <utility/exit.hh>
 
 //Auto Headers
 #include <core/scoring/func/FuncFactory.hh>
-#include <core/scoring/constraints/NamedAtomPairConstraint.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <utility/excn/Exceptions.hh>
 
 
 #include <numeric/random/random.hh>
+
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
 
 
 static basic::Tracer tr( "main" );

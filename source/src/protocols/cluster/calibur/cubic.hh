@@ -14,14 +14,9 @@
 #define apps_pilot_kalngyk_cubic_HH
 
 #ifndef PYROSETTA
-#include <time.h>
 #endif
 #if !defined(__WIN32__) && !defined(WIN32)
-#include <sys/resource.h>
 #endif
-#include <stdlib.h>
-#include <iosfwd>
-#include <cmath>
 #include <core/types.hh>
 
 namespace protocols {

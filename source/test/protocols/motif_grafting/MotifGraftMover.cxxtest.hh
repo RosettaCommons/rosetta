@@ -13,33 +13,21 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <util/pose_funcs.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/sicdock.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
-#include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
 
 //Include Rosetta Core Stuff
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 
 //Include Rosetta numeric
-#include <numeric/xyz.functions.hh>
 
-#include <boost/algorithm/string.hpp>
 
 //My own class headers
 #include <protocols/motif_grafting/movers/MotifGraftMover.hh>

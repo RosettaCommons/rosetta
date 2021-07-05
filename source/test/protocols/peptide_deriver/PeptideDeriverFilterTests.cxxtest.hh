@@ -34,6 +34,8 @@
 // C++ headers
 #include <fstream>
 
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
+
 class PeptideDeriverUTracerOutputter : public protocols::peptide_deriver::PeptideDeriverOutputter {
 private:
 	utility::pointer::shared_ptr<test::UTracer> ut_;

@@ -18,22 +18,16 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <core/io/nmr/util.hh>
 #include <core/scoring/nmr/rdc/RDCMultiSet.hh>
 #include <core/scoring/nmr/rdc/RDCSingleSet.hh>
-#include <core/scoring/nmr/rdc/RDCSingle.hh>
 #include <core/scoring/nmr/rdc/RDCTensor.hh>
-#include <core/scoring/nmr/util.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility headers
 
@@ -43,8 +37,6 @@
 // C++ headers
 #include <string>
 #include <iostream>
-#include <iomanip>
-#include <utility>
 
 static basic::Tracer TR("core.scoring.nmr.rdc.RDCMultiSet.cxxtest");
 

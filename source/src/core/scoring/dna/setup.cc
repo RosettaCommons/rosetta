@@ -17,7 +17,6 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>

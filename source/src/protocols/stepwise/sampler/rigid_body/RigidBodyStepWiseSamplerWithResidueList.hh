@@ -20,9 +20,10 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.fwd.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.fwd.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueListStepWiseSampler.fwd.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerOneValueComb.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
+
+#include <protocols/stepwise/sampler/StepWiseSamplerOneValue.hh> // AUTO IWYU For ValueList
 
 namespace protocols {
 namespace stepwise {

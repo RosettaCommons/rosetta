@@ -22,30 +22,19 @@
 #include <core/id/PartialAtomID.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/carbohydrates/util.hh>
-#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
-#include <core/conformation/carbohydrates/GlycanNode.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
-#include <core/select/movemap/MoveMapFactory.hh>
 #include <core/scoring/EnergyMap.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/types.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/TorsionID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/FoldTree.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>

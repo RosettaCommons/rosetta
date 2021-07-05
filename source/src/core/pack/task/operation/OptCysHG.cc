@@ -24,10 +24,10 @@
 // package headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
-#include <utility/vector1.hh>
+
+#include <core/chemical/ResidueType.hh> // AUTO IWYU For ResidueType
 
 
 namespace core {

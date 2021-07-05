@@ -15,16 +15,14 @@
 #define INCLUDED_numeric_util_hh
 
 #include <numeric/types.hh>
-#include <numeric/numeric.functions.hh>
+#include <numeric/numeric.functions.hh> // DO NOT AUTO-REMOVE (needed for max())
 #include <utility/vector1.hh>
 #include <utility/numbers.hh>
 
 #include <numeric/MathNTensorBase.fwd.hh>
 
-#include <limits>
 #include <cmath>
 #include <algorithm>
-#include <map>
 
 namespace numeric {
 

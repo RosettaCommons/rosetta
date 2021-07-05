@@ -24,11 +24,12 @@
 // Numeric headers
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/random.functions.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+
+#include <utility/tag/XMLSchemaGeneration.hh> // AUTO IWYU For operator+, XMLSchemaAttribute, xsct_real
 
 #ifdef SERIALIZATION
 // Utility serialization headers

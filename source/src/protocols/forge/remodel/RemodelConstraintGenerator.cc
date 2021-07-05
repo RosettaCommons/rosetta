@@ -18,8 +18,8 @@
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/id/SequenceMapping.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/id/SequenceMapping.fwd.hh>
 
 #include <utility>
 #include <utility/tag/Tag.hh>

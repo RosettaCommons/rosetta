@@ -21,19 +21,12 @@
 #include <protocols/moves/Mover.hh>
 
 // Core and Basic headers
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
 // C++ headers
-#include <iosfwd>
 #include <string>
 
 namespace protocols {

@@ -24,7 +24,6 @@
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/rms_util.hh>
@@ -32,11 +31,10 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility Headers
-#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/file/file_sys_util.hh>
 
 // External Headers
-#include <cppdb/frontend.h>
 
 // C++ Headers
 #include <sstream>

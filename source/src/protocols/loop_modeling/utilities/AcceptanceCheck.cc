@@ -13,9 +13,6 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Protocol headers
 #include <protocols/moves/MonteCarlo.hh>

@@ -28,7 +28,6 @@
 
 // Boost
 
-#include <utility/vector1.hh>
 
 #ifdef WIN32
 #include <protocols/frag_picker/FragmentPicker.hh>

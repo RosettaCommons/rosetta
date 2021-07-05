@@ -16,12 +16,11 @@
 
 // Package headers
 #include <devel/mmt_msd/MMTPackingJob.hh>
-#include <devel/mmt_msd/MMTMinPackingJob.hh>
 #include <devel/mmt_msd/MMTOffRotamerPackingJob.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
@@ -43,6 +42,8 @@
 
 // C++ headers
 #include <sstream>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 #ifdef MULTI_THREADED
 #include <chrono>

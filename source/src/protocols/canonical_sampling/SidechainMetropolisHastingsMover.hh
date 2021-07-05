@@ -17,18 +17,13 @@
 // Unit Headers
 #include <protocols/canonical_sampling/SidechainMetropolisHastingsMover.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Project Headers
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <numeric/random/WeightedSampler.hh>
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace canonical_sampling {

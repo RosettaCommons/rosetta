@@ -1,11 +1,8 @@
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/AtomType.hh>
 
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -13,25 +10,19 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 
-#include <core/import_pose/import_pose.hh>  //Read pdb in functionality
 #include <core/pose/Pose.hh>        //Creation of pose object
 #include <core/pose/variant_util.hh>
 
-#include <core/scoring/dna/setup.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoringManager.hh>
 
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/packer_neighbors.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 
 #include <devel/dna/util_motif_loop.hh>
 #include <basic/Tracer.hh>
-#include <numeric/xyzVector.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 static basic::Tracer tr( "devel.dna.util_motif_loop" );
 

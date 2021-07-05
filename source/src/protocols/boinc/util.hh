@@ -14,8 +14,6 @@
 #ifndef INCLUDED_protocols_boinc_util_hh
 #define INCLUDED_protocols_boinc_util_hh
 
-#include <map>
-#include <string>
 #include <core/types.hh>
 
 namespace protocols {

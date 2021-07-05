@@ -29,14 +29,11 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
 
-#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

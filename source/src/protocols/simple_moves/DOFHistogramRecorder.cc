@@ -28,12 +28,10 @@
 // External library headers
 
 // C++ headers
-#include <iomanip>
 #include <sstream>
 #include <set>
 
 //Auto Headers
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/MultiDimensionalHistogram.hh>
 

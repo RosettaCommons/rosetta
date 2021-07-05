@@ -26,7 +26,6 @@
 
 #include <core/fragment/picking_old/concepts/Extent.fwd.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {

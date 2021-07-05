@@ -14,7 +14,6 @@
 
 // C++ headers
 #include <iostream>
-#include <sstream>
 
 // Unit headers
 #include <core/energy_methods/DirectReadoutEnergy.hh>
@@ -30,7 +29,6 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/scoring/EnergyMap.hh>
-#include <utility/vector1.hh>
 
 
 using namespace std;

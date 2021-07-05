@@ -20,12 +20,11 @@
 #include <protocols/environment/ClientMover.hh>
 
 // Package headers
-#include <protocols/rigid/UniformRigidBodyMover.hh>
+#include <protocols/rigid/UniformRigidBodyMover.fwd.hh>
 
-#include <protocols/environment/claims/EnvClaim.hh>
+#include <protocols/environment/claims/EnvClaim.fwd.hh>
 
 // Project headers
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 

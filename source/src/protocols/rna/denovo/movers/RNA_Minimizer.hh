@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_rna_RNA_Minimizer_HH
 
 #include <protocols/moves/Mover.hh>
-#include <core/import_pose/options/RNA_MinimizerOptions.hh>
+#include <core/import_pose/options/RNA_MinimizerOptions.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>

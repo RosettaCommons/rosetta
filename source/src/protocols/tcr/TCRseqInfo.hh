@@ -21,7 +21,6 @@
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
 #include <utility/VirtualBase.hh>
 #include <protocols/antibody/grafting/antibody_sequence.hh>
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace tcr {

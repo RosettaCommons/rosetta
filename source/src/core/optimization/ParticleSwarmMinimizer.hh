@@ -22,7 +22,6 @@
 #include <core/optimization/Multifunc.hh>
 #include <core/optimization/types.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace core {

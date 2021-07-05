@@ -13,13 +13,11 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/sequence/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <devel/init.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 //RNA stuff -- move this?
@@ -31,13 +29,11 @@
 
 
 // option key includes
-#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/chemical/ResidueType.hh>
 #include <utility/excn/Exceptions.hh>
 
 using namespace protocols;

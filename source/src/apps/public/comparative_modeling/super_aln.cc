@@ -30,7 +30,6 @@
 
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <numeric/xyzVector.hh>
 
 #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
@@ -46,7 +45,6 @@ using utility::vector1;
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <core/pose/util.hh>
 
 //Auto Headers
 #include <core/pose/init_id_map.hh>

@@ -22,7 +22,7 @@
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/VirtualBase.hh>
+#include <utility/VirtualBase.fwd.hh>
 
 namespace numeric {
 namespace kdtree {

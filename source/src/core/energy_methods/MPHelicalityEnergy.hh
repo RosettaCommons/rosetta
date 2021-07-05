@@ -28,20 +28,14 @@
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
-#include <core/conformation/Atom.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/graph/Graph.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
-#include <ObjexxFCL/FArray3D.hh>
 #include <utility/vector1.hh>
-#include <map>
-#include <numeric/interpolation/spline/CubicSpline.hh>
 
 namespace core {
 namespace energy_methods {

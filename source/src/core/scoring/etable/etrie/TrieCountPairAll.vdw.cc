@@ -26,9 +26,7 @@
 #include <core/scoring/vdwaals/VDW_Energy.hh>
 
 // STL Headers
-#include <iostream>
 
-#include <core/scoring/etable/etrie/EtableAtom.hh>
 #include <core/scoring/trie/RotamerTrie.hh>
 #include <utility/vector1.hh>
 

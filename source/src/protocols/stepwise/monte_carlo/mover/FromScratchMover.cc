@@ -25,7 +25,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -37,7 +36,9 @@
 #include <basic/Tracer.hh>
 
 //Req'd on WIN32
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
+
+#include <core/pose/full_model_info/FullModelParameters.hh> // AUTO IWYU For FullModelParameters
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.FromScratchMover" );
 using namespace protocols::stepwise::modeler;

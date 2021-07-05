@@ -23,10 +23,9 @@
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/util.hh>
 
 // Core headers
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -41,7 +40,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
-#include <utility/tag/Tag.hh>
 
 // Boost headers
 

@@ -12,10 +12,6 @@
 /// @author TJ Brunette tjbrunette@gmail.com
 ///
 // Unit headers
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/pose/symmetry/util.hh>
 
 #include <protocols/pose_length_moves/ConnectChainsMover.hh>
 #include <protocols/pose_length_moves/ConnectChainsMoverCreator.hh>
@@ -23,7 +19,6 @@
 
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 
@@ -33,16 +28,13 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/VirtualBase.hh>
 
 #include <basic/Tracer.hh>
 
 
 #include <iostream>
-#include <sstream>
 #include <map>
 #include <set>
-#include <ctime>
 #include <boost/algorithm/string.hpp>
 #include <boost/range/algorithm/count.hpp>
 // XSD XRW Includes

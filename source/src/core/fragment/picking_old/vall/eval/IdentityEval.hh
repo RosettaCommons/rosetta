@@ -25,7 +25,6 @@
 #include <core/fragment/picking_old/vall/eval/VallFragmentEval.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 // C++ headers

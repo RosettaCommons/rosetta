@@ -33,9 +33,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <utility/fixedsizearray1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 static basic::Tracer TR( "protocols.constraint_generator.AtomPairConstraintGenerator" );

@@ -15,7 +15,7 @@
 // Unit Headers
 
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Package Headers
 
@@ -47,7 +47,6 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 #include <protocols/jd2/Job.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -20,7 +20,6 @@
 #include <core/scoring/Energies.hh>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 namespace core {
 namespace util {

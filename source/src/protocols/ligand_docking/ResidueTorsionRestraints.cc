@@ -19,14 +19,13 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 
 #include <basic/Tracer.hh>
 
 #include <numeric/conversions.hh>
 
-#include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

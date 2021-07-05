@@ -54,14 +54,11 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/func/SkipViolFunc.hh>
 
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
@@ -82,7 +79,6 @@
 //// C++ headers
 //#include <cstdlib>
 //#include <string>
-#include <fstream>
 
 //Auto Headers
 #include <core/fragment/Frame.hh>
@@ -91,8 +87,10 @@
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <protocols/abinitio/KinematicControl.hh> // AUTO IWYU For KinematicControl
+#include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
 
 
 static basic::Tracer tr( "protocols.abinitio", basic::t_info );

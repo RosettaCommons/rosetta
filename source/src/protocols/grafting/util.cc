@@ -17,7 +17,6 @@
 
 
 //Project headers
-#include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/init_id_map.hh>
@@ -25,22 +24,18 @@
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 //Protocols
 #include <protocols/loops/Loops.hh>

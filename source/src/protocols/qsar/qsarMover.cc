@@ -13,14 +13,11 @@
 #include <protocols/qsar/qsarMover.hh>
 #include <protocols/qsar/qsarMoverCreator.hh>
 #include <protocols/qsar/qsarMap.hh>
-#include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/qsar/scoring_grid/GridSet.hh>
 #include <protocols/qsar/scoring_grid/schema_util.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/jd2/util.hh>
 
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
@@ -30,7 +27,6 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
-#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 

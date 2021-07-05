@@ -21,13 +21,11 @@
 #define INCLUDED_utility_signals_BufferedSignalHub_hh
 
 // type headers
-#include <platform/types.hh>
 
 // unit headers
 /// #include <core/conformation/signals/GeneralEvent.hh> -- Illegal and unneccessary
 #include <utility/signals/BufferedSignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
-#include <utility/assert.hh>
 /// #include <core/pose/signals/DestructionEvent.hh> -- Illegal and unneccessary
 // boost headers
 

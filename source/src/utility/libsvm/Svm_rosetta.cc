@@ -18,7 +18,6 @@
 #include <platform/types.hh>
 
 #include <string>
-#include <iostream>
 
 namespace utility {
 namespace libsvm {

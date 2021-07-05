@@ -17,7 +17,7 @@
 #include <protocols/stepwise/modeler/packer/StepWisePacker.hh>
 #include <protocols/stepwise/modeler/packer/SideChainCopier.hh>
 #include <protocols/moves/CompositionMover.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <basic/Tracer.hh>
 #include <utility>
 

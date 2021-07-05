@@ -16,8 +16,6 @@
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 
-#include <sstream>
-#include <iomanip>
 #include <utility/excn/Exceptions.hh>
 
 

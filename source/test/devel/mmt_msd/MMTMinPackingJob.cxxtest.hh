@@ -31,7 +31,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/scmin/SidechainStateAssignment.hh>
-#include <core/pack/scmin/AtomTreeCollection.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 // --------------- Test Class --------------- //
 

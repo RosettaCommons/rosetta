@@ -30,8 +30,6 @@
 #include <core/fragment/SecondaryStructure.fwd.hh>
 
 #ifdef __clang__
-#include <core/pose/Pose.hh>
-#include <core/fragment/SecondaryStructure.hh>
 #endif
 // ObjexxFCL Headers
 

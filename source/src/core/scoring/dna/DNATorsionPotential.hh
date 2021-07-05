@@ -21,20 +21,17 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/func/AmberPeriodicFunc.hh>
+#include <core/scoring/func/AmberPeriodicFunc.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray4D.hh>
+
+#include <core/id/AtomID.fwd.hh> // AUTO IWYU For AtomID
+#include <utility/vector1.hh> // AUTO IWYU For vector1
 
 namespace core {
 namespace scoring {

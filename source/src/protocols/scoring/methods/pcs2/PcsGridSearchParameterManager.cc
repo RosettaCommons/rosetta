@@ -41,7 +41,6 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/thread/threadsafe_creation.hh>
 
 // C++ headers
 #include <iostream>

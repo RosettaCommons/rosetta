@@ -21,8 +21,6 @@
 // in it. This file will get processed with the --root switch which adds a main() method to the
 // generated .cpp file.  This is that file for the utility project.
 
-#include <cxxtest/TestSuite.h>
-#include <utility/exit.hh>
 
 
 //class UtilityTests : public CxxTest::TestSuite {

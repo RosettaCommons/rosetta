@@ -23,17 +23,16 @@
 // Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <set>
 
 namespace protocols {
 namespace fold_from_loops {

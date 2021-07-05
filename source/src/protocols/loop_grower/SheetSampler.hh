@@ -18,29 +18,21 @@
 
 #include <protocols/loop_grower/SheetSampler.fwd.hh>
 
-#include <iosfwd>
 
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FrameList.hh>
-#include <map>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/Mover.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/model_quality/rms.hh>
-#include <numeric/model_quality/maxsub.hh>
 
-#include <boost/unordered/unordered_map.hpp>
 
 //possibily duplicate includes here
 
 #include <basic/database/open.hh>
 
-#include <core/fragment/FrameList.fwd.hh>
 #include <core/fragment/JumpingFrame.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>

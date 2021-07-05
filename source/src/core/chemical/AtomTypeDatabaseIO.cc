@@ -17,7 +17,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomTypeDatabaseIO.hh>
-#include <core/chemical/types.hh>
 #include <basic/database/sql_utils.hh>
 //#include <basic/options/option.hh>
 //#include <basic/options/keys/inout.OptionKeys.gen.hh>

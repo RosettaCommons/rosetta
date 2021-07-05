@@ -13,7 +13,6 @@
 
 // Antibody Headers
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
-#include <protocols/antibody/design/AntibodyDesignMover.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
@@ -23,7 +22,6 @@
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterSet.hh>
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
-#include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 
 //Core Headers
@@ -38,14 +36,11 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
 #include <utility/io/util.hh>
-#include <utility/py/PyAssert.hh>
 #include <protocols/features/ProteinSilentReport.hh>
 #include <protocols/features/util.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/open.hh>
-#include <boost/uuid/uuid.hpp>
 #include <cppdb/frontend.h>
-#include <basic/database/open.hh>
 
 //Option Headers
 #include <basic/options/option.hh>
@@ -58,12 +53,10 @@
 #include <basic/Tracer.hh>
 #include <string>
 #include <utility/file/file_sys_util.hh>
-#include <utility/file/FileName.hh>
-#include <utility/string_util.hh>
-#include <utility/py/PyAssert.hh>
 #include <utility/excn/Exceptions.hh>
 #include <boost/algorithm/string.hpp>
-#include <fstream>
+
+#include <protocols/antibody/clusters/CDRCluster.hh> // AUTO IWYU For CDRCluster
 
 
 static basic::Tracer TR("antibody.database.AntibodyDatabaseManager");
@@ -170,7 +163,7 @@ AntibodyDatabaseManager::clone() const {
 }
 
 void
-AntibodyDatabaseManager::create_database_session(std::string const database_path) {
+AntibodyDatabaseManager::create_database_session(std::string const & database_path) {
 	db_path_ = database_path;
 	db_session_ = basic::database::get_db_session(db_path_);
 	TR << "Reading from: " << db_path_ << std::endl;

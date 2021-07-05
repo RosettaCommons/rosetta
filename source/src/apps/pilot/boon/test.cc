@@ -14,52 +14,22 @@
 // includes
 #include <iostream>
 #include <string>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AA.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
 
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
-#include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
-#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
-#include <protocols/docking/ConformerSwitchMover.hh>
-#include <protocols/docking/DockFilters.fwd.hh>
-#include <protocols/docking/DockFilters.hh>
-#include <protocols/docking/DockingEnsemble.hh>
-#include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
-#include <core/pack/task/TaskFactory.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/rna/denovo/util.hh>
 
 int main(int argc, char *argv[])
 {

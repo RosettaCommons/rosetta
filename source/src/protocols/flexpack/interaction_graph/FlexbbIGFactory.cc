@@ -15,11 +15,10 @@
 #include <protocols/flexpack/interaction_graph/FlexbbIGFactory.hh>
 
 /// Package headers
-#include <protocols/flexpack/interaction_graph/FlexbbInteractionGraph.hh>
+#include <protocols/flexpack/interaction_graph/FlexbbInteractionGraph.fwd.hh>
 #include <protocols/flexpack/interaction_graph/MinimalistFlexbbInteractionGraph.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

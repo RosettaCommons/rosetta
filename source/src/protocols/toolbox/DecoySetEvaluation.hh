@@ -17,7 +17,7 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2P.hh>
-#include <ObjexxFCL/FArray2.hh>
+#include <ObjexxFCL/FArray2.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>

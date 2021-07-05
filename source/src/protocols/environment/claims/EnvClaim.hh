@@ -18,22 +18,19 @@
 #include <protocols/environment/claims/EnvClaim.fwd.hh>
 
 // Package Headers
-#include <core/environment/LocalPosition.fwd.hh>
 #include <core/environment/FoldTreeSketch.hh>
 #include <core/environment/SequenceAnnotation.fwd.hh>
 
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
-#include <protocols/environment/ClientMover.hh>
-#include <protocols/environment/ProtectedConformation.fwd.hh>
+#include <protocols/environment/ClientMover.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/types.hh>
 
-#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -44,7 +41,6 @@
 
 //// C++ headers
 #include <string>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

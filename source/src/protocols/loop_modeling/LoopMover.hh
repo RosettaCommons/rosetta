@@ -13,11 +13,8 @@
 // Unit headers
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopMover.fwd.hh>
-#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //for friendship
 
 // Core headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 // Protocols headers
 #include <protocols/loops/Loop.hh>
@@ -25,19 +22,17 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <basic/datacache/HierarchicalDataMap.hh>
 
 // RosettaScripts headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 // C++ headers
 #include <string>
 #include <sstream>
+
+class LoopModelerTests; // Forward declaration of tests for friendship
 
 namespace protocols {
 namespace loop_modeling {

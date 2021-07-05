@@ -16,10 +16,7 @@
 
 #include <protocols/tcr/TCRmodel.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
-#include <protocols/tcr/TCRloopRefine.hh>
-#include <protocols/tcr/TCRseqInfo.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
 
 namespace protocols {
 namespace tcr {

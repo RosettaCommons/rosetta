@@ -14,36 +14,27 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/protocols/init_util.hh>
 
 // Package headers
 #include <protocols/simple_filters/AtomicDistanceFilter.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/rosetta_scripts/XmlObjects.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 // Basic headers
-#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <string>
 #include <math.h>
 
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 //#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
+
+#include <core/init_util.hh> // AUTO IWYU For core_init
 
 using namespace protocols::simple_filters;
 

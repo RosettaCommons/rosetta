@@ -26,8 +26,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/pose/rna/util.hh>
-#include <core/pose/rna/RNA_SuiteName.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <basic/Tracer.hh>
 #include <utility>
 #include <utility/string_util.hh>

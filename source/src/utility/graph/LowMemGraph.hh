@@ -20,11 +20,10 @@
 #include <utility/graph/LowMemGraph.fwd.hh>
 
 
-#include <utility/pointer/memory.hh>
 #include <platform/types.hh>
 
 #include <utility/VirtualBase.hh>
-#include <utility/backtrace.hh>
+#include <utility/assert.hh>
 #include <utility/vector1.hh>
 
 #include <vector>

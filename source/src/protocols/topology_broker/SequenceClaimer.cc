@@ -16,7 +16,7 @@
 #include <protocols/topology_broker/SequenceClaimer.hh>
 
 // Package Headers
-#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/claims/BBClaim.hh>
 #include <protocols/topology_broker/claims/SequenceClaim.hh>
 #include <protocols/topology_broker/claims/CutClaim.hh>
@@ -24,7 +24,6 @@
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 // ObjexxFCL Headers
 
@@ -44,7 +43,6 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <utility>
 
 #ifdef WIN32
 #include <iterator>

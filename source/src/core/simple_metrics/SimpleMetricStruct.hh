@@ -15,10 +15,10 @@
 #ifndef INCLUDED_simple_metrics_SimpleMetricStruct_hh
 #define INCLUDED_simple_metrics_SimpleMetricStruct_hh
 
-#include <platform/types.hh>
 #include <core/types.hh>
 
 #include <map>
+#include <string>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/chemical/rotamers/RotamerLibrarySpecificationCreator.hh>
-#include <core/chemical/rotamers/CenrotRotamerLibrarySpecification.fwd.hh>
 
 
 // Program header

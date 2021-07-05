@@ -16,9 +16,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <platform/types.hh>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 #include <core/conformation/Residue.hh>
@@ -36,12 +34,16 @@
 #include <core/types.hh>
 
 
-#include <numeric/angle.functions.hh>
 
 #include <test/UTracer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <core/chemical/ChemicalManager.hh> // AUTO IWYU For ChemicalManager
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
+#include <core/pose/Pose.hh> // AUTO IWYU For Pose
+#include <iomanip> // AUTO IWYU For operator<<, setprecision
 
 
 using basic::Error;

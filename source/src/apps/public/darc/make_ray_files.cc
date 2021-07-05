@@ -14,13 +14,8 @@
 //use -gpu:threads 1024 (or other number) on the command line
 
 #include <iostream>
-#include <iomanip>
 #include <fstream>
-#include <ostream>
 #include <string>
-#include <sstream>
-#include <cmath>
-#include <map>
 
 // Protocol Headers
 #include <devel/init.hh>
@@ -31,28 +26,18 @@
 // Utility Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pdb_writer.hh>
-#include <core/pose/PDBInfo.hh>
-#include <basic/Tracer.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/conformation/Conformation.hh>
-#include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <numeric/random/random.hh>
-#include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/simple_moves/SuperimposeMover.hh>
 #include <utility/options/StringOption.hh>
 
 using namespace core;

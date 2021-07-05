@@ -14,14 +14,12 @@
 /// @author Jeliazko Jeliazkov (jeliazkov@jhu.edu)
 
 
-#include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 
 #include <devel/init.hh>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -30,12 +28,10 @@
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
 /// my headers
 #include <string>
-#include <algorithm>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <protocols/scoring/Interface.hh>
@@ -44,7 +40,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <core/pose/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/pose/extra_pose_info_util.hh>

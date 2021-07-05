@@ -33,8 +33,8 @@
 #include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-//Auto Headers
-#include <utility/vector1.hh>
+#include <string>
+
 namespace protocols {
 namespace rotamer_recovery {
 

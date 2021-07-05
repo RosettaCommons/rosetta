@@ -18,13 +18,11 @@
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ProQPotential.hh>
+#include <core/scoring/ProQPotential.fwd.hh>
 #include <core/scoring/MembraneTopology.hh>
-#include <core/sequence/SequenceProfile.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/dssp/Dssp.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

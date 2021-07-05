@@ -12,24 +12,17 @@
 /// @author Wojciech Potrzebowski and Ingemar Andre
 
 
-#include <protocols/abinitio/AbrelaxMover.hh>
-#include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
 
 #include <core/scoring/Energies.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/minimization_packing/symmetry/SymMinMover.hh>
-#include <protocols/minimization_packing/symmetry/SymPackRotamersMover.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <devel/init.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -47,10 +40,8 @@
 
 // C++ headers
 //#include <cstdlib>
-#include <iostream>
 #include <string>
 
-#include <basic/Tracer.hh>
 using namespace protocols::moves;
 using namespace core;
 using namespace basic::options;

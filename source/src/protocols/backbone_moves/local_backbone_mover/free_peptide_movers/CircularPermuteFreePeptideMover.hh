@@ -18,9 +18,9 @@
 #include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/CircularPermuteFreePeptideMover.fwd.hh>
 #include <protocols/backbone_moves/local_backbone_mover/free_peptide_movers/FreePeptideMover.hh>
 
+#include <core/types.hh> // AUTO IWYU For Size
+
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace backbone_moves {

@@ -17,7 +17,7 @@
 
 //unit headers
 #include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -26,7 +26,6 @@
 //C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -21,7 +21,6 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/select/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/ref_pose.hh>
@@ -29,14 +28,10 @@
 
 // Basic/Utility headers
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <utility/options/OptionCollection.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <numeric/NumericTraits.hh>

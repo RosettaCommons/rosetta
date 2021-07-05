@@ -18,7 +18,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/conformation/Residue.hh>
@@ -38,7 +37,6 @@
 #include <numeric/xyzVector.io.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
 
 #include <numeric/random/DistributionSampler.hh>
 #include <numeric/trig.functions.hh>
@@ -46,7 +44,6 @@
 #include <protocols/docking/util.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
 
 #include <protocols/scoring/Interface.hh>
 

@@ -16,14 +16,11 @@
 #define INCLUDED_core_scoring_sasa_UTIL_HH
 
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/scoring/sasa/SasaMethod.hh>
 #include <core/scoring/sasa/SasaMethodFactory.hh>
 
 #include <ObjexxFCL/FArray2D.fwd.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/ubyte.hh>
 
 namespace core {
 namespace scoring {

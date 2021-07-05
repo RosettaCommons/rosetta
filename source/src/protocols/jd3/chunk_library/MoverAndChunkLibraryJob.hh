@@ -21,15 +21,13 @@
 // Package headers
 #include <protocols/jd3/Job.hh>
 #include <protocols/jd3/JobResult.hh>
-#include <protocols/jd3/JobSummary.hh>
-#include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
+#include <protocols/jd3/job_summaries/EnergyJobSummary.fwd.hh>
 
 // Project headers
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
-#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

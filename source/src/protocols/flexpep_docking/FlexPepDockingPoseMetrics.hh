@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_flexpep_docking_FlexPepDockingPoseMetrics_hh
 #define INCLUDED_protocols_flexpep_docking_FlexPepDockingPoseMetrics_hh
 
-#include <protocols/flexpep_docking/FlexPepDockingFlags.hh>
+#include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
 #include <protocols/flexpep_docking/FlexPepDockingPoseMetrics.fwd.hh>
 
 // ObjexxFCL headers
@@ -24,7 +24,9 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <core/pose/Pose.fwd.hh> // AUTO IWYU For Pose
+#include <map> // AUTO IWYU For map
 
 
 namespace protocols {

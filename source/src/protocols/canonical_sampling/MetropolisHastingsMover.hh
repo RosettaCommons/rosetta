@@ -17,7 +17,7 @@
 // Unit Headers
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
+#include <protocols/canonical_sampling/TemperatureController.fwd.hh>
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -27,7 +27,6 @@
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <vector>
 #include <protocols/canonical_sampling/ThermodynamicMover.fwd.hh>

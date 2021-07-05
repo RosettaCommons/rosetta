@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <test/UTracer.hh>
 #include <test/protocols/init_util.hh>
 
 // Utility headers
@@ -30,6 +29,8 @@
 
 // Basic headers
 #include <basic/options/option.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 class DisulfideInsertionMoverTests : public CxxTest::TestSuite {
 public:

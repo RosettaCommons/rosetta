@@ -15,16 +15,13 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/types.hh>
 
 // Unit headers
 #include <protocols/moves/MoverFactory.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/mover_schemas.hh>
 
 // Utility headers

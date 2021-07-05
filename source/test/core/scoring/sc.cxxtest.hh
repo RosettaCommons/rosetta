@@ -20,7 +20,8 @@
 
 // Package Headers
 #include <test/core/init_util.hh>
-#include <test/util/pose_funcs.hh>
+
+#include <core/import_pose/import_pose.hh> // AUTO IWYU For pose_from_file, PDB_file
 
 
 // --------------- Test Class --------------- //

@@ -19,7 +19,6 @@
 #include <basic/Tracer.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
-#include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/MatrixScoringScheme.hh>
 
 #include <utility/exit.hh>

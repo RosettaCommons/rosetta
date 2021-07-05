@@ -32,9 +32,7 @@
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

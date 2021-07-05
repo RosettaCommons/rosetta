@@ -15,7 +15,6 @@
 #include <devel/init.hh>
 
 // Project Headers
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -24,21 +23,17 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/analysis/GlycanInfoMover.hh>
-#include <protocols/moves/Mover.hh>
 
 #include <core/pose/carbohydrates/util.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 
-#include <utility/tag/Tag.hh>
 
 // Utility Headers
-#include <cstdlib>
 
 static basic::Tracer TR( "apps.public.carbohydrates.pose_from_saccharide_sequence" );
 

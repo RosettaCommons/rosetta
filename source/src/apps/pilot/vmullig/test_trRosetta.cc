@@ -15,27 +15,28 @@
 #include <devel/init.hh>
 
 // protocol headers
+
+
+// utility headers
+#include <utility/excn/Exceptions.hh>
+
+// basic headers
+#include <basic/Tracer.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
+#ifdef USE_TENSORFLOW
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/trRosetta/trRosettaProtocol_v1.hh>
 #include <protocols/trRosetta/trRosettaOutputs_v1.hh>
 #include <protocols/trRosetta/trRosettaOutputsBase.hh>
 #include <protocols/trRosetta/trRosettaMultipleSequenceAlignment.hh>
-
-
-// utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/options/OptionCollection.hh>
+#include <core/types.hh>
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/file/file_sys_util.hh>
-
-// basic headers
-#include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option_macros.hh>
-
-#ifndef USE_TENSORFLOW
+#else
 #include <basic/tensorflow_manager/util.hh>
 #endif //USE_TENSORFLOW
 

@@ -42,16 +42,12 @@
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
 
 //// C++ headers
-#include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

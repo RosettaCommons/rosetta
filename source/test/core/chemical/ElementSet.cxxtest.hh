@@ -18,7 +18,6 @@
 // Unit headers
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/Element.hh>
-#include <core/types.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -41,7 +40,7 @@ class ElementSetTests : public CxxTest::TestSuite {
 
 	// --------------- Suite-level Fixture --------------- //
 
-	AtomTypeSetTests() {
+	ElementSetTests() {
 		//std::string commandline = "core.test -mute all";
 		//initialize_from_commandline( commandline );
 		core_init();
@@ -52,7 +51,7 @@ class ElementSetTests : public CxxTest::TestSuite {
 
 		// note this reads the element properties in the unit test directory
 		// not the rosetta_database
-		element_set = new ElementSet;
+		element_set = utility::pointer::make_shared< ElementSet >();
 		element_set->read_file( "core/chemical/element_properties.txt" );
 	}
 
@@ -110,10 +109,9 @@ class ElementSetTests : public CxxTest::TestSuite {
 		//OH       O    1.5500    0.1591   -6.7700    3.5000   10.8000 ACCEPTOR SP3_HYBRID DONOR
 		// This test is also testing some of the AtomType methods!
 		ElementSet & e_set = *element_set; // just for convenience
-		TS_ASSERT_EQUALS( element_set[1].symbol(), "H");
-		TS_ASSERT_EQUALS( element_set[1].name(), "Hydrogen");
-		TS_ASSERT_DELTA( element_set[1].weight(), 1.008, delta_percent);
-		TS_ASSERT_DELTA( element_set[1].mass(), 1.008, delta_percent);
+		TS_ASSERT_EQUALS( e_set[1]->get_chemical_symbol(), "H");
+		TS_ASSERT_EQUALS( e_set[1]->get_chemical_name(), "Hydrogen");
+		TS_ASSERT_DELTA(  e_set[1]->weight(), 1.008, delta_percent);
 	}
 
 };

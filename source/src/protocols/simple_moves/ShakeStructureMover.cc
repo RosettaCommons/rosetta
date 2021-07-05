@@ -32,31 +32,22 @@
 
 
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
 
 #include <iostream>
-#include <sstream>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 
-#include <basic/Tracer.hh>
 
 
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/scoring/rms_util.hh>
 //#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/Func.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/Jump.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -70,11 +61,9 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <utility/vector1.hh>
 
 // C++ headers
 
-#include <utility/vector0.hh>
 
 
 namespace protocols {

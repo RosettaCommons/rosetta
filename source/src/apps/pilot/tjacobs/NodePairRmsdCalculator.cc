@@ -14,16 +14,12 @@
 /// @author Tim Jacobs
 
 //Basic
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 
 //Utility
 #include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/string_util.hh>
 
 //Core
 #include <devel/init.hh>
@@ -38,7 +34,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 //C++
-#include <cstdio>
+
+#include <iostream> // AUTO IWYU For operator<<, endl, basic_ostream, basic_ostream...
+#include <map> // AUTO IWYU For map<>::mapped_type, map, map<>::value_compare
 
 static basic::Tracer TR( "NodePairRmsdCalculator" );
 

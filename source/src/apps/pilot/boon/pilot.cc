@@ -13,36 +13,19 @@
 
 // includes
 #include <iostream>
-#include <string>
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
-#include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AA.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
 
-#include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <core/pack/task/TaskFactory.hh>
 
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/energy_methods/LK_PolarNonPolarEnergy.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/rna/denovo/util.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>

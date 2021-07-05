@@ -20,7 +20,6 @@
 #include <string>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // Project headers
 #include <core/fragment/FragSet.fwd.hh>
@@ -28,7 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/minimization_packing/SaneMinMover.hh>
+#include <protocols/minimization_packing/SaneMinMover.fwd.hh>
 
 namespace protocols {
 namespace star {

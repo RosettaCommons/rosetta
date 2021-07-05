@@ -24,7 +24,6 @@
 #include <basic/prof.hh>
 
 #include <utility>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

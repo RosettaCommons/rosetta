@@ -23,10 +23,8 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 
-#include <numeric/interpolation/spline/Interpolator.hh>
 
 // Options
 #include <basic/options/option.hh>
@@ -47,7 +45,6 @@
 #include <iomanip>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
 

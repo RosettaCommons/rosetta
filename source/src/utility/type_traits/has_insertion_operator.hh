@@ -16,10 +16,10 @@
 
 #include <utility/type_traits/has_insertion_operator.fwd.hh>
 
-#include <utility/stream_util.fwd.hh>
 
 #include <iosfwd>
-#include <utility>
+
+#include <type_traits> // AUTO IWYU For declval, is_same
 
 namespace utility {
 namespace type_traits {

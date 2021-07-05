@@ -26,12 +26,12 @@
 
 // RosettaScripts headers
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <basic/Tracer.hh> // AUTO IWYU For Tracer
 
 namespace protocols {
 namespace loop_build {

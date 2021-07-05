@@ -20,23 +20,19 @@
 #include <protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.fwd.hh>
 
 // Scripter Headers
-#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 
 //// Project Headers
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/id/AtomID.hh>
-#include <core/conformation/Residue.fwd.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <set>
 
-#include <core/grid/CartGrid.fwd.hh>
+
+#include <core/types.hh> // AUTO IWYU For Size, Real
+#include <utility/VirtualBase.hh> // AUTO IWYU For VirtualBase
 
 // How to add new selector types:
 // 1. Add a new entry in the selector_type enum list.

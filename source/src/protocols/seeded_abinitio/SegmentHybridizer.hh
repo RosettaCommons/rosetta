@@ -23,10 +23,8 @@
 #include <boost/unordered/unordered_map.hpp>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <utility/vector1.hh>
-#include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 
 namespace protocols {
 namespace seeded_abinitio {

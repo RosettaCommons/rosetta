@@ -27,14 +27,12 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/viewer/viewers.hh>
 
 #include <string>

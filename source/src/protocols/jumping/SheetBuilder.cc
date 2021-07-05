@@ -31,17 +31,14 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/kinematics/FoldTree.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2A.hh>
 #include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/StaticIndexRange.hh>
 #include <ObjexxFCL/format.hh>
 
 // numeric headers
@@ -51,8 +48,6 @@
 //// C++ headers
 #include <cstdlib>
 
-#include <utility>
-#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "protocols.jumping" );

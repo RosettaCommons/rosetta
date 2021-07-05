@@ -17,10 +17,6 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
-#include <core/pose/selection.hh>
-#include <core/pose/util.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -32,25 +28,15 @@
 #include <protocols/simple_ddg/DdgFilter.hh>
 //#include <protocols/motif_grafting/movers/MotifGraftMover.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/NamedAtomID.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
-#include <algorithm>
-#include <list>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
 
 namespace protocols {
 namespace protein_interface_design {

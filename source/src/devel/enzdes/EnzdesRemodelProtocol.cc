@@ -35,7 +35,6 @@
 #include <protocols/forge/remodel/ResidueVicinityRCG.hh>
 #include <protocols/forge/constraints/InverseRotamersRCG.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //unnecessary include
-#include <core/chemical/ResidueConnection.hh>
 
 //#include <protocols/enzdes/EnzdesBaseProtocol.hh>
 //#include <protocols/enzdes/EnzConstraintIO.hh>
@@ -64,7 +63,6 @@
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/Energies.hh>
@@ -90,17 +88,17 @@
 #include <utility/tag/Tag.hh>
 
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <utility/graph/Graph.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/string_util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <core/scoring/ScoreFunction.hh> // AUTO IWYU For ScoreFunction
 
 
 namespace devel {

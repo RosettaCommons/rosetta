@@ -22,11 +22,9 @@
 
 // Package Headers
 #include <protocols/topology_broker/FragmentClaimer.hh>
-#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
 // ObjexxFCL Headers
 
 // Utility headers
@@ -34,10 +32,8 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 
-#include <utility/VirtualBase.hh>
 
-#include <protocols/abinitio/Templates.hh>
-#include <utility/vector1.hh>
+#include <protocols/abinitio/Templates.fwd.hh>
 
 
 //// C++ headers

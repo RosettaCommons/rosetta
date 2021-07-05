@@ -35,7 +35,6 @@
 
 // Numeric headers
 #include <numeric/HomogeneousTransform.hh>
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>

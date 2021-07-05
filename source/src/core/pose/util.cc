@@ -20,14 +20,11 @@
 // Package headers
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/MiniPose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
-#include <core/pose/full_model_info/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/PositionConservedResiduesStore.hh>
 #include <core/pose/init_id_map.hh>
-#include <core/pose/rna/util.hh>
 #include <core/pose/carbohydrates/util.hh>
 
 // Project headers
@@ -35,10 +32,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/PatchOperation.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -62,30 +56,22 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataCache.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.string.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
-#include <utility/string_constants.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -93,7 +79,6 @@
 
 // C/C++ headers
 #include <cmath>
-#include <iostream>
 #include <algorithm>
 #include <numeric>
 

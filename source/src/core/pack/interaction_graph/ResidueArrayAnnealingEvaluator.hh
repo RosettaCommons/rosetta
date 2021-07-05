@@ -19,15 +19,11 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/MirrorSymmetricConformation.fwd.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
@@ -38,7 +34,7 @@
 #include <utility/graph/Graph.fwd.hh>
 
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.fwd.hh>
-#include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
+#include <core/scoring/annealing/ResidueArrayAnnealableEnergy.fwd.hh>
 
 #include <map>
 

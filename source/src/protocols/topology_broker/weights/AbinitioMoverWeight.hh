@@ -33,12 +33,7 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
-
 #include <utility/pointer/access_ptr.hh>
-
-
-//// C++ headers
-//#include <iosfwd>
 
 
 namespace protocols {

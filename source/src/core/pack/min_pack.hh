@@ -20,19 +20,17 @@
 #include <core/pack/scmin/SCMinMinimizerMap.fwd.hh>
 #include <core/pack/scmin/SidechainStateAssignment.fwd.hh>
 #include <core/pack/rotamer_set/ContinuousRotamerSet.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/interaction_graph/SimpleInteractionGraph.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <utility/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/MinimizationGraph.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 
-#include <utility/vector1.hh>
+
+#include <core/scoring/annealing/RotamerSets.fwd.hh> // AUTO IWYU For RotamerSetsOP
 
 
 namespace core {

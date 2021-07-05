@@ -17,6 +17,8 @@
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.hh>
 
+#include <core/pose/Pose.hh>
+
 using namespace core::select::residue_selector;
 
 class OddResidueSelector : public ResidueSelector {

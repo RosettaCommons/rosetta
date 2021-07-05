@@ -24,7 +24,6 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Basic headers
-#include <basic/datacache/DataCache.fwd.hh>
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
@@ -32,8 +31,8 @@
 
 // C++ Headers
 
-#include <utility/vector1.hh>
-#include <basic/citation_manager/CitationCollection.hh>
+
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh> // AUTO IWYU For CitationCollectionList
 
 #ifdef WIN32
 #include <utility/tag/Tag.hh>

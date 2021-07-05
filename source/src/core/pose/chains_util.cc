@@ -22,10 +22,6 @@
 
 // Project headers
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/Exceptions.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 
@@ -36,19 +32,14 @@
 #include <numeric/xyzVector.string.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <utility/string_constants.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
 
 // C/C++ headers
-#include <cmath>
-#include <iostream>
 #include <algorithm>
-#include <numeric>
 
 // External headers
 

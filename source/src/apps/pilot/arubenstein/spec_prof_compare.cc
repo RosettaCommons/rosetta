@@ -19,16 +19,12 @@
 // util
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <utility/vector0.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
-#include <utility/file/file_sys_util.hh> // file_exists
 #include <iostream>
 
 // option key includes
 
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/mean_field.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 

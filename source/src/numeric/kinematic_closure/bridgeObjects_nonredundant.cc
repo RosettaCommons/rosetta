@@ -19,7 +19,6 @@
 #include <utility/fixedsizearray1.hh>
 
 // STD
-#include <iostream>
 
 
 namespace numeric {

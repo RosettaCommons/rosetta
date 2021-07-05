@@ -24,6 +24,8 @@
 #include <core/types.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {

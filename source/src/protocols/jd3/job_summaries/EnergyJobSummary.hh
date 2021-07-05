@@ -19,6 +19,8 @@
 #include <protocols/jd3/JobSummary.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <core/types.hh> // AUTO IWYU For Real
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>

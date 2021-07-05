@@ -20,14 +20,12 @@
 #include <protocols/match/BumpGrid.hh>
 
 //numeric headers
-#include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Utility headers
 
 // C++ headers
 #include <fstream>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

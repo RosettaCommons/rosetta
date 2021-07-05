@@ -19,20 +19,12 @@
 
 // Package headers
 #include <protocols/jd3/CompletedJobOutput.hh>
-#include <protocols/jd3/JobResult.fwd.hh>
-#include <protocols/jd3/JobSummary.fwd.hh>
 
 //utility headers
 #include <utility/VirtualBase.hh>
-#include <core/types.hh>
 
 //C++ headers
-#include <string>
-#include <list>
-#include <map>
-#include <set>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

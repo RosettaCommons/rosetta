@@ -11,7 +11,6 @@
 /// @brief
 /// @author James Thompson
 
-#include <protocols/viewer/viewers.hh>
 
 
 #include <core/scoring/ScoreFunction.hh>
@@ -20,27 +19,21 @@
 
 #include <core/types.hh>
 
-#include <core/id/AtomID_Map.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/Pose.fwd.hh>
 
 #include <basic/options/option.hh>
 
-#include <basic/database/open.hh>
 #include <devel/init.hh>
 
-#include <numeric/xyzVector.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
 
 #include <apps/pilot/james/james_util.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -50,8 +43,6 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <utility/vector0.hh>
 
 #include <utility/excn/Exceptions.hh>
 

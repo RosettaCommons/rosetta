@@ -11,8 +11,6 @@
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -27,7 +25,6 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/ubyte.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/Fmath.hh>
 #include <ObjexxFCL/format.hh>
 
 // Numeric Headers
@@ -36,19 +33,15 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
-#include <core/pose/util.hh>
 
 // C++ Headers
 #include <cmath>
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <map>
-#include<algorithm>
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/pose/init_id_map.hh>
 
 static basic::Tracer TR( "core.scoring.sasa" );
 

@@ -21,9 +21,8 @@
 #include <protocols/denovo_design/components/SegmentPairing.hh>
 
 // Protocol headers
-#include <protocols/denovo_design/architects/StrandArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
-#include <protocols/denovo_design/components/SegmentPairing.hh>
+#include <protocols/denovo_design/components/SegmentPairing.fwd.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/util.hh>

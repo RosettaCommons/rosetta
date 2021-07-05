@@ -27,15 +27,12 @@
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <utility/vector1.hh>
 
 // Core Headers
-#include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/select/residue_selector/util.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 //// C++ headers
 

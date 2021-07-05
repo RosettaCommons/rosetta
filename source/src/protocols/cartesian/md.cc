@@ -21,17 +21,13 @@
 
 // Package headers
 #include <core/id/AtomID.hh>
-#include <core/optimization/types.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Atom.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // // ObjexxFCL headers
@@ -48,6 +44,8 @@
 #include <utility/vector1.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/random/random.fwd.hh>
+
+#include <core/optimization/DOF_Node.hh> // AUTO IWYU For DOF_Node
 
 
 using namespace ObjexxFCL;

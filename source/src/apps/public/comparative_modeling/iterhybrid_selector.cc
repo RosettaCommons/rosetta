@@ -19,18 +19,15 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <protocols/wum/SilentStructStore.hh>
@@ -46,7 +43,6 @@
 #include <utility/io/ozstream.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
-#include <cstdio>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

@@ -13,16 +13,12 @@
 
 
 // Test headers
-#include <test/UMoverTest.hh>
-#include <test/UTracer.hh>
 #include <cxxtest/TestSuite.h>
-#include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 // Project Headers
 #include <core/pack/guidance_scoreterms/buried_unsat_penalty/BuriedUnsatPenalty.hh>
 #include <core/pack/guidance_scoreterms/buried_unsat_penalty/graph/BuriedUnsatPenaltyGraph.hh>
-#include <core/pack/guidance_scoreterms/buried_unsat_penalty/graph/BuriedUnsatPenaltyGraphContainer.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -33,17 +29,14 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/PackerTask_.hh>
-#include <core/pack/task/ResidueLevelTask.hh>
 #include <core/pack/task/ResidueLevelTask_.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 // Protocols Headers, for convenience
 #include <protocols/simple_moves/MutateResidue.hh>
@@ -52,7 +45,6 @@
 // Utility, etc Headers
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR("BuriedUnsatPenaltySymmetricTests");
 

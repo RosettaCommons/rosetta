@@ -18,8 +18,8 @@
 
 #include <core/types.hh>
 #include <protocols/genetic_algorithm/Entity.fwd.hh>
-#include <utility/vector1.hh>
 
+#include <string>
 
 namespace protocols {
 namespace multistate_design {

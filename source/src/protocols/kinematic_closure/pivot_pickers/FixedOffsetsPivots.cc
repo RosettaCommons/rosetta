@@ -12,7 +12,7 @@
 #include <protocols/kinematic_closure/pivot_pickers/FixedOffsetsPivots.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
@@ -22,7 +22,6 @@
 #include <numeric/random/random.hh>
 
 // C++ headers
-#include <algorithm>
 #include <iostream>
 
 namespace protocols {

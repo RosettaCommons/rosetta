@@ -18,8 +18,10 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-#include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/analysis/InterfaceAnalyzerMover.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
+
+#include <protocols/antibody/AntibodyEnum.hh> // AUTO IWYU For CDRNameEnum
+#include <core/scoring/ScoreFunction.fwd.hh> // AUTO IWYU For ScoreFunctionCOP
 
 namespace protocols {
 namespace antibody {

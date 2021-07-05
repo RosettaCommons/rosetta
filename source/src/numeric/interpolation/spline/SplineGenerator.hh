@@ -15,12 +15,13 @@
 #ifndef INCLUDED_numeric_interpolation_spline_SplineGenerator_hh
 #define INCLUDED_numeric_interpolation_spline_SplineGenerator_hh
 
+#include <numeric/interpolation/spline/SplineGenerator.fwd.hh>
+
 #include <numeric/interpolation/spline/Interpolator.hh>
 
 #include <numeric/types.hh>
 #include <utility/vector1.hh>
 #include <map>
-#include <iosfwd>
 
 namespace numeric {
 namespace interpolation {

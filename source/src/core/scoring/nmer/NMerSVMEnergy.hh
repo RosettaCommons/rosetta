@@ -27,12 +27,11 @@
 #include <core/scoring/nmer/NMerPSSMEnergy.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 
-#include <utility/libsvm/Svm_rosetta.hh>
+#include <utility/libsvm/Svm_rosetta.fwd.hh>
 #include <utility/vector1.hh>
 #include <map>
 

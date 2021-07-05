@@ -25,6 +25,9 @@
 
 //Utility headers
 #include <set>
+#include <string>
+
+#include <utility/tag/XMLSchemaGeneration.fwd.hh> // AUTO IWYU For XMLSchemaDefinition
 
 namespace protocols {
 namespace legacy_sewing  {

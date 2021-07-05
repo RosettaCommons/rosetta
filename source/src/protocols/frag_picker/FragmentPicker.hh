@@ -19,19 +19,18 @@
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 
 // package headers
-#include <protocols/frag_picker/ContactCounts.hh>
-#include <protocols/frag_picker/VallProvider.hh>
+#include <protocols/frag_picker/ContactCounts.fwd.hh>
+#include <protocols/frag_picker/VallProvider.fwd.hh>
 #include <protocols/frag_picker/VallChunk.fwd.hh>
-#include <protocols/frag_picker/VallChunkFilter.hh>
-#include <protocols/frag_picker/CandidatesCollector.hh>
-#include <protocols/frag_picker/FragmentSelectingRule.hh>
+#include <protocols/frag_picker/VallChunkFilter.fwd.hh>
+#include <protocols/frag_picker/CandidatesCollector.fwd.hh>
+#include <protocols/frag_picker/FragmentSelectingRule.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
-#include <protocols/frag_picker/scores/AtomPairConstraintsScore.hh>
 #include <protocols/frag_picker/scores/PValuedFragmentScoreManager.hh>
-#include <protocols/frag_picker/FragmentCandidate.hh>
+#include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-#include <protocols/frag_picker/SidechainContactDistCutoff.hh>
-#include <protocols/frag_picker/nonlocal/NonlocalPair.hh>
+#include <protocols/frag_picker/SidechainContactDistCutoff.fwd.hh>
+#include <protocols/frag_picker/nonlocal/NonlocalPair.fwd.hh>
 #include <protocols/frag_picker/ContactTypes.hh>
 #include <protocols/frag_picker/quota/QuotaCollector.fwd.hh>
 
@@ -39,7 +38,7 @@
 #include <core/types.hh>
 
 // core headers
-#include <core/fragment/SecondaryStructure.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 

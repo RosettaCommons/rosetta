@@ -20,7 +20,6 @@
 
 #include <utility/numbers.hh>
 #include <utility/tools/make_vector.hh>
-#include <utility/thread/backwards_thread_local.hh>
 
 #include <string>
 

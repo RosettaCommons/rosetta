@@ -20,7 +20,8 @@
 
 #include <utility/pointer/memory.hh>
 
-#include <ObjexxFCL/format.hh>
+#include <numeric/geometry/hashing/xyzStripeHash.hh> // AUTO IWYU For Ball
+
 
 
 namespace numeric {

@@ -20,8 +20,6 @@
 #include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
 
 // Package headers
-#include <core/scoring/elec/electrie/ElecAtom.hh>
-#include <core/scoring/elec/electrie/ElecTrie.fwd.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
@@ -32,7 +30,6 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/elec/CPRepMapType.fwd.hh>
 #include <core/chemical/RestypeDestructionEvent.fwd.hh>
 #include <core/chemical/AtomType.hh> // for MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH
@@ -41,7 +38,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <cmath>
 
 #ifdef SERIALIZATION
 #include <cereal/types/polymorphic.fwd.hpp>

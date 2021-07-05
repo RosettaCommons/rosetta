@@ -25,11 +25,8 @@
 
 
 // Project Headers
-#include <core/types.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
-#include <utility/VirtualBase.hh>
 
 // std Headers
 

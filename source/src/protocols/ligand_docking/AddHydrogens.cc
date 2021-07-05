@@ -17,7 +17,6 @@
 #include <protocols/ligand_docking/AddHydrogen.hh>
 #include <protocols/ligand_docking/LigandDesign.hh>
 
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 #include <core/types.hh>
@@ -27,7 +26,6 @@
 // option key includes
 #include <utility/tag/Tag.hh>
 
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

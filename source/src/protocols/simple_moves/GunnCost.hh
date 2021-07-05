@@ -20,7 +20,6 @@
 
 
 // Package Headers
-#include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FragCache.hh>
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 
@@ -33,7 +32,6 @@
 #endif
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers

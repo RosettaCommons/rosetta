@@ -40,11 +40,9 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
-#include <vector>
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <utility/vector1.hh>

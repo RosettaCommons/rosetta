@@ -17,16 +17,16 @@
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/types.hh>
-#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 // Boost Headers
 

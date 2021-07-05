@@ -24,7 +24,7 @@
 #include <protocols/loops/Loop.fwd.hh>
 #endif
 
-#include <protocols/loops/LoopsFileIO.hh>
+#include <protocols/loops/LoopsFileIO.fwd.hh>
 
 // Platform Headers
 #include <core/pose/Pose.fwd.hh>
@@ -32,8 +32,6 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>

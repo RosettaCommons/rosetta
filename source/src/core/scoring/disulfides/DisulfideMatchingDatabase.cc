@@ -16,9 +16,7 @@
 #include <core/scoring/disulfides/DisulfideMatchingDatabase.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
 #include <basic/database/open.hh>
-#include <core/conformation/Atom.hh>
 #include <core/kinematics/RT.hh>
 
 // Utility Headers
@@ -28,7 +26,6 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/kinematics/Jump.hh>
 
 static basic::Tracer TR( "core.scoring.disulfides.CentroidMatchingDatabase" );
 

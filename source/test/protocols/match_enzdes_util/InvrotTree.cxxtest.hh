@@ -24,9 +24,8 @@
 #include <core/types.hh>
 
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
-#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <basic/options/option.hh> //needed to set option
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
@@ -42,8 +41,6 @@
 
 // option key includes
 
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

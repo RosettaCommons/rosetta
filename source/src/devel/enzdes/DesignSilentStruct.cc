@@ -19,7 +19,6 @@
 #include <vector>
 #include <map>
 
-#include <core/chemical/ResidueConnection.hh>
 #include <core/pose/Pose.hh>
 
 // mini headers
@@ -32,8 +31,10 @@
 #include <basic/MetricValue.hh>
 
 //Auto Headers
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh> // DO NOT AUTO-REMOVE
 #include <utility/vector1.hh>
+
+#include <ObjexxFCL/format.hh> // AUTO IWYU For LJ, A, F, format
 
 //#include <devel/PoseMetricCalculators/InterfaceDeltaEnergeticsCalculator.hh> //needed for type checking
 

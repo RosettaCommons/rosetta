@@ -19,16 +19,16 @@
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.fwd.hh>
 
 // Core headers
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 
 // Utility headers
-#include <utility/fixedsizearray1.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <iosfwd>
+
+#include <utility/fixedsizearray1.hh> // AUTO IWYU For fixedsizearray1
+#include <utility/io/izstream.fwd.hh> // AUTO IWYU For izstream
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <map> // AUTO IWYU For map
 
 namespace core {
 namespace pack {

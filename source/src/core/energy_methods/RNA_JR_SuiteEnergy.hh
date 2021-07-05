@@ -18,9 +18,7 @@
 #include <core/energy_methods/RNA_JR_SuiteEnergy.fwd.hh>
 
 // Package headers
-#include <core/conformation/Atom.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
@@ -29,7 +27,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray3D.fwd.hh>
 
 namespace core {
 namespace energy_methods {

@@ -18,7 +18,6 @@
 // // Rosetta Headers
 #include <core/types.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
@@ -44,9 +43,8 @@
 #include <core/pose/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-#include <ObjexxFCL/string.functions.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>

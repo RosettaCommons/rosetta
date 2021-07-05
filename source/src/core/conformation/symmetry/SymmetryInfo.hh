@@ -29,14 +29,12 @@
 #include <core/conformation/Conformation.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
 #include <iosfwd>
 
-#include <utility/vector1.fwd.hh>
 
 
 #ifdef    SERIALIZATION

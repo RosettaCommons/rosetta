@@ -23,9 +23,6 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/HarmonicFunc.fwd.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/conformation/Residue.hh>
 
@@ -33,11 +30,12 @@
 //#include <core/pack/task/PackerTask.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.hh>
 
 // Utility headers
-#include <numeric/conversions.hh>
+
+#include <core/scoring/dna/DNATorsionPotential.hh> // AUTO IWYU For DNATorsionPotential
 
 // C++
 

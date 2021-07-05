@@ -17,7 +17,6 @@
 #include <test/util/pose_funcs.hh>
 
 // Protocol Headers
-#include <protocols/relax/FastRelax.hh>
 #include <protocols/calc_taskop_filters/RotamerBoltzmannWeight.hh>
 #include <protocols/calc_taskop_filters/RotamerBoltzmannWeight2.hh>
 #include <protocols/toolbox/EnergyLandscapeEvaluator.hh>

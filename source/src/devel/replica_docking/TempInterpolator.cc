@@ -14,6 +14,8 @@
 #include <cmath>
 #include <basic/Tracer.hh>
 
+#include <utility/tag/Tag.hh> // AUTO IWYU For Tag
+
 static basic::Tracer tr( "devel.replica_docking.TempInterpolator" );
 
 namespace devel {

@@ -17,11 +17,12 @@
 #include <protocols/environment/ProtectedConformation.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
 
 // tracer
 #include <basic/Tracer.hh>
 #include <utility>
+
+#include <core/environment/DofPassport.hh> // AUTO IWYU For DofPassport
 
 // C++ Headers
 

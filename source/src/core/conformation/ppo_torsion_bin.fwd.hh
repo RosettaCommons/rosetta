@@ -16,7 +16,7 @@
 #define INCLUDED_core_conformation_ppo_torsion_bin_FWD_HH
 
 // Utility headers
-#include <utility/vector0.fwd.hh>
+#include <utility/vector0.hh>
 
 namespace core {
 namespace conformation {

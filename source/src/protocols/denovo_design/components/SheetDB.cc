@@ -16,8 +16,6 @@
 #include <protocols/denovo_design/components/SheetDB.hh>
 
 // Protocol Headers
-#include <protocols/denovo_design/util.hh>
-#include <protocols/fldsgn/topology/Sheet.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/util.hh>
 #include <protocols/idealize/IdealizeMover.hh>
@@ -35,10 +33,8 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // Utility Headers
@@ -50,6 +46,10 @@
 #include <boost/lexical_cast.hpp>
 #include <map>
 #include <stack>
+
+#include <protocols/fldsgn/topology/StrandPairing.hh> // AUTO IWYU For StrandPairing, StrandPairingSet, operat...
+#include <utility/string_util.hh> // AUTO IWYU For string_split
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.denovo_design.components.SheetDB" );
 

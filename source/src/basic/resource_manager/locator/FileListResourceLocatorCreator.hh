@@ -17,7 +17,6 @@
 // Unit Headers
 #include <basic/resource_manager/ResourceLocatorCreator.hh>
 
-#include <utility/vector1.hh>
 #include <string>
 
 namespace basic {

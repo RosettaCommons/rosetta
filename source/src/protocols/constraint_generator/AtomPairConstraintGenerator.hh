@@ -27,10 +27,10 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/fixedsizearray1.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <core/id/SequenceMapping.fwd.hh> // AUTO IWYU For SequenceMapping
+
 namespace protocols {
 namespace constraint_generator {
 

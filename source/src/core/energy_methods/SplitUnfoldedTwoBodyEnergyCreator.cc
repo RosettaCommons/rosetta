@@ -18,11 +18,9 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/conformation/Residue.hh>
 
 #include <utility/vector1.hh>
 
-#include <iostream>
 
 namespace core {
 namespace energy_methods {

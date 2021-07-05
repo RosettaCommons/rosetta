@@ -29,6 +29,12 @@ class BranchParam1 {
 
 public:
 
+#ifdef IWYU_SCAN
+	BranchParam1() = default;
+#else
+	BranchParam1() = delete;
+#endif
+
 	BranchParam1(
 		core::Real m1_m2_Ktheta,
 		core::Real m1_m2_theta0,

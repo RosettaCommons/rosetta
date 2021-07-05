@@ -20,7 +20,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Residue.hh>

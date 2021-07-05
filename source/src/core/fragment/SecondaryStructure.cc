@@ -33,7 +33,6 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragID_Iterator.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>

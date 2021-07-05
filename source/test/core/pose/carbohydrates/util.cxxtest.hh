@@ -47,6 +47,8 @@
 // Basic headers
 #include <basic/Tracer.hh>
 
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
+
 
 static basic::Tracer TR( "core.pose.carbohydrates.util.cxxtest" );
 

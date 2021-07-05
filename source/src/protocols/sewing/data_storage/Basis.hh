@@ -18,7 +18,6 @@
 #include <protocols/sewing/data_storage/Basis.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
 #include <core/types.hh>

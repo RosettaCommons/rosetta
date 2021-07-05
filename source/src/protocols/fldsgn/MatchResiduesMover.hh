@@ -24,9 +24,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>

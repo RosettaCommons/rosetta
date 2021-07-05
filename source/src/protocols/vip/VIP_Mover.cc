@@ -23,12 +23,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <protocols/relax/FastRelax.hh>
@@ -40,10 +39,11 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 
-#include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <iterator>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 core::Size num_stored_poses( 0 );
 

@@ -27,7 +27,7 @@
 
 // Project headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 // Package headers
 #include <protocols/star/StarAbinitio.hh>

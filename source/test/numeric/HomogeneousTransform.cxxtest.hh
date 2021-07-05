@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <numeric/HomogeneousTransform.hh>
-#include <numeric/xyzVector.io.hh>
 
 typedef numeric::HomogeneousTransform< double > HTD;
 

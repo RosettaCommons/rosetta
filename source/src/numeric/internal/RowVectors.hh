@@ -18,7 +18,6 @@
 
 
 // Package headers
-#include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.hh>
 
 

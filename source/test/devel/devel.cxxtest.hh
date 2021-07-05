@@ -22,6 +22,6 @@
 // generated .cpp file.  This is that file for the devel project.
 
 
-#endif INCLUDED_devel_cxxtest_HH
+#endif // INCLUDED_devel_cxxtest_HH
 
 

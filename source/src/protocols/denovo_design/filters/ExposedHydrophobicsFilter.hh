@@ -22,18 +22,13 @@
 // Project headers
 #include <protocols/filters/Filter.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 //// C++ headers
 #include <string>
 
-#include <core/io/silent/silent.fwd.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

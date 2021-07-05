@@ -18,7 +18,6 @@
 //unit headers
 #include <protocols/jd2/SilentFileJobOutputter.fwd.hh>
 #include <protocols/jd2/FileJobOutputter.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.fwd.hh>
 
 //project headers

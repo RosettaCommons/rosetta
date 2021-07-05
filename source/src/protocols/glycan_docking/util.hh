@@ -17,20 +17,20 @@
 
 
 // Project Headers
-#include <protocols/minimization_packing/MinMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/minimization_packing/PackRotamersMover.hh>
-#include <protocols/minimization_packing/RotamerTrialsMover.hh>
+#include <protocols/minimization_packing/MinMover.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+#include <protocols/minimization_packing/RotamerTrialsMover.fwd.hh>
 //#include <protocols/moves/PyMOLMover.hh>
-#include <protocols/analysis/InterfaceAnalyzerMover.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/select/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/ChainSelector.fwd.hh>
 
 // Basic Headers
 
@@ -38,7 +38,9 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
+
+#include <core/conformation/Residue.fwd.hh> // AUTO IWYU For ResidueCOP
 
 
 namespace protocols {

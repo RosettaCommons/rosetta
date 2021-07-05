@@ -14,7 +14,6 @@
 
 #include <core/scoring/func/IdentityFunc.hh>
 #include <core/types.hh>
-#include <utility/VirtualBase.hh>
 #include <sstream>
 
 

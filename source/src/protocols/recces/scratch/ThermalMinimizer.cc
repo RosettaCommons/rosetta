@@ -20,63 +20,33 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/scoring/rms_util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/database/open.hh>
-#include <protocols/viewer/viewers.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <core/pose/util.hh>
-#include <core/init/init.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/string.functions.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <protocols/stepwise/modeler/align/util.hh>
-#include <core/io/rna/RNA_DataReader.hh>
 #include <core/id/TorsionID.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <protocols/recces/sampler/rna/MC_RNA_Suite.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_MultiSuite.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.hh>
-#include <protocols/stepwise/sampler/rna/RNA_KIC_Sampler.hh>
-#include <protocols/recces/util.hh>
-#include <protocols/recces/scratch/thermal_sampler.hh>
 
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/chemical.OptionKeys.gen.hh>
-#include <basic/options/keys/full_model.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/recces.OptionKeys.gen.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+#include <protocols/recces/sampler/MC_OneTorsion.hh> // AUTO IWYU For MC_OneTorsion
+#include <numeric/random/random.hh> // AUTO IWYU For rg, RandomGenerator
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 static basic::Tracer TR( "protocols.recces.scratch.ThermalMinimizer" );
 
@@ -207,7 +177,6 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
-	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::modeler;

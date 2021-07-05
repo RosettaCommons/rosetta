@@ -16,7 +16,6 @@
 
 // Unit Headers
 #include <protocols/docking/membrane/QuickRelaxPartnersSeparately.fwd.hh>
-#include <protocols/docking/membrane/QuickRelaxPartnersSeparatelyCreator.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
@@ -24,17 +23,11 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Package Headers
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
-#include <utility/file/file_sys_util.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/Tracer.fwd.hh>
 
 namespace protocols {
 namespace docking {

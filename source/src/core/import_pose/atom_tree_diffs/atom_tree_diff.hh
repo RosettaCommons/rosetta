@@ -30,7 +30,6 @@
 #include <fstream>
 #include <map>
 
-#include <utility/vector1.fwd.hh>
 
 
 namespace core {

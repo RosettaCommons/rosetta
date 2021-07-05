@@ -13,29 +13,23 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/jd2/util.hh>
-#include <ObjexxFCL/format.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
-#include <core/pose/util.hh>
 #include <core/pose/ref_pose.hh>
 #include <core/chemical/ResidueType.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <basic/options/keys/OptionKeys.hh> // AUTO IWYU For OptionKeys,
+#include <ObjexxFCL/string.functions.hh> // AUTO IWYU For string_of
 
 namespace protocols {
 namespace protein_interface_design {

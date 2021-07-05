@@ -21,7 +21,6 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <platform/types.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -36,8 +35,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
+
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 using basic::Error;

@@ -14,7 +14,6 @@
 
 #include <core/types.hh>
 
-#include <core/chemical/AA.hh>
 
 #include <core/pose/symmetry/util.hh>
 
@@ -31,32 +30,19 @@
 #include <core/pose/Pose.hh>
 
 
-#include <numeric/xyzVector.hh>
 
-#include <iostream>
-#include <sstream>
 
 // C++ headers
-#include <cstdlib>
 #include <string>
 
-#include <basic/Tracer.hh>
 
 
 //#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/Func.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/Jump.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 
-#include <core/optimization/AtomTreeMinimizer.hh>
 
 //protocols
 #include <protocols/symmetry/SymShakeStructureMover.hh>
@@ -66,13 +52,11 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 
 // C++ headers
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

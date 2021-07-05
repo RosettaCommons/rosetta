@@ -17,7 +17,6 @@
 #include <protocols/pdbinfo_manipulations/AlignPDBInfoToSequencesUtil.hh>
 
 // Core headers
-#include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/sequence/Sequence.hh>
@@ -31,15 +30,15 @@
 #include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/io/izstream.hh>
-#include <utility/json_utilities.hh>
 #include <utility/excn/Exceptions.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-#include <numeric>
 #include <sstream>
+
+#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 
 static basic::Tracer TR( "protocols.pdbinfo_manipulations.AlignPDBInfoToSequences" );

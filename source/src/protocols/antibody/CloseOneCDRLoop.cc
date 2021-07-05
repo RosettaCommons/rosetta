@@ -17,17 +17,16 @@
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
 //#include <protocols/loops/LoopMover.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
 #include <protocols/antibody/util.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Residue.hh> // AUTO IWYU For Pose::Residue
+
 static basic::Tracer TRC( "protocols.antibody.CloseOneCDRLoop" );
 
 namespace protocols {

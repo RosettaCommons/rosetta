@@ -21,6 +21,8 @@
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
+#include <map>
+
 #ifdef WIN32
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #endif

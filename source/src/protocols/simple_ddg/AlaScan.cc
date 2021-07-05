@@ -12,14 +12,9 @@
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
 // Project Headers
 
-#include <ObjexxFCL/FArray1D.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
-#include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -30,17 +25,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreTypeManager.hh>
 #include <core/types.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-#include <map>
-#include <numeric/random/random.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/simple_ddg/DdgFilter.hh>
@@ -49,11 +36,12 @@
 #include <string>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 
 namespace protocols {

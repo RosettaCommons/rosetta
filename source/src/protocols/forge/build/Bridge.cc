@@ -27,11 +27,8 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.hh>
 
 #include <core/pose/annotated_sequence.hh>
-#include <utility>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

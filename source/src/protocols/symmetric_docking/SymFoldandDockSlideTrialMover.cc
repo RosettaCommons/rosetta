@@ -25,8 +25,7 @@
 #include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
 #include <utility/tag/Tag.hh>
-#include <basic/datacache/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // options
 #include <basic/options/option.hh>
@@ -35,9 +34,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <core/conformation/symmetry/SymDof.hh>
 #include <core/pose/Pose.hh>
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

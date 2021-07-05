@@ -21,14 +21,8 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/TranslationRotationMover.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/util.hh>
-#include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -39,13 +33,11 @@
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // Utility
 #include <utility/string_util.hh>
 
 // C++ Headers
-#include <cstdlib>
 
 using namespace core;
 using namespace utility;

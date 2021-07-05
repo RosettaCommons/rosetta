@@ -17,6 +17,8 @@
 
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 
+#include <core/kinematics/RT.hh> // AUTO IWYU For RT
+
 namespace protocols {
 namespace hotspot_hashing {
 

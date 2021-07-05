@@ -33,10 +33,8 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
 
 namespace protocols {
 namespace loops {

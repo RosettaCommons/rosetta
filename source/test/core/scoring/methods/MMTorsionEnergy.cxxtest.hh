@@ -29,10 +29,8 @@
 // Utility headers
 
 // C++ headers
-#include <iostream>
 
 //Auto Headers
-#include <utility/vector1.hh>
 
 
 using namespace core;

@@ -26,7 +26,6 @@
 #include <core/io/rna/RDAT.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
@@ -36,7 +35,6 @@
 
 // C++ headers
 #include <fstream>
-#include <iostream>
 
 #include <utility/vector1.hh>
 

@@ -23,17 +23,17 @@
 // Package headers
 
 // Core headers
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <list>
 #include <set>
 #include <vector>
 #include <string>
+
+#include <string> // AUTO IWYU For string
 
 #ifdef PYROSETTA
 #include <core/kinematics/FoldTree.hh>

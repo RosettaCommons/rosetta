@@ -18,17 +18,14 @@
 
 // Project headers
 
-#include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.minimization_packing.symmetry.SymPackRotamersMover" );
 
 // Utility Headers
-#include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <protocols/moves/mover_schemas.hh>
 
 
 namespace protocols {

@@ -14,17 +14,9 @@
 // Unit headers
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/viewer/SilentObserver.hh>
-#include <protocols/viewer/SilentObserver.fwd.hh>
-#include <core/chemical/AtomType.hh>
 
 // Package headers
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MonteCarlo.tmpl.hh>
-#include <core/id/AtomID.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
 
 #if defined(WIN32) || defined(BOINC)
 #include <core/chemical/AtomTypeSet.hh>
@@ -37,7 +29,6 @@
 #include <protocols/viewer/triangleIterator.hh>
 #endif
 
-#include <core/conformation/Residue.hh>
 
 
 // Project headers
@@ -59,10 +50,16 @@
 #include <basic/options/keys/view.OptionKeys.gen.hh>
 #endif
 
-// Utility headers
-#include <utility/vector1.hh>
+#if defined GL_GRAPHICS || defined BOINC_GRAPHICS
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.tmpl.hh>
+#include <protocols/viewer/SilentObserver.hh>
+#include <core/conformation/Residue.hh>
 
-#include <numeric/NumericTraits.hh>
+#endif
+
+// Utility headers
+
 
 // GLUT
 #if defined GL_GRAPHICS || defined BOINC_GRAPHICS
@@ -83,7 +80,10 @@
 
 
 using namespace core; /////////////////////////////////////////// DANGER
+
+#if defined GL_GRAPHICS || defined BOINC_GRAPHICS
 using namespace protocols::viewer::graphics_states_param;
+#endif
 
 namespace protocols {
 namespace viewer {

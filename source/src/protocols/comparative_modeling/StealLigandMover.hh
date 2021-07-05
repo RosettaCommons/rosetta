@@ -16,7 +16,6 @@
 // Unit headers
 #include <protocols/comparative_modeling/StealLigandMover.fwd.hh>
 
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 

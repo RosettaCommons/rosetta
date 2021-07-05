@@ -14,13 +14,8 @@
 #ifndef INCLUDED_protocols_mpi_refinement_Clusterer_hh
 #define INCLUDED_protocols_mpi_refinement_Clusterer_hh
 
-#include <protocols/mpi_refinement/util.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
-#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace mpi_refinement {

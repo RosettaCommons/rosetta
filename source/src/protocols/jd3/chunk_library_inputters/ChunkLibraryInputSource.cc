@@ -15,8 +15,6 @@
 #include <protocols/jd3/chunk_library_inputters/ChunkLibraryInputSource.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
-#include <utility>
 
 
 #ifdef    SERIALIZATION

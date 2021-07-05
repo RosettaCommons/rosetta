@@ -41,11 +41,9 @@
 #include <utility/numbers.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/excn/Exceptions.hh>
 

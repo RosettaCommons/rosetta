@@ -12,8 +12,8 @@
 /// @brief
 /// @author
 
-#ifndef DEVEL_INVKINLIGLOOPDESIGN_MOVER_HH
-#define DEVEL_INVKINLIGLOOPDESIGN_MOVER_HH
+#ifndef INCLUDED_DEVEL_INVKINLIGLOOPDESIGN_MOVER_HH
+#define INCLUDED_DEVEL_INVKINLIGLOOPDESIGN_MOVER_HH
 
 #ifdef WIN32
 #define _USE_MATH_DEFINES
@@ -24,12 +24,12 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
 #include <iosfwd>
-#include <cmath>
-#include <devel/inv_kin_lig_loop_design/Fragment.hh>
+#include <devel/inv_kin_lig_loop_design/Fragment.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.hh>
+
+#include <map> // AUTO IWYU For map
 
 
 namespace devel {

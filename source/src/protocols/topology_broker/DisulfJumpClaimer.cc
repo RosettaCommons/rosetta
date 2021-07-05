@@ -34,6 +34,8 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
+#include <protocols/jumping/DisulfPairingLibrary.hh> // AUTO IWYU For StandardDisulfPairingLibrary, DisulfPairingLibrary
+
 static basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {

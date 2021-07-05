@@ -23,8 +23,6 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 namespace protocols {

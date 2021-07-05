@@ -17,14 +17,11 @@
 
 // Unit headers
 #include <core/io/StructFileReaderOptions.fwd.hh>
-#include <core/io/StructFileRep.hh>
+#include <core/io/StructFileRep.fwd.hh>
 
 // Project headers
-#include <core/io/pdb/Field.hh>
 
 // Utility headers
-#include <utility/Show.hh>
-#include <utility/vector1.fwd.hh>
 
 class CifFile;
 typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
@@ -34,9 +31,9 @@ typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 #include <string>
 #endif
 
-#include <map>
-#include <vector>
-#include <iosfwd>
+#ifdef PYROSETTA
+#include <cifparse/CifFile.h>
+#endif
 
 
 namespace core {

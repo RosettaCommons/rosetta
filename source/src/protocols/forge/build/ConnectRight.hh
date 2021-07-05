@@ -21,8 +21,6 @@
 #include <protocols/forge/build/BuildInstruction.hh>
 
 // project headers
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/id/NamedStubID.hh>
 #include <core/kinematics/RT.hh>
 #include <core/pose/Pose.hh>
@@ -30,9 +28,7 @@
 // utility headers
 
 // C++ headers
-#include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols {

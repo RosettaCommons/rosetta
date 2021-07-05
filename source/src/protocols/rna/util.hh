@@ -17,8 +17,6 @@
 #ifndef INCLUDED_protocols_rna_util_HH
 #define INCLUDED_protocols_rna_util_HH
 
-#include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
 
 namespace protocols {
 namespace rna {

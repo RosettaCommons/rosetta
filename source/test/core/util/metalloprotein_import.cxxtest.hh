@@ -26,14 +26,9 @@
 #include <test/core/init_util.hh>
 
 // Package Headers
-#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Project Headers
-#include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 

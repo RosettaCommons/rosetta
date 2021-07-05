@@ -17,15 +17,13 @@
 //Project headers
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <utility>
-#include <utility/graph/Graph.hh>
+#include <utility/graph/Graph.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
@@ -38,6 +36,8 @@
 // c++ headers
 #include <fstream>
 #include <map>
+
+#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace toolbox {

@@ -20,18 +20,15 @@
 #include <protocols/jd3/LarvalJob.hh>
 #include <protocols/jd3/JobDigraph.hh>
 #include <protocols/jd3/JobOutputIndex.hh>
-#include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/InputSource.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputSource.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputter.hh>
-#include <protocols/jd3/full_model_inputters/PDBFullModelInputter.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputterCreator.hh>
 #include <protocols/jd3/full_model_inputters/PDBFullModelInputterCreator.hh>
 #include <protocols/jd3/full_model_inputters/SilentFileFullModelInputterCreator.hh>
 #include <protocols/jd3/full_model_inputters/FullModelInputterFactory.hh>
 #include <protocols/jd3/output/MultipleOutputSpecification.hh>
 #include <protocols/jd3/output/MultipleOutputter.hh>
-#include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputter.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputSpecification.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
@@ -44,16 +41,12 @@
 
 //project headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose_options.hh>
 // #include <basic/resource_manager/JobOptions.hh>
 
 //utility headers
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
 #include <utility/keys/VariantKey.hh>
 #include <utility/options/OptionCollection.hh>
-#include <utility/options/keys/OptionKeyList.hh>
-#include <utility/VirtualBase.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
@@ -65,8 +58,6 @@
 #include <basic/options/util.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.cc.gen.hh>
-#include <basic/datacache/ConstDataMap.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.jd3.full_model.FullModelJobQueen" );

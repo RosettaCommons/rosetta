@@ -21,6 +21,8 @@
 // Package headers
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 
+#include <utility/vector1.hh> // AUTO IWYU For vector1
+
 // Note from rhiju -- perhaps this should have multiple inheritance from StepWiseSamplerComb
 //  and StepWiseSamplerSized -- would prevent copying code.
 

@@ -18,18 +18,15 @@
 #ifndef INCLUDED_protocols_stepwise_rna_StepWiseWorkingParametersSetup_HH
 #define INCLUDED_protocols_stepwise_rna_StepWiseWorkingParametersSetup_HH
 
-#include <protocols/stepwise/modeler/rna/util.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/Mover.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <string>
-#include <map>
+
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> // AUTO IWYU For InternalWorkingRes...
+#include <core/kinematics/FoldTree.hh> // AUTO IWYU For FoldTree
 
 namespace protocols {
 namespace stepwise {
