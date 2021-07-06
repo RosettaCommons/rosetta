@@ -21,7 +21,7 @@ from argparse import ArgumentParser
 # list of ROSIE scipt-modules, add your app name here and put related code int <app-name>.py file
 #
 script_modules = '''
-util docking
+util docking stabilize-ssm
 '''
 
 def rosie_scripts():
