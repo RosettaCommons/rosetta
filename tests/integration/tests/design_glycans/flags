@@ -1,6 +1,6 @@
 #-mute all
 -include_sugars
--s input/maltotriose.pdb
+-s input/N-linked_14-mer_glycan.pdb
 -out:path:pdb output/
 -out:path:score output/
 -out:suffix _redesigned

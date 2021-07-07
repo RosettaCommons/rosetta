@@ -616,7 +616,7 @@ sources = {
 	# L ######################################################################
 	"pilot/labonte" : [
 		"debug_labontes_current_work",
-		"design_glycans",
+#		"design_glycans",
 		"glycomutagenesis",
 		"load_crazy_sugars",
 		"test_glycan_linkages",
@@ -762,6 +762,9 @@ sources = {
 	],
 
 	# P ######################################################################
+	"pilot/pacheco" : [
+	"design_glycans",
+	],
 	"pilot/phil" : [
 		"test1", # /* Phil Bradley,Documentation Location,Demo Location */
 	        "repeat_demo", # app to demo setting up a tandem repeat pose for connected chain folding
