@@ -31,6 +31,10 @@
 
 #include <utility/vector1.hh>
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 
 namespace protocols {
 namespace docking {
@@ -63,8 +67,9 @@ public:
 
 	std::string get_name() const override;
 
-	void set_ensemble1( std::string ensemble1 ) { ensemble1_filename_ = ensemble1; }
-	void set_ensemble2( std::string ensemble2 ) { ensemble2_filename_ = ensemble2; }
+	void set_ensemble1( std::string const &ensemble1 );
+
+	void set_ensemble2( std::string const &ensemble2 );
 
 private:
 	// add @brief for members
@@ -83,6 +88,23 @@ private:
 	DockingEnsembleOP ensemble1_;
 	DockingEnsembleOP ensemble2_;
 	std::string ensemble1_filename_, ensemble2_filename_;
+
+	std::string copy_ensemble( std::string const & inputfile_name ){
+		std::string line;
+		std::string outputfile_name = inputfile_name + ".ensemble";
+		std::ifstream inputfile ( inputfile_name );
+		std::ofstream outputfile ( outputfile_name );
+
+		if ( inputfile && outputfile ) {
+			while ( getline( inputfile, line ) ) {
+				outputfile << line << "\n";
+			}
+		} else {
+			std::string exit_message = "Could not open " + inputfile_name + "! Must define path to ensemble1 structures to load ensembles. \n";
+			utility_exit_with_message( exit_message );
+		}
+		return outputfile_name;
+	}
 
 	/// @brief Performs setup that requires a pose
 	void finalize_setup( core::pose::Pose & );

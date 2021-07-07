@@ -454,5 +454,13 @@ std::string DockingEnsemblePrepackProtocol::get_name() const {
 	return "DockingEnsemblePrepackProtocol";
 }
 
+void DockingEnsemblePrepackProtocol::set_ensemble1( std::string const &ensemble1 ) {
+	ensemble1_filename_ = copy_ensemble( ensemble1 );
+}
+
+void DockingEnsemblePrepackProtocol::set_ensemble2( std::string const &ensemble2 ) {
+	ensemble2_filename_ = copy_ensemble( ensemble2 );
+}
+
 }//docking
 }//protocols
