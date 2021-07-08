@@ -39,6 +39,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/ddg/CartesianddG.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -275,6 +276,11 @@ main( int argc, char * argv [] )
 			core::pose::Pose pose;
 			core::import_pose::pose_from_file( pose, basic::options::start_file(),
 				core::import_pose::PDB_file );
+			//Is the protein in the membrane?
+			if ( option[ OptionKeys::in::membrane ].value() ) {
+				protocols::membrane::AddMembraneMoverOP addmem( new protocols::membrane::AddMembraneMover() );
+				addmem->apply( pose );
+			}
 			protocols::ddg::CartesianddG::run(pose);
 #else
 			utility_exit_with_message("A JSON capable compiler is required to use this app");
@@ -294,6 +300,12 @@ main( int argc, char * argv [] )
 			Pose pose;
 			core::import_pose::pose_from_file( pose, basic::options::start_file(),
 				core::import_pose::PDB_file );
+
+			//Is the protein in the membrane?
+			if ( option[ OptionKeys::in::membrane ].value() ) {
+				protocols::membrane::AddMembraneMoverOP addmem( new protocols::membrane::AddMembraneMover() );
+				addmem->apply( pose );
+			}
 
 			core::scoring::ScoreFunctionOP score_fxn;
 			score_fxn = core::scoring::get_score_function();
