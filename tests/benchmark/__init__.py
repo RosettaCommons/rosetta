@@ -133,7 +133,8 @@ def save_variables(variable_names=None):
 def load_variables():
     caller_frame_variables = inspect.stack()[1][0].f_globals
 
-    script_name = caller_frame_variables['__file__']
+    #script_name = caller_frame_variables['__file__']
+    script_name = os.path.basename( inspect.stack(context=2)[1].filename )
 
     previous_script_variable_file =  get_script_output_file_name( find_privious_script_name(script_name) )
 

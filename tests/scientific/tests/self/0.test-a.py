@@ -8,7 +8,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-## @file  self/0.test.py
+## @file  self/0.test-a.py
 ## @brief scientific self-test script
 ## @author Sergey Lyskov
 
@@ -40,3 +40,11 @@ with open(_multi_step_result_, 'w') as f:
     }
 
     json.dump(r, f, sort_keys=True, indent=2)
+
+
+
+
+a = 1
+b = [1, 2, 3]
+c = dict(a = a, b = b, c = None)
+benchmark.save_variables() # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
