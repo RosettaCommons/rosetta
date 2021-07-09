@@ -1,4 +1,2 @@
-#pdb	correlation
-1py6	0.038
-2k74	0.051
-2xov	0.177
+#pdb	correlation	spearman
+all	0.140	0.150

@@ -64,15 +64,15 @@ nstruct = 1 if debug else 50
 
 #==> EDIT HERE
 targets = '1py6 2k74 2xov'.split()
-targets = targets[1:2] if debug else targets
+targets = targets[-1:] if debug else targets
 
 mutants = {
-	"1py6" : "107_A 111_A 144_A 144_V 148_A 166_A 167_A 16_A 170_A 181_A 181_F 182_A 185_F 189_A 200_A 208_A 20_A 20_S 20_V 222_A 23_A 26_M 31_A 32_A 33_A 34_A 35_P 36_A 36_P 37_A 37_P 38_A 39_A 39_F 39_P 40_P 41_A 42_A 42_P 42_S 43_A 43_P 44_A 45_A 46_A 47_P 48_A 50_A 51_A 52_A 53_A 54_A 55_A 56_A 57_A 58_A 5_A 75_F 79_A 79_F 86_A 87_A 90_A 92_A 93_A 96_A 9_A".split(), 
-	"2k74" : "148_A 152_G 157_G 19_G 26_L 29_G 40_A 57_G 62_G 82_A 83_A 89_A".split(),
-	"2xov" : "100_A 104_V 107_A 108_V 109_A 109_V 10_A 110_A 111_A 112_A 113_A 115_A 116_G 117_A 119_V 120_F 124_A 125_V 128_A 129_A 131_A 136_A 139_A 146_G 14_A 14_V 151_A 153_A 157_A 163_V 167_V 171_V 178_A 179_V 21_A 22_A 30_A 44_A 46_A 47_A 48_F 49_A 50_A 51_A 53_A 54_A 55_A 56_A 57_A 5_A 60_A 63_A 64_A 65_A 68_F 70_F 72_V 76_A 78_A 79_A 7_A 80_A 81_A 83_A 84_A 85_A 87_A 88_A 89_A 90_A 94_A".split()
+	"1py6" : "35_P 40_P 47_P 111_A 208_A 32_A 34_A 92_A 200_A 5_A 167_A 23_A 38_A 50_A 144_A 144_V 41_A 48_A 26_M 36_A 36_P 37_A 37_P 96_A 107_A 9_A 148_A 170_A 44_A 54_A 57_A 58_A 90_A 93_A 16_A 52_A 56_A 182_A 33_A 46_A 87_A 189_A 222_A 31_A 55_A 166_A 20_A 20_S 20_V 42_A 42_P 42_S 43_A 43_P 51_A 86_A 45_A 185_F 181_A 181_F 39_A 39_F 39_P 53_A 75_F 79_A 79_F 53_F 64_A 148_V".split(), 
+	"2k74" : "152_G 157_G 19_G 29_G 57_G 62_G 26_L 82_A 148_A 40_A 83_A 89_A".split(),
+	"2xov" : "116_G 163_V 14_A 14_V 128_A 153_A 178_A 44_A 76_A 49_A 56_A 63_A 107_A 72_V 80_A 104_V 108_V 109_A 109_V 112_A 119_V 125_V 167_V 171_V 51_A 55_A 60_A 85_A 87_A 90_A 83_A 53_A 65_A 79_A 84_A 89_A 94_A 110_A 117_A 139_A 10_A 21_A 30_A 54_A 157_A 64_A 129_A 5_A 22_A 100_A 136_A 47_A 78_A 124_A 57_A 81_A 111_A 131_A 179_V 50_A 88_A 7_A 113_A 46_A 68_F 146_G 151_A 48_F 70_F 115_A 120_F 164_A".split()
 }
 
-mutants = {"2k74" : "148_A 152_G 157_G".split()} if debug else mutants
+mutants = {"2xov" : "64_A 76_A 111_A 164_A ".split()} if debug else mutants
 
 #print(f'extension: {extension}')
 #print(f'command_line: {command_line}')
