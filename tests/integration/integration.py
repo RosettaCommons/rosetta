@@ -436,7 +436,7 @@ EXAMPLES For Running Demos/Tutorials
         # Write substitution parameters to result directory
         print("Outdir: "+outdir)
         with open(path.join( outdir, "test_parameters.json"), "w") as parameters_file:
-            json.dump(generateIntegrationTestGlobalSubstitutionParameters(), parameters_file, sort_keys=True, indent=2)
+            json.dump(globalparams, parameters_file, sort_keys=True, indent=2)
 
         for test in tests:
             testbase = os.path.basename(test)
@@ -482,7 +482,7 @@ EXAMPLES For Running Demos/Tutorials
                     data = data.replace(root_rosetta_dir, 'ROSETTA')
                     mod = True
                 # In case commandline specification is used - normalize to standard install directories.
-                params = generateIntegrationTestGlobalSubstitutionParameters()
+                params = globalparams
                 if params['minidir'] in data:
                     data = data.replace( params['minidir'], "ROSETTA/source")
                     mod = True
@@ -1042,7 +1042,7 @@ def generateIntegrationTestGlobalSubstitutionParameters():
         python2 = "PYTHON2_NOT_FOUND"
     else:
         verify_python_version(python2, 2)
-   
+
     if python3 == "":
         print("ERROR: Unable to find Python3 executable -- some integration tests may fail on that basis alone.")
         python3 = "PYTHON3_NOT_FOUND"
