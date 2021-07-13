@@ -106,21 +106,25 @@ def compute_kl_divergence( seqdict ):
 	n_designed_all_arr = np.asarray( seqdict[ 'No.designed' ] )
 	n_native_all_arr = np.asarray( seqdict[ 'No.native' ] )	
 	n_designed_all, n_native_all = skip_when_native_is_zero( n_designed_all_arr, n_native_all_arr )
-	n_designed_all[ n_designed_all == 0 ] = 0.0001
+	#eliminates those with n_designed_all;
+	n_designed_all[ np.where(n_designed_all == 0)[0] ] = n_native_all[ np.where(n_designed_all == 0)[0] ] 
+	#n_designed_all[ n_designed_all == 0 ] = 0.0001
 	all_KL = -np.sum( np.log( np.divide( n_designed_all, n_native_all ) ) )
 
 	# lipid-facing positons
 	n_designed_lipid_arr = np.asarray( seqdict[ 'No.designed.lipid.facing' ] )
 	n_native_lipid_arr = np.asarray( seqdict[ 'No.native.lipid.facing' ] )
 	n_designed_lipid, n_native_lipid = skip_when_native_is_zero( n_designed_lipid_arr, n_native_lipid_arr )
-	n_designed_lipid[ n_designed_lipid == 0 ] = 0.0001
+	n_designed_lipid[ np.where(n_designed_lipid == 0)[0] ] = n_native_lipid[ np.where(n_designed_lipid == 0)[0] ]
+	#n_designed_lipid[ n_designed_lipid == 0 ] = 0.0001
 	lipid_KL = -np.sum( np.log( np.divide( n_designed_lipid, n_native_lipid ) ) )
 
 	# aqueous-facing positions
 	n_designed_aqueous_arr = np.asarray( seqdict[ 'No.designed.aqueous' ] )
 	n_native_aqueous_arr = np.asarray( seqdict[ 'No.native.aqueous' ] )
 	n_designed_aqueous, n_native_aqueous = skip_when_native_is_zero( n_designed_aqueous_arr, n_native_aqueous_arr )
-	n_designed_aqueous[ n_designed_aqueous == 0 ] = 0.0001
+	n_designed_aqueous[ np.where(n_designed_aqueous == 0)[0] ] = n_native_aqueous[ np.where(n_designed_aqueous == 0)[0] ]
+	#n_designed_aqueous[ n_designed_aqueous == 0 ] = 0.0001
 	aqueous_KL = -np.sum( np.log( np.divide( n_designed_aqueous, n_native_aqueous ) ) )
 
 	return [all_KL, lipid_KL, aqueous_KL]
