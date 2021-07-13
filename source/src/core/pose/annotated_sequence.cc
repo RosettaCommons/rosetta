@@ -242,7 +242,8 @@ residue_types_from_saccharide_sequence_recursive( std::string const & sequence, 
 /// beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc is:\n
 /// beta-D-Galp-(1->4)-D-GlcpNAc\n
 ///                       |\n
-///     alpha-L-Fucp-(1->3)
+///     alpha-L-Fucp-(1->3)\n
+/// Bidirectional linkages are indicated with a double-headed arrow, e.g., sucrose is a-D-Glcp-(1<->2)-b-D-Fruf.
 /// @note make_pose_from_saccharide_sequence() will generate a pose with a proper lower terminus.
 /// glycosylate_pose() will append the fragment by bond.
 chemical::ResidueTypeCOPs
@@ -285,6 +286,7 @@ residue_types_from_saccharide_sequence_recursive(
 	//uint n_carbohydrate_units( 1 );
 	stringstream residue_type_name( stringstream::out );
 	utility::vector1< uint > branch_points;
+	bool bidirectional_linkage( false );
 	bool linkage_assigned( false );
 	bool anomer_assigned( false );
 	bool L_or_D_assigned( false );
@@ -325,7 +327,17 @@ residue_types_from_saccharide_sequence_recursive(
 		} else {  // Hyphen: The morpheme is complete; interpret it....
 			// Linkage indication, first half (ignored)
 			if ( morpheme[ 0 ] == '(' ) {
+				if ( morpheme[ 2 ] == '<' ) {
+					// We are reading a bidirectional linkage, i.e. "(_<->_)"
+					bidirectional_linkage = true;
+				}
 				morpheme = "";  // The "(_" information is not needed; continue on to the next morpheme.
+
+			} else if ( morpheme == "<" ) {
+				// We are reading a bidirectional linkage, "<->", but one used for a monosaccharide.
+				// This is silly, but there's no reason Rosetta needs to crash on it.
+				bidirectional_linkage = true;
+				morpheme = "";  // The left arrowhead doesn't matter; continue on to the next morpheme.
 
 			} else if ( morpheme == "" ) {
 				// We just came out of a branch, the user typed two hyphens in a row,
@@ -347,6 +359,9 @@ residue_types_from_saccharide_sequence_recursive(
 						" Could not interpret saccharide unit."
 						" Is your input sequence in this format? '->2)-alpha-D-Manp'" );
 				} else {
+					if ( bidirectional_linkage ) {
+						residue_type_name << '<';  // left arrowhead
+					}
 					residue_type_name << '-' << morpheme << '-';
 					linkage_assigned = true;
 					morpheme = "";
@@ -557,6 +572,7 @@ residue_types_from_saccharide_sequence_recursive(
 				//n_carbohydrate_units += 1; // @mlnance TODO eventually
 				residue_type_name.str( "" );
 				branch_points.resize( 0 );
+				bidirectional_linkage = false;
 				linkage_assigned = false;
 				anomer_assigned = false;
 				L_or_D_assigned = false;

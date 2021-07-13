@@ -1,0 +1,30 @@
+HEADER    Trehalose from 5DX9                     09-JUN-21   XXXX
+AUTHOR    Labonte
+HETNAM     Glc B   1  <->1)-alpha-D-Glcp
+HETNAM     Glc B   2  ->4)-alpha-D-Glcp
+LINK         O1  Glc B   1                 C1  Glc B   2     1555   1555  1.43  
+HETATM 2436  C1  Glc B   1       0.735  21.229  20.780  1.00 43.13           C  
+HETATM 2437  C2  Glc B   1       1.637  20.077  21.203  1.00 45.05           C  
+HETATM 2438  C3  Glc B   1       3.103  20.420  21.026  1.00 47.04           C  
+HETATM 2439  C4  Glc B   1       3.389  20.761  19.578  1.00 48.43           C  
+HETATM 2440  C5  Glc B   1       2.362  21.699  18.915  1.00 47.92           C  
+HETATM 2441  C6  Glc B   1       2.171  21.369  17.422  1.00 44.86           C  
+HETATM 2442  O1  Glc B   1       0.819  22.347  21.667  1.00 43.69           O  
+HETATM 2443  O2  Glc B   1       1.363  19.746  22.563  1.00 46.41           O  
+HETATM 2444  O3  Glc B   1       3.922  19.290  21.357  1.00 49.05           O  
+HETATM 2445  O4  Glc B   1       4.704  21.334  19.591  1.00 43.36           O  
+HETATM 2446  O5  Glc B   1       1.028  21.640  19.444  1.00 41.98           O  
+HETATM 2447  O6  Glc B   1       0.832  20.881  17.157  1.00 46.74           O  
+HETATM 2414  C1  Glc B   2      -0.174  23.337  21.364  1.00 44.31           C  
+HETATM 2415  C2  Glc B   2       0.084  24.608  22.175  1.00 43.93           C  
+HETATM 2416  C3  Glc B   2      -0.233  24.390  23.648  1.00 44.26           C  
+HETATM 2417  C4  Glc B   2      -1.630  23.814  23.838  1.00 44.56           C  
+HETATM 2418  C5  Glc B   2      -1.822  22.569  22.976  1.00 43.01           C  
+HETATM 2419  C6  Glc B   2      -3.268  22.076  22.995  1.00 44.02           C  
+HETATM 2420  O2  Glc B   2       1.456  25.012  22.003  1.00 46.28           O  
+HETATM 2421  O3  Glc B   2      -0.139  25.637  24.345  1.00 47.35           O  
+HETATM 2422  O4  Glc B   2      -1.808  23.518  25.232  1.00 50.19           O  
+HETATM 2423  O5  Glc B   2      -1.487  22.835  21.616  1.00 44.36           O  
+HETATM 2424  O6  Glc B   2      -4.162  23.156  22.694  1.00 42.54           O  
+TER
+END                                                                             

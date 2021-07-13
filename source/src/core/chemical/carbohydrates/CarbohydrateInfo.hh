@@ -489,10 +489,18 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 	///  This residue may still have an exocylic linkage through a branch point.
 	///  See core::pose::has_exocylic_carbon_linkage to get more specific exocyclic carbon linkage info.
 	bool
-	has_exocyclic_linkage_to_child_mainchain() const
+	has_mainchain_exocyclic_linkage_to_child() const
 	{
-		return has_exocyclic_linkage_to_child_mainchain_;
+		return has_mainchain_exocyclic_linkage_to_child_;
 	}
+
+	/// @brief  Return true if the attachment point of the downstream saccharide (N+1) is a bidirectional linkage.
+	bool
+	has_mainchain_bidirectional_linkage_to_child() const
+	{
+		return has_mainchain_bidirectional_linkage_to_child_;
+	}
+
 
 	/// @brief Get pseudotorsion of anomeric carbon from ideal residue: defined as the out-of-plane angle
 	///   of the anomeric O with respect to the Oring-Canomeric-Cadjacent plane w/i the ring
@@ -565,7 +573,8 @@ private: // Private data //////////////////////////////////////////////////////
 	// Glycosidic bond attachment points, i.e., the second integer in (1->n) notations.
 	core::uint mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
 	utility::vector1< core::uint > branch_points_;
-	bool has_exocyclic_linkage_to_child_mainchain_;
+	bool has_mainchain_exocyclic_linkage_to_child_;
+	bool has_mainchain_bidirectional_linkage_to_child_;
 
 
 public:  // Constants /////////////////////////////////////////////////////////

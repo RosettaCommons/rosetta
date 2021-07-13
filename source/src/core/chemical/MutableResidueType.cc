@@ -310,7 +310,7 @@ MutableResidueType::atom_vertex( std::string const & name ) const{
 		TR.Error << "atom name : '" << name << "' not available in residue " << name3() << std::endl;
 		show_all_atom_names( TR.Error );
 		TR.Error << std::endl;
-		utility_exit_with_message("Atom name not found in MutableResidueType.");
+		utility_exit_with_message("Atom name " + name + " not found in MutableResidueType " + name3() + ".");
 	}
 
 	return atom_name_to_vd_iter->second;

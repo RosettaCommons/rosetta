@@ -1811,8 +1811,8 @@ ResidueType::define_mainchain_atoms()
 	}
 
 	// Test that we're actually a decent polymer
-	if ( !upper_connect_id() || !upper_connect_atom() ||
-			!lower_connect_id() || !lower_connect_atom() ) {
+	if ( ! upper_connect_id() || ! upper_connect_atom() ||
+			! lower_connect_id() || ! lower_connect_atom() ) {
 		TR.Warning << "Residue " << name() << " claims it's a polymer, " <<
 			"but it doesn't have the appropriate UPPER and LOWER connection points specified.  " <<
 			"Set MAINCHAIN_ATOMS in the topology file to remove this warning." << std::endl;

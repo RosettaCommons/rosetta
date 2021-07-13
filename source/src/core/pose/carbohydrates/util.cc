@@ -751,7 +751,7 @@ is_glycosidic_torsion(
 				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
 					if ( residue.is_carbohydrate() ) {
 						chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-						if ( core::Size( torsion_type ) > 2 && ! info->has_exocyclic_linkage_to_child_mainchain() ) {
+						if ( core::Size( torsion_type ) > 2 && ! info->has_mainchain_exocyclic_linkage_to_child() ) {
 							return false;
 						}
 					}

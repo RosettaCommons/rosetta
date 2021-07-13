@@ -136,8 +136,13 @@ CarbohydrateInfo::show( std::ostream & output ) const
 	output << " Modifications: " << endl << modifications;
 	output << " Polymeric Information:" << endl;
 	output << "  Reducing?: " << ( is_reducing_sugar() ? "yes" : "no" ) << endl;
+	//output << "  Glycoside?:" << ( is_glycoside() ?  "yes" : "no" ) << endl;  // TEMP (redundant w/ above)
 	if ( mainchain_glycosidic_bond_acceptor_ ) {
-		output << "  Main chain connection: (_->" << mainchain_glycosidic_bond_acceptor_ << ')' << endl;
+		output << "  Main chain connection: (_";
+		if ( mainchain_glycosidic_bond_acceptor_ == anomeric_carbon_ ) {
+			output << "<";
+		}
+		output << "->" << mainchain_glycosidic_bond_acceptor_ << ')' << endl;
 	} else {
 		output << "  Main chain connection: N/A" << endl;
 	}
@@ -191,7 +196,9 @@ CarbohydrateInfo::basic_name() const
 bool
 CarbohydrateInfo::is_reducing_sugar() const
 {
-	return ( residue_type_.lock()->is_lower_terminus() && ! is_glycoside() ) || residue_type_.lock()->is_ligand() ;
+	return ( residue_type_.lock()->is_lower_terminus() &&
+		! ( is_glycoside() || has_mainchain_bidirectional_linkage_to_child() ) ) ||
+		residue_type_.lock()->is_ligand() ;
 }
 
 
@@ -297,7 +304,7 @@ CarbohydrateInfo::init( core::chemical::ResidueTypeCAP residue_type_in )
 
 	read_and_set_properties();
 
-	determine_anomeric_pseudotorsion(); // after read_and_set_properties()
+	determine_anomeric_pseudotorsion();  // after read_and_set_properties()
 
 	determine_polymer_connections();
 
@@ -329,7 +336,8 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.modifications_ = object_to_copy_from.modifications_;
 	object_to_copy_to.mainchain_glycosidic_bond_acceptor_ = object_to_copy_from.mainchain_glycosidic_bond_acceptor_;
 	object_to_copy_to.branch_points_ = object_to_copy_from.branch_points_;
-	object_to_copy_to.has_exocyclic_linkage_to_child_mainchain_ = object_to_copy_from.has_exocyclic_linkage_to_child_mainchain_;
+	object_to_copy_to.has_mainchain_exocyclic_linkage_to_child_ = object_to_copy_from.has_mainchain_exocyclic_linkage_to_child_;
+	object_to_copy_to.has_mainchain_bidirectional_linkage_to_child_ = object_to_copy_from.has_mainchain_bidirectional_linkage_to_child_;
 }
 
 
@@ -551,7 +559,8 @@ CarbohydrateInfo::determine_polymer_connections()
 
 	if ( residue_type->is_ligand() ) {
 		mainchain_glycosidic_bond_acceptor_ = 0;
-		has_exocyclic_linkage_to_child_mainchain_ = false;
+		has_mainchain_exocyclic_linkage_to_child_ = false;
+		has_mainchain_bidirectional_linkage_to_child_ = false;
 		return;
 	}
 
@@ -577,9 +586,9 @@ CarbohydrateInfo::determine_polymer_connections()
 
 	// Exocyclic linkage?
 	if ( mainchain_glycosidic_bond_acceptor_ > last_carbon_in_ring() ) {
-		has_exocyclic_linkage_to_child_mainchain_ = true;
+		has_mainchain_exocyclic_linkage_to_child_ = true;
 	} else {
-		has_exocyclic_linkage_to_child_mainchain_ = false;
+		has_mainchain_exocyclic_linkage_to_child_ = false;
 	}
 }
 
@@ -610,7 +619,18 @@ CarbohydrateInfo::determine_IUPAC_names()
 	// Connectivity
 	if ( residue_type->is_polymer() ) {
 		if ( ! residue_type->is_upper_terminus() ) {
-			linkage_notation << "->" << mainchain_glycosidic_bond_acceptor_ << ')';
+			if ( mainchain_glycosidic_bond_acceptor_ == anomeric_carbon_ ) {
+				// We have a bidirectional linkage.
+				linkage_notation << "<->";
+				has_mainchain_bidirectional_linkage_to_child_ = true;
+			} else {
+				// the usual situation
+				linkage_notation << "->";
+				has_mainchain_bidirectional_linkage_to_child_ = false;
+			}
+			linkage_notation << mainchain_glycosidic_bond_acceptor_ << ')';
+		} else /* is_upper_terminus */ {
+			has_mainchain_bidirectional_linkage_to_child_ = false;  // impossible for upper terminus to be bidirectional
 		}
 		long_prefixes << anomer_ << '-';
 		short_prefixes << long_prefixes.str();

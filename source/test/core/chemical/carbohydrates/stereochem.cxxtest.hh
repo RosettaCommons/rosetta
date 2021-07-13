@@ -121,16 +121,25 @@ public: // Tests //////////////////////////////////////////////////////////////
 		vector1< string > const lines( io::get_lines_from_file_data( filename ) );
 		for ( string line : lines ) {
 			if ( line.substr( 0, 27 ) == "residue_types/carbohydrates"  ) {
-				core::uint const start_of_name( line.find( "/to" ) );
-				if ( start_of_name ==  string::npos ) { continue; }  // It's not a polymeric sugar, so don't bother.
-				string const & linkage( line.substr( start_of_name + 3, 1 ) );
+				bool has_bidirectional_linkage( false );
+				core::uint start_of_name( line.find( "/to" ) );
+				if ( start_of_name == string::npos ) {
+					// It doesn't start with "/to"; see if it starts with "/bi".
+					start_of_name = line.find( "/bi" );
+					if ( start_of_name == string::npos ) { continue; }  // It's not a polymeric sugar, so don't bother.
+					has_bidirectional_linkage = true;
+				}
+				string const & linkage_position( line.substr( start_of_name + 3, 1 ) );
 
 				string const & code(
 					line.substr( start_of_name + 5, line.find( ".params" ) - ( start_of_name + 5 ) ) );
 				if ( code == "alpha-Daup" ) { continue; }  // TEMP
-				TR << "Testing: ->" << linkage << ")-" << code << endl;
+				string residue_name;
+				if ( has_bidirectional_linkage ) { residue_name += "<"; }  // left arrowhead
+				residue_name += "->" + linkage_position + ")-" + code;
+				TR << "Testing: " << residue_name << endl;
 				pose::Pose pose;
-				make_pose_from_saccharide_sequence( pose, "->" + linkage + ")-" + code );
+				make_pose_from_saccharide_sequence( pose, residue_name );
 				//pose.dump_pdb( "/home/labonte/Dropbox/Transfer/Sugars/" + linkage + "-" + code + ".pdb" );  // TEMP
 				conformation::Residue const & res( pose.residue( 1 ) );
 				TS_ASSERT( res.is_carbohydrate() );

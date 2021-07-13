@@ -534,9 +534,11 @@ void PoseFromSFRBuilder::pass_3_verify_sufficient_backbone_atoms()
 		if ( nbb >= 3 ) {
 			bool mainchain_core_present( false );
 			for ( Size jj=1; jj<= nbb-2; ++jj ) {
-				std::string const & name1(iirestype.atom_name(iimainchain[jj  ]));
-				std::string const & name2(iirestype.atom_name(iimainchain[jj+1]));
-				std::string const & name3(iirestype.atom_name(iimainchain[jj+2]));
+				core::uint const shadowed_atom_index( iirestype.atom_being_shadowed( iimainchain[ jj ] ) );  // required for rare short-mainchain cyclic residues
+				std::string const & name1( (shadowed_atom_index) ? iirestype.atom_name( shadowed_atom_index ) : iirestype.atom_name( iimainchain[ jj ] ) );
+				std::string const & name2( iirestype.atom_name( iimainchain[ jj + 1 ] ) );
+				std::string const & name3( iirestype.atom_name( iimainchain[ jj + 2 ] ) );
+
 				if ( ! ii_atom_names.right.count(name1) ||
 						!  ii_atom_names.right.count(name2) ||
 						!  ii_atom_names.right.count(name3) ) {

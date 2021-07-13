@@ -60,6 +60,9 @@ public:  // Standard methods //////////////////////////////////////////////////
 		// Test that oligosaccharides can be created from a given sequence.
 		make_pose_from_saccharide_sequence( lactose_, "beta-D-Galp-(1->4)-Glcp" );
 
+		// Test a disaccharide with a bidirectional linkage.
+		pose_from_file( sucrose_, "core/chemical/carbohydrates/sucrose.pdb", core::import_pose::PDB_file);
+
 		// Test last_carbon_in_ring for ketoses and aldoses
 		// using GlcN as the aldose hexose pyranose
 		pose_from_file( Neu_, "core/chemical/carbohydrates/Neu.pdb", core::import_pose::PDB_file);
@@ -78,6 +81,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( maltotriose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-alpha-D-Glcp" );
 		TS_ASSERT_EQUALS( isomaltose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->6)-alpha-D-Glcp" );
 		TS_ASSERT_EQUALS( lactose_.chain_sequence( 1 ), "beta-D-Galp-(1->4)-alpha-D-Glcp" );
+		TS_ASSERT_EQUALS( sucrose_.chain_sequence( 1 ), "alpha-D-Glcp-(1<->2)-beta-D-Fruf" );
 		TS_ASSERT_EQUALS( glucosamine_.chain_sequence( 1 ), "alpha-D-GlcpN" );
 	}
 
@@ -90,6 +94,14 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_DELTA( isomaltose_.phi( 2 ), 44.3268, 0.02 );
 		TS_ASSERT_DELTA( isomaltose_.psi( 2 ), -170.869, 0.02 );
 		TS_ASSERT_DELTA( isomaltose_.omega( 2 ), 49.383, 0.02 );
+
+		TS_ASSERT_DELTA( sucrose_.phi( 1 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( sucrose_.psi( 1 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( sucrose_.phi( 2 ), 114.81, 0.02 );
+		//TS_ASSERT_DELTA( sucrose_.psi( 2 ), 72.21, 0.02 );
+		// Technically, IUPAC defines this angle as C1-O1-C2-C1,
+		// but we intentionally differ from this in the special case of bidirectional linkages, as C1 is exocyclic.
+		TS_ASSERT_DELTA( sucrose_.psi( 2 ), -50.66, 0.02 );
 
 		TS_ASSERT_DELTA( branched_fragment_.phi( 5 ), 111.187, 0.02 );
 
@@ -174,6 +186,7 @@ private:  // Private data /////////////////////////////////////////////////////
 	core::pose::Pose branched_fragment_;  // a branched fragment of amylopectin
 	core::pose::Pose N_linked_;  // a 5-mer peptide with an N-linked glycan
 	core::pose::Pose lactose_;  // a (1beta->4) disaccharide of D-glucose and D-galactose
+	core::pose::Pose sucrose_;  // a (1alpha<->2beta) disaccharide of D-fructose and D-glucose
 	core::pose::Pose glucosamine_;  // 2-amino-2-deoxy-D-glucopyranose
 	core::pose::Pose Lex_;  // Lewisx: beta-D-Galp-(1->4)-[alpha-D-Fucp-(1->3)]-D-GlcpNAc
 	core::pose::Pose Neu_;  // ->8)-alpha-neuraminic acid

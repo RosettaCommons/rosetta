@@ -1,0 +1,29 @@
+HEADER    Sucrose from 1tj5                       02-MAY-21   XXXX
+AUTHOR    Labonte
+HETNAM     Fru B   1  <->2)-beta-D-Fruf
+HETNAM     Glc B   2  ->4)-alpha-D-Glcp
+LINK         O2  Fru B   1                 C1  Glc B   2     1555   1555  1.46  
+HETATM 1967  C1  Fru B   1      43.541   1.002  97.976  1.00 41.24           C  
+HETATM 1968  C2  Fru B   1      44.965   0.503  97.664  1.00 40.71           C  
+HETATM 1969  C3  Fru B   1      45.241  -0.950  98.130  1.00 41.60           C  
+HETATM 1970  C4  Fru B   1      46.734  -0.906  98.415  1.00 41.23           C  
+HETATM 1971  C5  Fru B   1      46.768   0.400  99.180  1.00 41.00           C  
+HETATM 1972  C6  Fru B   1      48.165   0.987  99.286  1.00 39.52           C  
+HETATM 1973  O1  Fru B   1      42.571   0.261  97.218  1.00 43.36           O  
+HETATM 1974  O2  Fru B   1      45.326   0.520  96.254  1.00 36.75           O  
+HETATM 1975  O3  Fru B   1      44.954  -1.905  97.106  1.00 39.58           O  
+HETATM 1976  O4  Fru B   1      47.205  -2.010  99.220  1.00 39.87           O  
+HETATM 1977  O5  Fru B   1      45.901   1.293  98.447  1.00 37.94           O  
+HETATM 1978  O6  Fru B   1      48.090   2.404  99.181  1.00 39.79           O  
+HETATM 1956  C1  Glc B   2      45.579   1.784  95.573  1.00 35.04           C  
+HETATM 1957  C2  Glc B   2      44.651   1.806  94.337  1.00 33.82           C  
+HETATM 1958  C3  Glc B   2      45.029   0.675  93.342  1.00 30.24           C  
+HETATM 1959  C4  Glc B   2      46.488   0.902  92.930  1.00 27.00           C  
+HETATM 1960  C5  Glc B   2      47.401   0.875  94.176  1.00 26.31           C  
+HETATM 1961  C6  Glc B   2      48.868   1.129  93.835  1.00 24.22           C  
+HETATM 1962  O2  Glc B   2      43.273   1.664  94.772  1.00 35.31           O  
+HETATM 1963  O3  Glc B   2      44.180   0.713  92.179  1.00 27.50           O  
+HETATM 1964  O4  Glc B   2      46.884  -0.125  92.009  1.00 20.56           O  
+HETATM 1965  O5  Glc B   2      46.997   1.896  95.134  1.00 30.67           O  
+HETATM 1966  O6  Glc B   2      48.966   2.276  92.978  1.00 16.61           O  
+END

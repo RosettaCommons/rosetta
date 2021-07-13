@@ -160,7 +160,8 @@ main( int argc, char *argv[] )
 		devel::init( argc, argv );
 
 		// Declare Pose variables.
-		Pose maltobiose, lactose, isomaltose, LeX, bisected_man, N_linked_glycan, O_linked_glycan, UDP_D_Glc, GalCer;
+		Pose maltobiose, lactose, isomaltose, sucrose, trehalose, LeX, bisected_man, N_linked_glycan, O_linked_glycan,
+			UDP_D_Glc, GalCer;
 
 		// Set up ScoreFunctions.
 		ScoreFunctionOP sf_full( get_score_function() );
@@ -231,6 +232,27 @@ main( int argc, char *argv[] )
 		sample_torsions( isomaltose, 2, *sf_bb );
 		cout << "(The best angles should be close to 75/180/-60.)" << endl;
 		cout << "(The worst angles should be close to -105/0/-120.)" << endl;
+
+		cout << endl << "-------------------------------------------------------------------------------" << endl;
+
+
+		cout << "Importing sucrose (D-alpha1<->D-beta2 linkage):" << endl << endl;
+
+		pose_from_file( sucrose, PATH + "sucrose.pdb", PDB_file );
+
+		sample_torsions( sucrose, 2, *sf_bb );
+		//cout << "(The best angles should be close to 75/180/-60.)" << endl;
+		//cout << "(The worst angles should be close to -105/0/-120.)" << endl;
+
+		cout << endl << "-------------------------------------------------------------------------------" << endl;
+
+		cout << "Importing trehalose (D-alpha1<->D-alpha1 linkage):" << endl << endl;
+
+		pose_from_file( trehalose, PATH + "trehalose.pdb", PDB_file );
+
+		sample_torsions( trehalose, 2, *sf_bb );
+		//cout << "(The best angles should be close to 75/180/-60.)" << endl;
+		//cout << "(The worst angles should be close to -105/0/-120.)" << endl;
 
 		cout << endl << "-------------------------------------------------------------------------------" << endl;
 

@@ -92,7 +92,7 @@ main( int argc, char *argv[] )
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
 			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
 			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, propargyl_sugar, lactyl_sugar, ligand_sugar,
-			methyl_sugar, glycolylamino_sugar, thio_sugar, phosphorylated_sugar, pdb_code_pdb, bad_pdb;
+			methyl_sugar, glycolylamino_sugar, thio_sugar, phosphorylated_sugar, pdb_code_pdb, bad_pdb, sucrose, trehalose;
 
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -515,6 +515,39 @@ main( int argc, char *argv[] )
 
 		cout << ".pdb file with bad LINK records imported successfully." << endl;
 
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing sucrose:" << endl;
+
+		pose_from_file( sucrose, PATH + "sucrose.pdb", PDB_file );
+
+		test_sugar( sucrose );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating sucrose from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( sucrose, "a-D-Glcp-(1<->2)-b-D-Fruf", *residue_set );
+		sucrose.pdb_info()->name( "sucrose_from_seq" );
+
+		test_sugar( sucrose );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing trehalose:" << endl;
+
+		pose_from_file( trehalose, PATH + "trehalose.pdb", PDB_file );
+
+		test_sugar( trehalose );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating trehalose from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( trehalose, "a-D-Glcp-(1<->1)-a-D-Glcp", *residue_set );
+		trehalose.pdb_info()->name( "trehalose_from_seq" );
+
+		test_sugar( trehalose );
 	} catch ( utility::excn::Exception const & e ) {
 		e.display();
 		return FAILURE;

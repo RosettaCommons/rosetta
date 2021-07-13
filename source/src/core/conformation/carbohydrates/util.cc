@@ -338,7 +338,15 @@ get_reference_atoms_for_phi( Conformation const & conf, uint const sequence_posi
 
 // Return the AtomIDs of the four psi torsion reference atoms.
 /// @details For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),\n
-/// where X is the position of the glycosidic linkage.
+/// where X is the position of the glycosidic linkage.\n
+/// This is the "official" IUPAC rule, but there are cases where it fails to make any sense:\n
+/// A) For bidirectional linkages from aldoses, there is no lower-numbered carbon; the rule cannot apply.\n
+///    Rosetta uses the ring oxygen instead for the final reference atom.\n
+/// B) For bidirectional linkages from ketoses, the lower-numbered carbon would be exocyclic.\n
+///    For consistency, Rosetta uses the ring oxygen instead for the final reference atom,\n
+///    technically in violation of IUPAC rules.\n
+/// C) For linkages from the 1 position of ketoses, there is no lower-numbered carbon; the rule cannot apply.\n
+///    Rosetta cannot use the ring oxygen either, as it not attached. Instead, it uses C2.\n
 utility::vector1< id::AtomID >
 get_reference_atoms_for_psi( Conformation const & conf, uint const sequence_position )
 {
@@ -371,7 +379,11 @@ get_reference_atoms_for_psi( Conformation const & conf, uint const sequence_posi
 	AtomID const ref3( residues.second->type().atom_base( ref2.atomno() ), residues.second->seqpos() );
 	ids[ 3 ] = ref3;
 
-	// Reference 4 is CX-1(n-1) for polysaccharides.
+	// Reference 4 is CX-1(n-1) for polysaccharides, with three exceptions, noted in the comments above.
+	// Rosetta will always use the atom base, or parent, of reference atom 3,
+	// which follows the IUPAC rule in non-exception cases,
+	// and gives us the behavior I/we want in the case of the three exceptions,
+	// assuming that the .params files are set up in a consistent manner.
 	AtomID const ref4( residues.second->type().atom_base( ref3.atomno() ), residues.second->seqpos() );
 	ids[ 4 ] = ref4;
 
@@ -938,7 +950,7 @@ is_glycosidic_omega_torsion( Conformation const & conf, id::TorsionID const & to
 				if ( conf.residue( next_rsd_num ).is_carbohydrate() ) {
 					if ( residue.is_carbohydrate() ) {
 						chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-						if ( ! info->has_exocyclic_linkage_to_child_mainchain() ) {
+						if ( ! info->has_mainchain_exocyclic_linkage_to_child() ) {
 							return false;
 						}
 					}

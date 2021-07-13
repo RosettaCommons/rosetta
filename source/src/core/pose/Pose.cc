@@ -1107,6 +1107,14 @@ Pose::set_phi( Size const seqpos, Real const setting )
 /// For beta-amino acids, psi is defined as CA(n)-CM(n)-C(n)-N(n+1).
 /// For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
 /// where X is the position of the glycosidic linkage.
+/// This is the "official" IUPAC rule, but there are cases where it fails to make any sense:
+/// A) For bidirectional linkages from aldoses, there is no lower-numbered carbon; the rule cannot apply.
+///    Rosetta uses the ring oxygen instead for the final reference atom.
+/// B) For bidirectional linkages from ketoses, the lower-numbered carbon would be exocyclic.
+///    For consistency, Rosetta uses the ring oxygen instead for the final reference atom, technically in violation of
+///    IUPAC rules.
+/// C) For linkages from the 1 position of ketoses, there is no lower-numbered carbon; the rule cannot apply.
+///    Rosetta cannot use the ring oxygen either, as it not attached. Instead, it uses C2.
 Real
 Pose::psi( Size const seqpos ) const
 {

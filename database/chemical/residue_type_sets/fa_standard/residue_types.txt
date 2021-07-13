@@ -1063,6 +1063,7 @@ residue_types/carbohydrates/aldoses/pentoses/xyloses/to4-alpha-L-Xylp.params
 residue_types/carbohydrates/aldoses/pentoses/xyloses/to4-beta-L-Xylp.params
 ### Aldohexoses
 #### Glucoses
+residue_types/carbohydrates/aldoses/hexoses/glucoses/bi1-alpha-D-Glcp.params
 residue_types/carbohydrates/aldoses/hexoses/glucoses/to2-alpha-D-Glcf.params
 residue_types/carbohydrates/aldoses/hexoses/glucoses/to2-beta-D-Glcf.params
 residue_types/carbohydrates/aldoses/hexoses/glucoses/to3-alpha-D-Glcf.params
@@ -1533,6 +1534,7 @@ residue_types/carbohydrates/ketoses/pentoses/xyluloses/to4-alpha-L-Xulf.params
 residue_types/carbohydrates/ketoses/pentoses/xyluloses/to4-beta-L-Xulf.params
 ### Ketohexoses
 #### Fructoses
+residue_types/carbohydrates/ketoses/hexoses/fructoses/bi2-beta-D-Fruf.params
 residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-alpha-D-Fruf.params
 residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-beta-D-Fruf.params
 residue_types/carbohydrates/ketoses/hexoses/fructoses/to1-alpha-D-Frup.params
