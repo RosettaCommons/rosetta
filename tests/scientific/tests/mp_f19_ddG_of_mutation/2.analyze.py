@@ -91,19 +91,20 @@ for i in range( 0, len( ddG_files ) ):
 	intercept = best_fit[1]
 	
 	# check for correlation above cutoff
+	#Its a stochastic value, exact value may not match. giving a range of -0.05
 	f.write( targets[i] + "\t" )
 	f.write( str(round(pearson_correl, 3)) + "\t" )
-	if ( cutoffs_corr_dict[targets[i]] > pearson_correl ): 
+	if ( cutoffs_corr_dict[targets[i]]-0.05 > pearson_correl ): 
 		failures.append( "correl " + targets[i] )
 
 	# check for slope within range
 	f.write( str(round(slope, 3)) + "\t" )
-	if ( cutoffs_slope_dict[targets[i]]+0.5 < slope or cutoffs_slope_dict[targets[i]]-0.5 > slope ):
+	if ( cutoffs_slope_dict[targets[i]]+2.0 < slope or cutoffs_slope_dict[targets[i]]-2.0 > slope ):
 		failures.append( "slope " + targets[i] )
 
 	# check for intercept within range
 	f.write( str(round(intercept, 3)) + "\t" )
-	if ( cutoffs_intercept_dict[targets[i]]+0.5 < intercept or cutoffs_intercept_dict[targets[i]]-0.5 > intercept ): 
+	if ( cutoffs_intercept_dict[targets[i]]+3.0 < intercept or cutoffs_intercept_dict[targets[i]]-3.0 > intercept ): 
 		failures.append( "intercept " + targets[i] )
 
 	results.update( {targets[i] : [pearson_correl, slope, intercept] } )

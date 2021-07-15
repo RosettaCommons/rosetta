@@ -2,6 +2,7 @@
 # @brief: Calculated the ddG of mutation dependent on membrane depth and pH
 # @notes: Adapted for benchmark and PyRosetta4 from Alford & Koehler Leman et al. 2015
 # @author: Rebcca Alford (ralford3@jhu.edu)
+# Modified on Apr 6th, 2021 by Rituparna Samanta (rsamant2@jhu.edu)
 
 from pyrosetta import *
 from pyrosetta.teaching import *
@@ -76,6 +77,8 @@ def mutate_residue( pose, mutant_position, mutant_aa, pack_radius, pack_scorefxn
         # only pack the mutating residue and any within the pack_radius
         if i != mutant_position and dist > pow( float( pack_radius ), 2 ) :
             task.nonconst_residue_task( i ).prevent_repacking()
+        elif i !=mutant_position and dist <= pow( float( pack_radius ), 2 ) :
+            task.nonconst_residue_task( i ).restrict_to_repacking()
 
     # apply the mutation and pack nearby residues
     packer = PackRotamersMover( pack_scorefxn , task )
@@ -138,8 +141,8 @@ def main( args ):
     # Initialize Pyrosetta with const options
     option_string = "-run:constant_seed -in:ignore_unrecognized_res"
     if ( Options.implicit_lipids ): 
-        option_string = option_string + " -mp:lipids:temperature 37.0 -mp:lipids:composition DLPC -mp:lipids:has_pore false"
-
+        option_string = option_string + " -mp:lipids:temperature 20.0 -mp:lipids:composition DLPC -mp:lipids:has_pore false"
+        #changed from 37 to 20 as per the paper. 
     init( extra_options=option_string )
 
     # Read database file including mutations (space delimited)
@@ -152,9 +155,12 @@ def main( args ):
     # Create an energy function
     print("going to make energy function")
     sfxn = create_score_function( Options.energy_fxn )
+    sfxn.set_weight(fa_water_to_bilayer, 1.5)
+    #Results in the paper are with respect to the weight being 1.50
     print("done")
     # Set the repack radius from the option system
     repack_radius = 8.0
+    ##RS: a repack_radius is also taken as command line. 
 
     # Setup output file
     outfile = Options.outdir + "/ddG_" + Options.energy_fxn + ".dat"

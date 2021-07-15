@@ -47,9 +47,10 @@ plt.rc("font", size=20)
 plt.rcParams['figure.figsize'] = width, height #width, height
 
 # Correlation coefficients from Alford et al. 2019
-moon_fleming = 0.68
-mcdonald_fleming = -0.1
-marx_fleming = 0.66
+#updating R values for the plots. In the paper the results were for R2. 
+moon_fleming = 0.922
+mcdonald_fleming = 0.158
+marx_fleming = 0.919
 
 lit_values = [ moon_fleming, mcdonald_fleming, marx_fleming ]
 
@@ -100,7 +101,7 @@ for i in range( 0, len( ddG_files ) ):
 
 	# Plot text labels
 	corr_coeff = np.corrcoef( exp_no_proline, pred_no_proline )[1,0]
-	plt.text( -5, -3, "corr=" + str(round(corr_coeff,3)) + "\n lit_coeff=" + str(lit_values[i]) , horizontalalignment='center', verticalalignment='center' )
+	plt.text( -5, 4, "corr=" + str(round(corr_coeff,3)) + "\n lit_coeff=" + str(lit_values[i]) , horizontalalignment='center', verticalalignment='center' )
 
 
 #save figure
