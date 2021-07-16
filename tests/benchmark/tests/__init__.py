@@ -485,7 +485,7 @@ def build_and_install_pyrosetta(working_dir, rosetta_dir, platform, jobs, config
 
 
 
-def install_llvm_tool(name, source_location, platform, config, clean=True):
+def install_llvm_tool_deprecated(name, source_location, platform, config, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
         Return absolute path to executable on success and raise BenchmarkError exception on failure (do not catch this! if you really need 'normal' exit from this function on failure - refactor it instead)
     '''
@@ -532,6 +532,113 @@ def install_llvm_tool(name, source_location, platform, config, clean=True):
     if not os.path.isfile(executable): raise BenchmarkError("\nEncounter error while running install_llvm_tool: Build is complete but executable {} is not there!!!".format(executable) )
 
     return executable
+
+
+def install_llvm_tool(name, source_location, platform, config, clean=True):
+    ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
+        Return absolute path to executable on success and terminate with error on failure
+    '''
+    debug = False
+
+    prefix_root = calculate_unique_prefix_path(platform, config)
+
+    if not os.path.isdir(prefix_root): os.makedirs(prefix_root)
+
+    llvm_version='3.7.1'
+    prefix = prefix_root + '/llvm-' + llvm_version
+
+    build_dir = prefix+'/llvm-' + llvm_version + '.' + platform_to_pretty_string(platform) + ('.debug' if debug else '.release')
+
+    res, output = execute('Getting source HEAD commit SHA1...', 'cd {} && git rev-parse HEAD'.format(source_location), return_='tuple', silent=True)
+    if res: binder_head = 'unknown'
+    else: binder_head = output.split('\n')[0]
+
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.1, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=platform['compiler'], gcc_install_prefix=None)
+    signature_file_name = build_dir + '/.signature.json'
+
+    disk_signature = dict(config = 'unknown', binder = 'unknown')
+    if os.path.isfile(signature_file_name):
+        with open(signature_file_name) as f: disk_signature = json.load(f)
+
+    if signature == disk_signature:
+        print('LLVM:{} + Binder install is detected at {}, skipping LLVM installation and Binder building procedures...\n'.format(llvm_version, build_dir))
+
+    else:
+        print('LLVM build detected, but config/binder version has changed, perfoming a clean rebuild...')
+        if os.path.isdir(build_dir): shutil.rmtree(build_dir)
+
+        def get_cmake_compiler_options():
+            ''' Get cmake compiler flags from Options.compiler '''
+            if platform['compiler'] == 'clang': return ' -DCMAKE_C_COMPILER=`which clang` -DCMAKE_CXX_COMPILER=`which clang++`'
+            elif platform['compiler'] == 'gcc': return ' -DCMAKE_C_COMPILER=`which gcc` -DCMAKE_CXX_COMPILER=`which g++`'
+            else: return ''
+
+        clang_path = "{prefix}/tools/clang".format(**locals())
+
+        if not os.path.isfile(prefix + '/CMakeLists.txt'): execute('Download LLVM source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxom && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
+
+        if not os.path.isdir(clang_path): execute('Download Clang source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/cfe-{llvm_version}.src.tar.xz | tar -Jxom && mv cfe-{llvm_version}.src {clang_path}'.format(**locals()) )
+
+        if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
+
+
+        # if signature['config'] != disk_signature['config']:
+        #     print( 'LLVM build detected, but config version mismatched: was:"{}" current:"{}", perfoming a clean rebuild...'.format(disk_signature['config'], signature['config']) )
+        #     if os.path.isdir(build_dir): shutil.rmtree(build_dir)
+        # else: print( 'Binder build detected, but source version mismatched: was:{} current:{}, rebuilding...'.format(disk_signature['binder'], signature['binder']) )
+        '''
+        git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
+
+        #if os.path.isdir(prefix) and  (not os.path.isdir(prefix+'/.git')): shutil.rmtree(prefix)  # removing old style checkoiut
+
+        if not os.path.isdir(prefix):
+            print( 'No LLVM:{} + Binder install is detected! Going to check out LLVM and install Binder. This procedure will require ~1Gb of free disk space and will only be needed to be done once...\n'.format(release) )
+            os.makedirs(prefix)
+
+        if not os.path.isdir(prefix+'/.git'): execute('Clonning llvm...', 'cd {} && git clone git@github.com:llvm-mirror/llvm.git .'.format(prefix) )
+        execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix} && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+        if not os.path.isdir(prefix+'/tools/clang'): execute('Clonning clang...', 'cd {}/tools && git clone git@github.com:llvm-mirror/clang.git clang'.format(prefix) )
+        execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+        if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
+        '''
+
+        tool_link_path = '{prefix}/tools/clang/tools/extra/{name}'.format(prefix=prefix, name=name)
+        if os.path.islink(tool_link_path): os.unlink(tool_link_path)
+        os.symlink(source_location, tool_link_path)
+
+        cmake_lists = prefix + '/tools/clang/tools/extra/CMakeLists.txt'
+        tool_build_line = 'add_subdirectory({})'.format(name)
+
+        if not os.path.isfile(cmake_lists):
+            with open(cmake_lists, 'w') as f: f.write(tool_build_line + '\n')
+
+        build_config = '-DCMAKE_BUILD_TYPE={build_type}'.format(build_type='Debug' if debug else 'Release')
+        build_config += get_cmake_compiler_options()
+
+        if not os.path.isdir(build_dir): os.makedirs(build_dir)
+        execute(
+            'Building tool: {}...'.format(name), # -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=1
+            'cd {build_dir} && cmake -G Ninja {build_config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja {name} tools/clang/lib/Headers/clang-headers {jobs}'.format( # was 'binder clang', we need to build Clang so lib/clang/<version>/include is also built
+                name=name,
+                build_dir=build_dir, build_config=build_config,
+                jobs=f"-j{config['cpu_count']}",
+                gcc_install_prefix = ''), # ='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
+            silence_output=True)
+
+        print()
+        # build_dir = prefix+'/build-ninja-' + release
+        # if not os.path.isdir(build_dir): os.makedirs(build_dir)
+        # execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -DCMAKE_BUILD_TYPE={build_type} .. -G Ninja && ninja -j{jobs}'.format(build_dir=build_dir, jobs=Options.jobs, build_type='Debug' if debug else 'Release')) )
+
+        with open(signature_file_name, 'w') as f: json.dump(signature, f, sort_keys=True, indent=2)
+
+    executable = build_dir + '/bin/' + name
+    if not os.path.isfile(executable): print("\nEncounter error while running install_llvm_tool: Build is complete but executable {} is not there!!!".format(executable) ); sys.exit(1)
+
+    return executable
+
 
 
 def get_python_include_and_lib(python):
