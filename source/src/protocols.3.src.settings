@@ -103,6 +103,7 @@ sources = {
 		"BfactorFittingMover",
 		"DensitySymmInfo",
 		"DockIntoDensityMover",
+		"DockIntoDensityUtils",
 		"ScaleMapIntensities",
 		"ReportFSC",
 		"SetupForDensityScoringMover",

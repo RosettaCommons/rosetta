@@ -13,6 +13,7 @@
 /// @author Frank DiMaio
 
 #include <protocols/electron_density/DockIntoDensityMover.hh>
+#include <protocols/electron_density/DockIntoDensityUtils.hh>
 
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -446,190 +447,6 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 }
 
 
-void
-DockIntoDensityMover::poseSphericalSamples(
-	core::pose::Pose const &pose,
-	ObjexxFCL::FArray3D< core::Real > & sigR,
-	ObjexxFCL::FArray3D< core::Real > & epsR
-) {
-	using namespace core;
-
-	core::scoring::electron_density::ElectronDensity &density = core::scoring::electron_density::getDensityMap();
-
-	core::Size B=B_;
-	core::Real delRsteps=delR_;
-	core::Size nRsteps=nRsteps_;
-
-	numeric::xyzVector< Real > reference_atm;
-	utility::vector1< numeric::xyzVector< Real > > atmList;
-	utility::vector1< Real > all_K, all_C;
-
-	numeric::xyzVector< Real > massSum(0.0,0.0,0.0), centerCA(0.0,0.0,0.0);
-
-	// atom mask ... 3sigma from carbon
-	core::Real ATOM_MASK = 3.0 * sqrt( density.getEffectiveBfactor() / (2*M_PI*M_PI) );
-
-	for ( core::Size i=1; i<= pose.size(); ++i ) {
-		conformation::Residue const & rsd( pose.residue(i) );
-		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
-			conformation::Atom const & atom( rsd.atom(j) );
-			atmList.push_back(atom.xyz());
-			massSum += atom.xyz();
-
-			if ( i==(pose.size()+1)/2 && j==2 ) {
-				centerCA = atom.xyz();
-			}
-
-			chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
-			std::string elt_i = atom_type_set[ rsd.atom_type_index( j ) ].element();
-			core::scoring::electron_density::OneGaussianScattering sig_j = core::scoring::electron_density::get_A( elt_i );
-
-			core::Real K_i = sig_j.k( density.getEffectiveBfactor() );
-			all_K.push_back( K_i );
-			all_C.push_back( sig_j.C( K_i ) );
-		}
-	}
-	int nAtms=atmList.size();
-	massSum /= nAtms; // center_of_mass = mass_sum / nAtms
-
-	if ( center_on_middle_ca_ ) {
-		massSum = centerCA;
-	}
-
-	// precompute sines & cosines
-	utility::vector1<core::Real> cT,cG, sT,sG;
-	cT.resize(2*B); cG.resize(2*B); sT.resize(2*B); sG.resize(2*B);
-	for ( core::Size t=1; t<=2*B; ++t ) {
-		core::Real theta = (2.0*t-1.0)*M_PI/(4*B);
-		sT[t] = sin(theta);
-		cT[t] = cos(theta);
-	}
-	for ( core::Size p=1; p<=2*B; ++p ) {
-		core::Real phi = (2.0*p-2.0)*M_PI/(2*B);
-		sG[p] = sin(phi);
-		cG[p] = cos(phi);
-	}
-
-	//////////////////
-	// pose -> spherical-sampled density
-	// 1. one models each atom with a Gaussian sphere of density
-	// 2. interpolate this calculated density in cencentric spherical shells
-	// (extending out to D Ang in 1 Ang steps)
-	//////////////////
-	if ( laplacian_offset_ != 0 ) {
-		TR << "Applying laplacian filter with offset of: " << laplacian_offset_ << " A" << std::endl;
-	}
-	sigR.dimension( 2*B, 2*B, nRsteps );
-	sigR = 0.0;
-
-	epsR.dimension( 2*B, 2*B, nRsteps );
-	epsR = 0.0;
-
-	// for each atom
-	for ( int i=1; i<=nAtms; ++i ) {
-		core::Real k=all_K[i];
-		core::Real C=all_C[i];
-
-		atmList[i] -= massSum;
-
-		core::Real atomR = atmList[i].length();
-		if ( atomR < 1e-5 ) {
-			// uniform contribution to inner shells
-			for ( core::Size ridx=1; ridx<=nRsteps; ++ridx ) {
-				core::Real atomD = ridx * delRsteps;
-				if ( atomD < ATOM_MASK ) {
-					core::Real atomH = C * exp(-k*atomD*atomD); // <-- this is the place to calculate density
-					for ( core::Size t=1; t<=2*B; ++t ) {
-						for ( core::Size p=1; p<=2*B; ++p ) {
-							sigR(p,t,ridx) += atomH;
-							epsR(p,t,ridx) = 1.0;
-						}
-					}
-				}
-			}
-			continue;
-		}
-
-
-		core::Real beta = acos( atmList[i][2] / atomR );
-		core::Real gamma = atan2( atmList[i][0] , atmList[i][1] );   // x and y switched from usual convention
-
-		core::Real st1 = sin(beta);
-		core::Real sg1 = sin(gamma);
-		core::Real ct1 = cos(beta);
-		core::Real cg1 = cos(gamma);
-
-		if ( laplacian_offset_ != 0 ) {
-			for ( core::Size ridx=1; ridx<=nRsteps; ++ridx ) {
-				core::Real shellR = ridx * delRsteps;
-				for ( core::Size t=1; t<=2*B; ++t ) {
-					core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
-					if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue; // this just loops back to 2xB so we still get to sigR
-					for ( core::Size p=1; p<=2*B; ++p ) {
-						core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
-						if ( atomD < ATOM_MASK*ATOM_MASK ) {
-							core::Real atomH = C * exp(-k*atomD);
-							sigR(p,t,ridx) += (-6 * atomH);
-							epsR(p,t,ridx) = 1.0;
-						}
-					}
-				}
-			}
-			// compute laplacian for surrounding coordinates
-			for ( int xyz = 0; xyz < 3; ++xyz ) {
-				for ( int lapl = 0; lapl < 2; ++lapl ) {
-					reference_atm = atmList[i];
-					atmList[i][xyz] = atmList[i][xyz] + ( ( (lapl==0) ? 1.0 : -1.0 ) * laplacian_offset_ );
-					atomR = atmList[i].length();
-					core::Real beta_2 = acos( atmList[i][2] / atomR );
-					core::Real gamma_2 = atan2( atmList[i][0] , atmList[i][1] );   // x and y switched from usual convention
-					core::Real st1_2 = sin(beta_2);
-					core::Real sg1_2 = sin(gamma_2);
-					core::Real ct1_2 = cos(beta_2);
-					core::Real cg1_2 = cos(gamma_2);
-					// residue index
-					for ( core::Size ridx=1; ridx<=nRsteps; ++ridx ) {
-						core::Real shellR = ridx * delRsteps;
-						for ( core::Size t=1; t<=2*B; ++t ) {
-							core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1_2*sT[t]+ct1_2*cT[t]);
-							if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue;
-							for ( core::Size p=1; p<=2*B; ++p ) {
-								core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1_2*sT[t]*(sg1_2*sG[p]+cg1_2*cG[p])+ct1_2*cT[t]);
-								if ( atomD < ATOM_MASK*ATOM_MASK ) {
-									core::Real atomH = C * exp(-k*atomD);
-									sigR(p,t,ridx) += atomH;
-									epsR(p,t,ridx) = 1.0;
-								}
-							}
-						}
-					}
-					// set atm back to original value
-					atmList[i] = reference_atm;
-				}
-			}
-
-		} else {
-			for ( core::Size ridx=1; ridx<=nRsteps; ++ridx ) {
-				core::Real shellR = ridx * delRsteps;
-				for ( core::Size t=1; t<=2*B; ++t ) {
-					core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
-					if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue;
-					for ( core::Size p=1; p<=2*B; ++p ) {
-						core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
-						if ( atomD < ATOM_MASK*ATOM_MASK ) {
-							core::Real atomH = C * exp(-k*atomD);
-							sigR(p,t,ridx) += atomH;
-							epsR(p,t,ridx) = 1.0;
-						}
-					}
-				}
-			}
-		}
-	} // loop through each atom
-}
-
-
 // do the main search over the map
 void
 DockIntoDensityMover::density_grid_search (
@@ -655,7 +472,10 @@ DockIntoDensityMover::density_grid_search (
 	// get pose SPHARM
 	ObjexxFCL::FArray3D< core::Real > poseSig, poseCoefR, poseCoefI;
 	ObjexxFCL::FArray3D< core::Real > poseEps, poseEpsCoefR, poseEpsCoefI;
-	poseSphericalSamples( pose, poseSig, poseEps );
+
+	/// step 1: map pose to spherically sampled density + mask
+	pose_spherical_samples( pose, poseSig, poseEps,
+		PoseSphericalSamplesOptions{B_, nRsteps_, delR_, laplacian_offset_, center_on_middle_ca_});
 
 	SOFT.sharm_transform( poseSig, poseCoefR, poseCoefI );
 	//poseEps = 1.0; // uncomment to turn off masking
@@ -1151,9 +971,5 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 	}
 }
 
-
-
-
 }
 }
-

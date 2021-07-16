@@ -234,13 +234,6 @@ public:
 	void
 	map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< core::Real > &rot );
 
-	/// @brief  step 0: map pose to spherically sampled density + mask
-	void
-	poseSphericalSamples(
-		core::pose::Pose const &pose,
-		ObjexxFCL::FArray3D< core::Real > &sigR,
-		ObjexxFCL::FArray3D< core::Real > &epsR);
-
 	/// @brief  step 1: select points over which to search (saved in class variable)
 	void
 	select_points(
