@@ -991,7 +991,7 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 
 	// set flexible jump in the pose
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
-	TRBM << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
+	TRBM.Debug << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
 
 	// get upstream stub
 	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
@@ -1014,7 +1014,7 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 
 	// do the actual translation
 	flexible_jump.translation_along_axis( upstream_stub, axis, step_size_ );
-	TRBM << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
+	TRBM.Debug << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
 
 	// set flexible jump in the pose
 	pose.set_jump( rb_jump_, flexible_jump );

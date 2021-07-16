@@ -2442,8 +2442,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		#### Glycan Dock Options #####
 		Option_Group('glycan_dock',
 			Option('n_repeats', 'Integer',
-				desc = 'Number of times to run the GlycanDock protocol on a protein-glycoligand system if the final docked structure does not pass the quality filter (< 0 Rosetta interaction energy). Default = 1',
-				default = '1'
+				desc = 'Number of times to restart the GlycanDock algorithm starting at Stage 2 if the final docked model does not pass the quality filter (< 0 Rosetta interaction energy). Default = 3',
+				default = '3'
 				),
 			Option('refine_only', 'Boolean',
 				desc='Perform refinement of the input putative complex only. Skips Stage 1 (conformational initialization via a random perturbation) and, during Stage 2, do not perform large perturbations in glycosidic torsion angle space. Default = false',

@@ -70,7 +70,12 @@ for i in range( 0, len( scorefiles ) ):
 	x = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + x_index + "}'" ).splitlines()
 	y = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + y_index + "}'" ).splitlines()
 	z = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + z_index + "}'" ).splitlines()
-	nscore, nstd = bs.bootstrap_NX( scorefiles[i], 5, 1000)
+
+	# sort the randomly re-sampled subset of models on y_label, taking the top 5
+	# then, check if the 5-top-scoring models have metric z_label >= 1 (True means use >= for the metric)
+	# take len(y) random models with replacement from the original set of models
+	# repeat the process of checking if the top-5 models have a CAPRI rank of 1 or better 1000 times
+	nscore, nstd = bs.bootstrap_NX( scorefiles[i], y_label, 5, z_label, 1, True, sample_size=len(y), n_samples=1000)
 
 	# map values to floats (were strings)
 	x = list( map( float, x ))

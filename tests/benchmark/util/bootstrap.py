@@ -11,81 +11,123 @@
 ## @file   bootstrap.py
 ## @brief  Functions for bootstrapping docking results to evaluate quality metrics
 ## @author Ameya Harmalkar, Shourya S. Roy Burman
+## @edits Morgan Nance (@mlnance; for generality of bootstrap calculations)
 
 import argparse, os, os.path, sys, math, random
 import numpy as np
 import pandas as pd
+import benchmark
+from benchmark.util import scorefile_io_utils as sciu
 
 #=======================================
-def count_high_res_success(sample, n):
+def count_success(sub_sample_df, score, N_top, metric, cutoff, gt_eq_cutoff):
     """This functions measures the metric to calculate success. It takes in the list of
     the randomly selected decoys that need to be chosen and returns the success count
 
     **Arguments**
-        sample : *list,list,float,float,str*
-        Nested list containing floats and strings .i.e. scores, rms and description
-        of the PDB decoys
+        sub_sample_df : *DataFrame*
+            A DataFrame containing 'score' and 'metric' for decoy of the random sub-selection.
         
-        n : *int*
-        The integer of decoys that need to be randomly selected.
+        score : *str*
+            The name of the score on which to sort the decoys.
+
+        N_top : *int*
+            The top X decoys to be evauated against.
+
+        metric : *str*
+            The name of the metric with which to determine docking success.
+
+        cutoff : *float*
+            The float cutoff value defining docking success
+        
+        gt_eq_cutoff : *bool*
+            Is success defined by the metric being >= to the cutoff (True)? Or
+            is it defined by the metric being <= to the cutoff (False)?
         
     **Returns**
         success_count : *int*
-        The successful/acceptable decoys present in the random selection from 1000 decoys.
+            The successful decoys present in the random sub-selection of decoys.
     """
-    success_count = 0
-    # select CAPRI rank > 0 i.e. acceptable or better quality
-    if len(sample) < n :
-        if sample[0][1] >= 1:
-            success_count += 1
+    # example success cutoff of 1 when gt_eq_cutoff is True:
+    # --select CAPRI_rank >= 1 i.e. acceptable or better quality
+    # example success cutoff of 2.0 when gt_eq_cutoff is False:
+    # --select rmsd <= 2.0 i.e. a near-native decoy
+    sub_sample_df = sub_sample_df.sort_values(score)
+    if gt_eq_cutoff:
+        return sum(sub_sample_df.iloc[:N_top][metric] >= cutoff)
     else:
-        for i in range(n):
-            if sample[i][1] >= 1:
-                success_count += 1
-    return success_count
+        return sum(sub_sample_df.iloc[:N_top][metric] <= cutoff)
 
 
 #=======================================
-def randomly_sample(scorefile, N_top):
+def randomly_sample(df, sample_size, score, N_top, metric, cutoff, gt_eq_cutoff):
     """Evaluates the <NX> metric where X=N_top, with randomly picked score entries 
     from the scorefile. 
 
     **Arguments**
-        scorefile : *str*
+        df : *DataFrame*
+            The scorefile turned into a Pandas DataFrame
+
+        sample_size : *int*
+            The number of random models to select (with replacement) from the original set.
+            Ex: len(df) == 10000 & sample_size == 1000, select 1000 random models from the 10000.
+                where "with replacement" means you could select the same model more than once.
+
+        score : *str*
+            The name of the score on which to sort the decoys.
+
         N_top : *int*
             The top X decoys to be evauated against.
+
+        metric : *str*
+            The name of the metric with which to determine docking success.
+
+        cutoff : *float*
+            The float cutoff value defining docking success
+        
+        gt_eq_cutoff : *bool*
+            Is success defined by the metric being >= to the cutoff (True)? Or
+            is it defined by the metric being <= to the cutoff (False)?
         
     **Returns**
         N_top : *int*
             The <NX> quality metric
     """
-    sample = []
-    score_file = open(scorefile).readlines()
-    headers = score_file[1].split()[1:]
-    score_data = [line.split()[1:] for line in score_file[2:]]
-    df = pd.DataFrame( score_data, columns=headers, dtype=float )
-    
-    for i in range(len(score_file) - 2):
-        entry = random.randint(1, len(score_file)-2) 
-        # appends I_sc, CAPRI_rank
-        sample.append( [df.iloc[entry-1]["I_sc"], df.iloc[entry-1]["CAPRI_rank"]])
+    # examples:
+    # --samples "I_sc" (score) and its "CAPRI_rank" (metric)
+    # --samples "interaction_energy" (score) and its "rmsd" (metric)
 
-    sample.sort(key=lambda x:x[0])
-    ntop = count_high_res_success(sample, N_top)
+    if len(df) < sample_size:
+        # should only be here in debug mode, really
+        # debug mode nstruct is very low, say 5-20
+        # so should not take 1000 samples if len(df) is low
+        sample_size = len(df)
 
-    return ntop
+    # Note: could set a random_state for pandas' random sample
+    sub_sample_df = df.sample(n=sample_size, replace=True)
+
+    return count_success(sub_sample_df, score, N_top, metric, cutoff, gt_eq_cutoff)
 
 
 #=======================================
-def bootstrap_NX(scorefile, N_top, sample_size=1000):
+def bootstrap_NX(scorefile,
+                 score_str, N_top,
+                 metric_str, cutoff, gt_eq_cutoff,
+                 sample_size=1000, # N random models selected form orig model set
+                 n_samples=5000): # B in doi.org/10.1371
     """To evaluate the average <NX> metric by bootstrapping for defined sample size.
     """
+    df = sciu.scorefile_to_dataframe(scorefile)
+    # only care about the score_str and metric_str cols in df from scorefile
+    df = df[[score_str, metric_str]]
 
+    # evaluate bootstrap <NX> by taking    
+    # <n_samples> random, independent sub-samples of size <sample_size>
     NX = []
-
-    # sample 1000 times
-    for i in range(sample_size):
-        ntop = randomly_sample(scorefile, N_top)
+    for ii in range(n_samples):
+        ntop = randomly_sample(df, sample_size,
+                               score_str, N_top, # top-N ranked by score
+                               metric_str, cutoff, gt_eq_cutoff) # is metric >= or <= cutoff
         NX.append(ntop)
     
     NX = np.array(NX)

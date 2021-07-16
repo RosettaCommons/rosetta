@@ -970,12 +970,12 @@ calc_GlycanDock_intf_metrics
 	// and return a pymol selection of those decoy interface residues
 	core::Real const n_intf_residues = // yes, change Size to Real
 		core::select::residue_selector::count_selected( decoy_intf_res_subset );
-	core::simple_metrics::metrics::SelectedResiduesPyMOLMetric SRPyMOL =
-		core::simple_metrics::metrics::SelectedResiduesPyMOLMetric();
-	SRPyMOL.set_residue_selector( core::select::get_residue_selector_from_subset
-		( decoy_intf_res_subset ) );
-	core::pose::setPoseExtraScore( pose, "pymol_intf_res_5A_cutoff",
-		SRPyMOL.calculate( pose ) );
+	//core::simple_metrics::metrics::SelectedResiduesPyMOLMetric SRPyMOL =
+	// core::simple_metrics::metrics::SelectedResiduesPyMOLMetric();
+	//SRPyMOL.set_residue_selector( core::select::get_residue_selector_from_subset
+	// ( decoy_intf_res_subset ) );
+	//core::pose::setPoseExtraScore( pose, "pymol_intf_res_5A_cutoff",
+	// SRPyMOL.calculate( pose ) );
 
 	// If we are not comparing the decoy to the reference pose,
 	// then we are done getting interface stats

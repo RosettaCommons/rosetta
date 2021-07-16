@@ -131,9 +131,10 @@ def norm_Conway(scores):
 # =======================================
 def check_rmsd_of_topscoring(rmsd_col_sorted, cutoff, filehandle):
 
-    out = "rmsd of topscoring model < " + str(cutoff)
+    out = "rmsd of topscoring model <= " + str(cutoff)
     filehandle.write(out + "\t")
 
+    assert len(rmsd_col_sorted) > 0
     if rmsd_col_sorted[0] <= cutoff:
         value = True
     else:
@@ -144,16 +145,36 @@ def check_rmsd_of_topscoring(rmsd_col_sorted, cutoff, filehandle):
 
 
 # =======================================
+# @author Morgan Nance (@mlnance)
+def check_rmsd_of_topXscoring(rmsd_col_sorted, topX, cutoff, filehandle):
+
+    out = "At least one RMSD among top-" + str(topX) + " <= cutoff " + str(cutoff)
+    filehandle.write(out + "\t")
+
+    value = False
+    l = len(rmsd_col_sorted)
+    for ii in range(0, topX):
+        if ii >= l: break # otherwise IndexError
+        if rmsd_col_sorted[ii] <= cutoff:
+            value = True
+            break
+
+    filehandle.write(str(value) + "\n")
+    return {"At least one RMSD among top-" + str(topX) + " <= its cutoff": value}
+
+
+# =======================================
 def check_range(col, tag, filehandle):
 
     filehandle.write(
         tag
-        + "\tmin, max, avg, std:"
-        + "% 12.3f % 12.3f % 12.3f % 12.3f\n" % (min(col), max(col), np.mean(col), np.std(col))
+        + "\tmin, max, med, avg, std:"
+        + "% 12.3f % 12.3f % 12.3f % 12.3f % 12.3f\n" % (min(col), max(col), np.median(col), np.mean(col), np.std(col))
     )
     value = {
         "min": round(min(col), 4),
         "max": round(max(col), 4),
+        "med": round(np.median(col), 4),
         "avg": round(np.mean(col), 4),
         "std": round(np.std(col), 4),
     }
@@ -260,7 +281,7 @@ def check_for_2d_top_values(
 # advantageous for repeated testing: if the scatter of points on the RMSD plot changes very slightly
 # from run to run, the PNear value will only change by a small amount, whereas any metric dependent
 # on hard cutoffs could change by a large amount if a low-energy point crosses an RMSD threshold.
-# @author Vikram K. Mulligan (vmulligan@flatironinstitute.org
+# @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 def calculate_pnear( scores, rmsds, lambda_val=1.5, kbt=0.62 ) :
     nscores = len(scores)
     assert nscores == len(rmsds), "Error in calculate_pnear(): The scores and rmsds lists must be of the same length."
@@ -272,8 +293,8 @@ def calculate_pnear( scores, rmsds, lambda_val=1.5, kbt=0.62 ) :
     Z = 0.0
     lambdasq = lambda_val * lambda_val
     for i in range( nscores ) :
-        val1 = exp( -( rmsds[i] * rmsds[i] ) / lambdasq )
-        val2 = exp( -( scores[i] - minscore ) / kbt )
+        val1 = np.exp( -( rmsds[i] * rmsds[i] ) / lambdasq )
+        val2 = np.exp( -( scores[i] - minscore ) / kbt )
         weighted_sum += val1*val2
         Z += val2
     assert Z > 1e-15, "Math error in calculate_pnear()!  This shouldn't happen."

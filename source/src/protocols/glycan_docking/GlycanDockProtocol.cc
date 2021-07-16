@@ -212,7 +212,9 @@ GlycanDockProtocol::set_cmd_line_defaults()
 	// code to work, but the user could have also set an explicit value
 	// Either way, grab the inputs for each protocol-necessary flag default
 	n_cycles_ = option[ OptionKeys::run::n_cycles ]; // default = 10 in .hh
-	lock_rings_ = option[ OptionKeys::rings::lock_rings ]; // default = true in .hh
+	if ( option[ OptionKeys::rings::lock_rings ].user() ) {
+		lock_rings_ = option[ OptionKeys::rings::lock_rings ]; // default = true in .hh
+	}
 	min_type_ = option[ OptionKeys::run::min_type ]; // default = lbfgs_armijo_nonmonotone
 	min_tolerance_ = option[ OptionKeys::run::min_tolerance ]; // default here = 0.01
 
@@ -710,7 +712,7 @@ GlycanDockProtocol::docking_filter
 void
 GlycanDockProtocol::record_pose_metrics
 ( core::pose::Pose & pose, // metrics written to pose
-	std::string const & partners,
+	//std::string const & partners,
 	utility::vector1< bool > const & glycolig_subset,
 	core::pose::Pose const & ref_pose, // should be already scored!
 	utility::vector1< bool > const & ref_glycolig_subset )
@@ -741,41 +743,38 @@ GlycanDockProtocol::record_pose_metrics
 	core::pose::setPoseExtraScore( pose, "heavy_Srmsd", heavy_Srmsd );
 
 	// Get HBond information at the interface
+	/*
 	protocols::residue_selectors::HBondSelectorOP intf_hbond_stor
-		( utility::pointer::make_shared
-		< protocols::residue_selectors::HBondSelector >() );
+	( utility::pointer::make_shared
+	< protocols::residue_selectors::HBondSelector >() );
 	intf_hbond_stor->set_hbond_energy_cutoff( -0.5 );
 	intf_hbond_stor->set_include_bb_bb( true );
 	intf_hbond_stor->set_scorefxn( scorefxn_ );
 	core::simple_metrics::metrics::SelectedResiduesPyMOLMetricOP SRPyMOL
-		( utility::pointer::make_shared
-		< core::simple_metrics::metrics::SelectedResiduesPyMOLMetric >() );
+	( utility::pointer::make_shared
+	< core::simple_metrics::metrics::SelectedResiduesPyMOLMetric >() );
 	for ( core::Size glycolig_resnum : glycolig_resnums ) {
-		utility::vector1< bool > single_glycolig_subset =
-			( utility::pointer::make_shared
-			< core::select::residue_selector::FalseResidueSelector >() )->apply( pose );
-		single_glycolig_subset[glycolig_resnum] = true;
-		intf_hbond_stor->set_input_set_selector
-			( core::select::get_residue_selector_from_subset( single_glycolig_subset ) );
-		SRPyMOL->set_residue_selector
-			( core::select::get_residue_selector_from_subset
-			( intf_hbond_stor->apply( pose ) ) );
-		core::pose::setPoseExtraScore( pose,
-			"pymol_hbonders_to-" +
-			pose.pdb_info()->pose2pdb
-			( glycolig_resnum, "" ),
-			SRPyMOL->calculate( pose ) );
+	utility::vector1< bool > single_glycolig_subset =
+	( utility::pointer::make_shared
+	< core::select::residue_selector::FalseResidueSelector >() )->apply( pose );
+	single_glycolig_subset[glycolig_resnum] = true;
+	intf_hbond_stor->set_input_set_selector
+	( core::select::get_residue_selector_from_subset( single_glycolig_subset ) );
+	SRPyMOL->set_residue_selector
+	( core::select::get_residue_selector_from_subset
+	( intf_hbond_stor->apply( pose ) ) );
+	core::pose::setPoseExtraScore( pose,
+	"pymol_hbonders_to-" +
+	pose.pdb_info()->pose2pdb
+	( glycolig_resnum, "" ),
+	SRPyMOL->calculate( pose ) );
 	}
+	*/
 
-	// Calculate interaction energy and with a scorefxn_ without fa_sol score
+	// Calculate interaction energy
 	core::Real const interaction_energy
 		( calc_interaction_energy( pose, // const
 		scorefxn_, movable_jump_ ) );
-	core::scoring::ScoreFunctionOP no_fa_sol_sf( scorefxn_->clone() );
-	no_fa_sol_sf->set_weight( fa_sol, 0 );
-	core::Real const no_fa_sol_interaction_energy
-		( calc_interaction_energy( pose, // const
-		no_fa_sol_sf, movable_jump_ ) );
 
 	// Calculate the standard docking decoy metrics using the reference pose
 	// If no native pose given on input, the starting structure is used
@@ -800,24 +799,21 @@ GlycanDockProtocol::record_pose_metrics
 
 	// Record and output decoy pose metrics
 	TR << "START Metrics for decoy:" << std::endl;
-	TR << "-Total Score:                     " << total_score << std::endl;
-	TR << "-Interaction Energy:              " << interaction_energy << std::endl;
-	TR << "-fa_sol=0 Interaction Energy:     " << no_fa_sol_interaction_energy << std::endl;
+	TR << "-total_score:                     " << total_score << std::endl;
+	TR << "-interaction_energy:              " << interaction_energy << std::endl;
 	TR << "-ring_Lrmsd:                      " << ring_Lrmsd << std::endl;
 	TR << "-heavy_Lrmsd:                     " << heavy_Lrmsd << std::endl;
 	TR << "-ring_Srmsd:                      " << ring_Srmsd << std::endl;
 	TR << "-heavy_Srmsd:                     " << heavy_Srmsd << std::endl;
 	TR << "-N interface residues:            " << n_intf_residues << std::endl;
-	TR << "-Fnat interface residues:         " << Fnat_intf_res << std::endl;
 	TR << "-N interface residue contacts:    " << n_intf_res_contacts << std::endl;
 	TR << "-Fraction of native contacts:     " << Fnat << std::endl;
+	TR << "-Fnat interface residues:         " << Fnat_intf_res << std::endl;
 	TR << "END Metrics for decoy" << std::endl;
 
 	// Add the extra decoy metrics to the scorefile and the decoy
 	core::pose::setPoseExtraScore( pose, "interaction_energy",
 		interaction_energy );
-	core::pose::setPoseExtraScore( pose, "no_fa_sol_interaction_energy",
-		no_fa_sol_interaction_energy );
 	core::pose::setPoseExtraScore( pose, "n_intf_residues",
 		n_intf_residues );
 	core::pose::setPoseExtraScore( pose, "n_nat_intf_residues",
@@ -837,9 +833,9 @@ GlycanDockProtocol::record_pose_metrics
 	// After manually getting above metrics, use the InterfaceAnalyzerMover
 	// the apply method calls apply_const first, so the pose is const
 	// until the data are written to the pose object (output file) itself
-	protocols::analysis::InterfaceAnalyzerMoverOP intf_analyzer
-		( get_GlycanDock_IAM( partners, scorefxn_ ) );
-	intf_analyzer->apply( pose );
+	//protocols::analysis::InterfaceAnalyzerMoverOP intf_analyzer
+	// ( get_GlycanDock_IAM( partners, scorefxn_ ) );
+	//intf_analyzer->apply( pose );
 
 } // END record_pose_metrics
 
@@ -1312,7 +1308,7 @@ GlycanDockProtocol::apply( core::pose::Pose & pose )
 	// Record output decoy pose metrics to be stored in the score file
 	// but for prepacking, we are not interested in these data
 	if ( ! prepack_only_ ) {
-		record_pose_metrics( pose, partners_, glycolig_subset,
+		record_pose_metrics( pose, glycolig_subset,
 			*ref_pose, ref_glycolig_subset );
 	}
 

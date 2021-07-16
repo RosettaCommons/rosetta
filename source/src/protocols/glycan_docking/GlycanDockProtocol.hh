@@ -412,7 +412,7 @@ private: // methods
 	/// @brief Record a collection of decoy metrics
 	void record_pose_metrics
 	( core::pose::Pose & pose,
-		std::string const & partners,
+		//std::string const & partners,
 		utility::vector1< bool > const & glycolig_subset,
 		core::pose::Pose const & ref_pose,
 		utility::vector1< bool > const & ref_glycolig_subset );
@@ -464,7 +464,7 @@ private: // data
 	//////////////////////////
 
 	core::Size n_cycles_ = 10; // from benchmark, set by -run:ncycles
-	core::Size n_repeats_ = 1; // cmd line; benchmark used = 3
+	core::Size n_repeats_ = 3; // cmd line; benchmark used = 3
 	std::string partners_ = "_"; // req
 	core::Real intf_pack_dist_ = 16; // cmd line
 

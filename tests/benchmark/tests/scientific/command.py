@@ -126,7 +126,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         stepwise_rna_favorites = 'numpy matplotlib==3.2',
         rna_denovo_favorites   = 'numpy matplotlib==3.2',
         simple_cycpep_predict  = 'numpy matplotlib==3.2',
-	      peptide_pnear_vs_ic50  = 'numpy scipy matplotlib==3.2',
+        peptide_pnear_vs_ic50  = 'numpy scipy matplotlib==3.2',
 
         design_fast            = 'numpy matplotlib==3.2',
         enzyme_design          = 'numpy matplotlib==3.2',
@@ -165,6 +165,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         docking_ensemble       = 'numpy matplotlib==3.2 pandas==0.24.2',
         ddg_ala_scan           = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
         glycan_structure_prediction  = 'numpy matplotlib==3.2 pandas==0.24.2 seaborn',
+        glycan_dock            = 'numpy matplotlib==3.2 pandas==0.24.2',
         RosettaCM              = 'numpy matplotlib==3.2',
 
 
