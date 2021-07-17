@@ -29,7 +29,7 @@ The ensemble docking protocol is based on the conformational-selection mechanism
 Publication: The methodological details of the protocol, RosettaDock 4.0 and the performance on the benchmark have been thoroughly discussed in Marze, N. A., Roy Burman, S. S. et al. <a href="https://doi.org/10.1093/bioinformatics/bty355">Bioinfo., 2018</a>.
  
 CPU hours: 
-The benchmark takes 600-700 CPU hrs depending upon the size of the protein target. The debug mode takes roughly 13-15 mins. 
+The benchmark takes 3000-3500 CPU hrs for 5000 decoys. The debug mode takes roughly 1h 15 mins. 
 
 ## PERFORMANCE METRICS
 #### What are the performance metrics used and why were they chosen?

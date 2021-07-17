@@ -168,6 +168,9 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         glycan_dock            = 'numpy matplotlib==3.2 pandas==0.24.2',
         RosettaCM              = 'numpy matplotlib==3.2',
 
+        abinitio_RosettaNMR_rdc = 'numpy matplotlib==3.2',
+        abinitio_RosettaNMR_pcs = 'numpy matplotlib==3.2',
+
 
 	# LARGE-SCALE SCOREFUNCTION COMPARISONS============================
 

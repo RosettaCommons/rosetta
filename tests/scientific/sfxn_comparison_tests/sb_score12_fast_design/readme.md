@@ -23,7 +23,7 @@ The protocol runs FastDesign in RosettaScripts currently with 1 iteration, nstru
 #### What are the performance metrics used and why were they chosen?
 #### How do you define a pass/fail for this test?
 #### How were any cutoffs defined?
-We use sequence recovery between the native and the design computed via SimpleMetrics in RosettaScripts. The cutoffs were defined for sequence recovery, for each protein take the minimum minus 2 stdev. For the score, per protein take the maximum plus 5 stdev. 
+We use sequence recovery between the native and the design computed via SimpleMetrics in RosettaScripts. The cutoffs were defined for sequence recovery, for each protein take the minimum minus 2 stdev. For the score, per protein take the maximum plus 5 stdev. For the score12 version we use 90% of the score values below the cutoff because there are occasional outliers with high scores. 
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?

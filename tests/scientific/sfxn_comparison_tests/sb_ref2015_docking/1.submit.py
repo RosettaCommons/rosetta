@@ -76,7 +76,7 @@ command_line = '''
 '''.replace('\n', ' ').replace('  ', ' ')
 
 
-nstruct = 2 if debug else 1000
+nstruct = 2 if debug else 5000
 
 targets = '1AY7 1CGI 1FQ1 1LFD 1MAH 2IDO 2PCC 2SIC 3EO1 4IZ7'.split()
 targets = targets[:2] if debug else targets

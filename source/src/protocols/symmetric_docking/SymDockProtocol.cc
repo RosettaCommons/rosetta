@@ -57,12 +57,15 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/constraint_generator/util.hh>
 
 #include <protocols/simple_filters/SAXSScoreFilter.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -502,7 +505,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 	if ( !hurry_ ) {
 		// calculate and store the rms no matter which mode was used
-		if ( get_native_pose() ) {
+		if ( get_native_pose() && !option[ OptionKeys::mp::setup::spanfiles ].user() ) {
 			Real rms = calc_rms( pose );
 			score_map_["rms"] = rms; //jd1
 			job->add_string_real_pair("rms", rms);
@@ -739,15 +742,37 @@ SymDockProtocol::calc_rms( core::pose::Pose & pose ){
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	FArray1D_bool superpos ( pose.size(), false );
-	for ( core::Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res ) {
-		superpos(res) = true;
-	}
-	if ( get_native_pose() ) {
+	// if native exists
+	if ( protocols::constraint_generator::get_native_pose() ) {
+
+		// THIS IS FOR A FUTURE TODO:
+		// Currently made a quick fix that doesn't even use this function for MPs
+		// but this needs to be fixed later when digging into mp_symdock properly!!!
+
+		// if native pose is a membrane pose, add the MEM residue
+		core::pose::PoseOP native = protocols::constraint_generator::get_native_pose();
+		//  if (  option[ OptionKeys::mp::setup::spanfiles ].user() ) {
+		//   using namespace protocols::membrane;
+		//   AddMembraneMoverOP add_memb = AddMembraneMoverOP( new AddMembraneMover() );
+		//   add_memb->apply( *native );
+		//  }
+
+		//  FArray1D_bool superpos ( pose.size(), false );
+		FArray1D_bool superpos ( symm_info->num_total_residues_without_pseudo(), false );
+		//  TR << "pose size " << pose.size() << std::endl;
+		//  TR << "native size " << native->size() << std::endl;
+		//  TR << "pose without pseudo" << symm_info->num_total_residues_without_pseudo() << std::endl;
+
+		for ( core::Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res ) {
+			superpos(res) = true;
+			//   TR << "superpos res " << res << " " << superpos(res) << std::endl;
+		}
+
+		// if native pose is symmetric
 		if ( option[ OptionKeys::symmetry::symmetric_rmsd ]() ) {
-			return core::scoring::CA_rmsd_symmetric( *get_native_pose(), pose );
+			return core::scoring::CA_rmsd_symmetric( *native, pose );
 		} else {
-			return core::scoring::rmsd_with_super_subset( *get_native_pose(), pose, superpos, core::scoring::is_protein_CA );
+			return core::scoring::rmsd_with_super_subset( *native, pose, superpos, core::scoring::is_protein_CA );
 		}
 	}
 	return -1;
@@ -975,6 +1000,13 @@ SymDockProtocol::calc_fnat( core::pose::Pose & pose, core::scoring::ScoreFunctio
 	// score to set up interface object
 	// scoring only happened here to update the residue neighbors
 	core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone();
+
+	// make sure the native has a MembraneInfo object if it's a membrane protein
+	if (  option[ OptionKeys::mp::setup::spanfiles ].user() ) {
+		using namespace protocols::membrane;
+		AddMembraneMoverOP add_memb = AddMembraneMoverOP( new AddMembraneMover() );
+		add_memb->apply( native_docking_pose );
+	}
 
 	( *scorefxn )( native_docking_pose );
 

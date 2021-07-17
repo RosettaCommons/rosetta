@@ -29,7 +29,7 @@ failures = []
 
 # inputs are header labels from the scorefile, for instance "total_score" and "rmsd"
 # => it figures out the column numbers from there
-x_label = "rms"
+x_label = "cen_rms"
 y_label = "I_sc"
 outfile = "result.txt"
 cutoffs = "cutoffs"

@@ -22,7 +22,7 @@ The input files were downloaded from the OPM database (1BL8 didn't have the corr
 
 The protocol is described in (Alford, Koehler Leman et. al. PlosCompBio 2015) with command lines in the paper supplement. However, some flags had to be adjusted to make this run properly. 
 
-Note that for -in:file:native I am using the relaxed native but the symmetry framework starts with the asymmetric unit as the input structure. Therefore, the RMSD will never be super close to the native (even though with the adjusted (and terrible flags) the RMSDs are actually amazing compared to what I see in the figures in the paper supplement). Terrible flags means that to get decoys in a reasonable amount of time, I had so use some flags that should not be used (like one for docking prepack for instance). I can imagine that some code has changed for low-res and high-res filtering steps as well, the docking:ppk flag makes sure the models pass these filters which they otherwise would not. 
+Note that for -in:file:native I am using the relaxed native but the symmetry framework starts with the asymmetric unit as the input structure. Therefore, the RMSD will never be super close to the native (even though with the adjusted not-optimal flags the RMSDs are actually amazing compared to what I see in the figures in the paper supplement). Not-optimal flags means that to get decoys in a reasonable amount of time, I had so use some flags that should not be used (like one for docking prepack for instance). I can imagine that some code has changed for low-res and high-res filtering steps as well, the docking:ppk flag makes sure the models pass these filters which they otherwise would not. 
 
 The protocol is the MPSymDock protocol, which runs the SymDock protocol underneath, which is based on the DockingProtocol. So we have a low-res docking step before it does high-res docking. Because of this, some decoys wouldn't pass the low-res stage, therefore the score file can have a mixture of centroid and high-res decoys with differing headers. That's the reason why the plotting script goes by index and not by column tag.
 
@@ -37,7 +37,7 @@ We use interface score I_sc vs. RMSD to the native. The native here is the relax
 
 Cutoffs were defined by looking at the I_sc vs. RMSD distribution of the first run. The I_sc vs RMSD plots look substantially better than in the paper, not quite sure why. Differences are inclusion of the '-score:weights mpframework_docking_fa_2015.wts' flag and the '-docking::dock_ppk true'. Cutoffs need to be redone once the protocol has been optimized and better flags are found. 
 
-Note that the I_sc in a normal range would be <0, maybe in the range between -20 to 0, not in the tens of thousands as we see here. Same with the total scores, which is all due to clashes.
+Note that the I_sc in a normal range would be <0, maybe in the range between -20 to 0, not in negative hundreds as we sometimes see here. 
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?
@@ -51,7 +51,7 @@ The baseline are relaxed structures from the OPM database.
 2oar - C5 symmetry of a channel
 2uuh - C3 symmetry of leukotriene synthase
 
-The funnel plots look pretty great, but again, these are docking_ppk structures and have horrible total scores due to clashes. I also noticed that the models (without docking_ppk flag) are too close and tight and therefore have horrible scores compared to the natives. So adjusting the protocol to move the structures slightly further apart (perpendicular to the symmetry axis) should give better scoring models that are closer to the native without needing the docking_ppk flag.
+The RMSDs that are sampled are pretty good but the interface scores are sometimes a little too good and it needs to be figured out where this is coming from. Note that this is a proof-of-concept protocol that could and should be improved code-wise and properly benchmarked. 
 
 ## DEFINITIONS AND COMMENTS
 #### State anything you think is important for someone else to replicate your results. 
@@ -64,3 +64,6 @@ The original benchmarking was done by Rebecca Alford and this benchmark set, eve
 #### What goals should be hit to make this a "good" benchmark?
 
 The protocol should certainly be improved code-wise. This protocol is a proof-of-concept so far, needs to be benchmarked on a larger dataset with more diverse structures and symmetries. I'd like to see some beta-barrels in the benchmark set. Quality measures are standard, so they are fine. 
+
+In an earlier version of this protocol the funnel plots looked pretty great, but again, these are docking_ppk structures and had horrible total scores due to clashes. I also noticed that the models (without docking_ppk flag) were too close and tight and therefore have horrible scores compared to the natives. So adjusting the protocol to move the structures slightly further apart (perpendicular to the symmetry axis) should give better scoring models that are closer to the native without needing the docking_ppk flag.
+

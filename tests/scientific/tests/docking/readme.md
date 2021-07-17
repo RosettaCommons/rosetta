@@ -29,7 +29,7 @@ Publication:
 The methodological details of the protocol, RosettaDock 4.0 and the performance on the benchmark have been thoroughly discussed in Marze, N. A., Roy Burman, S. S. et al. <a href="https://doi.org/10.1093/bioinformatics/bty355">Bioinfo., 2018</a>. 
 
 CPU hours:
-The benchmark takes ~150 hours. The debug mode takes ~4 mins.
+The benchmark takes ~833 CPU hours (10 targets x 5000 decoys x 60s per decoy). The debug mode takes ~4 mins.
 
 ## PERFORMANCE METRICS
 #### What are the performance metrics used and why were they chosen?
