@@ -27,6 +27,7 @@
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
 #include <protocols/electron_density/DensitySymmInfo.hh>
+#include <protocols/electron_density/DockIntoDensityUtils.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
@@ -38,133 +39,6 @@
 
 namespace protocols {
 namespace electron_density {
-
-// stores the intermediate result of spharm search
-class RBfitResult {
-public:
-	core::Size pose_idx_;
-	core::Real score_;
-	numeric::xyzVector<core::Real> pre_trans_;
-	numeric::xyzVector<core::Real> post_trans_;
-	numeric::xyzMatrix<core::Real> rotation_;
-
-	RBfitResult() {}
-
-	RBfitResult(
-		core::Size pose_idx,
-		core::Real score,
-		numeric::xyzMatrix<core::Real> rotation,
-		numeric::xyzVector<core::Real> pre_trans,
-		numeric::xyzVector<core::Real> post_trans
-	) {
-		pose_idx_ = pose_idx;
-		score_ = score;
-		pre_trans_ = pre_trans;
-		post_trans_ = post_trans;
-		rotation_ = rotation;
-	}
-};
-
-
-// stores the result of refinement
-class RefinementResult {
-public:
-	core::Real score_, prerefine_score_, spharm_score_;
-	core::pose::PoseOP pose_;
-
-	// code like this belongs in a .cc file, not a header file.
-	numeric::xyzVector< core::Real > center() {
-		core::Size centerres = (pose_->size()+1)/2;
-		return (pose_->residue(centerres).xyz(2));
-	}
-
-	RefinementResult() {}
-
-	RefinementResult(
-		core::Real score,
-		core::Real prerefine_score,
-		core::Real spharm_score,
-		core::pose::PoseOP pose_in
-	) {
-		score_ = score;
-		prerefine_score_ = prerefine_score;
-		spharm_score_ = spharm_score;
-		pose_ = pose_in;
-	}
-};
-
-// comparators
-class RBfitResultComparitor {
-public:
-	bool operator()(RBfitResult& t1, RBfitResult& t2) {
-		return (t1.score_ > t2.score_);
-	}
-
-	bool operator()(RBfitResult const& t1, RBfitResult const& t2) {
-		return (t1.score_ > t2.score_);
-	}
-};
-
-
-class RefinementResultComparitor {
-public:
-	bool operator()(RefinementResult& t1, RefinementResult& t2) {
-		return (t1.score_ > t2.score_);
-	}
-
-	bool operator()(RefinementResult const& t1, RefinementResult const& t2) {
-		return (t1.score_ > t2.score_);
-	}
-};
-
-class PointScoreComparator{
-public:
-	bool operator()(std::pair< numeric::xyzVector<core::Real>, core::Real > Pair1, std::pair< numeric::xyzVector<core::Real>, core::Real > Pair2){
-		return (Pair1.second < Pair2.second);
-	}
-
-};
-
-// database stores the top N results
-template <class T,class Tcomp> class ResultDB  {
-private:
-	core::Size N_;
-	std::priority_queue<T, std::vector<T>, Tcomp> queue_;
-
-public:
-	ResultDB(int N_in) { N_ = N_in; }
-
-	void add_element( T elt ) {
-		if ( queue_.size() <N_ ) {
-			queue_.push( elt );
-		} else if ( elt.score_ > queue_.top().score_ ) {
-			queue_.pop();
-			queue_.push( elt );
-		}
-	}
-
-	// would we add an element with this score?
-	bool to_add_element( core::Real score ) {
-		return (queue_.size() <N_ || score > queue_.top().score_ );
-	}
-
-	T pop() {
-		T retval = queue_.top();
-		queue_.pop();
-		return retval;
-	}
-
-	T top() {
-		T retval = queue_.top();
-		return retval;
-	}
-
-	core::Size size() { return queue_.size(); }
-};
-
-
-typedef ResultDB<RBfitResult,RBfitResultComparitor> RBfitResultDB;
-typedef ResultDB<RefinementResult,RefinementResultComparitor> RefinementResultDB;
 
 
 ///
@@ -217,34 +91,9 @@ public:
 	// apply to multiple poses simultaneously
 	void apply_multi( utility::vector1< core::pose::PoseOP > & poses);
 
-	// get max extent of pose
-	core::Real get_radius( core::pose::Pose const & pose, numeric::xyzVector< core::Real > &com );
-
-	// apply an xform to a pose
-	void apply_transform (
-		core::pose::Pose & pose,
-		RBfitResult const& transform
-	);
-
-	// get 1d power spectrum of a pose
-	void
-	get_spectrum( core::pose::Pose const& pose, utility::vector1< core::Real > &pose_1dspec );
-
 	// convert 1d power spectrum into 3d map
 	void
 	map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< core::Real > &rot );
-
-	/// @brief  step 1: select points over which to search (saved in class variable)
-	void
-	select_points(
-		core::pose::Pose & pose);
-
-	/// @brief  step 2: perform the grid search, storing these results
-	void
-	density_grid_search (
-		core::Size pose_idx,
-		core::pose::Pose & pose,
-		RBfitResultDB & results);
 
 	/// @brief  step 3: local refinement of each hit
 	///   empties the results_in DB
@@ -252,25 +101,6 @@ public:
 		utility::vector1< core::pose::PoseOP > const &poses,
 		RBfitResultDB & results_in,
 		RefinementResultDB & results_out
-	);
-
-	/// @brief  step 4: filter similar hits (non-refined)
-	void
-	do_filter(
-		utility::vector1< core::pose::PoseOP > const &poses,
-		RBfitResultDB & results_in,
-		bool rescore
-	);
-
-	/// @brief  step 4: (fast) filter hits using rotation only
-	void
-	do_filter(
-		RBfitResultDB & results_in
-	);
-
-	/// @brief  step 4: filter similar hits (refined)
-	void do_filter(
-		RefinementResultDB & results_in
 	);
 
 	/// @brief   debugging: add some stats

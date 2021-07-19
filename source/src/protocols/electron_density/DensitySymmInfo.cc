@@ -289,7 +289,7 @@ DensitySymmInfo::autocorrelate(
 }
 
 void
-DensitySymmInfo::mask_asu( ObjexxFCL::FArray3D< core::Real > &vol, core::scoring::electron_density::ElectronDensity const &e, core::Real value ) {
+DensitySymmInfo::mask_asu( ObjexxFCL::FArray3D< core::Real > &vol, core::scoring::electron_density::ElectronDensity const &e, core::Real const value ) const {
 	numeric::xyzVector< core::Real > grid(vol.u1(), vol.u2(), vol.u3()), idx_center;
 
 	if ( type=='C' || type == 'D' ) {
@@ -314,19 +314,19 @@ DensitySymmInfo::mask_asu( ObjexxFCL::FArray3D< core::Real > &vol, core::scoring
 		for ( int k=1; k<= (int)vol.u3(); ++k ) {
 			for ( int j=1; j<= (int)vol.u2(); ++j ) {
 				for ( int i=1; i<= (int)vol.u1(); ++i ) {
-					numeric::xyzVector<core::Real> cart_ijk_canonic =
+					numeric::xyzVector<core::Real> const cart_ijk_canonic =
 						R_canonic * e.get_f2c()* (numeric::xyzVector<core::Real>(
 						(i-idx_center[0])/grid[0], (j-idx_center[1])/grid[1], (k-idx_center[2])/grid[2] ));
 
 					// find the angle w.r.t. canonic
 
-					core::Real theta = atan2( cart_ijk_canonic[1], cart_ijk_canonic[0] );
-					bool theta_good = (theta >= 0) && (theta <= (2.0 * numeric::constants::d::pi / count_primary));
+					core::Real const theta = atan2( cart_ijk_canonic[1], cart_ijk_canonic[0] );
+					bool const theta_good = (theta >= 0) && (theta <= (2.0 * numeric::constants::d::pi / count_primary));
 					if ( type == 'C' ) {
 						if ( theta_good ) continue;
 					} else if ( type == 'D' ) {
-						core::Real phi = asin( cart_ijk_canonic[2] / cart_ijk_canonic.length() );
-						bool phi_good = (phi >= 0);
+						core::Real const phi = asin( cart_ijk_canonic[2] / cart_ijk_canonic.length() );
+						bool const phi_good = (phi >= 0);
 						if ( theta_good && phi_good ) {
 							continue;
 						}

@@ -48,7 +48,7 @@ public:
 	mask_asu(
 		ObjexxFCL::FArray3D< core::Real > &vol,
 		core::scoring::electron_density::ElectronDensity const &e,
-		core::Real value );
+		core::Real value ) const;
 
 	// min dist between X and any symm copy of Y
 	core::Real
