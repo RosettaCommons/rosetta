@@ -1,6 +1,8 @@
-#pdb	ddG_ins	zmin	anglemin
-1a11 	-11.43 	4.36369 	26.0
-1mp6 	-15.77 	2.38409 	137.0
-2nr1 	-7.46 	-6.73401 	358.0
-1pje 	-15.34 	0.825803 	221.0
-#WALP23 	-17.68 	-0.28754 	278.0
+#pdb    ddG_ins zmin    anglemin    z_exp   angle_exp
+1a11    -11.54  -4.0    20.0    -0.5    11
+1mp6    -16.07  -5.0    48.0    1.0     37
+2nr1    -9.53  -4.0    26.0    2.3     43
+1pje    -15.68  -2.0    30.0    0.0     16
+WALP23  -18.89  -1.0     20.0    0.0     24
+#RS changed the values, since the medium was changed, 
+#only WALP difference was the most -17.68 to -18.69. rest all were +/-1 the previous entered values.

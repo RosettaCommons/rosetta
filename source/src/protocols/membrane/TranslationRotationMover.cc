@@ -260,7 +260,8 @@ RotationMover::RotationMover() :
 	old_normal_( 0, 0, 1 ),
 	new_normal_( 0, 1, 0 ),
 	rot_center_( 0, 0, 0 ),
-	jumpnum_(0)
+	jumpnum_(0),
+	azimuthal_angle_(0)
 {
 	register_options();
 	init_from_cmd();
@@ -278,7 +279,8 @@ RotationMover::RotationMover(
 	old_normal_( old_normal ),
 	new_normal_( new_normal ),
 	rot_center_( rot_center ),
-	jumpnum_(0)
+	jumpnum_(0),
+	azimuthal_angle_(0)
 {
 	register_options();
 	init_from_cmd();
@@ -298,7 +300,29 @@ RotationMover::RotationMover(
 	old_normal_( old_normal ),
 	new_normal_( new_normal ),
 	rot_center_( rot_center ),
-	jumpnum_( jumpnum )
+	jumpnum_( jumpnum ),
+	azimuthal_angle_(0)
+{
+	register_options();
+	init_from_cmd();
+}
+
+/// @brief Custom Constructor
+///// @details User can specify an old normal, a new normal, and a new center
+/////   around which the rotation takes place on this particular jump;
+/////   operation happens on the downstream stub and the azimuthal angle
+RotationMover::RotationMover(
+	core::Vector old_normal,
+	core::Vector new_normal,
+	core::Vector rot_center,
+	core::Size jumpnum,
+	core::Real azimuthal_angle ) :
+	protocols::moves::Mover(),
+	old_normal_( old_normal ),
+	new_normal_( new_normal ),
+	rot_center_( rot_center ),
+	jumpnum_( jumpnum ),
+	azimuthal_angle_(azimuthal_angle)
 {
 	register_options();
 	init_from_cmd();
@@ -372,25 +396,71 @@ RotationMover::get_name() const {
 void
 RotationMover::apply( Pose & pose ) {
 
+	using namespace numeric;
+	using namespace core;
+	using namespace protocols;
 	using namespace core::conformation::membrane;
 	using namespace protocols::membrane::geometry;
+	using namespace numeric::conversions;
 
 	// checking input
 	core::Vector diff = new_normal_ - old_normal_;
 	core::Vector zero( 0, 0, 0 );
+
+	//core::Real delta( numeric::conversions::radians( azimuthal_angle_ ));
+
 	if ( diff == zero ) {
-		TR.Warning << "Old and new normal are identical. Skipping rotation!" << std::endl;
+
+		if ( azimuthal_angle_==0 ) {
+			TR.Warning << "Old and new normal are identical. Skipping rotation!" << std::endl;
+		} else {
+			/*for ( core::Size r=1; r <= lastres; r++ ) {
+			for ( core::Size a=1; a <= pose.residue(r).natoms(); a++ ) {
+
+			core::Vector new_pos( 0, 0, 0 );
+			core::Vector pose_centered ( 0, 0, 0 );
+
+			//pose_centered = pose.residue(r).xyz(a) - rot_center_;
+			pose_centered = pose.residue(r).xyz(a) - rot_center2;
+			new_pos = ( pose_centered * cos( delta_azim) ) + ( cross( new_normal, pose_centered ) * sin( delta_azim ) ) + ( new_normal * dot( new_normal, pose_centered ) * ( 1 - cos( delta_azim ) ) );
+			//new_pos = new_pos + rot_center_;
+			new_pos = new_pos + rot_center2;
+			pose.set_xyz( core::id::AtomID( a,r ), new_pos );
+
+			}
+
+			}*/
+			/*I m applyig the rotation mover wrt the new_normal and rota_center2*/
+
+			TR << "Rotating the pose about own axis..." << std::endl;
+			TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+			pose.fold_tree().show( TR );
+			core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
+			// if pose membrane pose, use membrane jump as default
+			if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
+				jumpnum_ = pose.membrane_info()->membrane_jump();
+			} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
+				jumpnum_ = 2;
+			}
+
+			rigid::RigidBodyDeterministicSpinMover spinmover = rigid::RigidBodyDeterministicSpinMover( jumpnum_, new_normal_, rot_center_, azimuthal_angle_ );
+			spinmover.apply( pose );
+
+			// reset foldtree and show final one
+			pose.fold_tree( orig_ft );
+			TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+			pose.fold_tree().show( TR );
+
+		}
 	} else {
 		TR << "Rotating the pose..." << std::endl;
-
 		// starting foldtree
 		TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
 		pose.fold_tree().show( TR );
 		core::kinematics::FoldTree orig_ft = pose.fold_tree();
-
 		// normalize the new normal
 		new_normal_.normalize();
-
 		// if pose membrane pose, use membrane jump as default
 		if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
 			jumpnum_ = pose.membrane_info()->membrane_jump();
@@ -464,7 +534,6 @@ TranslationRotationMover::TranslationRotationMover() :
 	register_options();
 	init_from_cmd();
 }
-
 /// @brief Custom Constructor
 /// @details User can specify a TranslationRotation vector
 TranslationRotationMover::TranslationRotationMover(
@@ -578,7 +647,7 @@ TranslationRotationMover::apply( Pose & pose ) {
 	// normalize new normal
 	new_normal_.normalize();
 
-	// if pose membrane pose, use membrane jump as default
+	//if pose membrane pose, use jump as default
 	if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
 		jumpnum_ = pose.membrane_info()->membrane_jump();
 	} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
@@ -627,8 +696,6 @@ void
 TranslationRotationMover::init_from_cmd() {
 
 	// read center and normal from cmd
-	read_center_normal_from_cmd( new_center_, new_normal_ );
-
 }// init from cmd
 
 

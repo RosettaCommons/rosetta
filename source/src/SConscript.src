@@ -57,7 +57,7 @@ actual.include_path = \
     [ "#src" ] + \
     [ "#external/include" ] + \
     [ "#src/platform/" + "/".join(build.platform_includes) ]
-
+       
 # Searches the platform paths by moving up from most specific to most general.
 # This makes more specific platforms take priority.
 for last in range(1, len(build.platform_includes)):

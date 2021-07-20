@@ -11,7 +11,7 @@
 		<TransformIntoMembraneMover name="transform_into_memb" />
 		<PackRotamersMover name="pack_rotamers" scorefxn="s" task_operations="rtrp"/>
 		<MinMover name="minimize_struc" scorefxn="s" chi="1" bb="1" jump="0" type="dfpmin_armijo_nonmonotone" tolerance="0.01" />
-		<MembraneEnergyLandscapeSampler name="landscape_test" scorefxn="s" interface="0" />
+		<MembraneEnergyLandscapeSampler name="landscape_test" scorefxn="s" interface="0" start_z="%%start_z%%" end_z="%%end_z%%" flag_axis = "0.0" azimuthal_delta = "30"/>
 	</MOVERS>
 	<PROTOCOLS>
 		<Add mover_name="add_memb"/>

@@ -10,6 +10,7 @@
 /// @file protocols/membrane_benchmark/MembraneEnergyLandscapeSampler.hh
 /// @brief Sample all points on a 2D membrane energy landscape given implicit model and protein dimensions
 /// @author Rebecca Alford (rfalford12@gmail.com)
+///edited by Rituparna Samanta (rituparna@utexas.edu)
 
 #ifndef INCLUDED_protocols_membrane_benchmark_MembraneEnergyLandscapeSampler_HH
 #define INCLUDED_protocols_membrane_benchmark_MembraneEnergyLandscapeSampler_HH
@@ -23,6 +24,7 @@
 
 
 // Core headers
+#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -49,7 +51,11 @@ public:
 	MembraneEnergyLandscapeSampler(
 		std::string sfxn_weights,
 		std::string rotation_type,
-		bool interface = false
+		bool interface = false,
+		core::Real start_z = -70,
+		core::Real end_z = 70,
+		core::Real flag_axis = 1,
+		core::Real azimuthal_delta = 30
 	);
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
@@ -68,7 +74,11 @@ public:
 	apply( core::pose::Pose & pose ) override;
 
 	void
-	show( std::ostream & output = std::cout ) const override;
+	show( std::ostream & output ) const override;
+
+	/// @brief Declaring an overload
+	void
+	show() const;
 
 	///////////////////////////////
 	/// Rosetta Scripts Support ///
@@ -102,6 +112,17 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	core::Vector
+	getaxis(
+		core::pose::Pose & pose,
+		core::Real flag
+	);
+	core::Vector
+	getcenter(
+		core::pose::Pose & pose,
+		core::Real flag
+	);
+
 private: // methods
 
 	protocols::membrane::RotationMoverOP
@@ -119,7 +140,10 @@ private: // data
 	std::string sfxn_weights_;
 	std::string rotation_type_;
 	bool interface_;
-
+	core::Real start_z_;
+	core::Real end_z_;
+	core::Real flag_axis_;
+	core::Real azimuthal_delta_;
 };
 
 std::ostream &

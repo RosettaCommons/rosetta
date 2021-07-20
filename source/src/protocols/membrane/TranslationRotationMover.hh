@@ -161,6 +161,18 @@ public:
 		core::Size jumpnum
 	);
 
+	/// @brief Custom Constructor
+	/// @details User can specify the same normal twice as old_normal_ and new_normal_, and a new center
+	///   around which the rotation takes place on this particular jump;
+	///   operation happens on the downstream stub. azimuthal_angle is the angle to be rotated about the normal.
+	RotationMover(
+		core::Vector old_normal,
+		core::Vector new_normal,
+		core::Vector rot_center,
+		core::Size jumpnum,
+		core::Real azimuthal_angle
+	);
+
 	/// @brief Copy Constructor
 	RotationMover( RotationMover const & src );
 
@@ -219,6 +231,7 @@ private: // data
 
 	// jump number
 	core::Size jumpnum_;
+	core::Real azimuthal_angle_;
 
 };
 

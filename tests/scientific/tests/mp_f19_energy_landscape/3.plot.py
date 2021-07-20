@@ -29,7 +29,7 @@ config = benchmark.config()
 outfile = "plot_results.png"
 
 #number of subplots
-ncols = 4
+ncols = 5
 nrows = 1
 
 # figure size
@@ -44,12 +44,18 @@ cutoffs = "cutoffs"
 protein = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $1}'" ).splitlines()
 cutoffs_zmin = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
 cutoffs_anglemin = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $4}'" ).splitlines()
+cutoffs_zexp = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $5}'" ).splitlines()
+cutoffs_angleexp = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $6}'" ).splitlines()
 
 cutoffs_zmin = map( float, cutoffs_zmin )
 cutoffs_anglemin = map( float, cutoffs_anglemin )
+cutoffs_zexp = map( float, cutoffs_zexp )
+cutoffs_angleexp = map( float, cutoffs_angleexp )
 
 cutoffs_zmin_dict.update( dict( zip ( protein, cutoffs_zmin )))
 cutoffs_anglemin_dict.update( dict( zip( protein, cutoffs_anglemin )))
+cutoffs_zexp_dict.update( dict( zip( protein, cutoffs_zexp )))
+cutoffs_angleexp_dict.update( dict( zip( protein, cutoffs_angleexp )))
 
 # go through energy landscapes
 for i in range( 0, len( energy_landscapes ) ):
@@ -70,7 +76,7 @@ for i in range( 0, len( energy_landscapes ) ):
 	for x in range(1, len(contents)): 
 		zcoords.append( float( contents[x][0] ) )
 		angles.append( float( contents[x][1] ) )
-		total_scores.append( float( contents[x][2] ) )
+		total_scores.append( float( contents[x][3] ) )
 
 	zcoords_arr = np.asarray( zcoords )
 	angles_arr = np.asarray( angles )
@@ -89,16 +95,31 @@ for i in range( 0, len( energy_landscapes ) ):
 	points = np.c_[X.ravel(), Y.ravel()]
 	Z = interpolate.griddata(np.c_[angles_arr, zcoords_arr], total_scores_arr, points).reshape(X.shape)
 
+	#RS: adding contours to have a sense of error bars in the energy landscape. 
+	contours = plt.contour( X, Y, Z, 10, colors='black')
+	plt.clabel(contours, inline=True, fontsize=8, colors='red')
+
 	cmap = cm.get_cmap('viridis', 256)
 	im = ax.pcolormesh( X,Y,Z, cmap=cmap)
 	cbar = plt.colorbar(im)
 
-	# Calculate and plot the minimum energy point from landscape as a white point
+	# Calculate the minimum energy point
 	zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
+	#changing the minimum angle to first phase; results are symmetrical about the z-axis which is 0 and 180 degrees. 
+
+	if( anglemin>90 and anglemin<=180 ):
+		anglemin = 180 - anglemin
+	elif( anglemin>180 and anglemin<=270 ):
+		anglemin = anglemin - 180
+	elif( anglemin>270 and anglemin<=360 ):
+		anglemin = 360 - anglemin
 	plt.plot( anglemin, zmin, 'wo', markersize=12 )
-	
+
 	# Plot experimental values as red open squares
-	plt.plot( cutoffs_anglemin_dict[targets[i]], cutoffs_zmin_dict[targets[i]], 'sr', fillstyle='none', markeredgewidth=5, markersize=30 )
+	plt.plot( cutoffs_angleexp_dict[targets[i]], cutoffs_zexp_dict[targets[i]], '^r', fillstyle='none', markeredgewidth=5, markersize=20 )
+
+	#changing the value of ticks in the x-axis
+	plt.xticks(np.arange(0, 180, 45))
 	
 #save figure
 plt.tight_layout()

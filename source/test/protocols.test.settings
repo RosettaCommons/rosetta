@@ -1,4 +1,4 @@
-# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+## -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
 #
 # Project settings for protocols tests.
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -479,6 +479,7 @@ sources = {
 		"AddMembraneMover",
 		"AddMPLigandMover",
 		"FlipMover",
+		"MembraneEnergyLandscapeSamplerTest",
 		"MembranePositionFromTopologyMover",
 		"MembraneUtil",
 		"MPLipidAccessibility",
