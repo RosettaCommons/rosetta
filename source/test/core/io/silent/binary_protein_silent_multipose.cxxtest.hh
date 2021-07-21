@@ -29,6 +29,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -84,6 +85,9 @@ public:
 		//Import the poses:
 		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/io/test_in.pdb"), core::import_pose::PDB_file);
 		core::import_pose::pose_from_file( ref_pose_2, *rsd, std::string("core/io/bin_silentfile_test.pdb"), core::import_pose::PDB_file);
+
+		// Add a comment/remark to ref_pose that includes the string "RNA" that could trip up the silent_struct_type_ determination in a multi-pose file
+		core::pose::add_comment( ref_pose, "RNA", "This could break this silent_struct_type_ determination" );
 
 		//Write out the poses:
 		std::string const silent_outfile( "core/io/bin_silentfile_multipose_test.out" );

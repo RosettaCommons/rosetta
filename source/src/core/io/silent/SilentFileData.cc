@@ -734,6 +734,7 @@ SilentFileData::read_stream(
 	bool line_ok( true );
 	bool reading_header( true ); //True if we're reading header lines, false if we're reading data lines.
 	bool premature_stop( false ); // True if we were reading header lines when we reached the end of a file.
+	bool first_remark( true );  // True if we have NOT processed a REMARK line yet
 
 	//tr.Debug << "Entering loop..." << std::endl; //DELETE ME
 
@@ -766,7 +767,13 @@ SilentFileData::read_stream(
 				if ( !line_ok ) { premature_stop = true; break; }
 				continue;
 			} else if ( line_starts_with_remark( line ) ) {
-				read_silent_struct_type_from_remark( line, true /* header */);
+				// If this is the first REMARK line or silent_struct_type_ is still unknown, see if we can find it in the remark
+				// We need to check the first line even if the silent_struct_type_ is known, in case it was set in check_if_rna_from_sequence_line (see comment re: binary RNA)
+				// Otherwise, I think it's OK to skip if we know silent_struct_type_, since this should apparently be the first remark line
+				if ( first_remark || silent_struct_type_ == "" ) {
+					read_silent_struct_type_from_remark( line, true /* header */);
+				}
+				first_remark = false;  // We've read the first REMARK line
 				read_full_model_parameters_from_remark( line, true /* header */ );
 				mylines.push_back(line);
 				getline(data,line);
@@ -797,6 +804,7 @@ SilentFileData::read_stream(
 				//parse what we've read.
 
 				reading_header = true;
+				first_remark = true;  // Reset flag for the next pose in the silent file
 				lines_from_header_line_collection( header_lines, mylines ); //Copy the header lines to the lines collection.
 
 				SilentStructOP tmp_struct( create_SilentStructOP() );

@@ -210,6 +210,53 @@ public:
 		TR << std::endl; TR.flush();
 	}
 
+	/// @brief Test whether silent files with second REMARK with "RNA" in it can be read.
+	/// @details The silent_struct_type_ can be mis-identified if a silent file has a second REMARK line with the string "RNA" in it.
+	/// @author Brahm Yachnin (byachnin@visterrainc.com).
+	void test_read_silent_file_with_rna_remark() {
+		TR << "Starting test_read_silent_file_with_rna_remark." << std::endl;
+		TR << "Author: Brahm Yachnin (byachnin@visterrainc.com)." << std::endl;
+		TR << "Failure of this test would indicate that REMARK lines after the first are being improperly processed." << std::endl;
+
+		core::pose::Pose good_pose, rna_remark_pose;
+		core::chemical::ResidueTypeSetCOP rsd( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+
+		core::io::silent::SilentFileOptions opts;
+		core::io::silent::SilentFileData sfd(opts);
+		sfd.read_file( "core/io/silent/cyclic_peptide_binary_silent.silent" );
+		TS_ASSERT( sfd.size() > 0 );
+		TS_ASSERT( sfd.begin()->decoy_tag() == "result_proc0042_34330");
+		sfd.begin()->fill_pose( good_pose, *rsd );
+
+		core::io::silent::SilentFileData sfd2(opts);
+		sfd2.read_file( "core/io/silent/cyclic_peptide_binary_silent_rnaremark.silent" );
+		TS_ASSERT( sfd2.size() > 0 );
+		TS_ASSERT( sfd2.begin()->decoy_tag() == "result_proc0042_34330");
+		sfd2.begin()->fill_pose( rna_remark_pose, *rsd );
+
+		TS_ASSERT_EQUALS( good_pose.size(), 18 );
+		TS_ASSERT_EQUALS( good_pose.size(), rna_remark_pose.size() );
+
+		TR << "\nPHI1\tPHI2\tPSI1\tPSI2\tOMEGA1\tOMEGA2\n";
+		for ( core::Size i=1; i<=18; ++i ) {
+			TR << good_pose.phi(i) << "\t" << rna_remark_pose.phi(i) << "\t";
+			TR << good_pose.psi(i) << "\t" << rna_remark_pose.psi(i) << "\t";
+			TR << good_pose.omega(i) << "\t" << rna_remark_pose.omega(i) << "\n";
+			TS_ASSERT_DELTA( good_pose.phi( i ), rna_remark_pose.phi( i ), 0.001 );
+			TS_ASSERT_DELTA( good_pose.psi( i ), rna_remark_pose.psi( i ), 0.001 );
+			TS_ASSERT_DELTA( good_pose.omega( i ), rna_remark_pose.omega( i ), 0.001 );
+		}
+		TR << "\n";
+
+		// call default, not hardcoded one
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "ref2015") );
+		core::Real const score1( (*scorefxn)(good_pose) );
+		core::Real const score2( (*scorefxn)(rna_remark_pose) );
+		TR << "SCORE1\tSCORE2\n" << score1 << "\t" << score2 << "\n";
+		TS_ASSERT_DELTA( score1, score2, 0.001 );
+		TR << std::endl; TR.flush();
+	}
+
 	/// @brief Test whether poses that have had their lenghts modified in Rosetta can
 	/// be written and read properly.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

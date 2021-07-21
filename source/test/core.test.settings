@@ -1039,6 +1039,7 @@ testinputfiles = [
 	"io/pose_to_sfr/2_peptides_2_glycan_ligands.pdb",
 	"io/silent/cyclic_peptide_binary_silent.silent",
 	"io/silent/cyclic_peptide_binary_silent_duplicated_header.silent",
+	"io/silent/cyclic_peptide_binary_silent_rnaremark.silent",
 	"io/mmtf/173D.mmtf",
 	"io/mmtf/1AUY.mmtf",
 	"io/mmtf/1CAG.mmtf",
