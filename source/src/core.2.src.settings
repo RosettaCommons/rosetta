@@ -36,7 +36,6 @@ sources = {
 		"IdealBondLengthSet",
 		"GlobalResidueTypeSet",
 		"Metapatch",
-		"MergeBehaviorManager",
 		"MMAtomType",
 		"MMAtomTypeSet",
 		"MutableChiRecord",
@@ -68,13 +67,11 @@ sources = {
 		"util",
 		"VariantType_mappings",
 	],
-
 	"core/chemical/carbohydrates": [
 		"CarbohydrateInfo",
 		"CarbohydrateInfoManager",
 		"database_io",
 	],
-
 	"core/chemical/gasteiger": [
 		"GasteigerAtomTypeData",
 		"GasteigerAtomTypeSet",
@@ -82,6 +79,10 @@ sources = {
 		#"ElectronConfiguration",
 		#"Element",
 		#"ElementTypeSet",
+	],
+	"core/chemical/io": [
+		"MergeAndSplitBehaviorManager",
+		"merge_and_split_behaviors_io",
 	],
 	"core/chemical/mainchain_potential": [
 		"MainchainScoreTable",
@@ -93,14 +94,12 @@ sources = {
 		"RingConformerSet",
 		"util",
 	],
-
 	"core/chemical/rna": [
 		"RNA_Info",
 		"RNA_FittedTorsionInfo",
 		"RNA_SamplerUtil",
 		"util",
 	],
-
 	"core/chemical/rotamers": [
 		"BasicRotamerLibrarySpecification",
 		"CenrotRotamerLibrarySpecification",
@@ -111,8 +110,6 @@ sources = {
 		"RotamerLibrarySpecificationFactory",
 		"StoredRotamerLibrarySpecification",
 	],
-
-
 	"core/chemical/orbitals": [
 		"AssignOrbitals",
 		"ICoorOrbitalData",

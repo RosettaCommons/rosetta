@@ -60,14 +60,16 @@ public:
 
 	std::string const & rosetta_resName() const;
 
-	void resName(  std::string const & setting );
-	void chainID(  char setting );
-	void resSeq(   int setting );
-	void iCode(    char setting );
+	void resName( std::string const & setting );
+	void chainID( char setting );
+	void resSeq( int setting );
+	void iCode( char setting );
 	void terCount( int setting );
 	void set_xyz( std::string const &atomname, Vector const &vect );
 	void set_temp( std::string const &atomname, core::Real const &val );
 	void segmentID( std::string const & setting );
+
+	void rosetta_resName( std::string const & setting );
 
 	utility::vector1< AtomInformation > const & atoms() const;
 	void append_atom( AtomInformation const & atoms );
@@ -79,7 +81,7 @@ public:
 	std::map< std::string, core::Real > const & temps() const; //< map of names to B-factors;  redundant but used a lot in reader
 
 	/// @brief Returns a short, printable designation for this residue.
-	std::string resid() const;
+	std::string resid() const;  // 6-char string: resSeq_iCode_chainID_
 
 
 private:

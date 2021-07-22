@@ -73,8 +73,11 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Called by the public static method rosetta_names_from_pdb_code()
 	AltCodeMap const & get_alternate_3_letter_code_map() const;
 
+	// Try various combinations to locate the specific file being requested by the user.
+	// (inspired by core::scoring::ScoreFunction::find_weights_file())
+	std::string find_alternate_codes_file( std::string const & filename ) const;
+
 	// Get the set requested, creating it if necessary.
-	// Called by the public static method rosetta_names_from_pdb_code()
 	std::set< std::string > const & na_set() const { return is_NA_; };
 	std::set< std::string > const & old_rna_set() const { return is_old_RNA_; };
 	std::set< std::string > const & old_dna_set() const { return is_old_DNA_; };
@@ -83,17 +86,15 @@ private:  // Private methods //////////////////////////////////////////////////
 	std::set< std::string > const & achiral_set() const { return achiral_set_; };
 	std::set< std::string > const & metal_set() const { return metal_set_; };
 	std::set< std::string > const & sugar_set() const { return sugar_set_; };
+
 	std::map< std::string, std::string > const & iupac_map() const { return annotated_seq_from_IUPAC_map_; };
 	std::map< char, std::string > const & modomics_map() const { return annotated_seq_from_modomics_map_; };
-
-	// Try various combinations to locate the specific file being requested by the user.
-	// (inspired by core::scoring::ScoreFunction::find_weights_file())
-	std::string find_alternate_codes_file( std::string const & filename );
 
 
 private:  // Private data /////////////////////////////////////////////////////
 
 	AltCodeMap alt_codes_;
+
 	std::set< std::string > is_NA_;
 	std::set< std::string > is_old_RNA_;
 	std::set< std::string > is_old_DNA_;

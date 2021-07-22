@@ -104,11 +104,12 @@ main( int argc, char *argv[] )
 		devel::init( argc, argv );
 
 		// Declare variables.
-		Pose ATP, UDP_GlcNAc, SAM, SAH;
+		Pose ATP, UDP_GlcNAc, UDP_Glc, SAM, SAH;
 		//Pose ATP, UDP_GlcNAc, SAM, SAH, flavin1 /*, flavin2, flavin3*/ ;
 
 		test_cofactor( ATP, "ATP" );
 		test_cofactor( UDP_GlcNAc, "UDP-GlcNAc" );
+		test_cofactor( UDP_Glc, "PDB_UDP-Glc" );
 		test_cofactor( SAM, "SAM" );
 		test_cofactor( SAH, "SAH" );
 		//test_cofactor( flavin1, "flavin_mononucleotide" );

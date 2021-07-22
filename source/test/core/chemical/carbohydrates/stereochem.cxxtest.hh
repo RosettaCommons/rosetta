@@ -84,7 +84,7 @@ public: // Standard methods ///////////////////////////////////////////////////
 		using namespace utility;
 
 
-		vector1< string > const lines( io::get_lines_from_file_data( filename ) );
+		vector1< string > const lines( utility::io::get_lines_from_file_data( filename ) );
 		TestKey key;
 
 		for ( string const & line : lines ) {
@@ -118,7 +118,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		string const filename(
 			basic::database::full_name( "chemical/residue_type_sets/" + FA_STANDARD + "/" ) + "residue_types.txt" );
-		vector1< string > const lines( io::get_lines_from_file_data( filename ) );
+		vector1< string > const lines( utility::io::get_lines_from_file_data( filename ) );
 		for ( string line : lines ) {
 			if ( line.substr( 0, 27 ) == "residue_types/carbohydrates"  ) {
 				bool has_bidirectional_linkage( false );

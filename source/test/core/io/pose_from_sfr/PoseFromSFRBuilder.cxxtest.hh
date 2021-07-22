@@ -36,7 +36,7 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 
-static basic::Tracer TR("core.io.pose_from_sfr.PoseFromSFRBuilder.cxxtest");
+static basic::Tracer TR( "core.io.pose_from_sfr.PoseFromSFRBuilder.cxxtest" );
 
 using namespace core;
 using namespace core::io;
@@ -49,7 +49,7 @@ class PoseFromSFRBuilderTests : public CxxTest::TestSuite
 public:
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-include_sugars" );
 	}
 
 	void test_build_trpcage_pdb() {
@@ -120,6 +120,74 @@ public:
 		TS_ASSERT_EQUALS( pose.residue(1).aa(), chemical::aa_ala );
 		TS_ASSERT( pose.residue_type(1).has_property( "ACETYLATED_NTERMINUS" ));
 		TS_ASSERT( pose.residue_type(1).has_property( "METHYLATED_CTERMINUS" ));
+	}
+
+	// Confirm that pass_1_merge_and_split_residues_as_necessary() correctly splits a splitable residue.
+	/// @author  Labonte <JWLabonte@jhu.edu>
+	void test_splitting_of_residues() {
+		using namespace std;
+		using namespace chemical;
+
+		TR << "Testing that the PoseFromSFRBuilder can split residues." << endl;
+
+		StructFileReaderOptions options;
+		string const pdb_contents(  // Lines from PDB #5BJZ
+			"ATOM     36  N   GLY A   5      -9.957 -28.821 189.708  1.00 36.49           N  \n"
+			"ATOM     37  CA  GLY A   5     -10.536 -29.933 188.980  1.00 33.76           C  \n"
+			"ATOM     38  C   GLY A   5     -11.743 -29.607 188.130  1.00 32.07           C  \n"
+			"ATOM     39  O   GLY A   5     -12.472 -30.526 187.740  1.00 30.93           O  \n"
+			"HETATM12532  C1  MAL B 401     -16.780  -1.670 175.019  1.00 22.31           C  \n"
+			"HETATM12533  C2  MAL B 401     -15.458  -1.864 175.750  1.00 20.10           C  \n"
+			"HETATM12534  C3  MAL B 401     -15.725  -1.759 177.260  1.00 22.44           C  \n"
+			"HETATM12535  C4  MAL B 401     -16.356  -0.412 177.578  1.00 23.54           C  \n"
+			"HETATM12536  C5  MAL B 401     -17.612  -0.218 176.728  1.00 21.74           C  \n"
+			"HETATM12537  C6  MAL B 401     -18.181   1.184 176.949  1.00 24.56           C  \n"
+			"HETATM12538  O1  MAL B 401     -17.679  -2.694 175.383  1.00 23.77           O  \n"
+			"HETATM12539  O2  MAL B 401     -14.947  -3.131 175.441  1.00 19.29           O  \n"
+			"HETATM12540  O3  MAL B 401     -14.531  -1.936 177.997  1.00 20.90           O  \n"
+			"HETATM12541  O4  MAL B 401     -16.698  -0.306 178.948  1.00 22.31           O  \n"
+			"HETATM12542  O5  MAL B 401     -17.323  -0.414 175.357  1.00 21.30           O  \n"
+			"HETATM12543  O6  MAL B 401     -19.358   1.387 176.189  1.00 24.58           O  \n"
+			"HETATM12544  C1' MAL B 401     -20.164  -5.437 173.448  1.00 27.37           C  \n"
+			"HETATM12545  C2' MAL B 401     -18.684  -5.407 173.044  1.00 26.37           C  \n"
+			"HETATM12546  C3' MAL B 401     -17.785  -4.643 174.017  1.00 24.36           C  \n"
+			"HETATM12547  C4' MAL B 401     -18.418  -3.307 174.341  1.00 26.47           C  \n"
+			"HETATM12548  C5' MAL B 401     -19.887  -3.472 174.771  1.00 25.02           C  \n"
+			"HETATM12549  C6' MAL B 401     -20.564  -2.126 174.943  1.00 21.11           C  \n"
+			"HETATM12550  O1' MAL B 401     -20.398  -6.331 174.513  1.00 29.23           O  \n"
+			"HETATM12551  O2' MAL B 401     -18.240  -6.733 172.968  1.00 32.21           O  \n"
+			"HETATM12552  O3' MAL B 401     -16.481  -4.449 173.475  1.00 26.14           O  \n"
+			"HETATM12553  O5' MAL B 401     -20.646  -4.162 173.796  1.00 24.94           O  \n"
+			"HETATM12554  O6' MAL B 401     -21.712  -2.306 175.755  1.00 27.37           O  \n"
+			"ATOM   2911  N   GLY C  11     -54.011   1.690 100.082  1.00 29.22           N  \n"
+			"ATOM   2912  CA  GLY C  11     -54.910   0.571  99.922  1.00 26.67           C  \n"
+			"ATOM   2913  C   GLY C  11     -54.864  -0.464 101.023  1.00 31.14           C  \n"
+			"ATOM   2914  O   GLY C  11     -55.627  -1.435 100.960  1.00 35.10           O  \n" );
+		StructFileRep const sfr( pdb::create_sfr_from_pdb_file_contents( pdb_contents, options ) );
+
+		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		PoseFromSFRBuilder builder( residue_set, options );
+		pose::Pose pose;
+		builder.build_pose( sfr, pose );
+
+		TS_ASSERT_EQUALS( pose.size(), 4 );
+
+		pose::PDBInfoCOP info( pose.pdb_info() );
+
+		TS_ASSERT_EQUALS( pose.residue( 1 ).name3(), "GLY" );
+		TS_ASSERT_EQUALS( info->chain( 1 ), 'A' );
+		TS_ASSERT_EQUALS( info->number( 1 ), 5 );
+		TS_ASSERT_EQUALS( pose.residue( 2 ).name3(), "Glc" );
+		TS_ASSERT_EQUALS( info->chain( 2 ), 'B' );
+		TS_ASSERT_EQUALS( info->number( 2 ), 401 );
+		TS_ASSERT_EQUALS( info->icode( 2 ), 'A' );
+		TS_ASSERT_EQUALS( pose.residue( 3 ).name3(), "Glc" );
+		TS_ASSERT_EQUALS( info->chain( 3 ), 'B' );
+		TS_ASSERT_EQUALS( info->number( 3 ), 401 );
+		TS_ASSERT_EQUALS( info->icode( 3 ), 'B' );
+		TS_ASSERT_EQUALS( pose.residue( 4 ).name3(), "GLY" );
+		TS_ASSERT_EQUALS( info->chain( 4 ), 'C' );
+		TS_ASSERT_EQUALS( info->number( 4 ), 11 );
 	}
 
 	void test_1rgr() {
@@ -218,7 +286,5 @@ public:
 		TS_ASSERT( !pose4->residue_type(resNB).is_upper_terminus() );
 		TS_ASSERT( pose4->residue_type(res1C).is_lower_terminus() );
 		TS_ASSERT( pose4->residue_type(resNC).is_upper_terminus() );
-
 	}
-
 };

@@ -115,7 +115,7 @@ public:
 		utility::vector1< std::string > const & patch_filenames,
 		utility::vector1< std::string > const & metapatch_filenames
 	) override;
-	void set_merge_behavior_manager( MergeBehaviorManagerCOP mbm) override;
+	void set_merge_split_behavior_manager( io::MergeAndSplitBehaviorManagerCOP mbm) override;
 
 	// Hoist the getters
 	AtomTypeSetCOP atom_type_set() const { return ResidueTypeSet::atom_type_set(); }
@@ -177,8 +177,3 @@ CEREAL_FORCE_DYNAMIC_INIT( core_chemical_PoseResidueTypeSet )
 
 
 #endif //INCLUDED_core_chemical_PoseResidueTypeSet_hh
-
-
-
-
-

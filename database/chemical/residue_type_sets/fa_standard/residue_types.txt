@@ -1803,7 +1803,7 @@ residue_types/polyaramids/MAG.params
 residue_types/polyaramids/MAH.params
 residue_types/polyaramids/MAI.params
 residue_types/polyaramids/MAK.params
-residue_types/polyaramids/MAL.params
+#residue_types/polyaramids/MAL.params  conflicts w/ MAL from the PDB
 residue_types/polyaramids/MAM.params
 #residue_types/polyaramids/MAN.params not worth the trouble.
 residue_types/polyaramids/MAQ.params

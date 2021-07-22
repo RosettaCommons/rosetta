@@ -1,0 +1,26 @@
+# This file helps to split PDB residues that Rosetta prefers to represent as
+# separate residues.
+
+# THIS IS JUST A LIST FOR UNIT TESTING!
+# The actual, current lists are found within the appropriate ResidueTypeSet
+# directories in the database:
+# database/chemical/residue_type_sets
+# If you edit this file, you must also edit merge_and_split_behaviors_io.cxxtest.hh.
+
+# The three fields are tab-separated.
+# The second column is a semicolon-delimited list of base residue types, given
+# as a comma-separated pair of Rosetta 3-letter code and residue name, (NOT
+# 3-letter code,) i.e., what one could enter in a Rosetta-formatted HETNAM
+# record.
+# The third column is a semicolon-delimited grouping of sets of atom renaming
+# instructions.
+# The sets are ordered in the same manner as the residue names in the previous
+# column; that is, the first residue named has its atoms renamed first.
+# Within a set of instructions, a hyphen separates the old PDB name from the new
+# Rosetta atom name.
+# Just like in .pdb files, atom names are all strings of four characters,
+# so " HA " is not the same as "HA  "; spaces matter.
+
+
+# 3-Letter Code	Residues Into Which to Split	Atoms to Rename (From- To )
+2FC	HD ,Harvey Dent;2Fc,Two-Face	REYE- EYE,REAR- EAR,RNOS-NOSE,RARM- ARM,RHND-HAND,RLEG- LEG,RFT -FOOT;LEYE- EYE,LEAR- EAR,LNOS-NOSE,LARM- ARM,LHND-HAND,LLEG- LEG,LFT -FOOT

@@ -84,13 +84,15 @@ void ResidueInformation::resName(  std::string const & setting )
 		atoms_[ ii ].resName = setting;
 	}
 }
-void ResidueInformation::chainID(  char setting ) { chainID_ = setting; }
-void ResidueInformation::resSeq(   int setting ) { resSeq_ = setting; }
-void ResidueInformation::iCode(    char setting ) { iCode_ = setting; }
+
+void ResidueInformation::chainID( char setting ) { chainID_ = setting; }
+void ResidueInformation::resSeq( int setting ) { resSeq_ = setting; }
+void ResidueInformation::iCode( char setting ) { iCode_ = setting; }
 void ResidueInformation::terCount( int setting ) { terCount_ = setting; }
 void ResidueInformation::set_xyz( std::string const &atomname, Vector const &vect ) { xyz_[atomname] = vect; }
 void ResidueInformation::set_temp( std::string const &atomname, core::Real const &val ) { temps_[atomname] = static_cast<core::Real>(val); }
 void ResidueInformation::segmentID( std::string const & setting ) { segmentID_ = setting; }
+void ResidueInformation::rosetta_resName( std::string const & setting ) { rosetta_resName_ = setting; }
 
 utility::vector1< AtomInformation > const & ResidueInformation::atoms() const { return atoms_; }
 void ResidueInformation::append_atom( AtomInformation const & new_atom ) {

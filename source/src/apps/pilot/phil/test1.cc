@@ -138,7 +138,7 @@ using std::string;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 using core::import_pose::pose_from_file;
-using io::pdb::dump_pdb; // deprecated though
+using core::io::pdb::dump_pdb; // deprecated though
 static basic::Tracer tt( "demo.phil.test1", basic::t_trace );
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -489,7 +489,7 @@ simple_rotamer_test()
 void
 set_fullatom_flag_test()
 {
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 	using namespace conformation;
 	using namespace chemical;
 	using namespace scoring;
@@ -590,7 +590,7 @@ delete_test()
 void
 simple_loop_modeling_test()
 {
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 	using namespace conformation;
 	using namespace chemical;
 	using namespace scoring;
@@ -867,7 +867,7 @@ dna_deriv_test_old()
 	using namespace basic::options;
 	using namespace pose;
 
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 	using namespace protocols::frags;
 	using namespace protocols::moves;
 	using namespace scoring::dna;
@@ -996,7 +996,7 @@ dna_deriv_test()
 	using namespace basic::options;
 	using namespace pose;
 
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 	using namespace protocols::frags;
 	using namespace protocols::moves;
 	using namespace scoring::dna;
@@ -1112,7 +1112,7 @@ dna_io_test()
 	using namespace basic::options;
 	using namespace pose;
 
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 	using namespace protocols::frags;
 	using namespace protocols::moves;
 
@@ -1269,7 +1269,7 @@ simple_frag_test()
 		for ( Size i=1; i<= 20; ++i ) {
 			pose.set_omega(i,180.0);
 		}
-		io::pdb::dump_pdb( pose, "test_ideal.pdb" );
+		core::io::pdb::dump_pdb( pose, "test_ideal.pdb" );
 	}
 }
 
@@ -1282,7 +1282,7 @@ dna_design_test_old( pose::Pose & pose )
 	using namespace conformation;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 
 	using namespace core::scoring::dna;
 
@@ -1331,7 +1331,7 @@ dna_coupled_rotamer_design_test()
 	using namespace conformation;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 
 	using namespace core::scoring::dna;
 	using namespace basic::options;
@@ -1451,7 +1451,7 @@ dna_coupled_rotamer_design_test()
 void
 dna_design_test()
 {
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 
 	// read the filenames
 	utility::vector1< std::string > files( basic::options::start_files() );
@@ -1479,7 +1479,7 @@ simple_dna_test()
 	using namespace conformation;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace io::pdb;
+	using namespace core::io::pdb;
 
 	Pose pose;
 

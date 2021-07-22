@@ -29,9 +29,9 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/id/NamedAtomID_Map.hh>
-#include <core/chemical/MergeBehaviorManager.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/io/MergeAndSplitBehaviorManager.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
@@ -60,7 +60,8 @@ namespace pose_from_sfr {
 /// This code handles n-terminal acetylation, and some other similar chemical modifications, by merging
 /// the atoms in the "ACE" residue with the next residue.  Instructions of what residue types to merge
 /// and how to rename the atoms to avoid naming collisions are read in from the database by the
-/// MergeBehaviorManager.  After the atoms are merged and renamed, the appropriate AcetylatedNtermProteinFull
+/// MergeAndSplitBehaviorManager.
+/// After the atoms are merged and renamed, the appropriate AcetylatedNtermProteinFull
 /// is applied to that next residue.
 ///
 /// The process of building a pose is handled in four passes.
@@ -84,7 +85,7 @@ public:
 
 private:
 	void setup( StructFileRep const & sfr );
-	void pass_1_merge_residues_as_necessary();
+	void pass_1_split_and_merge_residues_as_necessary();
 	void pass_2_resolve_residue_types();
 	void pass_3_verify_sufficient_backbone_atoms();
 	void pass_4_redo_termini();
@@ -174,7 +175,7 @@ private:
 	// Records which atoms in the output Pose were not present in the SFR
 	id::AtomID_Mask missing_;
 
-	utility::vector1< core::io::ResidueInformation > rinfos_;
+	utility::vector1< ResidueInformation > rinfos_;
 	std::map< std::string, core::Size > resid_to_index_;
 
 	id::NamedAtomID_Mask coordinates_assigned_;
@@ -184,7 +185,7 @@ private:
 	StructFileRep::Strings branch_lower_termini_;
 	StructFileRep::Strings branch_lower_termini_extra_;
 
-	utility::vector1< chemical::merge_residue_behavior > merge_behaviors_;
+	utility::vector1< chemical::io::merge_residue_behavior > merge_behaviors_;
 	utility::vector1< std::map< std::string, std::string > > merge_atom_maps_;
 
 	utility::vector1< core::Size > glycan_positions_;

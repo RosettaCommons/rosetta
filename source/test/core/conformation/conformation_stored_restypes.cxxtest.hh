@@ -40,12 +40,12 @@
 #include <fstream>
 
 #ifdef SERIALIZATION
-#include <core/chemical/MergeBehaviorManager.hh>
 #include <core/chemical/Element.hh>
+#include <core/chemical/io/MergeAndSplitBehaviorManager.hh>
+
 #include <basic/database/open.hh>
 
 // Cereal headers
-//#include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
@@ -224,8 +224,8 @@ public:
 		trunc_metapatches.push_back( basic::database::full_name( "chemical/residue_type_sets/fa_standard/metapatches/connect.txt" ) );
 		mod_restype_set->add_patches( trunc_patches, trunc_metapatches );
 
-		MergeBehaviorManagerOP mbm_copy( new MergeBehaviorManager( mod_restype_set->default_rts()->merge_behavior_manager() ) );
-		mod_restype_set->set_merge_behavior_manager( mbm_copy );
+		io::MergeAndSplitBehaviorManagerOP mbm_copy( new io::MergeAndSplitBehaviorManager( mod_restype_set->default_rts()->merge_split_behavior_manager() ) );
+		mod_restype_set->set_merge_split_behavior_manager( mbm_copy );
 
 		pose.conformation().reset_residue_type_set_for_conf( mod_restype_set );
 

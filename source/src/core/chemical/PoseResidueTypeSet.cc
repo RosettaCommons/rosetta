@@ -326,13 +326,14 @@ PoseResidueTypeSet::remove_unpatchable_residue_type( std::string const & name ) 
 void
 PoseResidueTypeSet::add_patches(
 	utility::vector1< std::string > const & patch_filenames,
-	utility::vector1< std::string > const & metapatch_filenames
-) {
+	utility::vector1< std::string > const & metapatch_filenames )
+{
 	ResidueTypeSet::add_patches( patch_filenames, metapatch_filenames );
 }
 void
-PoseResidueTypeSet::set_merge_behavior_manager( MergeBehaviorManagerCOP mbm) {
-	ResidueTypeSet::set_merge_behavior_manager( mbm );
+PoseResidueTypeSet::set_merge_split_behavior_manager( io::MergeAndSplitBehaviorManagerCOP mbm )
+{
+	ResidueTypeSet::set_merge_split_behavior_manager( mbm );
 }
 ///////////////// end hoist work-around
 

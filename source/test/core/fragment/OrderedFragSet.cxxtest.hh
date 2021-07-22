@@ -100,7 +100,7 @@ void OrderedFragSetTest::generate_random_pose() {
 		ResidueOP new_rsd( ResidueFactory::create_residue( * ( res_list[ 1 ] ) ) );
 		pose_random_.append_residue_by_bond( *new_rsd );
 	}
-	io::pdb::dump_pdb( pose_random_, "random_chain_pose" );
+	core::io::pdb::dump_pdb( pose_random_, "random_chain_pose" );
 }
 
 

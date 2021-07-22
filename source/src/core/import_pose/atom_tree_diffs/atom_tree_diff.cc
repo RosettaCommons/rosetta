@@ -544,7 +544,7 @@ bool pose_from_atom_tree_diff(
 				using namespace core::chemical;
 				using namespace core::import_pose;
 				std::string const end_pdb_key = "END_PDB_FORMAT";
-				utility::vector1< io::pdb::Record > pdb_data;
+				utility::vector1< core::io::pdb::Record > pdb_data;
 				while ( in.good() ) {
 					getline(in, line);
 					if ( in.fail() ) {
@@ -557,7 +557,7 @@ bool pose_from_atom_tree_diff(
 						// I can't figure out if getline() might leave behind a \n or \r\n,
 						// but all real PDB records are longer than 2 characters anyway.
 					} else if ( line.size() > 2 ) {
-						pdb_data.push_back( io::pdb::create_record_from_pdb_line( line ) );
+						pdb_data.push_back( core::io::pdb::create_record_from_pdb_line( line ) );
 					}
 				}
 				core::io::StructFileRep sfr( core::io::pdb::create_sfr_from_pdb_records(pdb_data) );

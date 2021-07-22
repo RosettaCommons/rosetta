@@ -482,7 +482,7 @@ residue_types_from_saccharide_sequence_recursive(
 					// Now check for and interpret valid sugar modifications.
 					if ( suffix != "" ) {
 						vector1< pair< uint, string > > const modifications(
-							io::carbohydrates::sugar_modifications_from_suffix( suffix ) );
+							core::io::carbohydrates::sugar_modifications_from_suffix( suffix ) );
 						Size const n_modifications( modifications.size() );
 						TR.Debug << "Interpretted " << n_modifications << " modification(s) from suffix '" <<
 							suffix << "' in saccharide unit " << morpheme << std::endl;

@@ -26,13 +26,12 @@
 #include <core/chemical/ResidueTypeSetCache.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/MergeBehaviorManager.hh>
 #include <core/chemical/Metapatch.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/util.hh>
-
+#include <core/chemical/io/MergeAndSplitBehaviorManager.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 
 // Basic headers
@@ -44,7 +43,6 @@
 // C++ headers
 #include <fstream>
 #include <string>
-//#include <sstream>
 #include <set>
 #include <algorithm>
 
@@ -80,7 +78,7 @@ static basic::Tracer TR( "core.chemical.ResidueTypeSet" );
 
 ResidueTypeSet::ResidueTypeSet( TypeSetMode mode /*= INVALID_t*/ ) :
 	mode_( mode ),
-	merge_behavior_manager_( new MergeBehaviorManager ),
+	merge_split_behavior_manager_( utility::pointer::make_shared< io::MergeAndSplitBehaviorManager >() ),
 	cache_( utility::pointer::make_shared< ResidueTypeSetCache >( *this ) )
 {}
 
@@ -1034,10 +1032,10 @@ ResidueTypeSet::get_residue_type_with_custom_variant_added(
 	return *rsd_type;
 }
 
-MergeBehaviorManager const &
-ResidueTypeSet::merge_behavior_manager() const
+io::MergeAndSplitBehaviorManager const &
+ResidueTypeSet::merge_split_behavior_manager() const
 {
-	return *merge_behavior_manager_;
+	return *merge_split_behavior_manager_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1085,8 +1083,9 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 }
 
 void
-ResidueTypeSet::set_merge_behavior_manager( MergeBehaviorManagerCOP mbm) {
-	merge_behavior_manager_ = mbm;
+ResidueTypeSet::set_merge_split_behavior_manager( io::MergeAndSplitBehaviorManagerCOP mbm )
+{
+	merge_split_behavior_manager_ = mbm;
 }
 
 // @details Copy constructor -- Not exposed by the Base class itself, or by the GlobalRTS, but it is used by the PoseRTS.
@@ -1100,7 +1099,7 @@ ResidueTypeSet::ResidueTypeSet( ResidueTypeSet const & src ) :
 	mm_atom_types_( src.mm_atom_types_ ), // const, so can share
 	orbital_types_( src.orbital_types_ ), // const, so can share
 	mode_( src.mode_ ),
-	merge_behavior_manager_( src.merge_behavior_manager_ ), // const, so can share
+	merge_split_behavior_manager_( src.merge_split_behavior_manager_ ), // const, so can share
 	//cache_( src.cache_->clone(*this) ), // DEEP-ish COPY NEEDED!
 	base_residue_types_( src.base_residue_types_ ), // individual entries are const, so can share
 	unpatchable_residue_types_( src.unpatchable_residue_types_ ), // individual entries are const, so can share
@@ -1143,7 +1142,7 @@ core::chemical::ResidueTypeSet::save( Archive & arc ) const {
 
 	arc( CEREAL_NVP( mode_ ) ); // TypeSetMode
 
-	arc( CEREAL_NVP( merge_behavior_manager_ ) ); // MergeBehaviorManagerCOP
+	arc( CEREAL_NVP( merge_split_behavior_manager_ ) ); // MergeAndSplitBehaviorManagerCOP
 	arc( CEREAL_NVP( cache_ ) ); // ResidueTypeSetCacheOP
 
 	// Cereal should be smart enough to know that the COPs are duplicated from the Cache object,
@@ -1174,9 +1173,9 @@ core::chemical::ResidueTypeSet::load( Archive & arc ) {
 
 	arc( mode_ ); // TypeSetMode
 
-	MergeBehaviorManagerOP merge_behavior_manager;
-	arc( merge_behavior_manager );
-	merge_behavior_manager_ = merge_behavior_manager;
+	io::MergeAndSplitBehaviorManagerOP merge_split_behavior_manager;
+	arc( merge_split_behavior_manager );
+	merge_split_behavior_manager_ = merge_split_behavior_manager;
 
 	arc( cache_ ); // ResidueTypeSetCacheOP
 

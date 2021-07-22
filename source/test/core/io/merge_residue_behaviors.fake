@@ -1,0 +1,14 @@
+# This file helps to merge PDB residues that Rosetta prefers to represent with patches.
+# Its three fields are tab-separated. Try to keep this up to date with patches!
+
+# THIS IS JUST A LIST FOR UNIT TESTING!
+# The actual, current lists are found within the appropriate ResidueTypeSet
+# directories in the database:
+# database/chemical/residue_type_sets
+# If you edit this file, you must also edit merge_and_split_behaviors_io.cxxtest.hh.
+
+Black Lion	merge_w_next	mouth-face,body-torso,arms-shoulders,legs-thighs
+Red Lion	merge_w_prev	mouth-hand,body-arm
+Green Lion	merge_w_prev	mouth-hand,body-arm
+Blue Lion	merge_w_prev	mouth-foot,body-leg
+Yellow Lion	merge_w_prev	mouth-foot,body-leg

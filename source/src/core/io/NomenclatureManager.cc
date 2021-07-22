@@ -361,7 +361,7 @@ NomenclatureManager::get_alternate_3_letter_code_map() const
 // Try various combinations to locate the specific file being requested by the user.
 // (inspired by core::scoring::ScoreFunction::find_weights_file())
 std::string
-NomenclatureManager::find_alternate_codes_file( std::string const & filename )
+NomenclatureManager::find_alternate_codes_file( std::string const & filename ) const
 {
 	using namespace utility::io;
 
@@ -393,7 +393,6 @@ NomenclatureManager::find_alternate_codes_file( std::string const & filename )
 		" nor " + path + filename +
 		" nor " + path + filename + ext + " exists." );
 }
-
 
 }  // namespace io
 }  // namespace core

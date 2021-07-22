@@ -375,7 +375,7 @@ rhiju_pdbstats()
 		if ( option[out::file::o].user() ) outfile  = option[ out::file::o ];
 		else outfile = pdb_file + ".rdat";
 
-		io::rna::RDAT rdat;
+		core::io::rna::RDAT rdat;
 		rdat.fill_header_information( pose );
 		total_residues += rna_features_from_pose( rdat, pose );
 		rdat.output_rdat_to_file( outfile );

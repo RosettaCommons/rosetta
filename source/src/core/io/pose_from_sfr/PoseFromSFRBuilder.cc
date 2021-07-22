@@ -28,13 +28,15 @@
 #include <core/io/HeaderInformation.hh>
 #include <core/io/NomenclatureManager.hh>
 #include <core/io/ResidueInformation.hh>
+#include <core/io/raw_data/DisulfideFile.hh>
+#include <core/io/util.hh>
+#include <core/chemical/io/merge_and_split_behaviors_io.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedAtomID_Map.hh>
-#include <core/io/util.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
@@ -69,11 +71,13 @@
 
 // Utility headers
 #include <utility>
+#include <utility/string_constants.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh> // for nmers_of
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/exit.hh>
+#include <utility/stream_util.hh>
 
 // External headers
 
@@ -83,8 +87,6 @@
 #include <algorithm>    // std::sort std::find
 #include <vector>
 
-#include <core/chemical/MergeBehaviorManager.hh> // AUTO IWYU For MergeBehaviorManager::AtomRenamingMap, Mer...
-#include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 namespace core {
 namespace io {
@@ -123,7 +125,7 @@ PoseFromSFRBuilder::build_pose( StructFileRep const & sfr, pose::Pose & pose )
 	}
 
 	setup( sfr );
-	pass_1_merge_residues_as_necessary();
+	pass_1_split_and_merge_residues_as_necessary();
 	pass_2_resolve_residue_types();
 	pass_3_verify_sufficient_backbone_atoms();
 	pass_4_redo_termini();
@@ -167,7 +169,7 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 
 		// first establish if this is DNA or RNA (or something else)
 		if ( !options_.guarantee_no_DNA()
-				&& core::io::NomenclatureManager::is_old_DNA( rinfo.resName() )
+				&& NomenclatureManager::is_old_DNA( rinfo.resName() )
 				&& missing_O2prime( rinfo.atoms() ) )  {
 			std::string new_name( original_name ); new_name.replace( 1, 1, "D" ); // A --> dA
 			rinfo.resName( new_name );
@@ -176,7 +178,7 @@ PoseFromSFRBuilder::convert_nucleic_acid_residue_info_to_standard()
 			}
 		}
 
-		if ( core::io::NomenclatureManager::is_old_RNA( rinfo.resName() ) ) {
+		if ( NomenclatureManager::is_old_RNA( rinfo.resName() ) ) {
 			std::string new_name( original_name ); new_name.replace( 1, 1, " " ); // rA --> A
 			rinfo.resName( new_name );
 			if ( ++nfix_ <= max_fix || show_all_fixup ) {
@@ -278,18 +280,69 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 		}
 	}
 	sfr_.link_map() = pruned_links;
-
-
 }
 
 void
-PoseFromSFRBuilder::pass_1_merge_residues_as_necessary()
+PoseFromSFRBuilder::pass_1_split_and_merge_residues_as_necessary()
 {
 	using namespace core::io::pdb;
 	using namespace core::chemical;
+	using namespace core::chemical::io;
 
 	create_working_data( options_, sfr_, rinfos_ );
 	convert_nucleic_acid_residue_info_to_standard();
+
+	// Split residues.
+	{
+		core::uint i( 1 );
+		while ( i <= rinfos_.size() ) {
+			ResidueInformation const rinfo( rinfos_[ i ] );
+			SplitBehaviors const & residues_renamings_pair =
+				residue_type_set_->merge_split_behavior_manager().split_behavior_for_name3( rinfo.resName() );
+			if ( ! residues_renamings_pair.first.empty() ) {
+				Size const n_res_into_which_to_split( residues_renamings_pair.first.size() );
+				TR << "Splitting residue " << rinfo.resName() << " into " << n_res_into_which_to_split << " residues: ";
+				rinfos_[ i ] = ResidueInformation();  // Clear the original residue.
+				// Make space in the vector for the new residues.
+				rinfos_.insert( rinfos_.begin() + i, n_res_into_which_to_split - 1, ResidueInformation() );
+				for ( core::uint j( 0 ); j < n_res_into_which_to_split; ++j ) {
+					ResidueInformation & res_frag( rinfos_[ i + j ] );
+					std::string const & new_name( residues_renamings_pair.first[ j + 1 ].first );
+					if ( j ) { TR << ", "; }
+					TR << new_name;
+
+					// Create the new residue.
+					// Keep the same chain and sequence ID, but give it an insertion code.
+					res_frag.resName( new_name );
+					res_frag.chainID( rinfo.chainID() );
+					res_frag.resSeq( rinfo.resSeq() );
+					res_frag.iCode( utility::UPPERCASE_LETTERS[ j ] );
+					res_frag.terCount( rinfo.terCount() );
+					res_frag.segmentID( rinfo.segmentID() );
+
+					sfr_.residue_type_base_names()[ res_frag.resid() ] = residues_renamings_pair.first[ j + 1 ];
+
+					// Copy and rename the atoms.
+					AtomRenamingMap const & renamings( residues_renamings_pair.second[ j + 1 ] );
+					Size const n_atoms( rinfo.atoms().size() );
+					for ( core::uint k( 1 ); k <= n_atoms; ++k ) {
+						std::string const & old_name( rinfo.atoms()[ k ].name );
+						if ( renamings.count( old_name ) ) {
+							AtomInformation new_atom = rinfo.atoms()[ k ];
+							new_atom.name = renamings.at( old_name );
+							res_frag.append_atom( new_atom );
+						}
+					}
+				}
+				TR << std::endl;
+
+				i += n_res_into_which_to_split;
+			} else {
+				++i;
+			}
+		}
+	}
+
 
 	residue_types_.resize(              rinfos_.size() );
 	is_lower_terminus_.resize(          rinfos_.size(), false );
@@ -299,10 +352,12 @@ PoseFromSFRBuilder::pass_1_merge_residues_as_necessary()
 	merge_behaviors_.resize(            rinfos_.size() );
 	merge_atom_maps_.resize(            rinfos_.size() );
 
+
+	// Merge residues.
 	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
 		resid_to_index_[ rinfos_[ ii ].resid() ] = ii;
-		MergeBehaviorManager::ResidueMergeInstructions const & behavior_map_pair =
-			residue_type_set_->merge_behavior_manager().merge_behavior_for_name3( rinfos_[ ii ].resName() );
+		ResidueMergeInstructions const & behavior_map_pair =
+			residue_type_set_->merge_split_behavior_manager().merge_behavior_for_name3( rinfos_[ ii ].resName() );
 
 		merge_behaviors_[ ii ] = behavior_map_pair.first;
 		if ( merge_behaviors_[ ii ] != mrb_do_not_merge ) {
@@ -317,14 +372,15 @@ PoseFromSFRBuilder::pass_1_merge_residues_as_necessary()
 			}
 
 			if ( ii == rinfos_.size() && merge_behaviors_[ ii ] == mrb_merge_w_next ) {
-				utility_exit_with_message( "The last residue, residue" + utility::to_string( ii ) + " named \"" + rinfos_[ ii ].resName() +
+				utility_exit_with_message( "The last residue, residue" + utility::to_string( ii ) +
+					" named \"" +rinfos_[ ii ].resName() +
 					"\" has been indicated to merge with the next residue from the core::io::NomenclatureManager" );
 			}
 
-			core::io::ResidueInformation & rmerged_into = rinfos_[ merge_behaviors_[ ii ] == mrb_merge_w_prev ? ii-1 : ii+ 1 ];
+			ResidueInformation & rmerged_into = rinfos_[ merge_behaviors_[ ii ] == mrb_merge_w_prev ? ii-1 : ii+ 1 ];
 
-			chemical::MergeBehaviorManager::AtomRenamingMap nowhitespace_rename_map;
-			for ( chemical::MergeBehaviorManager::AtomRenamingMap::const_iterator
+			AtomRenamingMap nowhitespace_rename_map;
+			for ( AtomRenamingMap::const_iterator
 					iter = merge_atom_maps_[ ii ].begin(), iter_end = merge_atom_maps_[ ii ].end();
 					iter != iter_end; ++iter ) {
 				nowhitespace_rename_map[ utility::strip( iter->first ) ] = iter->second;
@@ -388,7 +444,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		}
 		utility::vector1< core::Size > chain_ends = core::io::fix_glycan_order( rinfos_, glycan_positions_, options_, known_links_ );
 		// Reset correspondences for reordered glycans
-		for ( core::Size pos: glycan_positions_ ) {
+		for ( core::Size pos : glycan_positions_ ) {
 			resid_to_index_[ rinfos_[ pos ].resid() ] = pos;
 		}
 		for ( core::Size end : chain_ends ) {
@@ -402,7 +458,10 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 	}
 
 	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
-		if ( merge_behaviors_[ ii ] == mrb_merge_w_next || merge_behaviors_[ ii ] == mrb_merge_w_prev ) continue;
+		if ( merge_behaviors_[ ii ] == chemical::io::mrb_merge_w_next ||
+				merge_behaviors_[ ii ] == chemical::io::mrb_merge_w_prev ) {
+			continue;
+		}
 
 		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
 		char chainID = rinfo.chainID();
@@ -488,8 +547,6 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 
 			--kk;
 		}
-
-
 
 		if ( rsd_type_cop == nullptr ) {
 			std::string variant;
@@ -1644,16 +1701,16 @@ PoseFromSFRBuilder::get_rsd_type(
 /// the second residue and the first residue has a mrb_merge_w_next behavior specified
 Size PoseFromSFRBuilder::prev_residue_skipping_merges( Size resid ) const
 {
-	return resid > 1 ? ( merge_behaviors_[ resid-1 ] != core::chemical::mrb_merge_w_next ? resid-1 : ( resid-1 > 1 ? resid-2 : resid )) : resid;
+	return resid > 1 ? ( merge_behaviors_[ resid-1 ] != chemical::io::mrb_merge_w_next ? resid-1 : ( resid-1 > 1 ? resid-2 : resid )) : resid;
 }
 
 /// @brief Returns the input resid if it's the first residue that has a non-null-pointing
 /// entry in the residue_types_ array.
 Size PoseFromSFRBuilder::prev_residue_skipping_null_residue_types( Size resid ) const
 {
-	if ( resid == 1 ) return resid;
+	if ( resid == 1 ) { return resid; }
 	for ( Size ii = resid-1; ii >= 1; --ii ) {
-		if ( residue_types_[ ii ] ) return ii;
+		if ( residue_types_[ ii ] ) { return ii; }
 	}
 	return resid;
 }
@@ -1662,9 +1719,8 @@ Size PoseFromSFRBuilder::prev_residue_skipping_null_residue_types( Size resid ) 
 /// the second-to-last residue and the last residue has a mrb_merge_w_prev behavior specified
 Size PoseFromSFRBuilder::next_residue_skipping_merges( Size resid ) const
 {
-	//return resid < rinfos_.size() ? ( merge_behaviors_[ resid+1 ] != core::chemical::mrb_merge_w_prev ? resid+1 : ( resid+1 < rinfos_.size() ? resid+2 : resid  )) : resid;
 	if ( resid < rinfos_.size()  ) {
-		if ( merge_behaviors_[ resid+1 ] != core::chemical::mrb_merge_w_prev ) {
+		if ( merge_behaviors_[ resid+1 ] != chemical::io::mrb_merge_w_prev ) {
 			return resid+1;
 		} else if ( resid+1 < rinfos_.size() ) {
 			return resid+2;
@@ -1677,9 +1733,9 @@ Size PoseFromSFRBuilder::next_residue_skipping_merges( Size resid ) const
 /// entry in the residue_types_ array.
 Size PoseFromSFRBuilder::next_residue_skipping_null_residue_types( Size resid ) const
 {
-	if ( resid == residue_types_.size() ) return resid;
+	if ( resid == residue_types_.size() ) { return resid; }
 	for ( Size ii = resid+1; ii <= residue_types_.size(); ++ii ) {
-		if ( residue_types_[ ii ] ) return ii;
+		if ( residue_types_[ ii ] ) { return ii; }
 	}
 	return resid;
 }

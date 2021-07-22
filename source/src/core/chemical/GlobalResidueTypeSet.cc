@@ -42,14 +42,13 @@
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/MergeBehaviorManager.hh>
-#include <core/chemical/sdf/MolFileIOReader.hh>
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/adduct_util.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/residue_support.hh>
-
+#include <core/chemical/io/MergeAndSplitBehaviorManager.hh>
 #include <core/chemical/mmCIF/mmCIFParser.hh>
+#include <core/chemical/sdf/MolFileIOReader.hh>
 
 // Basic headers
 #include <basic/database/open.hh>
@@ -101,7 +100,7 @@ GlobalResidueTypeSet::GlobalResidueTypeSet(
 	clock_t const time_start( clock() );
 
 	name( cm_name );
-	set_merge_behavior_manager( utility::pointer::make_shared< MergeBehaviorManager >( directory ) );
+	set_merge_split_behavior_manager( utility::pointer::make_shared< io::MergeAndSplitBehaviorManager >( directory ) );
 	load_exclude_pdb_component_ids( directory );
 
 	init_restypes_from_database(); // Will also load the sub-typesets

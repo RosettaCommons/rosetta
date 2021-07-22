@@ -306,6 +306,14 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Now importing maltobiose using the single PDB residue name MAL:" << endl;
+
+		pose_from_file( maltobiose, PATH + "PDB_maltobiose.pdb", PDB_file );
+
+		test_sugar( maltobiose );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing GalCer:" << endl;
 
 		pose_from_file( GalCer, PATH + "GalCer.pdb", PDB_file );

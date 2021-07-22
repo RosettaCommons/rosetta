@@ -116,7 +116,7 @@ void FragmentConstantLengthTest::generate_random_pose () {
 		ResidueOP new_rsd( ResidueFactory::create_residue( * ( res_list[ 1 ] ) ) );
 		pose_random_.append_residue_by_bond( *new_rsd );
 	}
-	io::pdb::dump_pdb( pose_random_, "random_chain_pose" );
+	core::io::pdb::dump_pdb( pose_random_, "random_chain_pose" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -423,7 +423,7 @@ void FragmentConstantLengthTest::sub_insertion( Size size, fragment::FragSet con
 			pose_Nmers.set_torsion( id::TorsionID( pos, id::BB, i ), numeric::random::uniform() );
 		}
 	};
-	io::pdb::dump_pdb( pose_Nmers, "randomized.pdb");
+	core::io::pdb::dump_pdb( pose_Nmers, "randomized.pdb");
 
 	for ( Size pos = 1; pos<= pose_Nmers.size() - size; pos+= ( size / 2 ) ) {
 		FrameList frames;
@@ -436,7 +436,7 @@ void FragmentConstantLengthTest::sub_insertion( Size size, fragment::FragSet con
 		TS_ASSERT_EQUALS( frame.end(), pos + size - 1 );
 		frame.apply( movemap, 1, pose_Nmers ); // apply the first fragment of this frame
 	}
-	io::pdb::dump_pdb( pose_Nmers, "pose_after_"+right_string_of(size,1)+"mer_insertion");
+	core::io::pdb::dump_pdb( pose_Nmers, "pose_after_"+right_string_of(size,1)+"mer_insertion");
 	for ( Size pos = 1; pos<= pose_Nmers.size(); pos ++ ) {
 		for ( Size i = 1; i <= 3; i++ ) {
 			TS_ASSERT_EQUALS( pose_Nmers.torsion( id::TorsionID( pos, id::BB, i) ), pose_.torsion( id::TorsionID( pos, id::BB, i) ) );

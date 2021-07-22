@@ -320,14 +320,16 @@ packing_specificity_test_fast(
 		tt << " total_correct= " << ObjexxFCL::format::F(6,3,total_correct) << ' ' << output_tag << std::endl <<
 			"packed_terms: " << output_tag << ' ' << pose.energies().total_energies().show_nonzero() << std::endl;
 
-		if ( dump_pdbs ) io::pdb::dump_pdb( pose, output_tag+"_"+packed_seq+"_"+nat_seq+".pdb" );
+		if ( dump_pdbs ) core::io::pdb::dump_pdb( pose, output_tag+"_"+packed_seq+"_"+nat_seq+".pdb" );
 
 		if ( postmin ) {
 			//MinimizerOptions min_options( min_type, min_tol, true /*use_nblist*/ );
 			AtomTreeMinimizer().run( pose, mm, scorefxn, MinimizerOptions( min_type, min_tol, true ) );//min_options );
 			tt << "postmin_score: " << packed_seq << ' ' << scorefxn( pose ) << ' ' << output_tag << std::endl <<
 				"postmin_terms: " << output_tag << ' ' << pose.energies().total_energies().show_nonzero() << std::endl;
-			if ( dump_pdbs ) io::pdb::dump_pdb( pose, output_tag+"_"+packed_seq+"_"+nat_seq+"_postmin.pdb" );
+			if ( dump_pdbs ) {
+				core::io::pdb::dump_pdb( pose, output_tag+"_"+packed_seq+"_"+nat_seq+"_postmin.pdb" );
+			}
 		}
 
 	} // loop over sequence combinations
@@ -518,7 +520,7 @@ packing_specificity_test(
 		Energy pack_score = scorefxn( pose );
 
 		if ( false ) { //debugging
-			io::pdb::dump_pdb( pose, combo_tag+"_packed.pdb" );
+			core::io::pdb::dump_pdb( pose, combo_tag+"_packed.pdb" );
 			pose.energies().show(tt);
 			pose.energies().clear();
 			Energy pack_rescore( scorefxn( pose ) );
@@ -544,7 +546,7 @@ packing_specificity_test(
 
 
 		/// PB -- I think SVN MERGE mucked this up a bit. Have to take a closer look.
-		io::pdb::dump_pdb( pose, output_tag+"_"+combo_tag+"_"+nat_seq+".pdb" );
+		core::io::pdb::dump_pdb( pose, output_tag+"_"+combo_tag+"_"+nat_seq+".pdb" );
 
 		if ( postmin ) {
 			AtomTreeMinimizer().run( pose, mm, scorefxn, min_options );
@@ -564,7 +566,7 @@ packing_specificity_test(
 			<< " interface_allatom=" << interface_allatom_rmsd << ", dna_bb=" << dna_bb_rmsd
 			<< std::endl;
 
-		io::pdb::dump_pdb( pose, output_tag+"_"+combo_tag+"_"+nat_seq+".pdb" );
+		core::io::pdb::dump_pdb( pose, output_tag+"_"+combo_tag+"_"+nat_seq+".pdb" );
 
 	} // loop over sequence combinations
 	basic::prof_show();

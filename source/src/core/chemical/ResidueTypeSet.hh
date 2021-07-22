@@ -22,9 +22,7 @@
 // Package headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/AA.hh>
-//#include <core/chemical/ResidueTypeSelector.fwd.hh>
 #include <core/chemical/ResidueTypeSetCache.fwd.hh>
-#include <core/chemical/MergeBehaviorManager.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -33,13 +31,13 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/Metapatch.fwd.hh>
 #include <core/chemical/Patch.fwd.hh>
+#include <core/chemical/io/MergeAndSplitBehaviorManager.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
-
 
 // STL headers
 #include <map>
@@ -53,13 +51,14 @@
 namespace core {
 namespace chemical {
 
-/**
-One thing that is not nailed down is whether a single ResidueTypeSet can have ResidueTypes with different AtomTypeSets. (PB-07/07)
+/*
+One thing that is not nailed down is whether a single ResidueTypeSet can have ResidueTypes with different AtomTypeSets.
+(PB-07/07)
 
 The answer is NO -- or at least a ResidueTypeSet shouldn't have ResidueTypes with different mode() values,
 which in most cases are determined by the AtomTypeSet being used. -
 Though two different AtomTypeSets with the same mode may be permitted. (RM-11/16)
-**/
+*/
 
 /// @brief An abstract interface to a set of ResidueTypes
 class ResidueTypeSet : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< ResidueTypeSet >
@@ -297,9 +296,8 @@ public:
 		VariantType const old_type
 	) const;
 
-	/// @brief accessor for merge behavior manager
-	MergeBehaviorManager const &
-	merge_behavior_manager() const;
+	/// @brief accessor for merge/split behavior manager
+	io::MergeAndSplitBehaviorManager const & merge_split_behavior_manager() const;
 
 	/// @brief The list of ResidueTypes that don't have any patches, but can be patched.
 	virtual
@@ -584,9 +582,7 @@ protected:
 		utility::vector1< std::string > const & metapatch_filenames
 	);
 
-	virtual
-	void
-	set_merge_behavior_manager( MergeBehaviorManagerCOP mbm);
+	virtual void set_merge_split_behavior_manager( io::MergeAndSplitBehaviorManagerCOP mbm);
 
 	/// @brief A list of L-chirality base types with an equivalent D-chirality base type.
 	std::map < ResidueTypeCOP /*L-type*/, ResidueTypeCOP /*D-type*/> &
@@ -624,7 +620,7 @@ private:
 	/// @brief What sort of TypeSet is this?
 	TypeSetMode mode_;
 
-	MergeBehaviorManagerCOP merge_behavior_manager_;
+	io::MergeAndSplitBehaviorManagerCOP merge_split_behavior_manager_;
 
 	/// @brief all cached residue_type information including generated residue_types, name3_map, etc.
 	/// By making the following an OP (instead of an object) the cache effectively becomes mutable even when in a

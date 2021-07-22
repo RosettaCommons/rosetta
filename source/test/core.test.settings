@@ -130,6 +130,7 @@ sources = {
 		"StructFileReaderOptions",
 		"mmcif_IO",
 		"mmtf_IO",
+		"merge_and_split_behaviors_io",
 	],
 	"io/atom_tree_diffs": [
 		"atom_tree_diff",
@@ -1000,6 +1001,8 @@ testinputfiles = [
 	"io/GTP.params",
 	"io/bin_silentfile_test.out",
 	"io/bin_silentfile_test.pdb",
+	"io/merge_residue_behaviors.fake",
+	"io/split_residue_behaviors.fake",
 	"io/carbohydrates/1ioo.pdb",
 	"io/carbohydrates/1x38.pdb",
 	"io/carbohydrates/3uue.pdb",

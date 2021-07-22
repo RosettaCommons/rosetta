@@ -38,8 +38,7 @@ class StructFileRepTests : public CxxTest::TestSuite {
 public:  // Standard methods //////////////////////////////////////////////////
 	// Initialization
 	void setUp()
-	{
-	}
+	{}
 
 	// Destruction
 	void tearDown()
