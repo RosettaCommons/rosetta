@@ -188,7 +188,7 @@ std::map< core::Size, core::Real >
 SidechainNeighborCountMetric::calculate(const pose::Pose & pose) const {
 	std::map< core::Size, core::Real > final_counts;
 
-	utility::vector1< core::Size > counts = core::select::util::calc_sc_neighbors(pose, angle_exponent_, angle_shift_factor_, dist_exponent_, dist_midpoint_, res_denominator_);
+	utility::vector1< core::Real > counts = core::select::util::calc_sc_neighbors(pose, angle_exponent_, angle_shift_factor_, dist_exponent_, dist_midpoint_, res_denominator_);
 
 	assert(pose.size() == counts.size());
 
