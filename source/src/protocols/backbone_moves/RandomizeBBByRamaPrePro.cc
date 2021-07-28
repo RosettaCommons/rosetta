@@ -146,13 +146,16 @@ void RandomizeBBByRamaPrePro::provide_xml_schema( utility::tag::XMLSchemaDefinit
 }
 
 /// @brief Set the residue selector that this mover will use.
-/// @details The selector is cloned.
+/// @details The selector is cloned.  Pass in nullptr to reset selector_.
 void
 RandomizeBBByRamaPrePro::set_residue_selector(
 	core::select::residue_selector::ResidueSelectorCOP const & selector_in
 ) {
-	runtime_assert( selector_in != nullptr );
-	selector_ = selector_in->clone();
+	if ( selector_in == nullptr ) {
+		selector_ = nullptr;
+	} else {
+		selector_ = selector_in->clone();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

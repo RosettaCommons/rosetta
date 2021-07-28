@@ -97,7 +97,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/// @brief Set the residue selector that this mover will use.
-	/// @details The selector is cloned.
+	/// @details The selector is cloned.  Pass in nullptr to reset selector_.
 	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP const & selector_in );
 
 private: // methods
