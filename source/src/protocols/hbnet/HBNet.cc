@@ -3415,8 +3415,11 @@ HBNet::apply( Pose & pose )
 	if ( only_native_ ) {
 		// in only_native_ case, HBNet reslabels and comments get added to cached orig_pose_, but apply() is passed Pose & pose REFERENCE, so need update "pose"
 		pose = nonconst_get_orig_pose();
-		if ( native_networks_.empty() ) set_last_move_status( moves::FAIL_RETRY );
-		else set_last_move_status( moves::MS_SUCCESS );
+		if ( native_networks_.empty() && !allow_no_hbnets_ ) {
+			set_last_move_status( moves::FAIL_RETRY );
+		} else {
+			set_last_move_status( moves::MS_SUCCESS );
+		}
 		return;
 	}
 	TR.Debug << "After prepare_output, network_vector_.size() = " << network_vector_.size() << std::endl;
