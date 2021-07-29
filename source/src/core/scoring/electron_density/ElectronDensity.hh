@@ -97,7 +97,7 @@ public:
 	/// @brief Load an MRC density map
 	bool
 	readMRCandResize(
-		std::string mapfile,
+		std::string const & mapfile,
 		core::Real reso=5.0,
 		core::Real gridSpacing=0.0);
 
@@ -476,16 +476,16 @@ public:
 	}
 
 	///@brief gets rotation vactor for subunit 'subunit' in last-scored pose (Rosetta symmetry)
-	void get_R(int subunit, numeric::xyzMatrix<core::Real> &R) {
+	void get_R(int subunit, numeric::xyzMatrix<core::Real> &R) const {
 		runtime_assert( symmap.find( -subunit ) != symmap.end() );
-		R = symmap[ -subunit ].second;
+		R = symmap.at(-subunit).second;
 	}
 
 	///@brief get the "effective B factor": a global b factor based on map resolution
-	core::Real getEffectiveBfactor() { return effectiveB; }
+	core::Real getEffectiveBfactor() const { return effectiveB; }
 
 	// get S2 (reciprocal space dist^2)
-	core::Real S2(int h, int k, int l) {
+	core::Real S2(int h, int k, int l) const {
 		return ( h*h*RcellDimensions[0]*RcellDimensions[0]
 			+ k*k*RcellDimensions[1]*RcellDimensions[1]
 			+ l*l*RcellDimensions[2]*RcellDimensions[2]

@@ -1,0 +1,102 @@
+{
+	"cryo_assembly": {
+		"assembly": {
+			"connectivity_weight": 1000.0,
+			"extras": "",
+			"final_out": 20,
+			"n_iter": 200,
+			"n_out": 10,
+			"null_weight": -1150,
+			"onebody_weight": 260.0,
+			"twobody_weight": 150.0,
+			"dc_weight": 0,
+			"overlap_weight": 100,
+			"vdw_weight": 1.0,
+			"rg_weight": 0,
+			"cen_env_smooth_weight": 2.0,
+			"cen_pair_smooth_weight": 1.0,
+			"hbond_sr_bb_weight": 1,
+			"hbond_lr_bb_weight": 1,
+			"rama_weight": 0.2,
+			"omega_weight": 0.2,
+			"cbeta_smooth_weight": 1.0,
+			"cenpack_smooth_weight": 1.0,
+			"motif_dock_weight": 0,
+			"interchain_vdw_weight": 0,
+			"neighbor_count_weight": 0,
+			"jobs": 50
+		},
+		"general": {
+			"dsm": "1E6V_A 2",
+			"extras": "",
+			"mapfile": "inputs/1e6v_trim.mrc.gz",
+			"mute": "true",
+			"name": "1e6v_hm_run",
+			"rank_range": "1 100"
+		},
+		"iterover": {
+			"general": {},
+			"twobody": {},
+			"assembly": {
+				"null_weight": [
+					-200,
+					-500,
+					-1150,
+					-1300
+				]
+			}
+		},
+		"twobody": {
+			"scorefile_out": "sc",
+			"scorefile": "sc",
+			"constrain_type": "legacy",
+			"extras": "-hbond_bb_per_residue_energy",
+			"bb_iter": "0",
+			"rb_iter": "20",
+			"refine_dens_wt": "10",
+			"core_split": 500,
+			"score_closability": "true",
+			"slide_domains": "5",
+			"legacy_radii": "12",
+			"trim_clash": "true",
+			"allow_domains_to_minimize": "true"
+		}
+	},
+	"docking": {
+		"pdbs": [
+			[
+				"inputs/001_3sqg_A.pdb"
+			]
+		],
+		"mapfiles": [
+			"inputs/1e6v_trim.mrc.gz"
+		],
+		"mapreso": 4.0,
+		"multi_natives": [
+			[
+				"inputs/1E6V_A_1.pdb",
+				"inputs/1E6V_A_2.pdb"
+			]
+		],
+		"clust_radius": 10.0,
+		"convolute_single_residue": false,
+		"laplacian_offset": 0,
+		"n_to_search": 100,
+		"n_filtered": 6,
+		"n_output": 2,
+		"point_radius": 1.0,
+		"min": true,
+		"min_bb": false,
+		"constrain_refinement": 10.0,
+		"refinement_reso": 4.0,
+		"rot_middle_ca": false,
+		"extras": "",
+		"max_rot_per_trans": 11,
+		"bw": null,
+		"final_result_names": [
+			"1E6V_A"
+		],
+		"redo": false,
+		"cores": 2
+	}
+}

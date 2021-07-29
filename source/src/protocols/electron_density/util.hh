@@ -18,6 +18,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/electron_density/ElectronDensity.fwd.hh>
 
 //// C++ headers
 #include <string>
@@ -33,6 +34,13 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose , std::string const & align_
 
 // find N residues with worst agreement to density
 protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real frac, int max_helix, int max_strand );
+
+void
+remove_occupied_density_from_density(
+	core::pose::Pose const & pose,
+	core::scoring::electron_density::ElectronDensity & dens,
+	core::Size const edge_trim = 5,
+	core::Real const mask_radius = 2.0);
 
 }
 }

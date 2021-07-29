@@ -34,9 +34,12 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Atom.hh>
-#include <basic/options/option.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
+
+#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/io/izstream.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
@@ -2765,15 +2768,24 @@ void ElectronDensity::dCCdx_aacen( int atmid, int resid,
 //      read an MRC/CCP4 density map
 bool
 ElectronDensity::readMRCandResize(
-	std::string mapfile,
-	core::Real reso,
-	core::Real gridSpacing
+	std::string const & mapfile,
+	core::Real const reso,
+	core::Real const gridSpacing
 ) {
-	std::ifstream mapin(mapfile.c_str() , std::ios::binary | std::ios::in );
-	bool const isLoaded( readMRCandResize(mapin, mapfile, reso, gridSpacing) );
+	utility::io::izstream mapin(mapfile.c_str());
+	bool const is_loaded = [&]{
+		if ( !mapin.gzipped() ) {
+			return readMRCandResize(mapin(), mapfile, reso, gridSpacing);
+		} else {
+			// can't seek correctly with gzipped -- have to load whole file into memory
+			std::stringstream unzipped_map;
+			unzipped_map << mapin.rdbuf();
+			return readMRCandResize(unzipped_map, mapfile, reso, gridSpacing);
+		}
+	}();
 	mapin.close();
 
-	return isLoaded;
+	return is_loaded;
 }
 
 // ElectronDensity::readMRC(std::istream mapfile)

@@ -5,19 +5,9 @@
 
 #include <core/import_pose/import_pose.hh>
 
-
-
-
-
 // minimize pose into density
-#include <protocols/electron_density/DockIntoDensityMover.hh>
+#include <protocols/electron_density/DockFragmentsIntoDensityMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-
-
-
-
-
-
 
 //#include <core/io/silent/ProteinSilentStruct.hh>
 
@@ -79,7 +69,7 @@ int main(int argc, char* argv[]) {
 		// force some options
 		option[ out::nooutput ].value(true);
 
-		protocols::electron_density::DockIntoDensityMoverOP dock( new protocols::electron_density::DockIntoDensityMover );
+		protocols::electron_density::DockFragmentsIntoDensityMoverOP dock( new protocols::electron_density::DockFragmentsIntoDensityMover );
 		dock->setB( option[ bw ] );
 		dock->setTopN( option[ n_to_search ] , option[ n_filtered ] , option[ n_output ] );
 		dock->setGridStep( option[ movestep ] );

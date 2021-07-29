@@ -331,6 +331,7 @@ sources = {
 		"calc_ssm_energies", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"perturb_structure", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"fasol_perres", # /* Frank Dimaio,Documentation Location,Demo Location */
+		"dock_pdb_into_density",
 		#"cryst_gen", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"dsrna_grow", # /* Frank Dimaio,Documentation Location,Demo Location */
 	],

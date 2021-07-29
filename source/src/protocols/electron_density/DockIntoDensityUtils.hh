@@ -58,6 +58,7 @@ public:
 		post_trans_ = post_trans;
 		rotation_ = rotation;
 	}
+	friend std::ostream& operator<< (std::ostream& out, const RBfitResult& result);
 };
 
 
@@ -65,7 +66,7 @@ public:
 class RefinementResult {
 public:
 	core::Real score_, prerefine_score_, spharm_score_;
-	core::pose::PoseOP pose_;
+	core::pose::PoseCOP pose_;
 
 	numeric::xyzVector< core::Real > center();
 
@@ -73,9 +74,19 @@ public:
 
 	RefinementResult(
 		core::Real const score,
+		core::pose::PoseOP const pose_in
+	) {
+		score_ = score;
+		prerefine_score_ = 0.0;
+		spharm_score_ = 0.0;
+		pose_ = pose_in;
+	}
+
+	RefinementResult(
+		core::Real const score,
 		core::Real const prerefine_score,
 		core::Real const spharm_score,
-		core::pose::PoseOP const pose_in
+		core::pose::PoseCOP const pose_in
 	) {
 		score_ = score;
 		prerefine_score_ = prerefine_score;
@@ -88,11 +99,7 @@ public:
 // comparators
 class RBfitResultComparitor {
 public:
-	bool operator()(RBfitResult& t1, RBfitResult& t2) {
-		return (t1.score_ > t2.score_);
-	}
-
-	bool operator()(RBfitResult const& t1, RBfitResult const& t2) {
+	bool operator()(RBfitResult const& t1, RBfitResult const& t2) const {
 		return (t1.score_ > t2.score_);
 	}
 };
@@ -100,18 +107,24 @@ public:
 
 class RefinementResultComparitor {
 public:
-	bool operator()(RefinementResult& t1, RefinementResult& t2) {
+	bool operator()(RefinementResult const& t1, RefinementResult const& t2) const {
 		return (t1.score_ > t2.score_);
 	}
+};
 
-	bool operator()(RefinementResult const& t1, RefinementResult const& t2) {
-		return (t1.score_ > t2.score_);
+
+class RevRefinementResultComparitor {
+public:
+	bool operator()(RefinementResult const & t1, RefinementResult const & t2) const {
+		return (t1.score_ < t2.score_);
 	}
 };
 
 class PointScoreComparator{
 public:
-	bool operator()(std::pair< numeric::xyzVector<core::Real>, core::Real > Pair1, std::pair< numeric::xyzVector<core::Real>, core::Real > Pair2){
+	bool operator()(
+		std::pair< numeric::xyzVector<core::Real>, core::Real > const & Pair1,
+		std::pair< numeric::xyzVector<core::Real>, core::Real > const & Pair2) const {
 		return (Pair1.second < Pair2.second);
 	}
 
@@ -155,8 +168,9 @@ public:
 };
 
 
-typedef ResultDB<RBfitResult,RBfitResultComparitor> RBfitResultDB;
-typedef ResultDB<RefinementResult,RefinementResultComparitor> RefinementResultDB;
+typedef ResultDB<RBfitResult, RBfitResultComparitor> RBfitResultDB;
+typedef ResultDB<RefinementResult, RefinementResultComparitor> RefinementResultDB;
+typedef ResultDB<RefinementResult, RevRefinementResultComparitor> RevRefinementResultDB;
 
 
 struct PoseSphericalSamplesOptions {
@@ -171,30 +185,94 @@ struct SelectDensityPointsOptions {
 	core::Real delRsteps_, fragDens_, point_radius_, laplacian_offset_;
 	bool center_on_middle_ca_, convolute_single_residue_;
 	DensitySymmInfo symminfo_;
-	core::pose::PoseOP native_;
-	numeric::xyzVector< core::Real > native_com_;
+	utility::vector1< core::pose::PoseCOP > natives_;
+	utility::vector1< numeric::xyzVector< core::Real > > native_coms_;
+	utility::vector1< numeric::xyzVector< core::Real > > native_middle_cas_;
 };
 
 
 struct DensityGridSearchOptions {
-	core::Size B_, nRsteps_, max_rot_per_trans_;
-	core::Real delRSteps_, cluster_radius_, laplacian_offset_;
-	bool center_on_middle_ca_, convolute_single_residue_;
+	core::Size B_, nRsteps_, max_rot_per_trans_, point_search_start_, point_search_end_;
+	core::Real delRSteps_, cluster_radius_, laplacian_offset_, rms_cutoff_;
+	bool center_on_middle_ca_, convolute_single_residue_, include_distance_during_fast_cluster_;
+	std::string output_fn_;
 	DensitySymmInfo symminfo_;
-	core::pose::PoseOP native_;
-	numeric::xyzVector< core::Real > native_com_;
+	utility::vector1< core::pose::PoseCOP > natives_;
+	utility::vector1< numeric::xyzVector< core::Real > > native_coms_;
+	utility::vector1< numeric::xyzVector< core::Real > > native_middle_cas_;
 };
 
-
 /// FUNCTIONS
+template< typename T >
+void
+write_RBfitResultDB( RBfitResultDB fit_result_DB, T & outresults );
+
+template< typename T >
+void
+dump_RefinementDB_to_silent(
+	T resultDB,
+	std::string const & outfile,
+	std::string const & tag_prefix,
+	std::string const & final_chain,
+	bool const centroid_output,
+	bool const append_to_outfile,
+	utility::vector1< core::pose::PoseCOP > const & natives,
+	DensitySymmInfo const & symminfo,
+	bool const legacy_rms
+);
+
+// template
+// void
+// dump_RefinementDB_to_silent<RevRefinementResultDB>(
+//   RevRefinementResultDB resultDB,
+//   std::string const & outfile,
+//   std::string const & tag_prefix,
+//   std::string const & final_chain,
+//   bool const centroid_output,
+//   bool const append_to_outfile,
+//   utility::vector1< core::pose::PoseCOP > const & natives,
+//   DensitySymmInfo const & symminfo
+// );
+//
+// template
+// void
+// dump_RefinementDB_to_silent<RefinementResultDB>(
+//   RefinementResultDB resultDB,
+//   std::string const & outfile,
+//   std::string const & tag_prefix,
+//   std::string const & final_chain,
+//   bool const centroid_output,
+//   bool const append_to_outfile,
+//   utility::vector1< core::pose::PoseCOP > const & natives,
+//   DensitySymmInfo const & symminfo
+// );
 
 
-core::Real
-get_rms(core::pose::PoseOP const r1, core::pose::PoseOP const r2, DensitySymmInfo const &d);
+void
+compare_RBfitDB_to_native(
+	RBfitResultDB resultDB,
+	core::pose::Pose const & pose,
+	core::pose::PoseCOPs const & natives,
+	utility::vector1< numeric::xyzVector< core::Real > > const & native_coms,
+	utility::vector1< numeric::xyzVector< core::Real > > const & native_middle_cas,
+	DensitySymmInfo const & symminfo,
+	bool const rot_middle_ca,
+	core::Real const rms_cutoff );
 
 // non-superposed RMS
 core::Real
+get_rms(core::pose::Pose const & r1, core::pose::Pose const & r2, DensitySymmInfo const & d);
+
+core::Real
 get_rms(RefinementResult const & r1, RefinementResult const & r2, DensitySymmInfo const & d );
+
+// These respect the poses PDBInfo when doing rms
+core::Real
+get_rms(core::pose::Pose const & r1, core::pose::Pose const & r2, DensitySymmInfo const &d, bool const native);
+
+core::Real
+get_gdt(core::pose::Pose const & r1, core::pose::Pose const & r2, DensitySymmInfo const & d, bool const native);
+
 
 void
 apply_transform(
@@ -227,9 +305,10 @@ map_from_spectrum(
 
 
 void
-dump_points_to_search_to_pdb(
+dump_points_to_search_to_pdb_or_txt(
 	utility::vector1< numeric::xyzVector< core::Real > > const & points_to_search,
-	std::string const & filename );
+	std::string const & pdb_filename,
+	std::string const & txt_filename );
 
 utility::vector1< numeric::xyzVector< core::Real > >
 select_density_points( core::pose::Pose const & pose,
@@ -246,11 +325,10 @@ get_spectrum(
 	bool const convolute_single_residue,
 	bool const center_on_middle_ca);
 
-
-
+/// @brief cluster a RefinementResultDB based on a specific cluster_radius.  If target_size is unset or
+//         set to zero then the database will not be filtered to a specific size.
 void
-do_filter( RefinementResultDB & results, DensitySymmInfo const & symminfo, core::Real const cluster_radius);
-
+cluster_RefinementDB( RefinementResultDB & results, DensitySymmInfo const & symminfo, core::Real const cluster_radius, core::Size const target_size = 0);
 
 void
 do_filter(
@@ -263,11 +341,14 @@ do_filter(
 
 
 void
-do_filter(
+cluster_RBfitResultDB_fast(
 	RBfitResultDB & results,
 	core::Size const delR,
 	core::Size const nRsteps,
-	core::Real const cluster_radius);
+	core::Real const cluster_radius,
+	core::Size const max_results,
+	bool const include_distance,
+	core::scoring::electron_density::ElectronDensity const & dens);
 
 
 /// @brief do the main search over the map

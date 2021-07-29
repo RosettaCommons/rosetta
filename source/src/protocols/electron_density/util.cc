@@ -14,6 +14,7 @@
 
 #include <protocols/electron_density/util.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 
@@ -29,6 +30,8 @@
 #include <protocols/minimization_packing/MinMover.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomType.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -271,6 +274,56 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string const & align_i
 	return dens_score;
 }
 
+
+
+void
+remove_occupied_density_from_density(
+	core::pose::Pose const & pose,
+	core::scoring::electron_density::ElectronDensity & dens,
+	core::Size const edge_trim /* 5 */,
+	core::Real const mask_radius /* 2 */) {
+	using core::scoring::electron_density::poseCoords;
+	using core::scoring::electron_density::poseCoord;
+	poseCoords litePose;
+
+	core::Real const b_factor(dens.getEffectiveBfactor());
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
+		core::conformation::Residue const & rsd_i ( pose.residue(i) );
+		bool skipres = ( rsd_i.aa() == core::chemical::aa_vrt );
+		for ( int j = (int)i-(int)edge_trim; j < ((int)i+(int)edge_trim) && !skipres; ++j ) {
+			if ( j>=1 && j<=(int)pose.size() && pose.fold_tree().is_cutpoint( j ) ) skipres=true;
+		}
+
+		if ( skipres ) continue;
+
+		core::Size natoms = rsd_i.nheavyatoms();
+		for ( core::Size j = 1; j <= natoms; ++j ) {
+			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+			poseCoord coord_j;
+			coord_j.x_ = rsd_i.xyz( j );
+			coord_j.B_ = b_factor;
+			coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+			litePose.push_back( coord_j );
+		}
+	}
+
+	ObjexxFCL::FArray3D< double > rhoC, rhoMask;
+	dens.calcRhoC( litePose, 0, rhoC, rhoMask, -1, 600, mask_radius );
+	// apply mask to map
+	ObjexxFCL::FArray3D< float > densnew = dens.get_data();
+	for ( int z=1; z<=(int)densnew.u3(); z++ ) {
+		for ( int y=1; y<=(int)densnew.u2(); y++ ) {
+			for ( int x=1; x<=(int)densnew.u1(); x++ ) {
+				densnew(x,y,z) *= (1-rhoMask(x,y,z));
+			}
+		}
+	}
+	dens.set_data( densnew );
+
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
+		core::scoring::electron_density::getDensityMap().writeMRC( "trimmed.mrc" );
+	}
+}
 
 
 }

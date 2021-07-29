@@ -35,7 +35,7 @@
 
 // minimize pose into density
 #include <protocols/electron_density/DensitySymmInfo.hh>
-#include <protocols/electron_density/DockIntoDensityMover.hh>
+#include <protocols/electron_density/DockFragmentsIntoDensityMover.hh>
 
 
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -526,7 +526,7 @@ void DockFragmentsMover::run() {
 	}
 
 	// set up docking
-	protocols::electron_density::DockIntoDensityMover dock;
+	protocols::electron_density::DockFragmentsIntoDensityMover dock;
 	dock.setDelR(option[ delR ]); // option?
 	dock.setB( option[ bw ]() );
 	dock.setTopN( option[ n_to_search ]() , option[ n_filtered ]() , option[ n_output ]() );

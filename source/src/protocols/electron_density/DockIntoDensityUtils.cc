@@ -14,6 +14,7 @@
 /// @author Danny Farrell
 
 #include <protocols/electron_density/DockIntoDensityUtils.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -24,6 +25,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
@@ -34,11 +36,15 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/io/StructFileRep.hh>
 #include <core/io/StructFileRepOptions.hh>
+#include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/BinarySilentStruct.hh>
 
 #include <core/types.hh>
 
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
+#include <utility/exit.hh>
 
 #include <numeric/fourier/SHT.hh>
 #include <numeric/numeric.functions.hh>
@@ -53,26 +59,331 @@ static basic::Tracer TR( "protocols.electron_density.DockIntoDensityUtils" );
 namespace protocols {
 namespace electron_density {
 
+
+std::ostream& operator<< (std::ostream& out, const RBfitResult& result) {
+	out << "RBfitResult( pose_idx: " << result.pose_idx_ << ", score: " << result.score_
+		<< ", pre_trans: (" << result.pre_trans_.x()  << ", " << result.pre_trans_.y()  << ", " << result.pre_trans_.z()
+		<< "), post_trans: (" << result.post_trans_.x()  << ", " << result.post_trans_.y() << ", " << result.post_trans_.z()
+		<< "), rotation: ()" << std::endl;
+	return out;
+}
+// for classes
+//
+template< typename T >
+void
+write_RBfitResultDB( RBfitResultDB fit_result_DB, T & outresults ) {
+	while ( fit_result_DB.size() > 0 ) {
+		core::Size const rank = fit_result_DB.size();
+		RBfitResult const sol_i = fit_result_DB.pop();
+		// write out RBfitResult, so we can combine them later
+		outresults << sol_i.pose_idx_ << "\t" << rank << "\t" << sol_i.score_
+			<< "\t" << sol_i.rotation_.xx() << "\t" << sol_i.rotation_.xy() << "\t" << sol_i.rotation_.xz()
+			<< "\t" << sol_i.rotation_.yx() << "\t" << sol_i.rotation_.yy() << "\t" << sol_i.rotation_.yz()
+			<< "\t" << sol_i.rotation_.zx() << "\t" << sol_i.rotation_.zy() << "\t" << sol_i.rotation_.zz()
+			<< "\t" << sol_i.pre_trans_[0] << "\t" << sol_i.pre_trans_[1] << "\t" <<  sol_i.pre_trans_[2]
+			<< "\t" << sol_i.post_trans_[0] << "\t" << sol_i.post_trans_[1] << "\t" << sol_i.post_trans_[2] << std::endl;
+	}
+}
+
+
+template< typename T >
+void
+dump_RefinementDB_to_silent(
+	T resultDB,
+	std::string const & outfile,
+	std::string const & tag_prefix,
+	std::string const & final_chain,
+	bool const centroid_output,
+	bool const append_to_outfile,
+	utility::vector1< core::pose::PoseCOP > const & natives,
+	DensitySymmInfo const & symminfo,
+	bool const legacy_rms
+) {
+	if ( !append_to_outfile ) {
+		remove( outfile.c_str() );
+	}
+
+	core::io::silent::SilentFileOptions sfopts;
+	core::io::silent::SilentFileData silent_file_data( outfile, false, false, "binary", sfopts );
+	protocols::simple_moves::SwitchResidueTypeSetMover to_cen("centroid");
+	protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
+	while ( resultDB.size() > 0 ) {
+		core::Size const rank = resultDB.size();
+		RefinementResult const sol_i = resultDB.pop();
+
+		std::string const current_tag( tag_prefix + "_" + ObjexxFCL::right_string_of(rank, 6, '0') );
+
+		core::pose::Pose const posecopy = [&]{
+			core::pose::Pose tmp_pose(*sol_i.pose_);
+
+			if ( centroid_output ) to_cen.apply(tmp_pose);
+			else to_fa.apply(tmp_pose);
+
+			if ( tmp_pose.pdb_info() == nullptr ) {
+				tmp_pose.pdb_info(utility::pointer::make_shared< core::pose::PDBInfo >(tmp_pose.size()));
+			}
+			// Temporary until chains are strings i guess
+			if ( final_chain.at(0) != '^' ) tmp_pose.pdb_info()->set_chains( final_chain.at(0) );
+
+			return tmp_pose;
+		}();
+
+		core::io::silent::BinarySilentStruct silent_stream( sfopts, posecopy, current_tag );
+		silent_stream.clear_energies();
+
+		silent_stream.add_energy( "score", -sol_i.score_ ); // REQUIRED!! order is IMPORTANT
+		silent_stream.add_energy( "spharm_score", sol_i.spharm_score_ );
+		silent_stream.add_energy( "init_score", sol_i.prerefine_score_ );
+		silent_stream.add_energy( "dens_score", sol_i.score_ );
+		silent_stream.add_energy( "dens_rank", rank );
+		core::Real best_rms = 9999.0, best_gdt = 0;
+		core::Size best_rms_idx = 0;
+		for ( core::Size i=1; i<=natives.size(); ++i ) {
+			core::Real const rms = [&]{
+				if ( legacy_rms ) return get_rms( *sol_i.pose_, *natives.at(i), symminfo );
+				else { return get_rms( *sol_i.pose_, *natives.at(i), symminfo, true ); }
+			}();
+			// this isn't perfect but i guess it's ok
+			if ( rms < best_rms ) {
+				best_rms = rms;
+				best_rms_idx = i;
+				if ( !legacy_rms ) best_gdt = get_gdt( *sol_i.pose_, *natives[i], symminfo, true );
+			}
+		}
+
+		silent_stream.add_energy( "rms", best_rms );
+		if ( !legacy_rms ) silent_stream.add_energy( "gdt", best_gdt );
+		silent_stream.add_energy( "native_idx", best_rms_idx );
+		silent_file_data.write_silent_struct( silent_stream, outfile );
+	}
+}
+
+template
+void
+dump_RefinementDB_to_silent<RevRefinementResultDB>(
+	RevRefinementResultDB resultDB,
+	std::string const & outfile,
+	std::string const & tag_prefix,
+	std::string const & final_chain,
+	bool const centroid_output,
+	bool const append_to_outfile,
+	utility::vector1< core::pose::PoseCOP > const & natives,
+	DensitySymmInfo const & symminfo,
+	bool const legacy_rms
+);
+
+
+template
+void
+dump_RefinementDB_to_silent<RefinementResultDB>(
+	RefinementResultDB resultDB,
+	std::string const & outfile,
+	std::string const & tag_prefix,
+	std::string const & final_chain,
+	bool const centroid_output,
+	bool const append_to_outfile,
+	utility::vector1< core::pose::PoseCOP > const & natives,
+	DensitySymmInfo const & symminfo,
+	bool const legacy_rms
+);
+
+
+void
+compare_RBfitDB_to_native(
+	RBfitResultDB resultDB,
+	core::pose::Pose const & pose,
+	core::pose::PoseCOPs const & natives,
+	utility::vector1< numeric::xyzVector< core::Real > > const & native_coms,
+	utility::vector1< numeric::xyzVector< core::Real > > const & native_middle_cas,
+	DensitySymmInfo const & symminfo,
+	bool const rot_middle_ca,
+	core::Real const rms_cutoff ) {
+	core::Size initial_DB_size = resultDB.size();
+	core::Size num_results_w_rms_under_cutoff = 0;
+
+	TR.Debug << "Checking the RMS of " << resultDB.size() << " results to the native" << std::endl;
+
+	while ( resultDB.size() > 0 ) {
+		core::Size const result_idx = resultDB.size();
+		RBfitResult const sol_i = resultDB.pop();
+
+		for ( core::Size i = 1; i <= natives.size(); ++i ) {
+			// only check if translation within 10 A of native rotation centers
+			if ( rot_middle_ca && sqrt( symminfo.min_symm_dist2( sol_i.post_trans_, native_middle_cas[i] ) ) > 10 ) continue;
+			else if ( sqrt( symminfo.min_symm_dist2( sol_i.post_trans_, native_coms[i] ) ) > 10 ) continue;
+
+			core::pose::Pose const posecopy = [&]{
+				core::pose::Pose tmp_pose(pose);
+				apply_transform( tmp_pose, sol_i );
+				core::pose::addVirtualResAsRoot( tmp_pose );
+				return tmp_pose;
+			}();
+			core::Real const rms = get_rms(posecopy, *natives[i], symminfo, true);
+			core::Real const gdt_result = get_gdt(posecopy, *natives[i], symminfo, true);
+			if ( rms <= rms_cutoff ) {
+				TR << "Search kept result: rank: " << result_idx << "/" << initial_DB_size << " rms: " << rms << " GDT: " << gdt_result << " score: " << sol_i.score_
+					<< " closest to com_idx " << i << std::endl;
+				++num_results_w_rms_under_cutoff;
+			}
+		}
+	}
+	TR << "Completed native comparison between " << initial_DB_size << " results. Have " << num_results_w_rms_under_cutoff << " results <= " << rms_cutoff << " rms." << std::endl;
+}
+
+
 // non-superposed RMS
 core::Real
-get_rms(core::pose::PoseOP const r1, core::pose::PoseOP const r2, DensitySymmInfo const &d) {
-	runtime_assert( r1->size() == r2->size() );
-	core::Size nres = r1->size();
+get_rms(core::pose::Pose const & r1, core::pose::Pose const & r2, DensitySymmInfo const &d) {
+	runtime_assert( r1.size() == r2.size() );
+	core::Size const nres = r1.size();
 	core::Real rms=0.0;
 	core::Size N=0;
-	for ( int i=1; i<=(int)nres; ++i ) {
-		if ( !r1->residue(i).is_protein() ) continue;
-		rms += d.min_symm_dist2( r1->residue(i).xyz(2), r2->residue(i).xyz(2) );
+	for ( core::Size i=1; i<=nres; ++i ) {
+		if ( !r1.residue(i).is_protein() ) continue;
+		rms += d.min_symm_dist2( r1.residue(i).xyz(2), r2.residue(i).xyz(2) );
 		N++;
 	}
 
 	return (std::sqrt(rms/N));
 }
 
+
+template< typename T >
+void
+dump_and_raise_bad_pose_alignment(
+	core::pose::Pose const & r1,
+	char const r1_chain,
+	core::Size const r1_resnum,
+	core::Size const r1_posenum,
+	core::pose::Pose const & r2,
+	core::Size const r2_posenum,
+	T & out) {
+	out << "r1 seq: " << r1.sequence() << std::endl;
+	out << "r2 seq: " << r2.sequence() << std::endl;
+	out << "r1 chain: " << r1_chain << " r1 pdbinfo resnum: " << r1_resnum << std::endl;
+	out << "r2 chain: " << r2.pdb_info()->chain(r2_posenum) << " r2 pdbinfo resnum: " << r2.pdb_info()->number(r2_posenum) << std::endl;
+	out << "r1 name: " << r1.residue(r1_posenum).name3() << " r2 name: " << r2.residue(r2_posenum).name3() << std::endl;
+	out << "r1 pose num: " << r1_posenum << " r2 pose num: " << r2_posenum << std::endl;
+	throw CREATE_EXCEPTION(utility::excn::BadInput, "Found that in get_rms or get_gdt, poses did not align in residue numbering or sequence");
+}
+
+
+template< typename T >
+void
+dump_and_raise_no_pose_alignment(
+	core::pose::Pose const & r1,
+	core::pose::Pose const & r2,
+	T & out) {
+	out << "r1 seq: " << r1.sequence() << std::endl;
+	out << "r1 start " << r1.pdb_info()->number(1) << std::endl;
+	out << "r1 chain: " << r1.pdb_info()->chain(1) << std::endl;
+	out << "r2 seq: " << r2.sequence() << std::endl;
+	out << "r2 start " << r2.pdb_info()->number(1) << std::endl;
+	out << "r2 chain: " << r2.pdb_info()->chain(2) << std::endl;
+	throw CREATE_EXCEPTION(
+		utility::excn::BadInput,
+		"0 residues aligned when getting rms or gdt. something must be wrong with your inputs");
+}
+
+
+core::Real
+get_rms(core::pose::Pose const & r1, core::pose::Pose const & r2, DensitySymmInfo const &d, bool const native) {
+	core::Real rms=0.0;
+	core::Size N=0;
+	for ( core::Size i = 1; i <= r1.size(); ++i ) {
+		int const r1_resnum = r1.pdb_info()->number(i);
+		char const r1_chain = r1.pdb_info()->chain(i);
+		core::Size const r2_posenum = r2.pdb_info()->pdb2pose( r1_chain, r1_resnum );
+		if ( r2_posenum == 0 ) continue;
+
+		if ( r1.residue(i).name3() != r2.residue(r2_posenum).name3() ) {
+			dump_and_raise_bad_pose_alignment(
+				r1, r1_chain, r1_resnum, i,
+				r2, r2_posenum,
+				TR.Error
+			);
+		}
+
+		core::Real const distance = d.min_symm_dist2( r1.residue(i).xyz(2), r2.residue(r2_posenum).xyz(2) );
+		rms += distance;
+		++N;
+	}
+
+	if ( N == 0 ) {
+		if ( native ) {
+			// Sometimes we have a native that is the same chain, but is out of frame of our input pose.
+			// So if we're doing a native check, we can just return 1000, but if we're doing clustering
+			// this should never happen and we fail
+			TR.Warning << "pose did not align at all N==0, does your native pose contain your query seq?" << std::endl;
+			return 1000.0;
+		} else {
+			dump_and_raise_no_pose_alignment(r1, r2, TR.Error);
+			return 1000.0;  // tidy wants this
+		}
+	} else if ( N <= 5 ) {
+		TR.Warning << "WARNING only aligned to native with " << N << " residues! that's too small to make sense! returning 1000" << std::endl;
+		return 1000.0;
+	} else return std::sqrt(rms/N);
+}
+
+
 // non-superposed RMS
 core::Real
 get_rms(RefinementResult const & r1, RefinementResult const & r2, DensitySymmInfo const & d ) {
-	return get_rms(r1.pose_, r2.pose_, d);
+	return get_rms(*r1.pose_, *r2.pose_, d);
+}
+
+
+
+core::Real
+get_gdt(
+	core::pose::Pose const & r1,
+	core::pose::Pose const & r2,
+	DensitySymmInfo const &d,
+	bool native)
+{
+	core::Real one=0.0, two=0.0, four=0.0, eight=0.0;
+	core::Size N=0;
+	for ( core::Size i = 1; i <= r1.size(); ++i ) {
+		int const r1_resnum = r1.pdb_info()->number(i);
+		char const r1_chain = r1.pdb_info()->chain(i);
+		core::Size const r2_posenum = r2.pdb_info()->pdb2pose( r1_chain, r1_resnum );
+		if ( r2_posenum == 0 ) continue;
+
+		if ( r1.residue(i).name3() != r2.residue(r2_posenum).name3() ) {
+			dump_and_raise_bad_pose_alignment(
+				r1, r1_chain, r1_resnum, i,
+				r2, r2_posenum,
+				TR.Error
+			);
+		}
+
+		core::Real const distance = d.min_symm_dist2( r1.residue(i).xyz(2), r2.residue(r2_posenum).xyz(2) );
+		if ( distance <= 1 ) ++one;
+		if ( distance <= 2 ) ++two;
+		if ( distance <= 4 ) ++four;
+		if ( distance <= 8 ) ++eight;
+		++N;
+	}
+
+	if ( N == 0 ) {
+		if ( native ) {
+			// Sometimes we have a native that is the same chain, but is out of frame of our input pose.
+			// So if we're doing a native check, we can just return 0.0, but if we're doing clustering
+			// this should never happen and we fail
+			TR.Warning << "pose did not align at all N==0, does your native pose contain your query seq?" << std::endl;
+			return 0.0;
+		} else {
+			dump_and_raise_no_pose_alignment(r1, r2, TR.Error);
+			return 0.0;
+		}
+	} else if ( N <= 5 ) {
+		TR.Warning << "WARNING only aligned to native with " << N << " residues! that's too small to make sense! returning 0.0" << std::endl;
+		return 0.0;
+	} else {
+		core::Real const gdt = 100 * (one + two + four + eight) / (4 * N);
+		return gdt;
+	}
 }
 
 
@@ -458,7 +769,6 @@ map_from_spectrum(
 
 
 
-
 utility::vector1< std::pair< numeric::xyzVector< core::Real >, core::Real > >
 create_and_sort_point_score_pairs(
 	ObjexxFCL::FArray3D< float > const & densdata,
@@ -482,35 +792,49 @@ create_and_sort_point_score_pairs(
 
 
 void
-dump_points_to_search_to_pdb(
+dump_points_to_search_to_pdb_or_txt(
 	utility::vector1< numeric::xyzVector< core::Real > > const & points_to_search,
-	std::string const & filename ) {
+	std::string const & pdb_filename,
+	std::string const & txt_filename
+) {
 	//dump the points
-	core::io::StructFileRep sfr;
-	auto & chains = sfr.chains();
-	chains.push_back(utility::vector0<core::io::AtomInformation>());
-	core::io::StructFileRepOptionsCOP options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
-	core::io::AtomInformation ai;
-	for ( core::Size i=1; i<=points_to_search.size(); i++ ) {
-		ai.serial = i;
-		ai.name = "MG  ";
-		ai.resName = " MG";
-		ai.chainID = 'A';
-		numeric::xyzVector< core::Real > x_cart;
-		numeric::xyzVector< core::Real > x_idx = points_to_search[i];
-		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
-		ai.x = x_cart[0];
-		ai.y = x_cart[1];
-		ai.z = x_cart[2];
-		ai.occupancy = 1.0;
-		ai.element = "MG";
-		chains[0].push_back(ai);
+	if ( !txt_filename.empty() ) {
+		//dump the points
+		std::ofstream outpoints;
+		outpoints.open(txt_filename.c_str());
+		for ( core::Size i=1; i<=points_to_search.size(); i++ ) {
+			outpoints << std::to_string(i) << "\t" << points_to_search[i][0] << "\t" << points_to_search[i][1] << "\t" << points_to_search[i][2] << std::endl;
+		}
+		outpoints.close();
 	}
 
-	std::string const pdb_contents(core::io::pdb::create_pdb_contents_from_sfr(sfr, options));
-	utility::io::ozstream file(std::string(filename).c_str(), std::ios::out | std::ios::binary);
-	file.write( pdb_contents.c_str(), pdb_contents.size() );
-	file.close();
+	if ( !pdb_filename.empty() ) {
+		core::io::StructFileRep sfr;
+		auto & chains = sfr.chains();
+		chains.push_back(utility::vector0<core::io::AtomInformation>());
+		core::io::StructFileRepOptionsCOP options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
+		core::io::AtomInformation ai;
+		for ( core::Size i=1; i<=points_to_search.size(); i++ ) {
+			ai.serial = i;
+			ai.name = "MG  ";
+			ai.resName = " MG";
+			ai.chainID = 'A';
+			numeric::xyzVector< core::Real > x_cart;
+			numeric::xyzVector< core::Real > x_idx = points_to_search[i];
+			core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
+			ai.x = x_cart[0];
+			ai.y = x_cart[1];
+			ai.z = x_cart[2];
+			ai.occupancy = 1.0;
+			ai.element = "MG";
+			chains[0].push_back(ai);
+		}
+
+		std::string const pdb_contents(core::io::pdb::create_pdb_contents_from_sfr(sfr, options));
+		utility::io::ozstream file(std::string(pdb_filename).c_str(), std::ios::out | std::ios::binary);
+		file.write( pdb_contents.c_str(), pdb_contents.size() );
+		file.close();
+	}
 }
 
 utility::vector1< numeric::xyzVector< core::Real > >
@@ -553,26 +877,39 @@ select_density_points( core::pose::Pose const & pose,
 
 	auto const point_score_pairs = create_and_sort_point_score_pairs(densdata, rot, params.gridStep_);
 
-	core::Real minDistNative = 1e4;
+
+	utility::vector1< core::Real > distance_to_native_points( params.natives_.size(), 10000 );
+	utility::vector1< core::Size > best_native_point_ranks( params.natives_.size(), 10000 );
+
 	for ( core::Size i=1; i<=point_score_pairs.size(); i++ ) {
 		bool hasneighbor = false;
-		numeric::xyzVector< core::Real > x_idx = point_score_pairs[i].first;
+		numeric::xyzVector< core::Real > const x_idx = point_score_pairs[i].first;
 		numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
 		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
 		for ( core::Size j=1; j<=points_to_search.size(); j++ ) {
-			numeric::xyzVector< core::Real > x_idx_stored = points_to_search[j];
+			numeric::xyzVector< core::Real > const x_idx_stored = points_to_search[j];
 			numeric::xyzVector< core::Real > x_cart_stored(x_idx_stored[0],x_idx_stored[1],x_idx_stored[2]);
 			core::scoring::electron_density::getDensityMap().idx2cart( x_idx_stored, x_cart_stored );
-			core::Real distance = (x_cart - x_cart_stored).length();
+			core::Real const distance = (x_cart - x_cart_stored).length();
 			if ( distance < params.point_radius_ ) hasneighbor = true;
 		}
 		if ( !hasneighbor ) {
 			points_to_search.push_back(point_score_pairs[i].first);
-			if ( params.native_ ) {
-				numeric::xyzVector< core::Real > x_cart2;
-				core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart2 );
-				core::Real const distNative = params.symminfo_.min_symm_dist2(x_cart2, params.native_com_);
-				minDistNative = std::min( minDistNative, distNative );
+
+			for ( core::Size native_i = 1; native_i <= params.natives_.size(); ++native_i ) {
+
+				core::Real const distNative = [&]{
+					if ( params.center_on_middle_ca_ ) {
+						return params.symminfo_.min_symm_dist2(x_cart, params.native_middle_cas_[native_i]);
+					} else {
+						return params.symminfo_.min_symm_dist2(x_cart, params.native_coms_[native_i]);
+					}
+				}();
+
+				if ( distNative < distance_to_native_points[ native_i ] ) {
+					best_native_point_ranks[ native_i ] = points_to_search.size();
+					distance_to_native_points[ native_i ] = distNative;
+				}
 			}
 		}
 		if ( points_to_search.size() >= params.topNtrans_ ) break;
@@ -584,17 +921,27 @@ select_density_points( core::pose::Pose const & pose,
 		mapdmp.set_data(rot);
 		mapdmp.writeMRC( "filter.mrc" );
 
-		dump_points_to_search_to_pdb( points_to_search, "selectedpoints.pdb");
+		dump_points_to_search_to_pdb_or_txt( points_to_search, "selectedpoints.pdb", "");
 	}
 
-	if ( params.native_ ) TR << "Closest point to native: " << std::sqrt(minDistNative) << std::endl;
+	for ( core::Size i = 1; i <= params.natives_.size(); ++i ) {
+		TR << "Closest point to ";
+		if ( params.center_on_middle_ca_ ) {
+			TR << "native middle CA";
+		} else {
+			TR << "native COM";
+		}
+		TR << " index: " << i << " is: " <<  std::sqrt(distance_to_native_points[i]) <<
+			" at rank: " << best_native_point_ranks[i] << std::endl;
+	}
+
 	return points_to_search;
 }
 
 
 // read results, normalize scores, remove redundant (CA rms)
 void
-do_filter( RefinementResultDB & results, DensitySymmInfo const & symminfo, core::Real const cluster_radius) {
+cluster_RefinementDB( RefinementResultDB & results, DensitySymmInfo const & symminfo, core::Real const cluster_radius, core::Size const target_size ) {
 	// dumb -- copy to vector
 	utility::vector1< RefinementResult > results_sort;
 	while ( results.size() > 0 )
@@ -611,8 +958,8 @@ do_filter( RefinementResultDB & results, DensitySymmInfo const & symminfo, core:
 		if ( selector[i] ) {
 			results.add_element( results_sort[i] );
 		}
+		if ( results.size() == target_size && target_size != 0 ) return;
 	}
-
 	return;
 }
 
@@ -639,7 +986,7 @@ do_filter(
 	for ( int i=results_sort.size(); i>=1; --i ) {
 		selector[i] = true;
 		// make (& rescore) the pose:
-		core::pose::PoseOP const posecopy( utility::pointer::make_shared< core::pose::Pose >( *(poses[ results_sort[i].pose_idx_ ]) ) );
+		core::pose::PoseOP posecopy( poses[ results_sort[i].pose_idx_ ]->clone() );
 		apply_transform( *posecopy, results_sort[i] );
 
 		if ( rescore ) {
@@ -649,7 +996,7 @@ do_filter(
 			results_sort[i].score_ = (*scorefxn_dens)(*posecopy);
 		}
 		for ( int j=1; j<=(int)selected.size() && selector[i]; ++j ) {
-			if ( get_rms(posecopy, selected[j], symminfo) <cluster_radius ) {
+			if ( get_rms(*posecopy, *selected[j], symminfo) <cluster_radius ) {
 				selector[i] = false;
 			}
 		}
@@ -665,23 +1012,37 @@ do_filter(
 
 // fast (rot-only) filter
 void
-do_filter(
+cluster_RBfitResultDB_fast(
 	RBfitResultDB & results,
 	core::Size const delR,
 	core::Size const nRsteps,
-	core::Real const cluster_radius) {
+	core::Real const cluster_radius,
+	core::Size const max_results,
+	bool const include_distance,
+	core::scoring::electron_density::ElectronDensity const & dens) {
 	// dumb -- copy to vector
 	utility::vector1< RBfitResult > results_sort;
 	while ( results.size() > 0 )
 			results_sort.push_back( results.pop() );
 	utility::vector1< bool > selector(results_sort.size(), false);
 
-	core::Real nsel=0;
-	for ( int i=results_sort.size(); i>=1; --i ) {
+	numeric::xyzVector< core::Real > i_posttrans_cart, j_posttrans_cart;
+	core::Real nsel=0, distance=0.0;
+	for ( core::Size i=results_sort.size(); i>=1; --i ) {
+		if ( max_results != 0 && max_results == results.size() ) break;
 		selector[i] = true;
+		if ( include_distance ) {
+			numeric::xyzVector< core::Real > const & i_posttrans_idx = results_sort[i].post_trans_;
+			dens.idx2cart( i_posttrans_idx, i_posttrans_cart );
+		}
 
-		for ( int j=i+1; j<=(int)selector.size() && selector[i]; ++j ) {
-			core::Real est_rms = 0.6*delR*nRsteps * get_rot_angle( results_sort[i].rotation_ * numeric::inverse(results_sort[j].rotation_) );
+		for ( core::Size j=i+1; j<=selector.size() && selector[i]; ++j ) {
+			if ( include_distance ) {
+				numeric::xyzVector< core::Real > const & j_posttrans_idx = results_sort[j].post_trans_;
+				dens.idx2cart( j_posttrans_idx, j_posttrans_cart );
+				distance = (i_posttrans_cart - j_posttrans_cart).length();
+			}
+			core::Real const est_rms = distance + 0.6*delR*nRsteps * get_rot_angle( results_sort[i].rotation_ * numeric::inverse(results_sort[j].rotation_) );
 
 			if ( selector[j] && est_rms < cluster_radius ) {
 				selector[i] = false;
@@ -693,7 +1054,6 @@ do_filter(
 			nsel++;
 		}
 	}
-
 	return;
 }
 
@@ -701,12 +1061,16 @@ do_filter(
 // do the main search over the map
 void
 density_grid_search(
-	core::Size pose_idx,
+	core::Size const pose_idx,
 	core::pose::Pose const & pose,
 	RBfitResultDB & results,
 	utility::vector1< numeric::xyzVector< core::Real > > const & points_to_search,
 	DensityGridSearchOptions const & params
 ) {
+	if ( params.nRsteps_ == 0  ) {
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Code error: params.nRsteps_ cannot be 0 when passed into"
+			" densiy_grid_search.  Try using get_spectrum() to return nRsteps before calling this function");
+	}
 	core::scoring::electron_density::ElectronDensity &density = core::scoring::electron_density::getDensityMap();
 
 	// allocate space for SHT
@@ -722,6 +1086,15 @@ density_grid_search(
 	// get pose SPHARM
 	ObjexxFCL::FArray3D< core::Real > poseSig, poseCoefR, poseCoefI;
 	ObjexxFCL::FArray3D< core::Real > poseEps, poseEpsCoefR, poseEpsCoefI;
+
+	std::stringstream outresults;
+	outresults << "index" << "\t" << "rank" << "\t" << "score" << "\t" << "rot_xx" << "\t" <<  "rot_xy" << "\t" << "rot_xz"
+		<< "\t" << "rot_yx" << "\t" << "rot_yy" << "\t" << "rot_yz"
+		<< "\t" << "rot_zx" << "\t" << "rot_zy" << "\t" << "rot_zz"
+		<< "\t" << "pre_x" << "\t" << "pre_y" << "\t" << "pre_z"
+		<< "\t" << "post_x" << "\t" << "post_y" << "\t" << "post_z" << std::endl;
+
+	TR.Debug << "Beginning point search from " << params.point_search_start_ << " to " << params.point_search_end_ << " now." << std::endl;
 
 	/// step 1: map pose to spherically sampled density + mask
 	pose_spherical_samples( pose, poseSig, poseEps,
@@ -814,7 +1187,6 @@ density_grid_search(
 		// we initially oversample since the set is so clustered
 		// no matter how many we want, don't take more than 1/8 of everything (which still might be a lot)
 		core::Size const nperRot = std::min( 100*params.max_rot_per_trans_ , params.B_*params.B_*params.B_);
-		core::Size const nperRotCl = params.max_rot_per_trans_;
 
 		RBfitResultDB local_results( nperRot );
 
@@ -823,7 +1195,7 @@ density_grid_search(
 			core::Real const sumMap = mask_correl[j] / (4*numeric::constants::d::pi);
 			core::Real const sumMap2 = mask2_correl[j] / (4*numeric::constants::d::pi);
 
-			double const CC = (
+			core::Real const CC = (
 				(sumEps*sumSigMap - sumSig*sumMap) / (
 				std::sqrt( sumEps*sumSig2 - sumSig*sumSig )
 				* std::sqrt( sumEps*sumMap2 - sumMap*sumMap )
@@ -835,45 +1207,52 @@ density_grid_search(
 			}
 		}
 
-		do_filter( local_results, params.delRSteps_, params.nRsteps_, params.cluster_radius_ );
-		while ( local_results.size() > nperRotCl ) local_results.pop();
+		cluster_RBfitResultDB_fast(
+			local_results,
+			params.delRSteps_,
+			params.nRsteps_,
+			params.cluster_radius_,
+			params.max_rot_per_trans_,
+			params.include_distance_during_fast_cluster_,
+			density);
 
-		core::Size const nclust = local_results.size();
+		while ( local_results.size() > params.max_rot_per_trans_ ) local_results.pop();
 
-		core::Real bestrms=1e6,bestscore=0;
+		if ( !params.output_fn_.empty() ) write_RBfitResultDB( local_results, outresults );
+
 		while ( local_results.size() > 0 ) {
-			RBfitResult sol_i = local_results.pop();
+			RBfitResult const sol_i = local_results.pop();
 
-			if ( params.native_ ) {
-				core::pose::PoseOP const posecopy( utility::pointer::make_shared< core::pose::Pose >( pose ) );
-				apply_transform( *posecopy, sol_i );
-				core::pose::addVirtualResAsRoot( *posecopy );
-				core::Real const rms_i = get_rms(params.native_, posecopy, params.symminfo_);
-				if ( rms_i < bestrms ) {
-					bestrms = rms_i;
-					bestscore = sol_i.score_;
+			if ( !params.natives_.empty() ) {
+				for ( core::Size native_i = 1; native_i <= params.natives_.size(); ++native_i ) {
+					core::Real const distNative = ( posttrans - params.native_coms_[ native_i ] ).length();
+					if ( distNative < params.rms_cutoff_ ) {
+						TR << "[" << i << "/" << points_to_search.size() << "] COM dist to native " << distNative << " at com_idx " << native_i << std::endl;
+						compare_RBfitDB_to_native(
+							local_results,
+							pose,
+							params.natives_,
+							params.native_coms_,
+							params.native_middle_cas_,
+							params.symminfo_,
+							params.center_on_middle_ca_,
+							params.rms_cutoff_
+						);
+					}
 				}
 			}
 
 			results.add_element( sol_i );
-		}
-
-		core::Real minDistNative=1e6;
-		if ( params.native_ ) {
-			core::Real const distNative = (posttrans-params.native_com_).length_squared();
-			minDistNative = std::min( minDistNative, distNative );
-		}
-
-		if ( std::sqrt(minDistNative) <5.0 ) {
-			TR << "[" << i << "/" << points_to_search.size() << "]" << " nmdls " << nclust << " pointrms " << std::sqrt(minDistNative)
-				<< " rms " << bestrms << " score " << bestscore << std::endl;
 		}
 		if ( i%100 == 0 ) {
 			TR << "[" << i << "/" << points_to_search.size() << "] " << results.top().score_ << " / " << results.size() << std::endl;
 		}
 	}
 
-	//TR << "[" << points_to_search_.size() << "/" << points_to_search_.size() << "]" << std::endl;
+	if ( !params.output_fn_.empty() ) {
+		std::ofstream out_file( params.output_fn_.c_str() );
+		out_file << outresults.str() << std::endl;
+	}
 }
 
 
