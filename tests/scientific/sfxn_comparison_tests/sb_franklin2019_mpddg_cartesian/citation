@@ -1,0 +1,18 @@
+dataset:
+1. Kroncke, B. M., Duran, A. M., Mendenhall, J. L., Meiler, J., Blume, J. D. & Sanders, C. R. Documentation of an Imperative to Improve Methods for Predicting Membrane Protein Stability. Biochemistry 55, 5002–5009 (2016).
+
+mpframework2012:
+2. Alford, R. F., Koehler Leman, J., Weitzner, B. D., Duran, A. M., Tilley, D. C., Elazar, A. & Gray, J. J. An Integrated Framework Advancing Membrane Protein Modeling and Design. PLoS Comput. Biol. 11, e1004398 (2015).
+
+ref2015:
+3. Park, H., Bradley, P., Greisen, P., Liu, Y., Mulligan, V. K., Kim, D. E., Baker, D. & DiMaio, F. Simultaneous Optimization of Biomolecular Energy Functions on Features from Small Molecules and Macromolecules. J. Chem. Theory Comput. 12, 6201–6212 (2016).
+
+ref2015mem = dsTBl:
+4. Assaf Elazar, A., Weinstein, J., Biran, I., Fridman, Y., Bibi, E. & Fleishman, S. J. Mutational scanning reveals the determinants of protein insertion and association energetics in the plasma membrane. Elife 5, (2016).
+
+franklin2019 - NOTE CORRECTION TO THIS PAPER (coming out in spring 2021 ):
+5. Alford, R. F., Fleming, P. J., Fleming, K. G. & Gray, J. J. Protein Structure Prediction and Design in a Biologically Realistic Implicit Membrane. Biophys. J. 118, 2042–2055 (2020).
+
+protocol:
+6. Park, H., Bradley, P., Greisen, P., Jr, Liu, Y., Mulligan, V. K., Kim, D. E., Baker, D., & DiMaio, F. Simultaneous Optimization of Biomolecular Energy Functions on Features from Small Molecules and Macromolecules. Journal of chemical theory and computation, 12(12), 6201–6212. (2016)
+7. Frenz, B., Lewis, S. M., King, I., DiMaio, F., Park, H., & Song, Y. Prediction of Protein Mutational Free Energy: Benchmark and Sampling Improvements Increase Classification Accuracy. Frontiers in bioengineering and biotechnology, 8, 558247. (2020)

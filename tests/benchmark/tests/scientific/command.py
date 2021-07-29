@@ -227,6 +227,11 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         sb_mpframework2012_mpddg = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
         sb_franklin2019_mpddg    = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
 
+        sb_ref2015_mpddg_cartesian         = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        sb_ref2015mem_mpddg_cartesian      = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        sb_mpframework2012_mpddg_cartesian = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        sb_franklin2019_mpddg_cartesian    = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+
         self   = '',
     )
 
