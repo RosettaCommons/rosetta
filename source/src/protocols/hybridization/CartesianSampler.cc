@@ -102,6 +102,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
+#include <utility/pointer/memory.hh>
 
 #include <boost/unordered/unordered_map.hpp>
 // XSD XRW Includes
@@ -157,8 +158,6 @@ CartesianSampler::init() {
 	// ray added
 	exclude_residues_ = false;
 	include_residues_ = false;
-	dump_pdb_ = false;
-	dump_pdb_tag_ = "1";
 	automode_scorecut_ = -0.5;
 	rsd_wdw_to_refine_ = 0; //
 	wdw_to_freeze_ = 0;
@@ -283,7 +282,7 @@ CartesianSampler::apply_fragcsts(
 	if ( !nterm ) {
 		for ( core::uint j = 0; j < overlap_; ++j ) {
 			for ( core::uint i = 1; i <= 3; ++i ) {
-				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+				core::scoring::func::FuncOP fx( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, 1.0 ) );
 				working_frag.add_constraint(
 					scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					core::id::AtomID(i,j+1),
@@ -298,7 +297,7 @@ CartesianSampler::apply_fragcsts(
 	if ( !cterm ) {
 		for ( int j=len-overlap_; j<len; ++j ) {
 			for ( int i=1; i<=3; ++i ) {
-				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+				core::scoring::func::FuncOP fx( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0.0, 1.0 ) );
 				working_frag.add_constraint(
 					scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					core::id::AtomID(i,j+1),
@@ -390,10 +389,10 @@ CartesianSampler::apply_frame(
 	}
 
 	if ( selection_bias_ == "density" ) {
-		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+		core::pack::task::TaskFactoryOP main_task_factory( utility::pointer::make_shared< core::pack::task::TaskFactory >() );
 		main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 
-		protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
+		protocols::minimization_packing::PackRotamersMoverOP pack_mover( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >() );
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( nonsymm_fa_scorefxn );
 
@@ -401,7 +400,7 @@ CartesianSampler::apply_frame(
 		if ( nonsymm_fa_scorefxn->get_weight( core::scoring::elec_dens_fast ) == 0 ) {
 			nonsymm_fa_scorefxn->set_weight( core::scoring::elec_dens_fast , 20 );
 		}
-		core::scoring::ScoreFunctionOP densonly( new core::scoring::ScoreFunction() );
+		core::scoring::ScoreFunctionOP densonly( utility::pointer::make_shared< core::scoring::ScoreFunction >() );
 		densonly->set_weight( core::scoring::elec_dens_fast, 5.0 );
 
 		// prepare fragment
@@ -510,9 +509,9 @@ CartesianSampler::apply_frame(
 		// if fullatom do a repack here
 		if ( fullatom_ ) {
 			// set up packer
-			core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+			core::pack::task::TaskFactoryOP main_task_factory( utility::pointer::make_shared< core::pack::task::TaskFactory >() );
 			main_task_factory->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
-			protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover );
+			protocols::minimization_packing::PackRotamersMoverOP pack_mover( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >() );
 			pack_mover->task_factory( main_task_factory );
 			pack_mover->score_function( fa_scorefxn_ ); // Note this doesn't contain the coordinate_constraint check.
 			debug_assert( !bbmove_ || nonsymm_fa_scorefxn->get_weight( core::scoring::coordinate_constraint ) != 0 );
@@ -618,7 +617,7 @@ CartesianSampler::apply_constraints(
 				if ( symm_info && !symm_info->bb_is_independent( tgt_resid_j ) ) continue;
 				if ( symm_info && !symm_info->bb_is_independent( tgt_resid_k ) ) continue;
 
-				FuncOP fx( new ScalarWeightedFunc( ref_cst_weight_, utility::pointer::make_shared< USOGFunc >( dist, COORDDEV ) ) );
+				FuncOP fx( utility::pointer::make_shared< ScalarWeightedFunc >( ref_cst_weight_, utility::pointer::make_shared< USOGFunc >( dist, COORDDEV ) ) );
 				pose.add_constraint(
 					utility::pointer::make_shared< AtomPairConstraint >( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k), fx )
 				);
@@ -721,13 +720,6 @@ apply(
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
 
-	// dump pdb right before doing anything
-	if ( dump_pdb_ ) {
-		std::string outfile = ("intermediate_" + dump_pdb_tag_ + ".pdb");
-		utility::io::ozstream out( outfile );
-		core::io::pdb::dump_pdb( pose, out );
-	}
-
 	// autogenerate fragments if they are not loaded yet
 	if ( fragments_.size() == 0 ) {
 		if ( frag_sizes_.size() == 0 ) frag_sizes_.push_back(9); // default is 9-mers only
@@ -782,7 +774,7 @@ apply(
 	protocols::moves::MoverOP restore_sc;
 	if ( fullatom_input && !fullatom_ ) {
 		restore_sc = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( pose );
-		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
+		protocols::moves::MoverOP tocen( utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	} else if ( !fullatom_input && fullatom_ ) {
 		utility_exit_with_message("ERROR! Expected fullatom input.");
@@ -797,20 +789,11 @@ apply(
 	// stepwise minimizer
 	core::optimization::MinimizerOptions options_minilbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 	options_minilbfgs.max_iter(nminsteps_);
-
-	// ray, why do we need this mm?
-	// to do ... make this parsable
 	core::optimization::CartesianMinimizer minimizer;
-	core::kinematics::MoveMap mm;
-	mm.set_bb( true ); mm.set_chi( true ); mm.set_jump( true );
-
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::pose::symmetry::make_symmetric_movemap( pose, mm );
-	}
 
 	Pose pose_in = pose;
 	(*scorefxn_)(pose);
-	protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *mc_scorefxn_, temp_ ) );
+	protocols::moves::MonteCarloOP mc( utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *mc_scorefxn_, temp_ ) );
 
 	if ( TR.Debug.visible() ) {
 		scorefxn_->show_line_headers(TR);
@@ -833,9 +816,12 @@ apply(
 		while ( !success && --try_count>0 ) {
 			// pick fragment set
 			i_frag_set = numeric::random::random_range(1, fragments_.size());
+			core::Size const current_frag_len_min_1( frag_sizes_[i_frag_set]-1 );
 
 			// pick insertion position
 			insert_pos = (int)frag_bias_[i_frag_set].random_sample(numeric::random::rg());
+			if ( pose.chain(insert_pos) != pose.chain( insert_pos + current_frag_len_min_1 ) ) continue;
+
 			int ntries=50;
 			while ( library_[i_frag_set].find(insert_pos) == library_[i_frag_set].end() && --ntries>0 )
 					insert_pos = (int)frag_bias_[i_frag_set].random_sample(numeric::random::rg());
@@ -910,7 +896,7 @@ apply(
 	if ( recover_low_ ) mc->recover_low(pose); // default: true
 
 	if ( fullatom_input && !fullatom_ ) {
-		protocols::moves::MoverOP tofa( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
+		protocols::moves::MoverOP tofa( utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::FA_STANDARD ) );
 		tofa->apply( pose );
 		restore_sc->apply( pose );
 	}
@@ -998,12 +984,6 @@ CartesianSampler::parse_my_tag(
 	}
 	if ( tag->hasOption( "automode_scorecut" ) ) {
 		automode_scorecut_ = tag->getOption<core::Real>( "automode_scorecut" );
-	}
-	if ( tag->hasOption( "dump_pdb" ) ) {
-		dump_pdb_ = tag->getOption<bool>( "dump_pdb" );
-	}
-	if ( tag->hasOption( "dump_pdb_tag" ) ) {
-		dump_pdb_tag_ = tag->getOption<std::string>( "dump_pdb_tag" );
 	}
 
 	if ( tag->hasOption( "wdw_to_freeze" ) ) {
@@ -1119,9 +1099,9 @@ void CartesianSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute( "mcscorefxn", xs_string, "Monte Carlo (?) scorefunction")
 		+ XMLSchemaAttribute( "debug", xsct_rosetta_bool, "XRW TODO")
 		+ XMLSchemaAttribute( "fullatom", xsct_rosetta_bool, "XRW TODO")
-		+ XMLSchemaAttribute( "bbmove", xsct_rosetta_bool, "XRW TODO")
+		+ XMLSchemaAttribute( "bbmove", xsct_rosetta_bool, "Allow/disalllow bb minimization during min.")
 		+ XMLSchemaAttribute( "temp", xsct_real, "XRW TODO")
-		+ XMLSchemaAttribute( "rms", xsct_real, "XRW TODO")
+		+ XMLSchemaAttribute( "rms", xsct_real, "Maximum RMS deviation of fragment insertion")
 		+ XMLSchemaAttribute( "nminsteps", xsct_non_negative_integer, "XRW TODO")
 		+ XMLSchemaAttribute( "overlap", xsct_non_negative_integer, "XRW TODO")
 		+ XMLSchemaAttribute( "ncycles", xsct_non_negative_integer, "XRW TODO")
@@ -1143,23 +1123,20 @@ void CartesianSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute( "strategy", "strategy_type", "fragment bias strategies.  This string is a comma-separated list; allowed values include 'user', 'uniform', 'auto', 'density', 'density_nbr', 'geometry', 'rama', 'bfactors', 'chainbreak' ")
 		//now we return to the FUN LIST OF FUN
 		+ XMLSchemaAttribute( "rsd_wdw_to_refine", xsct_non_negative_integer, "residue window to refine")
-		+ XMLSchemaAttribute( "score_threshold", xsct_real, "XRW TODO")
+		+ XMLSchemaAttribute( "score_threshold", xsct_real, "Sets the FragmentBiasAssigner score_threshold")
 		+ XMLSchemaAttribute( "cumulate_prob", xsct_rosetta_bool, "XRW TODO")
 		+ XMLSchemaAttribute( "automode_scorecut", xsct_real, "XRW TODO")
-		+ XMLSchemaAttribute( "dump_pdb", xsct_rosetta_bool, "XRW TODO")
-		+ XMLSchemaAttribute( "dump_pdb_tag", xs_string, "XRW TODO")
 		+ XMLSchemaAttribute( "wdw_to_freeze", xs_integer, "XRW TODO") //is stored as int
 		+ XMLSchemaAttribute( "freeze_endpoints", xsct_rosetta_bool, "XRW TODO");
 
 	std::string const residues_loops_warning(" 'residues' and 'loops_in' are mutually exclusive.");
 
-	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues"); //XRW TODO, fix function to take a docstring; here is partial docstring:
-	//+ XMLSchemaAttribute( "residues", xsct_refpose_enabled_residue_number_cslist, "XRW TODO" + residues_loops_warning) // XRW TODO this is the wrong type, use get_attributes_for_get_resnum_selector instead
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues", "The residues to set as equal probability (1.0) ONLY IF strategy is 'user'");
 
 	attlist + XMLSchemaAttribute( "loops_in", xs_string, "XRW TODO.  Looks for a Loops object in the DataMap with this name." + residues_loops_warning);
 
-	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues_to_include");
-	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues_to_exclude");
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues_to_include", "Sets the residues to probability of 1.0 AFTER fragment bias strategy is applied");
+	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "residues_to_exclude",  "Sets the residues to probability of 1.0 AFTER fragment bias strategy and residues_to_include is applied");
 
 	attlist
 		+ XMLSchemaAttribute( "reference_model", xs_string, "XRW TODO; if 'input' uses the Pose from apply(); otherwise loads this pdb file")

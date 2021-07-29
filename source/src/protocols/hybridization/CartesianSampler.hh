@@ -139,10 +139,6 @@ private:
 	core::select::residue_selector::ResidueSelectorCOP residues_to_exclude_;
 	core::select::residue_selector::ResidueSelectorCOP residues_to_include_;
 
-	// dump pdb right before changing anything
-	bool dump_pdb_;
-	std::string dump_pdb_tag_;
-
 	// for auto strategy
 	core::Real automode_scorecut_;
 	// for rama, geometry strategy
