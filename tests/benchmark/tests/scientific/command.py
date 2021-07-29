@@ -121,7 +121,9 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         relax_fast       = 'numpy matplotlib==3.2',
         relax_fast_5iter = 'numpy matplotlib==3.2',
 
-        dock_glycans     = 'numpy matplotlib==3.2',
+        # commented out because we're no longer running it continuously
+        # has been superceded by glycan_dock and renamed to legacy_dock_glycans
+#        dock_glycans     = 'numpy matplotlib==3.2',
 
         stepwise_rna_favorites = 'numpy matplotlib==3.2',
         rna_denovo_favorites   = 'numpy matplotlib==3.2',
@@ -133,7 +135,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         fragments_picking      = 'numpy matplotlib==3.2',
         cofactor_binding_sites = 'numpy matplotlib==3.2',
 
-        mp_f19_energy_landscape     = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        mp_f19_tilt_angle     = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
         mp_f19_sequence_recovery    = 'numpy matplotlib==3.2',
         mp_f19_ddG_of_mutation      = 'numpy matplotlib==3.2',
         mp_f19_decoy_discrimination = 'numpy matplotlib==3.2',
