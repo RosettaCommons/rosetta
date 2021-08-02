@@ -76,7 +76,6 @@ class SimpleMetricTests : public CxxTest::TestSuite {
 
 public:
 	Pose pose; //Empty pose
-	Pose ab_pose;
 	Pose glycan_pose;
 
 	void setUp(){
@@ -299,6 +298,7 @@ public:
 	}
 
 	void test_utility_metrics() {
+		Pose ab_pose;
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
 		AntibodyInfoOP ab_info =  utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
 		CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
@@ -330,6 +330,7 @@ public:
 	}
 
 	void test_ss_metric() {
+		Pose ab_pose;
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
 		AntibodyInfoOP ab_info =  utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
 		CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
@@ -342,6 +343,7 @@ public:
 	}
 
 	void test_seq_metric() {
+		Pose ab_pose;
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
 		AntibodyInfoOP ab_info =  utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
 		CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
@@ -354,6 +356,7 @@ public:
 	}
 
 	void test_sasa_metric() {
+		Pose ab_pose;
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
 		AntibodyInfoOP ab_info =  utility::pointer::make_shared< AntibodyInfo >(ab_pose, AHO_Scheme, North);
 		CDRResidueSelectorOP cdr_selector = utility::pointer::make_shared< CDRResidueSelector >( ab_info);
@@ -436,6 +439,8 @@ public:
 		summary_metric.set_action( n_res_lt );
 		TS_ASSERT( summary_metric.calculate(pose) == 1.0 );
 
+		Pose ab_pose;
+		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
 
 		/// Test Caching
 		tester->apply(ab_pose);
@@ -448,6 +453,7 @@ public:
 	}
 
 	void test_interaction_energy_metric(){
+		Pose ab_pose;
 		core::import_pose::pose_from_file(ab_pose, "core/simple_metrics/2r0l_1_1.pdb", core::import_pose::PDB_file);
 		ScoreFunctionOP default_scorefxn = get_score_function();
 		default_scorefxn->score(ab_pose);
