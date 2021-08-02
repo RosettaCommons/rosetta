@@ -33,6 +33,7 @@
 // C++ Headers
 #include <iostream>
 #include <string>
+#include <cmath>
 
 #include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
