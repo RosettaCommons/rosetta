@@ -61,7 +61,7 @@ command_line = '''
 
 # minimum of nstruct = 5 because using 5-top-scoring for bootstrapping
 nstruct = 1000
-if debug: nstruct = 5
+if debug: nstruct = 10
 
 targets = '1UXX 2RDK 2J1U 5OYE 5ZHO 6R3M'.split()
 if debug: targets[:2]
