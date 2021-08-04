@@ -388,7 +388,8 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
         packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1'
 
     else:
-        packages = 'numpy>=1.19.2'
+        #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
+        packages = 'numpy>=1.20.2'
 
 
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
@@ -424,7 +425,8 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         traitlets>=4.3.3     \
         '
     else:
-        packages = 'numpy>=1.19.2'
+        #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
+        packages = 'numpy>=1.20.2'
 
     if conda: packages = packages.replace('blosc', 'python-blosc')
 
