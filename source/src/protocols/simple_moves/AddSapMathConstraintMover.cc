@@ -108,7 +108,7 @@ void AddSapMathConstraintMover::parse_my_tag(
 
 	for ( utility::tag::TagCOP sub_tag : tag->getTags() ) {
 		std::string cst_name = sub_tag->getOption<std::string>( "name" );
-		Real multiplier = tag->getOption<Real>( "multiplier", Real(1) );
+		Real multiplier = sub_tag->getOption<Real>( "multiplier", Real(1) );
 
 		add_constraint( multiplier, cst_name );
 	}

@@ -19,6 +19,7 @@
 
 // Unit headers
 #include <core/pack/guidance_scoreterms/sap/SapConstraintOptions.fwd.hh>
+#include <core/pack/guidance_scoreterms/sap/SapParameterOptions.hh>
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
@@ -56,6 +57,9 @@ public:
 	void full_accuracy_when_scoring( bool full_accuracy );
 
 	void name( std::string const & name );
+
+	SapParameterOptions & sap_parameter_options();
+	SapParameterOptions const & sap_parameter_options() const;
 
 	void score_selector( select::residue_selector::ResidueSelectorCOP const & sel );
 	void sap_calculate_selector( select::residue_selector::ResidueSelectorCOP const & sel );
@@ -101,6 +105,8 @@ private:
 
 	bool full_accuracy_when_scoring_;
 	std::string name_;
+
+	SapParameterOptions sap_parameter_options_;
 
 
 #ifdef    SERIALIZATION

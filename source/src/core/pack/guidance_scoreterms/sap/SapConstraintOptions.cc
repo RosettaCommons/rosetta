@@ -61,7 +61,8 @@ SapConstraintOptions::SapConstraintOptions() :
 	fast_( false ),
 	lightning_( false ),
 	full_accuracy_when_scoring_( true ),
-	name_( "" )
+	name_( "" ),
+	sap_parameter_options_( )
 {}
 
 SapConstraintOptionsOP SapConstraintOptions::clone() const {
@@ -128,6 +129,15 @@ SapConstraintOptions::name( std::string const & name ) {
 	name_ = name;
 }
 
+
+SapParameterOptions &
+SapConstraintOptions::sap_parameter_options() {
+	return sap_parameter_options_;
+}
+SapParameterOptions const &
+SapConstraintOptions::sap_parameter_options() const {
+	return sap_parameter_options_;
+}
 
 void
 SapConstraintOptions::sanity_check( ) const {
@@ -236,6 +246,7 @@ core::pack::guidance_scoreterms::sap::SapConstraintOptions::save( Archive & arc 
 	arc( CEREAL_NVP( lightning_ ) );
 	arc( CEREAL_NVP( full_accuracy_when_scoring_ ) );
 	arc( CEREAL_NVP( name_ ) );
+	arc( CEREAL_NVP( sap_parameter_options_ ) );
 }
 
 template< class Archive >
@@ -260,6 +271,8 @@ core::pack::guidance_scoreterms::sap::SapConstraintOptions::load( Archive & arc 
 	arc( lightning_ );
 	arc( full_accuracy_when_scoring_ );
 	arc( name_ );
+
+	arc( sap_parameter_options_ );
 }
 
 

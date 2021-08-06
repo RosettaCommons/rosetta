@@ -126,6 +126,11 @@ SapScoreMetric::set_sasa_selector( core::select::residue_selector::ResidueSelect
 	sasa_selector_ = selector->clone();
 }
 
+core::pack::guidance_scoreterms::sap::SapParameterOptions &
+SapScoreMetric::sap_parameter_options() {
+	return sap_parameter_options_;
+}
+
 
 std::string
 SapScoreMetric::name() const {
@@ -157,6 +162,12 @@ SapScoreMetric::parse_my_tag(
 	if ( tag->hasOption("sasa_selector") ) {
 		set_sasa_selector( core::select::residue_selector::parse_residue_selector( tag, datamap, "sasa_selector" ) );
 	}
+	if ( tag->hasOption("hydrop_lys_arg_setting") ) {
+		sap_parameter_options().hydrop_lys_arg_setting = tag->getOption<core::Real>( "hydrop_lys_arg_setting" );
+	}
+	if ( tag->hasOption("hydrop_adder") ) {
+		sap_parameter_options().hydrop_adder = tag->getOption<core::Real>( "hydrop_adder" );
+	}
 }
 
 void
@@ -177,7 +188,14 @@ SapScoreMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		" in this selector will still be assigned atom-saps which can affect the residues in score_selector. Optional, will default to score_selector." )
 		+ XMLSchemaAttribute(
 		"sasa_selector", xs_string,
-		"Which residues should be present during the sasa calculation? Optional, will default to sap_calculate_selector." );
+		"Which residues should be present during the sasa calculation? Optional, will default to sap_calculate_selector." )
+		+ XMLSchemaAttribute(
+		"hydrop_lys_arg_setting", xsct_real,
+		"Manually adjust the hydrophobicity of ARG and LYS to be this value." )
+		+ XMLSchemaAttribute(
+		"hydrop_adder", xsct_real,
+		"Add this value to all hydrophobicity values." )
+		;
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"A metric to report the SapScore of a specific region of a pose. Also see the AddSapConstraintMover. See this paper for more info on sap:"
@@ -192,7 +210,7 @@ SapScoreMetric::calculate( core::pose::Pose const & pose ) const {
 	core::select::residue_selector::ResidueSelectorCOP sap_calculate_sel = bool(sap_calculate_selector_) ? sap_calculate_selector_ : score_selector_;
 	core::select::residue_selector::ResidueSelectorCOP sasa_sel = bool(sasa_selector_) ? sasa_selector_ : sap_calculate_sel;
 
-	Real sap = core::pack::guidance_scoreterms::sap::calculate_sap( pose, score_selector_, sap_calculate_sel, sasa_sel );
+	Real sap = core::pack::guidance_scoreterms::sap::calculate_sap( pose, score_selector_, sap_calculate_sel, sasa_sel, sap_parameter_options_ );
 
 	return sap;
 }
@@ -228,6 +246,7 @@ core::pack::guidance_scoreterms::sap::SapScoreMetric::save( Archive & arc ) cons
 	arc( CEREAL_NVP( score_selector_ ) );
 	arc( CEREAL_NVP( sap_calculate_selector_ ) );
 	arc( CEREAL_NVP( sasa_selector_ ) );
+	arc( CEREAL_NVP( sap_parameter_options_ ) );
 }
 
 template< class Archive >
@@ -244,6 +263,8 @@ core::pack::guidance_scoreterms::sap::SapScoreMetric::load( Archive & arc ) {
 
 	arc( local_selector );
 	sasa_selector_ = local_selector;
+
+	arc( sap_parameter_options_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pack::guidance_scoreterms::sap::SapScoreMetric );

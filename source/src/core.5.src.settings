@@ -106,6 +106,7 @@ sources = {
 		   "SapConstraintOptions",
 		   "SapMathConstraint",
 		   "SapDatabase",
+		   "SapParameterOptions",
 		   "SapScoreMetric",
 		   "PerResidueSapScoreMetric",
 		   "util",

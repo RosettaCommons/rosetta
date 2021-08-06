@@ -2079,9 +2079,11 @@ public:
 
 	void test_helper_lightning(){
 		TR << "test_helper_lightning" << std::endl;
-		for ( Size int_sym = 0; int_sym <= 1; int_sym++ ) {
+		for ( Size int_sym = 0; int_sym <= 2; int_sym++ ) {
 			bool using_symm = bool(int_sym);
+			bool using_map = int_sym == 2;
 			TR << (using_symm ? "Symm pass" : "first pass") << std::endl;
+			SapDatabase::get_instance()->symm_debug_force_map_ = using_map;
 
 			core::pose::Pose pose = create_trpcage_ideal_pose();
 			terrible_C3_symmetry( pose, using_symm );
@@ -2151,6 +2153,7 @@ public:
 
 			TS_ASSERT_DELTA( helper_sap_score, sap_score, 0.1 );
 
+			SapDatabase::get_instance()->symm_debug_force_map_ = false;
 		}
 
 	}
@@ -2421,9 +2424,11 @@ public:
 
 	void test_lightning_packing_partial() {
 		TR << "test_lightning_packing" << std::endl;
-		for ( Size int_sym = 0; int_sym <= 1; int_sym++ ) {
+		for ( Size int_sym = 0; int_sym <= 2; int_sym++ ) {
 			bool using_symm = bool(int_sym);
+			bool using_map = int_sym == 2;
 			TR << (using_symm ? "Symm pass" : "first pass") << std::endl;
+			SapDatabase::get_instance()->symm_debug_force_map_ = using_map;
 
 			core::pose::Pose pose;
 			utility::vector1< core::conformation::ResidueCOP > res_vector;
@@ -2581,6 +2586,7 @@ public:
 					}
 				}
 			}
+			SapDatabase::get_instance()->symm_debug_force_map_ = false;
 		}
 
 	}

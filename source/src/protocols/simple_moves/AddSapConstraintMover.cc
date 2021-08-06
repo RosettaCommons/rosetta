@@ -135,7 +135,7 @@ void AddSapConstraintMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption( "sasa_selector" ) ) {
-		core::select::residue_selector::ResidueSelectorCOP selector( protocols::rosetta_scripts::parse_residue_selector( tag, data, "sap_calculate_selector" ) );
+		core::select::residue_selector::ResidueSelectorCOP selector( protocols::rosetta_scripts::parse_residue_selector( tag, data, "sasa_selector" ) );
 		options_->sasa_selector( selector );
 	}
 }

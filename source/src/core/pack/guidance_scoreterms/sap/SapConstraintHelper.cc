@@ -1081,10 +1081,12 @@ SapConstraintHelper::resize_arrays(
 	check_positions_block_.clear();
 	check_positions_block_.resize( pose.size() );
 
+
 	delta_sasa_scratch_.clear();
 	delta_sasa_scratch_.resize( lightning_ ? 1 : max_rotamer_atoms_);
 	delta_sasa_zeros_.clear();
 	delta_sasa_zeros_.resize( lightning_ ? 1 : max_rotamer_atoms_);
+
 
 }
 
@@ -1132,9 +1134,7 @@ SapConstraintHelper::fill_block_params( core::pose::Pose const & pose, pack::rot
 			Size first_sidechain = rotamer->first_sidechain_atom();
 			Size natoms = my_natoms( rotamer );
 
-			if ( (int)natoms - (int)first_sidechain + 1 > (int)max_rotamer_atoms_ ) {
-				max_rotamer_atoms_ = natoms - first_sidechain + 1;
-			}
+			max_rotamer_atoms_ = std::max<Size>( natoms, max_rotamer_atoms_ );
 
 			float total_sasa = 0;
 			utility::vector1< BlockParam > block_params;
@@ -1157,7 +1157,7 @@ SapConstraintHelper::fill_block_params( core::pose::Pose const & pose, pack::rot
 			}
 
 
-			Real hydrophobic_weight = name1_name3.first? db->hydrophobic_weight( name1_name3.first ) : 0;
+			Real hydrophobic_weight = name1_name3.first? my_hydrophobic_weight( db, name1_name3.first ) : 0;
 
 			for ( BlockParam param : block_params ) {
 				all_block_params_.emplace_back( param.max_sasa_score / total_sasa * hydrophobic_weight,
@@ -1595,6 +1595,24 @@ SapConstraintHelper::my_natoms(
 	}
 }
 
+Real
+SapConstraintHelper::my_hydrophobic_weight(
+	SapDatabase * db,
+	char aa
+) const {
+	Real weight = db->hydrophobic_weight( aa );
+	if ( ! utility::isnan( options_->sap_parameter_options().hydrop_lys_arg_setting ) ) {
+		if ( aa == 'R' || aa == 'K' ) {
+			weight = options_->sap_parameter_options().hydrop_lys_arg_setting;
+		}
+	}
+
+	weight += options_->sap_parameter_options().hydrop_adder;
+
+	return weight;
+}
+
+
 // This is a helper function for "fast" since we are filling in the sasa's ahead of time
 // All we need to do is step through each atom on each rotamer and use the BlockParams to convert
 //  the blocks into a sasa score
@@ -1777,30 +1795,54 @@ upper_triangle_offset( Size y, Size x, Size size ) {
 
 // Lookup into lightning_rotamer_2b_sap_ for two given aa types and seqposs
 std::pair< float, float > &
-SapConstraintHelper::lightning_2b_lookup( chemical::AA aa1, Size seqpos1, chemical::AA aa2, Size seqpos2 ) {
+SapConstraintHelper::lightning_2b_lookup( chemical::AA aa1, Size seqpos1, chemical::AA aa2, Size seqpos2, bool create /*= false*/ ) {
 	debug_assert( seqpos1 < seqpos2 );
 
-	// we only store the upper triangle for seqpos
-	// first figure out the offset to the seqpos upper triangle
-	// then go inside and figure out the index to the aa
 
 	Size aa_idx1 = lightning_aa_2_index_[ (Size)aa1 ];
 	Size aa_idx2 = lightning_aa_2_index_[ (Size)aa2 ];
-	Size seqpos_idx1 = lightning_seqpos_2_index_[ seqpos1 ];
-	Size seqpos_idx2 = lightning_seqpos_2_index_[ seqpos2 ];
 
-	debug_assert( aa_idx1 != BAD_AA_INDEX );
-	debug_assert( aa_idx2 != BAD_AA_INDEX );
-	debug_assert( seqpos_idx1 != BAD_SEQPOS_INDEX );
-	debug_assert( seqpos_idx2 != BAD_SEQPOS_INDEX );
 
-	Size seqpos_part = upper_triangle_offset( seqpos_idx1, seqpos_idx2, lightning_num_seqpos_ );
-	Size aa_part = aa_idx1 * lightning_num_aas_ + aa_idx2;
+	if ( use_2b_map_ ) {
 
-	// std::cout << aa_idx1 << " " << aa_idx2 << " " << seqpos_idx1 << " " << seqpos_idx2 << " " << seqpos_part << " " << aa_part << " " << lightning_rotamer_2b_sap_.size() << " " << lightning_num_seqpos_ << " " << lightning_num_aas_ << std::endl;
-	// std::cout << seqpos_part << " " <<  lightning_num_aas_sq_ << " " << aa_part << " " << seqpos_part * lightning_num_aas_sq_ + aa_part << std::endl;
+		basic::datacache::ResRotPair rrp( seqpos1, aa_idx1, seqpos2, aa_idx2 );
 
-	return lightning_rotamer_2b_sap_[ seqpos_part * lightning_num_aas_sq_ + aa_part ];
+		if ( create ) {
+			return lightning_rotamer_2b_sap_map_[ rrp ];
+		} else {
+			auto iter = lightning_rotamer_2b_sap_map_.find( rrp );
+			if ( iter == lightning_rotamer_2b_sap_map_.end() ) {
+				return default_2b_;
+			} else {
+				return iter->second;
+			}
+		}
+		runtime_assert( false );
+		return default_2b_;
+
+	} else {
+
+
+		// we only store the upper triangle for seqpos
+		// first figure out the offset to the seqpos upper triangle
+		// then go inside and figure out the index to the aa
+
+		Size seqpos_idx1 = lightning_seqpos_2_index_[ seqpos1 ];
+		Size seqpos_idx2 = lightning_seqpos_2_index_[ seqpos2 ];
+
+		debug_assert( aa_idx1 != BAD_AA_INDEX );
+		debug_assert( aa_idx2 != BAD_AA_INDEX );
+		debug_assert( seqpos_idx1 != BAD_SEQPOS_INDEX );
+		debug_assert( seqpos_idx2 != BAD_SEQPOS_INDEX );
+
+		Size seqpos_part = upper_triangle_offset( seqpos_idx1, seqpos_idx2, lightning_num_seqpos_ );
+		Size aa_part = aa_idx1 * lightning_num_aas_ + aa_idx2;
+
+		// std::cout << aa_idx1 << " " << aa_idx2 << " " << seqpos_idx1 << " " << seqpos_idx2 << " " << seqpos_part << " " << aa_part << " " << lightning_rotamer_2b_sap_.size() << " " << lightning_num_seqpos_ << " " << lightning_num_aas_ << std::endl;
+		// std::cout << seqpos_part << " " <<  lightning_num_aas_sq_ << " " << aa_part << " " << seqpos_part * lightning_num_aas_sq_ + aa_part << std::endl;
+
+		return lightning_rotamer_2b_sap_[ seqpos_part * lightning_num_aas_sq_ + aa_part ];
+	}
 }
 
 // Setting up lightning is actually rather similar to setting up the other modes with the exception being that
@@ -1812,6 +1854,8 @@ SapConstraintHelper::setup_lightning(
 ) {
 	lightning_rotamer_1b_sap_.clear();
 	lightning_rotamer_2b_sap_.clear();
+	use_2b_map_ = false;
+	lightning_rotamer_2b_sap_map_.clear();
 	lightning_aa_2_index_.clear();
 	lightning_aa_2_index_.resize( chemical::num_aa_types, BAD_AA_INDEX );
 	lightning_num_aas_ = 0;
@@ -1844,7 +1888,7 @@ SapConstraintHelper::setup_lightning(
 
 		// This for-loop is either a loop over the rotamers or a single loop with just the input pose's residue
 		//  It's necessary to use the input pose's residue because if a position isn't packing, it won't have any rotamers
-		Size start_rot = rotamer_sets.has_rotamer_set_for_residue( seqpos ) ? 1 : 0;
+		Size start_rot = 0; //rotamer_sets.has_rotamer_set_for_residue( seqpos ) ? 1 : 0;
 		for ( Size irot = start_rot; irot <= old_rotset->num_rotamers(); irot++ ) {
 			conformation::ResidueCOP const & rotamer = irot > 0 ? old_rotset->rotamer( irot ) : pose.residue( seqpos ).get_self_ptr();
 
@@ -1873,8 +1917,20 @@ SapConstraintHelper::setup_lightning(
 	lightning_rotamer_1b_sap_.resize( lightning_num_aas_ * lightning_num_seqpos_ );
 
 	lightning_num_aas_sq_ = lightning_num_aas_ * lightning_num_aas_;
-	lightning_rotamer_2b_sap_.resize( lightning_num_aas_sq_ *
-		( lightning_num_seqpos_ * lightning_num_seqpos_ - lightning_num_seqpos_ ) / 2 );
+
+	// We'll make 20 GB the flip point
+	// 20e9 = num_aa^2 * ( x^2 - x )^2 / 2
+	// x ~= 100 when 20 aa
+	Size lim = Size(  450 / std::sqrt( lightning_num_aas_ + 1 )  );
+	use_2b_map_ = ( lightning_num_seqpos_ > lim ) || symm_debug_force_map_;
+	if ( use_2b_map_ ) {
+		default_2b_.first = 0;
+		default_2b_.second = 0;
+		TR << "Using lightning map. Select fewer calculate positions for faster calulations." << std::endl;
+	} else {
+		lightning_rotamer_2b_sap_.resize( lightning_num_aas_sq_ *
+			( lightning_num_seqpos_ * lightning_num_seqpos_ - lightning_num_seqpos_ ) / 2 );
+	}
 
 
 	// This exactly mirrors how we set up "fast", except now we're only doing it with one rotamer of each aa type at each position
@@ -1926,7 +1982,10 @@ SapConstraintHelper::setup_lightning(
 						debug_assert( lightning_2b_lookup( seq_rot->aa(), seqpos, pos_rot->aa(), position ).first == 0 );
 						debug_assert( lightning_2b_lookup( seq_rot->aa(), seqpos, pos_rot->aa(), position ).second == 0 );
 						// std::cout << "P " << seq_rot->name1() << " " << seqpos  << " " << pos_rot->name1() << " " << position << " -- "  << pos_onto_seq << " " << seq_onto_pos << std::endl;
-						lightning_2b_lookup( seq_rot->aa(), seqpos, pos_rot->aa(), position ) =
+
+						if ( use_2b_map_ && pos_onto_seq == 0 && seq_onto_pos == 0 ) continue;
+
+						lightning_2b_lookup( seq_rot->aa(), seqpos, pos_rot->aa(), position, true ) =
 							std::pair< float, float>( pos_onto_seq,seq_onto_pos );
 
 					}
@@ -1952,6 +2011,7 @@ SapConstraintHelper::init() {
 	lightning_ = options_->lightning();
 	heavy_ = false;
 	symm_debug_ = SapDatabase::get_instance()->symm_debug();
+	symm_debug_force_map_ = SapDatabase::get_instance()->symm_debug_force_map();
 
 	if ( lightning_ ) runtime_assert( fast_ );
 
@@ -2011,7 +2071,7 @@ SapConstraintHelper::setup_for_symmetry(
 	for ( Size seqpos = 1; seqpos <= pose.size(); seqpos++ ) {
 		Size i_follow = symm_info_->bb_follows( seqpos );
 		if ( i_follow == 0 ) continue;
-		runtime_assert( i_follow <= seqpos );
+		// runtime_assert( i_follow <= seqpos );
 		follows_me[ i_follow ].push_back( seqpos );
 
 		// We need to mirror over the packer task stuff too
@@ -2214,7 +2274,7 @@ SapConstraintHelper::set_accurate_sasa_and_recalc( pose::Pose const & pose ) {
 		Size natoms = my_natoms( res.get_self_ptr() );
 
 		Real max_sasa = name1_name3.first ? db->max_sasa( name1_name3.first ) : 0;
-		Real hydro = name1_name3.first ? db->hydrophobic_weight( name1_name3.first ) : 0;
+		Real hydro = name1_name3.first ? my_hydrophobic_weight( db, name1_name3.first ) : 0;
 
 		for ( Size iat = 0; (int)iat <= (int)natoms - (int)first_sidechain; iat++ ) {
 			Size iatom = iat + first_sidechain;

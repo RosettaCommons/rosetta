@@ -16,6 +16,7 @@
 #define INCLUDED_core_pack_guidance_scoreterms_sap_SapScoreMetric_HH
 
 #include <core/pack/guidance_scoreterms/sap/SapScoreMetric.fwd.hh>
+#include <core/pack/guidance_scoreterms/sap/SapParameterOptions.hh>
 #include <core/simple_metrics/RealMetric.hh>
 
 // Core headers
@@ -93,6 +94,9 @@ public:
 	void
 	set_sasa_selector( core::select::residue_selector::ResidueSelectorCOP const & selector );
 
+	core::pack::guidance_scoreterms::sap::SapParameterOptions & sap_parameter_options();
+
+
 public:
 
 	///@brief Name of the class
@@ -129,6 +133,7 @@ private:
 	core::select::residue_selector::ResidueSelectorCOP sap_calculate_selector_;
 	core::select::residue_selector::ResidueSelectorCOP sasa_selector_;
 
+	core::pack::guidance_scoreterms::sap::SapParameterOptions sap_parameter_options_;
 
 #ifdef    SERIALIZATION
 protected:

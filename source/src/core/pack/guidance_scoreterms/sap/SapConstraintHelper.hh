@@ -24,8 +24,10 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <basic/datacache/CacheableResRotPairFloatMap.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -244,7 +246,7 @@ protected:
 	lightning_1b_lookup( chemical::AA aa, Size seqpos );
 
 	std::pair< float, float > &
-	lightning_2b_lookup( chemical::AA aa1, Size seqpos1, chemical::AA aa2, Size seqpos2 );
+	lightning_2b_lookup( chemical::AA aa1, Size seqpos1, chemical::AA aa2, Size seqpos2, bool create = false );
 
 	Real
 	find_lightning_2b(
@@ -289,6 +291,12 @@ protected:
 		core::conformation::Residue const * res
 	) const;
 
+
+	Real
+	my_hydrophobic_weight(
+		SapDatabase * db,
+		char aa
+	) const;
 
 
 	void
@@ -440,6 +448,10 @@ private:
 	// Stored in upper triangle mode
 	utility::vector0< std::pair< float, float > > lightning_rotamer_2b_sap_;
 
+	bool use_2b_map_;
+	std::unordered_map< basic::datacache::ResRotPair, std::pair< float, float >, basic::datacache::ResRotPairHasher > lightning_rotamer_2b_sap_map_;
+	std::pair< float, float > default_2b_;
+
 	// The current sap score of each residue
 	utility::vector1< Real > lightning_current_res_sap_;
 
@@ -464,6 +476,8 @@ private:
 	utility::vector1< core::conformation::ResidueCOP > symm_work_resvect_;
 	utility::vector1< core::conformation::ResidueCOP > symm_work_resvect_shadow_;
 	bool symm_debug_;
+	bool symm_debug_force_map_;
+
 };
 
 

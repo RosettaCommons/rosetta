@@ -83,6 +83,7 @@ public:
 	get_name1_name3( core::conformation::Residue const & res, bool warn ) const;
 
 	bool symm_debug() const;
+	bool symm_debug_force_map() const;
 
 
 private:
@@ -108,6 +109,7 @@ private:
 
 	// This shouldn't be here but it makes the test suite a whole lot easier to write
 	bool symm_debug_;
+	bool symm_debug_force_map_;
 
 };
 

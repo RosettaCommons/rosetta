@@ -95,9 +95,11 @@ calculate_sap(
 	pose::Pose const & pose,
 	select::residue_selector::ResidueSelectorCOP const & score_sel,
 	select::residue_selector::ResidueSelectorCOP const & sap_calculate_sel,
-	select::residue_selector::ResidueSelectorCOP const & sasa_sel
+	select::residue_selector::ResidueSelectorCOP const & sasa_sel,
+	SapParameterOptions const & sap_parameter_options /*= SapParameterOptions()*/
 ) {
 	SapConstraintOptionsOP options = utility::pointer::make_shared<SapConstraintOptions>();
+	options->sap_parameter_options() = sap_parameter_options;
 	utility::vector1< core::conformation::ResidueCOP > res_vector;
 
 	SapConstraintHelperOP helper = common_setup( options, pose, score_sel, sap_calculate_sel, sasa_sel, res_vector );
@@ -114,9 +116,11 @@ calculate_per_atom_sap(
 	pose::Pose const & pose,
 	select::residue_selector::ResidueSelectorCOP const & score_sel,
 	select::residue_selector::ResidueSelectorCOP const & sap_calculate_sel,
-	select::residue_selector::ResidueSelectorCOP const & sasa_sel
+	select::residue_selector::ResidueSelectorCOP const & sasa_sel,
+	SapParameterOptions const & sap_parameter_options /*= SapParameterOptions()*/
 ) {
 	SapConstraintOptionsOP options = utility::pointer::make_shared<SapConstraintOptions>();
+	options->sap_parameter_options() = sap_parameter_options;
 	utility::vector1< core::conformation::ResidueCOP > res_vector;
 
 	SapConstraintHelperOP helper = common_setup( options, pose, score_sel, sap_calculate_sel, sasa_sel, res_vector );
@@ -133,10 +137,11 @@ calculate_per_res_sap(
 	pose::Pose const & pose,
 	select::residue_selector::ResidueSelectorCOP const & score_sel,
 	select::residue_selector::ResidueSelectorCOP const & sap_calculate_sel,
-	select::residue_selector::ResidueSelectorCOP const & sasa_sel
+	select::residue_selector::ResidueSelectorCOP const & sasa_sel,
+	SapParameterOptions const & sap_parameter_options /*= SapParameterOptions()*/
 ) {
 
-	core::id::AtomID_Map<Real> atom_saps = calculate_per_atom_sap( pose, score_sel, sap_calculate_sel, sasa_sel );
+	core::id::AtomID_Map<Real> atom_saps = calculate_per_atom_sap( pose, score_sel, sap_calculate_sel, sasa_sel, sap_parameter_options );
 
 	utility::vector1<Real> res_saps;
 	for ( Size seqpos = 1; seqpos <= pose.size(); seqpos++ ) {
@@ -157,9 +162,11 @@ calculate_slow_approx_sap(
 	pose::Pose const & pose,
 	select::residue_selector::ResidueSelectorCOP const & score_sel,
 	select::residue_selector::ResidueSelectorCOP const & sap_calculate_sel,
-	select::residue_selector::ResidueSelectorCOP const & sasa_sel
+	select::residue_selector::ResidueSelectorCOP const & sasa_sel,
+	SapParameterOptions const & sap_parameter_options /*= SapParameterOptions()*/
 ) {
 	SapConstraintOptionsOP options = utility::pointer::make_shared<SapConstraintOptions>();
+	options->sap_parameter_options() = sap_parameter_options;
 	utility::vector1< core::conformation::ResidueCOP > res_vector;
 
 	SapConstraintHelperOP helper = common_setup( options, pose, score_sel, sap_calculate_sel, sasa_sel, res_vector );

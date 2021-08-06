@@ -251,6 +251,11 @@ SapDatabase::symm_debug() const {
 	return symm_debug_;
 }
 
+bool
+SapDatabase::symm_debug_force_map() const {
+	return symm_debug_force_map_;
+}
+
 
 //namespaces
 } //sap

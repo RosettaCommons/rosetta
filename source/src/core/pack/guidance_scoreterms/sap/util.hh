@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <core/pack/guidance_scoreterms/sap/SapConstraintOptions.fwd.hh>
+#include <core/pack/guidance_scoreterms/sap/SapParameterOptions.hh>
 #include <core/pack/guidance_scoreterms/sap/SapConstraintHelper.fwd.hh>
 
 // Package headers
@@ -56,7 +57,8 @@ calculate_sap(
 	pose::Pose const & pose,
 	select::residue_selector::ResidueSelectorCOP const & score_sel,
 	select::residue_selector::ResidueSelectorCOP const & sap_calculate_sel,
-	select::residue_selector::ResidueSelectorCOP const & sasa_sel
+	select::residue_selector::ResidueSelectorCOP const & sasa_sel,
+	SapParameterOptions const & sap_parameter_options = SapParameterOptions()
 );
 
 core::id::AtomID_Map<Real>
@@ -64,7 +66,8 @@ calculate_per_atom_sap(
 	pose::Pose const & pose,
 	select::residue_selector::ResidueSelectorCOP const & score_sel,
 	select::residue_selector::ResidueSelectorCOP const & sap_calculate_sel,
-	select::residue_selector::ResidueSelectorCOP const & sasa_sel
+	select::residue_selector::ResidueSelectorCOP const & sasa_sel,
+	SapParameterOptions const & sap_parameter_options = SapParameterOptions()
 );
 
 utility::vector1<Real>
@@ -72,7 +75,8 @@ calculate_per_res_sap(
 	pose::Pose const & pose,
 	select::residue_selector::ResidueSelectorCOP const & score_sel,
 	select::residue_selector::ResidueSelectorCOP const & sap_calculate_sel,
-	select::residue_selector::ResidueSelectorCOP const & sasa_sel
+	select::residue_selector::ResidueSelectorCOP const & sasa_sel,
+	SapParameterOptions const & sap_parameter_options = SapParameterOptions()
 );
 
 Real
@@ -80,7 +84,8 @@ calculate_slow_approx_sap(
 	pose::Pose const & pose,
 	select::residue_selector::ResidueSelectorCOP const & score_sel,
 	select::residue_selector::ResidueSelectorCOP const & sap_calculate_sel,
-	select::residue_selector::ResidueSelectorCOP const & sasa_sel
+	select::residue_selector::ResidueSelectorCOP const & sasa_sel,
+	SapParameterOptions const & sap_parameter_options = SapParameterOptions()
 );
 
 core::id::AtomID_Map<Real>
