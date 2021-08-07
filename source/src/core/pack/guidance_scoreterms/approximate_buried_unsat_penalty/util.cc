@@ -439,9 +439,14 @@ three_body_approximate_buried_unsat_calculation(
 			float hbond_bonus =     -PENALTY;
 			float oversat_penalty = oversat_penalty_in;
 
-			if ( num_hs >= 3 ) { // standard LYS handling. 3 1 0 0 1 3
+			if ( !cor_opt.lys_ok_with_1 && num_hs >= 3 ) { // standard LYS handling. 3 1 0 0 1 3
 				buried_penalty =  PENALTY * 3;
 				hbond_bonus =    -PENALTY * 2;
+				oversat_penalty = oversat_penalty_in;
+
+			} else if ( cor_opt.lys_ok_with_1 && num_hs >= 3 ) { // nonstandard LYS handling. 1 0 0 1 3
+				buried_penalty =  PENALTY;
+				hbond_bonus =    -PENALTY;
 				oversat_penalty = oversat_penalty_in;
 
 			} else if ( cor_opt.nh2_wants_2 && is_N && num_hs == 2 ) {   // force NH2 to have 2. 2 0.5 0 0.5 2

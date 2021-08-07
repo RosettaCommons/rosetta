@@ -840,6 +840,10 @@ public:
 	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
 	void approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb( core::Real const setting );
 
+	/// @brief Set the lys_ok_with_1 for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	void approximate_buried_unsat_penalty_lys_ok_with_1( bool const setting );
+
 
 	/// @brief Get the energy threshold above which a hydrogen bond is not counted.
 	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
@@ -876,6 +880,10 @@ public:
 	/// @brief Get the hbond_bonus_ser_to_helix_bb for approximate_buried_unsat_penalty.
 	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb() const;
+
+	/// @brief Get the lys_ok_with_1 for approximate_buried_unsat_penalty.
+	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
+	bool approximate_buried_unsat_penalty_lys_ok_with_1() const;
 
 
 	/// geter and setter for target clash energy
@@ -1193,6 +1201,7 @@ private:
 	bool approximate_buried_unsat_penalty_natural_corrections1_;
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_cross_chain_;
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_;
+	bool approximate_buried_unsat_penalty_lys_ok_with_1_;
 
 	// options for the target clash energy
 	std::string target_clash_pdb_;

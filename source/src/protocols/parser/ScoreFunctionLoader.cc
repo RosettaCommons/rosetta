@@ -96,6 +96,7 @@ ScoreFunctionLoader::create_scorefxn_from_tag(
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Weights " + scorefxn_weights + " was requested with incompatible options.");
 		}
 
+
 		if (  scorefxn_tag->hasOption( "patch" ) ) {
 			std::string const scorefxn_patch( scorefxn_tag->getOption<std::string>( "patch" ) );
 			in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights, scorefxn_patch);
@@ -189,6 +190,9 @@ ScoreFunctionLoader::create_scorefxn_from_tag(
 			}
 			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb" ) ) {
 				emoptions.approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb( mod_tag->getOption<core::Real>("approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb") );
+			}
+			if ( mod_tag->hasOption( "approximate_buried_unsat_penalty_lys_ok_with_1" ) ) {
+				emoptions.approximate_buried_unsat_penalty_lys_ok_with_1( mod_tag->getOption<bool>("approximate_buried_unsat_penalty_lys_ok_with_1") );
 			}
 
 			//Options for buried_unsatisfied_penalty energy:
@@ -472,6 +476,7 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_natural_corrections1", xsct_rosetta_bool, "Apply the following corrections to buried unsat penalty: nh2_wants_2, nh1_wants_1, hydroxyl_wants_h, carboxyl_wants_2")
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_hbond_bonus_cross_chain", xsct_real, "Apply a bonus factor to hydrogen bonds accross chains.")
 		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb", xsct_real, "Apply a bonus factor to the classic SER/THR i - i-4 h-bond. OG/OG1 - O. Set this positive to penalize.")
+		+ XMLSchemaAttribute( "approximate_buried_unsat_penalty_lys_ok_with_1", xsct_rosetta_bool, "Make LYS N work like carbonyl O where it prefers 1 or 2 h-bonds.")
 
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_angle_exponent", xsct_real, "The angle exponent for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_angle_shift_factor", xsct_real, "The angle shift factor for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )

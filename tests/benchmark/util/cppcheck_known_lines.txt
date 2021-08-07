@@ -6168,6 +6168,7 @@
 [core/scoring/methods/EnergyMethodOptions.cc:73]: (warning) Member variable 'EnergyMethodOptions::use_gen_kirkwood_' is not initialized in the constructor. [uninitMemberVar]
 [core/scoring/methods/EnergyMethodOptions.cc:73]: (warning) Member variable 'EnergyMethodOptions::use_polarization_' is not initialized in the constructor. [uninitMemberVar]
 [core/scoring/methods/EnergyMethodOptions.cc:73]: (warning) Member variable 'EnergyMethodOptions::voids_penalty_energy_disabled_except_during_packing_' is not initialized in the constructor. [uninitMemberVar]
+[core/scoring/methods/EnergyMethodOptions.cc:73]: (warning) Member variable 'EnergyMethodOptions::approximate_buried_unsat_penalty_lys_ok_with_1_' is not initialized in the constructor. [uninitMemberVar]
 [core/scoring/methods/EnergyMethodOptions.cc:745]: (performance) Function parameter 'setting' should be passed by reference. [passedByValue]
 [core/scoring/methods/EnergyMethodOptions.cc:800]: (performance) Function parameter 'setting' should be passed by reference. [passedByValue]
 [core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.cc:207]: (style) Variable 'errmsg' is assigned a value that is never used. [unreadVariable]

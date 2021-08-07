@@ -47,13 +47,15 @@ public:
 		nh2_wants_2(false),
 		nh1_wants_1(false),
 		hydroxyl_wants_h(false),
-		carboxyl_wants_2(false)
+		carboxyl_wants_2(false),
+		lys_ok_with_1(false)
 	{}
 
 	bool nh2_wants_2;
 	bool nh1_wants_1;
 	bool hydroxyl_wants_h;
 	bool carboxyl_wants_2;
+	bool lys_ok_with_1;
 };
 
 struct HBondBonusOptions {

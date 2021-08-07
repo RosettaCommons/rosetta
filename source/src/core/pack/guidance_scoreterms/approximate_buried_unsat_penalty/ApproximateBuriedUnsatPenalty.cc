@@ -123,6 +123,10 @@ ApproximateBuriedUnsatPenalty::ApproximateBuriedUnsatPenalty(
 		cor_opt_.carboxyl_wants_2 = true;
 	}
 
+	if ( options.approximate_buried_unsat_penalty_lys_ok_with_1() ) {
+		cor_opt_.lys_ok_with_1 = true;
+	}
+
 	if ( options.approximate_buried_unsat_penalty_hbond_bonus_cross_chain() != 0 ) {
 		hbond_bonus_opt_.cross_chain_bonus_ = options.approximate_buried_unsat_penalty_hbond_bonus_cross_chain();
 	}
@@ -394,7 +398,14 @@ ApproximateBuriedUnsatPenalty::residue_pair_energy(
 	scoring::ScoreFunction const &,
 	scoring::EnergyMap & emap
 ) const {
-	if ( mode_ == MINIMIZING || mode_ == IDLE ) return;
+	if ( mode_ == MINIMIZING ) return;
+
+	if ( mode_ == IDLE ) {
+		utility_exit_with_message("core.pack.guidance_scoreterms.approximate_buried_unsat_penalty."
+			" Something outside the ordinary happened. The scores will not be valid. (If the log shows"
+			" LinearMemoryInteractionGraph, add this flag: -precompute_ig. Previously this resulted in"
+			" incorrect scores. Will be fixed \"soon\". -bcov)");
+	}
 
 	if ( mode_ == PACKING ) {
 		utility_exit_with_message("core.pack.guidance_scoreterms.approximate_buried_unsat_penalty."
@@ -426,7 +437,14 @@ ApproximateBuriedUnsatPenalty::eval_intrares_energy(
 	scoring::ScoreFunction const &,
 	scoring::EnergyMap & emap
 ) const {
-	if ( mode_ == MINIMIZING || mode_ == IDLE ) return;
+	if ( mode_ == MINIMIZING ) return;
+
+	if ( mode_ == IDLE ) {
+		utility_exit_with_message("core.pack.guidance_scoreterms.approximate_buried_unsat_penalty."
+			" Something outside the ordinary happened. The scores will not be valid. (If the log shows"
+			" LinearMemoryInteractionGraph, add this flag: -precompute_ig. Previously this resulted in"
+			" incorrect scores. Will be fixed \"soon\". -bcov)");
+	}
 
 	if ( mode_ == PACKING ) {
 		utility_exit_with_message("core.pack.guidance_scoreterms.approximate_buried_unsat_penalty."

@@ -1494,6 +1494,8 @@ Options = Option_Group( '',
 		Option( 'approximate_buried_unsat_penalty_natural_corrections1', 'Boolean', desc="Apply the following corrections to buried unsat penalty: nh2_wants_2, nh1_wants_1, hydroxyl_wants_h, carboxyl_wants_2", default="false" ),
 		Option( 'approximate_buried_unsat_penalty_hbond_bonus_cross_chain', 'Real', desc="Apply a bonus factor to hydrogen bonds accross chains. Remember to set this negative.", default="0" ),
 		Option( 'approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb', 'Real', desc="Apply a bonus factor to the classic SER/THR i - i-4 h-bond. OG/OG1 - O. Set this positive to penalize.", default="0" ),
+        Option( 'approximate_buried_unsat_penalty_lys_ok_with_1', 'Boolean', desc="Make LYS N work like carbonyl O where it prefers 1 or 2 h-bonds.", default="false" ),
+
 
 		Option( 'target_clash_pdb', 'String', desc="The target pdb file for clashing check with the target_clash score term.", default="" ),
 
