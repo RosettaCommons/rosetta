@@ -404,12 +404,14 @@ std::string serialize_residue_xyz_coords(core::conformation::Residue const & res
 
 }
 
-utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::string const & data, core::Size natoms)
+/// @note This function uses new and delete, but cleans up its own heap data.
+utility::vector1< numeric::xyzVector<core::Real> >
+deserialize_xyz_coords(std::string const & data, core::Size natoms)
 {
 	//natoms really needs to be correct
 	auto* coord_data = new core::Real[natoms*3];
-	//core::Size memory_size = natoms*3*sizeof(core::Real);  // unused ~Labonte
-	utility::decode6bit((unsigned char*)coord_data,data);
+	core::Size memory_size = natoms*3*sizeof(core::Real);
+	utility::decode6bit( (unsigned char*)coord_data,data, memory_size );
 
 	utility::vector1< numeric::xyzVector<core::Real> > xyz_vector;
 	for ( core::Size atom_index = 1; atom_index <= natoms; ++atom_index ) {

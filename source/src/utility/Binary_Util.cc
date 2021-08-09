@@ -19,6 +19,7 @@
 
 // C++ Headers
 #include <string>
+#include <algorithm> //For std::min
 
 namespace utility {
 
@@ -31,6 +32,12 @@ void swap4_aligned(void *v, long ndata) {
 	}
 }
 
+/// @brief Given a block of memory (with memory pointing to the first byte) and a byte
+/// count (length), convert every three bytes of memory into four bytes of ASCII characters,
+/// and populate the string (jar) with those characters.
+/// @details Note that decode6bit requires the length of the memory block into which
+/// the contents of jar will be extracted, so the length of the memory location here
+/// should be stored somehow if one hopes to accurately reproduce the bytes stored.
 void encode6bit(const unsigned char* memory, unsigned int length, std::string &jar){
 	jar = "";
 	unsigned int i;
@@ -59,14 +66,30 @@ void encode6bit(const unsigned char* memory, unsigned int length, std::string &j
 	//jar += '\n';
 }
 
-// assumes memory already allocated!!!!
-int decode6bit(unsigned char* memory, const std::string &jar){
+/// @brief Given 3*N bytes of memory to fill, and a string containing 4*N characters, decode the
+/// characters (interpreting 4 bytes of ASCII text as 3 binary bytes) and populate the block of memory.
+/// @param[in] memory A pointer to the first byte of memory to fill.  It is assumed that we're filling a
+/// contiguous block of memory.
+/// @param[in] jar The string containing the characters that will be decoded and converted to bytes.
+/// @param[in] maxbytes The maximum number of bytes to put into the memory pointed to by the "memory" pointer.
+/// (i.e. The size of the array that we're filling).
+/// @note Assumes memory already allocated!!!  There is no direct check for vector overflows, since this function
+/// has no knowlege of what it is that it's filling (or how big the object is).  The function relies on maxbytes
+/// to prevent overflows.
+/// @returns The number of bytes filled.
+/// @author Originally author unknown.  Revised in 2021 by Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+platform::Size
+decode6bit(
+	unsigned char * memory,
+	std::string const & jar,
+	platform::Size const maxbytes
+) {
 	//printf("-->%s\n",jar.c_str());
 	const unsigned char *jarmemory = (unsigned char *)jar.c_str();
-	unsigned int mempos = 0;
+	platform::Size mempos = 0;
 	//unsigned int memlength = (unsigned int)jar.length() * 3 / 4 + 1;
 	//*memory = new unsigned char [memlength];
-	for ( size_t i=0; i<jar.size(); ) {
+	for ( platform::Size i=0; i<jar.size(); ) {
 		unsigned char inbuf[4] = {0,0,0,0};
 		unsigned char ibuf=0;
 		for ( ; ((i<jar.size())&&(ibuf<4)); i++ ) {
@@ -74,12 +97,15 @@ int decode6bit(unsigned char* memory, const std::string &jar){
 			if ( inbuf[ibuf] < 32 ) continue;
 			ibuf++;
 		}
+		unsigned short const goodbytes = std::min( static_cast<platform::Size>(3), maxbytes-mempos );
 
-		decode_32_to_24(inbuf[0],inbuf[1],inbuf[2],inbuf[3],
-			//                (*memory)[mempos+0],(*memory)[mempos+1],(*memory)[mempos+2]);
-			(memory)[mempos+0],(memory)[mempos+1],(memory)[mempos+2]);
+		decode_32_to_24(inbuf[0],inbuf[1],inbuf[2],inbuf[3], &((memory)[mempos]), goodbytes);
 
-		mempos += 3;
+		mempos += goodbytes;
+		//Stop filling bytes:
+		if ( mempos > maxbytes ) {
+			break;
+		}
 	}
 	return mempos;
 }

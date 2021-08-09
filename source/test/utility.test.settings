@@ -13,6 +13,7 @@ sources = {
 	"" : [
 		"BitSet",
 		"BitVector",
+		"BinaryUtilTests",
 		"dating",
 		"deep_copy_vector1",
 		"DenseBoolMap",

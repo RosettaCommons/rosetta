@@ -461,7 +461,8 @@ bool BinarySilentStruct::init_from_lines(
 
 			int natoms = (tag.length()-1) / 16;
 			utility::vector1< numeric::xyzVector <float> > atm_buff( natoms+1 );
-			utility::decode6bit( (unsigned char*)&(atm_buff[1]) , tag.substr(1) );
+			core::Size const vecsize( sizeof( numeric::xyzVector<float> ) * (natoms + 1) );
+			utility::decode6bit( (unsigned char*)&(atm_buff[1]) , tag.substr(1), vecsize );
 
 			// option to force bit flip:
 			if ( force_bitflip() ) {

@@ -451,9 +451,10 @@ public:
 		// ... which means we may run off the end of the array if the size of the array isn't divisible by 3
 		// By adding an extra 2 items padding, we give it a safe space to overrun.
 		zones_.resize( npoints_+2 );
-		debug_assert( sizeof(T)*zones_.size()*4 >= point_data.size()*3 ); // 3 bytes of array data for every 4 bytes of string data
+		core::Size const vecsize( sizeof(T)*zones_.size()*4 );
+		debug_assert( vecsize >= point_data.size()*3 ); // 3 bytes of array data for every 4 bytes of string data
 		// vector::data() gives a raw pointer to the underlying (contigous) array.
-		utility::decode6bit( (unsigned char*) zones_.data(), point_data );
+		utility::decode6bit( (unsigned char*) zones_.data(), point_data, vecsize );
 		zones_.resize( npoints_ );
 
 	}
