@@ -240,6 +240,11 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
                         'src/core/scoring/etable/etrie/TrieCountPair1BC4.cc', #Timeout issues on the test server
                         ]
 
+    # list of Clang-tidy warnings that should not be treated as errors
+    WARNING_LINES_TO_IGNORE = [
+        #'src/ObjexxFCL/FArray2A.hh:567:3: warning: Returning null reference',
+    ]
+
     CLANG_TIDY_OPTIONS="-quiet -header-filter='.*'"
     CLANG_TIDY_TESTS = ["clang-diagnostic-*",
                         "clang-analyzer-*",
@@ -363,8 +368,12 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
     for key, res in raw_results.items():
         # Passing results gives a single line of output
         if res['result'] == 0 and len(res['output'].strip().split('\n')) > 1:
-            res['result'] = 127
+            for line in WARNING_LINES_TO_IGNORE:
+                if line in res['output']: break
+            else: res['result'] = 127
+
         run_cache[key] = res
+
     run_cache["CLANG_TIDY_TESTS"] = CLANG_TIDY_TESTS
     run_cache["CLANG_TIDY_VERSION"] = tidy_version
     with open(prior_run_cache_filename,'w') as f:
@@ -389,6 +398,7 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
         results[_LogKey_]   = f"Clang tidy with `-checks={CLANG_TIDY_TESTS}` found errors in {nfailed} files.\n\nClang Tidy Version:\n"+tidy_version
 
     return results
+
 
 def run_cppcheck_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
 

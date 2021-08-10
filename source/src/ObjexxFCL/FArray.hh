@@ -123,7 +123,7 @@ protected: // Creation
 		const_proxy_( false ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( a.shift_ ),
-		sarray_( array_ - shift_ )
+		sarray_( array_ ? array_ - shift_ : nullptr )
 	{
 		for ( size_type i = 0; i < size_; ++i ) {
 			array_[ i ] = a[ i ];
@@ -145,7 +145,7 @@ protected: // Creation
 		const_proxy_( false ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( a.shift_ ),
-		sarray_( array_ - shift_ )
+		sarray_( array_ ? array_ - shift_ : nullptr )
 	{
 		std::fill_n( array_, size_, v );
 #ifdef OBJEXXFCL_FARRAY_SIZE_REPORT
@@ -166,7 +166,7 @@ protected: // Creation
 		const_proxy_( false ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( a.shift_ ),
-		sarray_( array_ - shift_ )
+		sarray_( array_ ? array_ - shift_ : nullptr )
 	{
 		for ( size_type i = 0; i < size_; ++i ) {
 			array_[ i ] = T( a[ i ] );
@@ -865,7 +865,7 @@ protected: // Functions
 	shift_set( int const shift_a )
 	{
 		shift_ = shift_a;
-		sarray_ = array_ - shift_;
+		if(array_) sarray_ = array_ - shift_; // only set shifted pointer if memory was already allocated to avoid triggered undefined behavior
 	}
 
 

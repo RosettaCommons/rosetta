@@ -564,6 +564,7 @@ public: // Subscript
 	{
 		proxy_const_assert( not_const_proxy() );
 		assert( ( I1_.contains( i1 ) ) && ( I2_.contains( i2 ) ) );
+		assert( sarray_ );
 		return sarray_[ ( i2 * s1_ ) + i1 ];
 	}
 
