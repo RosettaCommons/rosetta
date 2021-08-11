@@ -586,6 +586,25 @@ sources = {
 		"PoseFromSequenceMoverTests",
 	],
 
+	"pose_sewing/filters" : [
+		"CoreScorerTests",
+		"HasDisulfideFilterTests",
+	],
+
+	"pose_sewing/movers" : [
+		"AddFlankingVirtualResiduesMoverTests",
+		"BlockwiseAnalysisMoverTests",
+		"OmnibusDisulfideAnalysisLabelerMoverTests",
+		"SewAnythingTests",
+		"DsspDisulfideLabelerMoverTests",
+	],
+	"pose_sewing/simple_metrics" : [
+		"BlockwisePoseCompMotifMetricTests",
+		"BlockwiseShapeCompMetricTests",
+		"MinimumInterAlphaDistanceMetricTests",
+		"WindowPoseCompMotifMetricTests",
+	],
+
 	"pmut_scan" : [
 		"PointMutScanDriver",
 	],

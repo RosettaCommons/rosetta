@@ -117,6 +117,8 @@ void ShapeComplementarityFilter::write_median_distance( bool write_median_distan
 bool ShapeComplementarityFilter::write_median_distance() const { return write_d_median_; }
 void ShapeComplementarityFilter::multicomp( bool multicomp ) { multicomp_ = multicomp; }
 bool ShapeComplementarityFilter::multicomp() const { return multicomp_; }
+void ShapeComplementarityFilter::selector1( core::select::residue_selector::ResidueSelectorCOP selector1 ) { selector1_ = selector1; }
+void ShapeComplementarityFilter::selector2( core::select::residue_selector::ResidueSelectorCOP selector2 ) { selector2_ = selector2; }
 
 
 /// @brief

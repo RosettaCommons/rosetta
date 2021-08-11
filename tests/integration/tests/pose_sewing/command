@@ -1,0 +1,19 @@
+cd %(workdir)s
+
+
+# Do the tests actually exist?
+[ -x %(bin)s/multistage_rosetta_scripts.%(binext)s ] || exit 1
+[ -x %(bin)s/MakeSegmentFile.%(binext)s ] || exit 1
+
+
+
+%(bin)s/MakeSegmentFile.%(binext)s %(additional_flags)s -database %(database)s \
+  -corrections::beta_nov16 true -motif_file test_motifs -l pdb_list -segment_path test_segments -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > makesegmentfile_log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+rm -rf test_segments
+
+%(bin)s/multistage_rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
+    -job_definition_file test_sewanything.xml -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > pose_sewing_log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+

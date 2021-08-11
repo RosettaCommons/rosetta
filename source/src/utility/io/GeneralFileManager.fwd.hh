@@ -31,6 +31,14 @@ typedef utility::pointer::shared_ptr< GeneralFileManager const > GeneralFileMana
 typedef utility::pointer::shared_ptr< GeneralFileContents > GeneralFileContentsOP;
 typedef utility::pointer::shared_ptr< GeneralFileContents const > GeneralFileContentsCOP;
 
+class GeneralFileManagerVector;
+class GeneralFileContentsVector;
+
+typedef utility::pointer::shared_ptr< GeneralFileManagerVector > GeneralFileManagerVectorOP;
+typedef utility::pointer::shared_ptr< GeneralFileManagerVector const > GeneralFileManagerVectorCOP;
+typedef utility::pointer::shared_ptr< GeneralFileContentsVector > GeneralFileContentsVectorOP;
+typedef utility::pointer::shared_ptr< GeneralFileContentsVector const > GeneralFileContentsVectorCOP;
+
 } //utility
 } //io
 

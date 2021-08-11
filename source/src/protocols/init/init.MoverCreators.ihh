@@ -398,6 +398,12 @@
 #include <protocols/pose_length_moves/InsertResMoverCreator.hh>
 #include <protocols/pose_length_moves/NearNativeLoopCloserCreator.hh>
 
+
+#include <protocols/pose_sewing/movers/AddFlankingVirtualResiduesMoverCreator.hh>
+#include <protocols/pose_sewing/movers/OmnibusDisulfideAnalysisLabelerMoverCreator.hh>
+#include <protocols/pose_sewing/movers/PickRandomSegmentMoverCreator.hh>
+#include <protocols/pose_sewing/movers/SewAnythingAddMoverCreator.hh>
+
 #include <protocols/protein_interface_design/movers/AddChainBreakCreator.hh>
 #include <protocols/protein_interface_design/movers/AddSidechainConstraintsToHotspotsCreator.hh>
 #include <protocols/protein_interface_design/movers/BackrubDDMoverCreator.hh>

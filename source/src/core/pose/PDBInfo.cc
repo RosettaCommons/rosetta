@@ -682,6 +682,22 @@ PDBInfo::clear_reslabel(
 	rr.label.clear();
 }
 
+void
+PDBInfo::clear_reslabel(
+	Size const res,
+	std::string const & label_match
+)
+{
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
+	ResidueRecord & rr = residue_rec_[ res ];
+	utility::vector1< std::string > const & labels = rr.label;
+	for ( std::string const & label: labels ) {
+		if ( utility::contains(label, label_match) ) {
+			rr.label.pop(label);
+		}
+	}
+}
+
 /// @brief parse PDBInfo-LABEL: lines from a collection of lines
 /// @details Lines not containing PDBInfo-LABEL are ignored
 /// @param[in] lines the lines to parse

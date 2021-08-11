@@ -1,0 +1,2 @@
+H 8 H 7 HHHHHHHHLLLLLHHHHHHH test_pdb_1.pdb 
+H 7 H 8 HHHHHHHLLLLLHHHHHHHH test_pdb_2.pdb 

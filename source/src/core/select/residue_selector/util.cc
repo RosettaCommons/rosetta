@@ -620,6 +620,39 @@ bool regex_usable() {
 }
 
 
+utility::vector1<core::select::residue_selector::ResidueSubset>
+identify_ss_blocks_vec( core::select::residue_selector::ResidueSubset const & selection ){
+	utility::vector1<core::select::residue_selector::ResidueSubset> block_selections;
+	core::select::residue_selector::ResidueSubset current_selection( selection.size(), false );
+
+	//Note - does not take into account new chains!
+	bool last_res = false;
+	for ( core::Size count_resnum = 1; count_resnum <= selection.size(); ++count_resnum ) {
+		if ( selection[count_resnum] ) {
+			if ( !last_res ) {
+				current_selection = core::select::residue_selector::ResidueSubset( selection.size(), false );
+			}
+			current_selection[count_resnum] = true;
+		} else {
+			if ( last_res ) {
+				block_selections.push_back(current_selection);
+			}
+		}
+		last_res = selection[count_resnum];
+	}
+	if ( last_res ) {
+		block_selections.push_back(current_selection);
+	}
+	return block_selections;
+}
+
+bool
+all_L_dssp(core::pose::Pose const & pose){
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		if ( pose.secstruct(i) != 'L' ) return false;
+	}
+	return true;
+}
 
 }
 }

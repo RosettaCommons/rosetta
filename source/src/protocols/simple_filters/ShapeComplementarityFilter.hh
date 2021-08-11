@@ -92,6 +92,8 @@ public:// mutator
 	bool write_median_distance( ) const;
 	void multicomp( bool multicomp );
 	bool multicomp( ) const;
+	void selector1( core::select::residue_selector::ResidueSelectorCOP selector1 );
+	void selector2( core::select::residue_selector::ResidueSelectorCOP selector2 );
 
 	//Jump
 	void jump_id( core::Size jump_id );

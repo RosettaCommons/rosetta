@@ -412,6 +412,12 @@ static MoverRegistrator< pose_length_moves::FixAllLoopsMoverCreator > reg_FixAll
 static MoverRegistrator< pose_length_moves::InsertResMoverCreator > reg_InsertResMoverCreator;
 static MoverRegistrator< pose_length_moves::NearNativeLoopCloserCreator > reg_NearNativeLoopCloserCreator;
 
+
+static MoverRegistrator< pose_sewing::movers::AddFlankingVirtualResiduesMoverCreator > reg_AddFlankingVirtualResiduesMoverCreator;
+static MoverRegistrator< pose_sewing::movers::OmnibusDisulfideAnalysisLabelerMoverCreator > reg_OmnibusDisulfideAnalysisLabelerMoverCreator;
+static MoverRegistrator< pose_sewing::movers::PickRandomSegmentMoverCreator > reg_PickRandomSegmentMoverCreator;
+static MoverRegistrator< pose_sewing::movers::SewAnythingAddMoverCreator > reg_SewAnythingAddMoverCreator;
+
 static MoverRegistrator< protein_interface_design::movers::AddChainBreakCreator > reg_AddChainBreakCreator;
 static MoverRegistrator< protein_interface_design::movers::AddSidechainConstraintsToHotspotsCreator > reg_AddSidechainConstraintsToHotspotsCreator;
 static MoverRegistrator< protein_interface_design::movers::BackrubDDMoverCreator > reg_BackrubDDMoverCreator;

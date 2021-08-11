@@ -860,6 +860,15 @@ public: // single residue mutators
 		Size const res
 	);
 
+	///@brief Clean a specific label of a specific residue if that label contains
+	/// the string.
+	void
+	clear_reslabel(
+		Size const res,
+		std::string const & match_label
+	);
+
+
 	/// @brief uses std iterators to check if a residue has a label associated to it
 	/// @param[in] res  residue in pose numbering
 	/// @param[in] target_label string to look for inside the labes associated to the residue

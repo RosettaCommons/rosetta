@@ -26,6 +26,7 @@
 
 // C++ headers
 #include <string>
+#include <fstream>
 
 // Boost headers
 #include <functional>
@@ -39,7 +40,7 @@ namespace io {
 
 // GeneralFileContents Public methods /////////////////////////////////////////////////////////////
 /// @brief File contents constructor.
-GeneralFileContents::GeneralFileContents( std::string const & filename ) :
+GeneralFileContents::GeneralFileContents( std::string const & filename) :
 	utility::VirtualBase()
 {
 	file_contents_ = utility::file_contents( filename );
@@ -88,6 +89,64 @@ GeneralFileManager::create_instance(
 	return utility::pointer::make_shared< GeneralFileContents >( filename );
 }
 
+
+
+
+
+
+
+//////////////////////////////////////////////
+// GeneralFileContentsVector Public methods /////////////////////////////////////////////////////////////
+/// @brief File contents constructor.
+GeneralFileContentsVector::GeneralFileContentsVector( std::string const & filename ) :
+	utility::VirtualBase()
+{
+	std::string contents = utility::file_contents( filename );
+	file_contents_ = utility::string_split_simple(contents, '\n');
+}
+
+/// @brief Destructor.
+GeneralFileContentsVector::~GeneralFileContentsVector() {}
+
+/// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
+GeneralFileContentsVectorOP
+GeneralFileContentsVector::clone() const {
+	return utility::pointer::make_shared< GeneralFileContentsVector >(*this);
+}
+
+// GeneralFileManager Public methods /////////////////////////////////////////////////////////////
+// Static constant data access
+
+utility::vector1<std::string> const &
+GeneralFileManagerVector::get_file_contents(
+	std::string const & filename
+) const {
+	std::function< GeneralFileContentsVectorOP () > creator( std::bind( &GeneralFileManagerVector::create_instance, std::cref( filename ) ) );
+	auto ptr = utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( io_script_mutex_ ), filename, filename_to_filecontents_map_ );
+	return ptr->get_file_contents();
+}
+
+// GeneralFileManagerVector Private methods ////////////////////////////////////////////////////////////
+
+/// @brief Empty constructor.
+GeneralFileManagerVector::GeneralFileManagerVector() :
+	SingletonBase< GeneralFileManagerVector >(),
+	filename_to_filecontents_map_()
+#ifdef MULTI_THREADED
+	,
+	io_script_mutex_()
+#endif //MULTI_THREADED
+{}
+
+/// @brief Create an instance of a GeneralFileContents object, by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of GeneralFileManager.
+GeneralFileContentsVectorOP
+GeneralFileManagerVector::create_instance(
+	std::string const & filename
+) {
+	return utility::pointer::make_shared< GeneralFileContentsVector >( filename );
+}
 
 } //utility
 } //io

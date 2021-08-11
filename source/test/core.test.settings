@@ -643,8 +643,11 @@ sources = {
 	"select/residue_selector" : [
 		"AndResidueSelector",
 		"BinSelector",
+		"BlockSelectorTests",
 		"BondedResidueSelector",
+		"ConfluentSelectorTests",
 		"CloseContactResidueSelector",
+		"FractionSelectorTests",
 		"GlycanResidueSelectorTest",
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",
@@ -669,6 +672,7 @@ sources = {
 		"ResidueInSequenceMotifSelectorTest",
 		"SelectorLogicParser",
 		"TestAsymmetricUnitSelector",
+		"VirtualSelectorTests",
 	],
 	"sequence" : [
 		"ABEGOManager",

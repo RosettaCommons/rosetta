@@ -95,6 +95,9 @@
 
 #include <protocols/peptide_deriver/PeptideDeriverFilterCreator.hh>
 
+#include <protocols/pose_sewing/filters/CoreScorerCreator.hh>
+#include <protocols/pose_sewing/filters/HasDisulfideFilterCreator.hh>
+
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>

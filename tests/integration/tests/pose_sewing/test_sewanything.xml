@@ -1,0 +1,51 @@
+<JobDefinitionFile>
+
+ <Job>
+  <Input>
+	  <PDB filename="test_pdb.pdb" /> EDIT THIS (i.e. scaffold.pdb)A
+  </Input>
+ </Job>
+ <Common>
+
+  <SCOREFXNS>
+	<ScoreFunction name="common_sfxn" weights="empty.wts"/>
+  </SCOREFXNS>
+<RESIDUE_SELECTORS>
+
+	<SecondaryStructure name="entire_loop" overlap="0" minH="3" minE="2" include_terminal_loops="false" use_dssp="true" ss="L"/>
+
+</RESIDUE_SELECTORS>
+<MOVE_MAP_FACTORIES>
+</MOVE_MAP_FACTORIES>
+<SIMPLE_METRICS>
+</SIMPLE_METRICS>
+
+<TASKOPERATIONS> 
+  </TASKOPERATIONS>
+
+  <FILTERS>
+	<TrueFilter name="true"/>
+  </FILTERS>
+
+  <MOVERS>
+	
+	<AddFlankingVirtualResiduesMover name="virtualize" N_term_residues="50" C_term_residues="50" chain_to_modify="1" vital_selector="entire_loop"/>
+
+	<SewAnythingAddMover name="chimerize" window_width="1" hashable_element_max_size="100" hashable_element_min_size="4" alignment_max_distance="10" segment_file_path="sewanything_test_segments" permissible_segment_ends="H" max_attempts="100" clash_radius = "0" permissible_termini="CN"/>
+
+	<PickRandomSegmentMover name="randomize" segment_file_path="sewanything_test_segments"/>
+
+  </MOVERS>
+
+  <PROTOCOLS>
+        <Stage num_runs_per_input_struct="1" total_num_results_to_keep="1"> #001
+	<Add mover_name="randomize"/>
+	<Add mover_name="virtualize"/>
+	<Add mover_name="chimerize"/>
+        <Sort filter="true"/>
+        </Stage>
+	 
+   </PROTOCOLS>
+
+ </Common>
+</JobDefinitionFile>

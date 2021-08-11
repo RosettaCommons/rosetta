@@ -116,6 +116,9 @@ static FilterRegistrator< protocols::matdes::SymUnsatHbondFilterCreator > reg_Sy
 
 static FilterRegistrator< protocols::peptide_deriver::PeptideDeriverFilterCreator > reg_PeptideDeriverFilterCreator;
 
+static FilterRegistrator< protocols::pose_sewing::filters::CoreScorerCreator> reg_CoreScorerCreator;
+static FilterRegistrator< protocols::pose_sewing::filters::HasDisulfideFilterCreator> reg_HasDisulfideFilterCreator;
+
 static FilterRegistrator< protocols::protein_interface_design::filters::AtomicContactCountFilterCreator > reg_AtomicContactCountFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::AverageDegreeFilterCreator > reg_AverageFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BindingStrainFilterCreator > reg_BindingStrainFilterCreator;

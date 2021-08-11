@@ -22,6 +22,7 @@
 // Utility header
 #include <utility/SingletonBase.hh>
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
@@ -89,6 +90,72 @@ private:  // Private data /////////////////////////////////////////////////////
 
 	/// @brief A map of filename to file contents.
 	mutable std::map < std::string, GeneralFileContentsOP > filename_to_filecontents_map_;
+
+#ifdef MULTI_THREADED
+	/// @brief Mutex for accessing the filename_to_filecontents_map_ object.
+	mutable utility::thread::ReadWriteMutex io_script_mutex_;
+#endif //MULTI_THREADED
+
+
+};
+
+class GeneralFileContentsVector : public utility::VirtualBase {
+
+public:
+
+	/// @brief Default constructor is explicitly deleted.
+	GeneralFileContentsVector() = delete;
+
+	/// @brief File contents constructor.
+	GeneralFileContentsVector( std::string const & filename );
+
+	/// @brief Destructor.
+	~GeneralFileContentsVector() override;
+
+	/// @brief Clone function: make a copy of this object and return an owning pointer to the copy.
+	GeneralFileContentsVectorOP clone() const;
+
+	utility::vector1< std::string> const &
+	get_file_contents() const {
+		return file_contents_;
+	}
+
+private:
+
+	utility::vector1< std::string > file_contents_;
+
+};
+
+class GeneralFileManagerVector : public utility::SingletonBase< GeneralFileManagerVector > {
+	friend class utility::SingletonBase< GeneralFileManagerVector >;
+
+public:
+
+	/// @brief Get a vector of file contents.  Load it from disk if it has not already been loaded.
+	/// @details Threadsafe and lazily loaded.
+	utility::vector1< std::string> const &
+	get_file_contents( std::string const & filename ) const;
+
+private:
+
+	/// @brief Empty constructor.
+	GeneralFileManagerVector();
+
+	/// @brief Explicitly deleted copy constructor.
+	GeneralFileManagerVector(GeneralFileManagerVector const & ) = delete;
+
+	/// @brief Explicitly deleted assignment operator.
+	GeneralFileManagerVector operator=(GeneralFileManagerVector const & ) = delete;
+
+	/// @brief Create an instance of a GeneralFileContents object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of GeneralFileManager.
+	static GeneralFileContentsVectorOP create_instance( std::string const & script_file );
+
+private:  // Private data /////////////////////////////////////////////////////
+
+	/// @brief A map of filename to file contents.
+	mutable std::map < std::string, GeneralFileContentsVectorOP > filename_to_filecontents_map_;
 
 #ifdef MULTI_THREADED
 	/// @brief Mutex for accessing the filename_to_filecontents_map_ object.

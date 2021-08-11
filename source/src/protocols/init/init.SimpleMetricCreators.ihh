@@ -41,3 +41,8 @@
 
 #include <protocols/quantum_annealing/InteractionGraphSummaryMetricCreator.hh> //Added by VKM, 5 September 2018.
 
+#include <protocols/pose_sewing/simple_metrics/BlockwisePoseCompMotifMetricCreator.hh>
+#include <protocols/pose_sewing/simple_metrics/BlockwiseShapeCompMetricCreator.hh>
+#include <protocols/pose_sewing/simple_metrics/MinimumInterAlphaDistanceMetricCreator.hh>
+#include <protocols/pose_sewing/simple_metrics/WindowPoseCompMotifMetricCreator.hh>
+

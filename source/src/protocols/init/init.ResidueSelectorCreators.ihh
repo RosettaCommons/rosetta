@@ -34,3 +34,9 @@
 #include <protocols/residue_selectors/NativeSelectorCreator.hh>
 #include <protocols/residue_selectors/StoredResidueSubsetSelectorCreator.hh>
 #include <protocols/residue_selectors/TaskSelectorCreator.hh>
+
+
+#include <core/select/residue_selector/BlockSelectorCreator.hh>
+#include <core/select/residue_selector/ConfluentSelectorCreator.hh>
+#include <core/select/residue_selector/FractionSelectorCreator.hh>
+#include <core/select/residue_selector/VirtualResidueSelectorCreator.hh>

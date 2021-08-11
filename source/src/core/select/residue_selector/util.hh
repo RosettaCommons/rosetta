@@ -262,6 +262,16 @@ attributes_for_parse_residue_selector_logic_string(
 /// @brief test regex support
 bool regex_usable();
 
+
+///@brief Will eventually replace standard function.
+utility::vector1< core::select::residue_selector::ResidueSubset>
+identify_ss_blocks_vec (utility::vector1< bool > const & subset );
+
+///@brief Is the DSSP all loop?
+/// A pose unfortunately starts with all L as the DSSP when creating a pose from seq and inserting residues as
+/// is done for segments.
+bool
+all_L_dssp(core::pose::Pose const & pose);
 }
 }
 }

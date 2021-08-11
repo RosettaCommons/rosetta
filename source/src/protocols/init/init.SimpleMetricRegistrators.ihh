@@ -115,4 +115,10 @@ static SimpleMetricRegistrator< protocols::filters::FilterValueMetricCreator > r
 // Added by VKM, 5 Sept. 2018:
 static SimpleMetricRegistrator< protocols::quantum_annealing::InteractionGraphSummaryMetricCreator > reg_InteractionGraphSummaryMetricCreator;
 
+static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::BlockwisePoseCompMotifMetricCreator > reg_BlockwisePoseCompMotifMetricCreator;
+static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::BlockwiseShapeCompMetricCreator > reg_BlockwiseShapeCompMetricCreator;
+static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::MinimumInterAlphaDistanceMetricCreator > reg_MinimumInterAlphaDistanceMetricCreator;
+static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::WindowPoseCompMotifMetricCreator > reg_WindowPoseCompMotifMetricCreator;
+
+
 } // namespace protocols

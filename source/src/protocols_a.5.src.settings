@@ -119,6 +119,35 @@ sources = {
 		"PackDaemon",
 		"util",
 	],
+	"protocols/pose_sewing": [
+		"strong_types",
+		"util",
+	],
+	"protocols/pose_sewing/data_storage": [
+		"DsspShiftArray",
+		"PoseSegment",
+		"PoseWithTerminalSegmentsOfKnownDSSP",
+		"SegmentEnvelope",
+		"TerminalDSSPSortedPoseVector",
+		
+	],
+	"protocols/pose_sewing/filters": [
+		"CoreScorer",
+		"HasDisulfideFilter",
+	],
+	"protocols/pose_sewing/movers": [
+		"AddFlankingVirtualResiduesMover",
+		"BlockwiseAnalysisMover",
+		"OmnibusDisulfideAnalysisLabelerMover",
+		"PickRandomSegmentMover",
+		"SewAnythingAddMover",
+	],
+	"protocols/pose_sewing/simple_metrics": [
+		"BlockwisePoseCompMotifMetric",		
+		"BlockwiseShapeCompMetric",		
+		"MinimumInterAlphaDistanceMetric",
+		"WindowPoseCompMotifMetric",		
+	],
 	"protocols/vip": [
 		"VIP_Mover",
 		"VIP_Report",

@@ -178,6 +178,9 @@ sources = {
 		"CstfileToTheozymePDB",
 		"enzyme_design",
 	],
+	"public/pose_sewing": [
+		"MakeSegmentFile"
+	],
 	"public/post-translational_modification": [
 		"DNA_methylation",
 		"glycosyltransfer",

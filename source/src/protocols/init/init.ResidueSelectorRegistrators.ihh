@@ -37,4 +37,9 @@ static ResidueSelectorRegistrator< protocols::residue_selectors::NativeSelectorC
 static ResidueSelectorRegistrator< protocols::residue_selectors::StoredResidueSubsetSelectorCreator > reg_StoredResidueSubsetSelectorCreator;
 static ResidueSelectorRegistrator< protocols::residue_selectors::TaskSelectorCreator > reg_TaskSelectorCreator;
 
+static ResidueSelectorRegistrator< core::select::residue_selector::BlockSelectorCreator > reg_BlockSelectorCreator;
+static ResidueSelectorRegistrator< core::select::residue_selector::ConfluentSelectorCreator > reg_ConfluentSelectorCreator;
+static ResidueSelectorRegistrator< core::select::residue_selector::FractionSelectorCreator > reg_FractionSelectorCreator;
+static ResidueSelectorRegistrator< core::select::residue_selector::VirtualResidueSelectorCreator > reg_VirtualResidueSelectorCreator;
+
 } // namespace protocols
