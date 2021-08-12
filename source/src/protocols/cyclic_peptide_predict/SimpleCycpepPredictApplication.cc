@@ -2467,14 +2467,14 @@ SimpleCycpepPredictApplication::set_up_cyclization_mover (
 	core::pose::PoseCOP pose,
 	bool const native, /*=false*/
 	core::Size const last_res, /*=0*/
-	core::Size const first_res /*=0*/
+	core::Size const /*first_res*/ /*=0*/
 ) const {
 	switch( cyclization_type() ) {
 	case SCPA_n_to_c_amide_bond :
 		set_up_n_to_c_cyclization_mover( termini, pose, native, last_res );
 		return;
 	case SCPA_terminal_disulfide :
-		set_up_terminal_disulfide_cyclization_mover( termini, pose, native, last_res, first_res );
+		set_up_terminal_disulfide_cyclization_mover( termini, pose, native, 0, 0 );
 		return;
 	case SCPA_nterm_isopeptide_lariat :
 		set_up_nterm_isopeptide_cyclization_mover( termini, pose );
