@@ -37,7 +37,7 @@ public:
 	PoseSegment(PoseSegment const & src);
 	PoseSegment( PoseSegment const & src, core::Size start,core::Size end);
 
-	virtual ~PoseSegment();
+	~PoseSegment() override;
 
 	PoseSegmentOP
 	clone() const;

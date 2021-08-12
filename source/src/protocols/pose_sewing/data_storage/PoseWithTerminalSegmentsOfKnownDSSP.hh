@@ -36,7 +36,7 @@ public:
 	PoseWithTerminalSegmentsOfKnownDSSP();
 	PoseWithTerminalSegmentsOfKnownDSSP(PoseWithTerminalSegmentsOfKnownDSSP const &);
 
-	virtual ~PoseWithTerminalSegmentsOfKnownDSSP();
+	 ~PoseWithTerminalSegmentsOfKnownDSSP() override;
 
 	PoseWithTerminalSegmentsOfKnownDSSPOP
 	clone() const;

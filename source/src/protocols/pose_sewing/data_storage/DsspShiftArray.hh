@@ -38,7 +38,7 @@ public:
 
 	DsspShiftArray(DsspShiftArray const & src);
 
-	virtual ~DsspShiftArray();
+	~DsspShiftArray() override;
 
 	DsspShiftArrayOP
 	clone() const;

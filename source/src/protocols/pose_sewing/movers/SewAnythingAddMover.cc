@@ -308,7 +308,7 @@ SewAnythingAddMover::apply( core::pose::Pose& pose){
 
 	for ( core::Size outer_try = 1; outer_try <= segment_vector.size(); ++outer_try ) {
 		if ( found_good_match || attempts > max_attempts_ || seg_filter_attempts > max_filter_attempts_ ) {
-			outer_try = segment_vector.size()+1;
+			//outer_try = segment_vector.size()+1;
 			break;
 		}
 		segments_to_add = segment_vector[outer_try];

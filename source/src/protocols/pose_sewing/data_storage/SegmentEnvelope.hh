@@ -35,7 +35,7 @@ public:
 	SegmentEnvelope();
 	SegmentEnvelope(SegmentEnvelope const & src);
 
-	virtual ~SegmentEnvelope();
+	~SegmentEnvelope() override;
 
 	SegmentEnvelopeOP
 	clone() const;

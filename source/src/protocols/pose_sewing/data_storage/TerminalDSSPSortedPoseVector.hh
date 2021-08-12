@@ -45,7 +45,7 @@ public:
 	TerminalDSSPSortedPoseVector();
 	TerminalDSSPSortedPoseVector(TerminalDSSPSortedPoseVector const & src);
 
-	virtual ~TerminalDSSPSortedPoseVector();
+	~TerminalDSSPSortedPoseVector() override;
 
 	TerminalDSSPSortedPoseVectorOP
 	clone() const;

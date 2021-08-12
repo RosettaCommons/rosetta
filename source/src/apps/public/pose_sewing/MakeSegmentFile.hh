@@ -33,7 +33,7 @@ public:
 	MakeSegmentFile();
 	MakeSegmentFile(MakeSegmentFile const & src);
 
-	virtual ~MakeSegmentFile();
+	~MakeSegmentFile() override;
 
 	MakeSegmentFileOP
 	clone() const;
