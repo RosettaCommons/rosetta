@@ -84,8 +84,6 @@
 
 
 using basic::Tracer;
-using basic::Error;
-using basic::Warning;
 
 
 namespace protocols {
