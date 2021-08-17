@@ -16,8 +16,12 @@ import os
 import pathlib
 import glob
 
-from dask_jobqueue import SLURMCluster
-from dask.distributed import Client
+try:
+    from dask_jobqueue import SLURMCluster
+    from dask.distributed import Client, LocalCluster
+except ModuleNotFoundError:
+    print("Warning: Unable to run cryo_dock_and_assemble without dask_jobqueue installed")
+    sys.exit()
 
 
 def parseargs():

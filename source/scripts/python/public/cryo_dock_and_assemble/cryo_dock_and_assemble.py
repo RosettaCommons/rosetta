@@ -9,8 +9,12 @@ import sys
 import pathlib
 
 
-from dask_jobqueue import SLURMCluster
-from dask.distributed import Client, LocalCluster
+try:
+    from dask_jobqueue import SLURMCluster
+    from dask.distributed import Client, LocalCluster
+except ModuleNotFoundError:
+    print("Warning: Unable to run cryo_dock_and_assemble without dask_jobqueue installed")
+    sys.exit()
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from dgdp import setup_docking_jobs_1, DGDPConfig, clean_up_args
@@ -116,10 +120,10 @@ def parseargs() -> argparse.Namespace:
         args.premade_json = json.load(fh)
 
     exes, rosetta_db = get_rosetta_exe_and_database_from_args(args, ["dgdp", "cryo_assembly", "extract_pdbs"])
-    args.dgdp_exe = exes["dgdp"]
-    args.cryo_assembly_exe = exes["cryo_assembly"]
-    args.extract_pdbs_exe = exes["extract_pdbs"]
-    args.rosetta_database = rosetta_db
+    args.dgdp_exe = os.path.abspath(exes["dgdp"])
+    args.cryo_assembly_exe = os.path.abspath(exes["cryo_assembly"])
+    args.extract_pdbs_exe = os.path.abspath(exes["extract_pdbs"])
+    args.rosetta_database = os.path.abspath(rosetta_db)
     save_args()
     return args
 
@@ -137,7 +141,7 @@ def check_docking_inputs(docking_dict: Dict[str, Any]) -> None:
         raise RuntimeError('you must set the "final_result_names" value to be the same length as the "pdbs" value')
 
     multi_natives = docking_dict["multi_natives"]
-    if len(multi_natives) != len(pdbs):
+    if multi_natives and len(multi_natives) != len(pdbs):
         raise RuntimeError(
             'you must set the "multi_natives" value to bethe same length as the "pdbs" value' " (can be empty)"
         )
@@ -182,7 +186,7 @@ async def run_assembly(
     return cryo_results
 
 
-async def main(args: argparse.Namespace, client: Client, sync_client: Client) -> None:
+async def main(args: argparse.Namespace, client: Client, sync_client: Client) -> List[str]:
     pathlib.Path(args.output_dir).mkdir(exist_ok=True, parents=True)
     with open(os.path.join(args.output_dir, "input.json"), "w") as fh:
         fh.write(json.dumps(args.premade_json))
@@ -192,7 +196,7 @@ async def main(args: argparse.Namespace, client: Client, sync_client: Client) ->
     )
     if args.dock_only:
         print("docking only... finishing up!")
-        return
+        return docking_job_fns
     docking_multi_natives = args.premade_json["docking"].get("multi_natives", [])
     assembly_multi_natives = args.premade_json["cryo_assembly"]["general"].get("multi_natives", [])
     if len(docking_multi_natives) != 0 and len(assembly_multi_natives) == 0:
@@ -209,6 +213,7 @@ async def main(args: argparse.Namespace, client: Client, sync_client: Client) ->
         sync_client,
     )
     print("results in", cryo_a_result_filenames)
+    return cryo_a_result_filenames
 
 
 def get_sync_cluster(args: argparse.Namespace) -> Union[SLURMCluster, LocalCluster]:
@@ -254,7 +259,6 @@ async def commandline_main(args: argparse.Namespace) -> None:
         async with Client(sync_cluster, asynchronous=True) as sync_client:
             async with get_work_cluster(args) as cluster:
                 async with Client(cluster, asynchronous=True) as client:
-                    print("Server info:", client, client.scheduler_info(), file=sys.stderr)
                     await main(args, client, sync_client)
 
 

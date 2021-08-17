@@ -85,6 +85,14 @@ write_RBfitResultDB( RBfitResultDB fit_result_DB, T & outresults ) {
 	}
 }
 
+template
+void
+write_RBfitResultDB<std::ofstream>( RBfitResultDB fit_result_DB, std::ofstream & outresults );
+
+template
+void
+write_RBfitResultDB<std::stringstream>( RBfitResultDB fit_result_DB, std::stringstream & outresults );
+
 
 template< typename T >
 void
@@ -1162,7 +1170,7 @@ density_grid_search(
 
 	ObjexxFCL::FArray3D< core::Real > mapSig, mapCoefR, mapCoefI, map2Sig, map2CoefR, map2CoefI;
 	ObjexxFCL::FArray3D< core::Real > so3_correl, mask_correl, mask2_correl;
-	for ( core::Size i=1; i<=points_to_search.size(); ++i ) {
+	for ( core::Size i=params.point_search_start_; i<=params.point_search_end_; ++i ) {
 		// get cartesian coords of ths point
 		density.idx2cart( points_to_search[i], posttrans );
 
@@ -1220,30 +1228,27 @@ density_grid_search(
 
 		if ( !params.output_fn_.empty() ) write_RBfitResultDB( local_results, outresults );
 
-		while ( local_results.size() > 0 ) {
-			RBfitResult const sol_i = local_results.pop();
-
-			if ( !params.natives_.empty() ) {
-				for ( core::Size native_i = 1; native_i <= params.natives_.size(); ++native_i ) {
-					core::Real const distNative = ( posttrans - params.native_coms_[ native_i ] ).length();
-					if ( distNative < params.rms_cutoff_ ) {
-						TR << "[" << i << "/" << points_to_search.size() << "] COM dist to native " << distNative << " at com_idx " << native_i << std::endl;
-						compare_RBfitDB_to_native(
-							local_results,
-							pose,
-							params.natives_,
-							params.native_coms_,
-							params.native_middle_cas_,
-							params.symminfo_,
-							params.center_on_middle_ca_,
-							params.rms_cutoff_
-						);
-					}
+		if ( !params.natives_.empty() ) {
+			for ( core::Size native_i = 1; native_i <= params.natives_.size(); ++native_i ) {
+				core::Real const distNative = ( posttrans - params.native_coms_[ native_i ] ).length();
+				if ( distNative < params.rms_cutoff_ ) {
+					TR << "[" << i << "/" << points_to_search.size() << "] COM dist to native " << distNative << " at com_idx " << native_i << std::endl;
+					compare_RBfitDB_to_native(
+						local_results,
+						pose,
+						params.natives_,
+						params.native_coms_,
+						params.native_middle_cas_,
+						params.symminfo_,
+						params.center_on_middle_ca_,
+						params.rms_cutoff_
+					);
 				}
 			}
-
-			results.add_element( sol_i );
 		}
+
+		while ( local_results.size() > 0 ) results.add_element( local_results.pop() );
+
 		if ( i%100 == 0 ) {
 			TR << "[" << i << "/" << points_to_search.size() << "] " << results.top().score_ << " / " << results.size() << std::endl;
 		}

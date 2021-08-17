@@ -31,21 +31,32 @@ cd %(workdir)s
 [ -x %(bin)s/dgdp.%(binext)s ] || exit 1
 # not yet
 # [ -x %(bin)s/cryo_assembly.%(binext)s ] || exit 1
+#
 
-# TODO
-# --cryo_assembly_exe %(bin)s/cryo_assembly.%(binext)s \
-[ -x %(minidir)s/scripts/python/public/cryo_dock_and_assemble/cryo_dock_and_assemble.py ] || exit 1
-%(minidir)s/scripts/python/public/cryo_dock_and_assemble/cryo_dock_and_assemble.py \
-	--rosetta_bin_location %(bin)s \
-	--rosetta_database %(database)s \
-	--premade_json input.dgdp_only.json \
-	--output_dir dgdp_out \
-	--name integration_test \
-	--dock_only \
-	--run_locally \
+%(bin)s/dgdp.%(binext)s \
+	-mode aio \
+	-clust_radius 10.0 \
+	-edensity::mapreso 4.0 \
+	-convolute_single_residue False \
+	-laplacian_offset 0 \
+	-n_to_search 100 \
+	-n_filtered 6 \
+	-n_output 2 \
+	-point_radius 1.0 \
+	-min True \
+	-min_bb False \
+	-constrain_refinement 10.0 \
+	-rot_middle_ca False \
+	-max_rot_per_trans 11 \
+	-multi_native inputs/1E6V_A_1.pdb inputs/1E6V_A_2.pdb \
+	-mapfile inputs/1e6v_trim.mrc.gz \
+	-ignore_unrecognized_res \
+	-ignore_zero_occupancy false \
+	-s inputs/001_3sqg_A.pdb \
+	-out::file::silent 001_3sqg_A_aio_results.silent \
 	2>&1 \
 	| egrep -vf ../../ignore_list \
-		> run_cryo_dock_and_assemble.log
+		> run_cryo_dock_and_assemble_aio.log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

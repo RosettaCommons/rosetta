@@ -142,6 +142,7 @@ def add_default_rosetta_exes_arguments(parser):
     rosetta_database_args.add_argument(
         "--rosetta_database_remote", help="location of the rosetta database, remote so not error checked", type=str
     )
+    parser.add_argument("--bin_extension", help="extension to add to the executables", default="")
     return parser
 
 
@@ -150,13 +151,18 @@ def get_rosetta_exe_and_database_from_args(
 ) -> Tuple[Dict[str, str], str]:
     if exes is None:
         exes = ["rosetta_scripts", "grower_prep", "extract_pdbs"]
-    ret = {}
+
     if args.rosetta_bin_location:
-        for exe in exes:
-            ret[exe] = os.path.join(args.rosetta_bin_location, exe)
+        base_path = args.rosetta_bin_location
     else:
-        for exe in exes:
-            ret[exe] = os.path.join(args.rosetta_bin_location_remote, exe)
+        base_path = args.rosetta_bin_location_remote
+
+    ret = {}
+    for exe in exes:
+        if args.bin_extension:
+            ret[exe] = os.path.join(base_path, f"{exe}{args.bin_extension}")
+        else:
+            ret[exe] = os.path.join(base_path, exe)
 
     if args.rosetta_database:
         rosetta_database = args.rosetta_database

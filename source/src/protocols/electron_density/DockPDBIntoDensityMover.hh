@@ -102,12 +102,12 @@ public:
 	void setNRsteps( core::Real nRsteps ) { nRsteps_=nRsteps; }
 	void set_nRsteps_from_pose( core::pose::Pose const & pose );
 	void setB( core::Real B ) { B_=B; }
-	void setBetaConv( bool beta_conv ) { beta_conv_ = beta_conv; }
-	void setTopN( core::Real topNtrans, core::Real topNfilter, core::Real topNfinal ) {
+	void setTopN( core::Size const topNtrans, core::Size const topNfilter, core::Size const topNfinal ) {
 		topNtrans_=topNtrans;
 		topNfilter_=topNfilter;
 		topNfinal_=topNfinal;
 	}
+	core::Size get_top_N_filter() const { return topNfilter_; }
 	void setGridStep( core::Size gridStep ) { gridStep_=gridStep; }
 	void setNCyc( core::Size ncyc ) { ncyc_=ncyc; }
 	void setPointRadius( core::Real point_radius ) { point_radius_ = point_radius; }
@@ -167,16 +167,6 @@ public:
 	core::Real
 	get_radius( core::pose::Pose const & );
 
-	// apply an xform to a pose
-	void apply_transform(
-		core::pose::Pose & pose,
-		RBfitResult const& transform
-	) const;
-
-	// convert 1d power spectrum into 3d map
-	void
-	map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< double > &rot );
-
 	std::string get_name() const override {
 		return "DockPDBIntoDensity";
 	}
@@ -191,14 +181,8 @@ public:
 	core::Real
 	compare_and_align_poses( core::pose::Pose &, core::pose::Pose const & );
 
-	core::Real
-	get_rot_angle( numeric::xyzMatrix<core::Real> ) const;
-
 	RBfitResultDB
 	read_in_partial_search_results( utility::vector1< std::string > const & ) const;
-
-	void
-	write_RBfitResultDB( RBfitResultDB, std::ofstream & ) const;
 
 	void
 	refine_partial_RBfitResultDB( utility::vector1< core::pose::PoseOP > const &,
@@ -216,7 +200,7 @@ public:
 	set_refinement_responsibilities( RBfitResultDB & );
 
 	void
-	check_for_existing_output_file( std::string const & );
+	check_for_existing_output_file( std::string const & ) const;
 
 	void
 	import_refinement_silent_files( utility::vector1< std::string > const &, RevRefinementResultDB & );
@@ -226,7 +210,7 @@ public:
 
 	void
 	minimize_poseOP_into_density(
-		core::pose::PoseOP const &,
+		core::pose::PoseOP const,
 		MinimizePoseIntoDensityOptions const & params,
 		utility::vector1< core::Real > &);
 
@@ -239,14 +223,14 @@ public:
 	);
 
 	// Main callable functions
-	void
-	get_points_to_search( core::pose::PoseOP const & );
+	utility::vector1< numeric::xyzVector<core::Real> >
+	get_points_to_search( core::pose::PoseOP const );
 
 	RBfitResultDB
 	apply_search( core::pose::Pose & pose, core::Size const result_size );
 
 	void
-	combine_search( utility::vector1< std::string > const &, core::pose::PoseOP const & );
+	combine_search( utility::vector1< std::string > const &, core::pose::Pose const &, RBfitResultDB & );
 
 	void
 	search_results_to_pdb( utility::vector1< std::string > const &, core::pose::PoseOP const & );
@@ -254,17 +238,20 @@ public:
 	void
 	manual_refine_pdb( core::pose::PoseOP const & );
 
-	void
-	apply_refinement( utility::vector1< std::string > const &, core::pose::PoseOP const & );
+	RevRefinementResultDB
+	apply_refinement( utility::vector1< std::string > const &, core::pose::PoseOP const, RBfitResultDB &, bool const );
 
 	void
-	combine_refinement( utility::vector1< std::string > const & );
+	combine_refinement( utility::vector1< std::string > const &, RevRefinementResultDB & refinement_results );
 
 	void
 	cluster_silent( utility::vector1< std::string > const & );
 
 	void
 	analyze_RefinementDB(RevRefinementResultDB);
+
+	void
+	run_aio( core::pose::PoseOP const);
 
 	void
 	apply( core::pose::Pose & ) override;
@@ -280,7 +267,7 @@ private:
 	// TODO: Document these params
 
 	// params of search
-	bool rot_seq_center_, rot_middle_ca_, points_defined_, convolute_single_residue_, gaussian_blur_, beta_conv_;
+	bool rot_seq_center_, rot_middle_ca_, points_defined_, convolute_single_residue_, gaussian_blur_;
 	core::Real delR_, dens_wt_, cluster_radius_, point_radius_, fragDens_, laplacian_offset_;
 	core::Size nRsteps_, gridStep_, B_;
 	std::string points_to_search_fname_, points_to_search_pdb_fname_, start_model_;

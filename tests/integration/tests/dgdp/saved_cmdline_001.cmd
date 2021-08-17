@@ -1,1 +1,0 @@
-/home/danpf/git/dimaiolab-rework/daimyo/apis/rosetta_scripts/dgdp.py --pdbs xxx --mapfiles xxx --mapreso 4 --n_filtered 2 --n_output 9 --n_to_search 2 --point_radius 3 --cores 2 --final_result_names 5 --name 2 --rosetta_bin_location /software/rosetta/latest/bin --rosetta_database xxx

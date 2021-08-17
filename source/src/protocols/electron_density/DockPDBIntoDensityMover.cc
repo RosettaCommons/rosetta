@@ -154,13 +154,6 @@ inline bool check_if_file_exists(const std::string& name) {
 }
 
 
-core::Real
-DockPDBIntoDensityMover::get_rot_angle( numeric::xyzMatrix<core::Real> R ) const {
-	core::Real const trace = R.xx() + R.yy() + R.zz();
-	return acos( std::min( std::max(0.5* (trace-1),-1.0), 1.0) );
-}
-
-
 void
 DockPDBIntoDensityMover::set_nRsteps_from_pose( core::pose::Pose const & pose ) {
 	numeric::xyzVector< core::Real > const com = core::pose::get_center_of_mass( pose );
@@ -273,147 +266,6 @@ DockPDBIntoDensityMover::get_radius( core::pose::Pose const & pose ) {
 }
 
 
-// move the pose given rotation/translation matrix
-void
-DockPDBIntoDensityMover::apply_transform(
-	core::pose::Pose & pose,
-	RBfitResult const& transform
-) const {
-	// then each atom x can be transformed to this optimal configuration by:
-	utility::vector1< core::id::AtomID > ids;
-	utility::vector1< numeric::xyzVector< core::Real > > positions;
-
-	for ( core::Size irsd = 1; irsd <= pose.size(); ++irsd ) {
-		for ( core::Size iatom = 1; iatom <= pose.residue_type( irsd ).natoms(); ++iatom ) {
-			numeric::xyzVector< core::Real > const atom_xyz = pose.xyz( core::id::AtomID( iatom, irsd ) );
-			ids.push_back( core::id::AtomID( iatom, irsd ) );
-			numeric::xyzVector< core::Real > const xyz_rot( transform.rotation_*( atom_xyz + transform.pre_trans_ ) + transform.post_trans_ );
-			positions.push_back( xyz_rot );
-		}
-	}
-	pose.batch_set_xyz( ids, positions );
-}
-
-// void
-// DockPDBIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vector1< core::Real > &pose_1dspec ) {
-//  numeric::xyzVector< core::Real > com = core::pose::get_center_of_mass( pose );
-//  core::Real extent = get_radius( pose );
-//
-//  // grid spacing == delR
-//  core::Size ngrid = (core::Size) std::ceil( extent / delR_ + 2);
-//  pose_1dspec.clear();
-//  pose_1dspec.resize(ngrid, 0.0);
-//  utility::vector1< core::Real > pose_1dspec_for_nrsteps = pose_1dspec;
-//
-//  core::Real massSum=0.0;
-//  // for fine point selection... generate pose_1dspec based on the middle residue of the pose.
-//  if ( convolute_single_residue_ == true ) {
-//   TR << "Convoluting map based on a single residue" << std::endl;
-//   core::Size midres = (pose.size()+1)/2;
-//   while ( pose.residue(midres).is_virtual_residue() ) {
-//    ++midres;
-//   }
-//   core::conformation::Residue const & rsd( pose.residue(midres) );
-//   core::conformation::Atom const & residue_CA( rsd.atom(2) );
-//   for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
-//    core::conformation::Atom const & atom( rsd.atom(j) );
-//    core::Real binnum = ( atom.xyz()-residue_CA.xyz() ).length() / delR_ + 1.0;
-//    core::Real fpart = binnum - std::floor(binnum);
-//    core::Size binint = (core::Size) std::floor(binnum);
-//    pose_1dspec[binint] += (1-fpart);
-//    pose_1dspec[binint+1] += (fpart);
-//   }
-//  }
-//  // for coarse point selection... generate pose_1dspec based on whole pose
-//  else {
-//   //core::Real reso = core::scoring::electron_density::getDensityMap().getResolution();
-//   for ( core::Size i=1; i<=pose.size(); ++i) {
-//    core::conformation::Residue const & rsd( pose.residue(i) );
-//    if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-//    for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
-//     core::conformation::Atom const & atom( rsd.atom(j) );
-//     core::Real binnum = atom.xyz().distance( com ) / delR_ + 1.0;
-//     core::Real fpart = binnum - std::floor(binnum);
-//     core::Size binint = (core::Size) std::floor(binnum);
-//     pose_1dspec[binint] += (1-fpart);
-//     pose_1dspec[binint+1] += (fpart);
-//    }
-//   }
-//  }
-//
-//  // this is to calculate massSum via full pose for nRsteps_
-//  for ( core::Size i=1; i<=pose.size(); ++i) {
-//   core::conformation::Residue const & rsd( pose.residue(i) );
-//   if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-//   for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
-//    core::conformation::Atom const & atom( rsd.atom(j) );
-//    core::Real binnum = ( atom.xyz()-com ).length() / delR_ + 1.0;
-//    core::Real fpart = binnum - std::floor(binnum);
-//    core::Size binint = (core::Size) std::floor(binnum);
-//    pose_1dspec_for_nrsteps[binint] += (1-fpart);
-//    pose_1dspec_for_nrsteps[binint+1] += (fpart);
-//    massSum += 1;
-//   }
-//  }
-//
-//  // now setting nRsteps_
-//  core::Real const fracDens=fragDens_; // choose radius covering this fraction of density mass
-//  core::Real running_total=0.0;
-//  for ( int i=1; i<=(int)ngrid; ++i ) {
-//   running_total += pose_1dspec_for_nrsteps[i] / massSum;
-//   if ( running_total > fracDens ) {
-//    nRsteps_ = i;
-//    break;
-//   }
-//  }
-//  running_total=0.0;
-//  core::Size beta_cutoff = 100;
-//  if ( beta_conv_ ) {
-//   core::Real reso = core::scoring::electron_density::getDensityMap().getResolution();
-//   core::Size distance = all_native_mca_[1].distance( all_native_com_[1] );
-//   beta_cutoff = distance * distance / 2;
-//   if ( reso > 12 ) { // 12 is a magic number :D
-//    beta_cutoff = beta_cutoff * beta_cutoff / 12;
-//   }
-//  }
-//  for ( int i=1; i<=(int)ngrid; ++i ) {
-//   running_total += pose_1dspec[i] / massSum;
-//   pose_1dspec[i] /= (i*i); // normalize
-//   if ( beta_conv_ && i > (int)beta_cutoff ) pose_1dspec[i] = 0;
-//   TR << "spectrum " << i << ": " << pose_1dspec[i] << " " << pose_1dspec[i]*i*i/massSum << " " << running_total << std::endl;
-//  }
-// }
-
-
-void
-DockPDBIntoDensityMover::map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< double > &rot ) {
-	core::scoring::electron_density::ElectronDensity const & density = core::scoring::electron_density::getDensityMap();
-	for ( int z=1; z<=(int)rot.u3(); ++z ) {
-		for ( int y=1; y<=(int)rot.u2(); ++y ) {
-			for ( int x=1; x<=(int)rot.u1(); ++x ) {
-				numeric::xyzVector< core::Real > idxX, cartX;
-				idxX[0] = x<=rot.u1()/2 ? x-1 : x-1-rot.u1();
-				idxX[1] = y<=rot.u2()/2 ? y-1 : y-1-rot.u2();
-				idxX[2] = z<=rot.u3()/2 ? z-1 : z-1-rot.u3();
-
-				density.idxoffset2cart( idxX, cartX );
-				core::Real const d = cartX.length() / delR_;
-				core::Real const fpart = d - std::floor(d);
-				core::Size const dint = (core::Size) std::floor(d) + 1;
-				if ( dint<pose_1dspec.size() ) { // last entry is always 0 so this check is valid
-					rot(x,y,z) = (1-fpart)*pose_1dspec[dint] + (fpart)*pose_1dspec[dint+1];
-				} else {
-					rot(x,y,z) = 0.0;
-				}
-			}
-		}
-	}
-
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
-		core::scoring::electron_density::ElectronDensity(rot,1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "spectrum.mrc" );
-	}
-}
-
 void
 DockPDBIntoDensityMover::predefine_search( utility::vector1< numeric::xyzVector<core::Real> > &pts_in ) {
 	points_defined_ = true;
@@ -515,27 +367,6 @@ DockPDBIntoDensityMover::compare_and_align_poses( core::pose::Pose & query, core
 	core::Real const aligned_rms = core::scoring::superimpose_pose( query, native, atom_map );
 	return aligned_rms;
 }
-
-void
-DockPDBIntoDensityMover::write_RBfitResultDB( RBfitResultDB fit_result_DB, std::ofstream & outresults ) const {
-	outresults << "index" << "\t" << "rank" << "\t" << "score" << "\t" << "rot_xx" << "\t" <<  "rot_xy" << "\t" << "rot_xz"
-		<< "\t" << "rot_yx" << "\t" << "rot_yy" << "\t" << "rot_yz"
-		<< "\t" << "rot_zx" << "\t" << "rot_zy" << "\t" << "rot_zz"
-		<< "\t" << "pre_x" << "\t" << "pre_y" << "\t" << "pre_z"
-		<< "\t" << "post_x" << "\t" << "post_y" << "\t" << "post_z" << std::endl;
-	while ( fit_result_DB.size() > 0 ) {
-		core::Size const rank = fit_result_DB.size();
-		RBfitResult const sol_i = fit_result_DB.pop();
-		// write out RBfitResult, so we can combine them later
-		outresults << sol_i.pose_idx_ << "\t" << rank << "\t" << sol_i.score_
-			<< "\t" << sol_i.rotation_.xx() << "\t" << sol_i.rotation_.xy() << "\t" << sol_i.rotation_.xz()
-			<< "\t" << sol_i.rotation_.yx() << "\t" << sol_i.rotation_.yy() << "\t" << sol_i.rotation_.yz()
-			<< "\t" << sol_i.rotation_.zx() << "\t" << sol_i.rotation_.zy() << "\t" << sol_i.rotation_.zz()
-			<< "\t" << sol_i.pre_trans_[0] << "\t" << sol_i.pre_trans_[1] << "\t" <<  sol_i.pre_trans_[2]
-			<< "\t" << sol_i.post_trans_[0] << "\t" << sol_i.post_trans_[1] << "\t" << sol_i.post_trans_[2] << std::endl;
-	}
-}
-
 
 RBfitResultDB
 DockPDBIntoDensityMover::read_in_partial_search_results( utility::vector1< std::string > const & local_result_filenames ) const {
@@ -663,34 +494,19 @@ DockPDBIntoDensityMover::set_refinement_responsibilities( RBfitResultDB & result
 
 
 void
-DockPDBIntoDensityMover::check_for_existing_output_file( std::string const & mode ) {
+DockPDBIntoDensityMover::check_for_existing_output_file( std::string const & mode ) const {
 	// .user? ? maybe instead of overwrite true?
-	if ( mode == "refine" ) {
-		std::string file_check = silent_ + "_inter_" + std::to_string(refine_start_) + "_" + std::to_string(refine_end_) + ".ref_silent";
-		if ( check_if_file_exists( file_check ) ) {
+	if ( mode == "refine" || mode == "combine_refine" || mode == "cluster_silent" ) {
+		if ( check_if_file_exists( silent_ ) ) {
 			if ( !overwrite_ ) {
-				TR.Error << "Found that file: "  << file_check <<  " already exists!\nDid you forget to pass -overwrite true? " << std::endl;
-				throw CREATE_EXCEPTION(utility::excn::IOError, "Found that file: " + file_check + " already exists!\nDid you forget to pass -overwrite true? ");
+				std::string const error_text = [&]{
+					std::stringstream tmp_error_text;
+					tmp_error_text << "Found that file: "  << silent_ <<  " already exists!\nDid you forget to pass -overwrite true? ";
+					return tmp_error_text.str();
+				}();
+				throw CREATE_EXCEPTION(utility::excn::IOError, error_text);
 			} else {
-				std::remove(file_check.c_str());
-			}
-		}
-	} else if ( mode == "combine_refine" ) {
-		std::string file_check = silent_ + "_final.silent";
-		if ( check_if_file_exists( file_check ) ) {
-			if ( !overwrite_ ) {
-				throw CREATE_EXCEPTION(utility::excn::IOError, "Found that file: " + file_check + " already exists!\nDid you forget to pass -overwrite true? ");
-			} else {
-				remove(file_check.c_str());
-			}
-		}
-	} else if ( mode == "cluster_silent" ) {
-		std::string file_check = silent_ + "clustered.silent";
-		if ( check_if_file_exists( file_check ) ) {
-			if ( !overwrite_ ) {
-				throw CREATE_EXCEPTION(utility::excn::IOError, "Found that file: " + file_check + " already exists!\nDid you forget to pass -overwrite true? ");
-			} else {
-				remove(file_check.c_str());
+				std::remove(silent_.c_str());
 			}
 		}
 	} else {
@@ -701,7 +517,7 @@ DockPDBIntoDensityMover::check_for_existing_output_file( std::string const & mod
 
 void
 DockPDBIntoDensityMover::minimize_poseOP_into_density(
-	core::pose::PoseOP const & posecopy,
+	core::pose::PoseOP const posecopy,
 	MinimizePoseIntoDensityOptions const & params,
 	utility::vector1< core::Real > & scores_vector
 ) {
@@ -915,8 +731,9 @@ DockPDBIntoDensityMover::analyze_RefinementDB(RevRefinementResultDB resultDB) {
 // TODO: big- should make all innner functions private. or protected
 // TODO: add a header check that will check to see if we have all points (just a warning, no error because we want to be able to do things partially.)
 
-void
-DockPDBIntoDensityMover::get_points_to_search( core::pose::PoseOP const & poseOP) {
+
+utility::vector1< numeric::xyzVector<core::Real> >
+DockPDBIntoDensityMover::get_points_to_search( core::pose::PoseOP const poseOP ) {
 	if ( score_natives_ ) {
 		TR << "Scoring natives and dumping to silent..." << std::endl;
 		score_and_dump_natives();
@@ -948,12 +765,13 @@ DockPDBIntoDensityMover::get_points_to_search( core::pose::PoseOP const & poseOP
 	}
 	TR << "Writing points to search..." << std::endl;
 	dump_points_to_search_to_pdb_or_txt(points_to_search_, points_to_search_pdb_fname_, points_to_search_fname_);
+	return points_to_search_;
 }
 
 
 RBfitResultDB
 DockPDBIntoDensityMover::apply_search( core::pose::Pose & pose, core::Size const result_size ) {
-	read_in_points_to_search();
+	if ( points_to_search_.empty() ) read_in_points_to_search();
 	set_search_responsibilities();
 	RBfitResultDB results(result_size); // placeholder
 
@@ -979,8 +797,8 @@ DockPDBIntoDensityMover::apply_search( core::pose::Pose & pose, core::Size const
 
 
 void
-DockPDBIntoDensityMover::combine_search( utility::vector1< std::string > const & local_result_filenames, core::pose::PoseOP const & poseOP ) {
-	RBfitResultDB all_results = read_in_partial_search_results( local_result_filenames );
+DockPDBIntoDensityMover::combine_search( utility::vector1< std::string > const & local_result_filenames, core::pose::Pose const & pose, RBfitResultDB & all_results ) {
+	if ( all_results.size() == 0 ) all_results = read_in_partial_search_results( local_result_filenames );
 	TR << "Imported " << all_results.size() << " results from fast density search" << std::endl;
 	cluster_RBfitResultDB_fast(
 		all_results,
@@ -993,7 +811,7 @@ DockPDBIntoDensityMover::combine_search( utility::vector1< std::string > const &
 	TR << "After clustering we have " << all_results.size() << " results from fast density search" << std::endl;
 	if ( all_natives_.size() != 0 ) {
 		TR << "Comparing our DB results to the native... " << std::endl;
-		compare_RBfitDB_to_native( all_results, *poseOP, all_natives_, all_native_com_, all_native_mca_, symminfo_, rot_middle_ca_, 15.0);
+		compare_RBfitDB_to_native( all_results, pose, all_natives_, all_native_com_, all_native_mca_, symminfo_, rot_middle_ca_, 15.0);
 	}
 
 	std::string const myfile = [&]{
@@ -1012,30 +830,41 @@ DockPDBIntoDensityMover::search_results_to_pdb( utility::vector1< std::string > 
 }
 
 
-void
-DockPDBIntoDensityMover::apply_refinement( utility::vector1< std::string > const & local_result_filenames, core::pose::PoseOP const & poseOP ) {
-	RBfitResultDB results_to_refine = read_in_partial_search_results( local_result_filenames );
+RevRefinementResultDB
+DockPDBIntoDensityMover::apply_refinement(
+	utility::vector1< std::string > const & local_result_filenames,
+	core::pose::PoseOP const poseOP,
+	RBfitResultDB & results_to_refine,
+	bool const write_to_file
+) {
+	if ( results_to_refine.size() == 0 ) results_to_refine = read_in_partial_search_results( local_result_filenames );
 	while ( results_to_refine.size() > topNfilter_ ) results_to_refine.pop();
 	RevRefinementResultDB refinement_results( topNfilter_ ); // keep same as results_to_refine size!
 	set_refinement_responsibilities( results_to_refine );
 	check_for_existing_output_file( "refine" );
 	refine_RBfitResultDB( poseOP, results_to_refine, refinement_results );
 
-	if ( silent_.size() == 0 ) { silent_ = "final_result"; }
-	std::string const out_silent_file = silent_ + "_inter_"
-		+ ObjexxFCL::right_string_of(refine_start_, 6, '0') +
-		"_" + ObjexxFCL::right_string_of(refine_end_, 6, '0') + ".ref_silent";
+	std::string const out_silent_file = [&]{
+		if ( silent_.empty() ) {
+			return  "final_result_inter_"
+				+ ObjexxFCL::right_string_of(refine_start_, 6, '0') +
+				"_" + ObjexxFCL::right_string_of(refine_end_, 6, '0') + ".ref_silent";
+		} else { return silent_; }
+	}();
 
-	dump_RefinementDB_to_silent(
-		refinement_results,
-		silent_,
-		out_silent_file,
-		final_chain_,
-		/*centroid_output*/ true,
-		/*appent_to_outfile*/ false,
-		all_natives_,
-		symminfo_,
-		/* legacy_rms */ false);
+	if ( write_to_file ) {
+		dump_RefinementDB_to_silent(
+			refinement_results,
+			silent_,
+			out_silent_file,
+			final_chain_,
+			/*centroid_output*/ true,
+			/*appent_to_outfile*/ false,
+			all_natives_,
+			symminfo_,
+			/* legacy_rms */ false);
+	}
+	return refinement_results;
 }
 
 void
@@ -1047,20 +876,20 @@ DockPDBIntoDensityMover::manual_refine_pdb( core::pose::PoseOP const & poseOP ) 
 
 
 void
-DockPDBIntoDensityMover::combine_refinement( utility::vector1< std::string > const & refinement_result_filenames ) {
+DockPDBIntoDensityMover::combine_refinement( utility::vector1< std::string > const & refinement_result_filenames, RevRefinementResultDB & refinement_results ) {
 	TR << "Running combine refinement, will output max " << topNfilter_ << " results!" << std::endl;
 	check_for_existing_output_file( "combine_refine" );
-	RevRefinementResultDB refinement_results( topNfilter_ * 5 );
-	import_refinement_silent_files( refinement_result_filenames, refinement_results);
+	if ( refinement_results.size() == 0 ) {
+		refinement_results = RevRefinementResultDB( topNfilter_ * 5 );
+		import_refinement_silent_files( refinement_result_filenames, refinement_results);
+	}
+
 	cluster_RevRefinementDB( refinement_results, topNfilter_ );
 	TR << "Just clustered and have " << refinement_results.size() << " results remaining!" << std::endl;
 	// only dump top N
 	while ( refinement_results.size() > topNfinal_ ) { refinement_results.pop(); }
 
-	std::string const out_silent_file = [&]{
-		if ( silent_.empty() ) return std::string("final_result.silent");
-		else return silent_ + "_final.silent";
-	}();
+	std::string const out_silent_file = silent_.empty() ? "final_result.silent" : silent_;
 
 	dump_RefinementDB_to_silent(
 		refinement_results,
@@ -1103,6 +932,23 @@ DockPDBIntoDensityMover::cluster_silent( utility::vector1< std::string > const &
 		symminfo_,
 		/* legacy_rms */ false);
 }
+
+
+void
+DockPDBIntoDensityMover::run_aio( core::pose::PoseOP const poseOP ) {
+	core_idx_ = utility::vector1< core::Size >({1, 1});
+	get_points_to_search( poseOP );
+
+	point_search_start_ = 1;
+	point_search_end_ = points_to_search_.size();
+
+	RBfitResultDB search_results = apply_search( *poseOP, 1000000 );
+	combine_search(utility::vector1< std::string >(), *poseOP, search_results);
+	RevRefinementResultDB refined_results = apply_refinement(utility::vector1< std::string >(), poseOP, search_results, false);
+	combine_refinement(utility::vector1< std::string >(), refined_results);
+	analyze_RefinementDB(refined_results);
+}
+
 
 
 void

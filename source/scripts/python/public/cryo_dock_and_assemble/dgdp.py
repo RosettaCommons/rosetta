@@ -19,10 +19,13 @@ import math
 import pathlib
 import copy
 import shutil
-from dataclasses import dataclass
 
-from dask_jobqueue import SLURMCluster
-from dask.distributed import Client, as_completed
+try:
+    from dask_jobqueue import SLURMCluster
+    from dask.distributed import Client, LocalCluster, as_completed
+except ModuleNotFoundError:
+    print("Warning: Unable to run cryo_dock_and_assemble without dask_jobqueue installed")
+    sys.exit()
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from distribution import run_subprocess
@@ -35,12 +38,12 @@ from user_input import (
 )
 
 
-@dataclass
 class DGDPConfig:
-    dgdp_exe: str
-    rosetta_database: str
-    outdir: str
-    basic_flags: Optional[str] = None
+    def __init__(self, dgdp_exe: str, rosetta_database: str, outdir: str, basic_flags: Optional[str] = None):
+        self.dgdp_exe = dgdp_exe
+        self.rosetta_database = rosetta_database
+        self.outdir = outdir
+        self.basic_flags = basic_flags
 
     def set_basic_flags(self, input_dict) -> None:
         """
@@ -82,10 +85,9 @@ class DGDPConfig:
                 continue
             basic_flags += f" -{key} {val}"
         # Default flags always on
-        basic_flags += (
-            " -beta_conv false -ignore_unrecognized_res -ignore_zero_occupancy false" f" {input_dict['extras']}"
-        )
+        basic_flags += " -ignore_unrecognized_res -ignore_zero_occupancy false" f" {input_dict['extras']}"
         self.basic_flags = basic_flags
+        print("set basic flags", self.basic_flags)
 
 
 def parseargs():
@@ -202,12 +204,16 @@ def clean_up_args(args: Dict[str, Any]) -> Dict[str, Any]:
 
     args["mapfiles"] = [os.path.abspath(x) for x in args["mapfiles"]]
 
-    new_natives = []
-    for x in args["multi_natives"]:
-        new_natives.append([os.path.abspath(y) for y in x])
-    args["multi_natives"] = new_natives
+    if "multi_native" in args and "multi_natives" in args:
+        raise RuntimeError("Cannot specify 'multi_native' and 'multi_natives' at the same time")
     if "multi_native" in args:
+        args["multi_natives"] = [args["multi_native"]]
         del args["multi_native"]
+    elif "multi_natives" in args:
+        new_natives = []
+        for x in args["multi_natives"]:
+            new_natives.append([os.path.abspath(y) for y in x])
+        args["multi_natives"] = new_natives
 
     if "mapreso" in args:
         args["edensity::mapreso"] = args["mapreso"]
@@ -360,6 +366,8 @@ async def run_combine_search(
     pdb_no_path = os.path.basename(pdb)
     pdb_no_extension = os.path.splitext(pdb_no_path)[0]
     search_result_file_basenames = [os.path.basename(x) for x in search_result_file_names]
+    output_file = f"{pdb_no_extension}_rfr.sscores"
+    output_final_file = os.path.join(config.outdir, output_file)
     runscript = (
         f"{config.basic_flags}"
         f" -mode combine_search"
@@ -367,9 +375,8 @@ async def run_combine_search(
         f" -local_result_files {' '.join(search_result_file_basenames)}"
         f" -edensity::mapreso {options['edensity::mapreso']}"
         f" -out::file::silent {pdb_no_extension}"
+        f" -combined_search_results_fname {output_file}"
     )
-    output_file = f"{pdb_no_extension}_rfr.sscores"
-    output_final_file = os.path.join(config.outdir, f"{pdb_no_extension}_rfr.sscores")
 
     input_files = {}
     if not os.path.isfile(output_final_file) or options["redo"]:
@@ -424,7 +431,7 @@ async def run_refinement(pdb: str, combined_search_result_file_name: str, config
         mapreso = 2
         if options["refinement_reso"] is not None:
             mapreso = options["refinement_reso"]
-        output_file = f"{pdb_no_extension}_inter_{refine_start:05}_{refine_end:05}.ref_silent"
+        output_file = f"{pdb_no_extension}_inter_{refine_start:05}_{refine_end:05}_ref.silent"
         runscript = (
             f"{config.basic_flags}"
             " -mode refine"
@@ -453,7 +460,7 @@ async def run_refinement(pdb: str, combined_search_result_file_name: str, config
             fh.write(zlib.decompress(result_files[expected_output]))
         refinement_file_names.append(expected_final_output)
 
-        logfile_name = os.path.join(config.outdir, "log_out", expected_output.replace(".ref_silent", ".log"))
+        logfile_name = os.path.join(config.outdir, "log_out", expected_output.replace("_ref.silent", ".log"))
         with open(logfile_name, "wb") as fh:
             fh.write(zlib.decompress(result_files["out.log"]))
 

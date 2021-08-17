@@ -67,7 +67,6 @@
 #include <string>
 
 
-OPT_KEY( Boolean, beta_conv )
 OPT_KEY( Boolean, centroid_silent_out )
 OPT_KEY( Boolean, cheat_native_com )
 OPT_KEY( Boolean, cheat_native_mca )
@@ -144,7 +143,7 @@ check_inputs_for_errors() {
 
 	if ( option[ mode ]() == "combine_search" ) {
 		if ( option[ combined_search_results_fname ]() == "" ) {
-			throw CREATE_EXCEPTION(utility::excn::BadInput, "The 'search_points' mode of this protocol requires that you set the '-combined_search_results_fname' option");
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "The 'combine_search' mode of this protocol requires that you set the '-combined_search_results_fname' option");
 		}
 	}
 }
@@ -155,7 +154,6 @@ set_basic_dock_options( protocols::electron_density::DockPDBIntoDensityMoverOP c
 	check_inputs_for_errors();
 	// search options
 	dock->setB( option[ bw ] );
-	dock->setBetaConv( option[ beta_conv ]() );
 	dock->setConvoluteSingleR( option[ convolute_single_residue ]());
 	dock->setDelR( option[ delR ]() );
 	dock->setFragDens(option[ frag_dens ]());
@@ -168,7 +166,7 @@ set_basic_dock_options( protocols::electron_density::DockPDBIntoDensityMoverOP c
 	dock->setPointsToSearchFname( option[ points_to_search_fname ]() );
 	dock->setPointsToSearchPDBFname( option[ points_to_search_pdb_fname ]() );
 	dock->setPointSearchResultsFname( option[ point_search_results_fname ]() );
-	dock->setPointSearchResultsFname( option[ combined_search_results_fname ]() );
+	dock->setCombinedSearchResultsFname( option[ combined_search_results_fname ]() );
 	dock->setRotateMiddleCA( option[ rot_middle_ca ]() );
 	dock->setRotateSeqCenter( option[ rot_seq_center ]() );
 	dock->setTopN( option[ n_to_search ], option[ n_filtered ] , option[ n_output ] );
@@ -345,7 +343,7 @@ do_search( protocols::electron_density::DockPDBIntoDensityMoverOP const & dock )
 	//  throw std::runtime_error("Found search start or end at 0!, indexing starts at 1 so please check your input flags");
 	// }
 
-	dock->apply_search( *poseOP, 10 );
+	dock->apply_search( *poseOP, 1000000 );
 }
 
 
@@ -360,7 +358,9 @@ combine_search( protocols::electron_density::DockPDBIntoDensityMoverOP const & d
 	core::pose::PoseOP const poseOP = core::import_pose::pose_from_file( filenames[1]);
 
 	dock->set_nRsteps_from_pose( *poseOP );
-	dock->combine_search( local_result_filenames, poseOP );
+
+	protocols::electron_density::RBfitResultDB search_results( 1000000 );
+	dock->combine_search( local_result_filenames, *poseOP, search_results );
 }
 
 
@@ -395,7 +395,8 @@ do_refinement( protocols::electron_density::DockPDBIntoDensityMoverOP const & do
 
 	core::pose::PoseOP const poseOP = core::import_pose::pose_from_file( filenames[1]);
 
-	dock->apply_refinement( local_result_filenames, poseOP );
+	protocols::electron_density::RBfitResultDB search_results( 1000000 );
+	dock->apply_refinement( local_result_filenames, poseOP, search_results, true );
 }
 
 void
@@ -416,7 +417,8 @@ combine_refinement( protocols::electron_density::DockPDBIntoDensityMoverOP const
 	}
 	utility::vector1< std::string > silent_filenames = option[ in::file::silent ]();
 
-	dock->combine_refinement( silent_filenames );
+	protocols::electron_density::RevRefinementResultDB refinement_results( dock->get_top_N_filter() );
+	dock->combine_refinement( silent_filenames, refinement_results );
 }
 
 
@@ -434,6 +436,24 @@ cluster_silent( protocols::electron_density::DockPDBIntoDensityMoverOP const & d
 }
 
 
+void
+run_aio( protocols::electron_density::DockPDBIntoDensityMoverOP const & dock ) {
+	utility::vector1< std::string > const filenames = option[ in::file::s ]();
+	if ( filenames.size() != 1 ) {
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "Found more or less then one input pose, please only use one! exiting");
+	}
+	core::pose::PoseOP const poseOP = core::import_pose::pose_from_file( filenames[1]);
+	if ( !option[ out::file::silent ].user() ) {
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "You must supply -out::file::silent {myfile} to run this protocol");
+	}
+	std::string const silent_filenames = option[ out::file::silent ]();
+
+	dock->setFinalChain( option[ final_chain ]() );
+	TR.Warning << "Setting final chain: " << option[ final_chain ]() << std::endl;
+
+	dock->run_aio( poseOP );
+}
+
 
 // main
 int main(int argc, char* argv[]) {
@@ -444,7 +464,6 @@ int main(int argc, char* argv[]) {
 		// Options
 
 		// Search options
-		NEW_OPT( beta_conv, "Modify convolution to take into account shape of the domain (beta)", false );
 		NEW_OPT( bw, "SPHARM bandwidth", 32 );
 		NEW_OPT( clust_radius, "Cluster radius", 8.0 );
 		NEW_OPT( convolute_single_residue, "Convolute only on middle reside", false);
@@ -523,9 +542,11 @@ int main(int argc, char* argv[]) {
 			manual_refine( dock );
 		} else if ( option[ mode ]() == "cluster_silent" ) {
 			cluster_silent( dock );
+		} else if ( option[ mode ]() == "aio" ) {
+			run_aio( dock );
 		} else {
 			throw CREATE_EXCEPTION(utility::excn::BadInput, "Didn't recognize your option " + option[ mode ]() + " please change it to one of the following:\n" +
-				"find_pts\nearch_points\ncombine_search\nearch_results_to_pdb\nrefine\ncombine_refine");
+				"find_pts\nearch_points\ncombine_search\nearch_results_to_pdb\nrefine\ncombine_refine\naio");
 		}
 
 		auto const end = std::chrono::system_clock::now();
