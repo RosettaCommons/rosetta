@@ -218,7 +218,7 @@ void AtomPairConstraintsScore::read_constraints(
 }
 
 FragmentScoringMethodOP MakeAtomPairConstraintsScore::make(core::Size priority,
-	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string const &) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

@@ -59,7 +59,7 @@ public:
 		MakeFragmentScoringMethod("JCoupling") {
 	}
 
-	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string) override;
+	FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP, std::string const &) override;
 };
 
 } // scores

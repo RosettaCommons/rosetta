@@ -218,7 +218,7 @@ void PhiPsiRmsd::clean_up() {
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
 FragmentScoringMethodOP MakePhiPsiRmsd::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-	, std::string input_file) {
+	, std::string const & input_file) {
 
 	//std::istringstream line_stream(config_line);
 	//std::string score_name;

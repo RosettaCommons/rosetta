@@ -62,15 +62,13 @@ operator<< (
 }
 
 template<class T>
-void read_stoopid(char * buf, size_t start, size_t end, T & field ) {
+void read_stoopid(std::string const & buf, size_t start, size_t end, T & field ) {
 	if ( start == end ) {
 		field = buf[start];
 		return;
 	}
-	char smbuf[99];
-	for ( char & i : smbuf ) i = 0;
-	strncpy(smbuf,buf+start,end-start+1);
-	std::istringstream iss(smbuf);
+
+	std::istringstream iss( end == 0 ? buf.substr( start ) : buf.substr( start, end-start+1 ) );
 	iss >> field;
 }
 
@@ -87,9 +85,7 @@ operator>> (
 	SimplePDB_Atom & atom
 ) {
 	using namespace std;
-	char buf[999];
-	in_raw.getline(buf,999);
-	atom.whole_line = buf;
+	std::getline(in_raw, atom.whole_line);
 	// std::cerr << "read line: " << buf << std::endl;
 	//  istringstream in(buf);
 	//  in >> atom.ATOM;
@@ -102,18 +98,18 @@ operator>> (
 		}
 		return in_raw;
 	}
-	read_stoopid<int   >(buf, 6,10,atom.num );
-	read_stoopid<string>(buf,11,16,atom.type);
-	read_stoopid<string>(buf,17,20,atom.res );
-	read_stoopid<char  >(buf,21,21,atom.chain );
-	read_stoopid<int   >(buf,22,26,atom.resnum );
-	read_stoopid<char  >(buf,26,26,atom.icode);
-	read_stoopid<PackstatReal >(buf,29,37,atom.x );
-	read_stoopid<PackstatReal >(buf,38,45,atom.y );
-	read_stoopid<PackstatReal >(buf,46,54,atom.z );
-	read_stoopid<PackstatReal >(buf,55,59,atom.occ );
-	read_stoopid<PackstatReal >(buf,60,65,atom.bfac );
-	read_stoopid<string>(buf,66,99,atom.lastcol );
+	read_stoopid<int   >(atom.whole_line, 6,10,atom.num );
+	read_stoopid<string>(atom.whole_line,11,16,atom.type);
+	read_stoopid<string>(atom.whole_line,17,20,atom.res );
+	read_stoopid<char  >(atom.whole_line,21,21,atom.chain );
+	read_stoopid<int   >(atom.whole_line,22,26,atom.resnum );
+	read_stoopid<char  >(atom.whole_line,26,26,atom.icode);
+	read_stoopid<PackstatReal >(atom.whole_line,29,37,atom.x );
+	read_stoopid<PackstatReal >(atom.whole_line,38,45,atom.y );
+	read_stoopid<PackstatReal >(atom.whole_line,46,54,atom.z );
+	read_stoopid<PackstatReal >(atom.whole_line,55,59,atom.occ );
+	read_stoopid<PackstatReal >(atom.whole_line,60,65,atom.bfac );
+	read_stoopid<string>(atom.whole_line,66,0,atom.lastcol );
 	return in_raw;
 }
 

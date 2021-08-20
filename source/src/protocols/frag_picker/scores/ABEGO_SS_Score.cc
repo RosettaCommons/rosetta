@@ -128,7 +128,7 @@ bool ABEGO_SS_Score::cached_score(FragmentCandidateOP f,
 }
 
 FragmentScoringMethodOP MakeABEGO_SS_Score::make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-	FragmentPickerOP picker, std::string /*prediction_file*/) {
+	FragmentPickerOP picker, std::string const & /*prediction_file*/) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

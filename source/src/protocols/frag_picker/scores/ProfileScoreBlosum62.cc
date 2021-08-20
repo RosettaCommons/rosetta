@@ -194,7 +194,7 @@ bool ProfileScoreBlosum62::score(FragmentCandidateOP f, FragmentScoreMapOP empty
 
 
 FragmentScoringMethodOP MakeProfileScoreBlosum62::make(core::Size priority,
-	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string const &) {
 
 	core::Size len = picker->get_vall()->get_largest_chunk_size();
 	trProfScoreBlosum62 << "Profile scoring method is: Blosum62" << std::endl;

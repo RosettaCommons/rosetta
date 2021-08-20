@@ -42,7 +42,7 @@ using namespace basic::options::OptionKeys;
 RamaScore::RamaScore(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, std::string & fastaQuery, std::string const & prediction_name ) :
 	CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "RamaScore"), query_(fastaQuery),prediction_name_(prediction_name) {
 
-	core::fragment::SecondaryStructureOP default_ss;
+	core::fragment::SecondaryStructureOP default_ss( utility::pointer::make_shared< core::fragment::SecondaryStructure >() );
 	std::cout << "QUERY" << fastaQuery << " " << query_.size() << std::endl;
 	default_ss->extend(query_.size());
 

@@ -665,13 +665,13 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 	WriteableCacheableMapOP orig_map = utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap > ( pose.data().get_ptr( CacheableDataType::WRITEABLE_DATA ) );
 
 	// Store the newly inserted cache objects here.
-	WriteableCacheableMapOP new_cached_data( new WriteableCacheableMap() );
+	WriteableCacheableMapOP new_cached_data( utility::pointer::make_shared< WriteableCacheableMap >() );
 
 	//Claiming
 	for ( auto const & movers_and_passe : movers_and_passes ) {
 
 		// a modifiable sandbox_map must be passed in separately, as pose is a const &.
-		WriteableCacheableMapOP sandbox_map( new WriteableCacheableMap( *orig_map ) );
+		WriteableCacheableMapOP sandbox_map( utility::pointer::make_shared< WriteableCacheableMap >( *orig_map ) );
 
 		claims::EnvClaims in_claims = movers_and_passe.first->yield_claims( pose, sandbox_map );
 		for ( EnvClaimOP claim : in_claims ) {
@@ -681,7 +681,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes
 			} else {
 				std::ostringstream ss;
 				EnvironmentCOP env = this->env_.lock();
-				ss << "The mover '" << claim->owner() << "' yielded a null pointer as one of its "
+				ss << "The mover '" << movers_and_passe.first->name() << "' yielded a null pointer as one of its "
 					<< in_claims.size() << " claims during broking of the environment '" << (env ? env->name() : "(Unknown)")
 					<< "'." << std::endl;
 				throw CREATE_EXCEPTION(utility::excn::NullPointerError,  ss.str() );

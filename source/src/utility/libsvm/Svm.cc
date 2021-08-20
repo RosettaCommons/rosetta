@@ -385,11 +385,11 @@ public:
 	virtual ~Solver() = default;
 
 	struct SolutionInfo {
-		double obj;
-		double rho;
-		double upper_bound_p;
-		double upper_bound_n;
-		double r; // for Solver_NU
+		double obj = 0.0;
+		double rho = 0.0;
+		double upper_bound_p = 0.0;
+		double upper_bound_n = 0.0;
+		double r = 0.0; // for Solver_NU
 	};
 
 	void Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,

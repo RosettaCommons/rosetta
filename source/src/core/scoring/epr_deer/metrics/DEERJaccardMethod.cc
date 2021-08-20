@@ -19,6 +19,7 @@
 
 // C++ headers
 #include <map>
+#include <limits>
 
 namespace core {
 namespace scoring {

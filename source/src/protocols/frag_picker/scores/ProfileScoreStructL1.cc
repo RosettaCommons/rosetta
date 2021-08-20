@@ -154,7 +154,7 @@ bool ProfileScoreStructL1::score(FragmentCandidateOP f, FragmentScoreMapOP empty
 
 
 FragmentScoringMethodOP MakeProfileScoreStructL1::make(core::Size priority,
-	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string const &) {
 
 	core::Size len = picker->get_vall()->get_largest_chunk_size();
 	trProfScoreL1 << "Profile scoring method is: L1" << std::endl;

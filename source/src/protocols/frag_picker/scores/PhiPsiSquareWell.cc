@@ -288,12 +288,12 @@ void PhiPsiSquareWell::clean_up() {
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
 FragmentScoringMethodOP MakePhiPsiSquareWell::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-	, std::string input_file) {
+	, std::string const & input_file) {
 
 	if ( input_file != "" ) {
 		core::Size pos = input_file.find(".pdb");
 		if ( pos != std::string::npos ) {
-			core::pose::PoseOP nativePose( new core::pose::Pose );
+			core::pose::PoseOP nativePose( utility::pointer::make_shared< core::pose::Pose >() );
 			core::import_pose::pose_from_file(*nativePose, input_file, core::import_pose::PDB_file);
 			tr.Info
 				<< "Reference file for Phi,Psi scoring loaded from "

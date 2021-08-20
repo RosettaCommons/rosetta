@@ -158,63 +158,68 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 			);
 		}
 	} else if ( rt.is_aramid() ) {
-		// 'first and last' are phi and psi, until we make things better.
-		// these are really pretty bb-independent!
-		// This logic sets your IVs by default.
 
-		// record which mainchain torsions to use for each type of amarid
-		// and then construct the appropriate MainchainTorsionReporters for
-		// the iv_reporters_ array.
-		Size last_tor = 2; // set this to some other value if you have an amarid with more than 2 relevant dihedrals.
-		utility::fixedsizearray1< Size, N > torsion_inds;
-		Real pnphi = parent::PEPTIDE_NEUTRAL_PHI, pnpsi = parent::PEPTIDE_NEUTRAL_PSI;
-		if ( rt.is_ortho_aramid() ) {
-			// There are only two flexible angles and they are first and last. So N must be two,
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 3;
-		} else if ( rt.is_pre_methylene_ortho_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 4;
-		} else if ( rt.is_post_methylene_ortho_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 4;
-		} else if ( rt.is_pre_methylene_post_methylene_ortho_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 5;
-		} else if ( rt.is_meta_aramid() ) {
-			// There are only two flexible angles and they are first and last. So N must be two,
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 4;
-		} else if ( rt.is_pre_methylene_meta_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 5;
-		} else if ( rt.is_post_methylene_meta_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 5;
-		} else if ( rt.is_pre_methylene_post_methylene_meta_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 6;
-		} else if ( rt.is_para_aramid() ) {
-			// There are only two flexible angles and they are first and last. So N must be two,
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 5;
-		} else if ( rt.is_pre_methylene_para_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 6;
-		} else if ( rt.is_post_methylene_para_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 6;
-		} else if ( rt.is_pre_methylene_post_methylene_para_aramid() ) {
-			torsion_inds[1] = 1;
-			torsion_inds[2] = 7;
-		}
-		for ( Size ii = 1; ii <= N; ++ii ) {
-			iv_reporters_[ii] = utility::pointer::make_shared< MainchainTorsionReporter >(
-				torsion_inds[ii],
-				torsion_inds[last_tor],
-				( ii == 1 ? pnphi : pnpsi ),
-				true /* flip for d_aa */,
-				false );
+		if ( N > 1 ) {
+			// 'first and last' are phi and psi, until we make things better.
+			// these are really pretty bb-independent!
+			// This logic sets your IVs by default.
+
+			// record which mainchain torsions to use for each type of amarid
+			// and then construct the appropriate MainchainTorsionReporters for
+			// the iv_reporters_ array.
+			Size last_tor = 2; // set this to some other value if you have an amarid with more than 2 relevant dihedrals.
+			utility::fixedsizearray1< Size, N > torsion_inds;
+			Real pnphi = parent::PEPTIDE_NEUTRAL_PHI, pnpsi = parent::PEPTIDE_NEUTRAL_PSI;
+			if ( rt.is_ortho_aramid() ) {
+				// There are only two flexible angles and they are first and last. So N must be two,
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 3;
+			} else if ( rt.is_pre_methylene_ortho_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 4;
+			} else if ( rt.is_post_methylene_ortho_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 4;
+			} else if ( rt.is_pre_methylene_post_methylene_ortho_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 5;
+			} else if ( rt.is_meta_aramid() ) {
+				// There are only two flexible angles and they are first and last. So N must be two,
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 4;
+			} else if ( rt.is_pre_methylene_meta_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 5;
+			} else if ( rt.is_post_methylene_meta_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 5;
+			} else if ( rt.is_pre_methylene_post_methylene_meta_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 6;
+			} else if ( rt.is_para_aramid() ) {
+				// There are only two flexible angles and they are first and last. So N must be two,
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 5;
+			} else if ( rt.is_pre_methylene_para_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 6;
+			} else if ( rt.is_post_methylene_para_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 6;
+			} else if ( rt.is_pre_methylene_post_methylene_para_aramid() ) {
+				torsion_inds[1] = 1;
+				torsion_inds[2] = 7;
+			}
+			for ( Size ii = 1; ii <= N; ++ii ) {
+				iv_reporters_[ii] = utility::pointer::make_shared< MainchainTorsionReporter >(
+					torsion_inds[ii],
+					torsion_inds[last_tor],
+					( ii == 1 ? pnphi : pnpsi ),
+					true /* flip for d_aa */,
+					false );
+			}
+		} else {
+			utility_exit_with_message( "Error: Trying to define an aramid with only one mainchain torsion!" );
 		}
 	} else if ( rt.is_protein() ) {
 		// This logic sets your IVs by default.

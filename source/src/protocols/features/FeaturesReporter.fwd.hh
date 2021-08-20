@@ -17,6 +17,9 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
+// STL headers
+#include <cstdint> //Needed for std::uint64_t.
+
 namespace protocols {
 namespace features {
 

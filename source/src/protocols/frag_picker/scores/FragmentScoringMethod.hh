@@ -100,7 +100,7 @@ public:
 	}
 
 	virtual FragmentScoringMethodOP make(core::Size, core::Real, bool, FragmentPickerOP,
-		std::string) =0;
+		std::string const &) =0;
 
 	inline std::string& get_score_name() {
 		return name_;

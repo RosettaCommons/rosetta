@@ -99,7 +99,7 @@ void MidPsiOut::clean_up() {
 ///  - a TALOS file with Psi/Psi prediction (tab extension is necessary)
 FragmentScoringMethodOP MakeMidPsiOut::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-	, std::string) {
+	, std::string const &) {
 
 	return (FragmentScoringMethodOP) utility::pointer::make_shared< MidPsiOut >(priority,
 		lowest_acceptable_value, use_lowest);

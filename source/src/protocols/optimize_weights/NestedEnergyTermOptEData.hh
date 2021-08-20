@@ -163,8 +163,8 @@ public:
 
 	//void add_mutant( SingleStructureDataOP mut );
 
-	void set_wt_unfolded_energies_emap( EnergyMap e ) { wt_unfolded_energies_emap_ = e; }
-	void set_mut_unfolded_energies_emap( EnergyMap e ) { mut_unfolded_energies_emap_ = e; }
+	void set_wt_unfolded_energies_emap( EnergyMap const & e ) { wt_unfolded_energies_emap_ = e; }
+	void set_mut_unfolded_energies_emap( EnergyMap const & e ) { mut_unfolded_energies_emap_ = e; }
 
 private:
 	//Real experimental_ddG_;

@@ -203,7 +203,7 @@ void FragmentDME::clean_up() {
 
 FragmentScoringMethodOP MakeFragmentDME::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-	, std::string) {
+	, std::string const &) {
 
 	if ( option[in::file::native].user() ) {
 		trDMEScore

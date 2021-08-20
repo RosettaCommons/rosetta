@@ -245,7 +245,7 @@ void AmbigCSScore::clean_up() {
 
 FragmentScoringMethodOP MakeAmbigCSScore::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-	, std::string // line
+	, std::string const & // line
 ) {
 
 	if ( option[in::file::ambig_talos_cs_A].user() &&

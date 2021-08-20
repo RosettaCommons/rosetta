@@ -94,7 +94,7 @@ public:
 		core::Real lowest_acceptable_value,
 		bool use_lowest,
 		FragmentPickerOP picker,
-		std::string /* prediction_id */
+		std::string  const & /* prediction_id */
 	) override;
 };
 

@@ -163,7 +163,7 @@ void DisulfideDistance::clean_up() {
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
 FragmentScoringMethodOP MakeDisulfideDistance::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker//picker
-	, std::string )
+	, std::string const & )
 {
 
 	if ( option[in::fix_disulf].user() ) {

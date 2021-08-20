@@ -242,7 +242,7 @@ void CSScore::clean_up() {
 
 FragmentScoringMethodOP MakeCSScore::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-	, std::string // line
+	, std::string const & // line
 ) {
 
 	if ( option[in::file::talos_cs].user() ) {

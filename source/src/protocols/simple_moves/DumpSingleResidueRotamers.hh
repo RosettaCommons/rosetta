@@ -102,8 +102,9 @@ private: // methods
 
 	void
 	write_poses_to_pdbs(
-		utility::vector1< core::pose::PoseOP > poses,
-		core::Size position );
+		utility::vector1< core::pose::PoseOP > const & poses,
+		core::Size const position
+	);
 
 	utility::vector1< core::pose::PoseOP >
 	enumerate_aa_rotamer(

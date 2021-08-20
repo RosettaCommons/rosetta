@@ -115,7 +115,7 @@ CartminLoopCloser::apply(
 	protocols::loops::add_single_cutpoint_variant(pose, loop());
 
 	// setup movemap
-	core::kinematics::MoveMapOP mm;
+	core::kinematics::MoveMapOP mm( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 	for ( core::Size ii=loop().start(); ii<=loop().stop(); ++ii ) {
 		mm->set_bb( ii, true );
 

@@ -164,7 +164,7 @@ void GunnCostScore::clean_up() {
 
 FragmentScoringMethodOP MakeGunnCostScore::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker
-	, std::string) {
+	, std::string const &) {
 
 
 	core::Size longest_chunk = picker->get_vall()->get_largest_chunk_size();

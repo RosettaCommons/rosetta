@@ -215,7 +215,7 @@ void sequencealign(core::sequence::SequenceOP seq1, core::sequence::SequenceOP s
 
 FragmentScoringMethodOP MakeFragmentChunkCrms::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker
-	, std::string) {
+	, std::string const &) {
 
 	//trTmScore << "QUERY_SEQUENCE " << picker->get_query_seq_string() << std::endl;
 	//Initialized an array and align to each other

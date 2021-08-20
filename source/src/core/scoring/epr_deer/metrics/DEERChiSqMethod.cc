@@ -19,7 +19,7 @@
 
 // C++ headers
 #include <map>
-
+#include <limits>
 #include <cmath> // MANUAL IWYU
 
 namespace core {

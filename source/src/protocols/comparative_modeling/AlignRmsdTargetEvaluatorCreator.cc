@@ -101,9 +101,12 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 			string const tag( align_rmsd_col_names[ii] );
 			core::sequence::SequenceAlignmentOP aln(nullptr);
 			if ( align_rmsd_fns.size() >= ii ) {
-				*aln = core::sequence::read_aln(
+				//If this is true, we make a copy of the first element in the vector and store an owning pointer to the copy.
+				aln = utility::pointer::make_shared<core::sequence::SequenceAlignment>(
+					core::sequence::read_aln(
 					align_rmsd_fns[ii], option[ OptionKeys::evaluation::align_rmsd_format ]()
-					).front();
+					).front()
+				);
 			}
 			eval.add_evaluation( utility::pointer::make_shared< Align_RmsdEvaluator >(rmsd_pose,tag,true,aln,gdt_by_TM) );
 			eval.add_evaluation( utility::pointer::make_shared< Align_RotamerEvaluator >(rmsd_pose,tag,true,aln) );

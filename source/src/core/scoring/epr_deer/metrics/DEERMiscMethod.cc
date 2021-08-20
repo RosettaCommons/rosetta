@@ -24,8 +24,8 @@
 // C++ headers
 #include <string>
 #include <map>
+#include <limits>
 #include <tuple>
-
 #include <cmath> // MANUAL IWYU
 
 namespace core {

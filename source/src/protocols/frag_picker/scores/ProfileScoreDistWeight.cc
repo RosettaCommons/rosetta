@@ -248,7 +248,7 @@ bool ProfileScoreDistWeight::cached_score(FragmentCandidateOP f, FragmentScoreMa
 }
 
 FragmentScoringMethodOP MakeProfileScoreDistWeight::make(core::Size priority,
-	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string prediction_id) {
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string  const & prediction_id) {
 
 	//query_sequence_ = picker->get_query_seq_string();
 

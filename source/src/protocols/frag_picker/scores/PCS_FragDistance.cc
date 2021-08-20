@@ -160,7 +160,7 @@ void PCS_FragDistance::clean_up() {
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
 FragmentScoringMethodOP MakePCS_FragDistance::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker//picker
-	, std::string )
+	, std::string const & )
 {
 
 	std::string target( picker->get_query_seq_string());

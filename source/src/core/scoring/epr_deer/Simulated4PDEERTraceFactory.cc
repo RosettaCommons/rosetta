@@ -35,6 +35,7 @@
 #include <map>
 #include <tuple>
 #include <cmath>
+#include <limits>
 
 namespace core {
 namespace scoring {

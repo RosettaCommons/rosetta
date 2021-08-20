@@ -92,7 +92,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(core::Size, core::Real, bool,
-		FragmentPickerOP, std::string) override;
+		FragmentPickerOP, std::string const &) override;
 };
 
 } // scores

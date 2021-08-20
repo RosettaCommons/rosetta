@@ -147,7 +147,7 @@ bool ProfileScoreSubMatrix::score(FragmentCandidateOP f, FragmentScoreMapOP empt
 }
 
 // MISC = Substitution Matrix File Name ... the reader will spit out an error if the file does not exist.
-FragmentScoringMethodOP MakeProfileScoreSubMatrix::make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string misc) {
+FragmentScoringMethodOP MakeProfileScoreSubMatrix::make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string  const & misc) {
 
 	core::Size len = picker->get_vall()->get_largest_chunk_size();
 

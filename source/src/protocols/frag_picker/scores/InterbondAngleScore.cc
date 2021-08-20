@@ -255,18 +255,19 @@ void InterbondAngleScore::read_constraints(
 		<< std::endl;
 }
 
-FragmentScoringMethodOP MakeInterbondAngleScore::make(core::Size priority,
-	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+FragmentScoringMethodOP MakeInterbondAngleScore::make(
+	core::Size priority,
+	core::Real lowest_acceptable_value,
+	bool use_lowest,
+	FragmentPickerOP picker,
+	std::string const &
+) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	// Hack for VEAN experiment scoring. In the future atom names should come from command-line
-	utility::vector1<std::string> constrainable_atoms;
-	constrainable_atoms.push_back("N");
-	constrainable_atoms.push_back("CA");
-	constrainable_atoms.push_back("H");
-	constrainable_atoms.push_back("HA");
+	utility::vector1<std::string> constrainable_atoms{"N", "CA", "H", "HA"};
 
 	if ( option[constraints::cst_file].user() ) {
 		trInterbondAngleScore << "Constraints loaded from: "

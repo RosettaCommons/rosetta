@@ -584,7 +584,7 @@ GeneralAntibodyModeler::relax_interface(Pose & pose, bool min_interface_sc /* tr
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
 	protocols::docking::setup_foldtree(pose, get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_), movable_jumps);
 
-	MoveMapOP mm;
+	MoveMapOP mm( utility::pointer::make_shared< MoveMap >() );
 	mm->set_jump(1, true); //There is more than one jump!
 
 	core::pack::task::TaskFactoryOP tf = interface_tf_->clone();

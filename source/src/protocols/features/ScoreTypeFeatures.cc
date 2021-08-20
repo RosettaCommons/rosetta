@@ -152,10 +152,7 @@ ScoreTypeFeatures::insert_score_type_rows(
 
 		string const table_name("score_types");
 
-		std::vector<std::string> column_names;
-		column_names.emplace_back("batch_id");
-		column_names.emplace_back("score_type_id");
-		column_names.emplace_back("score_type_name");
+		std::vector<std::string> const column_names{ "batch_id", "score_type_id", "score_type_name" };
 
 		std::string protocol_id_s = utility::to_string (protocol_id);
 

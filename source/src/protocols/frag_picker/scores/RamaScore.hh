@@ -87,10 +87,10 @@ public:
 	}
 
 	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value, bool use_lowest,
-		FragmentPickerOP picker, std::string prediction_id ) override {
+		FragmentPickerOP picker, std::string  const & prediction_id ) override {
 
 		if ( prediction_id == "" ) {
-			core::fragment::SecondaryStructureOP default_ss( new core::fragment::SecondaryStructure );
+			core::fragment::SecondaryStructureOP default_ss( utility::pointer::make_shared< core::fragment::SecondaryStructure >() );
 			core::Size query_len = picker->get_query_seq_string().size();
 			default_ss->extend( query_len );
 			for ( core::Size i = 1; i <= query_len; ++i ) {

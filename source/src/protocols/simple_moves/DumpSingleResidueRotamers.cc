@@ -281,13 +281,11 @@ DumpSingleResidueRotamers::enumerate_aa_rotamer(
 
 void
 DumpSingleResidueRotamers::write_poses_to_pdbs(
-	utility::vector1< core::pose::PoseOP > poses, core::Size position ) {
-
+	utility::vector1< core::pose::PoseOP > const & poses,
+	core::Size const position
+) {
 	// Stdev types
-	utility::vector1< std::string > stdev_types;
-	stdev_types.push_back( "minus1" );
-	stdev_types.push_back( "zero" );
-	stdev_types.push_back( "plus1" );
+	utility::vector1< std::string > stdev_types{ "minus1", "zero", "plus1" };
 
 	for ( core::Size ii = 1; ii <= poses.size()/3; ++ii ) {
 		std::string stdev( std::to_string( ii % 3 ) );

@@ -132,10 +132,7 @@ FunGroupTK::FunGroupTK(
 	ifc_ = utility::pointer::make_shared< ImplicitFastClashCheck >(*pose_,2.2);
 	frs_ = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 	core::chemical::ResidueTypeSetCOP frs( frs_ );
-	vector1<string> res_types;
-	res_types.push_back("ASP");
-	res_types.push_back("CYS");
-	res_types.push_back("HIS");
+	vector1<string> res_types { "ASP", "CYS", "HIS" };
 	for ( vector1<string>::const_iterator it = res_types.begin(); it != res_types.end(); ++it ) {
 		rsd_[*it].resize(pose_->size() );
 		for ( core::Size po : pos_ ) {

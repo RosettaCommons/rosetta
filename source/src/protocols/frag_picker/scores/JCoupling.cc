@@ -190,7 +190,7 @@ void JCoupling::clean_up() {
 ///  - a TALOS file with Phi/Psi prediction (tab extension is necessary)
 FragmentScoringMethodOP MakeJCoupling::make(core::Size priority,
 	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
-	, std::string input_file) {
+	, std::string  const & input_file) {
 
 	if ( input_file != "" ) {
 

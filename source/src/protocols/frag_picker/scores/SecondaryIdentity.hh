@@ -68,7 +68,7 @@ public:
 	}
 
 	FragmentScoringMethodOP make(core::Size priority, core::Real lowest_acceptable_value,
-		bool use_lowest, FragmentPickerOP picker, std::string prediction_id) override {
+		bool use_lowest, FragmentPickerOP picker, std::string  const & prediction_id) override {
 		return (FragmentScoringMethodOP) utility::pointer::make_shared< SecondaryIdentity >(priority,
 			lowest_acceptable_value, use_lowest, picker->get_query_ss_string(
 			prediction_id),prediction_id);

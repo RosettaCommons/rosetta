@@ -36,16 +36,6 @@
 #include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 #include <core/scoring/constraints/Constraint.hh> // AUTO IWYU For Constraint
 
-
-
-
-
-
-
-
-
-
-
 static  basic::Tracer TR( "protocols.splice.util" );
 namespace protocols {
 namespace splice {
@@ -243,9 +233,8 @@ bool calculate_rmsd(core::pose::Pose & pose, core::pose::Pose const & source_pos
 void min_seg(core::pose::Pose & pose, ResidueBBDofs dofs,bool debug, core::Size from_res, std::string tail_segment, core::Size cut_site, core::Size cut_vl_vh_after_llc,ResidueBBDofs tail_dofs,core::scoring::ScoreFunctionOP scorefxn,std::string segment_type){
 	pose.remove_constraints();//remove coor/dih constraints before rtmin
 
-	core::kinematics::MoveMapOP mm;
-	protocols::splice::SpliceOP splice;
-	mm = utility::pointer::make_shared< core::kinematics::MoveMap >();
+	core::kinematics::MoveMapOP mm(utility::pointer::make_shared< core::kinematics::MoveMap >());
+	protocols::splice::SpliceOP splice(utility::pointer::make_shared< protocols::splice::Splice >());
 	mm->set_chi(false);
 	mm->set_bb(false);
 	mm->set_jump(false);

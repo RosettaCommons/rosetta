@@ -153,7 +153,7 @@ bool ProfileScore::describe_score(FragmentCandidateOP f,
 }
 
 FragmentScoringMethodOP MakeProfileScore::make(core::Size priority,
-	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string) {
+	core::Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP picker, std::string const & ) {
 
 	if ( option[frags::scoring::profile_score].user() ) {
 		core::Size len = picker->get_vall()->get_largest_chunk_size();

@@ -150,7 +150,7 @@ FragmentScoringMethodOP MakeRDCScore::make(
 	core::Real lowest_acceptable_value,
 	bool use_lowest,
 	FragmentPickerOP, //picker,
-	std::string
+	std::string const &
 ) {
 	return ( FragmentScoringMethodOP )
 		utility::pointer::make_shared< RDCScore >(
