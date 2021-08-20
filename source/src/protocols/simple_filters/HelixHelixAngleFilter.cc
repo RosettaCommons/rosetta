@@ -292,7 +292,6 @@ utility::vector1< numeric::xyzVector < core::Real > >
 HelixHelixAngleFilter::find_helix_vector( core::pose::Pose const & pose, core::Size start, core::Size end ) const
 {
 	utility::vector1< numeric::xyzVector <core::Real > > vec;
-	vec.empty();
 
 	utility::vector1< numeric::xyzVector< core::Real> > bb_coords; bb_coords.clear();
 

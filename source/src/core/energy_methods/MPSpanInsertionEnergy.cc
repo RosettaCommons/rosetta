@@ -145,7 +145,6 @@ MPSpanInsertionEnergy::compute( pose::Pose const & pose ) const
 
 	utility::vector1< core::Real > span_scores;
 	core::Real span_scores_sum = 0.0;
-	span_scores.empty();
 	core::Real temp( 0.0 ); core::Real p( 0.0 );
 
 	core::Real _avg( 0.0 ); core::Real _std( 0.0 );
@@ -285,9 +284,7 @@ MPSpanInsertionEnergy::split_line_to_spline(
 {
 	numeric::interpolation::spline::CubicSpline spline;
 	utility::vector1< Real > result;
-	result.empty();
 	utility::vector1< std::string > spl;
-	spl.empty();
 
 	spl = utility::string_split( line, ' ');
 

@@ -1555,7 +1555,7 @@ bool
 HotspotStubSet::remove_all_hotspot_constraints( core::pose::Pose & pose ) const
 {
 	bool return_val( pose.remove_constraints( constraints_ ) );
-	constraints_.empty();
+	// constraints_.empty();
 	return( return_val ); // returns the state of constraints removal
 }
 

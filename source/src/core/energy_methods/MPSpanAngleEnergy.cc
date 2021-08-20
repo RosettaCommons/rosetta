@@ -141,7 +141,6 @@ MPSpanAngleEnergy::compute( pose::Pose const & pose, std::ostream & out, bool re
 
 	utility::vector1< core::Real > span_scores;
 	utility::vector1< core::Real > span_scores_sum;
-	span_scores.empty();
 
 	numeric::xyzVector < core::Real > memb_normal( 0, 0, 1 );
 

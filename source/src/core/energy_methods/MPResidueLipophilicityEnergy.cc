@@ -303,7 +303,6 @@ MPResidueLipophilicityEnergy::centroid_neighbors(
 	}
 
 	utility::vector1 < core::Size > result;
-	result.empty();
 	result.push_back( static_cast < core::Size > ( n_6A.size() ) );
 	result.push_back( static_cast < core::Size > ( n_12A.size() ) );
 	return( result );
@@ -547,7 +546,6 @@ MPResidueLipophilicityEnergy::neighboring_atoms(
 {
 	Real residue_distance_cutoff = 16.0;
 	utility::vector1 < core::Size > result;
-	result.empty();
 
 	std::set < core::Size > atoms_seen_1;
 	std::set < core::Size > atoms_seen_2;
