@@ -115,6 +115,8 @@ AddFlankingVirtualResiduesMover::add_flanking_virtual_residues( core::pose::Pose
 			core::pose::remove_lower_terminus_type_from_pose_residue(pose, current_resnum);
 			core::conformation::ResidueOP res = core::conformation::ResidueFactory::create_residue(*res_type);
 			pose.prepend_polymer_residue_before_seqpos(*res, current_resnum, true);
+			pose.pdb_info()->chain(current_resnum,pose.pdb_info()->chain(current_resnum+1));
+			pose.pdb_info()->number(current_resnum,pose.pdb_info()->number(current_resnum+1)-1);
 			pose.real_to_virtual(current_resnum );
 			if ( i == N_term_length_ ) {
 				pose.pdb_info()->add_reslabel(current_resnum , "PRE_POSE_SEWING_START");
@@ -128,6 +130,8 @@ AddFlankingVirtualResiduesMover::add_flanking_virtual_residues( core::pose::Pose
 			core::pose::remove_upper_terminus_type_from_pose_residue(pose, current_resnum);
 			core::conformation::ResidueOP res = core::conformation::ResidueFactory::create_residue(*res_type);
 			pose.append_polymer_residue_after_seqpos(*res, current_resnum, true);
+			pose.pdb_info()->chain(current_resnum+1,pose.pdb_info()->chain(current_resnum));
+			pose.pdb_info()->number(current_resnum+1,pose.pdb_info()->number(current_resnum)+1);
 			pose.real_to_virtual(current_resnum+1);
 			if ( i == C_term_length_ ) {
 				pose.pdb_info()->add_reslabel(current_resnum + 1, "PRE_POSE_SEWING_END");
