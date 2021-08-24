@@ -53,6 +53,7 @@ cd %(workdir)s
 	-ignore_unrecognized_res \
 	-ignore_zero_occupancy false \
 	-s inputs/001_3sqg_A.pdb \
+	-testing:INTEGRATION_TEST \
 	-out::file::silent 001_3sqg_A_aio_results.silent \
 	2>&1 \
 	| egrep -vf ../../ignore_list \

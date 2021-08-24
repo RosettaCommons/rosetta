@@ -28,7 +28,7 @@
 		},
 		"general": {
 			"dsm": "1E6V_A 2",
-			"extras": "",
+			"extras": " --testing:INTEGRATION_TEST ",
 			"mapfile": "inputs/1e6v_trim.mrc.gz",
 			"mute": "true",
 			"name": "1e6v_hm_run",
@@ -90,7 +90,7 @@
 		"constrain_refinement": 10.0,
 		"refinement_reso": 4.0,
 		"rot_middle_ca": false,
-		"extras": "",
+		"extras": " --testing:INTEGRATION_TEST ",
 		"max_rot_per_trans": 11,
 		"bw": null,
 		"final_result_names": [
