@@ -269,7 +269,7 @@ class PDBStructure :
 
 def pdbstructure_from_file( fname ) :
     pdb = PDBStructure()
-    pdb.read_from_lines( open( fname ).readlines() )
+    with open( fname ) as f: pdb.read_from_lines( f.readlines() )
     return pdb
 
 #### End of excerpt from rosetta/tools/pdb_structure.py ####
@@ -405,18 +405,18 @@ def symmetric_grouped_mutations(symmetric_input,mutation_list):
 # Default to only keeping protein residues (ATOM), but if ligands should be kept, check HETATM lines for specific residues. Only the first two elements of each tuple will be used from keep_ligand_list. That list can be created by using parse_input_resid with input_ligand_residues
 def trim_pdb(pdb_file, keep_ligand_list):
     with open('trimmed_input_protein.pdb', 'w') as trimmed_pdb:
-        opened_pdb = open(pdb_file, 'r').read()
-        for line in ( opened_pdb ).split('\n'):
-            if line[0:4] == "ATOM" :
-                 trimmed_pdb.write(line + '\n')
-            elif line[0:6] == "HETATM" and ('MSE' in line[17:20]):
-                 trimmed_pdb.write(line + '\n')
-            elif keep_ligand_list is not None and line[0:6] == "HETATM" :
-                for keep_ligand in keep_ligand_list :
-                    chain_id=keep_ligand[0]
-                    resid=keep_ligand[1]
-                    if line[21] == chain_id and (keep_ligand[1] in line[22:27]):
-                        trimmed_pdb.write(line + '\n')
+        with open( pdb_file ) as f:
+            for line in ( f.read() ).split('\n'):
+                if line[0:4] == "ATOM" :
+                     trimmed_pdb.write(line + '\n')
+                elif line[0:6] == "HETATM" and ('MSE' in line[17:20]):
+                     trimmed_pdb.write(line + '\n')
+                elif keep_ligand_list is not None and line[0:6] == "HETATM" :
+                    for keep_ligand in keep_ligand_list :
+                        chain_id=keep_ligand[0]
+                        resid=keep_ligand[1]
+                        if line[21] == chain_id and (keep_ligand[1] in line[22:27]):
+                            trimmed_pdb.write(line + '\n')
 
 # Convert amino acid code form 1 letter to 3 letter #
 dict_321 = {'CYS': 'C', 'ASP': 'D', 'SER': 'S', 'GLN': 'Q', 'LYS': 'K',
@@ -508,31 +508,32 @@ def cat_scores(out_dir, score_file_prefix):
 def get_best_model_and_score(score_file):
     ''' select model with lowest total_score '''
     top_n = 1
-    def tryFloat(v):
+    # Convert numbers to floats for parsing the score file; however some inputs are meant to be text (pdb names) so the input is returned either way
+    def convertFloat(v):
         try: return float(v)
         except ValueError: return v
 
     score_table = []
     score_table_keys = []
-    lines = open(score_file).read().split('\n')
-    score_table_keys = lines[1].split()[1:]  # ignoring first line, ignore first key (it just 'SCORE:')
-    if not score_table_keys: 
-        print('Score table is empty!')
-        sys.exit(1)
-    score_table_keys[-1] = 'decoy'  # changing description → decoy
-    lines = lines[:1] + sorted([l for l in lines[1:] if l and l.split()[0] == 'SCORE:' and l.split()[1] != 'total_score'], key=lambda l: float(l.split()[1]), )   # sorting lines by score, split based on total_score (l.split()[1] but skip the 1st line (Sequence:) and the header line ('total_score')
-    score_table = [ dict( list(zip(score_table_keys, list(map(tryFloat, l.split()[1:])))) )  for l in lines[1:]]
-    score_table_keys = score_table_keys[-1:] + score_table_keys[:-1]  # making 'decoy' the first column
-    best_model = [ m['decoy'] for m in score_table[:top_n] if type(m['decoy'])==str] 
-# FROM ROSIEv1:    best_model = [ m['decoy'] for m in score_table[:top_n] if type(m['decoy'])==str  and  '_mut_' in m['decoy'] ]  # need to check if '_mut_' is in decoy name to avoid rare cases when line is misformed (HPC writing issue?)
-    best_score = [ m['total_score'] for m in score_table[:top_n] if type(m['total_score'])==float ]
-    return best_model, best_score
+    with open( score_file ) as f:
+        lines = ( f.read() ).split('\n')
+        score_table_keys = lines[1].split()[1:]  # ignoring first line, ignore first key (it just 'SCORE:')
+        if not score_table_keys:
+            print('Score table is empty!')
+            sys.exit(1)
+        score_table_keys[-1] = 'decoy'  # changing description → decoy
+        lines = lines[:1] + sorted([l for l in lines[1:] if l and l.split()[0] == 'SCORE:' and l.split()[1] != 'total_score'], key=lambda l: float(l.split()[1]), )   # sorting lines by score, split based on total_score (l.split()[1] but skip the 1st line (Sequence:) and the header line ('total_score')
+        score_table = [ dict( list(zip(score_table_keys, list(map(convertFloat, l.split()[1:])))) )  for l in lines[1:]]
+        score_table_keys = score_table_keys[-1:] + score_table_keys[:-1]  # making 'decoy' the first column
+        best_model = [ m['decoy'] for m in score_table[:top_n] if type(m['decoy'])==str]
+    # FROM ROSIEv1:    best_model = [ m['decoy'] for m in score_table[:top_n] if type(m['decoy'])==str  and  '_mut_' in m['decoy'] ]  # we need to check if '_mut_' is in decoy name to avoid rare cases when line is misformed (HPC writing issue?)
+        best_score = [ m['total_score'] for m in score_table[:top_n] if type(m['total_score'])==float ]
+        return best_model, best_score
 
 ### Collect best models and create table of delta_scores (Total score of Mutant - WT)
 def analysis(mutation_list, resname, score_file_prefix):
     # Create directory for PDBs
-    start_dir = os.getcwd()
-    results_dir = '{}/results/'.format(start_dir)
+    results_dir = './results/'
     score_files_dir = '{}score_files/'.format(results_dir)
     pdb_models_dir = '{}pdb_models/'.format(results_dir)
     if not os.path.exists(results_dir):
@@ -558,7 +559,7 @@ def analysis(mutation_list, resname, score_file_prefix):
             ''' Determine the score of the WT residue at the given position '''
             WT_three_lett = current_pos[2]
             WT_one_lett = aa_3_to_1(WT_three_lett)
-            out_dir = '{}/{}/{}/'.format(start_dir, position, WT_one_lett)
+            out_dir = './{}/{}/'.format(position, WT_one_lett)
             # MPI generates multiple score files, so combine them into a single file
             cat_scores(out_dir, score_file_prefix) # This generates the file named 'mutant_scores.txt' for WT residue
             score_file = out_dir + 'mutant_scores.txt'
@@ -567,7 +568,7 @@ def analysis(mutation_list, resname, score_file_prefix):
             for mutation in resname:
                 assert mutation.isalnum()
                 '''Calculate delta scores and collect the best models'''
-                out_dir = '{}/{}/{}/'.format(start_dir, position, mutation)
+                out_dir = './{}/{}/'.format(position, mutation)
                 cat_scores(out_dir, score_file_prefix) # This generates the file named 'mutant_scores.txt'
                 score_file = out_dir + 'mutant_scores.txt'
                 mut_best_model, mut_best_score = get_best_model_and_score(score_file)
@@ -717,8 +718,7 @@ def annotate_heatmap(im, data_min, data_max, data=None, valfmt="{x:.2f}",
 
 def heatmap_gen(mutation_list, resname):
     # Generate a dict of lists that includes x-axis (aa position), y-axis (mutation residue name), and each resname (i.e. A,C,D...) contains the delta_score for each position
-    start_dir = os.getcwd()
-    results_dir = '{}/results/'.format(start_dir)
+    results_dir = './results/'
     mut_scores_dict={}
     mut_scores_dict.setdefault('x_axis', []) # X axis is a list of residue numbers
     for current_pos in mutation_list:
@@ -795,11 +795,10 @@ def check_path_validator(filename):
             print('Invalid path to file.')
             sys.exit(1)
 
-    start_dir = os.getcwd()
-    if os.path.isfile(start_dir + '/' + filename): 
+    if os.path.isfile('./' + filename): 
         pass
     else:
-        error = 'Error opening file: ' + start_dir + filename # This is a catch-all in case the PDB file doesn't exist
+        error = 'Error opening file: ./' + filename # This is a catch-all in case the PDB file doesn't exist
         print(error)
         sys.exit(1)
 
@@ -933,7 +932,8 @@ def trim(pdb_file, ligand_option):
 
     check_path_validator(pdb_file)
 
-    if not (ligand_option == 'null') :
+    if ligand_option != 'null' :
+
         error=input_position_validator(ligand_option)
         if error:
             error = 'The ligand position contains' + error
