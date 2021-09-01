@@ -1,0 +1,13 @@
+-nstruct 5
+-precompute_ig 1
+-symmetric_gly_tables true
+-inout:write_all_connect_info true
+-helical_bundle_predict:sequence_file inputs/seq.txt
+-in:file:native inputs/1b67.pdb
+-in:file:fullatom
+-helical_bundle_predict:psipred_file inputs/1b67.psipred_ss
+-helical_bundle_predict:num_steps_per_simulated_annealing_round_centroid 100
+-helical_bundle_predict:num_simulated_annealing_rounds_centroid 3
+-cyclic_peptide:MPI_processes_by_level 1 1 1 1
+-cyclic_peptide:MPI_batchsize_by_level 1 1 1
+-out:file:silent output.silent

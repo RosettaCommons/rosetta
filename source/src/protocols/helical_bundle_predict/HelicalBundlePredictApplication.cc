@@ -122,6 +122,9 @@ HelicalBundlePredictApplicationOptions::register_options() {
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::ignore_native_residues_in_rmsd );
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::ignore_prediction_residues_in_rmsd );
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::sequence_file );
+	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::psipred_file );
+	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::psipred_alpha_helix_prob_cutoff );
+	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::psipred_beta_strand_prob_cutoff );
 
 	//Options only used in MPI mode:
 #ifdef USEMPI //Options that are only needed in the MPI version:
@@ -166,6 +169,17 @@ HelicalBundlePredictApplicationOptions::initialize_from_options() {
 	signed long const fastrelax_rounds_int( basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::fast_relax_rounds ]() );
 	fullatom_fast_relax_rounds_ = ( fastrelax_rounds_int < 1 ? 1 : static_cast<core::Size>(fastrelax_rounds_int) );
 	fullatom_find_disulfides_ = basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::find_disulfides ]();
+
+	psipred_alpha_helix_prob_cutoff_ = basic::options::option[basic::options::OptionKeys::helical_bundle_predict::psipred_alpha_helix_prob_cutoff]();
+	psipred_beta_strand_prob_cutoff_ = basic::options::option[basic::options::OptionKeys::helical_bundle_predict::psipred_beta_strand_prob_cutoff]();
+	runtime_assert_string_msg(
+		psipred_alpha_helix_prob_cutoff_ >= 0.0 && psipred_alpha_helix_prob_cutoff_ <= 1.0,
+		errmsg + "The PsiPred alpha helix probability cutoff must be between 0.0 and 1.0."
+	);
+	runtime_assert_string_msg(
+		psipred_beta_strand_prob_cutoff_ >= 0.0 && psipred_beta_strand_prob_cutoff_ <= 1.0,
+		errmsg + "The PsiPred beta strand probability cutoff must be between 0.0 and 1.0."
+	);
 
 	if ( basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::ignore_native_residues_in_rmsd ].user() ) {
 		set_rmsd_residues_to_ignore_native( basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::ignore_native_residues_in_rmsd ]() );
@@ -213,7 +227,33 @@ void
 HelicalBundlePredictApplicationOptions::set_helix_assignment_file(
 	std::string const & file_in
 ) {
+	std::string const errmsg( "Error in HelicalBundlePredictApplicationOptions::set_helix_assignment_file(): " );
+	runtime_assert_string_msg(
+		!(file_in.empty()),
+		errmsg + "An empty filename was provided!"
+	);
+	runtime_assert_string_msg(
+		helix_assignment_file_.empty(),
+		errmsg + "Could not set helix assignment file, since one was already set."
+	);
 	helix_assignment_file_ = file_in;
+}
+
+/// @brief Set the file containing the PsiPred secondary structure predictions.
+void
+HelicalBundlePredictApplicationOptions::set_psipred_file(
+	std::string const & psipred_file_in
+) {
+	std::string const errmsg( "Error in HelicalBundlePredictApplicationOptions::set_psipred_file(): " );
+	runtime_assert_string_msg(
+		!(psipred_file_in.empty()),
+		errmsg + "An empty filename was provided!"
+	);
+	runtime_assert_string_msg(
+		psipred_assignment_file_.empty(),
+		errmsg + "Could not set PsiPred file, since one was already set."
+	);
+	psipred_assignment_file_ = psipred_file_in;
 }
 
 /// @brief Set the contents of the FASTA file.
@@ -246,7 +286,33 @@ void
 HelicalBundlePredictApplicationOptions::set_helix_assignment_file_contents(
 	std::string const & contents_in
 ) {
+	std::string const errmsg( "Error in HelicalBundlePredictApplicationOptions::set_helix_assignment_file_contents(): " );
+	runtime_assert_string_msg(
+		!contents_in.empty(),
+		errmsg + "The helix assignment file had nothing in it!"
+	);
+	runtime_assert_string_msg(
+		helix_assignment_file_contents_.empty(),
+		errmsg + "The contents of the helix assignment file have already been provided!"
+	);
 	helix_assignment_file_contents_ = contents_in;
+}
+
+/// @brief Set the contents of the PsiPred assignment file.
+void
+HelicalBundlePredictApplicationOptions::set_psipred_assignment_file_contents(
+	std::string const & contents_in
+) {
+	std::string const errmsg( "Error in HelicalBundlePredictApplicationOptions::set_psipred_assignment_file_contents(): " );
+	runtime_assert_string_msg(
+		!contents_in.empty(),
+		errmsg + "The PsiPred file had nothing in it!"
+	);
+	runtime_assert_string_msg(
+		psipred_assignment_file_contents_.empty(),
+		errmsg + "The contents of the PsiPred file have already been provided!"
+	);
+	psipred_assignment_file_contents_ = contents_in;
 }
 
 /// @brief Get the residues to ignore in the native pose when setting up the alignment for RMSD.
@@ -281,12 +347,28 @@ HelicalBundlePredictApplicationOptions::set_rmsd_residues_to_ignore_prediction(
 /// @details INVOLVES READS FROM DISK!  WARNING!
 void
 HelicalBundlePredictApplicationOptions::read_inputs() {
+	std::string const errmsg( "Error in HelicalBundlePredictApplicationOptions::read_inputs(): " );
+	runtime_assert_string_msg(
+		!( fasta_file_.empty() && sequence_file_.empty() ),
+		errmsg + "Either a FASTA filename or a sequence filename must be set before calling this function!"
+	);
+	runtime_assert_string_msg(
+		!( helix_assignment_file_.empty() && psipred_assignment_file_.empty() ),
+		errmsg + "Either a helix assignment filename or a PsiPred filename (or both) must be set before calling this function!"
+	);
+
 	if ( !fasta_file_.empty() ) {
 		read_fasta();
 	} else {
 		read_sequence_file();
 	}
-	read_helix_assignments();
+
+	if ( !helix_assignment_file_.empty() ) {
+		read_helix_assignments();
+	}
+	if ( !psipred_assignment_file_.empty() ) {
+		read_psipred_file();
+	}
 }
 
 ///////////////////////////////////// PRIVATE FUNCTIONS /////////////////////////////////////
@@ -342,11 +424,21 @@ HelicalBundlePredictApplicationOptions::clean_fasta_file_contents() {
 	TR << "Trimmed FASTA file contents to:\n" << fasta_file_contents_ << std::endl;
 }
 
-/// @brief Read a helix assignemnt file from disk.
+/// @brief Read a helix assignment file from disk.
+/// @details Uses the helix_assignment_file_ private member variable.  This must be non-empty.
 void
 HelicalBundlePredictApplicationOptions::read_helix_assignments() {
 	runtime_assert_string_msg( !helix_assignment_file_.empty(), "Error in protocols::helical_bundle_predict::HelicalBundlePredictApplication::read_helix_assignemnts(): An empty helix assignment file filename was provided." );
-	helix_assignment_file_contents_ = utility::file_contents( helix_assignment_file_ );
+	set_helix_assignment_file_contents( utility::file_contents( helix_assignment_file_ ) );
+}
+
+
+/// @brief Read a PsiPred file from disk.
+/// @details Uses the psipred_assignment_file_ private member variable.  This must be non-empty.
+void
+HelicalBundlePredictApplicationOptions::read_psipred_file() {
+	runtime_assert_string_msg( !psipred_assignment_file_.empty(), "Error in protocols::helical_bundle_predict::HelicalBundlePredictApplication::read_psipred_file(): An empty PsiPred file filename was provided." );
+	set_psipred_assignment_file_contents( utility::file_contents( psipred_assignment_file_ ) );
 }
 
 ///////////////////// HelicalBundlePredictApplication class /////////////////////
@@ -758,12 +850,27 @@ HelicalBundlePredictApplication::load_native_pose_from_disk() {
 void
 HelicalBundlePredictApplication::set_up_centroid_move_generator() {
 	static std::string const errmsg( "Error in HelicalBundlePredictApplicationOptions::set_up_move_generator(): " );
-	runtime_assert_string_msg( options_->helix_assignment_file_contents() != "", errmsg + "The helix assignment file contents are empty." );
+	runtime_assert_string_msg(
+		!(options_->helix_assignment_file_contents().empty() && options_->psipred_assignment_file_contents().empty()),
+		errmsg + "The helix assignment file contents and the PsiPred file contents are both empty.  One or the other (or both) must be loaded before running this protocol."
+	);
 	runtime_assert_string_msg( centroid_move_generator_ != nullptr, errmsg + "The centroid-mode helix/coil transition move generator was not properly created." );
 	HBP_HelixCoilMoveGeneratorOP move_generator( utility::pointer::dynamic_pointer_cast< HBP_HelixCoilMoveGenerator >(centroid_move_generator_) );
 	runtime_assert_string_msg( move_generator != nullptr, errmsg + "The centroid-mode helix/coil transition move generator is of the wrong type.  This should not be possible.  Please contact Vikram K. Mulligan (vmulligan@flatironinstitute.org)." );
 
-	move_generator->set_up_user_helix_assignments( options_->helix_assignment_file_contents() );
+	// Set helices from helix assignment file:
+	if ( !options_->helix_assignment_file_contents().empty() ) {
+		move_generator->set_up_user_helix_assignments( options_->helix_assignment_file_contents() );
+	}
+
+	// Additional setup from PsiPred file.  (Note that globals can only be set from helix assignment file):
+	if ( !options_->psipred_assignment_file_contents().empty() ) {
+		move_generator->set_up_user_helix_assignments_from_psipred_predictions(
+			options_->psipred_assignment_file_contents(),
+			options_->psipred_alpha_helix_prob_cutoff(),
+			options_->psipred_beta_strand_prob_cutoff()
+		);
+	}
 }
 
 /// @brief Construct a pose from the contents of a FASTA file.  The conformation is set to linear at this point.
@@ -962,9 +1069,3 @@ HelicalBundlePredictApplication::check_ignore_residues_reasonable(
 
 } //helical_bundle_predict
 } //protocols
-
-
-
-
-
-

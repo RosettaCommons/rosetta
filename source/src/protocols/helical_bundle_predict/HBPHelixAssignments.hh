@@ -286,6 +286,17 @@ public: //Functions
 	/// @details Warning!  Reads Crick params files from disk!
 	void initialize_from_file_contents( std::string const & file_contents );
 
+	/// @brief Set this object up from the contents of a PsiPred prediction file.
+	/// @details Warning!  Reads Crick params files from disk!
+	/// @note This can only set up left-handed alpha helix and beta strand secondary structures.  Globals
+	/// must be set by a prior call to HBPHelixAssignments::initialize_from_file_contents().
+	void
+	initialize_from_psipred_file_contents(
+		std::string const & psipred_file_contents,
+		core::Real const helix_prob_cutoff,
+		core::Real const strand_prob_cutoff
+	);
+
 	/// @brief Given a sequence index, determine whether it is in a helix.
 	bool is_in_helix( core::Size const sequence_index ) const;
 
@@ -384,6 +395,16 @@ private: //Functions
 	/// @brief Read BEGIN_HELIX...END_HELIX blocks in the file contents and set up local helix options.
 	/// @details Warning!  Triggers read from disk if Crick params file is set.
 	void initialize_helices_from_file_contents( std::string const &file_contents );
+
+	/// @brief Extract columns of a PsiPred .ss2 file that represent helix probabilities and strand probabilities.
+	/// @param[in] file_contents The contents of the PsiPred file.
+	/// @param[out] helix_probs A vector of helix probabilities, indexed by sequence position.  Cleared and populated by this function.
+	/// @param[out] strand_probs A vector of strand probabilities, indexed by sequence position.  Cleared and populated by this function.
+	void parse_psipred_file_contents(
+		std::string const & file_contents,
+		utility::vector1< core::Real > & helix_probs,
+		utility::vector1< core::Real > & strand_probs
+	) const;
 
 	/// @brief Add a helix and return an owning pointer to it.
 	/// @details Parameters are initialized from globals.

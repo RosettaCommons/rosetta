@@ -70,8 +70,17 @@ public: //Functions
 	void mark_move_accepted() const override;
 
 	/// @brief Given a helix assignment file's contents, set up the helix assignments.
-	/// @details Involves no read from disk.
+	/// @note Involves no read from disk.
 	void set_up_user_helix_assignments( std::string const &file_contents );
+
+	/// @brief Given PsiPred predictions, set up the helix assignments.
+	/// @details Can only set up left-handed alpha helix and beta strand predictions, of course.
+	/// @note Involves no read from disk.
+	void set_up_user_helix_assignments_from_psipred_predictions(
+		std::string const & psipred_file_contents,
+		core::Real const helix_prob_cutoff,
+		core::Real const strand_prob_cutoff
+	);
 
 private: //Functions
 

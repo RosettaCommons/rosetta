@@ -431,6 +431,94 @@ HBPHelixAssignments::initialize_from_file_contents(
 	initialize_helices_from_file_contents(file_contents);
 }
 
+/// @brief Set this object up from the contents of a PsiPred prediction file.
+/// @details Warning!  Reads Crick params files from disk!
+/// @note This can only set up left-handed alpha helix and beta strand secondary structures.  Globals
+/// must be set by a prior call to HBPHelixAssignments::initialize_from_file_contents().
+void
+HBPHelixAssignments::initialize_from_psipred_file_contents(
+	std::string const & psipred_file_contents,
+	core::Real const helix_prob_cutoff,
+	core::Real const strand_prob_cutoff
+) {
+	utility::vector1< core::Real > helix_probs, strand_probs;
+	parse_psipred_file_contents( psipred_file_contents, helix_probs, strand_probs );
+	debug_assert( helix_probs.size() == strand_probs.size() );
+
+	bool in_helix(false), in_strand(false);
+	HBPHelixOP curhelix, curstrand;
+	HBPHelixParametersOP curhelix_params, curstrand_params;
+
+	protocols::helical_bundle::BundleParametrizationCalculatorOP helix_calc(
+		utility::pointer::make_shared< protocols::helical_bundle::BundleParametrizationCalculator >( false )
+	);
+	helix_calc->init_from_file( "alpha_helix.crick_params" );
+	protocols::helical_bundle::BundleParametrizationCalculatorOP strand_calc(
+		utility::pointer::make_shared< protocols::helical_bundle::BundleParametrizationCalculator >( false )
+	);
+	strand_calc->init_from_file( "beta_strand.crick_params" );
+
+	std::ostringstream helix_summary, strand_summary;
+
+	for ( core::Size i(1), imax(helix_probs.size()); i<=imax; ++i ) {
+		if ( in_helix == false && helix_probs[i] >= helix_prob_cutoff ) {
+			in_helix = true;
+			curhelix = add_helix();
+			curhelix_params = curhelix->parameters();
+			curhelix_params->set_calculator( helix_calc );
+			curhelix->set_crick_params_filename("alpha_helix.crick_params");
+			curhelix->set_start_position(i);
+			if ( TR.visible() ) {
+				if ( !helix_summary.str().empty() ) {
+					helix_summary << ", ";
+				}
+				helix_summary << i;
+			}
+		} else if ( in_helix == true && helix_probs[i] < helix_prob_cutoff ) {
+			in_helix = false;
+			curhelix->set_end_position(i-1);
+			if ( TR.visible() ) {
+				helix_summary << "-" << i-1;
+			}
+		}
+
+		if ( in_strand == false && strand_probs[i] >= strand_prob_cutoff ) {
+			in_strand = true;
+			curstrand = add_helix();
+			curstrand_params = curstrand->parameters();
+			curstrand_params->set_calculator( strand_calc );
+			curstrand->set_crick_params_filename("beta_strand.crick_params");
+			curstrand->set_start_position(i);
+			if ( TR.visible() ) {
+				if ( !strand_summary.str().empty() ) {
+					strand_summary << ", ";
+				}
+				strand_summary << i;
+			}
+		} else if ( in_strand == true && strand_probs[i] < strand_prob_cutoff ) {
+			in_strand = false;
+			curstrand->set_end_position(i-1);
+			if ( TR.visible() ) {
+				strand_summary << "-" << i-1;
+			}
+		}
+	}
+
+	if ( TR.visible() ) {
+		if ( helix_summary.str().empty() ) {
+			TR << "No alpha-helical stretches found in PsiPred predictions." << std::endl;
+		} else {
+			TR << "Configured the following alpha-helical stretches from PsiPred predictions: " << helix_summary.str() << std::endl;
+		}
+
+		if ( strand_summary.str().empty() ) {
+			TR << "No beta-strand stretches found in PsiPred predictions." << std::endl;
+		} else {
+			TR << "Configured the following beta-strand stretches from PsiPred predictions: " << strand_summary.str() << std::endl;
+		}
+	}
+}
+
 /// @brief Given a sequence index, determine whether it is in a helix.
 bool
 HBPHelixAssignments::is_in_helix(
@@ -1109,6 +1197,51 @@ HBPHelixAssignments::initialize_helices_from_file_contents(
 			curhelix->set_crick_params_filename( crick_params_filename );
 		} // Else, this remains a default calculator that was cloned from the global calculator when the helix was created, above.
 	}
+}
+
+/// @brief Extract columns of a PsiPred .ss2 file that represent helix probabilities and strand probabilities.
+/// @param[in] file_contents The contents of the PsiPred file.
+/// @param[out] helix_probs A vector of helix probabilities, indexed by sequence position.  Cleared and populated by this function.
+/// @param[out] strand_probs A vector of strand probabilities, indexed by sequence position.  Cleared and populated by this function.
+void
+HBPHelixAssignments::parse_psipred_file_contents(
+	std::string const & file_contents,
+	utility::vector1< core::Real > & helix_probs,
+	utility::vector1< core::Real > & strand_probs
+) const {
+	helix_probs.clear();
+	strand_probs.clear();
+
+	std::string const errmsg( "Error in HBPHelixAssignments::parse_psipred_file_contents(): " );
+
+	utility::vector1< std::string > lines( utility::split_by_newlines(file_contents) );
+	std::string dummy1, dummy2, dummy3, dummy4;
+	core::Real helix_prob, strand_prob;
+
+	for ( auto const & line : lines ) {
+		std::string const linestripped( utility::stripped_whitespace( line ) );
+		if ( linestripped.empty() || linestripped[0] == '#' ) {
+			continue; //Skip empty lines and comment lines.
+		}
+		std::istringstream linestream( linestripped );
+		linestream >> dummy1 >> dummy2 >> dummy3 >> dummy4 >> helix_prob >> strand_prob;
+		runtime_assert_string_msg(
+			!(linestream.bad() || linestream.fail()),
+			errmsg + "Could not parse line \"" + linestripped + "\" in PsiPred file!"
+		);
+		runtime_assert_string_msg(
+			helix_prob >= 0.0 && helix_prob <= 1.0,
+			errmsg + "Extracted a value of " + std::to_string(helix_prob) + " for helix probability in line \"" + linestripped + "\" in PsiPred file.  Helix probabilities must be between 0.0 and 1.0."
+		);
+		runtime_assert_string_msg(
+			strand_prob >= 0.0 && strand_prob <= 1.0,
+			errmsg + "Extracted a value of " + std::to_string(strand_prob) + " for strand probability in line \"" + linestripped + "\" in PsiPred file.  Strand probabilities must be between 0.0 and 1.0."
+		);
+		helix_probs.push_back(helix_prob);
+		strand_probs.push_back(strand_prob);
+	}
+	debug_assert(helix_probs.size() == strand_probs.size());
+	TR << "Read " << helix_probs.size() << " helix and strand probabilities from PsiPred file." << std::endl;
 }
 
 /// @brief Add a helix and return an owning pointer to it.

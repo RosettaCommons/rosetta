@@ -67,7 +67,15 @@ get_options_from_options_collection(
 	if ( option_collection[in::file::fasta].user() ) {
 		runtime_assert_string_msg( option_collection[in::file::fasta]().size() == 1, errmsg + "The user must provide one and only one sequence in FASTA format using the \"-in:file:fasta\" commandline flag." );
 	}
-	runtime_assert_string_msg( option_collection[helical_bundle_predict::helix_assignment_file].user(), errmsg + "The user must provide helix assignments using the \"-helical_bundle_predict:helix_assignment_file\" commandline flag." );
+	runtime_assert_string_msg(
+		option_collection[helical_bundle_predict::helix_assignment_file].user() ||
+		option_collection[helical_bundle_predict::psipred_file].user(),
+		errmsg + "The user must provide helix assignments or a PsiPred file using the \"-helical_bundle_predict:helix_assignment_file\" commandline flag or the \"-helical_bundle_predict:psipred_file\" commandline flag, respectively."
+	);
+	if ( ( !option_collection[helical_bundle_predict::helix_assignment_file].user() ) &&
+			(option_collection[helical_bundle_predict::psipred_file].user()) ) {
+		TR.Warning << "The \"-helical_bundle_predict:psipred_file\" flag was provided without the \"-helical_bundle_predict::helix_assignment_file\" flag.  This means that no global bundle parameters can be configured.  Are you sure that this was intended?" << std::endl;
+	}
 
 	if ( option_collection[in::file::fasta].user() ) {
 		options.set_fasta_file( option_collection[in::file::fasta]()[1] );
@@ -75,9 +83,15 @@ get_options_from_options_collection(
 		runtime_assert( option_collection[helical_bundle_predict::sequence_file].user() ); //Should be true at this point; checked above.
 		options.set_sequence_file( option_collection[helical_bundle_predict::sequence_file]() );
 	}
-	options.set_helix_assignment_file( option_collection[helical_bundle_predict::helix_assignment_file]() );
 
-	// The following triggers read from disk.  Modify tihs for multi-threaded or multi-process processing:
+	if ( option_collection[helical_bundle_predict::helix_assignment_file].user() ) {
+		options.set_helix_assignment_file( option_collection[helical_bundle_predict::helix_assignment_file]() );
+	}
+	if ( option_collection[helical_bundle_predict::psipred_file].user() ) {
+		options.set_psipred_file( option_collection[helical_bundle_predict::psipred_file]() );
+	}
+
+	// The following triggers read from disk.  Modify this for multi-threaded or multi-process processing:
 	options.read_inputs();
 }
 

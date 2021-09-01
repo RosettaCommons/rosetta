@@ -74,6 +74,9 @@ public: //Member functions
 	/// @brief Set the file containing the helix assignments.
 	void set_helix_assignment_file( std::string const & file_in );
 
+	/// @brief Set the file containing the PsiPred secondary structure predictions.
+	void set_psipred_file( std::string const & psipred_file_in );
+
 	/// @brief Set the contents of the FASTA file.
 	void set_fasta_file_contents( std::string const & contents_in );
 
@@ -82,6 +85,9 @@ public: //Member functions
 
 	/// @brief Set the contents of the helix assignment file.
 	void set_helix_assignment_file_contents( std::string const & contents_in );
+
+	/// @brief Set the contents of the PsiPred assignment file.
+	void set_psipred_assignment_file_contents( std::string const & contents_in );
 
 	/// @brief Get the residues to ignore in the native pose when setting up the alignment for RMSD.
 	/// @details Throws errors if any are zero or negative.
@@ -97,6 +103,9 @@ public: //Member functions
 	/// @brief Get the file containing the helix assignments.
 	inline std::string const & helix_assignment_file() const { return helix_assignment_file_; }
 
+	/// @brief Get the file containing PsiPred predictions.
+	inline std::string const & psipred_assignment_file() const { return psipred_assignment_file_; }
+
 	/// @brief Get the contents of the FASTA file.
 	inline std::string const & fasta_file_contents() const { return fasta_file_contents_; }
 
@@ -105,6 +114,9 @@ public: //Member functions
 
 	/// @brief Get the contents of the helix assignment file.
 	inline std::string const & helix_assignment_file_contents() const { return helix_assignment_file_contents_; }
+
+	/// @brief Get the contents of the PsiPred assignment file.
+	inline std::string const & psipred_assignment_file_contents() const { return psipred_assignment_file_contents_; }
 
 	/// @brief Given input filenames, read the files.
 	/// @details INVOLVES READS FROM DISK!  WARNING!
@@ -143,6 +155,12 @@ public: //Member functions
 	/// @brief Get the residues to ignore in the generated poses when setting up the alignment for RMSD.
 	inline utility::vector1< core::Size > const & rmsd_residues_to_ignore_prediction() const { return rmsd_residues_to_ignore_prediction_; }
 
+	/// @brief Get the probability cutoff above which a position will be assigned to being left-handed alpha helix.
+	inline core::Real psipred_alpha_helix_prob_cutoff() const { return psipred_alpha_helix_prob_cutoff_; }
+
+	/// @brief Get the probability cutoff above which a position will be assigned to being beta strand.
+	inline core::Real psipred_beta_strand_prob_cutoff() const { return psipred_beta_strand_prob_cutoff_; }
+
 private: //Functions
 
 	/// @brief Read a FASTA file from disk.
@@ -158,8 +176,13 @@ private: //Functions
 	/// @brief Given FASTA file contents, remove comment lines.
 	void clean_fasta_file_contents();
 
-	/// @brief Read a helix assignemnt file from disk.
+	/// @brief Read a helix assignment file from disk.
+	/// @details Uses the helix_assignment_file_ private member variable.  This must be non-empty.
 	void read_helix_assignments();
+
+	/// @brief Read a PsiPred file from disk.
+	/// @details Uses the psipred_assignment_file_ private member variable.  This must be non-empty.
+	void read_psipred_file();
 
 private: //Variables
 
@@ -175,6 +198,10 @@ private: //Variables
 	/// @brief The file containing the helix assignments.
 	std::string helix_assignment_file_;
 
+	/// @brief The file containing the PsiPred prediction of secondary structure.
+	/// @details This is an alternative to helix_assigment_file_  being set.
+	std::string psipred_assignment_file_;
+
 	/// @brief The contents of the FASTA file.
 	std::string fasta_file_contents_;
 
@@ -183,6 +210,16 @@ private: //Variables
 
 	/// @brief The contents of the helix assignment file.
 	std::string helix_assignment_file_contents_;
+
+	/// @brief The contents of the PsiPred prediction file.
+	/// @details This is an alternative to helix_assignment_file_contents_  being set.
+	std::string psipred_assignment_file_contents_;
+
+	/// @brief The probability cutoff, above which a position will be assigned to being left-handed alpha helical.
+	core::Real psipred_alpha_helix_prob_cutoff_ = 0.75;
+
+	/// @brief The probability cutoff, above which a position will be assigned to being beta strand.
+	core::Real psipred_beta_strand_prob_cutoff_ = 0.75;
 
 	/// @brief Number of simulated annealing rounds in centroid mode.
 	core::Size num_simulated_annealing_rounds_centroid_=3;

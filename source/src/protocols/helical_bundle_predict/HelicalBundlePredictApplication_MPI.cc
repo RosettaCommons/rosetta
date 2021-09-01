@@ -125,7 +125,17 @@ HelicalBundlePredictApplication_MPI::get_protocol_specific_settings() {
 	centroid_move_generator_ = HelicalBundlePredictApplication::create_centroid_move_generator(); //Currently, makes a HBP_HelixCoilMoveGenerator.  Creator function is invoked since I might have different types in the future.
 	HBP_HelixCoilMoveGeneratorOP helix_coil_generator( utility::pointer::dynamic_pointer_cast< HBP_HelixCoilMoveGenerator >( centroid_move_generator_ ) );
 	runtime_assert( helix_coil_generator != nullptr );
-	helix_coil_generator->set_up_user_helix_assignments( options_->helix_assignment_file_contents() );
+
+	if( !options_->helix_assignment_file_contents().empty() ) {
+		helix_coil_generator->set_up_user_helix_assignments( options_->helix_assignment_file_contents() );
+	}
+	if( !options_->psipred_assignment_file_contents().empty() ) {
+		helix_coil_generator->set_up_user_helix_assignments_from_psipred_predictions(
+			options_->psipred_assignment_file_contents(),
+			options_->psipred_alpha_helix_prob_cutoff(),
+			options_->psipred_beta_strand_prob_cutoff()
+		);
+	}
 }
 
 /// @brief Create an instance of the appropriate app class, and carry out N jobs on a single process.

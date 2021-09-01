@@ -118,13 +118,26 @@ HBP_HelixCoilMoveGenerator::mark_move_accepted() const {
 
 
 /// @brief Given a helix assignment file's contents, set up the helix assignments.
-/// @details Involves no read from disk.
+/// @note Involves no read from disk.
 void
 HBP_HelixCoilMoveGenerator::set_up_user_helix_assignments(
 	std::string const &file_contents
 ) {
 	user_helix_assignments_.clear();
 	user_helix_assignments_.initialize_from_file_contents( file_contents );
+}
+
+/// @brief Given PsiPred predictions, set up the helix assignments.
+/// @details Can only set up left-handed alpha helix and beta strand predictions, of course.
+/// @note Involves no read from disk.
+void
+HBP_HelixCoilMoveGenerator::set_up_user_helix_assignments_from_psipred_predictions(
+	std::string const & psipred_file_contents,
+	core::Real const helix_prob_cutoff,
+	core::Real const strand_prob_cutoff
+) {
+	user_helix_assignments_.clear();
+	user_helix_assignments_.initialize_from_psipred_file_contents( psipred_file_contents, helix_prob_cutoff, strand_prob_cutoff );
 }
 
 //////////////////////////////////////////// PRIVATE METHODS ////////////////////////////////////////////
