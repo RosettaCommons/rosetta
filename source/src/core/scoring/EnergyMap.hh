@@ -26,6 +26,8 @@
 #include <core/types.hh>
 #include <utility/numbers.hh>
 
+#include <array>
+
 namespace core {
 namespace scoring {
 
@@ -40,9 +42,10 @@ namespace scoring {
 ///     EMapVector.zero
 class EMapVector
 {
+	using MemberType = std::array< Real, n_score_types >;
 public:
-	typedef Real const * const_iterator;
-	typedef Real* iterator;
+	using const_iterator = MemberType::const_iterator;
+	using iterator = MemberType::iterator;
 
 public:
 	/// @brief default constructor, initializes the energies to 0
@@ -51,27 +54,14 @@ public:
 		clear();
 	}
 
-	EMapVector( EMapVector const & src ) {
-		for ( Size ii = 0; ii < n_score_types; ++ii ) {
-			map_[ ii ] = src.map_[ ii ];
-		}
-	}
-
-	EMapVector & operator = ( EMapVector const & rhs ) {
-		if ( &rhs == this ) return *this;
-		for ( Size ii = 0; ii < n_score_types; ++ii ) {
-			map_[ ii ] = rhs.map_[ ii ];
-		}
-		return *this;
-	}
 	/// @brief const-iterator to the begining of the vector of energies
-	const_iterator begin() const { return &(map_[0]);}
+	const_iterator begin() const { return map_.cbegin();}
 	/// @brief const-iterator to the end of the vector of energies
-	const_iterator end() const { return ( &(map_[0]) + n_score_types ); }
+	const_iterator end() const { return map_.cend(); }
 	/// @brief non-const-iterator to the begining of the vector of energies
-	iterator begin() { return &(map_[0]);}
+	iterator begin() { return map_.begin(); }
 	/// @brief non-const-iterator to the end of the vector of energies
-	iterator end() { return ( &(map_[0]) + n_score_types ); }
+	iterator end() { return map_.end(); }
 
 	/// @brief Returns the value for ScoreType  <st>
 	///
@@ -146,10 +136,7 @@ public:
 	void
 	clear()
 	{
-		for ( Real & ii : map_ ) {
-			ii = 0;
-		}
-		//memset( map_, 0.0, n_score_types );
+		map_.fill( 0 );
 	}
 
 	/// @brief Returns the dot product of this object with EMapVector  <src>
@@ -249,20 +236,14 @@ public:
 	bool
 	operator == ( EMapVector const & src ) const
 	{
-		for ( int ii = 0; ii < n_score_types; ++ii ) {
-			if ( map_[ii] != src.map_[ii] ) return false;
-		}
-		return true;
+		return map_ == src.map_;
 	}
 
 	/// @brief != operator for comparing two energy maps element by element
 	bool
 	operator != ( EMapVector const & src ) const
 	{
-		for ( int ii = 0; ii < n_score_types; ++ii ) {
-			if ( map_[ii] != src.map_[ii] ) return true;
-		}
-		return false;
+		return map_ != src.map_;
 	}
 
 
@@ -324,8 +305,9 @@ public:
 	/// @brief Check that there aren't any non-finite (inf, NaN) entries.
 	bool
 	is_finite() {
-		for ( int ii = 1; ii <= n_score_types; ++ii ) {
-			Real const val( operator[]( ScoreType(ii) ) );
+		for ( Real const val: map_ ) {
+			// We check for zero first here, because we expect that most entries in the map are likely
+			// to be zero, and checking for zero is much faster than doing the finite check.
 			if ( val != 0.0 && ! utility::isfinite( val ) ) {
 				return false;
 			}
@@ -371,7 +353,7 @@ public:
 private:
 
 	/// EMapVector is an array. EMapVector[score_type] = value. Can be used for storing either energy or weight for each score_type.
-	Real map_[ n_score_types ];
+	MemberType map_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

@@ -668,7 +668,7 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 	silent_energies_.push_back( score_energy );
 	for ( auto emap_iter = emap.begin(), wts_iter = wts.begin();
 			emap_iter != emap.end() && wts_iter!= wts.end();
-			++emap_iter && ++wts_iter
+			++emap_iter, ++wts_iter
 			) {
 
 		// only grab scores that have non-zero weights.

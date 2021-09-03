@@ -837,7 +837,7 @@ core::Real calculate_binding_energy(
 	// Iterate through the score terms for the bound and unbound structures
 	for ( emap_bound_iter = emap_bound.begin(), wts_iter = wts.begin(), emap_unbound_iter = emap_unbound.begin();
 			emap_bound_iter != emap_bound.end() && wts_iter != wts.end() && emap_unbound_iter != emap_unbound.end();
-			++emap_bound_iter && ++wts_iter && ++emap_unbound_iter ) {
+			++emap_bound_iter, ++wts_iter, ++emap_unbound_iter ) {
 		if ( *wts_iter != 0.0 ) { // get terms w/ non-zero wts
 			core::scoring::ScoreType sc_type
 				= core::scoring::ScoreType( emap_bound_iter - emap_bound.begin() + 1 );

@@ -26,6 +26,7 @@
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
+#include <cereal/types/array.hpp>
 #endif // SERIALIZATION
 
 

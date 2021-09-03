@@ -444,16 +444,6 @@ settings = {
     },
 
     "gcc, 11.1" : {
-        "appends" : {
-            "flags" : {
-                "cxx" : [
-                    #GCC 11's built-in replacements for memcpy and memmove seem to be causing problems
-                    #with the operator = of EnergyMap, which doesn't make much sense.  The STL equivalents
-                    #seem fine, though.  We should revisit this flag and take it out if/when possible, however.
-                    "fno-builtin",
-                ],
-            },
-        },
         "removes" : {
             "flags" : {
                 "cxx" : [
