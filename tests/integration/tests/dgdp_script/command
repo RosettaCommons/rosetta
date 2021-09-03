@@ -46,7 +46,14 @@ cd %(workdir)s
 	--run_locally \
 	2>&1 \
 	| egrep -vf ../../ignore_list \
+	| egrep -v "Port .* is already in use." \
+	| egrep -v "Hosting the HTTP server on port .* instead" \
 		> run_cryo_dock_and_assemble.log
+
+for logfile in $(find dgdp_out -name '*.log'); do
+	egrep -vf ../../ignore_list ${logfile} > ${logfile}.filt
+	mv ${logfile} ${logfile}.ignore
+done
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

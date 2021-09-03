@@ -27,6 +27,13 @@ except ModuleNotFoundError:
     print("Warning: Unable to run cryo_dock_and_assemble without dask_jobqueue installed")
     sys.exit()
 
+try:
+    create_task = asyncio.create_task
+except AttributeError:
+    # For pre-3.7 versions: (https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task)
+    create_task = asyncio.ensure_future
+
+
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from distribution import run_subprocess
 
@@ -591,7 +598,7 @@ async def dgdp_call_1(options: Dict[str, Any], config: DGDPConfig, client: Clien
 
     dgdp_tasks = []
     for pdb in options["in:file:s"]:
-        dgdp_tasks.append(asyncio.create_task(run_dgdp_on_pdb(pdb, options, config, client)))
+        dgdp_tasks.append(create_task(run_dgdp_on_pdb(pdb, options, config, client)))
     all_final_result_files = await asyncio.gather(*dgdp_tasks)
     print("running cluster silent")
     return list(all_final_result_files)
@@ -646,7 +653,7 @@ async def setup_docking_jobs_2(docking_dict: Dict[str, Any], config: DGDPConfig,
         c_conf.outdir = current_output_dir
         c_conf.set_basic_flags(current_map_options)
 
-        per_map_tasks.append(asyncio.create_task(dgdp_call_1(current_map_options, c_conf, client)))
+        per_map_tasks.append(create_task(dgdp_call_1(current_map_options, c_conf, client)))
     per_map_tasks = await asyncio.gather(*per_map_tasks)
     all_result_files = [y for x in per_map_tasks for y in x]
 
@@ -678,7 +685,7 @@ async def setup_docking_jobs_1(docking_dict: Dict[str, Any], config: DGDPConfig,
         for j, pdb_fn in enumerate(pdb_group):
             basename = os.path.basename(pdb_fn)
             shutil.copyfile(pdb_fn, os.path.join(output_pdb_directory, f"{i:02}_{j:02}_{basename}"))
-        jobs.append(asyncio.create_task(setup_docking_jobs_2(docking_dict, config, i, client)))
+        jobs.append(create_task(setup_docking_jobs_2(docking_dict, config, i, client)))
     jobs = await asyncio.gather(*jobs)
     return jobs
 
