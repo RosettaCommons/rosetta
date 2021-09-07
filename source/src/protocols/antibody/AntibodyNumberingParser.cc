@@ -65,6 +65,9 @@ AntibodyNumberingParser::get_antibody_numbering(AntibodyNumberingSchemeEnum cons
 
 	AntibodyNumbering numbering;
 
+	if ( numbering_scheme == IMGT_Scheme ) {
+		TR.Warning << "Rosetta may handle IMGT numbering incorrectly, particularly with long CDRs." << std::endl;
+	}
 
 	numbering.numbering_scheme = numbering_scheme;
 	numbering.cdr_definition = cdr_definition;
