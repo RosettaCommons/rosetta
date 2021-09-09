@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_filters/ILeastNativeLike9merFilterCreator.hh
+/// @file   protocols/simple_filters/IWorst9merFilterCreator.hh
 /// @brief  FilterCreator for the best fragment at worst position.
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_filters_LeastNativeLike9merFilterCreator_hh
-#define INCLUDED_protocols_simple_filters_LeastNativeLike9merFilterCreator_hh
+#ifndef INCLUDED_protocols_simple_filters_Worst9merFilterCreator_hh
+#define INCLUDED_protocols_simple_filters_Worst9merFilterCreator_hh
 
 
 // Package Headers
@@ -26,7 +26,7 @@
 namespace protocols {
 namespace simple_filters {
 
-class LeastNativeLike9merFilterCreator : public protocols::filters::FilterCreator
+class Worst9merFilterCreator : public protocols::filters::FilterCreator
 {
 public:
 	protocols::filters::FilterOP create_filter() const override;

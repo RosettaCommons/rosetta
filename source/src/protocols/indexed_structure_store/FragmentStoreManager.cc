@@ -14,20 +14,30 @@
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
 
+#include <boost/algorithm/string.hpp>
+
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/indexed_structure_store.OptionKeys.gen.hh>
 
+#include <core/sequence/SSManager.hh>
+
 #include <protocols/indexed_structure_store/FragmentStoreManager.hh>
 #include <protocols/indexed_structure_store/FragmentStore.hh>
 #include <protocols/indexed_structure_store/FragmentLookup.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/StructureStore.hh>
+#include <protocols/indexed_structure_store/StructureStoreManager.hh>
 
 // H5-based backend declarations are guarded by #ifdef USEHDF5
+#include <protocols/indexed_structure_store/H5FragmentStoreBackend.hh>
 #include <protocols/indexed_structure_store/BinaryFragmentStoreBackend.hh>
 
 #include <utility/vector1.hh>
-
+#include <array>
+#include <chrono>
+#include <queue>
 namespace protocols {
 namespace indexed_structure_store {
 
@@ -250,6 +260,27 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 	}
 }
 
+//The SSHashedFragmentStore is an instance of the grouped_fragment_store.
+SSHashedFragmentStoreOP FragmentStoreManager::SSHashedFragmentStore( std::string store_path,std::string store_format, std::string store_compression)
+{
+	if ( store_path == "" && SSHashedFragmentStoreMap_.size()>0 ) {
+		std::string default_path = SSHashedFragmentStoreMap_.begin()->first;
+		if ( store_path != default_path ) { //Do not want to print out if the store_path is "" and the first_path is "" because this person is using flags
+			TR << "Auto choosing fragment store :" << store_path<< std::endl;
+		}
+		return(SSHashedFragmentStoreMap_.begin()->second);
+	}
+	SSHashedFragmentStoreMap::const_iterator iter(SSHashedFragmentStoreMap_.find(store_path));
+	if ( iter != SSHashedFragmentStoreMap_.end() ) {
+		return(iter->second);
+	} else {
+		protocols::indexed_structure_store::SSHashedFragmentStoreOP newHashedFragmentStoreOP( new protocols::indexed_structure_store::SSHashedFragmentStore(store_path,store_format,store_compression) );
+		SSHashedFragmentStoreMap_[store_path]=newHashedFragmentStoreOP;
+		return(newHashedFragmentStoreOP);
+	}
+}
+
+
 
 std::string FragmentStoreManager::resolve_store_path(std::string target_path)
 {
@@ -273,6 +304,201 @@ std::string FragmentStoreManager::resolve_store_path(std::string target_path)
 	}
 
 	return "";
+}
+
+std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::find_previously_loaded_fragmentStore(std::string const & fragment_store_path){
+	if ( fragment_store_path.size()<=1 && (grouped_fragment_map_.begin() != grouped_fragment_map_.end()) ) {
+		return(grouped_fragment_map_.begin()->second);
+	} else {
+		std::map<numeric::Size, FragmentStoreOP> empty;
+		return empty;
+	}
+
+}
+
+
+
+std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_and_hash_fragmentStore(std::string const & fragment_store_path, std::string const & fragment_store_compression, numeric::Size const & fragment_size){
+	using namespace numeric;
+	GroupedFragmentMap::const_iterator iter(grouped_fragment_map_.find(fragment_store_path));
+	if ( iter != grouped_fragment_map_.end() ) {
+		return(iter->second);
+	} else {
+		std::map<numeric::Size, FragmentStoreOP> hashed_fragmentStore;
+		core::sequence::SSManager SM;
+		auto start_time = std::chrono::high_resolution_clock::now();
+		StructureStoreOP structure_store = StructureStoreManager::get_instance()->load_structure_store(fragment_store_path);
+		//Step 1:  Loop through structure store and figure how many fragments of each dssp type there is
+		std::vector<numeric::Size> ss_vector;
+		auto post_disk_load_time = std::chrono::high_resolution_clock::now();
+		std::map<numeric::Size, std::vector<numeric::Size> > dssp_fragCt = get_dssp_fragCt(structure_store,fragment_store_compression,fragment_size,ss_vector);
+		auto post_dssp_time = std::chrono::high_resolution_clock::now();
+		//Step 2: For each SS trype
+		//create the space
+		std::vector<std::string> atoms;
+		atoms.push_back("CA");
+		FragmentSpecification frag_spec(9,atoms);
+		for ( auto& iter: dssp_fragCt ) {
+			FragmentStoreOP fragment_store = utility::pointer::make_shared< FragmentStore >(frag_spec, iter.second.size() );
+			//for speed predeclare the space for each element in fragment_store
+			Size num_fragments = iter.second.size();
+			std::vector < std::vector<Real> > phi_v;
+			std::vector < std::vector<Real> > psi_v;
+			std::vector < std::vector<Real> > omega_v;
+			std::vector < std::vector<Real> > cen_v;
+			std::vector< std::string> aa_v;
+			std::vector< std::string> name_v;
+			phi_v.reserve(num_fragments);
+			psi_v.reserve(num_fragments);
+			omega_v.reserve(num_fragments);
+			cen_v.reserve(num_fragments);
+			aa_v.reserve(num_fragments);
+			name_v.reserve(num_fragments);
+			/*phi_v.resize(num_fragments, std::vector<Real>(fragment_size));
+			psi_v.resize(num_fragments, std::vector<Real>(fragment_size));
+			omega_v.resize(num_fragments, std::vector<Real>(fragment_size));
+			cen_v.resize(num_fragments, std::vector<Real>(fragment_size));
+			aa_v.resize(num_fragments, std::string(fragment_size,'x'));
+			name_v.resize(num_fragments, std::string(5,'x'));
+			*/
+			/*
+			aa_v.resize(num_fragments);
+			name_v.resize(num_fragments);
+			for(Size ii=0; ii<num_fragments; ++ii){
+			aa_v[ii]=std::string(fragment_size,'x');
+			name_v[ii]=std::string(5,'x');
+			}*/
+			fragment_store->realVector_groups.insert(std::pair<std::string,std::vector < std::vector<Real> > > ("phi",phi_v));
+			fragment_store->realVector_groups.insert(std::pair<std::string,std::vector < std::vector<Real> > > ("psi",psi_v));
+			fragment_store->realVector_groups.insert(std::pair<std::string,std::vector < std::vector<Real> > > ("omega",omega_v));
+			fragment_store->realVector_groups.insert(std::pair<std::string,std::vector < std::vector<Real> > > ("cen",cen_v));
+			fragment_store->string_groups.insert(std::pair<std::string,std::vector< std::string> > ("aa",aa_v));
+			fragment_store->string_groups.insert(std::pair<std::string,std::vector< std::string> > ("name",name_v));
+			fragment_store->hash_id = iter.first;
+			hashed_fragmentStore.insert(std::pair<core::Size,FragmentStoreOP> (iter.first, fragment_store));
+
+		}
+		//load_db----
+		//atom coordinates of CA
+		//ss_bin
+		//phi,psi,omega
+		//cen
+		//aa
+		//fragment threshold distance is initialized & set within the movers
+		//name (5 char)
+		for ( auto& iter: dssp_fragCt ) {
+			numeric::Size frag_index = 0; //The fragment_coordinates are initialized to the proper size. Would this be smart to do for all of my datatypes.
+			for ( auto & iter_fragmentStore: iter.second ) {
+				uint32_t name_id = structure_store->residue_entries[iter_fragmentStore].structure_id-1;
+				std::string name_s= structure_store->structure_entries[name_id].name;
+				std::vector<char> aa_v;
+				std::vector<Real> phi_v;
+				std::vector<Real> psi_v;
+				std::vector<Real> omega_v;
+				std::vector<Real> cen_v;
+				for ( ndarray::Size ii=0; ii < fragment_size; ++ii ) {
+					Real phi = structure_store->residue_entries[iter_fragmentStore+ii].bb.phi;
+					Real psi = structure_store->residue_entries[iter_fragmentStore+ii].bb.psi;
+					Real omega = structure_store->residue_entries[iter_fragmentStore+ii].bb.omega;
+					Real cen = structure_store->residue_entries[iter_fragmentStore+ii].cen;
+					char aa = structure_store->residue_entries[iter_fragmentStore+ii].sc.aa;
+					std::array<float, 3> CA = structure_store->residue_entries[iter_fragmentStore+ii].orient.CA;
+					phi_v.push_back(phi);
+					psi_v.push_back(psi);
+					omega_v.push_back(omega);
+					cen_v.push_back(cen);
+					aa_v.push_back(aa);
+					numeric::xyzVector <numeric::Real> CA_xyz(CA[0],CA[1],CA[2]);
+					hashed_fragmentStore[iter.first]->fragment_coordinates[frag_index*fragment_size+ii]=CA_xyz;
+				}
+				hashed_fragmentStore[iter.first]->realVector_groups["phi"].push_back(phi_v);
+				hashed_fragmentStore[iter.first]->realVector_groups["psi"].push_back(psi_v);
+				hashed_fragmentStore[iter.first]->realVector_groups["omega"].push_back(omega_v);
+				hashed_fragmentStore[iter.first]->realVector_groups["cen"].push_back(cen_v);
+				std::string aa_s(aa_v.begin(),aa_v.end());
+				hashed_fragmentStore[iter.first]->string_groups["aa"].push_back(aa_s);
+				hashed_fragmentStore[iter.first]->string_groups["name"].push_back(name_s);
+				frag_index+=1;
+			}
+		}
+		auto post_convert_db_time = std::chrono::high_resolution_clock::now();
+		TR << "disk load time: " << std::chrono::duration_cast<std::chrono::seconds>(post_disk_load_time - start_time).count() << " seconds" << std::endl;
+		TR << "convert between db time " << std::chrono::duration_cast<std::chrono::seconds>(post_convert_db_time - post_disk_load_time).count() << " seconds" << std::endl;
+		TR << "convert dssp time " << std::chrono::duration_cast<std::chrono::seconds>(post_dssp_time - post_disk_load_time).count() << " seconds" << std::endl;
+		StructureStoreManager::get_instance()->delete_structure_store(fragment_store_path);
+		return(hashed_fragmentStore);
+	}
+}
+
+
+std::map<numeric::Size, std::vector<numeric::Size>> FragmentStoreManager::get_dssp_fragCt(StructureStoreOP structure_store,std::string const & fragment_store_compression,numeric::Size const & fragment_size,std::vector<numeric::Size> & ss_vector){
+	std::map<numeric::Size, std::vector<numeric::Size>> dssp_fragCt;
+	std::queue<char> frag_dssp;
+	core::sequence::SSManager SM;
+	std::map<numeric::Size, std::vector<numeric::Size>>::iterator it ;
+	char ss;
+	for ( ndarray::Size i=0; i < structure_store->residue_entries.getSize<0>(); ++i ) {
+		bool second_chain_start = false;
+		if ( i<structure_store->residue_entries.getSize<0>()-1 && i>1 ) {
+			if ( structure_store->residue_entries[i].structure_id != structure_store->residue_entries[i-1].structure_id ) {
+				second_chain_start=true;
+			}
+			if ( structure_store->residue_entries[i-1].chain_ending ) {
+				second_chain_start=true;
+			}
+		}
+		if ( !second_chain_start ) {
+			ss = structure_store->residue_entries[i].ss;
+			//uint32_t name_id = structure_store->residue_entries[i].structure_id-1; //***THE STRUCTURE ID IN THE DATABASE is 1 OFF
+			//std::string name= structure_store->structure_entries[name_id].name;
+			frag_dssp.push(ss);
+			if ( frag_dssp.size()==fragment_size ) {
+				std::string frag_string = queue_to_string(frag_dssp);
+				bool add_fragment = true;
+				if ( fragment_store_compression=="helix_shortLoop" ) {
+					core::Size h_ct = std::count(frag_string.begin(), frag_string.end(), 'H'); //helix
+					if ( h_ct<4 ) {
+						add_fragment = false;
+					}
+				}
+				if ( fragment_store_compression=="sheet_shortLoop" ) {
+					core::Size e_ct = std::count(frag_string.begin(), frag_string.end(), 'E'); //sheet
+					if ( e_ct<4 ) {
+						add_fragment = false;
+					}
+				}
+				if ( add_fragment ) {
+					core::Size ss_index = SM.symbolString2index(frag_string);
+					ss_vector.push_back(ss_index);
+					it = dssp_fragCt.find(ss_index);
+					if ( it == dssp_fragCt.end() ) {
+						//create vector of positions for new SS type
+						std::vector<numeric::Size> tmp_vector;
+						tmp_vector.push_back(i-fragment_size+1);
+						dssp_fragCt.insert(std::make_pair(ss_index,tmp_vector));
+					} else {
+						it->second.push_back(i-fragment_size+1);
+					}
+				}
+				//frag_seq.pop();
+				frag_dssp.pop();
+			}
+		} else { //for thse second chain start
+			frag_dssp = std::queue<char>(); //empties queue if end of pdb or chain
+			ss = structure_store->residue_entries[i].ss;
+			frag_dssp.push(ss);
+		}
+	}
+	return(dssp_fragCt);
+}
+
+std::string FragmentStoreManager::queue_to_string(std::queue<char> frag_dssp){
+	std::string frag_dssp_string ="";
+	while ( ! frag_dssp.empty() ) {
+		frag_dssp_string +=frag_dssp.front();
+		frag_dssp.pop();
+	}
+	return(frag_dssp_string);
 }
 
 

@@ -75,9 +75,15 @@ private:
 	core::Size lastResidue_;
 	std::string allowed_loop_abegos_;
 	bool refix_loops_;
+	std::string label_loop_;
+	std::string fragment_store_path_;
+	std::string fragment_store_format_;
+	std::string fragment_store_compression_;
+	core::Size numb_stubs_to_consider_;
+
 	//time_t start_time_;
 
-	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	protocols::indexed_structure_store::SSHashedFragmentStoreOP SSHashedFragmentStoreOP_;
 };
 
 

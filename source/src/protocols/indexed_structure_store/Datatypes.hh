@@ -71,6 +71,8 @@ struct ResidueEntry
 	ResidueBackboneEntry bb;
 	ResidueSidechainEntry sc;
 	ResidueOrientEntry orient;
+	char ss= 'x';
+	float cen = 0;
 
 	bool chain_ending = false;
 

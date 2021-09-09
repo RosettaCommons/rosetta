@@ -18,6 +18,8 @@
 #include <protocols/indexed_structure_store/FragmentStore.hh>
 #include <protocols/indexed_structure_store/FragmentStoreManager.hh>
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/search/QueryDatabase.hh>
+#include <protocols/indexed_structure_store/StructureStoreManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/sequence/SSManager.hh>
@@ -33,6 +35,7 @@
 
 #include <map>
 #include <set>
+#include <queue>
 
 
 static basic::Tracer TR( "core.indexed_structure_store.SSHashedFragmentStore" );
@@ -45,12 +48,43 @@ using utility::vector1;
 using namespace std;
 using namespace numeric;
 
-SSHashedFragmentStore::SSHashedFragmentStore(){
+BackboneStub::BackboneStub(numeric::Real rmsd_match_i, numeric::Size index_match_i, numeric::Size ss_index_match_i){
+	rmsd_match = rmsd_match_i;
+	index_match = index_match_i;
+	ss_index_match = ss_index_match_i;
+}
+
+SSHashedFragmentStore::SSHashedFragmentStore(std::string const & fragment_store_path,std::string const & fragment_store_format, std::string const & fragment_store_compression){
+	std::map<numeric::Size, protocols::indexed_structure_store::FragmentStoreOP> found_fragment_store;
+	found_fragment_store = FragmentStoreManager::get_instance()->find_previously_loaded_fragmentStore(fragment_store_path);
+	if ( found_fragment_store.empty() != true ) {
+		SSHashedFragmentStore_ = found_fragment_store;
+	} else {
+		//standard case. Load one of the two database formats
+		if ( fragment_store_format=="hashed" ) {
+			load_prehashed_fragmentStore(fragment_store_path);
+		} else {
+			Size fragment_size = 9;
+			SSHashedFragmentStore_ = FragmentStoreManager::get_instance()->load_and_hash_fragmentStore(fragment_store_path,fragment_store_compression,fragment_size);
+		}
+	}
+	if ( SS_stub_HashedFragmentStoreIndex_.size()==0 ) {
+		init_SS_stub_HashedFragmentStore();
+	}
+}
+
+
+void SSHashedFragmentStore::load_prehashed_fragmentStore(std::string const & fragment_store_path){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace OptionKeys::indexed_structure_store;
 	using namespace protocols::indexed_structure_store;
-	std::string store_path = option[OptionKeys::indexed_structure_store::fragment_store](); //error checking occurs in DB loading
+	std::string store_path = "";
+	if ( fragment_store_path.size()>=1 ) {
+		store_path = fragment_store_path;
+	} else {
+		store_path = option[OptionKeys::indexed_structure_store::fragment_store](); //error checking occurs in DB loading
+	}
 	vector1<string> fields_to_load;
 	vector1<string> fields_to_load_types;
 	string store_name = option[OptionKeys::indexed_structure_store::store_name]();
@@ -74,6 +108,7 @@ SSHashedFragmentStore::SSHashedFragmentStore(){
 	SSHashedFragmentStore_=FragmentStoreManager::get_instance()->load_grouped_fragment_store(group_field,store_name,store_path,fields_to_load,fields_to_load_types);
 }
 
+
 void SSHashedFragmentStore::set_threshold_distance(Real threshold_distance){
 	std::map<core::Size, protocols::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter;
 	if ( SSHashedFragmentStore_.begin()->second->fragment_threshold_distances[0]>threshold_distance ) { //fragment threshold distance needs to be set to the lowest calling value.
@@ -87,27 +122,57 @@ void SSHashedFragmentStore::set_threshold_distance(Real threshold_distance){
 void SSHashedFragmentStore::init_SS_stub_HashedFragmentStore(){
 	core::Size fragment_length = SSHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
 	vector1<std::string> types;
-	types.push_back("HH");
-	types.push_back("EE");
-	types.push_back("HHH"); //allow flexibility for the end of the helix
-	types.push_back("EEE");
-	vector1<std::string> loops;
-	std::string tmp_loop = "L";
-	loops.push_back(tmp_loop);
+	Size min_loop_length = 1;
+	Size max_loop_length = fragment_length-4;
 	vector1<std::string> ss_stubs;
-	for ( core::Size ii=2; ii<=5; ++ii ) {
-		tmp_loop+="L";
-		loops.push_back(tmp_loop);
-	}
-	for ( core::Size ii=1; ii<=types.size(); ++ii ) {
-		for ( core::Size jj=1; jj<=loops.size(); ++jj ) {
-			for ( core::Size kk=1; kk<=types.size(); ++kk ) {
-				std::string ss_stub = types[ii]+loops[jj]+types[kk];
-				if ( ss_stub.size()<=fragment_length ) {
-					ss_stubs.push_back(ss_stub);
-				}
-			}
+	std::map<std::string,std::vector<core::Size> > stubs_to_residues;
+	for ( Size ii=min_loop_length; ii<=max_loop_length; ++ii ) {
+		Size front_ss_length = 2;
+		Size back_ss_length = 2;
+		if ( fragment_length>front_ss_length+back_ss_length+ii ) { //within tolerance add a residue to the front
+			front_ss_length+=1;
 		}
+		if ( fragment_length>front_ss_length+back_ss_length+ii ) { //still within tolerance add a residue to the back
+			back_ss_length+=1;
+		}
+		std::string stubType1 = ""; //H,H
+		std::string stubType2 = ""; //H,E
+		std::string stubType3 = ""; //E,H
+		std::string stubType4 = ""; //E,E
+		//the back needs to be loaded first
+		stubType1.insert(0,back_ss_length,'H');
+		stubType2.insert(0,back_ss_length,'H');
+		stubType3.insert(0,back_ss_length,'E');
+		stubType4.insert(0,back_ss_length,'E');
+		stubType1.insert(0,ii,'L');
+		stubType2.insert(0,ii,'L');
+		stubType3.insert(0,ii,'L');
+		stubType4.insert(0,ii,'L');
+		stubType1.insert(0,front_ss_length,'H');
+		stubType2.insert(0,front_ss_length,'E');
+		stubType3.insert(0,front_ss_length,'H');
+		stubType4.insert(0,front_ss_length,'E');
+		ss_stubs.push_back(stubType1);
+		ss_stubs.push_back(stubType2);
+		ss_stubs.push_back(stubType3);
+		ss_stubs.push_back(stubType4);
+		std::vector<core::Size> residues;
+		core::Size pos = 0;
+		while ( pos<front_ss_length ) {
+			residues.push_back(pos);
+			pos+=1;
+		}
+		pos=front_ss_length+ii;
+		core::Size jj=0;
+		while ( jj<back_ss_length ) {
+			residues.push_back(pos);
+			jj+=1;
+			pos+=1;
+		}
+		stubs_to_residues.insert(std::pair<std::string,std::vector<core::Size> > (stubType1,residues));
+		stubs_to_residues.insert(std::pair<std::string,std::vector<core::Size> > (stubType2,residues));
+		stubs_to_residues.insert(std::pair<std::string,std::vector<core::Size> > (stubType3,residues));
+		stubs_to_residues.insert(std::pair<std::string,std::vector<core::Size> > (stubType4,residues));
 	}
 	core::sequence::SSManager SM;
 	std::map<core::Size, protocols::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter;
@@ -115,11 +180,7 @@ void SSHashedFragmentStore::init_SS_stub_HashedFragmentStore(){
 		std::string fragStore_ss_string = SM.index2symbolString(fragStoreMap_iter->first,fragment_length);
 		for ( core::Size ii=1; ii<=ss_stubs.size(); ++ii ) {
 			if ( fragStore_ss_string.substr(0,ss_stubs[ii].size())==ss_stubs[ii] ) {
-				std::vector<core::Size> residues;
-				residues.push_back(0);
-				residues.push_back(1);
-				residues.push_back(ss_stubs[ii].size()-2);
-				residues.push_back(ss_stubs[ii].size()-1);
+				std::vector<core::Size> residues = stubs_to_residues[ss_stubs[ii]];
 				fragStoreMap_iter->second->generate_residue_subset_fragment_store(residues);
 				if ( SS_stub_HashedFragmentStoreIndex_.find(ss_stubs[ii]) == SS_stub_HashedFragmentStoreIndex_.end() ) {
 					vector1<core::Size> fragStoreIndex_vector;
@@ -354,76 +415,97 @@ Real SSHashedFragmentStore::lookback(core::pose::Pose const & pose, core::Size r
 	return(returnRmsd);
 }
 
-vector <bool> SSHashedFragmentStore::generate_subset_residues_to_compare(core::Size loop_length,core::Size fragment_length,bool match_tail){
-	vector<bool> tmp;
-	tmp.push_back(true);
-	tmp.push_back(true);
-	for ( core::Size ii=0; ii<loop_length; ++ii ) {
-		tmp.push_back(false);
-	}
-	tmp.push_back(true);
-	tmp.push_back(true);
-	for ( core::Size ii=4+loop_length; ii<fragment_length; ++ii ) {
-		tmp.push_back(match_tail);
-	}
-	return(tmp);
-}
-
-void SSHashedFragmentStore::lookback_stub(std::vector< xyzVector<Real> > coordinates, char resTypeBeforeLoop,char resTypeAfterLoop, core::Size loop_length, Real & match_rmsd, core::Size & match_index, core::Size & match_ss_index){
+void SSHashedFragmentStore::lookback_stub(std::vector< xyzVector<Real> > coordinates, char resTypeBeforeLoop,char resTypeAfterLoop, core::Size loop_length, numeric::Real & top_match_rmsd, utility::vector1<BackboneStub> & stubVector, core::Real stubRmsdThreshold){
 	using namespace protocols::indexed_structure_store;
-	Real low_rmsd = 9999;
+	top_match_rmsd= 9999;
 	//core::Size tmp_match_index;
 	std::map<std::string, vector1<core::Size> >::iterator iter;
-	core::Size fragment_length = get_fragment_length();
 	for ( iter=SS_stub_HashedFragmentStoreIndex_.begin(); iter != SS_stub_HashedFragmentStoreIndex_.end(); ++iter ) {
-		if ( (iter->first.size() == 4+loop_length) && (iter->first[0]==resTypeBeforeLoop) && (iter->first[iter->first.size()-1]==resTypeAfterLoop) ) {
+		Size numb_L = std::count(iter->first.begin(), iter->first.end(), 'L');
+		if ( (iter->first[0]==resTypeBeforeLoop) && (numb_L ==loop_length) && (iter->first[iter->first.size()-1]==resTypeAfterLoop) ) {
 			for ( core::Size ii=1; ii<=iter->second.size(); ++ii ) {
 				FragmentStoreOP stub_fragStoreOP = SSHashedFragmentStore_[iter->second[ii]]->residue_subset_fragment_store;
 				FragmentLookupOP stub_fragLookupOP = stub_fragStoreOP->get_fragmentLookup();
-				vector<bool> residues_to_compare = generate_subset_residues_to_compare(loop_length,fragment_length,false);
-				FragmentLookupResult lookupResults= stub_fragLookupOP->lookup_closest_fragment_subset(&coordinates[0],residues_to_compare);
-				Real tmp_rmsd = lookupResults.match_rmsd;
-				core::Size tmp_index = lookupResults.match_index;
-				if ( tmp_rmsd<low_rmsd ) {
-					low_rmsd= tmp_rmsd;
-					match_ss_index = iter->second[ii];
-					match_index = tmp_index;
-					match_rmsd = tmp_rmsd;
+				std::vector<FragmentLookupResult> lookupResults = stub_fragLookupOP->lookup_close_fragments(&coordinates[0],stubRmsdThreshold);
+				for ( core::Size jj=0; jj<lookupResults.size(); ++jj ) {
+					Real tmp_rmsd = lookupResults[jj].match_rmsd;
+					core::Size tmp_index = lookupResults[jj].match_index;
+					core::Size match_ss_index = iter->second[ii];
+					struct BackboneStub stub_tmp(tmp_rmsd,tmp_index,match_ss_index);
+					stubVector.push_back(stub_tmp);
+					if ( tmp_rmsd<top_match_rmsd ) {
+						top_match_rmsd = tmp_rmsd;
+					}
 				}
 			}
 		}
 	}
 }
 
-void SSHashedFragmentStore::lookback_uncached_stub(std::vector< xyzVector<Real> > coordinates, core::Size stub_match_ss_index, core::Size loop_length, Real & match_rmsd, core::Size & match_index){
-	//Note: the short_stub_ss is used to minimize the number of abego types to search.
-	using namespace protocols::indexed_structure_store;
-	Real low_rmsd = 9999;
-	typedef alignment::QCPKernel<Real> QCPKernel;
 
-	QCPKernel::CoordMap coord_map(&coordinates.front().x(), 3, coordinates.size());
-
-	FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_[stub_match_ss_index];
-	core::Size fragment_length = get_fragment_length();
-	vector<bool> residues_to_compare = generate_subset_residues_to_compare(loop_length,fragment_length,true);
-	for ( core::Size jj=0; jj<selected_fragStoreOP->num_fragments_; ++jj ) {
-		std::vector< xyzVector<Real> > fragCoordinates;
-		for ( core::Size kk = 0;  kk < residues_to_compare.size(); ++kk ) {
-			if ( residues_to_compare[kk] ) {
-				fragCoordinates.push_back(selected_fragStoreOP->fragment_coordinates[jj*9+kk]);
-			}
-		}
-
-		QCPKernel::CoordMap frag_coord_map(&fragCoordinates.front().x(), 3, fragCoordinates.size());
-
-		Real tmp_rmsd = QCPKernel::calc_coordinate_rmsd(coord_map, frag_coord_map);
-		if ( tmp_rmsd<low_rmsd ) {
-			low_rmsd = tmp_rmsd;
-			match_index = jj;
-			match_rmsd = tmp_rmsd;
-		}
+vector <bool> SSHashedFragmentStore::generate_subset_residues_to_compare(core::Size loop_length,core::Size fragment_length){
+	vector<bool> tmp;
+	core::Size front_ss_length = 2;
+	core::Size back_ss_length = 2;
+	if ( fragment_length>(front_ss_length+back_ss_length+loop_length) ) { //within tolerance add a residue to the front
+		front_ss_length+=1;
 	}
+	if ( fragment_length>(front_ss_length+back_ss_length+loop_length) ) { //still within tolerance add a residue to the back
+		back_ss_length+=1;
+	}
+	core::Size pos=0;
+	for ( core::Size ii=0; ii<front_ss_length; ++ii ) {
+		tmp.push_back(true);
+		pos+=1;
+	}
+	for ( Size ii=0; ii<loop_length; ++ii ) {
+		tmp.push_back(false);
+		pos+=1;
+	}
+	for ( core::Size ii=0; ii<back_ss_length; ++ii ) {
+		tmp.push_back(true);
+		pos+=1;
+	}
+	while ( pos<fragment_length ) {
+		tmp.push_back(false);
+		pos+=1;
+	}
+	return(tmp);
 }
+
+/* No longer used
+void SSHashedFragmentStore::lookback_uncached_stub(std::vector< xyzVector<Real> > coordinates, core::Size stub_match_ss_index, core::Size loop_length, Real & match_rmsd, core::Size & match_index){
+//Note: the short_stub_ss is used to minimize the number of abego types to search.
+using namespace protocols::indexed_structure_store;
+Real low_rmsd = 9999;
+typedef alignment::QCPKernel<Real> QCPKernel;
+
+QCPKernel::CoordMap coord_map(&coordinates.front().x(), 3, coordinates.size());
+
+FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_[stub_match_ss_index];
+core::Size fragment_length = get_fragment_length();
+vector<bool> residues_to_compare = generate_subset_residues_to_compare(loop_length,fragment_length);
+for ( core::Size jj=0; jj<selected_fragStoreOP->num_fragments_; ++jj ) {
+std::vector< xyzVector<Real> > fragCoordinates;
+for ( core::Size kk = 0;  kk < residues_to_compare.size(); ++kk ) {
+if ( residues_to_compare[kk] ) {
+fragCoordinates.push_back(selected_fragStoreOP->fragment_coordinates[jj*9+kk]);
+}
+}
+
+QCPKernel::CoordMap frag_coord_map(&fragCoordinates.front().x(), 3, fragCoordinates.size());
+
+Real tmp_rmsd = QCPKernel::calc_coordinate_rmsd(coord_map, frag_coord_map);
+if ( tmp_rmsd<low_rmsd ) {
+low_rmsd = tmp_rmsd;
+match_index = jj;
+match_rmsd = tmp_rmsd;
+}
+}
+}
+*/
+
+
 std::vector< xyzVector<Real> > SSHashedFragmentStore::get_fragment_coordinates(core::Size db_index,core::Size match_index){
 	FragmentStoreOP selected_fragStoreOP = SSHashedFragmentStore_.at(db_index);
 	return(selected_fragStoreOP->get_fragment_coordinates(match_index));
@@ -573,12 +655,6 @@ Size SSHashedFragmentStore::get_fragment_length(){
 	core::Size fragmentStore_fragment_length = SSHashedFragmentStore_.begin()->second->fragment_specification.fragment_length;
 	return(fragmentStore_fragment_length);
 }
-
-SSHashedFragmentStore *  SSHashedFragmentStore::create_singleton_instance()
-{
-	return new SSHashedFragmentStore;
-}
-
 
 }
 }

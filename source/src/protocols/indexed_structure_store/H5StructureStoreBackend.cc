@@ -26,6 +26,8 @@
 #include <string>
 #include <stdexcept>
 
+#include <ndarray/initialization.h> // AUTO IWYU For SimpleInitializer, allocate
+
 #include "H5Cpp.h"
 
 namespace protocols
@@ -55,6 +57,8 @@ H5::DataType H5StructureStoreBackend::ResidueEntry_datatype()
 	type.insertMember("bb",           HOFFSET(ResidueEntry , bb)           , ResidueBackboneEntry_datatype());
 	type.insertMember("sc",           HOFFSET(ResidueEntry , sc)           , ResidueSidechainEntry_datatype());
 	type.insertMember("orient",       HOFFSET(ResidueEntry , orient)       , ResidueOrientEntry_datatype());
+	type.insertMember("ss",           HOFFSET(ResidueEntry , ss)  		   , PredType::FORTRAN_S1);
+	type.insertMember("cen",          HOFFSET(ResidueEntry , cen)  		   , PredType::NATIVE_FLOAT);
 	type.insertMember("chain_ending", HOFFSET(ResidueEntry , chain_ending) , PredType::NATIVE_HBOOL);
 
 	return type;

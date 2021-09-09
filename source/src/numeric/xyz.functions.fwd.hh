@@ -43,6 +43,7 @@ template< typename T > void dihedral( xyzVector< T > const & p1, xyzVector< T > 
 template< typename T > T dihedral( xyzVector< T > const & p1, xyzVector< T > const & p2, xyzVector< T > const & p3, xyzVector< T > const & p4 );
 template< typename T > xyzMatrix< T > rotation_matrix( xyzVector< T > const & axis, T const & theta );
 template< typename T > xyzVector< T > rotation_axis( xyzMatrix< T > const & R, T & theta );
+template< typename T > xyzVector< T > rotation_axis_angle(xyzMatrix< T > const & R);
 template< typename T > xyzVector< T > eigenvalue_jacobi( xyzMatrix< T > const & a, T const & tol );
 template< typename T > xyzVector< T > eigenvector_jacobi( xyzMatrix< T > const & a, T const & tol, xyzMatrix< T > & J );
 template< typename T > void jacobi_rotation( xyzMatrix< T > const & m, int const i, int const j, xyzMatrix< T > & r );

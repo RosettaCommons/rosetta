@@ -24,6 +24,7 @@
 
 #include <protocols/indexed_structure_store/StructureStoreProvider.hh>
 // H5-based backend declarations are guarded by #ifdef USEHDF5
+#include <protocols/indexed_structure_store/H5StructureStoreBackend.hh>
 #include <protocols/indexed_structure_store/JSONStructureStoreBackend.hh>
 #include <protocols/indexed_structure_store/DirStructureStoreBackend.hh>
 #include <protocols/indexed_structure_store/SilentStructureStoreBackend.hh>
@@ -126,5 +127,20 @@ void StructureStoreManager::register_store_provider(
 		store_providers[std::make_tuple(priority, name)] = backend;
 	}
 }
+
+void StructureStoreManager::delete_structure_store(std::string store_path)
+{
+	if ( store_cache.count(store_path) > 0 ) {
+		try {
+			TR << "Trying to delete store." << std::endl;
+			store_cache.erase(store_path);
+		}
+catch (std::bad_weak_ptr &) {
+	TR << "Failed to delete database." << std::endl;
+
+}
+	}
+}
+
 }
 }

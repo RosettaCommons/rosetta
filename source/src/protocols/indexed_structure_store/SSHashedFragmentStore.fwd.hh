@@ -14,6 +14,8 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_SSHashedFragmentStore_fwd_hh
 #define INCLUDED_protocols_indexed_structure_store_SSHashedFragmentStore_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace protocols
 {
@@ -21,6 +23,9 @@ namespace indexed_structure_store
 {
 
 class SSHashedFragmentStore;
+
+typedef utility::pointer::shared_ptr<SSHashedFragmentStore> SSHashedFragmentStoreOP;
+typedef utility::pointer::shared_ptr<SSHashedFragmentStore const> SSHashedFragmentStoreCOP;
 
 
 }

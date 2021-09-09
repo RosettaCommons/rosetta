@@ -19,8 +19,11 @@
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 #include <numeric/types.hh>
+#include <utility/vector1.hh>
+
 #include <map>
 #include <set>
+#include <queue>
 #include <vector>
 
 // Utility Headers
@@ -30,38 +33,51 @@
 namespace protocols {
 namespace indexed_structure_store {
 
-class SSHashedFragmentStore : public utility::SingletonBase< SSHashedFragmentStore >
+struct BackboneStub{
+public:
+	numeric::Real rmsd_match;
+	numeric::Size index_match;
+	numeric::Size ss_index_match;
+	BackboneStub(numeric::Real rmsd_match_i, numeric::Size index_match_i, numeric::Size ss_index_match_i);
+};
+
+class BackboneStubVectorRMSDComparator: public std::binary_function<BackboneStub, BackboneStub, bool> {
+public:
+	bool operator()(BackboneStub x, BackboneStub y) {
+		if ( x.rmsd_match <= y.rmsd_match ) return true;
+		//else ( x.rmsd_match > y.rmsd_match ) return false;
+		return false;
+	}
+};
+
+class SSHashedFragmentStore
 {
 public:
-	friend class utility::SingletonBase< SSHashedFragmentStore >;
+	SSHashedFragmentStore(std::string const & fragment_store_path="",std::string const & fragment_store_format="hashed", std::string const & fragment_store_compression="all");
+	void load_prehashed_fragmentStore(std::string const & fragment_store_path);
 	void set_threshold_distance(numeric::Real threshold_distance);
-	void init_SS_stub_HashedFragmentStore();
 	numeric::Size get_valid_resid(core::pose::Pose const & pose,int resid);
 	std::set<std::string> potential_valid_ss_strings(std::string frag_ss);
 	numeric::Real max_rmsd_in_region(core::pose::Pose const & pose, utility::vector1<numeric::Size> resids);
 	numeric::Real lookback_account_for_dssp_inaccuracy(core::pose::Pose const & pose, numeric::Size resid,bool find_closest,numeric::Real rms_threshold);
 	numeric::Real lookback_account_for_dssp_inaccuracy(core::pose::Pose const & pose, numeric::Size resid,std::string frags_ss, bool find_closest,numeric::Real rms_threshold);
-	numeric::Real lookback_account_for_dssp_inaccuracy(core::pose::Pose const & pose, numeric::Size resid,std::string frag_ss, numeric::Real & match_rmsd, numeric::Size & match_index, numeric::Size & match_ss_index);
+	numeric::Real lookback_account_for_dssp_inaccuracy(core::pose::Pose const & pose, numeric::Size resid, std::string frag_ss, numeric::Real & match_rmsd, numeric::Size & match_index, numeric::Size & match_ss_index);
 	numeric::Real lookback(core::pose::Pose const & pose, numeric::Size resid);
 	numeric::Real lookback(core::pose::Pose const & pose, numeric::Size resid,std::string frag_ss,bool find_closest);
-	void lookback_stub(std::vector< numeric::xyzVector<numeric::Real> > coordinates, char resTypeBeforeLoop,char resTypeAfterLoop ,numeric::Size loop_length, numeric::Real & match_rmsd, numeric::Size & match_index, numeric::Size & match_ss_index);
-	void lookback_uncached_stub(std::vector< numeric::xyzVector<numeric::Real> > coordinates, numeric::Size stub_match_ss_index, numeric::Size loop_length, numeric::Real & match_rmsd, numeric::Size & match_index);
+	void lookback_stub(std::vector< numeric::xyzVector<numeric::Real> > coordinates, char resTypeBeforeLoop,char resTypeAfterLoop ,numeric::Size loop_length, numeric::Real & top_match_rmsd, utility::vector1<BackboneStub> & stubVector,numeric::Real stubRmsdThreshold);
+	//void lookback_uncached_stub(std::vector< numeric::xyzVector<numeric::Real> > coordinates, numeric::Size stub_match_ss_index, numeric::Size loop_length, numeric::Real & match_rmsd, numeric::Size & match_index);
 	std::vector< numeric::xyzVector<numeric::Real> > get_fragment_coordinates(numeric::Size db_index,numeric::Size match_index);
-	// vector<FragmentLookupResult> get_N_fragments(std::string abego_string,numeric::Size topNFrags);
-	// vector<FragmentLookupResult> get_topN_fragments(std::string selectionType,numeric::Size topNFrags, pose::Pose const & pose, numeric::Size resid,numeric::Real rms_threshold,std::string fragAbegoStr);
-	// vector<FragmentLookupResult> get_fragments_below_rms(pose::Pose const & pose, numeric::Size resid,numeric::Real rms_threshold);
-	// vector<FragmentLookupResult> get_fragments_below_rms(pose::Pose const & pose, numeric::Size resid,numeric::Real rms_threshold,std::string fragAbegoStr);
 	void get_hits_below_rms(core::pose::Pose const & pose, numeric::Size resid, numeric::Real rms_threshold, utility::vector1< std::vector<numeric::Real> > & hits_cen, utility::vector1<numeric::Real> & hits_rms, utility::vector1<std::string> & hits_aa);
 	protocols::indexed_structure_store::FragmentStoreOP get_fragment_store(numeric::Size db_index);
 	protocols::indexed_structure_store::FragmentStoreOP get_fragment_store();
 	std::map<numeric::Size, protocols::indexed_structure_store::FragmentStoreOP> get_hashed_fragment_store();
 	numeric::Size get_fragment_length();
 private:
-	SSHashedFragmentStore();
+	void init_SS_stub_HashedFragmentStore();
 	std::map<numeric::Size, protocols::indexed_structure_store::FragmentStoreOP> SSHashedFragmentStore_;
 	std::map<std::string, utility::vector1<numeric::Size> > SS_stub_HashedFragmentStoreIndex_;
-	std::vector<bool> generate_subset_residues_to_compare(numeric::Size loop_length,numeric::Size fragment_length,bool match_tail);
-	static SSHashedFragmentStore * create_singleton_instance();
+	std::vector <bool> generate_subset_residues_to_compare(numeric::Size loop_length,numeric::Size fragment_length);
+
 };
 
 }

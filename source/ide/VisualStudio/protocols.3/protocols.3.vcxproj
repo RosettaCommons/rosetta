@@ -5348,18 +5348,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.3__protocols__simple_filters__SheetFilter.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.3__protocols__simple_filters__SheetFilter.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\simple_filters\LeastNativeLike9merFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.3__protocols__simple_filters__LeastNativeLike9merFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\simple_filters\BatchNrEvaluator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.3__protocols__simple_filters__BatchNrEvaluator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.3__protocols__simple_filters__BatchNrEvaluator.xdc</XMLDocumentationFileName>
@@ -9259,7 +9247,6 @@
     <ClInclude Include="..\..\..\src\protocols\simple_filters\InterfaceSasaFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\NMerSVMEnergyFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\NMerPSSMEnergyFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\simple_filters\LeastNativeLike9merFilter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\SimpleHbondsToAtomFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\TMsSpanMembraneFilter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\BuriedUnsatHbondFilter.hh" />
@@ -9302,7 +9289,6 @@
     <ClInclude Include="..\..\..\src\protocols\simple_filters\PoolEvaluatorCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\InterRepeatContactFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\NMerSVMEnergyFilter.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\simple_filters\LeastNativeLike9merFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\SSElementMotifContactFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\ResidueCountFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\LongestContinuousPolarSegmentFilterCreator.hh" />
@@ -9397,7 +9383,6 @@
     <ClInclude Include="..\..\..\src\protocols\simple_filters\AveragePathLengthFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\RDC_Evaluator.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\SimpleHbondsToAtomFilter.hh" />
-    <ClInclude Include="..\..\..\src\protocols\simple_filters\LeastNativeLike9merFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\ResidueChiralityFilter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\ResiduesInInterfaceFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\simple_filters\MutationsFilter.fwd.hh" />

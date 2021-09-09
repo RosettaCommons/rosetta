@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_filters/ILeastNativeLike9merFilter.fwd.hh
+/// @file   protocols/simple_filters/IWorst9merFilter.fwd.hh
 /// @brief  Filter for the best fragment at worst position.
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
 
-#ifndef INCLUDED_protocols_simple_filters_LeastNativeLike9merFilter_fwd_hh
-#define INCLUDED_protocols_simple_filters_LeastNativeLike9merFilter_fwd_hh
+#ifndef INCLUDED_protocols_simple_filters_Worst9merFilter_fwd_hh
+#define INCLUDED_protocols_simple_filters_Worst9merFilter_fwd_hh
 
 
 // Utility headers
@@ -23,11 +23,11 @@ namespace protocols {
 namespace simple_filters {
 
 // Forward
-class LeastNativeLike9merFilter;
+class Worst9merFilter;
 
 // Types
-typedef utility::pointer::shared_ptr< LeastNativeLike9merFilter >  LeastNativeLike9merFilterOP;
-typedef utility::pointer::shared_ptr< LeastNativeLike9merFilter const >  LeastNativeLike9merFilterCOP;
+typedef utility::pointer::shared_ptr< Worst9merFilter >  Worst9merFilterOP;
+typedef utility::pointer::shared_ptr< Worst9merFilter const >  Worst9merFilterCOP;
 
 } // namespace protocols
 } // namespace filters

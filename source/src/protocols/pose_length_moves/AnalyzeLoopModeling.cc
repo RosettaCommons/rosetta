@@ -24,6 +24,9 @@
 #include <protocols/loops/Loop.hh>
 
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStoreManager.hh>
+
 
 #include <core/pose/Pose.hh>
 
@@ -161,7 +164,7 @@ Real AnalyzeLoopModeling::generate_lookback_rmsd(core::pose::Pose pose, core::Si
 		core::Size tmp_resid = get_valid_resid(ii,pose);
 		resids.push_back(tmp_resid);
 	}
-	Real rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
+	Real rmsd = SSHashedFragmentStoreOP_->max_rmsd_in_region(pose,resids);
 	return(rmsd);
 }
 
@@ -197,9 +200,9 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 			core::pose::PoseOP kicPoseOP = pose.clone();
 			core::pose::PoseOP lookbackPoseOP = pose.clone();
 			core::pose::PoseOP lookbackPlusPoseOP = pose.clone();
-			NearNativeLoopCloserOP loopCloserKicOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"kic"));
+			NearNativeLoopCloserOP loopCloserKicOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"kic",""));
 			loopCloserKicOP->apply(*kicPoseOP);
-			NearNativeLoopCloserOP lookbackCloserOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"lookback"));
+			NearNativeLoopCloserOP lookbackCloserOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"lookback",""));
 			lookbackCloserOP->apply(*lookbackPoseOP);
 			Real kicRmsd = get_loop_rmsd(pose,*kicPoseOP,loopStart-2,loopEnd+2);
 			Real lookbackRmsd = get_loop_rmsd(pose,*lookbackPoseOP,loopStart-2,loopEnd+2);
@@ -207,7 +210,7 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 			resAdjustmentStartHigh = 3;
 			resAdjustmentStopLow = -3;
 			resAdjustmentStopHigh = 3;
-			NearNativeLoopCloserOP lookbackCloserPlusOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"lookback"));
+			NearNativeLoopCloserOP lookbackCloserPlusOP(new NearNativeLoopCloser(resAdjustmentStartLow,resAdjustmentStartHigh,resAdjustmentStopLow,resAdjustmentStopHigh,resAdjustmentStartLow_sheet,resAdjustmentStartHigh_sheet,resAdjustmentStopLow_sheet,resAdjustmentStopHigh_sheet,loopLength,loopLength,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold,max_vdw_change,true,ideal,true,"lookback",fragment_store_path_));
 			lookbackCloserPlusOP->apply(*lookbackPlusPoseOP);
 			Real kicVallRmsd = generate_lookback_rmsd(*kicPoseOP,pose_loops[ii].start()-1);
 			Real lookbackVallRmsd = generate_lookback_rmsd(*lookbackPoseOP,pose_loops[ii].start()-1);
@@ -227,14 +230,16 @@ AnalyzeLoopModeling::parse_my_tag(
 ){
 	//start_time_ = time(NULL);
 	std::string loopLengthRange( tag->getOption< std::string >( "loopLengthRange", "2,5") );
+	fragment_store_path_= tag->getOption< std::string >("fragment_store","");
+	fragment_store_format_=tag->getOption<std::string>("fragment_store_format","hashed");
+	fragment_store_compression_=tag->getOption<std::string>("fragment_store_compression","all");
 	utility::vector1< std::string > loopLengthRange_split( utility::string_split( loopLengthRange , ',' ) );
 	if ( loopLengthRange_split.size()==2 ) {
 		loopLengthRangeLow_ = atoi(loopLengthRange_split[1].c_str());
 		loopLengthRangeHigh_ = atoi(loopLengthRange_split[2].c_str());
 	}
-	SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
-	SSHashedFragmentStore_->set_threshold_distance(.1);
-	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
+	SSHashedFragmentStoreOP_ = protocols::indexed_structure_store::FragmentStoreManager::get_instance()->SSHashedFragmentStore(fragment_store_path_,fragment_store_format_,fragment_store_compression_);
+	SSHashedFragmentStoreOP_->set_threshold_distance(.1);
 	TR << "database loaded!!" << std::endl;
 }
 
@@ -251,7 +256,10 @@ void AnalyzeLoopModeling::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "loopLengthRange", xsct_size_cs_pair, "XRW TO DO", "2,5" );
+		+ XMLSchemaAttribute::attribute_w_default( "loopLengthRange", xsct_size_cs_pair, "XRW TO DO", "2,5" )
+		+ XMLSchemaAttribute::attribute_w_default( "fragment_store", xs_string, "path to fragment store. Note:All fragment stores use the same database", "")
+		+ XMLSchemaAttribute::attribute_w_default("fragment_store_format", xs_string, "Options:hashed,unhashed new format is unhashed", "hashed")
+		+ XMLSchemaAttribute::attribute_w_default("fragment_store_compression", xs_string,"Options:helix_shortLoop,sheet_shortLoop,all", "all");
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }
 

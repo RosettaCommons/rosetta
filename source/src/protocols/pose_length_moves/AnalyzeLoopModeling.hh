@@ -69,8 +69,10 @@ private:
 	protocols::loops::Loops get_loops(core::pose::Pose const & pose);
 	core::Size loopLengthRangeLow_;
 	core::Size loopLengthRangeHigh_;
-
-	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	std::string fragment_store_path_;
+	std::string fragment_store_format_;
+	std::string fragment_store_compression_;
+	protocols::indexed_structure_store::SSHashedFragmentStoreOP SSHashedFragmentStoreOP_;
 };
 
 

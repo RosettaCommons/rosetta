@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/simple_filters/LeastNativeLike9merFilter.hh
+/// @file   protocols/simple_filters/Worst9merFilter.hh
 /// @brief  Find the rmsd to the worst 9mer in the chain
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
 
-#ifndef INCLUDED_protocols_simple_filters_LeastNativeLike9merFilter_hh
-#define INCLUDED_protocols_simple_filters_LeastNativeLike9merFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_Worst9merFilter_hh
+#define INCLUDED_protocols_simple_filters_Worst9merFilter_hh
 
 // Unit Headers
-#include <protocols/simple_filters/LeastNativeLike9merFilter.fwd.hh>
+#include <protocols/simple_filters/Worst9merFilter.fwd.hh>
 
 // Package Headers
 #include <protocols/filters/Filter.hh>
@@ -40,7 +40,7 @@
 namespace protocols {
 namespace simple_filters {
 
-class LeastNativeLike9merFilter : public protocols::filters::Filter{
+class Worst9merFilter : public protocols::filters::Filter{
 public:
 
 	typedef protocols::filters::Filter Super;
@@ -58,18 +58,18 @@ public:// constructor/destructor
 
 
 	// @brief default constructor
-	LeastNativeLike9merFilter();
+	Worst9merFilter();
 
 
-	~LeastNativeLike9merFilter() override;
+	~Worst9merFilter() override;
 
 
 public:// virtual constructor
 
 	// @brief make clone
-	filters::FilterOP clone() const override { return filters::FilterOP(new LeastNativeLike9merFilter(*this));}
+	filters::FilterOP clone() const override { return filters::FilterOP(new Worst9merFilter(*this));}
 	// @brief make fresh instance
-	filters::FilterOP fresh_instance() const override { return filters::FilterOP(new LeastNativeLike9merFilter());}
+	filters::FilterOP fresh_instance() const override { return filters::FilterOP(new Worst9merFilter());}
 
 	// @brief get name of this filter
 	Real report_sm(const Pose & pose ) const override;
@@ -107,11 +107,14 @@ private:
 
 	Real filtered_value_;
 	Real rmsd_lookup_thresh_;
-	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	protocols::indexed_structure_store::SSHashedFragmentStoreOP SSHashedFragmentStoreOP_;
 	bool ignore_terminal_res_;
 	bool only_helices_;
 	bool report_mean_median_;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
+	std::string fragment_store_path_;
+	std::string fragment_store_format_;
+	std::string fragment_store_compression_;
 
 };
 

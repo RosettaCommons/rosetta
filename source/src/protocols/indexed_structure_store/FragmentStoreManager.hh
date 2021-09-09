@@ -20,6 +20,8 @@
 #include <protocols/indexed_structure_store/FragmentLookup.fwd.hh>
 #include <protocols/indexed_structure_store/FragmentStore.fwd.hh>
 #include <protocols/indexed_structure_store/FragmentStoreProvider.fwd.hh>
+#include <protocols/indexed_structure_store/SSHashedFragmentStore.fwd.hh>
+#include <protocols/indexed_structure_store/StructureStore.hh>
 
 
 // Utility Headers
@@ -29,6 +31,7 @@
 #include <numeric/types.hh>
 #include <string>
 #include <map>
+#include <queue>
 #include <mutex>
 #include <utility/vector1.hh>
 
@@ -46,6 +49,7 @@ public:
 
 	typedef std::map< std::string, std::map<numeric::Size, FragmentStoreOP> > GroupedFragmentMap;
 	typedef std::map< std::string, FragmentLookupOP > FragmentLookupMap; //for later
+	typedef std::map< std::string, SSHashedFragmentStoreOP > SSHashedFragmentStoreMap;
 public:
 	// @brief Load fragment lookup from the default structure store. Default store is defined
 	// via indexed_structure_store:fragment_store option.
@@ -61,8 +65,12 @@ public:
 	FragmentLookupOP load_fragment_lookup(std::string lookup_name, std::string store_path);
 	FragmentStoreOP load_fragment_store(std::string lookup_name, std::string store_path, utility::vector1<std::string> fields_to_load, utility::vector1<std::string> fields_to_load_types);
 	std::map<numeric::Size,FragmentStoreOP> load_grouped_fragment_store(std::string group_field, std::string lookup_name, std::string store_path, utility::vector1<std::string> fields_to_load, utility::vector1<std::string> fields_to_load_types);
-
+	SSHashedFragmentStoreOP SSHashedFragmentStore( std::string store_path="",std::string store_format="hashed", std::string store_compression="");
 	std::string resolve_store_path(std::string store_path);
+	std::map<numeric::Size, FragmentStoreOP> find_previously_loaded_fragmentStore(std::string const & fragment_store_path);
+	std::map<numeric::Size, FragmentStoreOP> load_and_hash_fragmentStore(std::string const & fragment_store_path,std::string const & fragment_store_compression, numeric::Size const & fragment_size);
+	std::map<numeric::Size, std::vector<numeric::Size>> get_dssp_fragCt(StructureStoreOP structure_store,std::string const & fragment_store_compression,numeric::Size const & fragment_size,std::vector<numeric::Size> & ss_vector);
+	std::string queue_to_string(std::queue<char> frag_dssp);
 
 	void register_store_provider(core::SSize priority, std::string name, FragmentStoreProviderOP backend);
 
@@ -71,6 +79,7 @@ private:
 	FragmentStoreManager();
 
 	GroupedFragmentMap grouped_fragment_map_;
+	SSHashedFragmentStoreMap SSHashedFragmentStoreMap_;
 
 	std::map<std::tuple<core::SSize, std::string>, FragmentStoreProviderOP> store_providers;
 	std::mutex cache_mutex;

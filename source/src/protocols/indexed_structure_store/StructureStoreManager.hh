@@ -46,6 +46,7 @@ public:
 	void write_structure_store(std::string store_path, StructureStore & store);
 
 	void register_store_provider(core::SSize priority, std::string name, StructureStoreProviderOP backend);
+	void delete_structure_store(std::string store_path);
 
 private:
 	StructureStoreManager();

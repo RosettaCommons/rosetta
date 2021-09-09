@@ -111,7 +111,6 @@
 #include <protocols/simple_ddg/InterfaceBindingEnergyDensityFilterCreator.hh>
 #include <protocols/simple_filters/InterRepeatContactFilterCreator.hh>
 #include <protocols/simple_filters/IntraRepeatContactFilterCreator.hh>
-#include <protocols/simple_filters/LeastNativeLike9merFilterCreator.hh>
 #include <protocols/simple_filters/MotifScoreFilterCreator.hh>
 #include <protocols/calc_taskop_filters/MultipleSigmoidsFilterCreator.hh>
 #include <protocols/simple_filters/MutationsFilterCreator.hh>
@@ -148,6 +147,7 @@
 #include <protocols/simple_filters/TaskAwareScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>
 #include <protocols/simple_filters/TotalSasaFilterCreator.hh>
+#include <protocols/simple_filters/Worst9merFilterCreator.hh>
 
 class BackwardsProtocolsFilterCreatorTests : public CxxTest::TestSuite
 {
@@ -455,9 +455,6 @@ public:
 
 	void test_protocols_simple_filters_IntraRepeatContactFilterCreator_name()
 	{ protocols::simple_filters::IntraRepeatContactFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "IntraRepeatContactsPerResidue" ); }
-
-	void test_protocols_simple_filters_LeastNativeLike9merFilterCreator_name()
-	{ protocols::simple_filters::LeastNativeLike9merFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "worst9mer" ); }
 
 	void test_protocols_simple_filters_MotifScoreFilterCreator_name()
 	{ protocols::simple_filters::MotifScoreFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MotifScore" ); }
@@ -867,9 +864,6 @@ public:
 	//
 	//void test_protocols_simple_filters_IntraRepeatContactFilterCreator()
 	//{ protocols::simple_filters::IntraRepeatContactFilterCreator cr; std::cout << "protocols::simple_filters::IntraRepeatContactFilterCreator " << cr.keyname() << std::endl; }
-	//
-	//void test_protocols_simple_filters_LeastNativeLike9merFilterCreator()
-	//{ protocols::simple_filters::LeastNativeLike9merFilterCreator cr; std::cout << "protocols::simple_filters::LeastNativeLike9merFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_protocols_simple_filters_MotifScoreFilterCreator()
 	//{ protocols::simple_filters::MotifScoreFilterCreator cr; std::cout << "protocols::simple_filters::MotifScoreFilterCreator " << cr.keyname() << std::endl; }

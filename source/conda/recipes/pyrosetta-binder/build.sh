@@ -18,10 +18,10 @@ python build.py -j
 LIB="${PREFIX}/lib/pyrosetta-binder.${PKG_VERSION}"
 
 mkdir -p $LIB
-cp build/llvm-4.0.0/build_*/bin/binder ${LIB}
+cp build/llvm-6.0.1/build_*/bin/binder ${LIB}
 
 mkdir -p ${LIB}/clang/lib
-cp -r build/llvm-4.0.0/tools/clang/lib/Headers ${LIB}/clang/lib/Headers
+cp -r build/llvm-6.0.1/tools/clang/lib/Headers ${LIB}/clang/lib/Headers
 
 mkdir -p ${LIB}/pybind11/
 cp -r build/pybind11/include ${LIB}/pybind11/include

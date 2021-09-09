@@ -174,7 +174,6 @@ static FilterRegistrator< protocols::simple_filters::InterfaceHbondsFilterCreato
 static FilterRegistrator< protocols::simple_filters::InterfaceHydrophobicResidueContactsFilterCreator > reg_InterfaceHydrophobicResidueContactsFilterCreator;
 static FilterRegistrator< protocols::simple_filters::InterRepeatContactFilterCreator > reg_InterRepeatContactFilterCreator;
 static FilterRegistrator< protocols::simple_filters::IntraRepeatContactFilterCreator > reg_IntraRepeatContactFilterCreator;
-static FilterRegistrator< protocols::simple_filters::LeastNativeLike9merFilterCreator > reg_LeastNativeLike9merFilterCreator;
 static FilterRegistrator< protocols::simple_filters::LongestContinuousApolarSegmentFilterCreator > reg_LongestContinuousApolarSegmentFilterCreator;
 static FilterRegistrator< protocols::simple_filters::LongestContinuousPolarSegmentFilterCreator > reg_LongestContinuousPolarSegmentFilterCreator;
 static FilterRegistrator< protocols::simple_filters::MotifScoreFilterCreator > reg_MotifScoreFilterCreator;
@@ -222,6 +221,8 @@ static FilterRegistrator< protocols::simple_filters::TaskAwareSASAFilterCreator 
 static FilterRegistrator< protocols::simple_filters::TaskAwareScoreTypeFilterCreator > reg_TaskAwareScoreTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TerminusDistanceFilterCreator > reg_TerminusDistanceFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TotalSasaFilterCreator > reg_TotalSasaFilterCreator;
+static FilterRegistrator< protocols::simple_filters::Worst9merFilterCreator > reg_Worst9merFilterCreator;
+
 static FilterRegistrator< protocols::frag_picker::FragmentScoreFilterCreator > reg_FragmentScoreFilterCreator;
 
 } //namespace protocols

@@ -23,8 +23,11 @@
 #include <protocols/loops/Loop.hh>
 
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStoreManager.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <protocols/pose_length_moves/NearNativeLoopCloser.hh>
 
@@ -83,6 +86,7 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		utility_exit_with_message("***fixing loops on a symmetric structure would be a bad idea because the fold tree is not properly maintained");
 	}
+	pose.conformation().clear_parameters_set_list();
 	protocols::loops::Loops pose_loops = get_loops(pose);
 	bool failure = false;
 	if ( firstResidue_==1 && lastResidue_>pose.size() ) {
@@ -97,7 +101,7 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 		resids.push_back(pose_loops[ii].start()-1);
 		resids.push_back(pose_loops[ii].start()+1);
 		resids.push_back(pose_loops[ii].start()+2);
-		Real loop_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
+		Real loop_rmsd = SSHashedFragmentStoreOP_->max_rmsd_in_region(pose,resids);
 		TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;
 	}
 	for ( core::Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
@@ -108,9 +112,9 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 			resids.push_back(pose_loops[ii].start()-1);
 			resids.push_back(pose_loops[ii].start()+1);
 			resids.push_back(pose_loops[ii].start()+2);
-			Real loop_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
+			Real loop_rmsd = SSHashedFragmentStoreOP_->max_rmsd_in_region(pose,resids);
 			if ( loop_rmsd > rmsThreshold_ || refix_loops_ ) {
-				NearNativeLoopCloserOP loopCloserOP(utility::pointer::make_shared<NearNativeLoopCloser>(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold_,max_vdw_change_,true,ideal_,true,"lookback",allowed_loop_abegos_));
+				NearNativeLoopCloserOP loopCloserOP(utility::pointer::make_shared<NearNativeLoopCloser>(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,pose_loops[ii].start()-1,pose_loops[ii].stop()+1,'A','A',rmsThreshold_,max_vdw_change_,true,ideal_,true,"lookback",allowed_loop_abegos_,label_loop_,fragment_store_path_,fragment_store_format_,fragment_store_compression_,numb_stubs_to_consider_));
 				loopCloserOP->apply(pose);
 				if ( reject_failed_loops_ ) {
 					if ( loopCloserOP->get_last_move_status()!=protocols::moves::MS_SUCCESS ) {
@@ -136,7 +140,7 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 			resids.push_back(pose_loops[ii].start()-1);
 			resids.push_back(pose_loops[ii].start()+1);
 			resids.push_back(pose_loops[ii].start()+2);
-			Real loop_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
+			Real loop_rmsd = SSHashedFragmentStoreOP_->max_rmsd_in_region(pose,resids);
 			TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;
 		}
 	}
@@ -161,7 +165,12 @@ FixAllLoopsMover::parse_my_tag(
 	max_vdw_change_ = tag->getOption<core::Real>("max_vdw_change",10.0);
 	allowed_loop_abegos_ = tag->getOption< std::string >( "allowed_loop_abegos","");
 	ideal_ = tag->getOption<bool>("ideal",false);
+	label_loop_ = tag->getOption<std::string>("label_loop","");
+	fragment_store_path_= tag->getOption<std::string>("fragment_store","");
+	fragment_store_format_=tag->getOption<std::string>("fragment_store_format","hashed");
+	fragment_store_compression_=tag->getOption<std::string>("fragment_store_compression","all");
 	reject_failed_loops_ = tag->getOption<bool>("reject_failed_loops",true);//If one loop fails just skip that one.
+	numb_stubs_to_consider_ = tag->getOption<core::Size>("numb_stubs_to_consider",1);
 	utility::vector1< std::string > resAdjustmentRange1_split( utility::string_split( resAdjustmentRange1 , ',' ) );
 	utility::vector1< std::string > resAdjustmentRange2_split( utility::string_split( resAdjustmentRange2 , ',' ) );
 	utility::vector1< std::string > resAdjustmentRange1_sheet_split( utility::string_split( resAdjustmentRange1_sheet , ',' ) );
@@ -212,11 +221,10 @@ FixAllLoopsMover::parse_my_tag(
 		firstResidue_ = atoi(residueRange_split[1].c_str());
 		lastResidue_ = atoi(residueRange_split[2].c_str());
 	}
-	SSHashedFragmentStore_ = protocols::indexed_structure_store::SSHashedFragmentStore::get_instance();
-	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
-	SSHashedFragmentStore_->init_SS_stub_HashedFragmentStore();
+	SSHashedFragmentStoreOP_ = protocols::indexed_structure_store::FragmentStoreManager::get_instance()->SSHashedFragmentStore(fragment_store_path_,fragment_store_format_,fragment_store_compression_);
+	SSHashedFragmentStoreOP_->set_threshold_distance(rmsThreshold_);
 	TR << "database loaded!!" << std::endl;
-	std::cout << resAdjustmentStartLow_ <<"," << resAdjustmentStartHigh_ << ",:," << resAdjustmentStopLow_ << "," << resAdjustmentStopHigh_ << ",:," << loopLengthRangeLow_ <<"," << loopLengthRangeHigh_ << std::endl;
+	TR << resAdjustmentStartLow_ <<"," << resAdjustmentStartHigh_ << ",:," << resAdjustmentStopLow_ << "," << resAdjustmentStopHigh_ << ",:," << loopLengthRangeLow_ <<"," << loopLengthRangeHigh_ << std::endl;
 }
 
 std::string FixAllLoopsMover::get_name() const {
@@ -265,6 +273,21 @@ void FixAllLoopsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"reject_failed_loops", xsct_rosetta_bool,
 		"allows the program to crash if the loops can't be fixed", "true");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"label_loop", xs_string,
+		"label loop in pdb_info object", "");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"fragment_store", xs_string,
+		"path to fragment store. Note:All fragment stores use the same database", "");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"fragment_store_format", xs_string,
+		"Options:hashed,unhashed new format is unhashed", "hashed");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"fragment_store_compression", xs_string,
+		"Options:helix_shortLoop,sheet_shortLoop,all", "all");
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"numb_stubs_to_consider", xsct_non_negative_integer,
+		"number of stubs to consider. Fewer-faster, higher-increased accuracy", "1");
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),

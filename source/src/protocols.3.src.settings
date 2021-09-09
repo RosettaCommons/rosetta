@@ -522,7 +522,6 @@ sources = {
 		"InterfaceSasaFilter",
 		"InterRepeatContactFilter",
 		"IntraRepeatContactFilter",
-		"LeastNativeLike9merFilter",
 		"LongestContinuousApolarSegmentFilter",
 		"LongestContinuousPolarSegmentFilter",
 		"MotifScoreFilter",
@@ -551,6 +550,7 @@ sources = {
 		"HelixHelixAngleFilter",
 		"TerminusDistanceFilter",
 		"MPSpanAngleFilter",
+		"Worst9merFilter",
 
 		# NMR
 		"RDC_Evaluator",

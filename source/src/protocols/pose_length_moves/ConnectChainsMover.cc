@@ -19,6 +19,7 @@
 
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 
@@ -129,9 +130,35 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 			core::pose::PoseOP chainA_plus = connected_chains.at(chain_assembled).poseOP->clone();
 			core::pose::PoseOP chainB = connected_chains.at(chain_remainder_split[1]).poseOP;
 			Real chainB_rmsd = connected_chains.at(chain_assembled).rmsd;
-			NearNativeLoopCloserOP loopCloserOP(utility::pointer::make_shared<NearNativeLoopCloser>(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,1,1,'A','B',rmsThreshold_,0,true,false,true,"lookback",allowed_loop_abegos_));
+			NearNativeLoopCloserOP loopCloserOP(utility::pointer::make_shared<NearNativeLoopCloser>(resAdjustmentStartLow_,resAdjustmentStartHigh_,resAdjustmentStopLow_,resAdjustmentStopHigh_,resAdjustmentStartLow_sheet_,resAdjustmentStartHigh_sheet_,resAdjustmentStopLow_sheet_,resAdjustmentStopHigh_sheet_,loopLengthRangeLow_,loopLengthRangeHigh_,1,1,'A','B',rmsThreshold_,0,true,false,true,"lookback",allowed_loop_abegos_,label_loop_,fragment_store_path_,fragment_store_format_,fragment_store_compression_,numb_stubs_to_consider_));
+			vector1 < vector1 < std::string > > labels_chainA;
+			vector1 < vector1 < std::string > > labels_chainB;
+			//cache labels before
+			for ( core::Size ii=1; ii<=chainA_plus->size(); ++ii ) {
+				vector1 < std::string > tmp_labels;
+				tmp_labels = chainA_plus->pdb_info()->get_reslabels(ii);
+				labels_chainA.push_back(tmp_labels);
+			}
+			for ( core::Size ii=1; ii<=chainB->size(); ++ii ) {
+				vector1 < std::string > tmp_labels;
+				tmp_labels = chainB->pdb_info()->get_reslabels(ii);
+				labels_chainB.push_back(tmp_labels);
+			}
 			append_pose_to_pose(*chainA_plus,*chainB,true);
 			renumber_pdbinfo_based_on_conf_chains(*chainA_plus,true,false,false,false);
+			//append cached labels
+			for ( core::Size ii=1; ii<=labels_chainA.size(); ++ii ) {
+				vector1 < std::string > tmp_labels = labels_chainA[ii];
+				for ( core::Size jj=1; jj <= tmp_labels.size(); ++jj ) {
+					chainA_plus->pdb_info()->add_reslabel(ii, tmp_labels[jj]);
+				}
+			}
+			for ( core::Size ii=1; ii<=labels_chainB.size(); ++ii ) {
+				vector1 < std::string > tmp_labels = labels_chainB[ii];
+				for ( core::Size jj=1; jj <= tmp_labels.size(); ++jj ) {
+					chainA_plus->pdb_info()->add_reslabel(ii+labels_chainA.size(), tmp_labels[jj]);
+				}
+			}
 			utility::vector1< char > pdb_chains;
 			for ( core::Size ii=1; ii<=chainA->total_residue(); ++ii ) {
 				pdb_chains.push_back('A');
@@ -197,18 +224,47 @@ void ConnectChainsMover::generate_best_final_pose(core::pose::Pose & pose,vector
 		core::pose::PoseOP return_pose = connected_chains.at(chains_in_poses[low_rmsd_pose_index][1]).poseOP->clone();
 		for ( core::Size jj=2; jj<=chains_in_poses[low_rmsd_pose_index].size(); ++jj ) {
 			core::pose::PoseOP append_pose = connected_chains.at(chains_in_poses[low_rmsd_pose_index][jj]).poseOP;
+			Size return_pose_pre_append_size = return_pose->size();
 			append_pose_to_pose(*return_pose,*append_pose,true);
+			for ( core::Size ii=1; ii<=append_pose->size(); ++ii ) {
+				Size return_pose_position = return_pose_pre_append_size+ii;
+				vector1 < std::string > tmp_labels = append_pose->pdb_info()->get_reslabels(ii);
+				for ( core::Size jj=1; jj <= tmp_labels.size(); ++jj ) {
+					return_pose->pdb_info()->add_reslabel(return_pose_position,tmp_labels[jj]);
+				}
+			}
 		}
 		pose = *return_pose;
 	}
 }
 
+void ConnectChainsMover::reletter_chains(core::pose::Pose & pose){
+	vector1 < vector1 < std::string > > labels;
+	for ( core::Size ii=1; ii<=pose.size(); ++ii ) {
+		vector1< std::string> tmp_labels = pose.pdb_info()->get_reslabels(ii);
+		labels.push_back(tmp_labels);
+	}
+	renumber_pdbinfo_based_on_conf_chains(pose);
+	pose.conformation().clear_parameters_set_list();
+	for ( core::Size ii=1; ii <= labels.size(); ++ii ) {
+		vector1 <std::string> pos_labels = labels[ii];
+		for ( core::Size jj=1; jj <= pos_labels.size(); ++jj ) {
+			pose.pdb_info()->add_reslabel(ii, pos_labels[jj]);
+		}
+	}
+}
+
+
+
 void ConnectChainsMover::apply(core::pose::Pose & pose) {
 	vector1<std::string> individual_chains;
-	vector1< vector1 <std::string> > chains_in_poses;
-	parse_input(individual_chains, chains_in_poses);
+	vector1< vector1 <std::string> > chains_in_pose;
+	if ( reletter_chains_ ) {
+		reletter_chains(pose);
+	}
+	parse_input(individual_chains, chains_in_pose);
 	map<std::string, Chain> connected_chains = generate_connected_chains(pose,individual_chains);
-	generate_best_final_pose(pose,chains_in_poses,connected_chains);
+	generate_best_final_pose(pose,chains_in_pose,connected_chains);
 }
 
 
@@ -227,6 +283,12 @@ ConnectChainsMover::parse_my_tag(
 	std::string resAdjustmentRange2_sheet( tag->getOption< std::string >( "resAdjustmentRangeSide2_sheet","-1,1") );
 	allowed_loop_abegos_ = tag->getOption< std::string >( "allowed_loop_abegos","");
 	output_chains_ = tag->getOption<std::string>("chain_connections");
+	label_loop_ = tag->getOption<std::string>("label_loop","");
+	fragment_store_path_= tag->getOption< std::string >("fragment_store","");
+	fragment_store_format_=tag->getOption<std::string>("fragment_store_format","hashed");
+	fragment_store_compression_=tag->getOption<std::string>("fragment_store_compression","all");
+	numb_stubs_to_consider_ = tag->getOption<core::Size>("numb_stubs_to_consider",1);
+	reletter_chains_ = tag->getOption< bool >("reletter_chains",false);
 	utility::vector1< std::string > resAdjustmentRange1_split( utility::string_split( resAdjustmentRange1 , ',' ) );
 	utility::vector1< std::string > resAdjustmentRange2_split( utility::string_split( resAdjustmentRange2 , ',' ) );
 	utility::vector1< std::string > resAdjustmentRange1_sheet_split( utility::string_split( resAdjustmentRange1_sheet , ',' ) );
@@ -296,9 +358,13 @@ void ConnectChainsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide1_sheet", xsct_int_cslist, "residue adjustment applied before the loop if sheet", "-1,1" )
 		+ XMLSchemaAttribute::attribute_w_default( "resAdjustmentRangeSide2_sheet", xsct_int_cslist, "residue adjustment applied after the loop if sheet", "-1,1" )
 		+ XMLSchemaAttribute::attribute_w_default( "allowed_loop_abegos", xs_string, "comma seperated string of allowed abegos, default=empty all abegos", "" )
-
-		+ XMLSchemaAttribute::required_attribute( "chain_connections", xs_string, "what chains to connect" );
-
+		+ XMLSchemaAttribute::attribute_w_default( "label_loop", xs_string, "label loop in pdb_info object", "")
+		+ XMLSchemaAttribute::required_attribute( "chain_connections", xs_string, "what chains to connect" )
+		+ XMLSchemaAttribute::attribute_w_default( "reletter_chains", xsct_rosetta_bool, "what chains to connect", "false" )
+		+ XMLSchemaAttribute::attribute_w_default("fragment_store", xs_string,"path to fragment store. Note:All fragment stores use the same database", "")
+		+ XMLSchemaAttribute::attribute_w_default("fragment_store_format", xs_string, "Options:hashed,unhashed new format is unhashed", "hashed")
+		+ XMLSchemaAttribute::attribute_w_default("numb_stubs_to_consider", xsct_non_negative_integer, "number of stubs to consider. Fewer-faster, higher-increased accuracy", "1")
+		+ XMLSchemaAttribute::attribute_w_default("fragment_store_compression", xs_string,"Options:helix_shortLoop,sheet_shortLoop,all", "all");
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "only allow loops from the most frequent abegos", attlist );
 }

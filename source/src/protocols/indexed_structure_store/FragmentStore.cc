@@ -140,6 +140,9 @@ void FragmentStore::generate_residue_subset_fragment_store(std::vector<numeric::
 						core::Size end_index2 = ll;
 						numeric::Real start_position=fragment_coordinates[start_index1][start_index2];
 						tmp_fragment_store->fragment_coordinates[end_index1][end_index2]=start_position;
+
+
+
 						//numeric::Real *start_position=&fragment_coordinates[start_index1][start_index2];
 						//numeric::Real *end_position=&tmp_fragment_store->fragment_coordinates[end_index1][end_index2];
 						//end_position=start_position;

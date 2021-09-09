@@ -25,6 +25,9 @@
 #include <core/pose/symmetry/util.hh>
 //
 #include <protocols/indexed_structure_store/SSHashedFragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentLookup.hh>
+#include <protocols/indexed_structure_store/FragmentStore.hh>
+#include <protocols/indexed_structure_store/FragmentStoreManager.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -76,7 +79,7 @@ StructProfileMover::StructProfileMover():moves::Mover("StructProfileMover"){
 	read_P_AA_SS_cen6();
 }
 
-StructProfileMover::StructProfileMover(Real rmsThreshold,core::Size consider_topN_frags, Real burialWt, bool only_loops , Real allowed_deviation, Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res):moves::Mover("StructProfileMover"){
+StructProfileMover::StructProfileMover(Real rmsThreshold,core::Size consider_topN_frags, Real burialWt, bool only_loops , Real allowed_deviation, Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res,std::string fragment_store_path,std::string fragment_store_format, std::string fragment_store_compression):moves::Mover("StructProfileMover"){
 	using namespace protocols::indexed_structure_store;
 	aa_order_="ACDEFGHIKLMNPQRSTVWY";
 	read_P_AA_SS_cen6();
@@ -91,8 +94,11 @@ StructProfileMover::StructProfileMover(Real rmsThreshold,core::Size consider_top
 	add_csts_to_pose_ = add_csts_to_pose;
 	ignore_terminal_res_ = ignore_terminal_res;
 	cenType_=6;
-	SSHashedFragmentStore_ = SSHashedFragmentStore::get_instance();
-	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
+	fragment_store_path_ = fragment_store_path;
+	fragment_store_format_ = fragment_store_format;
+	fragment_store_compression_ = fragment_store_compression;
+	SSHashedFragmentStoreOP_ = protocols::indexed_structure_store::FragmentStoreManager::get_instance()->SSHashedFragmentStore(fragment_store_path_,fragment_store_format_,fragment_store_compression_);
+	SSHashedFragmentStoreOP_->set_threshold_distance(rmsThreshold_);
 }
 
 void
@@ -182,7 +188,7 @@ vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose:
 	vector1<std::string> hits_aa;
 
 	if ( pose.residue(res).is_protein() ) {
-		SSHashedFragmentStore_->get_hits_below_rms(pose,res,rmsThreshold_,hits_cen,hits_rms,hits_aa);
+		SSHashedFragmentStoreOP_->get_hits_below_rms(pose,res,rmsThreshold_,hits_cen,hits_rms,hits_aa);
 	}
 	if ( hits_cen.size() == 0 ) {
 		return top_hits_aa;
@@ -233,7 +239,7 @@ vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose:
 }
 
 vector1<vector1<std::string> > StructProfileMover::get_closest_sequences(core::pose::Pose const & pose,vector1<Real> cenList,core::select::residue_selector::ResidueSubset const & subset){
-	core::Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
+	core::Size fragment_length = SSHashedFragmentStoreOP_->get_fragment_length();
 	vector1<vector1<std::string > > all_aa_hits;
 	core::Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -507,8 +513,11 @@ StructProfileMover::parse_my_tag(
 	allowed_deviation_=tag->getOption< Real >("allowed_deviation",0.10);
 	allowed_deviation_loops_=tag->getOption< Real >("allowed_deviation_loops",0.10);
 	eliminate_background_=tag->getOption< bool >("eliminate_background",true);
-	SSHashedFragmentStore_ = SSHashedFragmentStore::get_instance();
-	SSHashedFragmentStore_->set_threshold_distance(rmsThreshold_);
+	fragment_store_path_= tag->getOption< std::string >("fragment_store","");
+	fragment_store_format_=tag->getOption<std::string>("fragment_store_format","hashed");
+	fragment_store_compression_=tag->getOption<std::string>("fragment_store_compression","all");
+	SSHashedFragmentStoreOP_ = protocols::indexed_structure_store::FragmentStoreManager::get_instance()->SSHashedFragmentStore(fragment_store_path_,fragment_store_format_,fragment_store_compression_);
+	SSHashedFragmentStoreOP_->set_threshold_distance(rmsThreshold_);
 	cenType_ = tag->getOption<core::Size>("cenType",6); //Needs to match the datatabase. Likely I will find one I like and use that so this is an option that shouldn't be modified often
 	outputProfile_ = tag->getOption<bool>("outputProfile",false);
 	add_csts_to_pose_ = tag->getOption<bool>("add_csts_to_pose",true);
@@ -554,6 +563,7 @@ void StructProfileMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		+ XMLSchemaAttribute::attribute_w_default( "ignore_terminal_residue", xsct_rosetta_bool, "XRW TO DO", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "profile_name", xs_string, "Name of the profile to output. Empty string results in using the pdb output name."
 		" Setting this the the special word \"profile\" results in the original behavior of profile named \"profile\" and MSAcst named \"MSAcst\"", "profile" )
+		+ XMLSchemaAttribute::attribute_w_default("fragment_store", xs_string,"path to fragment store. Note:All fragment stores use the same database", "")
 		+ XMLSchemaAttribute( "residue_selector", xs_string, "Only compute structure profile for residues within residue selector" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Quickly generates a structure profile", attlist );
 }

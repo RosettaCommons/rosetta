@@ -40,7 +40,7 @@ typedef  core::Real  Probability;
 class StructProfileMover : public protocols::moves::Mover {
 public:
 	StructProfileMover();
-	StructProfileMover(core::Real rmsThreshold,core::Size consider_topN_frags, core::Real burialWt, bool only_loops , core::Real allowed_deviation, core::Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res);
+	StructProfileMover(core::Real rmsThreshold,core::Size consider_topN_frags, core::Real burialWt, bool only_loops , core::Real allowed_deviation, core::Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res,std::string fragment_store_path="",std::string fragment_store_format="", std::string fragment_store_compression="");
 	core::Size ss_type_convert(char ss_type);
 	void read_P_AA_SS_cen6();
 	utility::vector1<std::string> get_closest_sequence_at_res(core::pose::Pose const & pose, core::Size res,utility::vector1<core::Real> cenList);
@@ -77,7 +77,7 @@ private:
 	bool outputProfile_;
 	bool add_csts_to_pose_;
 	core::Size cenType_;
-	protocols::indexed_structure_store::SSHashedFragmentStore * SSHashedFragmentStore_;
+	protocols::indexed_structure_store::SSHashedFragmentStoreOP SSHashedFragmentStoreOP_;
 	typedef utility::vector1< utility::vector1< utility::vector1< Probability > > > Probability_AA_n_n;
 	Probability_AA_n_n P_AA_SS_burial_;
 	core::Real allowed_deviation_;
@@ -87,6 +87,9 @@ private:
 	bool ignore_terminal_res_;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 	std::string profile_save_filename_;
+	std::string fragment_store_path_;
+	std::string fragment_store_format_;
+	std::string fragment_store_compression_;
 
 };
 
