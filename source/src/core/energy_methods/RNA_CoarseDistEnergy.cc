@@ -71,7 +71,6 @@ RNA_CoarseDistEnergy::clone() const
 }
 
 
-inline
 Real
 RNA_CoarseDistEnergy::score_atom_pair(
 	conformation::Residue const & rsd1,
@@ -122,7 +121,6 @@ RNA_CoarseDistEnergy::score_atom_pair(
 	return energy;
 }
 
-inline
 Real
 RNA_CoarseDistEnergy::deriv_atom_pair(
 	conformation::Residue const & rsd1,
