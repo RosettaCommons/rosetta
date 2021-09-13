@@ -74,7 +74,7 @@ public:
 		//test::UTracer UT("core/conformation/test_simple_conformation.u");
 
 		// create it with jump 1 as the dock jump
-		InterfaceOP iface( new Interface(1) );
+		InterfaceOP iface( utility::pointer::make_shared< Interface >(1) );
 
 		// the Interface object uses an energy graph to calculate the iface,
 		// therefore, energies must be accumulated before any calculations
@@ -89,6 +89,38 @@ public:
 
 		test::UTracer ut("protocols/scoring/Interface.u");
 		iface->show( ut, *the_pose );
+
+		// This is the expected interface residue position vector
+		utility::vector1 < utility::vector1_int > expected_paired_list({
+			utility::vector1_int{39, 40, 41, 42, 55, 57, 58, 59, 95, 96, 97, 98, 99, 102, 141, 142, 143, 146, 149, 151, 152, 172, 175, 180, 189, 190, 191, 192, 193, 194, 195, 213, 214, 215, 216, 217, 218, 219, 220, 226, 227},
+			utility::vector1_int{255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 275, 277, 278, 280, 281, 284, 288, 299, 300}
+			});
+
+		// Verify that the calculated pair_list matches the expected paired list
+		TS_ASSERT_EQUALS(expected_paired_list, iface->pair_list());
+	}
+
+	void test_OneChainInterfaceTest() {
+		// Generate a one chain pose to test
+		PoseOP onechain_pose = utility::pointer::make_shared< Pose >();
+		core::import_pose::centroid_pose_from_pdb( *onechain_pose, "core/pose/onechain.pdb" );
+
+		// Create a new interface
+		InterfaceOP iface( utility::pointer::make_shared<Interface>() );
+
+		// Score the pose so that we can calculate the interface using the energy graph
+		scoring::ScoreFunctionOP scorefxn ( scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
+		(*scorefxn)(*onechain_pose);
+
+		// use an 8 A cutoff for the iface calculation
+		iface->distance( 8.0 );
+
+		// Calculate the interface (we have one chain, so there should be none)
+		iface->calculate( *onechain_pose );
+
+		// Make sure the interface residue lists are empty
+		for ( utility::vector1_int res_list: iface->pair_list() ) {
+			TS_ASSERT(res_list.empty());
+		}
 	}
 };
-

@@ -69,5 +69,14 @@ public:
 		sfxn.set_weight( interchain_env, 1.0 );
 		TS_ASSERT_DELTA( sfxn( *the_pose ), 6.2852, 1e-3 );
 	}
+
+	void test_OneChainEnvEnergyTest() {
+		PoseOP onechain_pose = utility::pointer::make_shared< Pose >();
+		core::import_pose::centroid_pose_from_pdb( *onechain_pose, "core/pose/onechain.pdb" );
+
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( core::scoring::interchain_env, 1.0 );
+		TS_ASSERT_EQUALS( sfxn( *onechain_pose ), 0 );
+	}
 };
 

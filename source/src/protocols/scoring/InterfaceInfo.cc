@@ -20,6 +20,7 @@
 // Package headers
 
 // Project headers
+#include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
 // Basic headers
@@ -42,8 +43,30 @@
 namespace protocols {
 namespace scoring {
 
+/// @brief Default constructor with rb jump = 1
+InterfaceInfo::InterfaceInfo()
+{
+	rb_jump_.push_back( 1 );
+	initialize();
+}
+
+/// @brief Constructor with arguments for non-default rb jump
+InterfaceInfo::InterfaceInfo( core::Size rb_jump_in )
+{
+	rb_jump_.push_back( rb_jump_in );
+	initialize();
+}
+
+/// @brief Constructor with arguments for multiple jumps
+InterfaceInfo::InterfaceInfo( utility::vector1_size const & rb_jump_in )
+{
+	rb_jump_ = rb_jump_in;
+	initialize();
+}
+
+/// @brief Copy constructor
 InterfaceInfo::InterfaceInfo( InterfaceInfo const & src ) :
-	CacheableData(src), calculated_(false)
+	CacheableData(src)
 {
 	rb_jump_ = src.rb_jump_;
 	num_jump_ = src.num_jump_;
@@ -54,21 +77,25 @@ InterfaceInfo::InterfaceInfo( InterfaceInfo const & src ) :
 }
 
 void
-//InterfaceInfo::initialize( pose::Pose const & pose )
-InterfaceInfo::initialize()
+InterfaceInfo::setup_interfaces()
 {
-
-	//get the number of jumps in the fold tree
-	num_jump_ = rb_jump_.size();
-
 	interface_list_.resize(num_jump_);
 
 	//initialize interface objects for each interface in pose
 	for ( core::Size i = 1; i <= num_jump_; i++ ) {
 		interface_list_[i] = utility::pointer::make_shared< protocols::scoring::Interface >( rb_jump_[i] );
-		interface_list_[i]->distance(6.0);
+		interface_list_[i]->distance(distance_);
 	}
+}
 
+void
+InterfaceInfo::initialize()
+{
+	//get the number of jumps in the fold tree
+	num_jump_ = rb_jump_.size();
+
+	// Initialize the interface objects
+	setup_interfaces();
 }
 
 bool
@@ -79,7 +106,10 @@ InterfaceInfo::is_interface(
 
 	bool is_interface(false);
 	for ( core::Size i = 1; i <= num_jump_; i++ ) {
-		if ( interface_list_[i]->is_interface( rsd ) ) is_interface = true;
+		// If the seqpos is within the size of the pose (as understood by the Interface), check if the rsd is_interface
+		if ( rsd.seqpos() <= interface_list_[i]->contact_list().size() ) {
+			if ( interface_list_[i]->is_interface( rsd ) ) is_interface = true;
+		}
 	}
 
 	return is_interface;
@@ -112,11 +142,43 @@ InterfaceInfo::interface( core::Size interface_num ) const {
 	return interface_list_[ interface_num ];
 }
 
+/// @brief Removes all jumps from the interface calculation
+void
+InterfaceInfo::clear_jumps()
+{
+	rb_jump_.clear();
+	initialize();
+}
+
+/// @brief Adds another jump to the interface calculation, for example
+///for multi-body docking
+void
+InterfaceInfo::add_jump( core::Size jump_in )
+{
+	rb_jump_.push_back( jump_in );
+	initialize();
+}
+
+/// @brief Sets the distance cutoff for interface calculations, and updates interfaces accordingly
+void
+InterfaceInfo::distance( core::Real distance_in )
+{
+	if ( distance_in != distance_ ) {
+		distance_ = distance_in;
+
+		// Update the interfaces using the new distance
+		setup_interfaces();
+	}
+}
+
 void
 InterfaceInfo::calculate( core::pose::Pose const & pose )
 {
 	for ( core::Size i = 1; i <= num_jump_; i++ ) {
-		interface_list_[i]->calculate( pose );
+		// Only calculate the interface if we have enough jumps in the pose
+		if ( pose.num_jump() >= i ) {
+			interface_list_[i]->calculate( pose );
+		}
 	}
 }
 

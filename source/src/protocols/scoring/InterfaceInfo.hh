@@ -48,29 +48,15 @@ class InterfaceInfo : public basic::datacache::CacheableData {
 public:
 
 	/// @brief Default constructor with rb jump = 1
-	InterfaceInfo(): calculated_(false)
-	{
-		rb_jump_.push_back( 1 );
-		distance_ = 6.0; //default
-		initialize();
-	}
+	InterfaceInfo();
 
 	/// @brief Constructor with arguments for non-default rb jump
-	InterfaceInfo( core::Size rb_jump_in ): calculated_(false), distance_ (6.0)
-	{
-		rb_jump_.push_back( rb_jump_in );
-		distance_ = 6.0; //default
-		initialize();
-	}
+	InterfaceInfo( core::Size rb_jump_in );
 
 	/// @brief Constructor with arguments for multiple jumps
-	InterfaceInfo( utility::vector1_size rb_jump_in ): calculated_(false)
-	{
-		rb_jump_ = rb_jump_in;
-		distance_ = 6.0; //default
-		initialize();
-	}
+	InterfaceInfo( utility::vector1_size const & rb_jump_in );
 
+	/// @brief Copy constructor
 	InterfaceInfo( InterfaceInfo const & src );
 
 	basic::datacache::CacheableDataOP
@@ -80,14 +66,17 @@ public:
 	}
 
 	/// @brief Removes all jumps from the interface calculation
-	void clear_jumps(){ rb_jump_.clear(); }
+	void clear_jumps();
 
 	/// @brief Adds another jump to the interface calculation, for example
 	///for multi-body docking
-	void add_jump( core::Size jump_in ){ rb_jump_.push_back( jump_in ); }
+	void add_jump( core::Size jump_in );
 
 	/// @brief Sets the distance cutoff for interface calculations
-	void distance( core::Real distance_in ){ distance_ = distance_in; }
+	void distance( core::Real distance_in );
+
+	/// @brief Get the distance cutoff for interface calculations
+	core::Real distance() { return distance_; }
 
 	/// @brief Returns if interface calculation is up to date
 	bool calculated() const { return calculated_; }
@@ -132,13 +121,16 @@ public:
 	InterfaceCOP interface( core::Size interface_num ) const;
 
 private:
-	bool calculated_;
+	bool calculated_ = false;
 	core::Size num_jump_;
-	core::Real distance_;
+	core::Real distance_ = 6.0;
 
 	utility::vector1_size rb_jump_;
 
 	utility::vector1< InterfaceOP > interface_list_;
+
+	void setup_interfaces();
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

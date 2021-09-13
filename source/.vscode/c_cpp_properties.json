@@ -1,12 +1,15 @@
 {
     "configurations": [
         {
+            "name": "Linux",
             "includePath": [
                 "${workspaceFolder}",
                 "${workspaceFolder}/src",
+                "${workspaceFolder}/test",
                 "${workspaceFolder}/external",
+                "${workspaceFolder}/external/cxxtest",
                 "${workspaceFolder}/external/include",
-                "${workspaceFolder}/external/boost_1_55_0",
+                "${workspaceFolder}/external/boost_submod",
                 "${workspaceFolder}/external/dbio",
                 "${workspaceFolder}/external/libxml2",
                 "${workspaceFolder}/src/platform/linux/",

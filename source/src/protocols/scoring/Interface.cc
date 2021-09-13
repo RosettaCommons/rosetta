@@ -115,6 +115,9 @@ Interface::calculate( core::pose::Pose const & pose )
 		return;
 	}
 
+	// If the pose has no jumps (single chain), return
+	if ( pose.num_jump() == 0 ) return;
+
 	// partner is the same as is_upstream of Ian's code in LigandDockProtocol
 	if ( !use_input_partners_ ) {
 		fold_tree.partition_by_jump( jump_number_, partner_ );

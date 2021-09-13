@@ -688,6 +688,7 @@ sources = {
 		"InterchainEnvEnergy",
 		"InterchainPairEnergy",
 		"Interface",
+		"InterfaceInfo",
 	],
 	"sewing/data_storage" : [
 		"SmartAssemblyTests",

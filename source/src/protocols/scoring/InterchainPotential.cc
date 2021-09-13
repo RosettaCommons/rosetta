@@ -102,6 +102,11 @@ InterchainPotential::compute_interface(
 	core::pose::Pose & pose
 ) const
 {
+	// Print a warning if the pose doesn't have any jumps
+	if ( pose.num_jump() == 0 ) {
+		TR.Warning << "Computing an interface for a pose with no jumps!" << std::endl;
+	}
+
 	InterfaceInfo & interface( nonconst_interface_from_pose( pose ) );
 
 	/// initialize the cenlist info:
@@ -145,6 +150,9 @@ InterchainPotential::evaluate_env_score(
 
 	//reset env_score
 	env_score = 0.0;
+
+	// If the pose has no jumps (single chain), return
+	if ( pose.num_jump() == 0 ) return;
 
 	if ( rsd.is_protein() == false ) return;
 
@@ -212,6 +220,9 @@ InterchainPotential::evaluate_pair_and_vdw_score(
 
 	pair_contribution = 0.0;
 	vdw_contribution = 0.0;
+
+	// If the pose has no jumps (single chain), return
+	if ( pose.num_jump() == 0 ) return;
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 
