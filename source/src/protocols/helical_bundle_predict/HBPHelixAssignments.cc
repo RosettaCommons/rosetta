@@ -269,7 +269,7 @@ HBPHelix::set_end_position(
 	runtime_assert_string_msg( position_in > 0, "Error in HBPHelix::set_end_position(): The position must be greater than zero." );
 	end_position_ = position_in;
 	if ( start_position_ != 0 ) {
-		runtime_assert_string_msg( end_position_ > start_position_, "Error in HBPHelix::set_end_position(): The end position must be greater than the start position." );
+		runtime_assert_string_msg( end_position_ >= start_position_, "Error in HBPHelix::set_end_position(): The end position must be greater than or equal to the start position.  Got start position = " + std::to_string(start_position_) + ", end position = " + std::to_string(end_position_) + "." );
 	}
 }
 
