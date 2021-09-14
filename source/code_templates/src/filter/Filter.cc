@@ -115,7 +115,7 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	protocols::filters::xsd_type_definition_w_attributes(
 		xsd,
 		class_name(),
-		"FILL IN THIS DOC STRING",
+		"--brief--",
 		attlist );
 }
 

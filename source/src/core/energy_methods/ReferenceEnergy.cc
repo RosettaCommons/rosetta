@@ -82,7 +82,7 @@ ReferenceEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) || rsd.is_virtual_residue() ) {
 		return;
 	}
 

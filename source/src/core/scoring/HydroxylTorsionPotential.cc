@@ -108,6 +108,8 @@ HydroxylTorsionPotential::eval_residue_energy(
 {
 	Real score( 0.0 );
 
+	if ( rsd.is_virtual_residue() ) return score;
+
 	bool const is_d( rsd.type().is_d_aa() );
 
 	std::string restag = get_restag( rsd.type() );

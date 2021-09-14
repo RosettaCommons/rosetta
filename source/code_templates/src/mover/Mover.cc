@@ -88,7 +88,7 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "DOCUMENTATION STRING", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "--brief--", attlist );
 }
 
 

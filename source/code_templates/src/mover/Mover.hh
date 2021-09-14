@@ -99,7 +99,7 @@ public:
 public: //Function overrides needed for the citation manager:
 
 	/// @brief This mover is unpublished.  It returns --name-- as its author.
-	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const override;
 
 private: // methods
 

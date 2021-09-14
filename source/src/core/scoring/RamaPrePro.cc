@@ -66,6 +66,10 @@ RamaPrePro::eval_rpp_rama_score(
 ) const {
 	core::chemical::AA const res_aa1( res1->backbone_aa() );
 	bool const is_L_D_or_GLY = (core::chemical::is_canonical_L_aa_or_gly(res_aa1) || core::chemical::is_canonical_D_aa(res_aa1) || res_aa1 == core::chemical::aa_gly );
+
+	//Virtual residues should not be scored.
+	if ( res1->is_virtual_residue() ) return 0.0;
+
 	bool const custom_rama_prepro_map = res1->defines_custom_rama_prepro_map( res2 && is_N_substituted( res2 ) );
 	if ( is_L_D_or_GLY && ! custom_rama_prepro_map ) {
 		debug_assert( input_mainchain_torsions.size() == 2 );

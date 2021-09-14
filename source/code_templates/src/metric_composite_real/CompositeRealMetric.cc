@@ -110,11 +110,11 @@ void
 	//	"Selector specifying residues." );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
-		"A metric for measuring ... and adding it to the resulting score file.", attlist);
+		"--brief--", attlist);
 }
 
 std::map< std::string, core::Real >
---class--::calculate(const pose::Pose & ) const {
+--class--::calculate(const core::pose::Pose & ) const {
 
 }
 

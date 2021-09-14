@@ -112,12 +112,12 @@ void
 	//	"Selector specifying residues." );
 
 	core::simple_metrics::xsd_per_residue_string_metric_type_definition_w_attributes(xsd, name_static(),
-		"A metric for measuring ... and adding it to the resulting score file.", attlist);
+		"--brief--", attlist);
 }
 
-std::map< std::string, std::string >
---class--::calculate(const pose::Pose & ) const {
-
+std::map< core::Size, std::string >
+--class--::calculate(const pose::Pose & pose) const {
+	utility::vector1< core::Size > selection1 = selection_positions(get_selector()->apply(pose));
 
 }
 

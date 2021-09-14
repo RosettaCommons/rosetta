@@ -284,6 +284,11 @@ BuriedUnsatPenaltyNode::initialize_node(
 	runtime_assert( rotamer_index > 0 );
 	runtime_assert( options != nullptr );
 
+	//JAB - skip virts from the calculation
+	if ( residue->type().is_virtual_residue() ) {
+		return;
+	}
+
 	BuriedUnsatPenaltyNodeDataOP new_stored_data( stored_data_->clone() );
 	stored_data_ = new_stored_data; //Const from nonconst.  We can continue to modify the object pointed to using new_stored_data; when it goes out of scope, stored_data_ is the COP to that object.
 
@@ -1341,6 +1346,11 @@ BuriedUnsatPenaltyGraph::initialize_node(
 	core::Size const nres( is_symmetric ? symmconf->Symmetry_Info()->num_independent_residues() : pose.total_residue() );
 
 	runtime_assert( residue_position > 0 && residue_position <= nres );
+
+	//JAB - skip virts in calculation.
+	if ( residue->type().is_virtual_residue() ) {
+		return;
+	}
 
 	//Store the (position, rotamer index) pair as a map key pointing to the current node:
 	std::pair< core::Size, core::Size > const position_rotamer( residue_position, always_rotamer_one_ ? 1 : rotamer_index );

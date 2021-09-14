@@ -648,6 +648,11 @@ VoidsPenaltyVoxelGrid::compute_burial(
 			skip_list[i] = true;
 			continue; //Skip ligands
 		}
+		if ( pose.residue_type(i).is_virtual_residue() ) {
+			skip_list[i] = true;
+			continue; //Skip virtuals
+		}
+
 		core::id::AtomID at2( pose.residue_type(i).aa() == core::chemical::aa_gly ? pose.residue_type(i).atom_index("2HA") : pose.residue_type(i).first_sidechain_atom(), i );
 		core::id::AtomID at1( pose.residue_type(i).icoor(at2.atomno()).stub_atom1().atomno(), i );
 		runtime_assert_string_msg( at1 != at2, errmsg + "The first sidechain atom index matches the first sidechain atom's parent (" + std::to_string(at1.atomno()) + ") for residue type " + pose.residue_type(i).name() + ".  Does this residue type's params file have a FIRST_SIDECHAIN_ATOM line?" );

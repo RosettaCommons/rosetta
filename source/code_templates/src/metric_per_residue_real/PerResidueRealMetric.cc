@@ -112,11 +112,12 @@ void
 	//	"Selector specifying residues." );
 
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),
-		"A metric for measuring ... and adding it to the resulting score file.", attlist);
+		"--brief--", attlist);
 }
 
 std::map< core::Size, core::Real >
---class--::calculate(const pose::Pose & ) const {
+--class--::calculate(const core::pose::Pose & pose) const {
+	utility::vector1< core::Size > selection1 = selection_positions(get_selector()->apply(pose));
 
 }
 
