@@ -119,10 +119,12 @@ SequenceMapping::operator = ( SequenceMapping const & src ) {
 }
 
 void
-SequenceMapping::resize( Size const s1, Size const s2 )
+SequenceMapping::resize( Size const s1, Size const s2, bool clear_values )
 {
 	size2_ = s2;
-	mapping_.clear();
+	if ( clear_values ) {
+		mapping_.clear();
+	}
 	mapping_.resize(s1,0);
 }
 

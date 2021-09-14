@@ -128,7 +128,7 @@ ozstream::open(
 		// prepare new character buffer -- must do this before file is opened
 		allocate_assign_char_buffer();
 
-		trytry_ofstream_open( of_stream_, filename_a, ios_base::out );
+		trytry_ofstream_open( of_stream_, filename_a, open_mode );
 		if ( of_stream_ ) { // Open succeeded
 			compression_ = UNCOMPRESSED;
 		} else { // Leave stream state so that failure can be detected

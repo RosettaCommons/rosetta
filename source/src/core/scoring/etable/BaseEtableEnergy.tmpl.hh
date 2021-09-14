@@ -1226,6 +1226,9 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_background_energies(
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
+	// skip virtual residues
+	if ( residue.name() == "VRT" ) return;
+
 	using namespace methods;
 	using namespace trie;
 	using namespace etrie;

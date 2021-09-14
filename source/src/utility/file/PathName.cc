@@ -126,7 +126,7 @@ PathName::assign( std::string const & name_string )
 
 	// Volume
 	vol_.clear();
-	if ( ( std::isalpha( cut[ 0 ] ) ) && ( cut[ 1 ] == ':' ) ) {
+	if ( ( cut.size() >= 2 ) && ( std::isalpha( cut[ 0 ] ) ) && ( cut[ 1 ] == ':' ) ) {
 		if ( platform::file::VOLUME_USED ) vol_.assign( cut, 0, 2 );
 		cut.erase( 0, 2 ); // Remove volume part
 	}

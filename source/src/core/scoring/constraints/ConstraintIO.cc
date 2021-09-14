@@ -102,7 +102,7 @@ ConstraintIO::read_cst_atom_pairs(
 			<< res1 << " " << res2 << " func: " << func_type
 			<< std::endl;
 
-		if ( res1>pose.size() || res2> pose.size() ||
+		if ( res1==0 || res2==0 || res1>pose.size() || res2> pose.size() ||
 				( !pose.residue_type( res1 ).has( name1 ) ) ||
 				( !pose.residue_type( res2 ).has( name2 ) )
 				) {

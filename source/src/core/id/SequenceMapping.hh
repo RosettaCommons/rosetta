@@ -91,7 +91,12 @@ public:
 
 
 	/// @brief resize
-	void resize( Size const s1, Size const s2 );
+	/// @param[in] s1 new size of the target sequence
+	/// @param[in] s2 new size of the aligned sequence
+	/// @param[in] clear_values optional parameter, defaults to true. By default, reset
+	/// mapping to empty. Cases where passing clear_values as false is desired should
+	/// be rare.
+	void resize( Size const s1, Size const s2, bool clear_values = true );
 
 	/// @brief go from an A->B mapping to a B->A mapping
 	void reverse();

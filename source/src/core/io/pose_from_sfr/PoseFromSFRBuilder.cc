@@ -1393,6 +1393,7 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 			"' has had its base name extracted from the PDB file: ";
 		TR.Trace << sfr_.residue_type_base_names()[ resid ].second << endl;
 		unknown_main_chain_connectivity =
+			sfr_.residue_type_base_names()[ resid ].second.size() > CARB_MAINCHAIN_CONN_POS &&
 			( sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] == '?' );
 	}
 
