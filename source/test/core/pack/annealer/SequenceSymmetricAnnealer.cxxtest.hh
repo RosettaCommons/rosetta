@@ -16,10 +16,10 @@
 
 // Core Headers
 #include <core/pack/annealer/SequenceSymmetricAnnealer.fwd.hh>
-
-
-
-
+#include <core/pack/palette/CustomBaseTypePackerPalette.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 
 #include <core/import_pose/import_pose.hh>
@@ -63,7 +63,19 @@ private:
 		std::list< core::pack::task::operation::TaskOperationCOP > operations;
 
 		{//for speedup
-			utility::vector1< std::string > base_types = { "ALA", "GLY", "SER" };
+			utility::vector1< std::string > base_types = { "ALA", "GLY", "SER"};
+			operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( base_types ) );
+			operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
+		}
+		return operations;
+	}
+
+	std::list< core::pack::task::operation::TaskOperationCOP >
+	setup_speedup__ncaa_task_ops() {
+		std::list< core::pack::task::operation::TaskOperationCOP > operations;
+
+		{//for speedup
+			utility::vector1< std::string > base_types = { "NVL", "DNVL" };
 			operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( base_types ) );
 			operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
 		}
@@ -116,6 +128,48 @@ public:
 		TS_ASSERT_EQUALS( pose->chain_sequence( 1 ), pose->chain_sequence( 3 ) );//Failer here is a failure of the protocol
 
 		// TR << "New sequences: " << pose->chain_sequence( 1 ) << " " << pose->chain_sequence( 2 ) << " " << pose->chain_sequence( 3 ) << std::endl;
+	}
+
+	//Pack a 3-chain protein, only allow noncanonical amino acids at one position, check that all chains end up with the same sequence
+	void test_chain_similarity_after_packing_ncaa() {
+		TR << "starting test_chain_similarity_after_packing_ncaa" << std::endl;
+		auto operations = setup_speedup__ncaa_task_ops();
+		auto kss_top = utility::pointer::make_shared< task::operation::KeepSequenceSymmetry >();
+		kss_top->set_prefix_name( "test" );
+		operations.push_back( kss_top );
+		//utility::vector1< std::string > ncaa_base_types = { "NVL", "DNVL" };
+		//operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( ncaa_base_types ) );
+
+		auto ss_mop = utility::pointer::make_shared< protocols::symmetry::SetupForSequenceSymmetryMover >();
+		ss_mop->set_prefix_name( kss_top->prefix_name() );
+
+		// Add chain residue selectors
+		ss_mop->add_residue_selector( 0, utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "1" ) );
+		ss_mop->add_residue_selector( 0, utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "2" ) );
+		ss_mop->add_residue_selector( 0, utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "3" ) );
+
+		// Add PackerPalette with L- and D-Norvaline
+		using namespace core::pack::palette;
+		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() );
+		core::pack::task::TaskFactoryOP task = utility::pointer::make_shared< core::pack::task::TaskFactory >();
+		CustomBaseTypePackerPaletteOP ncaa_pp = utility::pointer::make_shared< CustomBaseTypePackerPalette >();
+		ncaa_pp->parse_additional_residue_types( "NVL,DNVL" );
+		task->set_packer_palette( ncaa_pp );
+		for ( const auto & op : operations ) {
+			task->push_back(op);
+		};
+		auto pose = import_and_test_pose();
+		auto const old_sequence = pose->annotated_sequence( 1 );
+
+		ss_mop->apply( * pose );
+		protocols::minimization_packing::PackRotamersMover packer(sfxn, task->create_task_and_apply_taskoperations( * pose));
+		packer.apply( * pose);
+
+		TS_ASSERT( pose->annotated_sequence( 1 ) != old_sequence );//Failure here is a failure of the unit test, not of the protocol
+		TS_ASSERT_EQUALS( pose->annotated_sequence( 1 ), pose->annotated_sequence( 2 ) );//Failer here is a failure of the protocol
+		TS_ASSERT_EQUALS( pose->annotated_sequence( 1 ), pose->annotated_sequence( 3 ) );//Failer here is a failure of the protocol
+
+		TR << "New sequences: " << pose->annotated_sequence( 1 ) << " " << pose->annotated_sequence( 2 ) << " " << pose->annotated_sequence( 3 ) << std::endl;
 	}
 
 	// Probably more trouble than its worth to implement a cli method for this...
@@ -491,6 +545,55 @@ public:
 		ss_mop->apply( * pose );
 		protocols::minimization_packing::PackRotamersMover packer;
 		packer.initialize_task_factory_with_operations( operations );
+
+		try {
+			packer.apply( * pose );
+			TR << "SequenceSymmetricAnnealer should not have completed without throwing an exception, no common residue types for linked res were present." << std::endl;
+			TS_ASSERT( false );
+		} catch( utility::excn::Exception & e ) {
+			TS_ASSERT( true );
+		}
+	}
+
+	//Test that NVL and DNVL are not treated as interchangeable (this also tests the more general case, that different NCAAs are not treated as interchangeable)
+
+	void test_fail_in_packing_from_no_common_res_types_L_and_D() {
+		TR << "starting test_different_accepted_restypes_L_and_D_for_linked_residues" << std::endl;
+		std::list< core::pack::task::operation::TaskOperationCOP > operations;
+		auto kss_top = utility::pointer::make_shared< task::operation::KeepSequenceSymmetry >();
+		kss_top->set_prefix_name( "test" );
+		operations.emplace_back( kss_top );
+
+		auto chain1 = utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "1" );
+		auto chain2 = utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "2" );
+		auto chain3 = utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "3" );
+
+		auto ss_mop = utility::pointer::make_shared< protocols::symmetry::SetupForSequenceSymmetryMover >();
+		ss_mop->set_prefix_name( kss_top->prefix_name() );
+		ss_mop->add_residue_selector( 0, chain1 );
+		ss_mop->add_residue_selector( 0, chain2 );
+
+		utility::vector1< std::string > base_types1 = { "NVL", "SER" }; // No common residue types
+		utility::vector1< std::string > base_types2 = { "DNVL" };  // No common residue types
+		operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( base_types1, chain1 ) );
+		operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( base_types2, chain2 ) );
+		operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( base_types2, chain3 ) ); // For speedup
+		operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
+
+		using namespace core::pack::palette;
+		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() );
+		core::pack::task::TaskFactoryOP task = utility::pointer::make_shared< core::pack::task::TaskFactory >();
+		CustomBaseTypePackerPaletteOP ncaa_pp = utility::pointer::make_shared< CustomBaseTypePackerPalette >();
+		ncaa_pp->parse_additional_residue_types( "NVL,DNVL" );
+		task->set_packer_palette( ncaa_pp );
+		for ( const auto & op : operations ) {
+			task->push_back(op);
+		};
+		auto pose = import_and_test_pose();
+
+		auto const old_sequence = pose->chain_sequence( 1 );
+		ss_mop->apply( * pose );
+		protocols::minimization_packing::PackRotamersMover packer(sfxn, task->create_task_and_apply_taskoperations( * pose));
 
 		try {
 			packer.apply( * pose );

@@ -43,11 +43,11 @@ namespace core {
 namespace pack {
 namespace annealer {
 
-typedef utility::pointer::shared_ptr< std::unordered_set< char > > CharSetOP;
+typedef utility::pointer::shared_ptr< std::unordered_set< std::string > > StringSetOP;
 
 struct SeqSymmAnnealerSetup {
 	utility::vector1< utility::vector1< core::Size > > const corresponding_mress_for_mres;
-	utility::vector1< CharSetOP > const common_res_types;
+	utility::vector1< StringSetOP > const common_res_types;
 };
 
 /*
@@ -128,11 +128,11 @@ private: // Member methods
 	void
 	update_shared_residue_map(
 		core::Size const id,
-		std::unordered_map< char, core::Size > & map
+		std::unordered_map< std::string, core::Size > & map
 	) const;
 
 	/// @brief Returns the common set of residues based on a vector of linked moltenred ids.
-	std::unordered_set< char >
+	std::unordered_set< std::string >
 	get_shared_residue_types(
 		core::Size const curr_mres,
 		utility::vector1< core::Size > const & linked_res

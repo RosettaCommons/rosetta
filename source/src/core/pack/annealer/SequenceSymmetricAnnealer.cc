@@ -276,7 +276,7 @@ SequenceSymmetricAnnealer::create_corresponding_mress_for_mres() const {
 void
 SequenceSymmetricAnnealer::update_shared_residue_map(
 	core::Size const id,
-	std::unordered_map< char, core::Size > & map ) const {
+	std::unordered_map< std::string, core::Size > & map ) const {
 
 	rotamer_set::RotamerSetCOP rotamer_set =
 		rotamer_sets()->rotamer_set_for_moltenresidue( id );
@@ -285,17 +285,17 @@ SequenceSymmetricAnnealer::update_shared_residue_map(
 #ifndef NDEBUG
 	TR << "Residue type set for resid (Rosetta numbering): " << std::to_string( rotamer_sets()->moltenres_2_resid( id ) ) << " = ";
 #endif
-	std::unordered_set< char > curr_set; // To store all res_types
+	std::unordered_set< std::string > curr_set; // To store all res_types
 	curr_set.max_load_factor( 0.1 );
 	// Get the current set of residue types for the given mres (id)
 	for ( Size rot_id = 1; rot_id <= num_rots; ++rot_id ) {
-		char const res_type = rotamer_set->rotamer( rot_id )->name1();
+		std::string const & res_type = rotamer_set->rotamer( rot_id )->type().interchangeability_group();
 		curr_set.insert( res_type );
 	}
 
 	// Map contains a count of the number of times a residue type was seen for each linked mres
 	// now we need to update the map with whether the res type was seen for the current mres
-	for ( char const res_n1 : curr_set ) {
+	for ( std::string const & res_n1 : curr_set ) {
 #ifndef NDEBUG
 		TR << res_n1 << ", ";
 #endif
@@ -310,19 +310,19 @@ SequenceSymmetricAnnealer::update_shared_residue_map(
 #endif
 }
 
-std::unordered_set< char >
+std::unordered_set< std::string >
 SequenceSymmetricAnnealer::get_shared_residue_types(
 	core::Size const curr_mres,
 	utility::vector1< core::Size > const & linked_res ) const {
 
-	std::unordered_set< char > common_res_types;
+	std::unordered_set< std::string > common_res_types;
 	common_res_types.max_load_factor( 0.1 );
 
 	if ( linked_res.size() == 0 ) {
 		return common_res_types;
 	}
 	// A map with a count of the number of times a residue type was seen for a set of mres
-	std::unordered_map< char, core::Size > shared_res_types;
+	std::unordered_map< std::string, core::Size > shared_res_types;
 
 	// Now we need to get a set of the residue types present for a given set of linked_res
 	// As linked_res does not include the current res, must add it here.
@@ -374,9 +374,9 @@ SequenceSymmetricAnnealer::setup_for_linked_residues() {
 	print_linked_residues( corresponding_mress_for_mres );
 
 	// Determine if any mres do not share any residue types as this is an impossible problem for this annealer.
-	utility::vector1< CharSetOP > common_res_types( ig_->get_num_nodes() );
+	utility::vector1< StringSetOP > common_res_types( ig_->get_num_nodes() );
 	for ( core::Size ii = 1; ii <= corresponding_mress_for_mres.size(); ++ii ) {
-		auto new_set = utility::pointer::make_shared< std::unordered_set< char > >(
+		auto new_set = utility::pointer::make_shared< std::unordered_set< std::string > >(
 			get_shared_residue_types( ii, corresponding_mress_for_mres[ ii ] ) );
 		if ( ! corresponding_mress_for_mres[ ii ].empty() && new_set->empty() ) {
 			// If there are linked res but no common residue types
@@ -400,7 +400,7 @@ SequenceSymmetricAnnealer::run() {
 	auto setup_info = setup_for_linked_residues(); // Setup for annealer run, get linked res information.
 	utility::vector1< utility::vector1< core::Size > > corresponding_mress_for_mres =
 		std::move( setup_info.corresponding_mress_for_mres );
-	utility::vector1< CharSetOP > common_res_types = // CharSetOP == utility::pointer::shared_ptr< std::unordered_set< char > >
+	utility::vector1< StringSetOP > common_res_types = // StringSetOP == utility::pointer::shared_ptr< std::unordered_set< std::string > >
 		std::move( setup_info.common_res_types );
 
 	Size const nmoltenres = ig_->get_num_nodes();
@@ -458,7 +458,7 @@ SequenceSymmetricAnnealer::run() {
 			int const ranrotamer = pick_a_rotamer( n );
 			if ( ranrotamer == -1 ) continue;
 
-			char const name1 = rotamer_sets()->rotamer( ranrotamer )->name1();
+			std::string const & interchangeability_group = rotamer_sets()->rotamer( ranrotamer )->type().interchangeability_group();
 			int const moltenres_id = rotamer_sets()->moltenres_for_rotamer( ranrotamer );
 			// int const resid = rotamer_sets()->moltenres_2_resid( moltenres_id );
 
@@ -509,7 +509,7 @@ SequenceSymmetricAnnealer::run() {
 				};
 
 				// If picked a non common residue type then skip iteration
-				if ( common_res_types[ moltenres_id ]->find( name1 ) == common_res_types[ moltenres_id ]->end() ) continue;
+				if ( common_res_types[ moltenres_id ]->find( interchangeability_group ) == common_res_types[ moltenres_id ]->end() ) continue;
 
 				bool any_previous_unassigned = false;
 				utility::vector1< SavedState > starting_state;
@@ -552,7 +552,7 @@ SequenceSymmetricAnnealer::run() {
 					Size const num_other_rots = other_rotamer_set->num_rotamers();
 					utility::vector1< Size > local_ids_for_good_rotamers;
 					for ( Size other_rot_id = 1; other_rot_id <= num_other_rots; ++other_rot_id ) {
-						if ( other_rotamer_set->rotamer( other_rot_id )->name1() == name1 ) {
+						if ( other_rotamer_set->rotamer( other_rot_id )->type().interchangeability_group() == interchangeability_group ) {
 							local_ids_for_good_rotamers.push_back( other_rot_id );
 						}
 					}
