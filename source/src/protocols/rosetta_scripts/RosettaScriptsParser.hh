@@ -479,9 +479,6 @@ private: //Methods
 
 private: //Varaibles
 
-	/// @brief The object used to validate XML input files against the schema
-	utility::tag::XMLSchemaValidatorOP validator_;
-
 	/// @brief The depth of the rabbit hole one can find oneself in by including XML files that include XML files.
 	/// Defaults to 8.
 	core::Size recursion_limit_;

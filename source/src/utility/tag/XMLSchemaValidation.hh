@@ -78,7 +78,7 @@ public:
 	set_schema(  std::string const & schema );
 
 	XMLValidationOutput
-	validate_xml_against_schema( std::string const & xml );
+	validate_xml_against_schema( std::string const & xml ) const;
 
 private:
 	XMLValidator( XMLValidator const & ) = delete;

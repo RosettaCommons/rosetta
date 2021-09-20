@@ -412,7 +412,7 @@ public:
 	set_schema(  std::string const & schema );
 
 	XMLValidationOutput
-	validate_xml_against_schema( std::string const & xml );
+	validate_xml_against_schema( std::string const & xml ) const;
 
 private:
 	bool schema_has_been_set_ = false;
@@ -441,7 +441,7 @@ XMLValidator::set_schema( std::string const & schema )
 }
 
 XMLValidationOutput
-XMLValidator::validate_xml_against_schema( std::string const & xml )
+XMLValidator::validate_xml_against_schema( std::string const & xml ) const
 {
 	return pimpl_->validate_xml_against_schema( xml );
 }
@@ -515,7 +515,7 @@ XMLValidatorImpl::set_schema(  std::string const & xsd_string )
 }
 
 XMLValidationOutput
-XMLValidatorImpl::validate_xml_against_schema( std::string const & xml_string )
+XMLValidatorImpl::validate_xml_against_schema( std::string const & xml_string ) const
 {
 	XMLValidationOutput output;
 

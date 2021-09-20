@@ -340,6 +340,7 @@ sources = {
 		"PoseSelectorFactory",
 		"RosettaScriptsJobQueen",
 		"RosettaScriptsParser",
+		"RosettaScriptsSchemaValidator",
 		"SavePoseMover",
 		"util",
 		"XmlObjects"

@@ -7,28 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/utility/tag/XMLSchemaValidation.fwd.hh
-/// @brief  functions and classes needed to validate an XML file against a schema
-///
+/// @file   protocols/rosetta_scripts/RosettaScriptsSchemaValidator.hh
+/// @brief  A singleton class for generating the schema accepted by the
+///         RosettaScriptsParser and for holding the libxml2-library
+///         schema validation object.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_utility_tag_XMLSchemaValidation_FWD_HH
-#define INCLUDED_utility_tag_XMLSchemaValidation_FWD_HH
+#ifndef INCLUDED_protocols_rosetta_scripts_RosettaScriptsSchemaValidator_fwd_hh
+#define INCLUDED_protocols_rosetta_scripts_RosettaScriptsSchemaValidator_fwd_hh
 
-#include <utility/pointer/owning_ptr.hh>
+namespace protocols {
+namespace rosetta_scripts {
 
-namespace utility {
-namespace tag {
+class RosettaScriptsSchemaValidator;
 
-class XMLValidator;
-class XMLValidationOutput;
-class XMLErrorHandler;
-
-typedef utility::pointer::shared_ptr< XMLValidator > XMLSchemaValidatorOP;
-typedef utility::pointer::shared_ptr< XMLValidator const > XMLSchemaValidatorCOP;
-
-}
-}
+} //namespace rosetta_scripts
+} //namespace protocols
 
 #endif
-
