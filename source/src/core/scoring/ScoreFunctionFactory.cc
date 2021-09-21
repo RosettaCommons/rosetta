@@ -502,7 +502,7 @@ get_score_function(
 	// JAB - turn on intra-rep to get less bad structures and energies.
 	//  Also, recommend beta - as the LKBridge term helps sugars significantly.
 	if ( options[ in::include_sugars].value() && scorefxn->get_weight( fa_intra_rep_xover4 ) == 0 ) {
-		TR.Info << " The -include_sugars flag was used without fa_intra_rep_xover4 term in the scorefunction\n."<<
+		TR.Info << " The -include_sugars flag was used without fa_intra_rep_xover4 term in the scorefunction."<<
 			" Setting this term's weight to 0.55. It is generally recommended to use the -beta scorefunction (Rosetta-ICO) with sugars,"<<
 			" which includes this and other desired terms such as those bridging waters" << std::endl;
 		scorefxn->set_weight_if_zero(fa_intra_rep_xover4, 0.55);
