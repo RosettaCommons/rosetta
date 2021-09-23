@@ -91,7 +91,7 @@ sources = {
 		"RingPlaneFlipMover",
 		"TautomerizeAnomerMover",
 	],
-    
+
     "chromophore" : [
         "ReadResidueCoordinatesFromPDBTests",
         "ChromophoreDataReaderTests",
@@ -351,6 +351,7 @@ sources = {
 	],
 
 	"hybridization" : [
+		"HybridizeProtocolTests",
 		"TMalign",
 	],
 

@@ -63,10 +63,10 @@ public:
 		core::scoring::ScoreFunctionOP stage1_scorefxn_in,
 		core::scoring::ScoreFunctionOP stage2_scorefxn_in,
 		core::scoring::ScoreFunctionOP fa_scorefxn_in,
-		std::string frag3_fn,
-		std::string frag9_fn,
-		std::string & cen_cst_in,
-		std::string & fa_cst_in
+		std::string const & frag3_fn,
+		std::string const & frag9_fn,
+		std::string const & cen_cst_in,
+		std::string const & fa_cst_in
 	);
 
 	void init();
@@ -157,6 +157,10 @@ public:
 	void set_stage2_increase_cycles( core::Real newval ) { stage2_increase_cycles_ = newval; }
 	void set_fullatom_scorefxn( core::scoring::ScoreFunctionOP newval ) { fa_scorefxn_ = newval; }
 	void set_add_hetatm( bool add_hetatm ) { add_hetatm_ = add_hetatm; }
+
+	void set_disulf_file( std::string const & dsf ) { disulf_file_ = dsf; }
+
+	std::string const & get_disulf_file() const { return disulf_file_; }
 
 	std::string
 	get_name() const override;

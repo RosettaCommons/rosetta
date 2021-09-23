@@ -193,10 +193,10 @@ HybridizeProtocol::HybridizeProtocol(
 	core::scoring::ScoreFunctionOP stage1_scorefxn_in,
 	core::scoring::ScoreFunctionOP stage2_scorefxn_in,
 	core::scoring::ScoreFunctionOP fa_scorefxn_in,
-	std::string frag3_fn,
-	std::string frag9_fn,
-	std::string & cen_cst_in,
-	std::string & fa_cst_in
+	std::string const & frag3_fn,
+	std::string const & frag9_fn,
+	std::string const & cen_cst_in,
+	std::string const & fa_cst_in
 )
 {
 	if ( templates_in.size() != template_weights_in.size() ) {
