@@ -1,0 +1,15 @@
+-in:file:s input/input.pdb
+-in:file:extra_res_fa input/lig.fa.params
+-in:file:extra_res_cen input/lig.cen.params
+-out:pdb
+-packing
+-docking:ligand
+-docking:ligand:iphold_cen_cycles 1
+-docking:ligand:iphold_fa_cycles 0
+-docking:ligand:start_from  7.60   -2.8565 -4.071
+-loops:loop_file input/loopfile
+-loops:frag_sizes 9 3
+-loops:frag_files input/09.frags input/03.frags
+-loops:remodel quick_ccd
+-loops:refine no
+-loops:relax no
