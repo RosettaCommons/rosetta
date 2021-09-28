@@ -445,7 +445,6 @@ Real StructProfileMover::get_cen_deviation(vector<Real> cenListFrag,vector1<Real
 }
 
 std::string StructProfileMover::censorFragByBurial(vector<Real> cenListFrag,vector1<Real> cenListModel, std::string cenListFragSeq){
-	Real total_deviation = 0;
 	std::string censoredSeq;
 	for ( Size ii=1; ii<=cenListFrag.size(); ++ii ) {
 		Real deviation = std::sqrt((cenListModel[ii]-cenListFrag[ii-1])*(cenListModel[ii]-cenListFrag[ii-1]));
