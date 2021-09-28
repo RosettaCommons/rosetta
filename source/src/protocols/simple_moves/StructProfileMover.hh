@@ -40,7 +40,7 @@ typedef  core::Real  Probability;
 class StructProfileMover : public protocols::moves::Mover {
 public:
 	StructProfileMover();
-	StructProfileMover(core::Real rmsThreshold,core::Size consider_topN_frags, core::Real burialWt, bool only_loops , core::Real allowed_deviation, core::Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res,std::string fragment_store_path="",std::string fragment_store_format="", std::string fragment_store_compression="");
+	StructProfileMover(core::Real rmsThreshold,core::Real burialThreshold,core::Size consider_topN_frags,core::Real burialWt,bool only_loops,bool censorByBurial,core::Real allowed_deviation, core::Real allowed_deviation_loops,bool eliminate_background,bool psiblast_style_pssm,bool outputProfile,bool add_csts_to_pose,bool ignore_terminal_res,std::string fragment_store_path="",std::string fragment_store_format="",std::string fragment_store_compression="");
 	core::Size ss_type_convert(char ss_type);
 	void read_P_AA_SS_cen6();
 	utility::vector1<std::string> get_closest_sequence_at_res(core::pose::Pose const & pose, core::Size res,utility::vector1<core::Real> cenList);
@@ -51,6 +51,7 @@ public:
 	void save_MSAcst_file(utility::vector1<utility::vector1<core::Real> > profile_score,core::pose::Pose const & pose);
 	void add_MSAcst_to_pose(utility::vector1<utility::vector1<core::Real> > profile_score,core::pose::Pose & pose);
 	core::Real get_cen_deviation(std::vector<core::Real> cenListFrag,utility::vector1<core::Real> cenListModel);
+	std::string censorFragByBurial(std::vector<core::Real> cenListFrag,utility::vector1<core::Real> cenListModel, std::string cenListFragSeq);
 	void set_profile_save_name( std::string const & name ) { profile_save_filename_ = name; }
 	utility::vector1< core::Real> calc_cenlist(core::pose::Pose const & pose);
 	void apply( Pose & pose ) override;
@@ -71,9 +72,11 @@ public:
 
 private:
 	core::Real rmsThreshold_;
+	core::Real burialThreshold_;
 	std::string aa_order_;
 	core::Size consider_topN_frags_;
 	core::Real burialWt_;
+	bool psiblast_style_pssm_;
 	bool outputProfile_;
 	bool add_csts_to_pose_;
 	core::Size cenType_;
@@ -83,6 +86,7 @@ private:
 	core::Real allowed_deviation_;
 	core::Real allowed_deviation_loops_;
 	bool only_loops_;
+	bool censorByBurial_;
 	bool eliminate_background_;
 	bool ignore_terminal_res_;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_;

@@ -79,17 +79,20 @@ StructProfileMover::StructProfileMover():moves::Mover("StructProfileMover"){
 	read_P_AA_SS_cen6();
 }
 
-StructProfileMover::StructProfileMover(Real rmsThreshold,core::Size consider_topN_frags, Real burialWt, bool only_loops , Real allowed_deviation, Real allowed_deviation_loops, bool eliminate_background, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res,std::string fragment_store_path,std::string fragment_store_format, std::string fragment_store_compression):moves::Mover("StructProfileMover"){
+StructProfileMover::StructProfileMover(Real rmsThreshold, Real burialThreshold, core::Size consider_topN_frags, Real burialWt, bool only_loops , bool censorByBurial, Real allowed_deviation, Real allowed_deviation_loops, bool eliminate_background, bool psiblast_style_pssm, bool outputProfile, bool add_csts_to_pose, bool ignore_terminal_res, std::string fragment_store_path, std::string fragment_store_format, std::string fragment_store_compression):moves::Mover("StructProfileMover"){
 	using namespace protocols::indexed_structure_store;
 	aa_order_="ACDEFGHIKLMNPQRSTVWY";
 	read_P_AA_SS_cen6();
 	rmsThreshold_ = rmsThreshold;
+	burialThreshold_ = burialThreshold;
 	consider_topN_frags_ = consider_topN_frags;
 	burialWt_ = burialWt;
 	only_loops_ = only_loops;
+	censorByBurial_ = censorByBurial;
 	allowed_deviation_ = allowed_deviation;
 	allowed_deviation_loops_ = allowed_deviation_loops;
 	eliminate_background_ = eliminate_background;
+	psiblast_style_pssm_ = psiblast_style_pssm;
 	outputProfile_ = outputProfile;
 	add_csts_to_pose_ = add_csts_to_pose;
 	ignore_terminal_res_ = ignore_terminal_res;
@@ -196,6 +199,9 @@ vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose:
 	vector1<Hit>hits;
 	for ( core::Size ii=1; ii<=hits_cen.size(); ++ii ) {
 		Real cen_deviation = get_cen_deviation(hits_cen[ii],cenList);
+		if ( censorByBurial_ ){
+			hits_aa[ii] = censorFragByBurial(hits_cen[ii],cenList, hits_aa[ii]);
+		}
 		struct Hit result_tmp(cen_deviation,hits_rms[ii],hits_aa[ii]);
 		hits.push_back(result_tmp);
 	}
@@ -309,7 +315,13 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score(vector1<vecto
 	for ( core::Size ii=1; ii<= res_per_pos.size(); ++ii ) {
 		vector1<Real> pos_profile_score;
 		for ( core::Size jj=1; jj<= res_per_pos[ii].size(); ++jj ) {
-			Real tmp_score = -std::log((Real(res_per_pos[ii][jj]+1))/(Real(total_cts[ii]+20)));
+			Real tmp_score;
+			if (!psiblast_style_pssm_) {
+				tmp_score = -std::log((Real(res_per_pos[ii][jj]+1))/(Real(total_cts[ii]+20)));
+			} else {
+				// Then we write out the counts
+				tmp_score = Real(res_per_pos[ii][jj]);
+			}
 			if ( pose.secstruct(ii) != 'L' && only_loops_ ) {
 				tmp_score = 0.0;
 			}
@@ -432,6 +444,20 @@ Real StructProfileMover::get_cen_deviation(vector<Real> cenListFrag,vector1<Real
 	return(std::sqrt(total_deviation));
 }
 
+std::string StructProfileMover::censorFragByBurial(vector<Real> cenListFrag,vector1<Real> cenListModel, std::string cenListFragSeq){
+	Real total_deviation = 0;
+	std::string censoredSeq;
+	for ( Size ii=1; ii<=cenListFrag.size(); ++ii ) {
+		Real deviation = std::sqrt((cenListModel[ii]-cenListFrag[ii-1])*(cenListModel[ii]-cenListFrag[ii-1]));
+		if ( deviation < burialThreshold_){
+			censoredSeq += cenListFragSeq[ii-1];
+		} else {
+			censoredSeq += "-";
+		}
+	}
+	return( censoredSeq );
+}
+
 vector1< Real> StructProfileMover::calc_cenlist(Pose const & pose){
 	using namespace core::chemical;
 	using namespace core::scoring;
@@ -507,9 +533,11 @@ StructProfileMover::parse_my_tag(
 	basic::datacache::DataMap & data
 ){
 	rmsThreshold_ = tag->getOption< core::Real >( "RMSthreshold", 0.40 );
+	burialThreshold_ = tag->getOption< core::Real >( "burialThreshold", 3.0 );
 	burialWt_ =tag->getOption< Real > ("burialWt", 0.8); //other weight is toward RMSD
 	consider_topN_frags_ =tag->getOption< core::Size > ("consider_topN_frags", 50);
 	only_loops_=tag->getOption< bool > ("only_loops",false);
+	censorByBurial_=tag->getOption< bool > ("censorByBurial",false);
 	allowed_deviation_=tag->getOption< Real >("allowed_deviation",0.10);
 	allowed_deviation_loops_=tag->getOption< Real >("allowed_deviation_loops",0.10);
 	eliminate_background_=tag->getOption< bool >("eliminate_background",true);
@@ -519,6 +547,7 @@ StructProfileMover::parse_my_tag(
 	SSHashedFragmentStoreOP_ = protocols::indexed_structure_store::FragmentStoreManager::get_instance()->SSHashedFragmentStore(fragment_store_path_,fragment_store_format_,fragment_store_compression_);
 	SSHashedFragmentStoreOP_->set_threshold_distance(rmsThreshold_);
 	cenType_ = tag->getOption<core::Size>("cenType",6); //Needs to match the datatabase. Likely I will find one I like and use that so this is an option that shouldn't be modified often
+	psiblast_style_pssm_ = tag->getOption<bool>("psiblast_style_pssm",false);
 	outputProfile_ = tag->getOption<bool>("outputProfile",false);
 	add_csts_to_pose_ = tag->getOption<bool>("add_csts_to_pose",true);
 	ignore_terminal_res_ = tag->getOption<bool>("ignore_terminal_residue",true);
@@ -551,13 +580,16 @@ void StructProfileMover::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "RMSthreshold", xsct_real, "XRW TO DO", "0.40" )
+		+ XMLSchemaAttribute::attribute_w_default( "burialThreshold", xsct_real, "XRW TO DO", "3" )
 		+ XMLSchemaAttribute::attribute_w_default( "burialWt", xsct_real, "XRW TO DO", "0.8" )
 		+ XMLSchemaAttribute::attribute_w_default( "consider_topN_frags", xsct_non_negative_integer, "XRW TO DO", "50" )
 		+ XMLSchemaAttribute::attribute_w_default( "only_loops", xsct_rosetta_bool, "XRW TO DO",  "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "censorByBurial", xsct_rosetta_bool, "XRW TO DO",  "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "allowed_deviation", xsct_real,  "XRW TO DO", "0.10" )
 		+ XMLSchemaAttribute::attribute_w_default( "allowed_deviation_loops", xsct_real, "XRW TO DO", "0.10" )
 		+ XMLSchemaAttribute::attribute_w_default( "eliminate_background", xsct_rosetta_bool, "XRW TO DO", "true")
 		+ XMLSchemaAttribute::attribute_w_default( "cenType", xsct_non_negative_integer, "XRW TO DO",  "6")
+		+ XMLSchemaAttribute::attribute_w_default( "psiblast_style_pssm", xsct_rosetta_bool,  "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "outputProfile", xsct_rosetta_bool, "XRW TO DO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "add_csts_to_pose", xsct_rosetta_bool, "XRW TO DO", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "ignore_terminal_residue", xsct_rosetta_bool, "XRW TO DO", "true" )
