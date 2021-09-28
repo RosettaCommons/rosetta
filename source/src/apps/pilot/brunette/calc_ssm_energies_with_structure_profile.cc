@@ -362,16 +362,20 @@ public:
 		//added tj--------------
 
 		Real rmsThreshold = basic::options::option[basic::options::OptionKeys::ssm::rmsThreshold]();
+		Real burialThreshold = 0.0;
 		Size consider_topN_frags = basic::options::option[basic::options::OptionKeys::ssm::consider_topN_frags]();
 		Real burialWt = basic::options::option[basic::options::OptionKeys::ssm::burialWt]();
 		bool only_loops = basic::options::option[basic::options::OptionKeys::ssm::only_loops]();
+		bool censorByBurial = false;
 		Real allowed_deviation = basic::options::option[basic::options::OptionKeys::ssm::allowed_deviation]();
 		Real allowed_deviation_loops = basic::options::option[basic::options::OptionKeys::ssm::allowed_deviation_loops]();
 		bool eliminate_background = basic::options::option[basic::options::OptionKeys::ssm::eliminate_background]();
+		bool psiblast_style_pssm = false;
 		bool outputProfile = false;
 		bool add_csts_to_pose = true;
 		bool ignore_terminal_res = true;
-		protocols::simple_moves::StructProfileMoverOP structProfOP( new protocols::simple_moves::StructProfileMover(rmsThreshold,consider_topN_frags,burialWt,only_loops,allowed_deviation,allowed_deviation_loops,eliminate_background,outputProfile,add_csts_to_pose,ignore_terminal_res) );
+
+		protocols::simple_moves::StructProfileMoverOP structProfOP( utility::pointer::make_shared<protocols::simple_moves::StructProfileMover>(rmsThreshold,burialThreshold,consider_topN_frags,burialWt,only_loops,censorByBurial,allowed_deviation,allowed_deviation_loops,eliminate_background,psiblast_style_pssm,outputProfile,add_csts_to_pose,ignore_terminal_res) );
 		structProfOP->apply(pose);
 		//added tj end----------
 
