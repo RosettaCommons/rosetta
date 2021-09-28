@@ -99,6 +99,9 @@ core::Real interp_spline(
 	numeric::xyzVector< core::Real > const & idxX,
 	bool mirrored
 ) {
+	if ( idxX[0] == 0.0 && idxX[1] == 0.0 && idxX[2] == 0.0 ) {
+		return 0.0;
+	}
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
 	core::Real retval = SplineInterp::interp3(&coeffs[0], dims, pt, mirrored);
@@ -124,6 +127,9 @@ core::Real interp_spline(
 	numeric::xyzVector< core::Real > const & idxX,
 	bool mirrored
 ) {
+	if ( idxX[0] == 0.0 && idxX[1] == 0.0 && idxX[2] == 0.0 ) {
+		return 0.0;
+	}
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
 	core::Real retval = SplineInterp::interp3< float >(&coeffs[0], dims, pt, mirrored);
@@ -204,6 +210,9 @@ core::Real interp_spline(
 	core::Real slab,
 	numeric::xyzVector< core::Real > const & idxX )
 {
+	if ( idxX[0] == 0.0 && idxX[1] == 0.0 && idxX[2] == 0.0 ) {
+		return 0.0;
+	}
 	int dims[4] = { coeffs.u4(), coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[4] = { slab-1.0, idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
 	core::Real retval = SplineInterp::interp4(&coeffs[0], dims, pt);

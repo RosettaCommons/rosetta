@@ -5909,6 +5909,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 #		Option( 'render_sigma', 'Real', default = '2', desc='initially render at this sigma level (extras=graphics build only)'),
 		Option( 'unmask_bb', 'Boolean', default = 'false', desc='Only include sidechain atoms in atom mask'),
 		Option( 'render_density', 'Boolean', default = 'false', desc='render electron density in graphics mode build'),
+		Option( 'periodicity', 'Boolean', default = 'true', desc='calculate density scores with periodic boundaries'),
 	), # -edensity
 
 	## options for enzyme design

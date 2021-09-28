@@ -325,6 +325,7 @@ ElectronDensity::init() {
 	remap_symm_ = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 	force_apix_on_map_load_ = basic::options::option[ basic::options::OptionKeys::edensity::force_apix ]();
 	nkbins_ = basic::options::option[ basic::options::OptionKeys::edensity::n_kbins ]();
+	periodicity_ = basic::options::option[ basic::options::OptionKeys::edensity::periodicity ]();
 
 	// use-specified B factor (may be overridden)
 	effectiveB = 0;
@@ -338,6 +339,25 @@ numeric::xyzVector<core::Real> ElectronDensity::dens_grad (
 	dx[1] = interp_spline( coeff_grad_y, idxX );
 	dx[2] = interp_spline( coeff_grad_z, idxX );
 	return dx;
+}
+
+// periodicity of density
+numeric::xyzVector<core::Real> ElectronDensity::periodic_mod (
+	numeric::xyzVector<core::Real> const & fracX,
+	numeric::xyzVector<core::Real> const & grid,
+	numeric::xyzVector<core::Real> const & origin ) const {
+	numeric::xyzVector<core::Real> idxX;
+	for ( int i=0 ; i<=2 ; ++i ) {
+		if ( periodicity_ ) {
+			idxX[i] = pos_mod (fracX[i]*grid[i] - origin[i] + 1 , (core::Real)grid[i]);
+		} else {
+			idxX[i] = fracX[i]*grid[i] - origin[i] + 1;
+			if ( idxX[i] < 0 ) {
+				idxX[i] = 0;
+			}
+		}
+	}
+	return idxX;
 }
 
 //////////////////////
@@ -503,9 +523,7 @@ core::Real ElectronDensity::matchCentroidPose(
 		cartX = atm_i.xyz(); // - getTransform();
 		fracX = c2f*cartX;
 
-		atm_idx[i][0] = pos_mod (fracX[0]*grid_[0] - origin_[0] + 1 , (core::Real)grid_[0]);
-		atm_idx[i][1] = pos_mod (fracX[1]*grid_[1] - origin_[1] + 1 , (core::Real)grid_[1]);
-		atm_idx[i][2] = pos_mod (fracX[2]*grid_[2] - origin_[2] + 1 , (core::Real)grid_[2]);
+		atm_idx[i] = periodic_mod(fracX, grid_, origin_);
 
 		for ( int z=1; z<=density.u3(); ++z ) {
 			atm_j[2] = z;
@@ -731,10 +749,8 @@ core::Real ElectronDensity::matchPose(
 
 			cartX = atm_i.xyz(); // - getTransform();
 			fracX = c2f*cartX;
-			atm_idx[i][j][0] = pos_mod (fracX[0]*grid_[0] - origin_[0] + 1 , (core::Real)grid_[0]);
-			atm_idx[i][j][1] = pos_mod (fracX[1]*grid_[1] - origin_[1] + 1 , (core::Real)grid_[1]);
-			atm_idx[i][j][2] = pos_mod (fracX[2]*grid_[2] - origin_[2] + 1 , (core::Real)grid_[2]);
 
+			atm_idx[i][j] = periodic_mod(fracX, grid_, origin_);
 
 			for ( int z=1; z<=density.u3(); ++z ) {
 				atm_j[2] = z;
@@ -1347,11 +1363,6 @@ ElectronDensity::calcRhoC(
 			ATOM_MASK_SQS[i] = force_mask*force_mask;
 		}
 
-		// TO DO: OPTIONALLY control periodic/nonperiodic boundaries
-		//atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (core::Real)grid[0]);
-		//atm_idx[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (core::Real)grid[1]);
-		//atm_idx[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (core::Real)grid[2]);
-
 		numeric::xyzVector< core::Real> cartX = pose[i].x_; // - getTransform();
 		numeric::xyzVector< core::Real> fracX = c2f*cartX;
 		numeric::xyzVector< core::Real> atm_idx (
@@ -1691,12 +1702,9 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 
 				// compute overlap
 				fracX = c2f*litePose[i].x_;
-				idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
-				idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
-				idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
-				idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
-					fracX[1]*fastgrid[1] - fastorigin[1] + 1,
-					fracX[2]*fastgrid[2] - fastorigin[2] + 1);
+
+				idxX = periodic_mod(fracX, fastgrid, fastorigin);
+
 				core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
 				core::Real W = sig_j.a(  ) / 6.0;
 				overlap[kbin] += W*score_i;
@@ -2303,12 +2311,8 @@ ElectronDensity::matchResFast(
 
 		fracX = c2f*rsd.atom(i).xyz();
 
-		idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
-		idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
-		idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
-		idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
-			fracX[1]*fastgrid[1] - fastorigin[1] + 1,
-			fracX[2]*fastgrid[2] - fastorigin[2] + 1);
+		idxX = periodic_mod(fracX, fastgrid, fastorigin);
+
 		core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
 		core::Real W = sig_j.a(  ) / 6.0;
 		if ( i>rsd.last_backbone_atom() ) {
@@ -2367,12 +2371,9 @@ ElectronDensity::matchAtomFast(
 	if ( kbin>nkbins_ ) kbin=nkbins_;
 
 	fracX = c2f*rsd.atom(atomid).xyz();
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
-	idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
-		fracX[1]*fastgrid[1] - fastorigin[1] + 1,
-		fracX[2]*fastgrid[2] - fastorigin[2] + 1);
+
+	idxX = periodic_mod(fracX, fastgrid, fastorigin);
+
 	core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
 	core::Real W = sig_j.a(  ) / 6.0;
 	score += W*score_i;
@@ -2399,9 +2400,8 @@ ElectronDensity::matchPointFast(
 	numeric::xyzVector<core::Real> fracX = c2f*X;
 	numeric::xyzVector< core::Real > idxX;
 	core::Real kbin = 1;
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
+
+	idxX = periodic_mod(fracX, fastgrid, fastorigin);
 	core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
 
 	return score_i;
@@ -2428,9 +2428,8 @@ ElectronDensity::dCCdx_PointFast(
 	core::Real kbin = 1;
 	numeric::xyzVector<core::Real> dCCdX_grid;
 	core::Real dkbin;
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
+
+	idxX = periodic_mod(fracX, fastgrid, fastorigin);
 	interp_dspline( fastdens_score , idxX, kbin,  dCCdX_grid, dkbin );
 
 	dCCdX[0] = dCCdX_grid[0]*c2f(1,1)*fastgrid[0] + dCCdX_grid[1]*c2f(2,1)*fastgrid[1] + dCCdX_grid[2]*c2f(3,1)*fastgrid[2];
@@ -2462,9 +2461,7 @@ void ElectronDensity::dCCdx_fastRes(
 
 	numeric::xyzVector<core::Real> fracX = c2f*X;
 	numeric::xyzVector<core::Real> idxX;
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
+	idxX = periodic_mod(fracX, fastgrid, fastorigin);
 
 	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
 	std::string elt_i = atom_type_set[ rsd.atom_type_index( atmid ) ].element();
@@ -2513,9 +2510,7 @@ ElectronDensity::dCCdB_fastRes(
 	numeric::xyzVector<core::Real> const &X = rsd.xyz(atmid);
 	numeric::xyzVector<core::Real> fracX = c2f*X;
 	numeric::xyzVector<core::Real> idxX;
-	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (core::Real)fastgrid[0]);
-	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (core::Real)fastgrid[1]);
-	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (core::Real)fastgrid[2]);
+	idxX = periodic_mod(fracX, fastgrid, fastorigin);
 
 	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
 	std::string elt_i = atom_type_set[ rsd.atom_type_index( atmid ) ].element();
@@ -3130,9 +3125,27 @@ void ElectronDensity::expandToUnitCell() {
 						symmOps[symm_idx].get_rotation() * fracX +  symmOps[symm_idx].get_translation();
 
 					// indices of symm copy
-					int Sx = pos_mod((int)floor(SfracX[0]*grid_[0]+0.5 - origin_[0]) , grid_[0]) + 1;
-					int Sy = pos_mod((int)floor(SfracX[1]*grid_[1]+0.5 - origin_[1]) , grid_[1]) + 1 ;
-					int Sz = pos_mod((int)floor(SfracX[2]*grid_[2]+0.5 - origin_[2]) , grid_[2]) + 1 ;
+
+					int Sx, Sy, Sz;
+
+					if ( periodicity_ ) {
+						Sx = pos_mod((int)floor(SfracX[0]*grid_[0]+0.5 - origin_[0]) , grid_[0]) + 1;
+						Sy = pos_mod((int)floor(SfracX[1]*grid_[1]+0.5 - origin_[1]) , grid_[1]) + 1 ;
+						Sz = pos_mod((int)floor(SfracX[2]*grid_[2]+0.5 - origin_[2]) , grid_[2]) + 1 ;
+					} else {
+						Sx = (int)floor(SfracX[0]*grid_[0]+0.5 - origin_[0]) + 1;
+						if ( Sx < 0 ) {
+							Sx += (core::Real)grid_[0];
+						}
+						Sy = (int)floor(SfracX[1]*grid_[1]+0.5 - origin_[1]) + 1;
+						if ( Sy < 0 ) {
+							Sy += (core::Real)grid_[1];
+						}
+						Sz = (int)floor(SfracX[2]*grid_[2]+0.5 - origin_[2]) + 1;
+						if ( Sz < 0 ) {
+							Sz += (core::Real)grid_[2];
+						}
+					}
 
 					if ( Sx <= limX && Sy <= limY && Sz <= limZ ) {
 						newDensity( x,y,z ) = density(Sx,Sy,Sz);

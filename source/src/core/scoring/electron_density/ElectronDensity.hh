@@ -507,6 +507,13 @@ public:
 	// density gradients (visualization only)
 	numeric::xyzVector<core::Real> dens_grad ( numeric::xyzVector<core::Real> const & idxX ) const;
 
+	// apply periodic boundaries
+	numeric::xyzVector<core::Real> periodic_mod (
+		numeric::xyzVector<core::Real> const & fracX,
+		numeric::xyzVector<core::Real> const & grid,
+		numeric::xyzVector<core::Real> const & origin
+	) const;
+
 private:
 	/// @brief The function is called everytime the density changes
 	void
@@ -553,7 +560,7 @@ private:
 	core::Real reso_, ATOM_MASK, CA_MASK, force_apix_on_map_load_, SC_scaling_;
 	core::Real ATOM_MASK_PADDING;
 	core::Size WINDOW_;
-	bool score_window_context_, remap_symm_;
+	bool score_window_context_, remap_symm_, periodicity_;
 
 	// (fast scoring) precomputed rhocrhoo, d_rhocrhoo
 	ObjexxFCL::FArray4D< core::Real > fastdens_score;
