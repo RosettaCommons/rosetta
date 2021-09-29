@@ -71,7 +71,7 @@ GenerateMainchainPotential::GenerateMainchainPotential(
 	GenerateMainchainPotential const & src
 ) :
 	utility::VirtualBase(src),
-	options_( src.options_ != nullptr ? options_->clone() : utility::pointer::make_shared< GenerateMainchainPotentialOptions >(false) ),
+	options_( src.options_ != nullptr ? src.options_->clone() : utility::pointer::make_shared< GenerateMainchainPotentialOptions >(false) ),
 	last_generated_scoretable_( src.last_generated_scoretable_ == nullptr ? nullptr : src.last_generated_scoretable_->clone() ),
 	last_generated_scoretables_by_scoreterm_()
 {
