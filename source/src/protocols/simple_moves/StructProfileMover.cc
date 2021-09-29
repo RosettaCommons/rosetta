@@ -199,7 +199,7 @@ vector1<std::string> StructProfileMover::get_closest_sequence_at_res(core::pose:
 	vector1<Hit>hits;
 	for ( core::Size ii=1; ii<=hits_cen.size(); ++ii ) {
 		Real cen_deviation = get_cen_deviation(hits_cen[ii],cenList);
-		if ( censorByBurial_ ){
+		if ( censorByBurial_ ) {
 			hits_aa[ii] = censorFragByBurial(hits_cen[ii],cenList, hits_aa[ii]);
 		}
 		struct Hit result_tmp(cen_deviation,hits_rms[ii],hits_aa[ii]);
@@ -316,7 +316,7 @@ vector1<vector1<Real> > StructProfileMover::generate_profile_score(vector1<vecto
 		vector1<Real> pos_profile_score;
 		for ( core::Size jj=1; jj<= res_per_pos[ii].size(); ++jj ) {
 			Real tmp_score;
-			if (!psiblast_style_pssm_) {
+			if ( !psiblast_style_pssm_ ) {
 				tmp_score = -std::log((Real(res_per_pos[ii][jj]+1))/(Real(total_cts[ii]+20)));
 			} else {
 				// Then we write out the counts
@@ -448,7 +448,7 @@ std::string StructProfileMover::censorFragByBurial(vector<Real> cenListFrag,vect
 	std::string censoredSeq;
 	for ( Size ii=1; ii<=cenListFrag.size(); ++ii ) {
 		Real deviation = std::sqrt((cenListModel[ii]-cenListFrag[ii-1])*(cenListModel[ii]-cenListFrag[ii-1]));
-		if ( deviation < burialThreshold_){
+		if ( deviation < burialThreshold_ ) {
 			censoredSeq += cenListFragSeq[ii-1];
 		} else {
 			censoredSeq += "-";
