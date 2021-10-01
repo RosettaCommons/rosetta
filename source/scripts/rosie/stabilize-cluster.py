@@ -101,7 +101,6 @@ def gen_RScripts(symmetric_input):
     <Index name="add_res_NO_design" resnums="%%keep%%" error_on_out_of_bounds_index="false"/>                           # User-selected residues that should never mutate (i.e. an important protein-protein interface)
     <And name="inner_NO_design" selectors="inner_shell,add_res_NO_design"/>                             # Additional user-defined residues that should not mutate
     <Or name="NOT-designable" selectors="outer_shell,inner_NO_design"/>                                 # All residues that should not be mutated
-    Chain name="symmetry_chains" chains="A,B"/>                                                         # Only used to enforce sequence symmetry
   </RESIDUE_SELECTORS>
 
   <JUMP_SELECTORS>
@@ -144,7 +143,6 @@ def gen_RScripts(symmetric_input):
     <FastDesign name="design" relaxscript="MonomerDesign2019" scorefxn="sfxn_cc" task_operations="designable_to,NO_design_to,NO-pack_design_to,ex12,ifcl_to,incl_curr_to" movemap_factory="inside_sphere" />
     FastDesign name="sym_design" relaxscript="MonomerDesign2019" scorefxn="sfxn_cc" task_operations="designable_to,NO_design_to,NO-pack_design_to,ex12,ifcl_to,incl_curr_to,seq_sym_to" movemap_factory="inside_sphere" /> #  Only for sequence-symmetric simulations. Also comment out 'design' mover
     SetupForSequenceSymmetryMover name="setup_sym" sequence_symmetry_behaviour="seq_sym_to"> #  Only for sequence-symmetric simulations
-        SequenceSymmetry residue_selectors="symmetry_chains"/>
     /SetupForSequenceSymmetryMover>
     <ClearConstraintsMover name="clear-cst"/>
   </MOVERS>
@@ -169,20 +167,21 @@ def gen_RScripts(symmetric_input):
     if symmetric_input != 'null':
         initial_groups = symmetric_input.split("[")
         initial_groups[1] = initial_groups[1].replace("]","")
-        res_sel=""
-        for chain_id in initial_groups[0] :
-            res_sel=res_sel+","+chain_id
-        res_sel=res_sel[1:]
-        xml_cluster.replace('Chain name="symmetry_chains" chains="A,B"','<Chain name="symmetry_chains" chains="'+res_sel+'"')
-        xml_cluster.replace('KeepSequenceSymmetry','<KeepSequenceSymmetry')
-        xml_cluster.replace('<FastDesign name="design"','FastDesign name="design"')
-        xml_cluster.replace('FastDesign name="sym','<FastDesign name="sym')
-        xml_cluster.replace('SetupForSequenceSymmetryMover n','<SetupForSequenceSymmetryMover n')
-        xml_cluster.replace('SequenceSymmetry residue_selectors="symmetry_chains"/>','<SequenceSymmetry residue_selectors="symmetry_chains"/>')
-        xml_cluster.replace('/SetupForSequence','</SetupForSequence')
-        xml_cluster.replace('Add mover="setup_sym','<Add mover="setup_sym')
-        xml_cluster.replace('Add mover="sym_design','<Add mover="sym_design')
-        xml_cluster.replace('<Add mover="design','Add mover="design')
+        sym_chains=""
+        for chain_id in initial_groups[0] : # Add a residueselector for each chain indicated for symmetric mutations
+            xml_cluster=xml_cluster.replace('  </RESIDUE_SELECTORS>','    <Chain name="symmetry_chain_'+chain_id+'" chains="'+chain_id+'"/>\n  </RESIDUE_SELECTORS>')
+            sym_chains=sym_chains+",symmetry_chain_"+chain_id
+        sym_chains=sym_chains[1:]
+        xml_cluster=xml_cluster.replace('KeepSequenceSymmetry','<KeepSequenceSymmetry')
+        xml_cluster=xml_cluster.replace('<FastDesign name="design"','FastDesign name="design"')
+        xml_cluster=xml_cluster.replace('FastDesign name="sym','<FastDesign name="sym')
+        xml_cluster=xml_cluster.replace('SetupForSequenceSymmetryMover n','<SetupForSequenceSymmetryMover n')
+        xml_cluster=xml_cluster.replace('SequenceSymmetry residue_selectors="symmetry_chains"/>','<SequenceSymmetry residue_selectors="symmetry_chains"/>')
+        xml_cluster=xml_cluster.replace('/SetupForSequence','    <SequenceSymmetry residue_selectors="'+sym_chains+'"/>\n    /SetupForSequence')
+        xml_cluster=xml_cluster.replace('/SetupForSequence','</SetupForSequence')
+        xml_cluster=xml_cluster.replace('Add mover="setup_sym','<Add mover="setup_sym')
+        xml_cluster=xml_cluster.replace('Add mover="sym_design','<Add mover="sym_design')
+        xml_cluster=xml_cluster.replace('<Add mover="design','Add mover="design')
 
     # Initial relax with AtomTree minimization (repeats=1). This step is simply to process the pdb file (add hydrogens) so that -use_truncated_termini can be turned on without improperly treating the real N and C-termini.
     xml_file = 'rs_relax_cluster.xml'
@@ -624,6 +623,7 @@ def compare_sequences(wt_model,designed_model):
     if len(fasta_diff) != 0 : # As long as there are mutations between the two files, collect more information for each mutation (chain_id, PDB_number, ResName, Pose_Number)
         new_mut_list_pdb_num=""
         new_mut_list_pose_num=""
+        new_mut_list_pymol_pdb_num=""
         num_mut=0
 
         for pos in fasta_diff : # pos = the index (i.e. pose_num) for each mutation
@@ -638,11 +638,13 @@ def compare_sequences(wt_model,designed_model):
 
             new_mut_list_pdb_num=new_mut_list_pdb_num+chain_id+'['+resname_wt+pdb_num+resname_des+']'+' '
             new_mut_list_pose_num=new_mut_list_pose_num+chain_id+'['+resname_wt+pose_num+resname_des+']'+' '
+            new_mut_list_pymol_pdb_num=new_mut_list_pymol_pdb_num+pdb_num+'+'
             num_mut=num_mut+1
 
         # Remove the trailing '_' from constantly appending it in the for loop
         new_mut_list_pdb_num=new_mut_list_pdb_num[:-1]
         new_mut_list_pose_num=new_mut_list_pose_num[:-1]
+        new_mut_list_pymol_pdb_num=new_mut_list_pymol_pdb_num[:-1]
         # Create a list that contains 1) comma-separated string of the mutations in pdb_numbering, 2) same in pose_numbering, and 3) the number of mutations between these two models (i.e. ['A_E257D,A_G258E,A_M260D,A_H261E,', 'A_E1D,A_G2E,A_M4D,A_H5E,', '4'])
         # Generate fasta for designed model in fasta format (separate chains)
         start_chain=all_res_list_design[0]
@@ -656,11 +658,11 @@ def compare_sequences(wt_model,designed_model):
                 start_chain=current_chain
                 designed_fasta=designed_fasta+'\n> Chain '+start_chain+'\n'+aa_3_to_1(aa[2])
 
-        new_mut_list=[new_mut_list_pdb_num,new_mut_list_pose_num,str(num_mut),designed_fasta]
+        new_mut_list=[new_mut_list_pdb_num,new_mut_list_pose_num,str(num_mut),designed_fasta,new_mut_list_pymol_pdb_num]
 #        print(new_mut_list)
         return(new_mut_list)
     else :
-        new_mut_list=["none","none","0","matches_WT"]
+        new_mut_list=["none","none","0","matches_WT","none"]
 #        print(new_mut_list)
         return new_mut_list
 
@@ -678,7 +680,7 @@ def analysis(list_mutations, fav_nat_list, score_file_prefix):
 
     open(results_dir + 'fasta.txt', 'w').close() # overwrite if existing so we can append later without worry
     with open(results_dir + 'results.csv', 'w') as results:
-        results.write("Seed,Native Bonus,Delta Score / Num Mutations,Num Mutations,Total Score,Mutations (PDB Numbering),Mutations (Pose Numbering),Model Name")
+        results.write("Seed,Native Bonus,Delta Energy / Num Mutations,Num Mutations,Total Score,Mutations (PDB Numbering), Pymol Selector of Mutations (PDB Numbering), Mutations (Pose Numbering),Model Name")
         ''' 1) determine the score for the WT residue, 2) Subtract each mutant score from the WT score, move the best scoring models to the results_dir, and rename seed$x_nat$y.pdb where $x & $y are the seed_residue and fav_nat_bonus, respectively'''
         for current_pos in list_mutations:
             chain_id = current_pos[0]
@@ -694,7 +696,7 @@ def analysis(list_mutations, fav_nat_list, score_file_prefix):
             # Copy the best WT pdb file to the results directory and rename seed$x_wt.pdb
             wt_name='seed_{}_wt.pdb'.format(position)
             best_decoy_wt = out_dir + WT_best_model[0] + '.pdb'
-            shutil.copy(best_decoy_wt, results_dir + wt_name )
+            shutil.copy(best_decoy_wt, pdb_models_dir + wt_name )
 
             for fav_value in fav_nat_list:
                 out_dir = '{}/{}_bonus/'.format(position,fav_value)
@@ -705,7 +707,7 @@ def analysis(list_mutations, fav_nat_list, score_file_prefix):
                 best_decoy_des = out_dir + mut_best_model[0] + '.pdb'
                 delta_mut_score = mut_best_score[0] - WT_best_score[0]
 #                print(("Mut_Best_Score"), mut_best_score[0], ("WT_Best_Score"), WT_best_score[0])
-                comparison=compare_sequences(best_decoy_wt,best_decoy_des) # Returnes a tuple with a list of mutations in PDB numbering (0), pose numbering (1), the number of mutations (2), and the FASTA of the design (3)
+                comparison=compare_sequences(best_decoy_wt,best_decoy_des) # Returnes a tuple with a list of mutations in PDB numbering (0), pose numbering (1), the number of mutations (2), the FASTA of the design (3), and residue selectors for PyMol in PDB numbering (4)
                 if comparison[2] == '0' : # Skip if there are no mutations in the designed model
                     score_per_mut = 0
                 else :
@@ -713,9 +715,7 @@ def analysis(list_mutations, fav_nat_list, score_file_prefix):
                 mutant_name='seed_{}_nat{}.pdb'.format(position, fav_value)
                 escaped_mutant_name='seed_'+ chain_id + '\[' + resid + '\]'+ '_nat' + str(fav_value) + '.pdb'
                 shutil.copy(best_decoy_des, pdb_models_dir + mutant_name )
-#                results.write('\n' + escaped_mutant_name + ',' + str(format(score_per_mut,'.2f')) + ',' + comparison[2] + ',' + str(format(mut_best_score[0],'.2f')) + ',' + comparison[0] + ',' + comparison[1] + ',' + position + ',' + str(fav_value))
-                results.write('\n' + position + ',' + str(fav_value) + ',' + str(format(score_per_mut,'.2f')) + ',' + comparison[2] + ',' + str(format(mut_best_score[0],'.2f')) + ',' + comparison[0] + ',' + comparison[1] + ',' + escaped_mutant_name)
-#                results.write('\n' + str(format(delta_mut_score,'.2f')) + ',' + chain_id + ',' + WT_one_lett + ',' + resid + ',' + mutation + ',' + mutant_name + ',' + pose_num)
+                results.write('\n' + position + ',' + str(fav_value) + ',' + str(format(score_per_mut,'.2f')) + ',' + comparison[2] + ',' + str(format(mut_best_score[0],'.2f')) + ',' + comparison[0] + ',' + comparison[4] + ',' + comparison[1] + ',' + escaped_mutant_name)
                 with open(results_dir + 'fasta.txt', 'a') as fasta:
                     fasta.write('\n' + '>>> ' + mutant_name + '\n' + comparison[3])
 
@@ -891,7 +891,7 @@ def parse_build_analyze_inputs(pdb_file, input_resnum, aa_subs_option, fav_nativ
         resname = aa_subs_option
     else:
         # Can exclude mutations for saturation mutagenesis here (i.e. to save speed, skip Pro, etc.)
-        resname = "ADEFGHIKLMNPQRSTVWY"  # excludes Cys
+        resname = "ADEFGHIKLMNPQRSTVWY"
     if fav_native != 'null':
         fav_nat_list=parse_fav_native_input(fav_native)
     else:
