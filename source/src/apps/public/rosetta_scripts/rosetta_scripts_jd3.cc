@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file apps/pilot/jadolfbr/rosetta_scripts_jd3.cc
+/// @file apps/public/rosetta_scripts/rosetta_scripts_jd3.cc
 /// @brief First implementation of a JD3 app for RosettaScripts.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 

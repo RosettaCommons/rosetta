@@ -346,6 +346,7 @@ sources = {
 		"parse_rosetta_script",
 		"revert_design_to_native",
 		"rosetta_scripts",
+		"rosetta_scripts_jd3",
 		"validate_rosetta_script",
 		"multistage/multistage_rosetta_scripts",
 	],
