@@ -108,6 +108,18 @@ NodeManager::register_result(
 	}
 }
 
+bool
+NodeManager::done_submitting() const {
+	return stopped_early_ || num_jobs_submitted_ == num_jobs_total_;
+}
+
+bool
+NodeManager::all_results_are_in() const {
+	return done_submitting()
+		&& num_jobs_submitted_ == num_jobs_completed_
+		&& num_results_received_ == num_results_total_;
+
+}
 void
 NodeManager::clear() {
 	//result_threshold_per_part_.clear();

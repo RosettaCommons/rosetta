@@ -173,6 +173,10 @@ public:
 		return n_steps_passed_in_previous_run_;
 	}
 
+	///@brief Get the status of any filters after running.
+	bool
+	get_filter_status() const { return filter_status_;}
+
 private:
 	void finish_protocol(Pose & pose);
 
@@ -208,6 +212,7 @@ private:
 	bool resume_support_;
 
 	core::Size n_steps_passed_in_previous_run_ = 0;
+	bool filter_status_ = true; //JAB - used by MultiStageRosettaScripts to properly fail if filter failed.
 };
 
 } // rosetta_scripts

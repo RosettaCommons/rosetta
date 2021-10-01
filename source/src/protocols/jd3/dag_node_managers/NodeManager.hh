@@ -123,19 +123,13 @@ public:
 
 public://status checkers
 
-	bool done_submitting() const {
-		return stopped_early_ || num_jobs_submitted_ == num_jobs_total_;
-	}
+	bool done_submitting() const;
 
 	bool jobs_are_still_running(){
 		return num_jobs_completed_ < num_jobs_submitted_;
 	}
 
-	bool all_results_are_in() const {
-		return done_submitting()
-			&& num_jobs_submitted_ == num_jobs_completed_
-			&& num_results_received_ == num_results_total_;
-	}
+	bool all_results_are_in() const;
 
 	bool all_waste_is_discarded() const {
 		return all_results_are_in() && job_results_that_should_be_discarded_.empty();

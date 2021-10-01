@@ -26,9 +26,10 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/FilterFactory.hh>
+#include <protocols/filters/BasicFilters.hh>
 #include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 #include <protocols/jd3/job_results/PoseJobResult.hh>
-
+#include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
@@ -105,7 +106,20 @@ jd3::CompletedJobOutput MRSJob::run_inner() {
 		if ( protocol.is_mover ) {
 			debug_assert( pose_ );
 			protocol.mover->apply( *pose_ );
+			if ( protocol.mover->get_last_move_status() == moves::FAIL_DO_NOT_RETRY ) {
+				output.status = jd3::jd3_job_status_failed_do_not_retry;
+				return output;
+			}
 
+			//JAB If a filter fails in parsed protocol, the status is just fail_retry.
+			//So we check that here to preserve the same behavior for filters, w/o breaking JD2 machinery
+			if ( protocol.mover->get_name() == "ParsedProtocol" ) {
+				rosetta_scripts::ParsedProtocolCOP parser = std::dynamic_pointer_cast< rosetta_scripts::ParsedProtocol const>( protocol.mover );
+				if ( ! parser->get_filter_status() ) {
+					output.status = jd3::jd3_job_status_failed_do_not_retry;
+					return output;
+				}
+			}
 			if ( count == index_of_last_mover && max_num_results_ != 1 ) {
 				core::Size output_count = 1;
 				while ( pose_ && ( !max_num_results_ || output_count <= max_num_results_ ) ) {
@@ -182,6 +196,12 @@ MRSJob::parse_my_tag(
 	std::map< std::string, utility::tag::TagCOP > const & filter_tags_by_name
 ) {
 
+	core::Size num_runs_per_input_struct =
+		stage_subtag->getOption< core::Size >( "num_runs_per_input_struct", 1 );
+
+	core::Size max_keep = stage_subtag->getOption< core::Size >( "total_num_results_to_keep", 1 );
+	core::Size num_struct = stage_subtag->getOption< core::Size >("max_num_results_to_keep_per_input_struct", 0);
+
 	moves::MoverFactory const * mover_factory = moves::MoverFactory::get_instance();
 	filters::FilterFactory const * filter_factory = filters::FilterFactory::get_instance();
 
@@ -236,10 +256,22 @@ MRSJob::parse_my_tag(
 				protocols_.emplace_back( new_filter );
 				local_filter_map[ filter_name ] = new_filter;
 			}
-
-			debug_assert( protocols_.back().filter );
 		}
+	}
 
+	//JAB - If nstruct is lower than total, we output everything.
+	// If TrueFilter is missing, we add it.
+	if ( ! protocols_.back().filter
+			&& (num_runs_per_input_struct <= max_keep)
+			&& ((num_struct == 0  )|| (num_struct <= num_runs_per_input_struct )) ) {
+		protocols::filters::TrueFilterOP true_filt = utility::pointer::make_shared< protocols::filters::TrueFilter>();
+		protocols_.emplace_back(true_filt);
+		if ( local_filter_map.find( "true" ) == local_filter_map.end() ) {
+			local_filter_map[ "true" ] = true_filt;
+		}
+		TR << "Added true filter" <<std::endl;
+	} else if ( ! protocols_.back().filter ) {
+		utility_exit_with_message("MRS: A Filter must be used to rank jobs at the end of a stage if not outputting everything. Use <Sort filter=\"filt_name\"/> at the end of a stage");
 	}
 }
 

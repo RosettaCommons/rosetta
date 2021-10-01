@@ -715,6 +715,7 @@ ParsedProtocol::apply_filter( Pose & pose, ParsedProtocolStep const & step ) {
 	if ( !pass ) {
 		TR << "Filter " << filter_name << " reports failure!" << std::endl;
 		protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY ); // Set status for this ParsedProtocol mover
+		filter_status_ = false;
 		return false;
 	}
 	return true;

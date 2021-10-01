@@ -180,7 +180,9 @@ MRSJobQueen::determine_job_list(
 
 	TR << "determine_job_list " << max_njobs << " " << num_total_jobs_for_stage_[ job_dag_node_index ] << std::endl;
 	if ( job_dag_node_index > 1 ) {
-		runtime_assert( node_managers_[ job_dag_node_index - 1 ]->all_results_are_in() );//todo remove this if you ever try to fight the sawtooth pattern
+		//JAB - commenting out on the suggestion by jack.
+		TR << "All results from previous job "<<job_dag_node_index-1 << " are not in.  Continuing anyway." << std::endl;
+		//runtime_assert( node_managers_[ job_dag_node_index - 1 ]->all_results_are_in() );//todo remove this if you ever try to fight the sawtooth pattern
 	}
 
 	if ( node_managers_[ job_dag_node_index ]->num_jobs_submitted() == 0 ) {
@@ -195,6 +197,8 @@ MRSJobQueen::determine_job_list(
 			if ( max_num_jobs_for_current_stage < node_managers_[ job_dag_node_index ]->num_jobs() ) {
 				//It is possible that the node manager originally expected to be running more jobs but the previous stage did not fill its quota of results.
 				//In this case, we want to decrease the number of results expected by the node manager.
+				//TR << "Setting number of jobs for stage " << job_dag_node_index << " to "<< max_num_jobs_for_current_stage << std::endl;
+
 				node_managers_[ job_dag_node_index ]->set_num_jobs( max_num_jobs_for_current_stage );
 			}
 
@@ -213,6 +217,7 @@ MRSJobQueen::determine_job_list(
 	std::list< LarvalJobOP > jobs;
 	for ( core::Size ii = 1; ii <= max_njobs; ++ii ) {
 		if ( node_managers_[ job_dag_node_index ]->done_submitting() ) {
+			//TR << "Done submitting for stage " << job_dag_node_index << std::endl;
 			break;
 		}
 		LocalJobID const local_job_id( node_managers_[ job_dag_node_index ]->get_next_local_jobid() );
@@ -224,6 +229,8 @@ MRSJobQueen::determine_job_list(
 			larval_job = get_nth_job_for_noninitial_stage( job_dag_node_index, local_job_id );
 		}
 		if ( larval_job ) {
+			//TR <<"Pushing back larval job for stage " << job_dag_node_index <<" N " << ii << std::endl;
+
 			jobs.push_back( larval_job );
 			get_job_tracker().increment_current_job_index();
 		} else {
@@ -302,6 +309,7 @@ MRSJobQueen::note_job_completed(
 	} else {
 		node_managers_[ stage ]->note_job_completed( job_id, nresults );
 		job_genealogist_->note_job_completed( stage, job_id, nresults );
+
 	}
 }
 
@@ -327,6 +335,7 @@ MRSJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size 
 			TR << "Creating output specification for job " << job_id << " " << ii << std::endl;
 			output::OutputSpecificationOP out_spec = create_output_specification_for_job_result( job, *job_options, ii, nresults );
 			pose_output_specification_for_job_result_id_[ jd3::JobResultID( job_id, ii ) ] = out_spec;
+
 		}
 	}
 
@@ -389,12 +398,10 @@ MRSJobQueen::completed_job_summary(
 std::list< jd3::JobResultID >
 MRSJobQueen::job_results_that_should_be_discarded(){
 	std::list< jd3::JobResultID > list_of_all_job_results_to_be_discarded;
-
 	for ( JobDAGNodeID stage( num_stages_ ); stage > 0; --stage() ) {
 		//Add job results that are being discarded because they did not score well enough
 		std::list< jd3::JobResultID > job_results_to_be_discarded_for_stage;
 		node_managers_[ stage ]->append_job_results_that_should_be_discarded( job_results_to_be_discarded_for_stage );
-
 		for ( jd3::JobResultID const & discarded_result : job_results_to_be_discarded_for_stage ) {
 
 			if ( ! cluster_data_for_results_of_stage_[ stage ].empty() ) {
@@ -409,7 +416,6 @@ MRSJobQueen::job_results_that_should_be_discarded(){
 			}
 
 		}
-
 		list_of_all_job_results_to_be_discarded.splice( list_of_all_job_results_to_be_discarded.end(),
 			job_results_to_be_discarded_for_stage );
 
@@ -707,13 +713,14 @@ MRSJobQueen::append_common_tag_subelements(
 		.element_name( "Stage" )
 		.description( "Defines Movers and Filters used in a single round" )
 		.add_ordered_subelement_set_as_repeatable( ssl )
-		.add_ordered_subelement_set_as_required( ssl2 )
+		.add_ordered_subelement_set_as_optional( ssl2 )
 		.add_attribute( num_runs_per_input_struct )
 		.add_attribute( total_num_results_to_keep )
 		.add_attribute( max_num_results_to_keep_per_instance )
 		.add_attribute( max_num_results_to_keep_per_input_struct )
 		.add_attribute( result_cutoff )
 		.add_attribute( merge_results_after_this_stage )
+		//.add_attribute( output_all )
 		.complex_type_naming_func( & protocols_subelement_mangler )
 		.write_complex_type_to_schema( xsd );
 
@@ -833,7 +840,6 @@ void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
 						stage_to_merge_after = current_stage;
 					}
 					parse_single_stage_tag( stage_subtag );
-
 				} else if ( stage_subtag->getName() == "Checkpoint" ) {
 					checkpoints_.push_back(
 						std::pair< core::Size, utility::tag::TagCOP >( current_stage+1, std::move( stage_subtag ) ) );
@@ -1010,6 +1016,7 @@ void MRSJobQueen::print_job_lineage() const {
 
 void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for node 0
 
+	//JAB - note that this only runs in the MRSJobQueenChecker, which does NOT run normally...
 	runtime_assert( num_input_structs_ > 0 );
 
 	moves::MoverFactory const * mover_factory = moves::MoverFactory::get_instance();
@@ -1046,8 +1053,13 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 					utility::tag::TagCOP filter_tag = data_for_job->filter_tags->at( filter_name );
 					filter_factory->newFilter( filter_tag, * data_for_job->data_map );
 				} else if ( add_or_sort_count == tag->getTags().size() ) {
-					utility_exit_with_message( "All stages need to finish with a filter. No filter at the end of stage "
-						+ std::to_string( ii ) + " for input pose " + std::to_string( ii ) + "." );
+					//JAB - if we are keeping all of them, add a TrueFilter.
+					if ( num_jobs_per_input_for_stage_[stage_count] <= num_results_to_keep_for_stage_[stage_count] ) {
+						//TR << "Keeping all runs" << std::endl;
+					} else {
+						utility_exit_with_message( "All stages need to finish with a filter. Either set num_jobs_per_input less than num_jobs_to_keep or add a filter for sorting. No filter at the end of stage "
+							+ std::to_string( ii ) + " for input pose " + std::to_string( ii ) + "." );
+					}
 				}
 
 			}//subtag
