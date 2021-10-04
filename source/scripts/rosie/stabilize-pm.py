@@ -10,33 +10,33 @@
 
 ################################################################################################
 #
-# Generate input or analyze results for site saturation mutagenesis (SSM). This does not perform SSM - that requires a separate RosettaScript.
+# Generate input or analyze results for specificed point mutations (PM). This does not run the RosettaScripts but prepares and analyzes files.
 #
-# Stabilize_SSM.py
+# stabilize_pm.py
 # 'mode' is either 'trim' 'build' 'analyze' or 'validate' [Required]
 #     mode trim: Prepare the PDB file for relax (remove heteroatoms)
 #     mode build: Build the directory tree and jobdefinition file
-#     mode analyze: Analyze the results after SSM has been performed (collect best models based on total_score, calculate delta scores to WT, and generate a heatmap of results)
+#     mode analyze: Analyze the results after PM has been performed (collect best models based on total_score, calculate delta scores to WT, and generate a heatmap of results)
 #     mode validate: Validate inputs. If they are correct, return nothing
 # 'pdb' is starting structure filename. The starting structure should already be relaxed (original rosetta script used CARTESIAN minimization) [Required]
-# 'pos' is residue positions for SSM. Format is a comma-delimited list with chain_ID preceding each residue (e.g. "H[1,10-20],L[23]""). Insertion codes are allowed. [Optional]
-# 'res' is amino acid residues to substitute during SSM (must include WT residue for each position selected) [Optional]
+# 'pos' is residue positions for PM. Format is a comma-delimited list with chain_ID preceding each residue (e.g. "H[1,10-20],L[23]""). Insertion codes are allowed. [Optional]
+# 'res' is amino acid residues to substitute during PM (must include WT residue for each position selected) [Optional]
 # 'sym' allows mutations on multiple chains simultaneously (Format is chains:residues (i.e. "ABC[20-30,35,80]") [Optional]
 # 'lig' allows the user to specify ligand residues to keep when mode==trim. Format is a comma-delimited list with chain_ID preceding each residue (e.g. "H[405-408],L[403]") [Optional]
 #
 # Example of trimming a PDB file:
-# python Stabilize_SSM.py mode trim pdb input_file.pdb 
+# python stabilize_pm.py mode trim pdb input_file.pdb 
 #
-# Example of building SSM inputs:
-# python Stabilize_SSM.py mode build pdb input_file.pdb pos "H[1,10-20],L[23]" res ADEFHIKLMNQRSTVWY
+# Example of building PM inputs:
+# python stabilize_pm.py mode build pdb input_file.pdb pos "H[1,10-20],L[23]" res ADEFHIKLMNQRSTVWY
 #
-# Example of analyzing SSM results from a symmetric run:
-# python Stabilize_SSM.py mode analyze pdb input_file.pdb sym "ABC[20-30,35,80]" res DEKR
+# Example of analyzing PM results from a symmetric run:
+# python stabilize_pm.py mode analyze pdb input_file.pdb sym "ABC[20-30,35,80]" res DEKR
 #
 ################################################################################################
 
 
-''' ROSIE stabilize_ssm App - tested with Python3.5 '''
+''' ROSIE stabilize_pm App - tested with Python3.5 '''
 
 import sys, os, re, shutil
 import types, math, numpy, matplotlib
@@ -44,9 +44,9 @@ matplotlib.use('Agg') #Command-line only, dDon't display on screen
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 
-############# Print the RosettaScripts that are required for the SSM calculations (rs_relax_ssm.xml and rs_ssm.xml). #############
+############# Print the RosettaScripts that are required for the PM calculations (rs_relax_pm.xml and rs_pm.xml). #############
 
-xml_relax_ssm = '''\
+xml_relax_pm = '''\
 <ROSETTASCRIPTS>
   <SCOREFXNS>
     <ScoreFunction name="sfxn" weights="ref2015"/>  # Score function without constraints
@@ -81,11 +81,11 @@ xml_relax_ssm = '''\
     <Add mover="relax_atomTree"/>
     <Add mover="relax_cart"/>
   </PROTOCOLS>
-  <OUTPUT scorefxn="sfxn"/> # Output score without penalties from constraints (cc/cc2)
+  <OUTPUT scorefxn="sfxn_cart"/> # Output score without penalties from constraints (cc/cc2)
 </ROSETTASCRIPTS>
 '''
 
-xml_ssm = '''\
+xml_pm = '''\
 <ROSETTASCRIPTS>
 
   <SCOREFXNS>
@@ -156,14 +156,14 @@ xml_ssm = '''\
 
 def gen_RScripts():
     # Initial relax with AtomTree minimization (repeats=1). This step is simply to process the pdb file (add hydrogens) so that -use_truncated_termini can be turned on without improperly treating the real N and C-termini.
-    xml_file = 'rs_relax_ssm.xml'
+    xml_file = 'rs_relax_pm.xml'
     with open (xml_file, 'w') as xml_file :
-        xml_file.write( xml_relax_ssm )
+        xml_file.write( xml_relax_pm )
     
     # Second RosettaScript for Site Saturation Mutagenesis (repeats=3). Note that this requires a jobdefinition file
-    xml_file2 = 'rs_ssm.xml'
+    xml_file2 = 'rs_pm.xml'
     with open (xml_file2, 'w') as xml_file2:
-        xml_file2.write( xml_ssm )
+        xml_file2.write( xml_pm )
 
 #### This first section (~110 lines) is for parsing the PDB file and was extracted from rosetta/tools/pdb_structure.py, written by Andrew Leaver-Fay. ####
 
@@ -543,12 +543,12 @@ def analysis(mutation_list, resname, score_file_prefix):
     else:
         print(("Directory " , results_dir ,  " already exists, placing results in existing directory."))
 
-    with open(results_dir + 'delta_scores.csv', 'w') as delta_scores:
+    with open(results_dir + 'results.csv', 'w') as delta_scores:
         for test in mutation_list: # If symmetric mutations, more than one chain will be provided (i.e. AB mutates residues on both A and B chains). The WT_resnum will be the same for both but the Rosetta_Num will vary based on num of chains
              num_chains=(len(test[0]))
         start_rosetta_num_string=",Rosetta Number"
         final_rosetta_num_string=start_rosetta_num_string*num_chains # Edit the header based on the number of chains
-        delta_scores.write("Mutation Name,Delta Score (mutant-WT),Chain ID,WT Residue,Position,Mutant Residue" + final_rosetta_num_string + ",Model Name")
+        delta_scores.write("Mutation Name,Delta Energy (mutant-WT),Chain ID,WT Residue,Position,Mutant Residue" + final_rosetta_num_string + ",Model Name")
         ''' 1) determine the score for the WT residue, 2) Subtract each mutant score from the WT score and move the best scoring models to the results_dir'''
         for current_pos in mutation_list:
             chain_id = current_pos[0]
@@ -700,10 +700,13 @@ def annotate_heatmap(im, data_min, data_max, data=None, valfmt="{x:.2f}",
     for i in range(data.shape[0]):
         for j in range(data.shape[1]):
             kw.update(color=textcolors[int(data[i, j] < (data_max/3) and data[i, j] > (data_min/3))])
+            #If WT residue, print "WT" instead of score
             if float(data[i, j]) == 0:
                 text = im.axes.text(j, i, "WT", **kw)
+            # If positive score, mutations are unfavorable so leave field blank
             elif float(data[i, j]) > 0:
                 text = im.axes.text(j, i, " ", **kw)
+            # If negative score, print score
             else:
                 text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
             texts.append(text)
@@ -721,11 +724,16 @@ def heatmap_gen(mutation_list, resname):
     results_dir = './results/'
     mut_scores_dict={}
     mut_scores_dict.setdefault('x_axis', []) # X axis is a list of residue numbers
+    mut_scores_dict.setdefault('x_axis_table', []) # X axis is a list of residue numbers
     for current_pos in mutation_list:
         chain_id = current_pos[0]
         resid = current_pos[1]
+        WT_three_lett = current_pos[2]
+        WT_one_lett = aa_3_to_1(WT_three_lett)
+        position_WT = chain_id + '[' + resid + ']  ' + WT_one_lett
         position = chain_id + '[' + resid + ']'
-        mut_scores_dict['x_axis'].append(position)
+        mut_scores_dict['x_axis'].append(position_WT)
+        mut_scores_dict['x_axis_table'].append(position)
     mut_scores_dict.setdefault('y_axis', []) # Y Axis is a list of residue names
     for mutation in resname:
             mut_scores_dict['y_axis'].append(mutation) # Collect resnames for y-axis
@@ -736,7 +744,7 @@ def heatmap_gen(mutation_list, resname):
         for mutation in resname: # Do this for each resname (i.e. A, C, etc.)
             mut_scores_dict.setdefault(mutation, [])
 
-            all_scores=open(results_dir + 'delta_scores.csv', 'r').read()
+            all_scores=open(results_dir + 'results.csv', 'r').read()
             for line in all_scores.split('\n'):
                 score_col = re.split(",",line)
                 if score_col[2] == target_chain_id and score_col[4] == target_resid and score_col[5] == mutation :
@@ -766,17 +774,19 @@ def heatmap_gen(mutation_list, resname):
         font_size_var=12
 
     matplotlib.rcParams.update({'font.size': font_size_var})
+#    plt.rcParams["font.family"] = "monospace" # To change font styles
     data_min=numpy.amin(score_2d_array)
     data_max=1
 #    data_max=numpy.amax(score_2d_array)
     fig, ax = plt.subplots()
-    im, cbar = heatmap(score_2d_array, mut_scores_dict['y_axis'], mut_scores_dict['x_axis'], ax=ax, cmap="RdBu", cbarlabel="Delta_Score [REU]", norm=MidpointNormalize(midpoint=0., vmin=data_min, vmax=data_max))
+    im, cbar = heatmap(score_2d_array, mut_scores_dict['y_axis'], mut_scores_dict['x_axis'], ax=ax, cmap="RdBu", cbarlabel=r'$\Delta$E (REU)', norm=MidpointNormalize(midpoint=0., vmin=data_min, vmax=data_max))
     texts = annotate_heatmap(im, valfmt="{x:.1f}", data_min=data_min, data_max=data_max)
-    #ax.set_title("Site Saturation Mutagenesis Delta Scores (WT-Mutant Total Scores)")
+    #ax.set_title("Heatmap of $\Delta$E (WT-Mutant Total Scores)")
     fig.tight_layout()
     plt.savefig(results_dir + 'heatmap_image.pdf', dpi=300, bbox_inches='tight')
     plt.savefig(results_dir + 'heatmap_image.png', dpi=300, bbox_inches='tight')
 
+    # Create a txt file for the heatmap array
     x=numpy.array([mut_scores_dict['x_axis']])
     y=numpy.array([mut_scores_dict['y_axis']])
     full_2d_array=numpy.vstack((x.astype(numpy.str),score_2d_array.astype(numpy.str)))
@@ -899,9 +909,9 @@ def parse_build_analyze_inputs(pdb_file, input_resnum, aa_subs_option, symmetric
     if aa_subs_option != 'null':
         resname = [char for char in aa_subs_option]
     else:
-        # Can exclude mutations for saturation mutagenesis here (i.e. to save speed, skip Pro, etc.)
+        # Can exclude mutations here (i.e. to save speed, skip Pro, etc.)
         #resname = [ "A", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y" ]  # These are sorted alphabetically, exclude Cys
-        resname = [ "G", "P", "A", "V", "I", "L", "M", "F", "Y", "W", "S", "T", "N", "Q", "H", "K", "R", "D", "E" ] # These are sorted by type (special, hydrophobic, hydrophbilic, charge), exclude Cys
+        resname = [ "G", "P", "C", "A", "V", "I", "L", "M", "F", "Y", "W", "S", "T", "N", "Q", "H", "K", "R", "D", "E" ] # These are sorted by type (special, hydrophobic, hydrophbilic, charge)
     # Optional, symmetric mutations
     if symmetric_option != 'null':
         sym_mutation_list=parse_symmetric_input(symmetric_option)
@@ -952,9 +962,9 @@ def trim(pdb_file, ligand_option):
 
     trim_pdb(pdb_file, keep_ligand_list) # Creates the file 'trimmed_input_protein.pdb' in the current directory
 
-##### Mode 3: Build SSM inputs (directory tree and jobdefinition file) #####
+##### Mode 3: Build PM inputs (directory tree and jobdefinition file) #####
 def build(pdb_file, input_resnum, aa_subs_option, symmetric_option):
-    # To avoid code duplication, a separate function for validating both build and analyze was created. The variables are all returned so they can be passed to run_ssm consistently
+    # To avoid code duplication, a separate function for validating both build and analyze was created. The variables are all returned so they can be passed to run_pm consistently
     validate_build_and_analyze(pdb_file, input_resnum, aa_subs_option, symmetric_option)
 #    pdb_file, input_resnum, aa_subs_option, symmetric_option = validate_build_and_analyze(pdb_file, input_resnum, aa_subs_option, symmetric_option)
     print(symmetric_option)
@@ -964,7 +974,7 @@ def build(pdb_file, input_resnum, aa_subs_option, symmetric_option):
 ##### Mode 4: Analyze results (calculate delta_scores, collect best models, and generate heatmap) #####
 def analyze(pdb_file, input_resnum, aa_subs_option, symmetric_option):
     score_file_prefix = "score"
-    # To avoid code duplication, a separate function for validating both build and analyze was created. The variables are all returned so they can be passed to run_ssm consistently
+    # To avoid code duplication, a separate function for validating both build and analyze was created. The variables are all returned so they can be passed to run_pm consistently
     validate_build_and_analyze(pdb_file, input_resnum, aa_subs_option, symmetric_option)
 #    pdb_file, input_resnum, aa_subs_option, symmetric_option = validate_build_and_analyze(pdb_file, input_resnum, aa_subs_option, symmetric_option)
     list_mutations, resname = parse_build_analyze_inputs(pdb_file, input_resnum, aa_subs_option, symmetric_option)
@@ -973,10 +983,10 @@ def analyze(pdb_file, input_resnum, aa_subs_option, symmetric_option):
 
 def register():
     return {
-        'stabilize-ssm.RScripts' : RScripts,
-        'stabilize-ssm.trim' : trim,
-        'stabilize-ssm.build' : build,
-        'stabilize-ssm.analyze' : analyze,
+        'stabilize-pm.RScripts' : RScripts,
+        'stabilize-pm.trim' : trim,
+        'stabilize-pm.build' : build,
+        'stabilize-pm.analyze' : analyze,
     }
 
 
