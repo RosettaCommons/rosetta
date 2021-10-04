@@ -578,6 +578,8 @@ sources = {
 		#"oop_dimer_rama_calc",
 		"ld_converter",
 		#"scaffold_matcher",
+		"cmaes_test",
+		"cmaes_minimizer_test",
 	],
 	"pilot/kalngyk" : [
 		#"calibur" - Moved to public,

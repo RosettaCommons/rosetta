@@ -163,6 +163,51 @@ public:
 		run_an_algorithm("lbfgs_armijo_nonmonotone");
 		return;
 	}
+	//
+	/// @brief Test minimization with the cmaes algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash. kdrew: Not using run_an_algorithm because needed to change options to speed up test
+	/// @author Vikram K. Mulligan (vmullig@uw.edu), Kevin Drew (ksdrew@uic.edu)
+	void test_cmaes()
+	{
+		using namespace optimization;
+		using pose::Pose;
+		using id::AtomID;
+		using id::DOF_ID;
+		using id::PHI;
+		using id::THETA;
+		using id::D;
+
+		TR << "Testing cmaes..." << std::endl;
+
+		//Pose and MoevMap:
+		pose::Pose pose(create_test_in_pdb_pose());
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
+
+		// Set up moving dofs
+		for ( int i=30; i<= 35; ++i ) {
+			mm->set_bb ( i, true );
+			mm->set_chi( i, true );
+		}
+
+		// Set up the scorefunction -- use the current Rosetta default.
+		scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function(true) );
+
+		AtomTreeMinimizer minimizer;
+		//kdrew: the minimize_tolerance value of 10.0 is a bit nonsensical but needed to keep down the runtime of the test.
+		MinimizerOptionsOP min_options( utility::pointer::make_shared< MinimizerOptions >( "cmaes", 10.0, true, false, false ) );
+
+		//kdrew: save starting score
+		core::Real starting_score = (*scorefxn)(pose);
+
+		// Just run the minimizer and make sure there's no segfault.
+		minimizer.run( pose, *mm, *scorefxn, *min_options );
+
+		core::Real final_score = (*scorefxn)(pose);
+
+		TS_ASSERT(final_score < starting_score);
+
+		return;
+	}
 
 
 	///////////////////////////////////////////////////////////////////////////////

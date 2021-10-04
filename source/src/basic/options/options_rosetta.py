@@ -94,7 +94,7 @@ legal_minimization_types = [ "linmin", "linmin_iterated", "linmin_iterated_atol"
 														 "dfpmin_strong_wolfe", "dfpmin_strong_wolfe_atol",
 														 "lbfgs_armijo", "lbfgs_armijo_rescored",
 														 "lbfgs_armijo_atol", "lbfgs_armijo_nonmonotone",
-														 "lbfgs_armijo_nonmonotone_atol", "lbfgs_strong_wolfe" ]
+														 "lbfgs_armijo_nonmonotone_atol", "lbfgs_strong_wolfe","cmaes" ]
 
 ##################################################################
 # Option Group Ordering:
@@ -3647,6 +3647,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'nonideal', 'Boolean', desc='Permit bond geometries to vary from ideal values', default='false'),
 		Option( 'old_sym_min', 'Boolean', desc='Use the old approach to symmetric minimization', default='false'),
 		Option( 'debug_inaccurate_G', 'Boolean', desc='Debug innacurate G messages', default='false'),
+		Option( 'cmaes_rgsigma', 'Real', desc='CMAES initial coordinate wise standard deviation (step size)', default='0.3'),
 	), # -optimization
 
 	################STEVEN COMBS#######################

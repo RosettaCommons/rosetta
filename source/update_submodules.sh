@@ -28,6 +28,7 @@ echo "Updating submodules needed for compilation."
 git submodule update --init -- source/external/mmtf/mmtf-cpp
 git submodule update --init -- source/external/msgpack/msgpack-c.upstream
 git submodule update --init -- source/external/rdkit/rdkit.upstream
+git submodule update --init -- source/external/c-cmaes/c-cmaes
 
 # This should update all the submodules under the boost_submod directory
 # On some systems Git/GitHub apparently throttles things. 

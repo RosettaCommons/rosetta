@@ -60,5 +60,6 @@ projects = {
 		"libxml2",
 		"libzmq",
 		"rdkit",
+		"cmaes",
 	]
 }

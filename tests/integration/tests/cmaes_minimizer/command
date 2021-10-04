@@ -1,0 +1,27 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+cd %(workdir)s
+
+[ -x %(bin)s/cmaes_minimizer_test.%(binext)s ] || exit 1
+
+%(bin)s/cmaes_minimizer_test.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log
+#kdrew: this has a date and timestamp in it that is difficult to change so just ignore for now
+mv errcmaes.err errcmaes.err.ignore
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+

@@ -4,6 +4,9 @@
 [submodule "source/external/msgpack/msgpack-c.upstream"]
 	path = source/external/msgpack/msgpack-c.upstream
 	url = https://github.com/msgpack/msgpack-c.git
+[submodule "source/external/c-cmaes/c-cmaes"]
+	path = source/external/c-cmaes/c-cmaes
+	url = https://github.com/CMA-ES/c-cmaes.git
 [submodule "source/external/libzmq"]
 	path = source/external/libzmq
 	url = ../libzmq.git

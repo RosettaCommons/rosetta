@@ -16,6 +16,7 @@
 #include <core/optimization/LineMinimizer.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/GA_Minimizer.hh>
+#include <core/optimization/CMAES_Minimizer.hh>
 
 #include <basic/Tracer.hh>
 
@@ -132,6 +133,10 @@ Minimizer::run(
 	} else if ( type == "GA" ) {
 		GA_Minimizer gam(func_, options_);
 		gam.run(phipsi, ITMAX);
+	} else if ( type == "cmaes" ) {
+		CMAES_Minimizer cmaesm(func_, options_);
+		cmaesm.rgsigma( basic::options::option[ basic::options::OptionKeys::optimization::cmaes_rgsigma ]() );
+		cmaesm.run(phipsi);
 	} else {
 		utility_exit_with_message("unknown type of minimization '"+type+"'");
 	}

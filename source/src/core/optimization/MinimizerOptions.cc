@@ -57,6 +57,7 @@ MinimizerOptions::MinimizerOptions(
 	brent_abs_tolerance_( 0.01 ),
 	linmin_deriv_cutoff_( 0.0001 ),
 	ga_mutation_probability_( 0.5 ),
+	cmaes_rgsigma_(0.3),
 	armijo_max_step_limit_( 1.0 )
 {
 	using namespace basic::options;
@@ -252,6 +253,8 @@ void MinimizerOptions::max_iter(int n) { max_iter_ = n; }
 Real MinimizerOptions::ga_mutation_probability() const { return ga_mutation_probability_; }
 void MinimizerOptions::ga_mutation_probability(Real p) { ga_mutation_probability_ = p; }
 
+Real MinimizerOptions::cmaes_rgsigma() const { return cmaes_rgsigma_; }
+void MinimizerOptions::cmaes_rgsigma(Real s) { cmaes_rgsigma_ = s; }
 
 Real MinimizerOptions::armijo_max_step_limit() const { return armijo_max_step_limit_; }
 void MinimizerOptions::armijo_max_step_limit( Real lim ) { armijo_max_step_limit_ = lim; }

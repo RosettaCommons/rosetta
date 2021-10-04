@@ -19,6 +19,7 @@ sources = {
 		"CartesianMinimizerMap",
 		"CartesianMultifunc",
 		"GA_Minimizer",
+		"CMAES_Minimizer",
 		"LineMinimizer",
 		"Minimizer",
 		"MinimizerMap",

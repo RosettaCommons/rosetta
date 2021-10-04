@@ -166,6 +166,9 @@ public:
 	Real ga_mutation_probability() const;
 	void ga_mutation_probability(Real p);
 
+	Real cmaes_rgsigma() const;
+	void cmaes_rgsigma(Real s);
+
 	Real armijo_max_step_limit() const;
 	void armijo_max_step_limit( Real lim );
 
@@ -199,6 +202,9 @@ private:
 	Real linmin_deriv_cutoff_;
 
 	Real ga_mutation_probability_;
+
+	Real cmaes_rgsigma_;
+
 	Real armijo_max_step_limit_;
 
 }; // MinimizerOptions
