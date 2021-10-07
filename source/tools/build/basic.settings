@@ -749,6 +749,45 @@ settings = {
 
     # extras ##################################################################
 
+    "gcc, bcl" : {
+        "appends" : {
+            "include_path"  : [
+                "#external/bcl/include",
+            ],
+            "defines"       : [ "USEBCL" ],
+            "flags" : {
+                "warn" : [
+                    "Wno-deprecated",
+                ],
+                "compile" : [
+                    "fno-pretty-templates", "DBCL_NO_OS_SIGNAL_HANDLING",
+                    "fPIC"
+                ],
+                "cc" : [
+                    "isystem external/bcl",
+                    "isystem external/bcl/include",
+                ],
+                "cxx" : [
+                    "isystem external/bcl",
+                    "isystem external/bcl/include",
+                    #"fno-omit-frame-pointer", # -- useful for profiling on linux using RotateRight's Zoom profiler
+                ],
+            },
+        },
+        "removes" : {
+            "defines" : [ "_GLIBCXX_DEBUG" ],
+        },
+    },
+
+    "gcc, bcl, release" : {
+        "removes" : {
+            "flags" : {
+                # See comment above for rational here.
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
+            }
+        },
+    },
+
     "gcc, boinc" : {
         "appends" : {
             # Leading '#' means relative to the base directory, (i.e.,
@@ -1426,6 +1465,33 @@ settings = {
         },
     },
 
+    "icc, bcl" : {
+        "appends" : {
+	"include_path"  : [
+                "#external/bcl/include",
+            ],
+            "defines"       : [ "USEBCL" ],
+            "flags" : {
+                "compile" : [
+                    "fno-pretty-templates", "DBCL_NO_OS_SIGNAL_HANDLING",
+                    "fPIC"
+                ],
+                "cc" : [
+                    "isystem external/bcl",
+                    "isystem external/bcl/include",
+                ],
+                "cxx" : [
+                    "isystem external/bcl",
+                    "isystem external/bcl/include",
+                    #"fno-omit-frame-pointer", # -- useful for profiling on linux using RotateRight's Zoom profiler
+                ],
+
+            },
+        },
+        "removes" : {
+            "defines" : [ "_GLIBCXX_DEBUG" ],
+        },
+    },
 
     #"icc, windows" : {
     #    "overrides" : {
@@ -2457,6 +2523,32 @@ settings = {
 
 
     # extras ##################################################################
+
+    "clang, bcl" : {
+        "appends" : {
+	"include_path"  : [
+                "#external/bcl/include",
+            ],
+
+            "defines"       : [ "USEBCL" ],
+            "flags" : {
+		"compile" : ["DBCL_NO_OS_SIGNAL_HANDLING", "fPIC"],
+		"warn"    : [ "Wno-unused-variable", "Wno-deprecated" ],
+                "cc" : [
+                    "isystem external/bcl",
+                    "isystem external/bcl/include",
+                ],
+                "cxx" : [
+                    "isystem external/bcl",
+                    "isystem external/bcl/include",
+                    #"fno-omit-frame-pointer", # -- useful for profiling on linux using RotateRight's Zoom profiler
+                ],
+            },
+        },
+        "removes" : {
+            "defines" : [ "_GLIBCXX_DEBUG" ],
+        },
+    },
 
     "clang, cxx11thread" : {
         "appends" : {

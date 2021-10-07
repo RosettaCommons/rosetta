@@ -30,6 +30,7 @@
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 
+#include <core/chemical/bcl/util.hh>
 #include <core/chemical/rdkit/util.hh>
 
 #include <basic/random/init_random_generator.hh>
@@ -990,6 +991,8 @@ init_tracers(){
 
 	// Initialize tracers for external libraries
 	core::chemical::rdkit::initialize_rdkit_tracers();
+	// Ifdef USBCL contained within initialization function
+	core::chemical::bcl::initialize_bcl_tracers();
 }
 
 
@@ -1290,6 +1293,14 @@ void init(int argc, char * argv [])
 
 	//Locate rosetta_database
 	locate_rosetta_database();
+
+	// Initialize additional BCL external library settings
+#ifdef USEBCL
+	core::chemical::bcl::require_bcl();
+	core::chemical::bcl::locate_bcl();
+	core::chemical::bcl::initialize_bcl_main(); // beneficial to occur after locate_rosetta_database()
+	core::chemical::bcl::initialize_bcl_random(rand_seed);
+#endif
 
 	//Profiling measures execution performance
 	init_profiling();

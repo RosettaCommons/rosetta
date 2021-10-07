@@ -39,7 +39,7 @@ _python_version_ = '{}.{}'.format(sys.version_info.major, sys.version_info.minor
 
 #_pybind11_version_ = 'fa6a4241326a361fc23915f6a82c1e48667de668'
 
-_banned_dirs_ = 'src/utility/pointer'.split()  # src/utility/keys src/utility/options src/basic/options src/protocols/jd3
+_banned_dirs_ = 'external/bcl src/utility/pointer'.split()  # src/utility/keys src/utility/options src/basic/options src/protocols/jd3
 _banned_headers_ = 'utility/py/PyHelper.hh utility/keys/KeyCount.hh utility/keys/KeyLookup.functors.hh'
 _banned_headers_ +=' core/scoring/fiber_diffraction/FiberDiffractionKernelGpu.hh' # GPU code
 _banned_headers_ +=' basic/database/DatabaseSessionLoader.hh' # TEMP deprecated code from the old ResourceManager ...
@@ -64,7 +64,7 @@ def is_dir_banned(directory):
 
 def get_rosetta_system_include_directories():
     ''' return list of include directories for compilation '''
-    r = 'external external/include external/boost_submod external/dbio external/dbio/sqlite3 external/libxml2/include external/rdkit'.split()
+    r = 'external external/include external/boost_submod external/dbio external/dbio/sqlite3 external/libxml2/include external/rdkit external/bcl/include'.split()
     return r
 
 def get_rosetta_include_directories():
@@ -76,7 +76,7 @@ def get_rosetta_include_directories():
 
 def get_defines():
     ''' return list of #defines '''
-    defines = 'PYROSETTA NOCRASHREPORT BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD'
+    defines = 'PYROSETTA NOCRASHREPORT BOOST_ERROR_CODE_HEADER_ONLY BOOST_SYSTEM_NO_DEPRECATED BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS PTR_STD' # USEBCL
     if Platform == 'macos': defines += ' UNUSUAL_ALLOCATOR_DECLARATION'
     if Options.type in 'Release MinSizeRel': defines += ' NDEBUG'
     if Options.serialization: defines += ' SERIALIZATION'
@@ -570,7 +570,7 @@ def generate_bindings(rosetta_source_path):
     ''' Generate bindings using binder tools and return list of source files '''
     setup_source_directory_links(rosetta_source_path)
     maybe_version = '--version {} '.format(Options.version) if Options.version else ''
-    submodule_extras = "PyRosetta"
+    submodule_extras = "PyRosetta bcl"
     if Options.zmq:
         submodule_extras = submodule_extras + " zeromq"
     execute('Updating compilation submodules, version, options and residue-type-enum files...', 'cd {rosetta_source_path} && ./update_submodules.sh {submodule_extras} && ./version.py {maybe_version} && ./update_options.sh && ./update_ResidueType_enum_files.sh'.format(**vars()) )
@@ -646,7 +646,6 @@ def generate_bindings(rosetta_source_path):
             # includes += ' -isystem `xcrun --show-sdk-path`/usr/include/c++/v1'
             # includes += ' -isystem `xcrun --show-sdk-path`/usr/include'
             includes += ' -isysroot `xcrun --show-sdk-path`'
-
 
     if Options.binder_options:      include  += ' ' + Options.binder_options
     if Options.binder_llvm_options: includes += ' ' + Options.binder_llvm_options

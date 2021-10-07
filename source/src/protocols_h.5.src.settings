@@ -52,6 +52,12 @@ sources = {
 		"RDKitMetric",
 		"RDKitMetricsMover",
 	],
+        "protocols/drug_design/bcl": [
+                "BCLFragmentBaseMover",
+                "BCLFragmentMutateMover",
+		"BCLReferenceSDFilesManager",
+		"BCLSampleConfsManager",
+        ],
 	"protocols/ligand_docking": [
 		"AddHydrogen",
 		"AddHydrogens",

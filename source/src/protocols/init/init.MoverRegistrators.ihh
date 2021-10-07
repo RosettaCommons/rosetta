@@ -156,6 +156,7 @@ static MoverRegistrator< docking::DockingSlideIntoContactCreator > reg_DockingSl
 static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator;
 static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator;
 
+static MoverRegistrator< drug_design::bcl::BCLFragmentMutateMoverCreator > reg_BCLFragmentMutateMoverCreator;
 static MoverRegistrator< drug_design::RDKitMetricsMoverCreator > reg_RDKitMetricsMoverCreator;
 
 // E //////////////////////////////////////////////////////////////////////////

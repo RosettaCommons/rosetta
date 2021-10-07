@@ -67,6 +67,11 @@ sources = {
 		"util",
 		"VariantType_mappings",
 	],
+
+       "core/chemical/bcl": [
+               "BCLFragmentHandler",
+               "util",
+    ],
 	"core/chemical/carbohydrates": [
 		"CarbohydrateInfo",
 		"CarbohydrateInfoManager",
@@ -88,6 +93,7 @@ sources = {
 		"MainchainScoreTable",
 		"util",
 	],
+
 	"core/chemical/rings": [
 		"ring_conformer_io",
 		"RingConformerManager",

@@ -142,6 +142,7 @@
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>
 #include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>
 
+#include <protocols/drug_design/bcl/BCLFragmentMutateMoverCreator.hh>
 #include <protocols/drug_design/RDKitMetricsMoverCreator.hh>
 
 // E //////////////////////////////////////////////////////////////////////////

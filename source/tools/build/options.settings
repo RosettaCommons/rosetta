@@ -185,6 +185,9 @@ options = {
 	# CUDA and CUDNN.
 	# Note that there's no check that we're actually linking the GPU library and not the CPU library.
 	"tensorflow_gpu",
+
+	# BCL
+	"bcl",
     ],
 
 

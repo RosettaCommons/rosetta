@@ -325,6 +325,9 @@ Options = Option_Group( '',
 					"variable is tried."),
 			Option( 'database_cache_dir', 'Path',
 				desc="Which directory to use when caching processed database files."),
+			Option( 'bcl', 'PathVector',
+				desc="Path to the BCL submodule in Rosetta. Must lead to a valid BCL submodule. "
+					"If the BCL is not found then we attempt to resolve the path relative to the Rosetta database."),
 		), # in:path
 
 		# File options --------------------------------------------------------

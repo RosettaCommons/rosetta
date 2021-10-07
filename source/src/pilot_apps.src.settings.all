@@ -151,6 +151,9 @@ sources = {
 		"test", # /* a pilot app */
 		"pilot", # /* a pilot app */
 	],
+        "pilot/brownbp1" : [
+                #"test_bcl", # /* pilot app for basic BCL-Rosetta integration */
+        ],
 	"pilot/brunette" : [
 		#"abego_predict",
 		#"aln_to_disulf",
