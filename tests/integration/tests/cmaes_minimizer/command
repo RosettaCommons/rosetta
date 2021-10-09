@@ -20,8 +20,9 @@ cd %(workdir)s
 %(bin)s/cmaes_minimizer_test.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
-#kdrew: this has a date and timestamp in it that is difficult to change so just ignore for now
+#kdrew: these have a date and timestamp in it that is difficult to change so just ignore for now
 mv errcmaes.err errcmaes.err.ignore
+mv actparcmaes.par actparcmaes.par.ignore
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

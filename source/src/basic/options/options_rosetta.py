@@ -3651,6 +3651,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'old_sym_min', 'Boolean', desc='Use the old approach to symmetric minimization', default='false'),
 		Option( 'debug_inaccurate_G', 'Boolean', desc='Debug innacurate G messages', default='false'),
 		Option( 'cmaes_rgsigma', 'Real', desc='CMAES initial coordinate wise standard deviation (step size)', default='0.3'),
+		Option( 'cmaes_lambda', 'Integer', desc='CMAES population size, default is defined as a function of dimension size (N) (i.e. 4+(int)(3*log((double)N))), set default using value < 2', default='0'),
 	), # -optimization
 
 	################STEVEN COMBS#######################

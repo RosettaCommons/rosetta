@@ -136,6 +136,7 @@ Minimizer::run(
 	} else if ( type == "cmaes" ) {
 		CMAES_Minimizer cmaesm(func_, options_);
 		cmaesm.rgsigma( basic::options::option[ basic::options::OptionKeys::optimization::cmaes_rgsigma ]() );
+		cmaesm.lambda ( basic::options::option[ basic::options::OptionKeys::optimization::cmaes_lambda ]() );
 		cmaesm.run(phipsi);
 	} else {
 		utility_exit_with_message("unknown type of minimization '"+type+"'");

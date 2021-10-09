@@ -36,6 +36,7 @@ public:
 		func_( func_in ),
 		minimize_tolerance_( options.minimize_tolerance() ),
 		rgsigma_(options.cmaes_rgsigma()),
+		lambda_(options.cmaes_lambda()),
 		max_iter_(options.max_iter())
 
 	{}
@@ -47,12 +48,14 @@ public:
 	Real run( Multivec & phipsi_inout); // starting position, and solution is returned here
 
 	void rgsigma( Real rgsigma_in );
+	void lambda( int lambda_in );
 
 private:
 	Multifunc & func_;
 
 	Real minimize_tolerance_;
 	Real rgsigma_;
+	int lambda_;
 	Real max_iter_;
 
 };

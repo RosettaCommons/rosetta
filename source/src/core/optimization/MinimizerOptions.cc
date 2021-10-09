@@ -58,6 +58,7 @@ MinimizerOptions::MinimizerOptions(
 	linmin_deriv_cutoff_( 0.0001 ),
 	ga_mutation_probability_( 0.5 ),
 	cmaes_rgsigma_(0.3),
+	cmaes_lambda_(0),/*kdrew: equalivent to 4+(int)(3*log((double)N)), where N is size of dims */
 	armijo_max_step_limit_( 1.0 )
 {
 	using namespace basic::options;
@@ -255,6 +256,9 @@ void MinimizerOptions::ga_mutation_probability(Real p) { ga_mutation_probability
 
 Real MinimizerOptions::cmaes_rgsigma() const { return cmaes_rgsigma_; }
 void MinimizerOptions::cmaes_rgsigma(Real s) { cmaes_rgsigma_ = s; }
+
+int MinimizerOptions::cmaes_lambda() const { return cmaes_lambda_; }
+void MinimizerOptions::cmaes_lambda(int n) { cmaes_lambda_ = n; }
 
 Real MinimizerOptions::armijo_max_step_limit() const { return armijo_max_step_limit_; }
 void MinimizerOptions::armijo_max_step_limit( Real lim ) { armijo_max_step_limit_ = lim; }

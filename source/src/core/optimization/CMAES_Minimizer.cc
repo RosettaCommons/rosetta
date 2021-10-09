@@ -40,6 +40,11 @@ void CMAES_Minimizer::rgsigma( Real rgsigma_in )
 	rgsigma_=rgsigma_in;
 }
 
+void CMAES_Minimizer::lambda( int lambda_in )
+{
+	lambda_=lambda_in;
+}
+
 
 // starting position, and solution is returned here
 Real CMAES_Minimizer::run( Multivec & v )
@@ -66,11 +71,15 @@ Real CMAES_Minimizer::run( Multivec & v )
 	}
 	std::cout << std::endl;*/
 
+	//kdrew: interface expects a parameter filename but we aren't use it, clang complains about NULL pointers so just give it an empty filename for now
+	const char *input_parameter_filename = "";
+
 	//kdrew: cmaes_init expects a double* but xstart and rgsigma are std::vectors, get pointer to first element
 	//kdrew: cmaes_init looks for cmaes_initials.par by default and if it doesn't find anything, it adds an error line to errcmaes.err, ignoring for now
-	arFunvals = cmaes_init(&evo, v.size(), &xstart[0], &rgsigma[0], 0, 0/*lambda default is 4+(int)(3*log((double)N))*/, NULL);
+	//kdrew: lambda default is 0 but will be converted to 4+(int)(3*log((double)N)), where N is size of dims in the c-cmaes library code
+	arFunvals = cmaes_init(&evo, v.size(), &xstart[0], &rgsigma[0], numeric::random::rg().get_seed(), lambda_, input_parameter_filename);
 
-	TR << cmaes_SayHello(&evo) << std::endl;
+	TR << "CMAES_HELLO: " << cmaes_SayHello(&evo) << std::endl;
 	//cmaes_ReadSignals(&evo, "cmaes_signals.par");  /* write header and initial values */
 
 	//kdrew: set termination conditions
@@ -78,6 +87,7 @@ Real CMAES_Minimizer::run( Multivec & v )
 	evo.sp.stopTolFun = minimize_tolerance_;
 
 	TR << "rgsigma: " << rgsigma_ << std::endl;
+	TR << "lambda: " << lambda_ << std::endl;
 	//TR << "stopMaxIter: " << stopMaxIter_ << std::endl;
 	TR << "stopMaxIter: " << max_iter_ << std::endl;
 	TR << "stopTolFun: " << minimize_tolerance_ << std::endl;

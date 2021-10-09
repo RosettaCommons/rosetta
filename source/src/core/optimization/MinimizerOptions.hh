@@ -169,6 +169,9 @@ public:
 	Real cmaes_rgsigma() const;
 	void cmaes_rgsigma(Real s);
 
+	int cmaes_lambda() const;
+	void cmaes_lambda(int n);
+
 	Real armijo_max_step_limit() const;
 	void armijo_max_step_limit( Real lim );
 
@@ -204,6 +207,7 @@ private:
 	Real ga_mutation_probability_;
 
 	Real cmaes_rgsigma_;
+	int cmaes_lambda_;
 
 	Real armijo_max_step_limit_;
 
