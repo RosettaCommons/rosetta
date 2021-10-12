@@ -10,7 +10,7 @@
 /// @file protocols/simple_moves/SimpleThreadingMover.cc
 /// @brief Very Simple class for threading a regional sequence onto a structure
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
-
+/// @modified NCAA support added by Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 #ifndef INCLUDED_protocols_simple_moves_SimpleThreadingMover_hh
 #define INCLUDED_protocols_simple_moves_SimpleThreadingMover_hh
@@ -19,16 +19,18 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-
+#include <core/simple_metrics/metrics/SequenceMetric.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
 
+#include <map>
 
 // Forward
 namespace protocols {
 namespace simple_moves {
+
 
 ///@brief
 /// This mover functions to thread the sequence of a region onto the given pose.  Nothing fancy here.
@@ -43,11 +45,16 @@ class SimpleThreadingMover : public protocols::moves::Mover {
 
 public :
 
-	SimpleThreadingMover();
+	/// @brief Default constructor.
+	SimpleThreadingMover() = default;
+
+	/// @brief Initialization constructor.
 	SimpleThreadingMover(std::string thread_sequence, core::Size start_position);
 
-	SimpleThreadingMover(SimpleThreadingMover const & src);
+	/// @brief Default copy constructor.
+	SimpleThreadingMover(SimpleThreadingMover const & ) = default;
 
+	/// @brief Destructor.
 	~SimpleThreadingMover() override;
 
 
@@ -64,6 +71,18 @@ public :
 	void
 	set_neighbor_distance(core::Real neighbor_dis);
 
+	/// @brief Set the sequence mode, by string.
+	/// @details This determines how the sequence is interpreted (one-letter codes, three-letter codes, etc.).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	set_sequence_mode ( std::string const & mode_string_in );
+
+	/// @brief Set the sequence mode, by enum.
+	/// @details This determines how the sequence is interpreted (one-letter codes, three-letter codes, etc.).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	set_sequence_mode ( core::simple_metrics::metrics::SequenceMetricMode const mode_in );
+
 	///////////////
 
 	bool
@@ -72,6 +91,10 @@ public :
 	core::Real
 	get_neighbor_distance() const;
 
+	/// @brief Get the sequence mode.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline core::simple_metrics::metrics::SequenceMetricMode sequence_mode() const { return sequence_mode_; }
+
 	///@brief Set the scorefunction used for packing.
 	void
 	set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn);
@@ -79,6 +102,12 @@ public :
 	///@brief Set the number of pack rounds.
 	void
 	set_pack_rounds(core::Size pack_rounds);
+
+	///@brief Set whether we skip unknown residue types, or throw errors.
+	inline void set_skip_unknown_mutant( bool const setting ) { skip_unknown_mutant_ = setting; }
+
+	///@brief Get whether we skip unknown residue types, or throw errors.
+	inline bool skip_unknown_mutant() const { return skip_unknown_mutant_; }
 
 	void
 	apply(core::pose::Pose & pose) override;
@@ -111,31 +140,44 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-
 public:  // Citation Management
 
 	/// @brief Provide the citation.
 	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
-private:
+private: //Functions
 
-	void
-	set_defaults();
+	/// @brief Given the sequence, the interpretation mode, and the start position, fill a map of position->mutation name.
+	std::map< core::Size, std::string >
+	determine_mutations( core::Size const start_position, std::string const & sequence, core::simple_metrics::metrics::SequenceMetricMode const mode, core::pose::Pose const & pose ) const;
 
-private:
+	/// @brief Given the sequence as one-letter codes and the start position, fill a map of position->mutation name.
+	/// @details Supports possibility of positions of the form X[NCAA_NAME].
+	std::map< core::Size, std::string >
+	determine_mutations_oneletter( core::Size const start_position, std::string const & sequence ) const;
 
-	core::Size start_position_;
-	std::string thread_sequence_;
+	/// @brief Given the sequence as a comma-separated list of either three-letter codes, base names, or full names, plus the start position,
+	/// fill a map of position->mutation name.
+	std::map< core::Size, std::string >
+	determine_mutations_comma_separated( core::Size const start_position, std::string const & sequence, core::simple_metrics::metrics::SequenceMetricMode const mode, core::pose::Pose const & pose ) const;
 
-	bool pack_neighbors_;
-	core::Real neighbor_dis_;
+private: //Data
 
-	core::scoring::ScoreFunctionCOP scorefxn_;
+	core::Size start_position_ = 1;
+	std::string thread_sequence_ = "0"; //Note that "0" is the signal that the sequence has not been set.  (Changed from "NA" because ASN-ALA is a valid sequence.)
 
-	std::string parsed_position_; //enables pose-length changes after construction of mover.
-	bool skip_unknown_mutant_;
+	bool pack_neighbors_ = false;
+	core::Real neighbor_dis_ = 6.0;
 
-	core::Size pack_rounds_;
+	core::scoring::ScoreFunctionCOP scorefxn_ = nullptr;
+
+	std::string parsed_position_ = "NA"; //Enables pose-length changes after construction of mover.  Note that "NA" is the signal that this has not been set.
+	bool skip_unknown_mutant_ = false;
+
+	core::Size pack_rounds_ = 5;
+
+	/// @brief How should the sequence be interpreted?  Default is as a string of one-letter codes.
+	core::simple_metrics::metrics::SequenceMetricMode sequence_mode_ = core::simple_metrics::metrics::SequenceMetricMode::ONELETTER_CODE;
 
 };
 

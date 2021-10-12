@@ -24,6 +24,18 @@ namespace core {
 namespace simple_metrics {
 namespace metrics {
 
+/// @brief The mode for this metric.  If you add to this list, be sure to update the map associating this enum
+/// with corresponding strings in the .cc file.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+enum class SequenceMetricMode {
+	ONELETTER_CODE=1,
+	THREELETTER_CODE,
+	BASE_NAME,
+	FULL_NAME,
+	INVALID_MODE, //Keep this second-to-last.
+	END_OF_LIST = INVALID_MODE //Keep this last
+};
+
 class SequenceMetric;
 
 typedef utility::pointer::shared_ptr< SequenceMetric > SequenceMetricOP;

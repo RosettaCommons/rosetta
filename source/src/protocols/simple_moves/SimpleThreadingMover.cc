@@ -10,6 +10,7 @@
 /// @file protocols/simple_moves/SimpleThreadingMover.cc
 /// @brief Very Simple class for threading a regional sequence onto a structure
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @modified NCAA support added by Vikram K. Mulligan (vmulligan@flatironinstitute.org
 
 #include <protocols/simple_moves/SimpleThreadingMoverCreator.hh>
 #include <protocols/simple_moves/SimpleThreadingMover.hh>
@@ -20,17 +21,26 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/OperateOnResidueSubset.hh>
+#include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
+#include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/util.hh>
+#include <core/simple_metrics/metrics/SequenceMetric.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-
+#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -44,35 +54,15 @@ namespace protocols {
 namespace simple_moves {
 using namespace core::select;
 
-SimpleThreadingMover::SimpleThreadingMover():
-	protocols::moves::Mover("SimpleThreadingMover")
-{
-	set_defaults();
-}
-
+/// @brief Initialization constructor.
 SimpleThreadingMover::SimpleThreadingMover(std::string thread_sequence, core::Size start_position):
 	protocols::moves::Mover("SimpleThreadingMover"),
-	start_position_(start_position)
+	start_position_(start_position),
+	thread_sequence_( thread_sequence )
+{}
 
-
-{
-	set_defaults();
-	thread_sequence_ = thread_sequence;
-}
-
+/// @brief Destructor.
 SimpleThreadingMover::~SimpleThreadingMover()= default;
-
-void
-SimpleThreadingMover::set_defaults(){
-	pack_neighbors_ = false;
-	parsed_position_ = "NA";
-	thread_sequence_ = "NA";
-	scorefxn_ = core::scoring::get_score_function();
-	skip_unknown_mutant_ = false;
-	neighbor_dis_ = 6.0;
-	pack_rounds_ = 5.0;
-
-}
 
 
 void
@@ -93,11 +83,12 @@ SimpleThreadingMover::parse_my_tag(
 
 	skip_unknown_mutant_ = tag->getOption< bool >("skip_unknown_mutant", skip_unknown_mutant_);
 	pack_rounds_ = tag->getOption< core::Size >("pack_rounds", pack_rounds_);
+
+	if ( tag->hasOption( "sequence_mode" ) ) {
+		set_sequence_mode( tag->getOption<std::string>( "sequence_mode" ) );
+	}
 }
 
-
-
-SimpleThreadingMover::SimpleThreadingMover(SimpleThreadingMover const & )= default;
 
 protocols::moves::MoverOP
 SimpleThreadingMover::clone() const{
@@ -154,6 +145,33 @@ SimpleThreadingMover::set_neighbor_distance(core::Real neighbor_dis){
 	neighbor_dis_ = neighbor_dis;
 }
 
+/// @brief Set the sequence mode, by string.
+/// @details This determines how the sequence is interpreted (one-letter codes, three-letter codes, etc.).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+SimpleThreadingMover::set_sequence_mode (
+	std::string const & mode_string_in
+) {
+	using namespace core::simple_metrics::metrics;
+	SequenceMetricMode const mode( SequenceMetric::mode_enum_from_name( mode_string_in ) );
+	runtime_assert_string_msg( mode != SequenceMetricMode::INVALID_MODE, "Error in SimpleThreadingMover::set_sequence_mode(): Could not parse \"" + mode_string_in + "\" as a valid sequence mode.  Valid modes are: " + SequenceMetric::allowed_output_modes() + "." );
+	set_sequence_mode( mode );
+}
+
+/// @brief Set the sequence mode, by enum.
+/// @details This determines how the sequence is interpreted (one-letter codes, three-letter codes, etc.).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+SimpleThreadingMover::set_sequence_mode (
+	core::simple_metrics::metrics::SequenceMetricMode const mode_in
+) {
+	runtime_assert_string_msg(
+		static_cast< core::Size >(mode_in) > 0 && mode_in < core::simple_metrics::metrics::SequenceMetricMode::END_OF_LIST,
+		"Error in SimpleThreadingMover::set_sequence_mode(): Mode not recognized."
+	);
+	sequence_mode_ = mode_in;
+}
+
 void
 SimpleThreadingMover::set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn){
 	scorefxn_ = scorefxn;
@@ -172,96 +190,83 @@ SimpleThreadingMover::get_neighbor_distance() const {
 }
 
 void
-SimpleThreadingMover::apply(core::pose::Pose& pose){
+SimpleThreadingMover::apply(
+	core::pose::Pose& pose
+) {
 	using namespace core::pack::task;
 	using namespace core::scoring;
 	using namespace core::pack::task::operation;
 	using namespace protocols::minimization_packing;
+	using namespace core::simple_metrics::metrics;
+	using namespace core::select::residue_selector;
+
+	debug_assert( static_cast< core::Size >( sequence_mode_ ) > 0 && sequence_mode_ < SequenceMetricMode::END_OF_LIST ); //Should be true.
+
+	if ( scorefxn_ == nullptr ) {
+		scorefxn_ = core::scoring::get_score_function();
+	}
 
 	//This could have just as easily have been a task op.
 
-	if ( thread_sequence_ == "NA" ) {
+	if ( thread_sequence_ == "0" ) {
 		utility_exit_with_message("Sequence not set for threading.  Cannot continue.");
 	}
 
-	//Because this relies on a packer task to make the changes, if pack_rounds = 0, this mover does nothing.
-	//A user might expect that if pack_rounds = 0, the substitutions will be made but no packing will occur.
+	// Changed by VKM on 17 Sept 2019: Since we're using the MutateResidueMover under the hood, we can skip packing if necessary.
 	if ( pack_rounds_ < 1 ) {
-		utility_exit_with_message("pack_rounds is less than 1.  SimpleThreadingMover needs at least 1 round of packing to make the substitution.");
+		TR.Warning << "Warning: pack_rounds is set to 0.  Mutations will be made, but sidechain geometry will likely be poor.  Subsequent repacking is highly recommended." << std::endl;
 	}
 
 	if ( parsed_position_ !=  "NA" ) {
 		start_position_ = core::pose::parse_resnum(parsed_position_, pose);
 	}
 
-	TR << "Threading Sequence :"<<thread_sequence_<<":"<<std::endl;
-	TaskFactoryOP tf = utility::pointer::make_shared< TaskFactory >();
-	tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >() );
-	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
+	TR << "Threading Sequence :" << thread_sequence_ << ":" << std::endl;
 
+	//Thread the sequence:
+	runtime_assert_string_msg( start_position_ > 0 && start_position_ <= pose.total_residue(), "Error in SimpleThreadingMover::apply(): The start position, " + std::to_string(start_position_) + ", is outside of the range of the " + std::to_string( pose.total_residue() ) + "-residue pose." );
+	std::map< core::Size, std::string > const mutations = determine_mutations( start_position_,  utility::strip_whitespace( thread_sequence_ ), sequence_mode_, pose );
+	ResidueIndexSelectorOP select_mutated_residues( utility::pointer::make_shared< ResidueIndexSelector >() );
 
-	utility::vector1< bool > mutant_resnums( pose.size(), false);
-	std::map< core::Size, core::chemical::AA > mutations;
-	std::map< core::Size, core::chemical::AA >::iterator it;
-
-	core::Size seq_position = 0;
-	for ( core::Size resnum = start_position_; resnum <= std::min(pose.size(), start_position_+thread_sequence_.size() -1); ++resnum ) {
-
-		mutant_resnums[ resnum ] = true;
-
-		if ( core::chemical::oneletter_code_specifies_aa(thread_sequence_[ seq_position ]) ) {
-			mutations[ resnum ] = core::chemical::aa_from_oneletter_code(thread_sequence_[ seq_position ]);
-		} else if ( thread_sequence_[ seq_position ] == '-' ) {
-			seq_position += 1;
+	for ( std::map< core::Size, std::string >::const_iterator it( mutations.begin() ); it!=mutations.end(); ++it ) {
+		if ( it->first > pose.total_residue() || it->first < 1 ) {
+			TR.Warning << "Position " << it->first << " is not in the " << pose.total_residue() << "-residue pose.  Cannot mutate to " << it->second << "." << std::endl;
 			continue;
+		}
+		TR << "Mutating position " << it->first << " to " << it->second << "." << std::endl;
+		MutateResidue mutres( it->first, it->second );
+		mutres.apply( pose );
+
+		//Store this residue for later repacking.
+		select_mutated_residues->append_index( it->first );
+	}
+
+	//Repack without design if we're repacking:
+	if ( pack_rounds_ > 0 ) {
+		TaskFactoryOP tf = utility::pointer::make_shared< TaskFactory >();
+		tf->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
+		tf->push_back( utility::pointer::make_shared<core::pack::task::operation::RestrictToRepacking>() );
+		if ( pack_neighbors_ ) {
+			NeighborhoodResidueSelectorOP select_neighborhood( utility::pointer::make_shared< NeighborhoodResidueSelector >( select_mutated_residues, neighbor_dis_ ) );
+			NotResidueSelectorOP select_not_neighborhood( utility::pointer::make_shared< NotResidueSelector >() );
+			select_not_neighborhood->set_residue_selector( select_neighborhood );
+			OperateOnResidueSubsetOP prevent_repacking_not_neighborhood( utility::pointer::make_shared< OperateOnResidueSubset >( utility::pointer::make_shared< PreventRepackingRLT >(), select_not_neighborhood ) );
+			tf->push_back( prevent_repacking_not_neighborhood );
 		} else {
-			TR << "Amino Acid not understood: "<< thread_sequence_[ seq_position ] << std::endl;
-			if ( skip_unknown_mutant_ ) continue;
-			else utility_exit_with_message("SimpleThreadingMover: Unknown Amino Acid at position "+utility::to_string( seq_position + 1)+" Pass skip_unknown_mutant to skip this instead of fail.");
+			NotResidueSelectorOP select_not_mutated( utility::pointer::make_shared< NotResidueSelector >() );
+			select_not_mutated->set_residue_selector( select_mutated_residues );
+			OperateOnResidueSubsetOP prevent_repacking_not_mutated( utility::pointer::make_shared< OperateOnResidueSubset >( utility::pointer::make_shared< PreventRepackingRLT >(), select_not_mutated ) );
+			tf->push_back( prevent_repacking_not_mutated );
 		}
-		seq_position += 1;
+		PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
+
+		scorefxn_->score(pose); //Segfault Protection.
+
+		protocols::minimization_packing::PackRotamersMoverOP packer( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn_, task, pack_rounds_ ) );
+
+		packer->apply( pose );
 	}
 
-	//Enable positions to design - but only into the residues in list.
-	for ( it = mutations.begin(); it != mutations.end(); ++it ) {
-		utility::vector1< bool > allowed_aminos(20, false);
-		allowed_aminos[ it->second ] = true;
-		task->nonconst_residue_task(it->first).restrict_absent_canonical_aas(allowed_aminos);
-	}
-
-	core::pack::task::operation::PreventRepacking turn_off_packing;
-	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
-
-	//Select Set the packer to turn off design everywhere but our residues.
-	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
-		if ( ! mutant_resnums[ resnum ] ) {
-			turn_off_design.include_residue( resnum ); //Turn all design off except residues we are forcing.
-			if ( ! pack_neighbors_ ) {
-				turn_off_packing.include_residue( resnum );
-			}
-		}
-	}
-
-	scorefxn_->score(pose); //Segfault Protection.
-
-	//If we pack neighbors
-	if ( pack_neighbors_ ) {
-		utility::vector1< bool > mutant_resnums_and_neighbors = mutant_resnums;
-
-		core::select::fill_neighbor_residues(pose, mutant_resnums_and_neighbors, neighbor_dis_);
-		for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
-			if ( ! mutant_resnums_and_neighbors[ resnum ] ) {
-				turn_off_packing.include_residue( resnum );
-			}
-		}
-	}
-
-	turn_off_design.apply(pose, *task);
-	turn_off_packing.apply(pose, *task);
-
-	protocols::minimization_packing::PackRotamersMoverOP packer( new protocols::minimization_packing::PackRotamersMover( scorefxn_, task, pack_rounds_ ) );
-
-	packer->apply( pose );
 	TR << "Complete" <<std::endl;
 
 }
@@ -280,13 +285,15 @@ std::string SimpleThreadingMover::mover_name() {
 void SimpleThreadingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
+	using namespace core::simple_metrics::metrics;
+
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"pack_neighbors", xsct_rosetta_bool,
-		"Option to pack neighbors while threading", "false");
+		"Option to pack neighbors while threading.  By default, only the mutated residues, and not the neighbors, are repacked.", "false");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"neighbor_dis", xsct_real,
-		"Distance to repack neighbor side chains. Repack shell distance for each threaded residue",
+		"Distance to repack neighbor side chains. Repack shell distance for each threaded residue.  Default 6.0 Angstroms.",
 		"6.0");
 	attlist + XMLSchemaAttribute::required_attribute(
 		"start_position", xs_string,
@@ -294,26 +301,179 @@ void SimpleThreadingMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		"PDB numbering parsed at apply time to allow for pose-length changes prior to apply of this mover");
 	attlist + XMLSchemaAttribute::required_attribute(
 		"thread_sequence", xs_string,
-		"One letter amino acid sequence we will be grafting. "
-		"Currently only works for canonical amino acids");
+		"The residue sequence that we will be grafting.  This can be provided as one-letter codes (e.g. \"RSTX[DASP]LNE\", comma-separated three-letter codes (e.g. \"ARG,SER,THR,DAS,LEU,ASN,GLU\"), base-names (e.g. \"ARG,SER,THR,DASP,LEU,ASN,GLU\"), or full names (e.g. \"ARG,SER:N_Methylation,THR,DASP,LEU,ASN,GLU\"), depending on the setting for sequence_mode." );
 	attlist + XMLSchemaAttribute(
 		"scorefxn", xs_string,
 		"Optional Scorefunction name passed - setup in score function block");
 	attlist + XMLSchemaAttribute(
 		"skip_unknown_mutant", xsct_rosetta_bool,
-		"Skip unknown amino acid in thread_sequence string instead of throwing an exception" );
+		"Skip unknown amino acids in thread_sequence string instead of throwing an exception." );
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"pack_rounds", xsct_positive_integer,
-		"Number of packing rounds for threading.  Must be at least 1 so that substitutions are applied.", "5");
+		"Number of packing rounds for threading.  Set this to 0 to skip all packing, in which case the new side-chains will likely be in very poor conformations.  Defaults to 5.", "5");
+
+	utility::vector1< std::string > const allowed_modes_vec( SequenceMetric::allowed_output_modes_as_vector() );
+	utility::tag::add_schema_restrictions_for_strings( xsd, "SimpleThreadingMover_input_modes", allowed_modes_vec );
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"sequence_mode", "SequenceMetric_output_modes", "The format for the input sequence.  Allowed output formats are: " + SequenceMetric::allowed_output_modes() + ".", SequenceMetric::mode_name_from_enum( SequenceMetricMode::ONELETTER_CODE ) );
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
+		"Modified: Vikram K. Mulligan (vmulligan@flatironinstitute.org) to add support for noncanonicals.\n"
 		"This mover functions to thread the sequence of a region onto the given pose. "
 		"Nothing fancy here. Useful when combined with -parser:string_vars option "
 		"to replace strings within the RosettaScript. "
 		"For more a more fancy comparative modeling protocol, please see the lovely RosettaCM",
 		attlist );
+}
+
+/// @brief Given the sequence, the interpretation mode, and the start position, fill a map of position->mutation name.
+std::map< core::Size, std::string >
+SimpleThreadingMover::determine_mutations(
+	core::Size const start_position,
+	std::string const & sequence,
+	core::simple_metrics::metrics::SequenceMetricMode const mode,
+	core::pose::Pose const & pose
+) const {
+	using namespace core::simple_metrics::metrics;
+
+	switch( mode ) {
+	case SequenceMetricMode::ONELETTER_CODE :
+		return determine_mutations_oneletter( start_position, sequence );
+	case SequenceMetricMode::THREELETTER_CODE:
+	case SequenceMetricMode::BASE_NAME :
+	case SequenceMetricMode::FULL_NAME :
+		return determine_mutations_comma_separated( start_position, sequence, mode, pose );
+	default :
+		utility_exit_with_message( "Program error in SimpleThreadingMover::determine_mutations(): The sequence input mode was improperly set!  Please consult a developer." );
+	}
+	// To keep compiler happy:
+	return std::map< core::Size, std::string >();
+}
+
+/// @brief Given the as one-letter codes and the start position, fill a map of position->mutation name.
+/// @details Supports possibility of positions of the form X[NCAA_NAME].
+std::map< core::Size, std::string >
+SimpleThreadingMover::determine_mutations_oneletter(
+	core::Size const start_position,
+	std::string const & sequence
+) const {
+	std::map< core::Size, std::string > outmap;
+	core::Size curpos( start_position );
+	for ( core::Size i(0), imax(sequence.length()); i<imax; ++i ) { //Loop through the string; strings are zero-based
+		if ( core::chemical::oneletter_code_specifies_aa( sequence[i] ) && sequence[i] != 'X' && sequence[i] != 'Z'  && sequence[i] != 'z' && sequence[i] != 'w' ) {
+			debug_assert( outmap.count(curpos) == 0 );
+			outmap[curpos] = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code( sequence[i] ) );
+			++curpos;
+		} else if ( sequence[i] == 'X' ) {
+			runtime_assert_string_msg( i < imax-1 && sequence[i+1] == '[', "Error in SimpleThreadingMover::determine_mutations_oneletter():  The character \"X\" must be followed by a square bracket (\"[\")." );
+			core::Size j( i+1 );
+			bool found(false);
+			bool bracket_contents(false);
+			for ( ; j<imax; ++j ) {
+				if ( sequence[j] == ']' ) {
+					found=true;
+					break;
+				} else if ( sequence[j] != '[' ) {
+					bracket_contents = true;
+				}
+			}
+			runtime_assert_string_msg(found, "Error in SimpleThreadingMover::determine_mutations_oneletter():  An opening bracket was found in the sequence with no closing bracket.");
+			runtime_assert_string_msg(bracket_contents, "Error in SimpleThreadingMover::determine_mutations_oneletter():  Brackets were found in the sequence that enclose nothing.");
+			debug_assert( outmap.count(curpos) == 0 );
+			outmap[curpos] = sequence.substr( i+2, j-i-2 );
+			++curpos;
+			i=j;
+		} else if ( sequence[i] == '-' ) {
+			//Skip dashes in the sequence.
+			++curpos;
+		} else {
+			if ( skip_unknown_mutant_ ) {
+				TR.Warning << "Could not parse one-letter code \"" << sequence.substr(i, 1) << "\".  Skipping." << std::endl;
+				++curpos;
+			} else {
+				utility_exit_with_message( "Error in SimpleThreadingMover::determine_mutations_oneletter():  Could not parse character \"" + sequence.substr(i,1) + "\" in sequence \"" + sequence + "\"." );
+			}
+		}
+	}
+	return outmap;
+}
+
+/// @brief Given the sequence as a comma-separated list of either three-letter codes, base names, or full names, plus the start position,
+/// fill a map of position->mutation name.
+std::map< core::Size, std::string >
+SimpleThreadingMover::determine_mutations_comma_separated(
+	core::Size const start_position,
+	std::string const & sequence,
+	core::simple_metrics::metrics::SequenceMetricMode const mode,
+	core::pose::Pose const & pose
+) const {
+	static const std::string errmsg( "Error in SimpleThreadingMover::determine_mutations_comma_separated():  " );
+
+	//Split the sequence by commas:
+	utility::vector1< std::string > const splitseq( utility::string_split_multi_delim( sequence, " \t\n," ) );
+	runtime_assert_string_msg( !splitseq.empty(), errmsg + "The sequence is empty, or could otherwise not be parsed." );
+
+	std::map< core::Size, std::string > outmap;
+	core::Size curpos( start_position );
+
+	for ( core::Size i(1), imax(splitseq.size()); i<=imax; ++i ) { //Loop through the split sequence
+		if ( splitseq[i][0] == '-' ) {
+			//If a position is a dash or starts with a dash, skip it.
+			++curpos;
+			continue;
+		}
+		if ( mode == core::simple_metrics::metrics::SequenceMetricMode::THREELETTER_CODE ) {
+			core::chemical::ResidueTypeFinder finder( *(pose.residue_type_set_for_pose()) );
+			core::chemical::ResidueTypeCOP restype( finder.name3( splitseq[i] ).get_representative_type() );
+			if ( skip_unknown_mutant_ ) {
+				if ( restype == nullptr ) {
+					TR.Warning << "Could not parse amino acid with three-letter code \"" + splitseq[i] + "\".  Skipping and continuing on." << std::endl;
+					++curpos;
+					continue;
+				}
+			} else {
+				runtime_assert_string_msg( restype != nullptr, errmsg + "Could not find a suitable residue type for three-letter code \"" + splitseq[i] + "\"." );
+			}
+			debug_assert( outmap.count(curpos) == 0 );
+			outmap[curpos] = restype->base_name();
+			++curpos;
+		} else { //Base name or full name
+			debug_assert( outmap.count(curpos) == 0 );
+
+			core::chemical::ResidueTypeCOP restype;
+			if ( mode == core::simple_metrics::metrics::SequenceMetricMode::BASE_NAME ) {
+				restype = core::chemical::ResidueTypeFinder( *pose.residue_type_set_for_pose() ).residue_base_name( splitseq[i] ).get_representative_type();
+			} else {
+				core::chemical::ResidueTypeFinder finder ( *pose.residue_type_set_for_pose() );
+				utility::vector1< std::string > namesplit( utility::string_split( splitseq[i], ':' ) );
+				core::Size const nentries( namesplit.size() );
+				debug_assert( nentries > 0 ); // Should be true
+				finder.residue_base_name( namesplit[1] );
+				if ( nentries > 1 ) {
+					namesplit.erase( namesplit.begin() ); //Delete the first entry.
+					finder.patch_names( namesplit );
+				}
+				restype = finder.get_representative_type();
+			}
+
+			if ( skip_unknown_mutant_ ) {
+				if ( restype == nullptr ) {
+					TR.Warning << "Could not find suitable residue type for name \"" << splitseq[i] << "\".  Skipping and continuing on." << std::endl;
+					++curpos;
+					continue;
+				}
+			} else {
+				runtime_assert_string_msg( restype != nullptr, errmsg + "Could not find a suitable residue type for name \"" + splitseq[i] + "\"." );
+			}
+
+			outmap[curpos] = splitseq[i];
+			++curpos;
+		}
+	}
+
+	return outmap;
 }
 
 std::string SimpleThreadingMoverCreator::keyname() const {

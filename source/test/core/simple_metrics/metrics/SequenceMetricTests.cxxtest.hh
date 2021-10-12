@@ -51,7 +51,7 @@ public:
 		using namespace core::simple_metrics::metrics;
 		SequenceMetric metric1, metric2;
 		metric1.set_output_mode( "oneletter" );
-		metric2.set_output_mode( SMM_ONELETTER_CODE );
+		metric2.set_output_mode( SequenceMetricMode::ONELETTER_CODE );
 
 		std::string const expected_result( "RSTLNEXXYYS" );
 
@@ -63,7 +63,7 @@ public:
 		using namespace core::simple_metrics::metrics;
 		SequenceMetric metric1, metric2;
 		metric1.set_output_mode( "threeletter" );
-		metric2.set_output_mode( SMM_THREELETTER_CODE );
+		metric2.set_output_mode( SequenceMetricMode::THREELETTER_CODE );
 
 		std::string const expected_result( "ARG,SER,THR,LEU,ASN,GLU,ORN,ORN,DTY,TYR,DSE" );
 
@@ -75,7 +75,7 @@ public:
 		using namespace core::simple_metrics::metrics;
 		SequenceMetric metric1, metric2;
 		metric1.set_output_mode( "basename" );
-		metric2.set_output_mode( SMM_BASE_NAME );
+		metric2.set_output_mode( SequenceMetricMode::BASE_NAME );
 
 		std::string const expected_result( "ARG,SER,THR,LEU,ASN,GLU,ORN,DORN,DTYR,TYR,DSER" );
 
@@ -87,7 +87,7 @@ public:
 		using namespace core::simple_metrics::metrics;
 		SequenceMetric metric1, metric2;
 		metric1.set_output_mode( "fullname" );
-		metric2.set_output_mode( SMM_FULL_NAME );
+		metric2.set_output_mode( SequenceMetricMode::FULL_NAME );
 
 		std::string const expected_result( "ARG:NtermProteinFull,SER,THR,LEU,ASN,GLU,ORN,DORN,DTYR,TYR,DSER:CtermProteinFull" );
 

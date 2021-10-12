@@ -49,11 +49,11 @@ namespace metrics {
 /// @brief The map of enum to name.
 static const std::map< SequenceMetricMode, std::string > mode_to_name_map_(
 	{
-	{ SMM_ONELETTER_CODE, "oneletter" },
-	{ SMM_THREELETTER_CODE, "threeletter" },
-	{ SMM_BASE_NAME, "basename" },
-	{ SMM_FULL_NAME, "fullname" },
-	{ SMM_INVALID_MODE, "INVALID" }
+	{ SequenceMetricMode::ONELETTER_CODE, "oneletter" },
+	{ SequenceMetricMode::THREELETTER_CODE, "threeletter" },
+	{ SequenceMetricMode::BASE_NAME, "basename" },
+	{ SequenceMetricMode::FULL_NAME, "fullname" },
+	{ SequenceMetricMode::INVALID_MODE, "INVALID" }
 	}
 );
 
@@ -65,13 +65,13 @@ static const std::map< SequenceMetricMode, std::string > mode_to_name_map_(
 SequenceMetric::SequenceMetric():
 	core::simple_metrics::StringMetric(),
 	selector_(nullptr),
-	output_mode_(SMM_ONELETTER_CODE)
+	output_mode_(SequenceMetricMode::ONELETTER_CODE)
 {}
 
 SequenceMetric::SequenceMetric( select::residue_selector::ResidueSelectorCOP selector ):
 	core::simple_metrics::StringMetric(),
 	selector_(nullptr), //Set below
-	output_mode_(SMM_ONELETTER_CODE)
+	output_mode_(SequenceMetricMode::ONELETTER_CODE)
 {
 	set_residue_selector( selector );
 }
@@ -115,10 +115,10 @@ SequenceMetric::metric() const {
 std::string
 SequenceMetric::allowed_output_modes() {
 	std::stringstream outstring;
-	for ( core::Size i(1); i < static_cast<core::Size>( SMM_END_OF_LIST ); ++i ) {
+	for ( core::Size i(1); i < static_cast<core::Size>( SequenceMetricMode::END_OF_LIST ); ++i ) {
 		if ( i > 1 ) {
 			outstring << ", ";
-			if ( i == static_cast< core::Size >( SMM_END_OF_LIST )-1 ) {
+			if ( i == static_cast< core::Size >( SequenceMetricMode::END_OF_LIST )-1 ) {
 				outstring << "or ";
 			}
 		}
@@ -134,8 +134,8 @@ SequenceMetric::allowed_output_modes() {
 utility::vector1< std::string >
 SequenceMetric::allowed_output_modes_as_vector() {
 	utility::vector1< std::string > outvec;
-	outvec.reserve( static_cast< core::Size >( SMM_END_OF_LIST - 1 ) );
-	for ( core::Size i(1); i < static_cast<core::Size>( SMM_END_OF_LIST ); ++i ) {
+	outvec.reserve( static_cast< core::Size >( SequenceMetricMode::END_OF_LIST ) - 1 );
+	for ( core::Size i(1); i < static_cast<core::Size>( SequenceMetricMode::END_OF_LIST ); ++i ) {
 		outvec.push_back( mode_name_from_enum( static_cast<SequenceMetricMode>(i) ) );
 	}
 	return outvec;
@@ -149,26 +149,26 @@ std::string const &
 SequenceMetric::mode_name_from_enum(
 	SequenceMetricMode const mode_enum
 ) {
-	if ( static_cast<core::Size>(mode_enum) == 0 || mode_enum >= SMM_END_OF_LIST ) {
-		return mode_to_name_map_.at( SMM_INVALID_MODE );
+	if ( static_cast<core::Size>(mode_enum) == 0 || mode_enum >= SequenceMetricMode::END_OF_LIST ) {
+		return mode_to_name_map_.at( SequenceMetricMode::INVALID_MODE );
 	}
 	return mode_to_name_map_.at( mode_enum );
 }
 
 
 /// @brief Given an output mode string, get its enum.
-/// @details Returns SMM_INVALID_MODE if invalid.
+/// @details Returns SequenceMetricMode::INVALID_MODE if invalid.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 SequenceMetricMode
 SequenceMetric::mode_enum_from_name(
 	std::string const & mode_string
 ) {
-	for ( core::Size i(1); i < static_cast<core::Size>(SMM_END_OF_LIST); ++i ) {
-		if ( mode_string ==  mode_name_from_enum( static_cast< SequenceMetricMode >( i ) ) ) {
+	for ( core::Size i(1); i < static_cast<core::Size>(SequenceMetricMode::END_OF_LIST); ++i ) {
+		if ( !mode_string.compare( mode_name_from_enum( static_cast< SequenceMetricMode >( i ) ) ) ) {
 			return static_cast< SequenceMetricMode >(i);
 		}
 	}
-	return SMM_INVALID_MODE;
+	return SequenceMetricMode::INVALID_MODE;
 }
 
 void
@@ -184,7 +184,7 @@ void
 SequenceMetric::set_output_mode(
 	SequenceMetricMode const mode_in
 ) {
-	runtime_assert_string_msg( mode_in > 0 && mode_in < SMM_END_OF_LIST, "Error in SequenceMetric::set_output_mode(): An unknown output mode was provided." );
+	runtime_assert_string_msg( static_cast< core::Size >( mode_in ) > 0 && mode_in < SequenceMetricMode::END_OF_LIST, "Error in SequenceMetric::set_output_mode(): An unknown output mode was provided." );
 	output_mode_ = mode_in;
 }
 
@@ -210,7 +210,7 @@ SequenceMetric::parse_my_tag(
 	}
 	runtime_assert_string_msg( !tag->hasOption("three_letter"), "Error in SequenceMetric::parse_my_tag(): The \"three_letter\" option has been deprecated.  Please use the \"output_mode\" option to specify the output mode." );
 
-	set_output_mode( tag->getOption<std::string>( "output_mode", mode_name_from_enum(SMM_ONELETTER_CODE) ) );
+	set_output_mode( tag->getOption<std::string>( "output_mode", mode_name_from_enum(SequenceMetricMode::ONELETTER_CODE) ) );
 }
 
 void
@@ -223,7 +223,7 @@ SequenceMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 	utility::vector1< std::string > const allowed_modes_vec( allowed_output_modes_as_vector() );
 	utility::tag::add_schema_restrictions_for_strings( xsd, "SequenceMetric_output_modes", allowed_modes_vec );
-	attlist + XMLSchemaAttribute::attribute_w_default( "output_mode", "SequenceMetric_output_modes", "The format for the sequence.  Allowed output formats are: " + allowed_output_modes() + ".", mode_name_from_enum( SMM_ONELETTER_CODE ) );
+	attlist + XMLSchemaAttribute::attribute_w_default( "output_mode", "SequenceMetric_output_modes", "The format for the sequence.  Allowed output formats are: " + allowed_output_modes() + ".", mode_name_from_enum( SequenceMetricMode::ONELETTER_CODE ) );
 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector",
 		"Output the sequence of only the selected residues." );
@@ -247,28 +247,28 @@ SequenceMetric::calculate(const pose::Pose & pose ) const {
 
 	for ( core::Size resnum : selection ) {
 		switch( output_mode_ ) {
-		case SMM_ONELETTER_CODE :
+		case SequenceMetricMode::ONELETTER_CODE :
 			sequence += pose.residue_type( resnum ).name1();
 			break;
-		case SMM_THREELETTER_CODE :
+		case SequenceMetricMode::THREELETTER_CODE :
 			sequence += pose.residue_type( resnum ).name3();
 			if ( resnum != selection.size() ) {
 				sequence += ",";
 			}
 			break;
-		case SMM_BASE_NAME :
+		case SequenceMetricMode::BASE_NAME :
 			sequence += pose.residue_type( resnum ).base_name();
 			if ( resnum != selection.size() ) {
 				sequence += ",";
 			}
 			break;
-		case SMM_FULL_NAME :
+		case SequenceMetricMode::FULL_NAME :
 			sequence += pose.residue_type( resnum ).name();
 			if ( resnum != selection.size() ) {
 				sequence += ",";
 			}
 			break;
-		case SMM_INVALID_MODE :
+		case SequenceMetricMode::INVALID_MODE :
 			utility_exit_with_message( "Invalid configuration for SequenceMetric!" );
 			break;
 		}

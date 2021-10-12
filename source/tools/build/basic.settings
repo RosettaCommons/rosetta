@@ -443,6 +443,17 @@ settings = {
         },
     },
 
+    "gcc, 11.2" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+
+
     "gcc, 11.1" : {
         "removes" : {
             "flags" : {

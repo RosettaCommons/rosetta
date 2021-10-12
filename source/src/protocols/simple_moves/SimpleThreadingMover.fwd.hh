@@ -10,7 +10,7 @@
 /// @file  protocols/simple_moves/SimpleThreadingMover.fwd.hh
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
-
+/// @modified NCAA support added by Vikram K. Mulligan (vmulligan@flatironinstitute.org
 
 #ifndef INCLUDED_protocols_simple_moves_SimpleThreadingMover_fwd_hh
 #define INCLUDED_protocols_simple_moves_SimpleThreadingMover_fwd_hh

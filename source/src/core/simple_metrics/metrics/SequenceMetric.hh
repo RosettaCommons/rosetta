@@ -30,18 +30,6 @@ namespace core {
 namespace simple_metrics {
 namespace metrics {
 
-/// @brief The mode for this metric.  If you add to this list, be sure to update the map associating this enum
-/// with corresponding strings in the .cc file.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-enum SequenceMetricMode {
-	SMM_ONELETTER_CODE=1,
-	SMM_THREELETTER_CODE,
-	SMM_BASE_NAME,
-	SMM_FULL_NAME,
-	SMM_INVALID_MODE, //Keep this second-to-last.
-	SMM_END_OF_LIST = SMM_INVALID_MODE //Keep this last
-};
-
 ///@brief A SimpleMetric to output the single-letter OR three-letter sequence of a protein or subset of positions/regions using a ResidueSelector.
 class SequenceMetric : public core::simple_metrics::StringMetric{
 
@@ -128,7 +116,7 @@ public:
 
 
 	/// @brief Given an output mode string, get its enum.
-	/// @details Returns SMM_INVALID_MODE if invalid.
+	/// @details Returns SequenceMetricMode::INVALID_MODE if invalid.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 	static SequenceMetricMode mode_enum_from_name( std::string const & mode_string );
 
