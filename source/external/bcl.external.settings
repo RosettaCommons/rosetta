@@ -168,7 +168,6 @@ sources = {
 		"bcl_chemistry_fragment_split_scaffolds.cpp",
 		"bcl_chemistry_fragment_split_unbridged_rings.cpp",
 		"bcl_chemistry_fragment_stochastic_pose_optimizer.cpp",
-		"bcl_chemistry_fragment_swap_amide.cpp",
 		"bcl_chemistry_fragment_track_mutable_atoms.cpp",
 		"bcl_chemistry_hybrid_orbital_type_data.cpp",
 		"bcl_chemistry_hybrid_orbital_types.cpp",

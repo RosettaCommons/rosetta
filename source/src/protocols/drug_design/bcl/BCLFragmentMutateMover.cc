@@ -35,7 +35,6 @@
 
 // protocols includes
 #include <protocols/drug_design/bcl/BCLSampleConfsManager.hh>
-#include <protocols/drug_design/bcl/BCLReferenceSDFilesManager.hh>
 
 // projects includes
 #include <core/chemical/Atom.hh>
@@ -52,7 +51,6 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/drug_design/bcl/BCLReferenceSDFilesManager.hh>
 
 // utility includes
 #include <utility/numbers.hh>
@@ -104,8 +102,7 @@ static basic::Tracer TR("protocols.drug_design.bcl.BCLFragmentMutateMover");
 //! @brief default constructor
 BCLFragmentMutateMover::BCLFragmentMutateMover() :
 	BCLFragmentBaseMover(),
-	max_mutate_retry_( 10),
-	reference_fragment_filename_( "")
+	max_mutate_retry_( 10)
 {
 	// extras=bcl required for construction of this class object
 	core::chemical::bcl::require_bcl();
@@ -124,7 +121,6 @@ BCLFragmentMutateMover::BCLFragmentMutateMover
 ) :
 	BCLFragmentBaseMover(),
 	max_mutate_retry_( n_max_mutate_attempts),
-	reference_fragment_filename_( ""),
 	mutate_( mutate)
 {
 	// extras=bcl required for construction of this class object
@@ -227,37 +223,10 @@ void BCLFragmentMutateMover::apply(
 	TR << "Ligand resnum: " + ::bcl::util::Format()( ligand_resnum) << std::endl;
 
 	// create a BCL fragment from the ligand in the pose
-	//::bcl::chemistry::FragmentComplete fragment( get_base_handler().pose_residue_to_fragment(pose, ligand_resnum));
 	::bcl::chemistry::FragmentComplete fragment( this->pose_residue_to_fragment( pose, ligand_resnum));
 
 	// debug
 	TR << this->get_mutate_label() << std::endl;
-
-	// identify mutable atoms either via reference fragment or specified mutable indices
-	::bcl::storage::Vector< size_t> mutable_atom_indices( mutate_->GetMutableAtomIndices());
-	if ( reference_fragment_.IsDefined() ) {
-
-		// get our atom tracker
-		::bcl::chemistry::FragmentTrackMutableAtoms tracker;
-
-		// use the tracker to obtain the complement subgraph isomorphism
-		// of the mutable atoms and our starting molecule
-		::bcl::chemistry::FragmentComplete base_fragment
-			(
-			tracker.GetBaseFragment
-			(
-			fragment,
-			*reference_fragment_,
-			::bcl::storage::Vector< size_t>()
-			)
-		);
-
-		// set the base fragment as the scaffold in our mutate object
-		mutate_->SetScaffoldFragment( base_fragment);
-	} else if ( mutable_atom_indices.GetSize() ) {
-		// set the mutable atom indices directly
-		mutate_->SetMutableAtomIndices( mutable_atom_indices);
-	}
 
 	// mutate
 	// not all mutates work - molecules can fail the drug likeness filter, not have a 3D conformer
@@ -326,26 +295,6 @@ void BCLFragmentMutateMover::set_mutate(
 #endif
 }
 
-//! @brief add a fragment to our collection of reference fragments
-void BCLFragmentMutateMover::set_reference_fragment(
-#ifdef USEBCL
-	std::string const &reference_fragment_filename)
-#else
-	std::string const & /* OBJECT_DATA_LABEL */ )
-#endif
-{
-#ifdef USEBCL
-	// update filename member
-	reference_fragment_filename_ = reference_fragment_filename;
-
-	// read in reference fragment
-	BCLReferenceSDFilesManager::get_instance()->add_reference_fragment( reference_fragment_filename_);
-	reference_fragment_ = BCLReferenceSDFilesManager::get_instance()->get_fragment_from_file( reference_fragment_filename_);
-#else
-	utility_exit_with_message("Use of extras=bcl build required.");
-#endif
-}
-
 //////////////////////
 // helper functions //
 //////////////////////
@@ -361,9 +310,6 @@ void BCLFragmentMutateMover::parse_my_tag( TagCOP tag, basic::datacache::DataMap
 
 	// set max number of mutate attempts before returning the input ligand
 	this->set_n_max_mutate_attempts( tag->getOption< core::Size>( "n_max_mutate_attempts", max_mutate_retry_));
-
-	// add any new reference fragments
-	this->set_reference_fragment( tag->getOption< std::string>( "reference_fragment_filename", reference_fragment_filename_));
 }
 
 //! @brief set xml options
@@ -381,7 +327,11 @@ void BCLFragmentMutateMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		(
 		"object_data_label", xs_string,
 		"The BCL Object Data Label specifying the mutate to use and the options "
-		"with which that mutate will be constructed."
+		"with which that mutate will be constructed. To view all of the options "
+		"available to a mutate, pass 'help' as the argument to the mutate. For "
+		"example, if you are making an ExtendWithLinker flavor of this mover, "
+		"in your XML script Mover definition for BCLFragmentMutateMover, the "
+		"'object_data_label' attribute would read 'ExtendWithLinker(help)'."
 	);
 
 	attlist + XMLSchemaAttribute::attribute_w_default
@@ -392,19 +342,6 @@ void BCLFragmentMutateMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		"fails the internal druglikeness filter or when 3D coordinates cannot "
 		"be generated for the mutated fragment.",
 		"10"
-	);
-
-	attlist + XMLSchemaAttribute::attribute_w_default
-		(
-		"reference_fragment_filename", xs_string,
-		"Path to a file that specifies a small molecule SDF. If provided, this fragment will be "
-		"compared to the current pose residue small molecule ligand. The common substructure atoms will be "
-		"fixed as non-mutable (unless they are within a ring structure that contains at least one mutable atom "
-		"accessible by a RingSwap mutate). The non-conserved atoms will be set to mutable. This allows "
-		"new substructures created with one instance of this mover to be the subject of modification by "
-		"a separate instance of this mover in a protocol. Specifying a filename here supersedes any 'mutable_atoms' "
-		"specified in the 'object_data_label' argument.",
-		""
 	);
 
 	// Mover description and final attlist

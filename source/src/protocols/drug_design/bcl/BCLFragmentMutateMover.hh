@@ -132,9 +132,6 @@ public:
 	//! @brief set the mutate using a BCL object data label string
 	void set_mutate( std::string const &object_data_label);
 
-	//! @brief add a fragment to our collection of reference fragments
-	void set_reference_fragment( std::string const &reference_fragment_filename);
-
 	//////////////////////
 	// helper functions //
 	//////////////////////
@@ -160,14 +157,6 @@ private:
 	//! druglikeness filter or 3D coordinates could not be generated, then the mutate
 	//! returns a null pointer, so we will just return the initial fragment
 	core::Size max_mutate_retry_;
-
-	//! reference fragment filename superseding specified mutable atoms
-	std::string reference_fragment_filename_;
-
-	//! reference fragment superseding specified mutable atoms
-#ifdef USEBCL
-	::bcl::util::ShPtr< ::bcl::chemistry::FragmentComplete> reference_fragment_;
-#endif
 
 #ifdef USEBCL
 	//! the mutate interface the object will be handling, wrapped in an implementation for generalizability
