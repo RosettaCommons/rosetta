@@ -239,6 +239,12 @@ Energies::total_energies() const
 	return total_energies_;
 }
 
+EnergyMap
+Energies::total_energies_weighted() const
+{
+	return total_energies_ * scorefxn_weights_;
+}
+
 EnergyMap &
 Energies::total_energies()
 {

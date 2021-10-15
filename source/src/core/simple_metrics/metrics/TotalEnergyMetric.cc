@@ -23,6 +23,8 @@
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/Energies.hh>
 
 #include <core/scoring/xml_util.hh>
 #include <core/pose/Pose.hh>
@@ -51,6 +53,7 @@ using namespace core::scoring;
 using namespace core::pose;
 using namespace core::select::residue_selector;
 using namespace core::simple_metrics;
+using namespace core::scoring;
 
 /////////////////////
 /// Constructors  ///
@@ -60,13 +63,13 @@ using namespace core::simple_metrics;
 TotalEnergyMetric::TotalEnergyMetric():
 	core::simple_metrics::RealMetric()
 {
-
+	scorefxn_ = get_score_function();
 }
 
 TotalEnergyMetric::TotalEnergyMetric( ResidueSelectorCOP selector ):
 	core::simple_metrics::RealMetric()
 {
-
+	scorefxn_ = get_score_function();
 	set_residue_selector( selector );
 }
 
@@ -197,33 +200,56 @@ TotalEnergyMetric::calculate(const core::pose::Pose & pose) const {
 	using namespace core::simple_metrics::per_residue_metrics;
 
 
+	if ( residue_selector_ != nullptr ) {
 
-	PerResidueEnergyMetric e_metric = PerResidueEnergyMetric();
+		PerResidueEnergyMetric e_metric = PerResidueEnergyMetric();
 
-	e_metric.set_scoretype(scoretype_);
-
-	if ( residue_selector_ ) {
+		e_metric.set_scoretype(scoretype_);
 		e_metric.set_residue_selector(residue_selector_);
-	}
+		e_metric.set_scorefunction(scorefxn_);
 
-	e_metric.set_scorefunction(scorefxn_);
-
-	std::map< core::Size, core::Real > energies = e_metric.calculate( pose );
-	core::Real total_energy = 0;
-	for ( auto res_e_pair : energies ) {
-		total_energy+= res_e_pair.second;
-	}
-
-	if ( ref_pose_ ) {
-		core::Real ref_pose_energy = 0;
-		energies = e_metric.calculate( *ref_pose_ );
+		std::map< core::Size, core::Real > energies = e_metric.calculate( pose );
+		core::Real total_energy = 0;
 		for ( auto res_e_pair : energies ) {
-			ref_pose_energy+= res_e_pair.second;
+			total_energy+= res_e_pair.second;
 		}
-		return total_energy - ref_pose_energy;
+
+		if ( ref_pose_ != nullptr ) {
+			core::Real ref_pose_energy = 0;
+			energies = e_metric.calculate( *ref_pose_ );
+			for ( auto res_e_pair : energies ) {
+				ref_pose_energy+= res_e_pair.second;
+			}
+			return total_energy - ref_pose_energy;
+		} else {
+			return total_energy;
+		}
 	} else {
-		return total_energy;
+		core::pose::Pose local_pose = pose;
+		core::Real score = 0.0;
+		core::Real ref_pose_energy = 0.0;
+
+		if ( scoretype_ == total_score ) {
+			score = scorefxn_->score(local_pose);
+
+			if ( ref_pose_ != nullptr ) {
+				core::pose::Pose local_ref_pose = *ref_pose_;
+				ref_pose_energy = scorefxn_->score(local_ref_pose);
+			}
+
+		} else {
+			scorefxn_->score(local_pose);
+			score = local_pose.energies().total_energies_weighted()[scoretype_];
+			if ( ref_pose_ != nullptr ) {
+				core::pose::Pose local_ref_pose = *ref_pose_;
+				scorefxn_->score(local_ref_pose);
+				ref_pose_energy = local_ref_pose.energies().total_energies_weighted()[scoretype_];
+			}
+		}
+		return score - ref_pose_energy;
+
 	}
+	return 0;
 }
 
 /// @brief Provide the citation.

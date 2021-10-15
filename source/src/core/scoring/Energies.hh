@@ -180,6 +180,10 @@ public:
 	EnergyMap const &
 	total_energies() const;
 
+	/// @brief Returns the weighted total energies.
+	EnergyMap
+	total_energies_weighted() const;
+
 	/// @brief Returns a non-const reference to the total_energies EnergyMap
 	/// so that external sources may append additional information to the Energies
 	/// object.  This is primarily useful for outputting score data with structures
