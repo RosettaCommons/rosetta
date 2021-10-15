@@ -1,13 +1,5 @@
-from __future__ import print_function
-
 import logging
-
-try:
-    import h5py
-
-    h5py_is_present = True
-except ImportError:
-    h5py_is_present = False
+from .h5_importer import h5py, requires_h5py
 
 from pyrosetta.rosetta.protocols.indexed_structure_store import (
     FragmentSpecification,
@@ -23,18 +15,6 @@ from pyrosetta.rosetta.std import (
     vector_numeric_xyzVector_double_t,
 )
 from pyrosetta.rosetta.numeric import xyzVector_double_t
-
-
-def requires_h5py(func):
-    def hard_stop(*args, **kwargs):
-        import sys
-
-        logging.error("The `h5py` module is missing. Please install it and try again.")
-        sys.exit(1)
-
-    if not h5py_is_present:
-        return hard_stop
-    return func
 
 
 class H5PyFragmentStoreProvider(FragmentStoreProvider):
@@ -156,6 +136,7 @@ class H5PyFragmentStoreProvider(FragmentStoreProvider):
         self._target_filename = filename
 
 
+#  called in pyrosetta/__init__.py
 def init_H5FragmentStoreProvider():
     if H5PyFragmentStoreProvider.instance is None:
         H5PyFragmentStoreProvider.instance = H5PyFragmentStoreProvider()

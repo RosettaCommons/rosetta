@@ -52,7 +52,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     TR('Running PyRosetta unit tests: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', skip_compile=debug)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', skip_compile=config.get('skip_compile') )
 
     for f in os.listdir(result.pyrosetta_path + '/source'):
         if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)

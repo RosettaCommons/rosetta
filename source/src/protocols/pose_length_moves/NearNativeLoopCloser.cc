@@ -1181,6 +1181,7 @@ void NearNativeLoopCloser::extendRegion(bool towardCTerm, core::Size resStart, c
 
 core::pose::PoseOP NearNativeLoopCloser::create_maximum_length_pose(char resTypeBeforeLoop, char resTypeAfterLoop, core::pose::Pose const pose){
 	core::pose::PoseOP full_length_poseOP = pose.clone();
+	core::Size orig_resAfterLoop_ = resAfterLoop_;
 	if ( resBeforeLoop_+1 != resAfterLoop_ ) {
 		//trim region:
 		kinematics::FoldTree ft;
@@ -1210,16 +1211,16 @@ core::pose::PoseOP NearNativeLoopCloser::create_maximum_length_pose(char resType
 	} else {
 		resAdjustmentStartHigh_or_0=0;
 	}
-	//copy over labels
 	for ( core::Size ii=1; ii<=resBeforeLoop_; ++ii ) {
 		vector1 < std::string > tmp_labels = pose.pdb_info()->get_reslabels(ii);
 		for ( core::Size jj=1; jj <= tmp_labels.size(); ++jj ) {
 			full_length_poseOP->pdb_info()->add_reslabel(ii, tmp_labels[jj]);
 		}
 	}
-	for ( core::Size ii=resAfterLoop_; ii<=pose.size(); ++ii ) {
+	core::Size loopLabelAdjustment = orig_resAfterLoop_-resBeforeLoop_-1;
+	for ( core::Size ii=orig_resAfterLoop_; ii<=pose.size(); ++ii ) {
 		vector1 < std::string > tmp_labels = pose.pdb_info()->get_reslabels(ii);
-		Size ii_in_full_length_pose = ii+resAdjustmentStopHigh_or_0+resAdjustmentStartHigh_or_0;
+		Size ii_in_full_length_pose = ( ii - loopLabelAdjustment ) + resAdjustmentStopHigh_or_0 + resAdjustmentStartHigh_or_0;
 		for ( core::Size jj=1; jj <= tmp_labels.size(); ++jj ) {
 			full_length_poseOP->pdb_info()->add_reslabel(ii_in_full_length_pose, tmp_labels[jj]);
 		}

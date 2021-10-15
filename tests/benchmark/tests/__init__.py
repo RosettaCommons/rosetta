@@ -407,6 +407,8 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         so we can have reproducible test enviroment
 
         IMPORTANT: there should be no spaces between package name and version number
+
+        IMPORTANT: if PyRosetta build without serialization support or on Python-2 platform then we DO NOT REQUIRE any packages
     '''
 
     python_version = tuple( map(int, platform.get('python', '3.6').split('.') ) )
@@ -878,16 +880,17 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
 
         root = os.path.abspath( prefix + '/python_virtual_environments/' + '/python-' + python_environment.version + '/' + hash )
         signature_file_name = root + '/.signature'
+        signature = f'setup_persistent_python_virtual_environment v1.0.0\npython: {python_environment.hash}\npackages: {packages}\n'
 
         activate = f'unset __PYVENV_LAUNCHER__ && . {root}/bin/activate'
         bin = f'{root}/bin'
 
-        if os.path.isfile(signature_file_name): pass
+        if os.path.isfile(signature_file_name) and open(signature_file_name).read() == signature: pass
         else:
             if os.path.isdir(root): shutil.rmtree(root)
             setup_python_virtual_environment(root, python_environment, packages=packages)
             remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
-            with open(signature_file_name, 'w') as f: pass
+            with open(signature_file_name, 'w') as f: f.write(signature)
 
         return NT(activate = activate, python = bin + '/python', root = root, bin = bin, hash = hash)
 

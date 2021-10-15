@@ -66,7 +66,23 @@ template<typename Module> void bind_StructureStore(Module & m)
 		});
 
 	PYBIND11_NUMPY_DTYPE(ResidueOrientEntry, N, C, CA, O);
-	PYBIND11_NUMPY_DTYPE(ResidueEntry, structure_id, residue_id, bb, sc, orient, chain_ending);
+	::pybind11::detail::npy_format_descriptor<ResidueEntry>::register_dtype({
+		PYBIND11_FIELD_DESCRIPTOR(ResidueEntry, structure_id),
+		PYBIND11_FIELD_DESCRIPTOR(ResidueEntry, residue_id),
+		PYBIND11_FIELD_DESCRIPTOR(ResidueEntry, bb),
+		PYBIND11_FIELD_DESCRIPTOR(ResidueEntry, sc),
+		PYBIND11_FIELD_DESCRIPTOR(ResidueEntry, orient),
+		PYBIND11_FIELD_DESCRIPTOR(ResidueEntry, cen),
+		PYBIND11_FIELD_DESCRIPTOR(ResidueEntry, chain_ending),
+		::pybind11::detail::field_descriptor{
+		"ss",
+		offsetof(ResidueEntry, ss),
+		sizeof(decltype(std::declval<ResidueEntry>().ss)),
+		::pybind11::format_descriptor<char[1]>::format(),
+		::pybind11::detail::npy_format_descriptor<char[1]>::dtype()
+		}
+		});
+
 
 	m.attr("structure_entry") = py::dtype::of<StructureEntry>();
 	m.attr("residue_entry_dtype") = py::dtype::of<ResidueEntry>();

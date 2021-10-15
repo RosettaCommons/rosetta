@@ -6,6 +6,7 @@ requirements:
     - python
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - {{ pin_compatible('numpy') }}
     - cmake
     - ninja
   host:
@@ -21,6 +22,7 @@ requirements:
     - scipy >=1.0
     - traitlets
     - python-blosc
+    - decorator 
 
 test:
   commands:
