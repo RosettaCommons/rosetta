@@ -164,7 +164,7 @@ SequenceMetric::mode_enum_from_name(
 	std::string const & mode_string
 ) {
 	for ( core::Size i(1); i < static_cast<core::Size>(SequenceMetricMode::END_OF_LIST); ++i ) {
-		if ( !mode_string.compare( mode_name_from_enum( static_cast< SequenceMetricMode >( i ) ) ) ) {
+		if ( mode_string == mode_name_from_enum( static_cast< SequenceMetricMode >( i ) ) ) {
 			return static_cast< SequenceMetricMode >(i);
 		}
 	}
