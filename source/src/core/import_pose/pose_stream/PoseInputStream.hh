@@ -46,6 +46,11 @@ public:
 
 	virtual void fill_pose( core::pose::Pose&, bool const metapatches = true ) = 0;
 
+	/// @brief Get a string describing the last pose and where it came from.
+	/// @details Implemented by child classes.  Typically, filename + number from file + input tag.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual std::string get_last_pose_descriptor_string() const = 0;
+
 	virtual utility::vector1< core::pose::PoseOP > get_all_poses(
 		core::chemical::ResidueTypeSet const & residue_set
 	);

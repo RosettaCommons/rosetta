@@ -20,6 +20,7 @@
 #include <core/simple_metrics/per_residue_metrics/SidechainNeighborCountMetricCreator.hh>
 #include <core/simple_metrics/test_classes_creators.hh>
 
+#include <core/simple_metrics/metrics/CustomStringValueMetricCreator.hh> //Added by VKM, 28 Sept. 2021.
 #include <core/simple_metrics/metrics/CalculatorMetricCreator.hh>
 #include <core/pack/guidance_scoreterms/sap/SapScoreMetricCreator.hh>
 #include <core/pack/guidance_scoreterms/sap/PerResidueSapScoreMetricCreator.hh>

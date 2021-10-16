@@ -217,6 +217,7 @@ sources = {
 	],
 	"core/simple_metrics/metrics": [
 		"CalculatorMetric",
+		"CustomStringValueMetric",
 		"DihedralDistanceMetric",
 		"InteractionEnergyMetric",
 		"ResidueSummaryMetric",

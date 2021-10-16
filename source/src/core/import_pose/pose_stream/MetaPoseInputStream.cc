@@ -90,6 +90,15 @@ void MetaPoseInputStream::fill_pose(
 	input_streams_[ current_index_ ]->fill_pose( pose, metapatches );
 }
 
+/// @brief Get a string describing the last pose and where it came from.
+/// @details Typically, filename + number from file + input tag, but depends on the
+/// particular PoseInputStream subclass.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+MetaPoseInputStream::get_last_pose_descriptor_string() const {
+	return input_streams_[current_index_]->get_last_pose_descriptor_string();
+}
+
 } // pose_stream
 } // import_pose
 } // core

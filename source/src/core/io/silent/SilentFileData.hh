@@ -71,7 +71,13 @@ private:
 	utility::vector1< std::string > comment_lines_;
 
 	mutable std::map< SharedSilentDataType, SharedSilentDataOP > shared_silent_data_;
-	std::string filename_; // filename of the last file that we wrote a structure to
+
+	/// @brief Filename of the last file that we wrote a structure TO (i.e. output filename).
+	std::string filename_;
+
+	/// @brief Filename of the file from which we read data initially (i.e. input filename).  Can be blank.
+	std::string input_filename_;
+
 	bool store_argv_in_file_;
 	bool strict_column_mode_;
 	bool record_source_;
@@ -200,10 +206,17 @@ public:
 	SilentStructOP operator[] (std::string tag);
 
 	/// @brief Gets the filename that this SilentFileData object will
-	/// write to.
+	/// write to (i.e. OUTPUT filename).
 	std::string const& filename() const {
 		return filename_;
 	}
+
+	/// @brief Get the filename that this SilentFileData object was
+	/// initialized FROM (i.e. INPUT filename).
+	std::string const & input_filename() const {
+		return input_filename_;
+	}
+
 	/// @brief Return all tags in this container.
 	utility::vector1< std::string > tags() const;
 

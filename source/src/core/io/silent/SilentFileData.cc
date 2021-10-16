@@ -73,6 +73,7 @@ static basic::Tracer tr( "core.io.silent.SilentFileData" );
 
 SilentFileData::SilentFileData( SilentFileOptions const & options ) :
 	filename_(),
+	input_filename_(""),
 	store_argv_in_file_( false ),
 	strict_column_mode_( false ),
 	record_source_( false ),
@@ -87,6 +88,7 @@ SilentFileData::SilentFileData( SilentFileOptions const & options ) :
 
 SilentFileData::SilentFileData( std::string const & filename, SilentFileOptions const & options ) :
 	filename_( filename ),
+	input_filename_(""),
 	store_argv_in_file_( false ),
 	strict_column_mode_( false ),
 	record_source_( false ),
@@ -112,6 +114,7 @@ SilentFileData::SilentFileData(
 	SilentFileOptions const & options
 ) :
 	filename_( filename ),
+	input_filename_(""),
 	store_argv_in_file_( store_argv_in_file ),
 	strict_column_mode_( strict_column_mode ),
 	record_source_( false ),
@@ -690,6 +693,10 @@ SilentFileData::read_stream(
 	bool throw_exception_on_bad_structs, /*default false*/
 	std::string filename /** for error reporting and suppressing bitflip**/
 ) {
+	if ( !input_filename_.empty() ) {
+		tr.Warning << "In SilentFileData::read_stream(): Trying to initialize from file \"" + filename + "\", but this object was already initialized from file \"" + input_filename_ + "\".  This could potentially lead to aberrant behaviour." << std::endl;
+	}
+	input_filename_ = filename; //Store the input file.
 
 	// put the tags on a set to avoid repetition and fast search
 	std::set<std::string> tagset(tags.begin(), tags.end());
@@ -1324,6 +1331,7 @@ core::io::silent::SilentFileData::save( Archive & arc ) const {
 	arc( CEREAL_NVP( comment_lines_ ) ); // utility::vector1<std::string>
 	arc( CEREAL_NVP( shared_silent_data_ ) ); // std::map<SharedSilentDataType, SharedSilentDataOP>
 	arc( CEREAL_NVP( filename_ ) ); // std::string
+	arc( CEREAL_NVP( input_filename_ ) ); // std::string
 	arc( CEREAL_NVP( store_argv_in_file_ ) ); // _Bool
 	arc( CEREAL_NVP( strict_column_mode_ ) ); // _Bool
 	arc( CEREAL_NVP( record_source_ ) ); // _Bool
@@ -1342,6 +1350,7 @@ core::io::silent::SilentFileData::load( Archive & arc ) {
 	arc( comment_lines_ ); // utility::vector1<std::string>
 	arc( shared_silent_data_ ); // std::map<SharedSilentDataType, SharedSilentDataOP>
 	arc( filename_ ); // std::string
+	arc( input_filename_ ); // std::string
 	arc( store_argv_in_file_ ); // _Bool
 	arc( strict_column_mode_ ); // _Bool
 	arc( record_source_ ); // _Bool

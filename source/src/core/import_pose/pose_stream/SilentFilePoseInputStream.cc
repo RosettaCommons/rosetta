@@ -260,6 +260,26 @@ void SilentFilePoseInputStream::fill_pose(
 	++current_position_;
 } // fill_pose
 
+/// @brief Get a string describing the last pose and where it came from.
+/// @details Input tag + filename.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+SilentFilePoseInputStream::get_last_pose_descriptor_string() const {
+	runtime_assert_string_msg( current_position_ != sfd_->begin(), "Error in SilentFilePoseInputStream::get_last_pose_descriptor_string(): At least one pose must be read in before this method is called!" );
+	core::io::silent::SilentFileData::iterator temppos( current_position_ ); //Temporarily shift current position back one.
+	--temppos;
+	std::string const decoy_str(temppos->decoy_tag());
+	std::string const & filename_str( sfd_->input_filename() );
+	std::string outstr( decoy_str.empty() ? "" : decoy_str );
+	if ( !filename_str.empty() ) {
+		if ( !outstr.empty() ) {
+			outstr += "_";
+		}
+		outstr += filename_str;
+	}
+	return outstr;
+}
+
 
 core::io::silent::SilentStructOP
 SilentFilePoseInputStream::next_struct()

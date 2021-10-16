@@ -80,6 +80,11 @@ public:
 		utility::vector1< utility::file::FileName > list_fns
 	);
 
+	/// @brief Get a string describing the last pose and where it came from.
+	/// @details PDB filename.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string get_last_pose_descriptor_string() const override;
+
 private:
 	utility::vector1< utility::file::FileName > filenames_;
 	utility::vector1< utility::file::FileName >::const_iterator current_position_;

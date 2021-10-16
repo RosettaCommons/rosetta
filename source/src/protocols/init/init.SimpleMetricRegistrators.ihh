@@ -20,6 +20,8 @@ using core::simple_metrics::SimpleMetricRegistrator;
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::CalculatorMetricCreator > reg_CalculatorMetricCreator;
 
+static SimpleMetricRegistrator< core::simple_metrics::metrics::CustomStringValueMetricCreator > reg_CustomStringValueMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::DihedralDistanceMetricCreator > reg_DihedralDistanceMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::InteractionEnergyMetricCreator > reg_InteractionEnergyMetricCreator;

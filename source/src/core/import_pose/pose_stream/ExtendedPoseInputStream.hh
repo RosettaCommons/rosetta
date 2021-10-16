@@ -46,8 +46,14 @@ public:
 		core::chemical::ResidueTypeSet const & residue_set,
 		bool const metapatches = true
 	) override;
+
 	void fill_pose( core::pose::Pose&,
 		bool const metapatches = true ) override;
+
+	/// @brief Get a string describing the last pose and where it came from.
+	/// @details Input tag + filename.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string get_last_pose_descriptor_string() const override;
 
 private:
 	std::string seq_;

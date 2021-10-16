@@ -75,6 +75,18 @@ void ExtendedPoseInputStream::fill_pose(
 	);
 }
 
+/// @brief Get a string describing the last pose and where it came from.
+/// @details Input tag + filename.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+ExtendedPoseInputStream::get_last_pose_descriptor_string() const {
+	runtime_assert_string_msg( current_n_ > 1, "Error in ExtendedPoseInputStream::get_last_pose_descriptor_string(): The fill_pose() function must be called at least once before calling this function." );
+	char curindex_str[64];
+	sprintf( curindex_str, "%04lu", current_n_ - 1 );
+	std::string const outstr( "extended_pose_" + std::string(curindex_str) );
+	return outstr;
+}
+
 } // pose_stream
 } // import_pose
 } // core

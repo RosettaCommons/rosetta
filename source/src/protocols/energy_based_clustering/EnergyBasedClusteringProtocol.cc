@@ -41,6 +41,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/simple_metrics/metrics/CustomStringValueMetric.hh>
 
 //Protocols headers
 #include <protocols/relax/FastRelax.hh>
@@ -48,6 +49,7 @@
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/analysis/simple_metrics/RunSimpleMetricsMover.hh>
 
 //Utility headers
 #include <utility/vector1.hh>
@@ -155,6 +157,7 @@ EnergyBasedClusteringProtocol::go() {
 	core::Real lowestE = 0; //Lowest energy encountered so far.
 	core::Size lowestE_index = 0; //The number of the pose with the lowest energy encountered.
 	utility::vector1 <core::Real> poseenergies; //Vector of energies of the poses.
+	utility::vector1 <std::string> pose_descriptors; //Vector of descriptors (usually filenames and/or tags) of the poses.
 	utility::vector1 < utility::vector1 <core::Real> > posedata; //Vector of vectors to store the data that will be used for clustering.
 	utility::vector1 < utility::vector1 <core::Real> > dihedral_reconstruction_data; //Vector of vectors to store atom positions in dihedral mode.  Only populated if rebuild_all_in_dihedral_mode is true.
 	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > alignmentdata; //Vector of arrays of x,y,z coordinates of atoms to be used for alignment in Cartesian clustering.
@@ -180,7 +183,7 @@ EnergyBasedClusteringProtocol::go() {
 	std::string curbinstring_mirror; //Temp container used only for ABOXYZ bin analysis.
 
 	//Import and score all structures:
-	do_initial_import_and_scoring( count, lowestE, lowestE_index, firstpose, symmfilter, poseenergies, posedata, alignmentdata, dihedral_reconstruction_data, pose_binstrings, cluster_assignments, cluster_offsets, cluster_oligomer_permutations, sfxn, extra_atom_list );
+	do_initial_import_and_scoring( count, lowestE, lowestE_index, firstpose, symmfilter, poseenergies, pose_descriptors, posedata, alignmentdata, dihedral_reconstruction_data, pose_binstrings, cluster_assignments, cluster_offsets, cluster_oligomer_permutations, sfxn, extra_atom_list );
 
 	TR << "Clustering, starting with lowest-energy structure as the center of the first cluster." << std::endl;
 
@@ -297,7 +300,7 @@ EnergyBasedClusteringProtocol::go() {
 		for ( core::Size j=1, jmax(clusterlist_sortedbyenergy[i].size()); j<=jmax; j++ ) {
 			core::pose::Pose temppose;
 			if ( options_.limit_structures_per_cluster_==0 || j<=static_cast<core::Size>(options_.limit_structures_per_cluster_) ) {
-				pose_from_posedata (firstpose, temppose, options_.cluster_by_, posedata[ clusterlist_sortedbyenergy[i][j] ], dihedral_reconstruction_data[clusterlist_sortedbyenergy[i][j]], options_.rebuild_all_in_dihedral_mode_);
+				pose_from_posedata(firstpose, temppose, options_.cluster_by_, pose_descriptors[ clusterlist_sortedbyenergy[i][j] ], posedata[ clusterlist_sortedbyenergy[i][j] ], dihedral_reconstruction_data[clusterlist_sortedbyenergy[i][j]], options_.rebuild_all_in_dihedral_mode_);
 				if ( j>1 && options_.homooligomer_swap_ ) swap_chains( temppose, cluster_oligomer_permutations[clusterlist_sortedbyenergy[i][j]] ); //Swap chains around.
 				if ( j==1 ) pose1=temppose;
 				else align_with_offset(temppose, pose1, (options_.cluster_cyclic_permutations_ ? cluster_offsets[ clusterlist_sortedbyenergy[i][j] ] : 0), extra_atom_list );
@@ -587,6 +590,7 @@ EnergyBasedClusteringProtocol::pose_from_posedata (
 	core::pose::Pose const &inputpose,
 	core::pose::Pose &outputpose,
 	EBC_ClusterType const clustermode,
+	std::string const & pose_descriptor,
 	utility::vector1<core::Real> const &posedata,
 	utility::vector1<core::Real> const &reconstruction_data,
 	bool const rebuild_all_in_dihedral_mode/*=false*/
@@ -635,6 +639,16 @@ EnergyBasedClusteringProtocol::pose_from_posedata (
 
 	make_disulfides(outputpose);
 	outputpose.update_residue_neighbors();
+
+	{
+		//Add the pose descriptor to the pose:
+		core::simple_metrics::metrics::CustomStringValueMetricOP stringmetric(
+			utility::pointer::make_shared< core::simple_metrics::metrics::CustomStringValueMetric >()
+		);
+		stringmetric->set_value( "INPUT_POSE_DESCRIPTOR:\t" + pose_descriptor );
+		protocols::analysis::simple_metrics::RunSimpleMetricsMover runmetric({stringmetric});
+		runmetric.apply(outputpose);
+	}
 }
 
 /// @brief Sort the list of states in a cluster by energies.
@@ -1544,6 +1558,7 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 	core::pose::Pose &firstpose,
 	protocols::cyclic_peptide::CycpepSymmetryFilter const &symmfilter,
 	utility::vector1 <core::Real> &poseenergies,
+	utility::vector1 <std::string> &pose_descriptors,
 	utility::vector1 < utility::vector1 <core::Real> > &posedata,
 	utility::vector1 < utility::vector1< numeric::xyzVector< core::Real > > > &alignmentdata,
 	utility::vector1 < utility::vector1 <core::Real> > &dihedral_reconstruction_data,
@@ -1563,6 +1578,8 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 
 		core::pose::Pose pose; //Create the pose
 		input.fill_pose( pose ); //Import it
+
+		pose_descriptors.push_back( input.get_last_pose_descriptor_string() );
 
 		remove_extraneous_virtuals( pose );
 

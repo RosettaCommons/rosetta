@@ -158,6 +158,7 @@ private: //Functions
 		core::pose::Pose const &inputpose,
 		core::pose::Pose &outputpose,
 		EBC_ClusterType const clustermode,
+		std::string const & pose_descriptor,
 		utility::vector1<core::Real> const &posedata,
 		utility::vector1<core::Real> const &reconstruction_data,
 		bool const rebuild_all_in_dihedral_mode=false
@@ -291,7 +292,9 @@ private: //Functions
 	/// @details Performs disk access.
 	void do_initial_import_and_scoring( core::Size &count, core::Real &lowestE, core::Size &lowestE_index,
 		core::pose::Pose &firstpose, protocols::cyclic_peptide::CycpepSymmetryFilter const &symmfilter,
-		utility::vector1 <core::Real> &poseenergies, utility::vector1 < utility::vector1 <core::Real> > &posedata,
+		utility::vector1 <core::Real> &poseenergies,
+		utility::vector1 <std::string> &pose_descriptors,
+		utility::vector1 < utility::vector1 <core::Real> > &posedata,
 		utility::vector1< utility::vector1< numeric::xyzVector< core::Real > > > &alignmentdata,
 		utility::vector1 < utility::vector1 <core::Real> > &dihedral_reconstruction_data,
 		utility::vector1 < std::string > &pose_binstrings,

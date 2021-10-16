@@ -169,6 +169,18 @@ void LazySilentFilePoseInputStream::fill_pose(
 	tr.flush_all_channels();
 } // fill_pose
 
+/// @brief Get a string describing the last pose and where it came from.
+/// @details Input tag + filename.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+LazySilentFilePoseInputStream::get_last_pose_descriptor_string() const {
+	core::io::silent::SilentFileData::iterator temp_iterator( current_struct_ );
+	--temp_iterator; //Temporarily shift current position back one.
+	std::string const decoy_str(temp_iterator->decoy_tag());
+	std::string const outstr( decoy_str.empty() ? sfd_.filename() : decoy_str + "_" + sfd_.filename() );
+	return outstr;
+}
+
 void LazySilentFilePoseInputStream::reset() {
 	filenames_        = utility::vector1< FileName >();
 	current_filename_ = filenames_.end();

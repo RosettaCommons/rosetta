@@ -145,6 +145,21 @@ void PDBPoseInputStream::add_list_filenames(
 	}
 } // add_list_files
 
+/// @brief Get a string describing the last pose and where it came from.
+/// @details PDB filename.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+PDBPoseInputStream::get_last_pose_descriptor_string() const {
+	runtime_assert_string_msg(
+		current_position_ != filenames_.begin(),
+		"Error in PDBPoseInputStream::get_last_pose_descriptor_string(): At least one pose must be loaded before calling this function!"
+	);
+	utility::vector1< utility::file::FileName >::const_iterator temp_position( current_position_ );
+	--temp_position;
+	std::string const outstr( temp_position->local_name() );
+	return outstr;
+}
+
 } // pose_stream
 } // import_pose
 } // core
