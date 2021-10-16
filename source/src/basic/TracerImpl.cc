@@ -556,18 +556,20 @@ void TracerImpl::prepend_channel_name( out_stream & sout, std::string const &str
 #endif
 
 #ifdef MULTI_THREADED
-		//Append thread index to the tracer output:
-		if ( basic::thread_manager::RosettaThreadManager::thread_manager_initialization_begun() ) {
-			if ( basic::thread_manager::RosettaThreadManager::thread_manager_was_initialized() ) {
-				sout << "{" << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << "} ";
+		if ( basic::thread_manager::RosettaThreadManager::total_threads() > 1 ) {
+			//Append thread index to the tracer output iff we're launching more than one thread:
+			if ( basic::thread_manager::RosettaThreadManager::thread_manager_initialization_begun() ) {
+				if ( basic::thread_manager::RosettaThreadManager::thread_manager_was_initialized() ) {
+					sout << "{" << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << "} ";
+				} else {
+					sout << "{?} "; //This must be thread zero if we have not yet launched threads.  However, if we're in the middle of
+					//launching threads and the thread manager hasn't yet been marked as initialized, there can still be some messages
+					//from the threads, in which case we don't know which thread is producing them.
+				}
 			} else {
-				sout << "{?} "; //This must be thread zero if we have not yet launched threads.  However, if we're in the middle of
-				//launching threads and the thread manager hasn't yet been marked as initialized, there can still be some messages
-				//from the threads, in which case we don't know which thread is producing them.
+				//If we haven't started launching threads, this must be thread zero.
+				sout << "{0} ";
 			}
-		} else {
-			//If we haven't started launching threads, this must be thread zero.
-			sout << "{0} ";
 		}
 #endif
 
