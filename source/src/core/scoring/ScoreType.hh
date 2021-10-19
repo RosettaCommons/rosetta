@@ -491,6 +491,9 @@ enum ScoreType {
 	// Added by @ralford 6/13/18
 	fa_water_to_bilayer,
 
+	FaMPAsymEzCB, //added by @mwfranklin 9/6/19
+	FaMPAsymEzCG, //added by @mwfranklin 9/6/19
+
 	MPResidueLipophilicity,
 	span_ins,
 	mp_span_ang,

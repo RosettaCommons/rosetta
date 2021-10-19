@@ -372,6 +372,10 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_mpsolv" ] = FaMPSolv;
 	name2score_type_[ "fa_mpenv_smooth" ] = FaMPEnvSmooth;
 
+	//fullatom asymetric EZ added by @mwfranklin 9/6/19
+	name2score_type_[ "fa_mpasymEzCB" ] = FaMPAsymEzCB;
+	name2score_type_[ "fa_mpasymEzCG" ] = FaMPAsymEzCG;
+
 	// new implicit lipid env energy
 	name2score_type_[ "fa_water_to_bilayer" ] = fa_water_to_bilayer;
 

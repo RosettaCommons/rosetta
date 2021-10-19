@@ -68,6 +68,8 @@ sources = {
 		"FaMPSolvEnergy",
 		"FaMPEnvEnergy",
 		"FaMPEnvSmoothEnergy",
+		"FaMPAsymEzCBEnergy",
+		"FaMPAsymEzCGEnergy",
 		"MPResidueLipophilicityEnergy",
 		"MPHelicalityEnergy",
 		"MPSpanInsertionEnergy",

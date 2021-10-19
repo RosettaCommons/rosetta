@@ -566,6 +566,7 @@ sources = {
     "MPResidueLipophilicity",
     "MPSpanAngle",
     "MPSpanInsertion",
+    "MPasymEZ",
     "FaMPEnv",
     "FaMPSolv",
     "FaMbsolv",

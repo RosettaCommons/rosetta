@@ -187,6 +187,8 @@
 #include <core/energy_methods/FaMPEnvEnergyCreator.hh>
 #include <core/energy_methods/FaMPSolvEnergyCreator.hh>
 #include <core/energy_methods/FaMPEnvSmoothEnergyCreator.hh>
+#include <core/energy_methods/FaMPAsymEzCBEnergyCreator.hh>
+#include <core/energy_methods/FaMPAsymEzCGEnergyCreator.hh>
 #include <core/energy_methods/MPResidueLipophilicityEnergyCreator.hh>
 #include <core/energy_methods/MPHelicalityEnergyCreator.hh>
 #include <core/energy_methods/MPSpanInsertionEnergyCreator.hh>
@@ -588,6 +590,8 @@ static EnergyMethodRegistrator< energy_methods::FaMPSolvEnergyCreator >
 	FaMPSolvEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::FaMPEnvSmoothEnergyCreator >
 	FaMPEnvSMoothEnergyCreator_registrator;
+static EnergyMethodRegistrator< energy_methods::FaMPAsymEzCBEnergyCreator > FaMPAsymEzCBEnergyCreator_registrator;
+static EnergyMethodRegistrator< energy_methods::FaMPAsymEzCGEnergyCreator > FaMPAsymEzCGEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::MPResidueLipophilicityEnergyCreator > MPResidueLipophilicityEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::MPHelicalityEnergyCreator > MPHelicalityEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::MPSpanInsertionEnergyCreator > MPSpanInsertionEnergyCreator_registrator;

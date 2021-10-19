@@ -1,0 +1,7 @@
+-in:file:s 3AM6_A.pdb
+-mp:setup:spanfiles 3AM6_A.span
+-ignore_unrecognized_res
+-score:weights ModMembWeights
+-mp:scoring:hbond true 
+-restore_talaris_behavior
+-restore_lazaridis_imm_behavior true
