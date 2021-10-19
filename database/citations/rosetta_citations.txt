@@ -1254,3 +1254,28 @@
         10.1021/acs.jcim.1c00056
     [END_DOI]
 [END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Brian" "Coventry" "B"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2021
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Protein sequence optimization with a pairwise decomposable penalty for buried unsatisfied hydrogen bonds
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        PLoS Comput Biol
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        17(3):e1008061
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1371/journal.pcbi.1008061
+    [END_DOI]
+[END_CITATION]
+

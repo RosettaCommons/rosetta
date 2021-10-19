@@ -31,8 +31,8 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
-
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #ifdef MULTI_THREADED
 #include <basic/options/option.hh>
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
@@ -469,23 +469,17 @@ ApproximateBuriedUnsatPenalty::eval_intrares_energy(
 void
 ApproximateBuriedUnsatPenalty::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
-	UnpublishedModuleInfoOP authors(
-		utility::pointer::make_shared< UnpublishedModuleInfo >(
-		"ApproximateBuriedUnsatPenalty", CitedModuleType::EnergyMethod,
-		"Brian Coventry",
-		"Dept. of Biochemistry, Institute for Protein Design, University of Washington",
-		"bcov@uw.edu",
-		"Devised and wrote the ApproximateBuriedUnsatPenalty."
+
+	CitationCollectionOP collection(
+		utility::pointer::make_shared< CitationCollection >(
+		"ApproximateBuriedUnsatPenalty",
+		CitedModuleType::EnergyMethod
 		)
 	);
-	authors->add_author(
-		"Vikram K. Mulligan",
-		"Systems Biology, Center for Computational Biology, Flatiron Institute",
-		"vmulligan@flatironinstitute.org",
-		"Refactored for compatibility with multi-threading."
+	collection->add_citation(
+		CitationManager::get_instance()->get_citation_by_doi("10.1371/journal.pcbi.1008061")
 	);
-
-	citations.add( authors );
+	citations.add( collection );
 }
 
 basic::datacache::CacheableResRotPairFloatMapCOP
