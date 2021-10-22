@@ -1,0 +1,37 @@
+
+cd %(workdir)s
+
+date > start-time.ignore
+
+# Do the tests actually exist?
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
+    -parser:protocol test_complex_logic.xml -parser:script_vars run_packer=1 run_min=1 -s test_pdb.pdb -out:prefix one_ -testing:INTEGRATION_TEST \
+    2>&1 | egrep -vf ../../ignore_list > test_logic_one.log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
+    -parser:protocol test_complex_logic.xml -parser:script_vars run_packer=1 run_min=0 -s test_pdb.pdb -out:prefix two_ -testing:INTEGRATION_TEST \
+    2>&1 | egrep -vf ../../ignore_list > test_logic_two.log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
+    -parser:protocol test_complex_logic.xml -parser:script_vars run_packer=0 run_min=0 -s test_pdb.pdb -out:prefix three_ -testing:INTEGRATION_TEST \
+    2>&1 | egrep -vf ../../ignore_list > test_logic_three.log
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
+    -parser:protocol test_sequence_mover.xml -s test_pdb.pdb -out:prefix seq_ -testing:INTEGRATION_TEST \
+    2>&1 | egrep -vf ../../ignore_list > test_sequence_mover.log
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -parser:script_vars run_both=1 \
+    -parser:protocol test_value_if.xml -s test_pdb.pdb -out:prefix val_ -testing:INTEGRATION_TEST \
+    2>&1 | egrep -vf ../../ignore_list > val_test.log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+

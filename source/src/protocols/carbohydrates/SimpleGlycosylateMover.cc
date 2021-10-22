@@ -291,6 +291,10 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 		}
 		utility::vector1< bool > subset = selector_->apply( pose );
 		set_positions( subset);
+		if ( positions_.size() == 0 ) {
+			TR << "Empty subset passed! This is probably part of a larger protocol.  Continuing." << std::endl;
+			return;
+		}
 	}
 
 	if ( positions_.size() == 0 ) {

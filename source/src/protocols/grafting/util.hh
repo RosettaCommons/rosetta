@@ -28,7 +28,8 @@ namespace grafting {
 
 /// @brief Deletes a region of the pose. Starting from and including 'start' and 'end' residue.
 void
-delete_region(core::pose::Pose & pose, core::Size const start, core::Size const end);
+delete_region(core::pose::Pose & pose, core::Size const start, core::Size const end, bool detect_disulfides=true);
+
 
 /// @brief Returns a region of the pose including start and end as a new pose. Has a simple foldtree.
 core::pose::Pose

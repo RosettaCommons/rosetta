@@ -527,7 +527,7 @@ AntibodyDatabaseManager::load_cdr_poses(
 			base_statement += get_question_mark_string(options->include_only_germlines().size());
 		}
 		if ( options->exclude_germlines().size() >= 1 ) {
-			base_statement += " AND IG IN";
+			base_statement += " AND IG NOT IN";
 			base_statement += get_question_mark_string(options->exclude_germlines().size());
 		}
 

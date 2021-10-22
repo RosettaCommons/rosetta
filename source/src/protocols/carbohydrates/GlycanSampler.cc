@@ -637,6 +637,8 @@ GlycanSampler::setup_movers(
 	//////        //////
 	shear_ = make_shared< ShearMover >();
 	shear_->set_residue_selector(return_subset_dihedral);
+	shear_->set_warn_empty_list(false);
+
 	if ( use_shear_ ) {
 		if ( total_inner_cycles != 0 ) {
 			RationalMonteCarloOP mc_cycle_shear = make_shared< RationalMonteCarlo >(

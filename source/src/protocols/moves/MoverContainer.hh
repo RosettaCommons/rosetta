@@ -32,6 +32,7 @@
 
 // Utility Headers
 #include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace moves {
@@ -156,10 +157,24 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
 
+	static
+	std::string
+	mover_name();
+
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &
+	) override;
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+
 private:
 
 	/// @brief use mover status ( default false )
-	bool use_mover_status_;
+	bool use_mover_status_ = false;
 
 }; // SequenceMover class
 
@@ -190,6 +205,11 @@ public:
 	core::Size
 	get_index_of_last_mover_used();
 
+	///@brief Set the repeats for all the movers.  Should be the same order that the movers have been added.
+	/// Allows probabilistic repeats
+	void
+	set_repeats( utility::vector1< core::Size > const & repeats);
+
 	core::Real last_proposal_density_ratio() override;
 
 	//fpd Only making this MoverContainer parsile since the other MoverContainers already have an RS equivalent
@@ -213,6 +233,7 @@ private:
 	///@Brief Set the index of the last Mover used by the RandomMover (0 means RandomMover has not been applied yet)
 	void
 	set_index_of_last_mover_used( core::Size index_of_last_mover_used );
+	utility::vector1< core::Size > repeats_;
 
 private:
 	core::Size nmoves_;

@@ -71,6 +71,28 @@ xsd_type_definition_w_attributes_and_repeatable_subelements(
 		.write_complex_type_to_schema( xsd );
 }
 
+void
+xsd_type_definition_w_attributes_and_single_subelement(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & mover_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes,
+	utility::tag::XMLSchemaSimpleSubelementList const & subelement
+){
+	// If the developer has already added a name attribute, do not add another one.
+	utility::tag::AttributeList local_attrs( attributes );
+	if ( ! utility::tag::attribute_w_name_in_attribute_list( "name", local_attrs ) ) {
+		local_attrs + utility::tag::optional_name_attribute();
+	}
+
+	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & complex_type_name_for_mover )
+		.element_name( mover_type )
+		.description( description )
+		.add_attributes( local_attrs )
+		.set_subelements_single_appearance_optional( subelement )
+		.write_complex_type_to_schema( xsd );
+}
 
 }  // namespace moves
 }  // namespace protocols

@@ -38,6 +38,7 @@ find_mover_or_die(
 
 /// @brief Searches <filters> for the named filter, returning it if it exists,
 /// otherwise halts execution with an error message.
+/// Now parses logic to create a CompoundFilter if string is more than one word.
 protocols::filters::FilterOP
 find_filter_or_die(
 	const std::string& filter_name,

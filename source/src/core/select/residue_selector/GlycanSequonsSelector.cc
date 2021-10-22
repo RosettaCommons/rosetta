@@ -76,6 +76,7 @@ GlycanSequonsSelector::parse_my_tag(
 {
 	NxST_ = tag->getOption< bool >("NxST", NxST_);
 	NxC_ = tag->getOption< bool >("NxC", NxC_);
+	NxV_ = tag->getOption< bool >("NxV", NxV_);
 	WxxW_ = tag->getOption< bool >("WxxW", WxxW_);
 	WSTxC_ = tag->getOption< bool >("WSTxC", WSTxC_);
 
@@ -83,7 +84,11 @@ GlycanSequonsSelector::parse_my_tag(
 	if ( NxST_ ) { ++nr_trues; }
 	if ( NxC_ ) {
 		++nr_trues;
-		regex_ = "N[A_Z]C";
+		regex_ = "N[A-Z]C";
+	}
+	if ( NxV_ ) {
+		++nr_trues;
+		regex_ = "N[A-Z]V";
 	}
 	if ( WxxW_ ) {
 		++nr_trues;
@@ -118,6 +123,7 @@ void GlycanSequonsSelector::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	AttributeList attributes;
 	attributes + XMLSchemaAttribute::attribute_w_default("NxST", xsct_rosetta_bool, "Use N-notP-S/T glycosylation motif", "true")
 		+ XMLSchemaAttribute::attribute_w_default("NxC", xsct_rosetta_bool, "Use N-X-C glycosylation motif", "false")
+		+ XMLSchemaAttribute::attribute_w_default("NxV", xsct_rosetta_bool, "Use N-X-V glycosylation motif", "false")
 		+ XMLSchemaAttribute::attribute_w_default("WxxW", xsct_rosetta_bool, "Use W-X-X-W mannosylation motif", "false")
 		+ XMLSchemaAttribute::attribute_w_default("WSTxC", xsct_rosetta_bool, "Use W-S/T-X-C mannosylation motif", "false");
 	core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Select residues that can be glycosylated, based on a known sequence motif. Default: N-(not P)-S/T", attributes );
@@ -148,6 +154,7 @@ core::select::residue_selector::GlycanSequonsSelector::save( Archive & arc ) con
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( CEREAL_NVP( NxST_) );
 	arc( CEREAL_NVP( NxC_) );
+	arc( CEREAL_NVP( NxV_) );
 	arc( CEREAL_NVP( WxxW_) );
 	arc( CEREAL_NVP( WSTxC_) );
 }
@@ -158,6 +165,7 @@ core::select::residue_selector::GlycanSequonsSelector::load( Archive & arc ) {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( NxST_);
 	arc( NxC_);
+	arc( NxV_);
 	arc( WxxW_);
 	arc( WSTxC_);
 }

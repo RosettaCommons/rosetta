@@ -193,7 +193,9 @@ SimpleMetricFilter::parse_my_tag(
 	set_simple_metric(metric);
 
 	std::map< std::string, comparison_type > types = get_string_comparison_type_map();
-	set_comparison_type( types[tag->getOption< std::string >("comparison_type")]);
+	if ( tag->hasOption("comparison_type") ) {
+		set_comparison_type( types[tag->getOption< std::string >("comparison_type")]);
+	}
 	set_epsilon( tag->getOption< core::Real >("epsilon", epsilon_));
 	set_cutoff( tag->getOption< core::Real >("cutoff", 0.0));
 
@@ -234,7 +236,7 @@ void SimpleMetricFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	utility::tag::add_schema_restrictions_for_strings( xsd, "comparison_types", types);
 
 
-	attlist + XMLSchemaAttribute("comparison_type", "comparison_types", "The comparison type.  IE not equal, equal, etc.  IF value [comparison_type] cutoff_ or match_ we return TRUE.  Example (RMSDMetric) cutoff=4.0, comparison_type=lt.  We return true if the RMSD is less than 4.0. Required. Choieces are: \n" + utility::to_string( types));
+	attlist + XMLSchemaAttribute("comparison_type", "comparison_types", "The comparison type.  IE not equal, equal, etc.  IF value [comparison_type] cutoff_ or match_ we return TRUE.  Example (RMSDMetric) cutoff=4.0, comparison_type=lt.  We return true if the RMSD is less than 4.0. Required. Choices are: \n" + utility::to_string( types));
 
 	attlist + XMLSchemaAttribute("composite_action", xs_string, "If you have a composite metric or PerResidueMetric this can be `any`, `all` or a specific composite value type (Rosetta ResNum for per-residue metric.");
 
@@ -276,33 +278,33 @@ SimpleMetricFilter::compare_metric(core::Real value) const {
 		throw CREATE_EXCEPTION(utility::excn::BadInput, "A comparison_type must be set.  ");
 
 	case ( eq ) :
-		TR << value << " eq " << cutoff_ <<" ? "<< std::endl;
+		TR << value << " eq " << cutoff_ <<" ? " <<  " for "<< metric_->get_final_sm_type() << std::endl;
 		if ( equal_by_epsilon(value,cutoff_,epsilon_) ) return true;
 		break;
 
 	case ( ne ) :
-		TR << value << " ne " << cutoff_ <<" ? "<< std::endl;
+		TR << value << " ne " << cutoff_ <<" ? " <<  " for "<< metric_->get_final_sm_type() << std::endl;
 		if ( ! (equal_by_epsilon(value,cutoff_,epsilon_) ) ) return true;
 		break;
 
 	case ( lt ) :
-		TR << value << " lt " << cutoff_ <<" ? "<< std::endl;
+		TR << value << " lt " << cutoff_ <<" ? " <<  " for "<< metric_->get_final_sm_type() << std::endl;
 		if ( value < cutoff_ ) return true;
 		break;
 
 	case ( gt ) :
-		TR << value << " gt " << cutoff_ <<" ? "<< std::endl;
+		TR << value << " gt " << cutoff_ <<" ? " <<  " for "<< metric_->get_final_sm_type() << std::endl;
 		if ( value > cutoff_ ) return true;
 		break;
 
 	case ( lt_or_eq ) :
-		TR << value << " lt_or_eq " << cutoff_ <<" ? "<< std::endl;
+		TR << value << " lt_or_eq " << cutoff_ <<" ? " <<  " for "<< metric_->get_final_sm_type() << std::endl;
 		if ( value < cutoff_ ) return true;
 		if ( equal_by_epsilon(value,cutoff_,epsilon_) ) return true;
 		break;
 
 	case ( gt_or_eq ) :
-		TR << value << " gt_or_eq " << cutoff_ <<" ? "<< std::endl;
+		TR << value << " gt_or_eq " << cutoff_ <<" ? " <<  " for "<< metric_->get_final_sm_type() << std::endl;
 		if ( value > cutoff_ ) return true;
 		if ( equal_by_epsilon(value,cutoff_,epsilon_) ) return true;
 		break;
@@ -325,12 +327,12 @@ SimpleMetricFilter::compare_metric( std::string const & value) const {
 		utility_exit_with_message("A comparison_type must be set.  ");
 
 	case ( eq ) :
-		TR << value << " eq " << match_ <<" ? "<< std::endl;
+		TR << value << " eq " << match_ <<" ? " <<  " for "<< metric_->get_final_sm_type()  << std::endl;
 		if ( value == match_ ) return true;
 		break;
 
 	case ( ne ) :
-		TR << value << " ne " << match_ <<" ? "<< std::endl;
+		TR << value << " ne " << match_ <<" ? " <<  " for "<< metric_->get_final_sm_type() << std::endl;
 		if ( value != match_  ) return true;
 		break;
 
@@ -351,7 +353,7 @@ bool SimpleMetricFilter::compare_composites( std::map<std::string, T > const & v
 	if ( composite_action_ == "any" ) {
 		for ( auto v_pair : values ) {
 			if ( compare_metric( v_pair.second) ) {
-				TR << v_pair.first << " passes set cutoff " << cutoff_ << std::endl;
+				TR << v_pair.first << " passes set cutoff " << cutoff_ <<  " for "<< metric_->get_final_sm_type() << std::endl;
 				return true;
 			}
 		}
@@ -359,7 +361,7 @@ bool SimpleMetricFilter::compare_composites( std::map<std::string, T > const & v
 	} else if ( composite_action_ == "all" ) {
 		for ( auto v_pair : values ) {
 			if ( !compare_metric( v_pair.second) ) {
-				TR << v_pair.first << " did not pass cutuff."<< cutoff_ <<  "Filtering. " << std::endl;
+				TR << v_pair.first << " did not pass cutuff. "<< cutoff_ <<  " for "<< metric_->get_final_sm_type() <<" Filtering. " << std::endl;
 				return false;
 			}
 		}
@@ -368,7 +370,7 @@ bool SimpleMetricFilter::compare_composites( std::map<std::string, T > const & v
 		for ( auto v_pair : values ) {
 			if ( v_pair.first == composite_action_ ) {
 				bool pass = compare_metric( v_pair.second );
-				TR << "metric type " << composite_action_ << " Pass? " << pass << std::endl;
+				TR << "metric type " << composite_action_ << " Pass? " << pass <<  " for "<< metric_->get_final_sm_type() << std::endl;
 				return pass;
 			}
 		}
@@ -395,7 +397,7 @@ bool SimpleMetricFilter::compare_composites( std::map<core::Size, T > const & va
 	if ( composite_action_ == "any" ) {
 		for ( auto const & v_pair : values ) {
 			if ( compare_metric( v_pair.second) ) {
-				TR << utility::to_string(v_pair.first) << " passes set cutoff " << cutoff_ << std::endl;
+				TR << utility::to_string(v_pair.first) << " passes set cutoff " << cutoff_ <<  " for "<< metric_->get_final_sm_type() << std::endl;
 				return true;
 			}
 		}
@@ -403,7 +405,7 @@ bool SimpleMetricFilter::compare_composites( std::map<core::Size, T > const & va
 	} else if ( composite_action_ == "all" ) {
 		for ( auto const & v_pair: values ) {
 			if ( !compare_metric( v_pair.second) ) {
-				TR << utility::to_string(v_pair.first) << " did not pass cutuff."<< cutoff_ <<  "Filtering. " << std::endl;
+				TR << utility::to_string(v_pair.first) << " did not pass cutuff."<< cutoff_ << " for "<< metric_->get_final_sm_type() << "Filtering. " << std::endl;
 				return false;
 			}
 		}
@@ -412,7 +414,7 @@ bool SimpleMetricFilter::compare_composites( std::map<core::Size, T > const & va
 		for ( auto const & v_pair : values ) {
 			if ( v_pair.first == composite_action_ ) {
 				bool pass = compare_metric( v_pair.second );
-				TR << "metric type " << composite_action_ << " Pass? " << pass << std::endl;
+				TR << "metric type " << composite_action_ << " Pass? " << pass <<  " for "<< metric_->get_final_sm_type() << std::endl;
 				return pass;
 			}
 		}

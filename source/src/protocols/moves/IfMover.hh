@@ -81,6 +81,7 @@ private:
 
 	/// @brief Invoked when filter evaluates to false
 	protocols::moves::MoverOP false_mover_;
+
 };
 
 } // moves

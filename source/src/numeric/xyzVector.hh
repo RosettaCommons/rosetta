@@ -432,7 +432,7 @@ public: // Methods
 	}
 
 	// #ifdef PYROSETTA
-	//  /// @brief *this + xyzVector, mostly for PyRosetta
+	//  /// @brief *this + xyzVector, mostly for PyRoInta
 	//  inline
 	//  xyzVector<T>
 	//  operator +( xyzVector<T> const & rhs) const

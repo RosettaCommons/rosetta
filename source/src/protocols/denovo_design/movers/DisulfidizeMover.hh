@@ -39,7 +39,7 @@ namespace denovo_design {
 class DisulfidizeMover : public protocols::rosetta_scripts::MultiplePoseMover {
 public:
 	typedef utility::vector1< std::pair< core::Size, core::Size > > DisulfideList;
-	typedef std::list< core::pose::PoseOP > PoseList;
+	typedef utility::vector1< std::pair< core::Real, core::pose::PoseOP >> PoseList;
 
 	/// @brief Default constructor
 	///
@@ -219,6 +219,10 @@ public: //mutators
 	/// @details Clones the input scorefunction; does not copy it.
 	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in );
 
+	///@brief Set the scorefunction to use for sorting the final results.
+	/// @details Clones the input scorefunction; does not copy it.
+	void set_sort_scorefxn( core::scoring::ScoreFunctionCOP sort_scorefxn );
+
 	/// @brief If true, GLY --> CYS mutations will be allowed. Default=false
 	void set_mutate_gly( bool const mutate_gly );
 
@@ -272,6 +276,7 @@ private:   // options
 	core::Size max_disulfides_ ;
 	bool include_current_ds_;
 	bool keep_current_ds_;
+	bool keep_all_ds_ = false; //ACTUALLy keep all disulfides even those outside of selection.
 	bool score_or_matchrt_;
 
 	/// @brief Can disulfides involve L-cystine?
@@ -302,7 +307,8 @@ private:   // other data
 	/// -- scoring disulfides
 	/// -- repacking/minimizing disulfides
 	/// @details Set by user, or obtained from globals if null.
-	core::scoring::ScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_ = nullptr;
+	core::scoring::ScoreFunctionCOP sort_sfxn_ = nullptr;
 
 };
 

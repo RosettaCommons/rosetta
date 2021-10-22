@@ -75,6 +75,7 @@ sources = {
 		"ReplicateFilter",
 		"TimeFilter",
 		"VectorPoseFilter",
+		"util",
 	],
 	"protocols/idealize": [
 		"idealize",

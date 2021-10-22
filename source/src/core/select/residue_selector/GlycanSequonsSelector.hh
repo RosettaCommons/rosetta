@@ -83,6 +83,7 @@ private:
 	// Known glycosylation motifs that can be chosen
 	bool NxST_ = true;
 	bool NxC_ = false;
+	bool NxV_ = false;
 	bool WxxW_ = false;
 	bool WSTxC_ = false;
 

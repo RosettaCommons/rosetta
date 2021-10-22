@@ -76,7 +76,8 @@ DeleteRegionMover::DeleteRegionMover( DeleteRegionMover const & src ):
 	cter_overhang_( src.cter_overhang_ ),
 	rechain_( src.rechain_ ),
 	add_terminal_types_on_rechain_( src.add_terminal_types_on_rechain_ ),
-	add_jump_on_rechain_( src.add_jump_on_rechain_ )
+	add_jump_on_rechain_( src.add_jump_on_rechain_ ),
+	detect_disulfides_( src.detect_disulfides_)
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 }
@@ -144,6 +145,8 @@ DeleteRegionMover::parse_my_tag(
 
 	nter_overhang_ = tag->getOption<core::Size>( "nter_overhang", nter_overhang_ );
 	cter_overhang_ = tag->getOption<core::Size>( "cter_overhang", cter_overhang_ );
+	detect_disulfides_ = tag->getOption< core::Size >("detect_disulfides", detect_disulfides_);
+
 	//std::cout << " N "<<nter_overhang_<< " C " << cter_overhang_<<std::endl;
 }
 
@@ -166,7 +169,7 @@ DeleteRegionMover::apply( core::pose::Pose& pose )
 		core::Size const del_start = nter_overhang_ >= range->start() ? 1 : range->start() - nter_overhang_;
 		core::Size const del_stop = range->stop() + cter_overhang_ > pose.size() ? pose.size() : range->stop() + cter_overhang_;
 
-		protocols::grafting::delete_region( pose, del_start, del_stop );
+		protocols::grafting::delete_region( pose, del_start, del_stop, detect_disulfides_ );
 
 		if ( rechain_ ) {
 			if ( add_terminal_types_on_rechain_ ) {
@@ -244,7 +247,8 @@ void DeleteRegionMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute( "start", xs_string, "First residue in region to delete (PDBNum (24A) or RosettaNum " )
 		+ XMLSchemaAttribute( "end", xs_string,  "Last residue in region to delete" )
 		+ XMLSchemaAttribute( "nter_overhang", xsct_non_negative_integer, "Number of additional residues to delete on the N terminal side" )
-		+ XMLSchemaAttribute( "cter_overhang", xsct_non_negative_integer, "Number of additional residues to delete on the C terminal side" );
+		+ XMLSchemaAttribute( "cter_overhang", xsct_non_negative_integer, "Number of additional residues to delete on the C terminal side" )
+		+ XMLSchemaAttribute::attribute_w_default( "detect_disulfides", xs_boolean, "Detect disulfides?  Pass false if you are designing disulfides.", "true");
 
 	//Define things to do with the residue selector
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector", "ResidueSelector with region(s) to delete" );

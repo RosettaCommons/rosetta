@@ -110,6 +110,8 @@ private:
 	bool rechain_;
 	bool add_terminal_types_on_rechain_;
 	bool add_jump_on_rechain_;
+	bool detect_disulfides_ = true;
+
 };
 
 

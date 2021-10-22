@@ -1109,6 +1109,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 	// main centroid generation loop
 	core::Real gdtmm = 0.0;
+	if ( stage2_scorefxn_ == nullptr ) {
+		utility_exit_with_message("Stage 2 Scorefxn must be set!!!");
+	}
+
 	while ( need_more_samples ) {
 		need_more_samples = false;
 

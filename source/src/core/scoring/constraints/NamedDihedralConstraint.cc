@@ -163,7 +163,7 @@ NamedDihedralConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, E
 	emap[ this->score_type() ] += DihedralConstraint::score(
 		xyz.residue( named_atom1_.rsd() ).xyz( named_atom1_.atom() ),
 		xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
-		xyz.residue( named_atom4_.rsd() ).xyz( named_atom4_.atom() ),
+		xyz.residue( named_atom3_.rsd() ).xyz( named_atom3_.atom() ),
 		xyz.residue( named_atom4_.rsd() ).xyz( named_atom4_.atom() ) );
 }
 
@@ -172,7 +172,7 @@ NamedDihedralConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const
 	return dihedral_radians(
 		xyz.residue( named_atom1_.rsd() ).xyz( named_atom1_.atom() ),
 		xyz.residue( named_atom2_.rsd() ).xyz( named_atom2_.atom() ),
-		xyz.residue( named_atom4_.rsd() ).xyz( named_atom4_.atom() ),
+		xyz.residue( named_atom3_.rsd() ).xyz( named_atom3_.atom() ),
 		xyz.residue( named_atom4_.rsd() ).xyz( named_atom4_.atom() )
 	);
 }

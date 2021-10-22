@@ -36,6 +36,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
+#include <utility/string_util.hh>
 #include <utility/graph/Graph.hh>
 
 // Numeric headers
@@ -87,14 +88,11 @@ InterfacePair find_jump_partners_within_CB_cutoff( core::pose::Pose const & pose
 	int jump_num );
 
 /// @brief the Cbeta vector(s) from on rsd to another
-numeric::xyzVector<core::Real> cbeta_vector( core::conformation::Residue & res);
+numeric::xyzVector<core::Real> cbeta_vector( core::conformation::Residue const & res);
 /// @brief the action coordinate for each residue
-numeric::xyzVector<core::Real> select_coord_for_residue(core::conformation::Residue & res);
+numeric::xyzVector<core::Real> select_coord_for_residue(core::conformation::Residue const & res);
 /// @brief out if res1 and res2 are pointing at eachother
-bool res1_pointed_at_res2( core::conformation::Residue & res1,
-	core::conformation::Residue & res2,
-	core::Real angle_cutoff /*degrees*/,
-	core::Real dist_cutoff);
+
 void fill_in_chain_terminii( core::pose::Pose const & pose, core::Size chain1, core::Size chain2 );
 
 
@@ -430,12 +428,12 @@ find_jump_partners_within_CB_cutoff( core::pose::Pose const & pose, core::Real b
 
 /// @details find the Cbeta vector(s) from one residue to another, returns the normalized vector needed
 numeric::xyzVector<core::Real>
-cbeta_vector( core::conformation::Residue & res){
+cbeta_vector( core::conformation::Residue const & res){
 	//std::string const atom_to_use( "CA" );
 	if ( ! res.has("CA") ) {
 		return numeric::xyzVector< core::Real> (0.0);
 	}
-	numeric::xyzVector< core::Real > CA_position( res.atom("CA").xyz() );
+	numeric::xyzVector< core::Real > const & CA_position( res.atom("CA").xyz() );
 	numeric::xyzVector< core::Real > CB_position( select_coord_for_residue( res ) );
 	//subtract CB position from CA position to get the right vector, then .normalize()
 	numeric::xyzVector< core::Real > cbvector( CB_position - CA_position );
@@ -445,7 +443,7 @@ cbeta_vector( core::conformation::Residue & res){
 /// @details selects the action position for a given residue
 /// Generally CB for everything but gly, and an imaginary CB position for gly.
 numeric::xyzVector<core::Real>
-select_coord_for_residue(core::conformation::Residue & res){
+select_coord_for_residue(core::conformation::Residue const & res){
 	using namespace numeric;
 	using namespace core;
 	//if there is a CB then use it
@@ -454,9 +452,9 @@ select_coord_for_residue(core::conformation::Residue & res){
 		//otherwise estimate where one would be.
 	} else if ( res.has("CA") && res.has("C") && res.has("N") ) {
 		//locations of other bb atoms
-		xyzVector< core::Real > CA_xyz ( res.atom("CA").xyz() );
-		xyzVector< core::Real >  C_xyz ( res.atom("C").xyz() );
-		xyzVector< core::Real >  N_xyz ( res.atom("N").xyz() );
+		xyzVector< core::Real > const & CA_xyz ( res.atom("CA").xyz() );
+		xyzVector< core::Real >  const & C_xyz ( res.atom("C").xyz() );
+		xyzVector< core::Real >  const & N_xyz ( res.atom("N").xyz() );
 		//   //figure out where CB would be
 		//   xyzVector< Real > v1( midpoint( C_xyz, N_xyz)  );
 		//   xyzVector< Real > v2( 2*CA_xzy - v1 ); //reflection of v1 about CA position
@@ -472,10 +470,10 @@ select_coord_for_residue(core::conformation::Residue & res){
 		//lets use alanine as the ideal here
 		chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		chemical::ResidueType const & restype= rts->name_map("ALA");//define ala
-		xyzVector< core::Real > idealN  =  (  restype.ideal_xyz( restype.atom_index("N" ) ) );
-		xyzVector< core::Real > idealCA =  (  restype.ideal_xyz( restype.atom_index("CA") ) );
-		xyzVector< core::Real > idealC  =  (  restype.ideal_xyz( restype.atom_index("C")  ) );
-		xyzVector< core::Real > idealCB  = (  restype.ideal_xyz( restype.atom_index("CB") ) );
+		xyzVector< core::Real > const & idealN  =  (  restype.ideal_xyz( restype.atom_index("N" ) ) );
+		xyzVector< core::Real > const & idealCA =  (  restype.ideal_xyz( restype.atom_index("CA") ) );
+		xyzVector< core::Real > const & idealC  =  (  restype.ideal_xyz( restype.atom_index("C")  ) );
+		xyzVector< core::Real > const & idealCB  = (  restype.ideal_xyz( restype.atom_index("CB") ) );
 		//now use the HT to map from ideal space to the current residue position
 		xyzVector< core::Real > ideal_halfpoint = 0.5 * ( idealN + idealC );
 		HTReal ideal_frame( idealN, ideal_halfpoint, idealCA );
@@ -491,10 +489,12 @@ select_coord_for_residue(core::conformation::Residue & res){
 
 /// @details figures out if res1 and res2 are pointing at eachother
 /// @details the angle is the max angle between the two residues, dist_cutoff is how far the coords are from eachother
-bool res1_pointed_at_res2( core::conformation::Residue & res1,
-	core::conformation::Residue & res2,
-	core::Real angle_cutoff /*degrees*/,
-	core::Real dist_cutoff ){
+bool res1_pointed_at_res2(
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	core::Real const angle_cutoff /*degrees*/,
+	core::Real const dist_cutoff ){
+
 	using namespace numeric;
 	bool is_pointed_at(false);
 	core::Real dist_squared(dist_cutoff * dist_cutoff);
@@ -508,7 +508,7 @@ bool res1_pointed_at_res2( core::conformation::Residue & res1,
 		//find the vector between residues, then calculate the dot product
 		xyzVector< core::Real > base_to_dest = (dest_position - base_position).normalize();
 		core::Real r1_dot_r2 = dot_product (res1_vector, base_to_dest);
-		core::Real costheta = std::cos( conversions::to_radians( angle_cutoff ) );
+		core::Real costheta = std::cos( conversions::radians( angle_cutoff ) );
 		// is projection larger than cos(theta)?
 		if ( r1_dot_r2 > costheta ) {
 			is_pointed_at = true;

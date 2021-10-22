@@ -190,6 +190,9 @@ public:
 	/// @brief get the DOF_IDs perturbed by the mover during moves, along with their ranges
 	utility::vector1<core::id::DOF_ID_Range> dof_id_ranges(core::pose::Pose & pose) override = 0;
 
+	///@brief Set to warn of an empty setup list. Default true.
+	void
+	set_warn_empty_list(bool warn_empty);
 
 protected:
 	/// @brief Set the ResidueSelector that this mover will use.
@@ -215,6 +218,8 @@ private:
 
 	// Number of positions at which to make moves.
 	core::Size nmoves_;
+	bool warn_empty_list_ = true; //Warn if we try an empty list.  Typically, this is OK but for some ways to use these we can't tell ahead of time if we have residues or not (ShearMover, glycans especially).
+
 
 protected:
 	// Max allowed angle-change as a function of ss type.

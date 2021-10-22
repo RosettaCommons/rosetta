@@ -227,10 +227,9 @@ void ScoreMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attlist;
 	attlist
 		//Doesn't use parse_score_function
-		+ XMLSchemaAttribute::required_attribute(
+		+ XMLSchemaAttribute(
 		"scorefxn", xs_string,
-		"Score function to use when scoring this pose. Must be previously defined in the DataMap. "
-		"Calls ScoreFunctionFactory with an empty string by default, which is either a good default or NULL" )
+		"Score function to use when scoring this pose. Must be previously defined in the DataMap. Otherwise, we use the default scorefunction.")
 		+ XMLSchemaAttribute(
 		"verbose", xsct_rosetta_bool,
 		"boolean controls a bunch of extra output - pose.energies.show() and something called a jd2:ScoreMap" );

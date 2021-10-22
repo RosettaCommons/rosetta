@@ -43,10 +43,13 @@
 //Basic Headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/stream_util.hh>
+
 
 // ObjexxFCL Headers
 // XSD XRW Includes
@@ -89,7 +92,8 @@ DisulfidizeMover::DisulfidizeMover() :
 	mutate_pro_( false ),
 	set1_selector_(),
 	set2_selector_(),
-	sfxn_()
+	sfxn_(),
+	sort_sfxn_()
 {
 	set_rosetta_scripts_tag( utility::pointer::make_shared< utility::tag::Tag >() );
 }
@@ -106,6 +110,7 @@ DisulfidizeMover::DisulfidizeMover( DisulfidizeMover const &src ) :
 	max_disulfides_( src.max_disulfides_ ),
 	include_current_ds_( src.include_current_ds_ ),
 	keep_current_ds_( src.keep_current_ds_ ),
+	keep_all_ds_( src.keep_all_ds_),
 	score_or_matchrt_( src.score_or_matchrt_ ),
 	allow_l_cys_( src.allow_l_cys_ ),
 	allow_d_cys_( src.allow_d_cys_ ),
@@ -114,10 +119,15 @@ DisulfidizeMover::DisulfidizeMover( DisulfidizeMover const &src ) :
 	mutate_pro_( src.mutate_pro_ ),
 	set1_selector_( src.set1_selector_ ), //Copies the const owning pointer -- points to same object!
 	set2_selector_( src.set2_selector_ ), //Copies the const owning pointer -- points to same object!
-	sfxn_() //Cloned below, if it exists.  NULL pointer is possible, too.
+	sfxn_(), //Cloned below, if it exists.  NULL pointer is possible, too.
+	sort_sfxn_()
 {
 	if ( src.sfxn_ ) {
 		sfxn_=src.sfxn_->clone(); //Copy the source scorefunction, if it exists.
+	}
+
+	if ( src.sort_sfxn_ ) {
+		sort_sfxn_=src.sort_sfxn_->clone(); //Copy the source scorefunction, if it exists.
 	}
 }
 
@@ -187,6 +197,13 @@ DisulfidizeMover::set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in )
 	return;
 }
 
+void
+DisulfidizeMover::set_sort_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in )
+{
+	sort_sfxn_ = sfxn_in->clone();
+	return;
+}
+
 /// @brief If true, GLY --> CYS mutations will be allowed. Default=false
 void
 DisulfidizeMover::set_mutate_gly( bool const mutate_gly )
@@ -250,11 +267,21 @@ DisulfidizeMover::parse_my_tag(
 	if ( tag->hasOption( "scorefxn" ) ) {
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	}
+	if ( tag->hasOption( "sort_scorefxn" ) ) {
+		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "sort_scorefxn" ) );
+	}
+
 	set_match_rt_limit( tag->getOption< core::Real >( "match_rt_limit", match_rt_limit_ ) );
+
+
+	keep_all_ds_ = tag->getOption< bool >( "keep_all_disulfides", keep_all_ds_ );
+
+
 	set_min_disulfides( tag->getOption< core::Size >( "min_disulfides", min_disulfides_ ) );
 	set_max_disulfides( tag->getOption< core::Size >( "max_disulfides", max_disulfides_ ) );
 	set_keep_current_ds( tag->getOption< bool >( "keep_current_disulfides", keep_current_ds_ ) );
 	set_include_current_ds( tag->getOption< bool >( "include_current_disulfides", include_current_ds_ ) );
+
 	set_min_loop( tag->getOption< core::Size >( "min_loop", min_loop_  ) );
 	set_max_disulf_score( tag->getOption< core::Real >( "max_disulf_score", max_disulf_score_ ) );
 	set_mutate_gly( tag->getOption< bool >( "mutate_gly", mutate_gly_ ) );
@@ -296,6 +323,7 @@ DisulfidizeMover::process_pose(
 	pose.fold_tree( remove_all_jump_atoms( pose.fold_tree() ) );
 
 	core::scoring::ScoreFunctionOP sfxn( sfxn_ ? sfxn_->clone() : core::scoring::get_score_function() );
+	//if (sort_sfxn_ == nullptr) sort_sfxn_ = sfxn;
 
 	// get two sets of residues which will be connected by disulfides
 	core::select::residue_selector::ResidueSubset subset1;
@@ -312,10 +340,17 @@ DisulfidizeMover::process_pose(
 	}
 
 	DisulfideList current_ds = find_current_disulfides( pose, subset1, subset2 );
+	if ( keep_all_ds_ ) {
+		utility::vector1< bool > true_sel(pose.size(), true);
+		current_ds = find_current_disulfides(pose, true_sel, true_sel);
+	}
+
 	if ( current_ds.size() > 0 ) { TR << "Current disulfides are: " << current_ds << std::endl; }
+
 	else { TR << "No disulfides were already present in the pose." << std::endl; }
 
-	if ( !keep_current_ds_ ) {
+	if ( !keep_current_ds_ && !keep_all_ds_ ) {
+		TR << "Mutating disulfides!" << std::endl;
 		mutate_disulfides_to_ala( pose, current_ds ); //Updated for D-cys, VKM 17 Aug 2015; updated for B3A, VKM 26 Nov 2016.
 	}
 
@@ -351,10 +386,12 @@ DisulfidizeMover::process_pose(
 	if ( TR.visible() ) TR << "disulfide_configurations=" << disulfide_configurations << std::endl;
 	PoseList results;
 	if ( min_disulfides_ == 0 ) {
-		results.push_back( pose.clone() );
+
+		results.push_back( std::make_pair( sort_sfxn_->score(pose), pose.clone()) );
 	}
 
 	// iterate over disulfide configurations
+	core::Real score = 0.0;
 	for ( utility::vector1< DisulfideList >::const_iterator ds_config = disulfide_configurations.begin();
 			ds_config != disulfide_configurations.end();
 			++ds_config ) {
@@ -372,7 +409,10 @@ DisulfidizeMover::process_pose(
 			core::pose::PoseOP disulf_copy_pose( pose.clone() );
 			make_disulfides( *disulf_copy_pose, *ds_config, false, sfxn ); //Should be D-residue compatible.
 			tag_disulfides( *disulf_copy_pose, *ds_config );
-			results.push_back( disulf_copy_pose );
+			if ( sort_sfxn_ != nullptr ) {
+				score = sort_sfxn_->score(*disulf_copy_pose);
+			}
+			results.push_back( std::make_pair( score, disulf_copy_pose) );
 		}
 	}
 
@@ -381,12 +421,21 @@ DisulfidizeMover::process_pose(
 		return false;
 	}
 
+	//Sort the results to have them actually make sense on return and make the best pose returned.
+	if ( sort_sfxn_ ) {
+		std::sort( results.begin(), results.end());
+	} else {
+		numeric::random::random_permutation( results.begin(), results.end(), numeric::random::rg() );
+	}
+
 	core::Size count = 1;
-	for ( PoseList::const_iterator p=results.begin(), endp=results.end(); p!=endp; ++p ) {
+	//core::Real score = 0.0;
+	for ( auto & score_pair : results ) {
+		TR << "Adding disulf pose " << score_pair.first << std::endl;
 		if ( count == 1 ) {
-			pose = **p;
+			pose = *score_pair.second;
 		} else {
-			additional_poses.push_back( *p );
+			additional_poses.push_back( score_pair.second);
 		}
 		++count;
 	}
@@ -847,6 +896,7 @@ DisulfidizeMover::check_disulfide_match_rt(
 	core::Energy match_r = 0.0;
 	core::Energy match_rt = 0.0;
 	disulfPot.score_disulfide( pose.residue(res1), pose.residue(res2), match_t, match_r, match_rt, mirror );
+	TR << "DISULF " << pose.residue(res1) << " " << pose.residue(res2) << std::endl;
 	if ( TR.visible() ) TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
 	bool const retval = ( match_rt <= match_rt_limit_  );
 	if ( !retval && TR.visible() ) {
@@ -901,6 +951,9 @@ void DisulfidizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	rosetta_scripts::attributes_for_parse_score_function(attlist);
 
+	rosetta_scripts::attributes_for_parse_score_function_w_description(attlist, "sort_scorefxn", "Scorefunction to use for sorting results if more than one disulfide set found.  If unset, will use a random shuffle of the results.");
+
+
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"match_rt_limit", xsct_real,
 		"distance in 6D-space (rotation/translation) which is allowed from native disulfides. "
@@ -918,10 +971,18 @@ void DisulfidizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"keep_current_disulfides", xsct_rosetta_bool,
-		"If true, all current disulfides are preserved. If false, existing disulfides containing "
+		"If true, all current disulfides are preserved.\n"
+		"  NOTE: THIS ONLY WORKS FOR DISULFIDES IN THE SELECTION.\n"
+		"  If false, existing disulfides containing "
 		"a CYS residue within either set1 or set2 are mutated to alanine. Disulfides with both CYS "
 		"residues outside of the union of the selected residue sets will not be affected. "
 		"False by default.",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"keep_all_disulfides", xsct_rosetta_bool,
+		"If true, all current disulfides are preserved regardless of selection.\n"
+		" This is the option you probably want.\n",
 		"false");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(

@@ -1,0 +1,37 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+		<TrueFalseFilter name="run_packer" bool="%%run_packer%%" />
+		<TrueFalseFilter name="run_min" bool="%%run_min%%" />
+		<CompoundStatement name="run_both" logic="run_packer and run_min"/>
+	</FILTERS>
+	<MOVERS>
+		<RunSimpleMetrics name="both">
+			<ProtocolSettingsMetric job_tag="both_have_run" get_user_options="0"/>
+		</RunSimpleMetrics>
+
+		<RunSimpleMetrics name="not_both">
+			<ProtocolSettingsMetric job_tag="not_both" get_user_options="0"/>
+		</RunSimpleMetrics>
+
+		<RunSimpleMetrics name="off">
+			<ProtocolSettingsMetric job_tag="both_off" get_user_options="0" custom_type="end_check"/>
+		</RunSimpleMetrics>
+
+		<If logic="If run_both : both else not_both" name="if_set_output_tags"/>
+		<If logic="If not run_both : off" name="check_off"/>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="if_set_output_tags"/>
+		<Add mover_name="check_off"/>
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

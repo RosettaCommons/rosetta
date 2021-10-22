@@ -70,7 +70,7 @@ using protocols::loops::Loops;
 using core::scoring::ScoreFunctionCOP;
 
 void
-delete_region(Pose & pose, core::Size const start, core::Size const end){
+delete_region(Pose & pose, core::Size const start, core::Size const end, bool detect_disulfides){
 	//Going to remove residues from pose. Resnum changes each time - so...
 	core::Size const num_residues(end-start+1);
 	TR << "Deleting "<< num_residues << " residues from " << start << " to "<< end << std::endl;
@@ -80,7 +80,9 @@ delete_region(Pose & pose, core::Size const start, core::Size const end){
 		return;
 	}
 	pose.delete_residue_range_slow(start, end);
-	pose.conformation().detect_disulfides();
+	if ( detect_disulfides ) {
+		pose.conformation().detect_disulfides();
+	}
 	//for (core::Size i = 1; i <= num_residues; ++i) {
 	//pose_.conformation().delete_polymer_residue(resnum);
 	//pose.conformation().delete_residue_slow(start);

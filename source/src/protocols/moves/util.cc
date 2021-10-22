@@ -18,11 +18,14 @@
 
 // Project headers
 #include <protocols/filters/Filter.hh>
+#include <protocols/filters/util.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {
@@ -44,10 +47,16 @@ protocols::filters::FilterOP find_filter_or_die(
 	const utility::tag::TagCOP,
 	const basic::datacache::DataMap & data
 ) {
+
+	filters::FilterOP filter =  filters::parse_filter_with_logic(filter_name, data);
+	return filter;
+
+	/*
 	if ( ! data.has( "filters", filter_name ) ) {
-		utility_exit_with_message(filter_name + " was not found in the list of availible Filters");
+	utility_exit_with_message(filter_name + " was not found in the list of availible Filters");
 	}
 	return data.get_ptr< protocols::filters::Filter >( "filters", filter_name );
+	*/
 }
 
 

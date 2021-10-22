@@ -51,6 +51,18 @@ xsd_type_definition_w_attributes_and_repeatable_subelements(
 	utility::tag::XMLSchemaSimpleSubelementList const & subelements
 );
 
+/// @brief Define the XML schema definition for a Mover that
+/// contains subtags
+/// attributes (aka options).
+void
+xsd_type_definition_w_attributes_and_single_subelement(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & mover_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes,
+	utility::tag::XMLSchemaSimpleSubelementList const & subelement
+);
+
 
 }  // namespace moves
 }  // namespace protocols

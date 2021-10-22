@@ -214,15 +214,76 @@ void SequenceMover::apply( core::pose::Pose & pose )
 
 std::string
 SequenceMover::get_name() const {
+	return mover_name();
+}
+
+std::string
+SequenceMover::mover_name() {
 	return "SequenceMover";
+}
+
+void
+SequenceMover::parse_my_tag( utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data
+) {
+	using namespace protocols::filters;
+
+	utility::vector1<std::string> mover_names( utility::string_split( tag->getOption< std::string >("movers"), ',') );
+
+	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
+		protocols::moves::MoverOP mover = find_mover_or_die(mover_names[i], tag, data);
+		add_mover( mover, 1.0 );
+	}
+	use_mover_status(tag->getOption< bool >("mover_status", use_mover_status_));
+}
+
+void
+SequenceMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	using namespace utility::tag;
+
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute(
+		"movers", xs_string,
+		"The movers tag takes a comma separated list of mover names" );
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"mover_status", xsct_rosetta_bool,
+		"Use MoverStatus while running. FAIL_RETRY will try the mover again. FAIL_DO_NOT_RETRY or FAIL_BAD_INPUT will exit.", "false");
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Apply a list of movers in order.", attlist );
+}
+
+std::string SequenceMoverCreator::keyname() const {
+	return SequenceMover::mover_name();
+}
+
+protocols::moves::MoverOP
+SequenceMoverCreator::create_mover() const {
+	return utility::pointer::make_shared< SequenceMover >();
+}
+
+void SequenceMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	SequenceMover::provide_xml_schema( xsd );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// Random Mover //////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+///@brief Set the repeats for all the movers.  Should be the same order that the movers have been added.
+/// Allows probabilistic repeats
+void
+RandomMover::set_repeats( utility::vector1< core::Size > const & repeats){
+	repeats_ = repeats;
+}
+
 void RandomMover::apply( core::pose::Pose & pose )
 {
+
+
 	Real weight_sum(0.0);
 	Size m;
 
@@ -250,7 +311,16 @@ void RandomMover::apply( core::pose::Pose & pose )
 			TR.Debug << "Applying " << movers_[m]->get_name() <<
 				" (Mover " << m+1 << " of " << movers_.size() << ")" << std::endl;
 		}
-		movers_[m]->apply( pose );
+
+		if ( repeats_.size() == movers_.size() ) {
+			for ( core::Size r = 1; r <= repeats_[m + 1]; ++r ) {
+				movers_[m]->apply( pose );
+			}
+		} else {
+			movers_[m]->apply( pose );
+		}
+
+
 		type( type() + movers_[m]->type());
 
 		set_last_move_status( movers_[m]->get_last_move_status() );
@@ -299,6 +369,7 @@ RandomMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) {
 	using namespace protocols::filters;
+	repeats_.clear();
 
 	utility::vector1<std::string> mover_names( utility::string_split( tag->getOption< std::string >("movers"), ',') );
 	utility::vector1<std::string> mover_weights;
@@ -306,9 +377,16 @@ RandomMover::parse_my_tag( utility::tag::TagCOP tag,
 		mover_weights = utility::string_split( tag->getOption< std::string >( "weights" ), ',');
 	}
 
+	if ( tag->hasOption ("mover_repeats") ) {
+		utility::vector1< std::string > reps = utility::string_split( tag->getOption< std::string >( "mover_repeats" ), ',');
+		for ( std::string const & s :reps ) {
+			repeats_.push_back(utility::string2Size(s));
+		}
+		runtime_assert(mover_names.size() == repeats_.size());
+	}
+
 	// make sure # movers matches # weights
 	runtime_assert( mover_weights.size() == 0 || mover_weights.size() == mover_names.size() );
-
 	nmoves_ = tag->getOption< core::Size >( "repeats",1 );
 
 	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
@@ -343,6 +421,10 @@ void RandomMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute(
 		"weights", xsct_real_cslist_w_ws,
 		"NO SPACES between commas and values! The weights tag takes a comma separate list of weights that sum to 1" );
+	attlist + XMLSchemaAttribute(
+		"mover_repeats", xsct_real_cslist_w_ws,
+		"Comma seperated list of repeats where we repeat the mover N times.  Allows probabilistic repetition." );
+
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"repeats", xsct_non_negative_integer,
 		"Number of times the movers are being applied XDW TO DO",
@@ -417,6 +499,7 @@ std::ostream &operator<< (std::ostream &os, MoverContainer const &mover)
 
 	return os;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// Switch Mover //////////////////////////////////////////////

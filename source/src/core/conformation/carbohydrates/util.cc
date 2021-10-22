@@ -677,11 +677,13 @@ get_non_NU_TorsionID_from_AtomIDs( Conformation const & conf, utility::vector1< 
 		}
 	}
 
+	//JAB - This function get_glycosidic_TorsionIDs is dependant on this and should not error every time it goes to find
+	// glycan residues.
 	if ( ! torsionnum ) {
-		TR.Error << "get_non_NU_TorsionID_from_AtomIDs() could not determine the BB id for the";
-		TR.Error << "TorsionID defined by these atoms:";
-		TR.Error << upstream_bond_atom_parent << "; " << upstream_bond_atom << "; ";
-		TR.Error << downstream_bond_atom << "; " << downstream_bond_atom_child << endl <<endl;
+		TR.Debug << "get_non_NU_TorsionID_from_AtomIDs() could not determine the BB id for the";
+		TR.Debug << "TorsionID defined by these atoms:";
+		TR.Debug << upstream_bond_atom_parent << "; " << upstream_bond_atom << "; ";
+		TR.Debug << downstream_bond_atom << "; " << downstream_bond_atom_child << endl <<endl;
 
 		//TR.Error << conf.residue_type( upstream_bond_atom_parent.rsd() ).atom_type( upstream_bond_atom_parent.atomno()) << std::endl;
 		//TR.Error << conf.residue_type( upstream_bond_atom.rsd() ).atom_type( upstream_bond_atom.atomno()) << std::endl;

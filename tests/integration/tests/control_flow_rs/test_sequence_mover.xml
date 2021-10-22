@@ -1,0 +1,30 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="I1" resnums="1"/>
+		<Index name="I2" resnums="2"/>
+		<Index name="I3" resnums="3"/>
+		<Index name="I4" resnums="4"/>
+	</RESIDUE_SELECTORS>
+
+	<FILTERS>
+	</FILTERS>
+
+	<MOVERS>
+
+		<MutateResidue name="one" residue_selector="I1" new_res="VAL"/>
+		<MutateResidue name="two" residue_selector="I2" new_res="VAL"/>
+		<MutateResidue name="three" residue_selector="I3" new_res="VAL"/>
+		<MutateResidue name="four" residue_selector="I4" new_res="VAL"/>
+
+		<SequenceMover name="run_sequence" movers="two,three,four"/>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="run_sequence"/>
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

@@ -17,12 +17,15 @@
 
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
 
 #include <utility/sys_util.hh>
+#include <utility/string_util.hh>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -62,7 +65,16 @@ DumpPdb::DumpPdb( std::string const & fname ) :
 DumpPdb::~DumpPdb() = default;
 
 void DumpPdb::apply( core::pose::Pose & pose ) {
+
 	std::string name( fname_ );
+	if ( pose.pdb_info() && pose.pdb_info()->name() != "" ) {
+		name = utility::pathname(name)+"/"+utility::filename(name)+ "_"+utility::filename(pose.pdb_info()->name());
+	}
+
+	if ( !dir_.empty() ) {
+		name = dir_+"/"+name;
+	}
+
 	if ( addtime_ ) {
 #ifdef USEMPI
 		name += "_" + utility::to_string(utility::mpi_rank());
@@ -96,6 +108,9 @@ DumpPdb::parse_my_tag(
 		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	}
 
+	if ( tag->hasOption("dir") ) {
+		dir_ = tag->getOption< std::string >("dir");
+	}
 	tag_time( tag->getOption<bool>( "tag_time", false ) );
 	TR.Warning << "DEFINED DUMP_PDB MOVER. THIS IS USUALLY ONLY GOOD FOR DEBUGGING." << std::endl;
 	TR << "dump_pdb mover with filename "<<fname_<<std::endl;
@@ -114,9 +129,10 @@ void DumpPdb::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::attribute_w_default( "fname" , xs_string , "Filename of dumped PDB." , "dump.pdb" )
-		+ XMLSchemaAttribute::attribute_w_default( "tag_time" , xsct_rosetta_bool , "If true, adds timestamp to name of pdb file." , "false" ) ;
 
+	attlist + XMLSchemaAttribute::attribute_w_default( "fname" , xs_string , "Filename of dumped PDB.  If PDBInfo is present, we will also append the pdb name." , "dump.pdb" )
+		+ XMLSchemaAttribute::attribute_w_default( "tag_time" , xsct_rosetta_bool , "If true, adds timestamp to name of pdb file." , "false" )
+		+ XMLSchemaAttribute( "dir" , xs_string , "Any directory to give.  Will use this and fname as the final name. " ) ;
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist) ;
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Dumps a pdb. Recommended ONLY for debugging as you can't change the name of the file during a run, although if tag_time is true a timestamp with second resolution will be added to the filename, allowing for a limited amount of multi-dumping. If scorefxn is specified, a scored pdb will be dumped.", attlist );

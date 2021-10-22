@@ -41,6 +41,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+#include <protocols/filters/util.hh>
 
 //// C++ headers
 static basic::Tracer TR( "protocols.filters.Filter" );
@@ -66,6 +67,30 @@ FalseFilter::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &
 ) {} // No configuration needed
+
+void
+TrueFalseFilter::parse_my_tag(
+	TagCOP tag,
+	basic::datacache::DataMap &
+){
+	set_action(tag->getOption< bool >( "bool" ));
+	TR << "Action set to " << action_ << std::endl;
+}
+
+void
+TrueFalseFilter::set_action(bool action){
+	action_ = action;
+}
+
+void
+TrueFalseFilter::provide_xml_schema(utility::tag::XMLSchemaDefinition & xsd){
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	attlist + XMLSchemaAttribute::required_attribute("bool", xs_boolean, "What should this filter return? Use this to control flow.");
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filter that returns true or false according to an option.  Useful for script_vars to control flow of a protocol.", attlist );
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -343,28 +368,32 @@ CompoundFilter::parse_my_tag(
 	TR<<"CompoundStatement"<<std::endl;
 	invert_ = tag->getOption<bool>( "invert", false );
 
-	for ( TagCOP cmp_tag_ptr : tag->getTags() ) {
-		std::string const operation( cmp_tag_ptr->getName() );
-		std::pair< FilterOP, boolean_operations > filter_pair;
-		if ( operation == "AND" ) filter_pair.second = AND;
-		else if ( operation == "OR" ) filter_pair.second = OR;
-		else if ( operation == "XOR" ) filter_pair.second = XOR;
-		else if ( operation == "NOR" ) filter_pair.second = NOR;
-		else if ( operation == "NAND" ) filter_pair.second = NAND;
-		else if ( operation == "ORNOT" ) filter_pair.second = ORNOT;
-		else if ( operation == "ANDNOT" ) filter_pair.second = ANDNOT;
-		else if ( operation == "NOT" ) filter_pair.second = NOT;
-		else {
-			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: Boolean operation in tag is undefined." );
-		}
-		std::string const filter_name( cmp_tag_ptr->getOption<std::string>( "filter_name" ) );
-		protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
+	if ( tag->hasOption("logic") ) {
+		compound_statement_ = create_compound_statement_from_logic(tag->getOption< std::string >("logic"), data);
+	} else {
+		for ( TagCOP cmp_tag_ptr : tag->getTags() ) {
+			std::string const operation( cmp_tag_ptr->getName() );
+			std::pair< FilterOP, boolean_operations > filter_pair;
+			if ( operation == "AND" ) filter_pair.second = AND;
+			else if ( operation == "OR" ) filter_pair.second = OR;
+			else if ( operation == "XOR" ) filter_pair.second = XOR;
+			else if ( operation == "NOR" ) filter_pair.second = NOR;
+			else if ( operation == "NAND" ) filter_pair.second = NAND;
+			else if ( operation == "ORNOT" ) filter_pair.second = ORNOT;
+			else if ( operation == "ANDNOT" ) filter_pair.second = ANDNOT;
+			else if ( operation == "NOT" ) filter_pair.second = NOT;
+			else {
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: Boolean operation in tag is undefined." );
+			}
+			std::string const filter_name( cmp_tag_ptr->getOption<std::string>( "filter_name" ) );
+			protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
 
-		if ( ! filter ) {
-			utility_exit_with_message("CompoundStatement could not find the filter " + filter_name + " in the list of availible filters.");
+			if ( ! filter ) {
+				utility_exit_with_message("CompoundStatement could not find the filter " + filter_name + " in the list of availible filters.");
+			}
+			filter_pair.first = filter->clone();
+			compound_statement_.push_back( filter_pair );
 		}
-		filter_pair.first = filter->clone();
-		compound_statement_.push_back( filter_pair );
 	}
 }
 
@@ -758,7 +787,27 @@ void FalseFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	FalseFilter::provide_xml_schema( xsd );
 }
 
+FilterOP
+TrueFalseFilterCreator::create_filter() const { return utility::pointer::make_shared< TrueFalseFilter >(); }
 
+std::string
+TrueFalseFilterCreator::keyname() const { return "TrueFalseFilter"; }
+
+void
+TrueFalseFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	TrueFalseFilter::provide_xml_schema( xsd );
+}
+
+std::string
+TrueFalseFilter::name() const {
+	return class_name();
+}
+
+std::string
+TrueFalseFilter::class_name() {
+	return "TrueFalseFilter";
+}
 
 
 std::string StochasticFilter::name() const {
@@ -809,6 +858,7 @@ void CompoundFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
+		+ XMLSchemaAttribute("logic", xs_string, "Logic string to use INSTEAD of subelements. All subelements are available. Caps are not needed.  First filter is implicitly AND unless otherwise given.")
 		+ XMLSchemaAttribute::attribute_w_default( "invert", xsct_rosetta_bool, "XRW TO DO", "false" );
 	AttributeList subelement_attlist;
 	subelement_attlist

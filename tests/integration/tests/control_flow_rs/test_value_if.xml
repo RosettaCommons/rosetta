@@ -1,0 +1,32 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<RunSimpleMetrics name="both">
+			<ProtocolSettingsMetric job_tag="both_have_run" get_user_options="0"/>
+		</RunSimpleMetrics>
+
+		<RunSimpleMetrics name="not_both">
+			<ProtocolSettingsMetric job_tag="not_both" get_user_options="0"/>
+		</RunSimpleMetrics>
+
+		<RunSimpleMetrics name="off">
+			<ProtocolSettingsMetric job_tag="both_off" get_user_options="0" custom_type="end_check"/>
+		</RunSimpleMetrics>
+
+		<If value="%%run_both%%" true_mover_name="both" false_mover_name="not_both" name="if_set_output_tags"/>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover_name="if_set_output_tags"/>
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

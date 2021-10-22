@@ -381,6 +381,7 @@ static MoverRegistrator< motif_grafting::movers::MotifGraftCreator> reg_MotifGra
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
 static MoverRegistrator< moves::RandomMoverCreator > reg_RandomMoverCreator;
+static MoverRegistrator< moves::SequenceMoverCreator >reg_SequenceMoverCreator;
 static MoverRegistrator< moves::SwitchMoverCreator > reg_SwitchMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
 static MoverRegistrator< moves::PyMOLMoverCreator > reg_PyMOLMoverCreator;

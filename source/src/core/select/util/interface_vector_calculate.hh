@@ -16,6 +16,7 @@
 
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 #include <set>
 
@@ -73,6 +74,15 @@ calc_interacting_vector(
 	core::Real const vector_angle_cutoff,
 	core::Real const vector_dist_cutoff
 );
+
+/// @details figures out if res1 and res2 are pointing at eachother
+/// @details the angle is the max angle between the two residues, dist_cutoff is how far the coords are from eachother
+bool
+res1_pointed_at_res2(
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	core::Real const angle_cutoff /*degrees*/,
+	core::Real const dist_cutoff );
 
 }//end namespace util
 }//end namespace select

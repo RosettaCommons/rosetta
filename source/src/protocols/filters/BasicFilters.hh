@@ -88,6 +88,41 @@ public:
 
 };
 
+///@brief A filter that can be set to either return true or false - useful in RS.
+class TrueFalseFilter : public Filter {
+public:
+	TrueFalseFilter() : Filter( "TrueFalseFilter" ) {}
+	bool apply( core::pose::Pose const & ) const override { return action_; }
+	FilterOP clone() const override { return utility::pointer::make_shared< TrueFalseFilter >(*this); }
+	FilterOP fresh_instance() const override { return utility::pointer::make_shared< TrueFalseFilter >(); }
+
+	std::string
+	name() const override;
+
+	///@brief Set the action that this filter will return.
+	void
+	set_action( bool action );
+
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &
+	) override;
+
+	static
+	std::string
+	class_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+private:
+	bool action_ = true;
+
+};
+
+
+
 class StochasticFilter : public Filter {
 
 public:

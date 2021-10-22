@@ -207,6 +207,11 @@ BackboneMover::parse_my_tag(
 }
 
 void
+BackboneMover::set_warn_empty_list(bool warn_empty){
+	warn_empty_list_ = warn_empty;
+}
+
+void
 BackboneMover::apply( core::pose::Pose & pose )
 {
 	using namespace std;
@@ -217,7 +222,10 @@ BackboneMover::apply( core::pose::Pose & pose )
 	setup_list( pose );
 
 	if ( move_pos_list_.empty() ) {
-		TR.Warning << "no movable positions in " << type() << "!" << endl;
+
+		if ( warn_empty_list_ ) {
+			TR.Warning << "no movable positions in " << type() << "!" << endl;
+		}
 		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
 		return;
 	}

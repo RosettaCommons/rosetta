@@ -26,6 +26,7 @@ namespace filters {
 // Forward
 class TrueFilter;
 class FalseFilter;
+class TrueFalseFilter;
 class StochasticFilter;
 class CompoundFilter;
 class CombinedFilter;
@@ -38,6 +39,9 @@ typedef utility::pointer::shared_ptr< TrueFilter const >  TrueFilterCOP;
 
 typedef utility::pointer::shared_ptr< FalseFilter > FalseFilterOP;
 typedef utility::pointer::shared_ptr< FalseFilter const >  FalseFilterCOP;
+
+typedef utility::pointer::shared_ptr< TrueFalseFilter > TrueFalseFilterOP;
+typedef utility::pointer::shared_ptr< TrueFalseFilter const >  TrueFalseFilterCOP;
 
 typedef utility::pointer::shared_ptr< StochasticFilter > StochasticFilterOP;
 typedef utility::pointer::shared_ptr< StochasticFilter const >  StochasticFilterCOP;
@@ -65,6 +69,7 @@ enum boolean_operations {
 	ANDNOT,
 	NOT
 };
+
 
 
 } // namespace protocols

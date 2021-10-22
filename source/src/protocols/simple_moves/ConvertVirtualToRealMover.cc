@@ -19,6 +19,7 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
 // Basic/Utility headers
@@ -174,7 +175,11 @@ ConvertVirtualToRealMover::apply( core::pose::Pose & pose)
 	/// Go through the subset list and switch to a full atom residue type if subset[i]=1
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		if ( !subset[i] ) continue; //Skip residues masked by the ResidueSelector.
-		pose.virtual_to_real( i );
+
+		//Only convert if it is already a virtual residue.
+		if ( pose.residue_type(i).is_virtual_residue() ) {
+			pose.virtual_to_real( i );
+		}
 	}
 
 }

@@ -19,6 +19,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
+#include <protocols/filters/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
@@ -44,7 +45,7 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
-
+#include <protocols/filters/util.hh>
 #include <protocols/jd2/util.hh> // For hacky compatibility purposes only!!
 
 // Basic Headers
@@ -507,18 +508,27 @@ append_subelement_for_parse_movemap_factory_legacy(
 
 protocols::filters::FilterOP
 parse_filter( std::string const & filter_name, basic::datacache::DataMap const & data ){
-	if ( ! data.has( "filters", filter_name ) ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
+
+	try{
+		filters::FilterOP filter = filters::parse_filter_with_logic(filter_name, data);
+		return filter;
 	}
-	return data.get_ptr< protocols::filters::Filter >( "filters", filter_name );
+catch (utility::excn::Exception const & e){
+	throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
+}
 }
 
 protocols::filters::FilterOP
 parse_filter_or_null( std::string const & filter_name, basic::datacache::DataMap const & data ){
-	if ( ! data.has( "filters", filter_name ) ) {
-		return nullptr;
+
+	try{
+		filters::FilterOP filter = filters::parse_filter_with_logic(filter_name, data);
+		return filter;
 	}
-	return data.get_ptr< protocols::filters::Filter >( "filters", filter_name );
+catch (utility::excn::Exception const & e){
+	TR << e.msg() << std::endl;
+	return nullptr;
+}
 }
 
 

@@ -86,6 +86,27 @@ max( vector1< T > const & input )
 	return largest_so_far;
 }
 
+/// @brief Find the second largest value in a vector
+///
+/// class T must provide an operator < ()  and operator = ().
+/// Error if input.size() == 0
+template < class T >
+T
+max2( vector1< T > const & input )
+{
+	debug_assert( input.size() > 0 );
+
+	T largest_so_far = input[ 1 ];
+	T last = largest_so_far;
+	for ( typename vector1< T >::Size ii = 2; ii <= input.size(); ++ii ) {
+		if ( largest_so_far < input[ ii ] ) {
+			last = largest_so_far;
+			largest_so_far = input[ ii ];
+		}
+	}
+	return last;
+}
+
 /// @brief Find the smallest value in a vector
 ///
 /// class T must provide an operator < ()  and operator = ().
@@ -101,6 +122,28 @@ min( vector1< T > const & input )
 		if ( input[ ii ] < smallest_so_far ) smallest_so_far = input[ ii ];
 	}
 	return smallest_so_far;
+}
+
+/// @brief Find the SECOND smallest value in a vector
+///
+/// class T must provide an operator < ()  and operator = ().
+/// Error if input.size() == 0
+
+template < class T >
+T
+min2( vector1< T > const & input )
+{
+	debug_assert( input.size() > 0 );
+
+	T smallest_so_far = input[ 1 ];
+	T last = smallest_so_far;
+	for ( typename vector1< T >::Size ii = 2; ii <= input.size(); ++ii ) {
+		if ( input[ ii ] < smallest_so_far ) {
+			last = smallest_so_far;
+			smallest_so_far = input[ ii ];
+		}
+	}
+	return last;
 }
 
 /// @brief find the index of the largest value in a vector
