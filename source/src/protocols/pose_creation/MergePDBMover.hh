@@ -101,7 +101,6 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-
 private:
 	utility::vector1<MergePDBMover::Overlap> overlaps_;
 	core::pose::PoseOP xml_input_pose_;
@@ -126,6 +125,8 @@ private:
 	bool output_overlap_positions_;
 	bool do_design_;
 	core::Real clash_threshold_;
+	core::select::residue_selector::ResidueSelectorCOP selector_cmd_;
+	core::select::residue_selector::ResidueSelectorCOP selector_xml_;
 };
 
 } // pose_creation

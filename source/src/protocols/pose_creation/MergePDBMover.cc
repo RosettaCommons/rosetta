@@ -115,9 +115,36 @@ void MergePDBMover::determine_overlap(Pose const pose,core::Size chain_id){
 	utility::vector1<core::Size> res_in_chain = get_resnums_for_chain_id(pose,chain_id);
 	core::Size start_res_chain = res_in_chain[1];
 	core::Size end_res_chain = chain_end_res(pose,chain_id);
+
 	using namespace core::scoring;
 	//C-TERM
 	if ( overlap_location_pose_== "c_term" ) {
+		TR.Debug << "overlap_location_pose_: " << overlap_location_pose_ << std::endl;
+
+		//check for residue_selector
+		if ( !overlap_scan_range_cmdLine_ ) {
+			TR << "selector_cmd exists; overlap_scan_range_cmdLine ignored." << std::endl;
+			core::select::residue_selector::ResidueSubset selection_cmd = selector_cmd_->apply(pose);
+			core::Size cmd_first = core::select::residue_selector::selection_positions(selection_cmd).front();
+			core::Size cmd_last = selection_cmd.size();
+			overlap_scan_range_cmdLine_ = cmd_last-cmd_first+1;
+			//TR.Debug << "selection_cmd: " << selection_cmd << std::endl;
+			//TR.Debug << "selection_positions(selection_cmd): " << core::select::residue_selector::selection_positions(selection_cmd) << std::endl;
+			//TR.Debug << "selection_positions(selection_cmd).front(): " << core::select::residue_selector::selection_positions(selection_cmd).front() << std::endl;
+			//TR.Debug << "selection_cmd.size(): " << selection_cmd.size() << std::endl;
+			TR << "*NEW* overlap_scan_range_cmdLine_: " << overlap_scan_range_cmdLine_ << std::endl;
+		}
+
+		if ( !overlap_scan_range_xml_ ) {
+			TR << "selector_xml exists; overlap_scan_range_xml ignored." << std::endl;
+			core::select::residue_selector::ResidueSubset selection_xml = selector_xml_->apply(*xml_input_pose_);
+			overlap_scan_range_xml_ = core::select::residue_selector::selection_positions(selection_xml).back();
+			//TR.Debug << "selection_xml: " << selection_xml << std::endl;
+			//TR.Debug << "selection_positions(selection_xml): " << core::select::residue_selector::selection_positions(selection_xml) << std::endl;
+			//TR.Debug << "selection_positions(selection_xml).back(): " << core::select::residue_selector::selection_positions(selection_xml).back() << std::endl;
+			TR << "*NEW* overlap_scan_range_xml_: " << overlap_scan_range_xml_ << std::endl;
+		}
+
 		core::Size initial_start_xmlPose=1;
 		core::Size initial_start_pose=end_res_chain-overlap_length_+1;
 		core::Size initial_end_pose=end_res_chain;
@@ -150,6 +177,32 @@ void MergePDBMover::determine_overlap(Pose const pose,core::Size chain_id){
 	}
 	//N-TERM
 	if ( overlap_location_pose_== "n_term" ) {
+		TR.Debug << "overlap_location_pose_: " << overlap_location_pose_ << std::endl;
+
+		//check for residue_selector
+		if ( !overlap_scan_range_cmdLine_ ) {
+			TR << "selector_cmd exists; overlap_scan_range_cmdLine ignored." << std::endl;
+			core::select::residue_selector::ResidueSubset selection_cmd = selector_cmd_->apply(pose);
+			overlap_scan_range_cmdLine_ = core::select::residue_selector::selection_positions(selection_cmd).back();
+			//TR.Debug << "selection_cmd: " << selection_cmd << std::endl;
+			//TR.Debug << "selection_positions(selection_cmd): " << core::select::residue_selector::selection_positions(selection_cmd) << std::endl;
+			//TR.Debug << "selection_positions(selection_cmd).back(): " << core::select::residue_selector::selection_positions(selection_cmd).back() << std::endl;
+			TR << "*NEW* overlap_scan_range_cmdLine_: " << overlap_scan_range_cmdLine_ << std::endl;
+		}
+
+		if ( !overlap_scan_range_xml_ ) {
+			TR << "selector_xml exists; overlap_scan_range_xml ignored." << std::endl;
+			core::select::residue_selector::ResidueSubset selection_xml = selector_xml_->apply(*xml_input_pose_);
+			core::Size xml_first = core::select::residue_selector::selection_positions(selection_xml).front();
+			core::Size xml_last = selection_xml.size();
+			overlap_scan_range_xml_ = xml_last-xml_first+1;
+			//TR.Debug << "selection_xml: " << selection_xml << std::endl;
+			//TR.Debug << "selection_positions(selection_xml): " << core::select::residue_selector::selection_positions(selection_xml) << std::endl;
+			//TR.Debug << "selection_positions(selection_xml).front(): " << core::select::residue_selector::selection_positions(selection_xml).front() << std::endl;
+			//TR.Debug << "selection_xml.size(): " << selection_xml.size() << std::endl;
+			TR << "*NEW* overlap_scan_range_xml_: " << overlap_scan_range_xml_ << std::endl;
+		}
+
 		core::Size initial_start_xmlPose=xml_input_pose_->total_residue()-overlap_length_+1;
 		core::Size initial_start_pose=start_res_chain;
 		core::Size initial_end_pose=start_res_chain+overlap_length_-1;
@@ -955,6 +1008,20 @@ void MergePDBMover::parse_my_tag(
 		task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >();
 	}
 
+	//setup selectors
+	std::string const selector_cmd_name = tag->getOption< std::string >( "residue_selector_cmd_pose", "" );
+	if ( !selector_cmd_name.empty() ) {
+		selector_cmd_ = core::select::residue_selector::get_residue_selector( selector_cmd_name, data );
+		TR << "selector_cmd_name: " << selector_cmd_name << "; overlap_scan_range_cmdLine ignored." << std::endl;
+		overlap_scan_range_cmdLine_ = 0;
+	}
+
+	std::string const selector_xml_name = tag->getOption< std::string >( "residue_selector_xml_pose", "" );
+	if ( !selector_xml_name.empty() ) {
+		selector_xml_ = core::select::residue_selector::get_residue_selector( selector_xml_name, data );
+		TR << "selector_xml_name: " << selector_xml_name << "; overlap_scan_range_xml ignored." << std::endl;
+		overlap_scan_range_xml_ = 0;
+	}
 }
 
 std::string MergePDBMover::get_name() const {
@@ -1003,7 +1070,9 @@ void MergePDBMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		+ XMLSchemaAttribute::attribute_w_default( "output_only_first", xsct_rosetta_bool, "only does minimization on the first overlap and outputs", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "output_overlap_positions", xsct_rosetta_bool, "outputs overlap positions", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "do_design", xsct_rosetta_bool, "Perform design on sequence", "true" )
-		+ XMLSchemaAttribute::attribute_w_default( "clash_threshold", xsct_real, "score0 clash threshold", "10" );
+		+ XMLSchemaAttribute::attribute_w_default( "clash_threshold", xsct_real, "score0 clash threshold", "10" )
+		+ XMLSchemaAttribute( "residue_selector_cmd_pose" , xs_string , "Use residue_selector to determine how far to scan the cmdLine input pose" )
+		+ XMLSchemaAttribute( "residue_selector_xml_pose" , xs_string , "Use residue_selector to determine how far to scan the xml input pose" );
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Align + combine parts of the pdb", attlist );
 }
