@@ -935,7 +935,7 @@ GenericBondedPotential::modify_torsion_params_from_cmd_line() {
 			<< "fa_standard" << ' ' << tags[2] << " " << tags[3] << " " << tags[4] << " " << tags[5] << " " << tags[6]
 			<< " k=" << k1 << '/' << k2 << '/' << k3 << '/' << k4
 			<< " f=" << f1 << '/' << f2 << '/' << f3 << '/' << f4
-			<<" offset=" << offset << endl;
+			<< " offset=" << offset << endl;
 	}// end for
 }
 

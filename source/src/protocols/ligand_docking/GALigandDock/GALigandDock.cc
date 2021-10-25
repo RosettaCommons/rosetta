@@ -355,6 +355,7 @@ GALigandDock::apply( pose::Pose & pose )
 			std::chrono::duration<double> diff = end-start;
 			TR << "GALigand Dock took " << (diff).count() << " seconds." << std::endl;
 		}
+		pose = *remaining_outputs_.pop();
 
 	} else {
 		core::pose::PoseOP pose_working( new core::pose::Pose( pose ) );
@@ -829,7 +830,8 @@ GALigandDock::calculate_free_ligand_score(
 		( new protocols::minimization_packing::MinMover( mm, scfxn_ligmin, "linmin", 0.01, true ) );
 	min_mover->max_iter( 30 );
 	min_mover->apply( *pose );
-
+	//turn off coordinate constraint in the actual scoring
+	scfxn_relax_->set_weight( core::scoring::coordinate_constraint, 0.0 );
 	Real ligandscore = scfxn_relax_->score( *pose );
 
 	return ligandscore;
