@@ -68,7 +68,7 @@ class LoggingTest(unittest.TestCase):
             # NOTE: On some platforms there are binary characters - the CircleCI server does not. This fails on
             #       our AWS server but succeeds on CircleCI
             self.assertIn(
-                "INFO:rosetta:core.scoring.etable: {0} smooth_etable: changing atr/rep split to bottom of energy well",
+                "INFO:rosetta:core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well",
                 cm.output,
                 msg="rosetta logs not going to logger",
             )
