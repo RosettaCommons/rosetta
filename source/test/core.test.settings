@@ -171,6 +171,9 @@ sources = {
 		"MoveMap",
 		"util",
 	],
+	"kinematics/inverse" : [
+		"jump",
+	],
 	"membrane" : [
 		"hull",
 	],

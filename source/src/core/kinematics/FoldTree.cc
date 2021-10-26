@@ -2038,6 +2038,7 @@ FoldTree::partition_by_jump( Size const jump_nr ) const {
 
 	//silly conversion. There may be a faster way to do this actually.
 	utility::vector1< bool > partition_definition_vector1;
+	partition_definition_vector1.reserve( nres_ );
 	for ( Size n = 1; n <= nres_; n++ ) partition_definition_vector1.push_back( partition_definition(n) );
 
 	return partition_definition_vector1;
