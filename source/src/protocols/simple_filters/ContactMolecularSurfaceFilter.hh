@@ -60,6 +60,13 @@ public:// constructor/destructor
 	ContactMolecularSurfaceFilter( Real const & filtered_area, Real const & distance_weight,
 		bool const quick, bool const verbose, bool const use_rosetta_radii=false);
 
+	// @brief constructor with arguments and selectors
+	ContactMolecularSurfaceFilter( Real const & filtered_area, Real const & distance_weight,
+		bool const quick, bool const verbose,
+		core::select::residue_selector::ResidueSelectorCOP const selector1,
+		core::select::residue_selector::ResidueSelectorCOP const selector2,
+		bool const use_rosetta_radii=false);
+
 	~ContactMolecularSurfaceFilter() override= default;
 
 public:// virtual constructor
@@ -69,13 +76,28 @@ public:// virtual constructor
 	// @brief make fresh instance
 	filters::FilterOP fresh_instance() const override;
 
-public:// accessor
-	// @brief get name of this filter
+public:
+	// accessors
+	bool quick() const;
+	bool verbose() const;
+	bool use_rosetta_radii() const;
+	bool apolar_target() const;
+	Real filtered_area() const;
+	Real distance_weight() const;
+	Real near_squared_size() const;
+	core::select::residue_selector::ResidueSelectorCOP selector1() const;
+	core::select::residue_selector::ResidueSelectorCOP selector2() const;
 
-public:// mutator
+	// mutators
 	void quick( bool const quick );
 	void verbose( bool const verbose );
 	void use_rosetta_radii( bool const use_rosetta_radii );
+	void apolar_target( bool const apolar_target );
+	void filtered_area( Real const filtered_area );
+	void distance_weight( Real const distance_weight );
+	void near_squared_size( Real const near_squared_size );
+	void selector1( core::select::residue_selector::ResidueSelectorCOP const selector );
+	void selector2( core::select::residue_selector::ResidueSelectorCOP const selector );
 
 public:// parser
 	void parse_my_tag( TagCOP tag,

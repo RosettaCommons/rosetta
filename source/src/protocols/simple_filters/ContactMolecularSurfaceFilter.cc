@@ -74,9 +74,47 @@ ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter( Real const & filte
 	selector2_()
 {}
 
+
+// @brief constructor with arguments and selectors
+ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter( Real const & filtered_area, Real const & distance_weight,
+	bool const quick, bool const verbose,
+	core::select::residue_selector::ResidueSelectorCOP const selector1,
+	core::select::residue_selector::ResidueSelectorCOP const selector2,
+	bool const use_rosetta_radii ):
+	Filter( "ContactMolecularSurface" ),
+	filtered_area_( filtered_area ),
+	distance_weight_( distance_weight ),
+	near_squared_size_( 0 ),
+	apolar_target_( false ),
+	quick_( quick ),
+	verbose_( verbose ),
+	use_rosetta_radii_( use_rosetta_radii ),
+	selector1_( selector1 ),
+	selector2_( selector2 )
+{}
+
+
+// accessors
+bool ContactMolecularSurfaceFilter::quick() const { return quick_; }
+bool ContactMolecularSurfaceFilter::verbose() const { return verbose_; }
+bool ContactMolecularSurfaceFilter::use_rosetta_radii() const { return use_rosetta_radii_; }
+bool ContactMolecularSurfaceFilter::apolar_target() const { return apolar_target_; }
+core::Real ContactMolecularSurfaceFilter::filtered_area() const { return filtered_area_; }
+core::Real ContactMolecularSurfaceFilter::distance_weight() const { return distance_weight_; }
+core::Real ContactMolecularSurfaceFilter::near_squared_size() const { return near_squared_size_; }
+core::select::residue_selector::ResidueSelectorCOP ContactMolecularSurfaceFilter::selector1() const { return selector1_; }
+core::select::residue_selector::ResidueSelectorCOP ContactMolecularSurfaceFilter::selector2() const { return selector2_; }
+
+// mutators
 void ContactMolecularSurfaceFilter::quick( bool const quick ) { quick_ = quick; }
 void ContactMolecularSurfaceFilter::verbose( bool const verbose ) { verbose_ = verbose; }
 void ContactMolecularSurfaceFilter::use_rosetta_radii( bool const use_rosetta_radii ) { use_rosetta_radii_ = use_rosetta_radii; }
+void ContactMolecularSurfaceFilter::apolar_target( bool const apolar_target ) { apolar_target_ = apolar_target; }
+void ContactMolecularSurfaceFilter::filtered_area( core::Real const filtered_area ) { filtered_area_ = filtered_area; }
+void ContactMolecularSurfaceFilter::distance_weight( core::Real const distance_weight ) { distance_weight_ = distance_weight; }
+void ContactMolecularSurfaceFilter::near_squared_size( core::Real const near_squared_size ) { near_squared_size_ = near_squared_size; }
+void ContactMolecularSurfaceFilter::selector1( core::select::residue_selector::ResidueSelectorCOP const selector ) { selector1_ = selector; }
+void ContactMolecularSurfaceFilter::selector2( core::select::residue_selector::ResidueSelectorCOP const selector ) { selector2_ = selector; }
 
 filters::FilterOP
 ContactMolecularSurfaceFilter::clone() const {
