@@ -121,6 +121,7 @@ GALigandDock::GALigandDock() {
 	final_solvate_ = false;
 	fast_relax_script_file_ = "";
 	fast_relax_lines_ = std::vector<std::string>();
+	turnon_flexscs_at_relax_ = false;
 	redefine_flexscs_at_relax_ = false;
 
 	// estimate and report dG
@@ -156,6 +157,31 @@ GALigandDock::GALigandDock() {
 }
 
 void
+GALigandDock::get_ligand_resids(pose::Pose const& pose,
+	utility::vector1 < core::Size >& lig_resids) const
+{
+	core::Size lastres = pose.total_residue();
+	while ( pose.residue(lastres).is_virtual_residue() && lastres>1 ) lastres--;
+	lig_resids.push_back( lastres );
+	bool extending = true;
+	while ( extending ) {
+		if ( !pose.residue(lastres).is_polymer() ) {
+			extending = false; // ligand not a polymer, we're done
+		} else if ( pose.residue(lastres).has_lower_connect() ) {
+			core::Size nextres = pose.residue(lastres).connected_residue_at_resconn( pose.residue(lastres).type().lower_connect_id() );
+			if ( std::find (lig_resids.begin(), lig_resids.end(), nextres) == lig_resids.end() ) {
+				lastres = nextres;
+				lig_resids.push_back( lastres );
+			} else {
+				extending = false;  // finished a cyclic peptide, we're done
+			}
+		} else {
+			extending = false; // hit n-term
+		}
+	}
+}
+
+void
 GALigandDock::apply( pose::Pose & pose )
 {
 	std::string prefix( basic::options::option[ basic::options::OptionKeys::out::prefix ]() );
@@ -177,27 +203,14 @@ GALigandDock::apply( pose::Pose & pose )
 			}
 		}
 	} else {
-		core::Size lastres = pose.total_residue();
-		while ( pose.residue(lastres).is_virtual_residue() && lastres>1 ) lastres--;
-		lig_resids.push_back( lastres );
-		bool extending = true;
-		while ( extending ) {
-			if ( !pose.residue(lastres).is_polymer() ) {
-				extending = false; // ligand not a polymer, we're done
-			} else if ( pose.residue(lastres).has_lower_connect() ) {
-				core::Size nextres = pose.residue(lastres).connected_residue_at_resconn( pose.residue(lastres).type().lower_connect_id() );
-				if ( std::find (lig_resids.begin(), lig_resids.end(), nextres) == lig_resids.end() ) {
-					lastres = nextres;
-					lig_resids.push_back( lastres );
-				} else {
-					extending = false;  // finished a cyclic peptide, we're done
-				}
-			} else {
-				extending = false; // hit n-term
-			}
-		}
+		get_ligand_resids(pose, lig_resids);
 	}
 	std::sort (lig_resids.begin(), lig_resids.end());
+
+	if ( runmode_ == "eval" ) {
+		eval_docked_pose(pose, lig_resids);
+		return;
+	}
 
 	// fd: some of the code assumes lk_ball "interaction centers" are present.
 	//     if disabled, turn on at very low weight (so score is unaffected
@@ -520,6 +533,43 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 	return *pose; // return lowest energy one
 }
 
+
+void
+GALigandDock::eval_docked_pose( core::pose::Pose &pose,
+	utility::vector1< core::Size > const& lig_ids )
+{
+	TR << "Evaluating docked pose." << std::endl;
+	utility::vector1< core::Size > movable_scs;
+	core::Real complex_score = (*scfxn_relax_)(pose);
+	core::Real ligscore = calculate_free_ligand_score( pose, lig_ids );
+	core::Real recscore = calculate_free_receptor_score( pose, lig_ids, movable_scs, true );
+	core::Real dH = complex_score - ligscore - recscore;
+	EntropyEstimator entropy_estimator( scfxn_relax_, pose, lig_ids );
+	entropy_estimator.set_niter( 2000 );
+	core::Real TdS = entropy_estimator.apply( pose );
+	core::Real dG = dH + TdS;
+	core::pose::setPoseExtraScore( pose, "ligscore", ligscore );
+	core::pose::setPoseExtraScore( pose, "recscore", recscore );
+	core::pose::setPoseExtraScore( pose, "dH", dH );
+	core::pose::setPoseExtraScore( pose, "-TdS", TdS );
+	core::pose::setPoseExtraScore( pose, "dG", dG );
+
+
+	std::string ligandname = pose.residue(lig_ids[1]).name();
+	for ( core::Size ires=2; ires <= lig_ids.size(); ++ires ) {
+		ligandname += "-"+pose.residue(lig_ids[ires]).name();
+	}
+
+	core::pose::setPoseExtraScore( pose, "ligandname", ligandname);
+
+	TR << "Estimated Binding Free Energy (arbitrary energy unit, just for relative ranking)" << std::endl;
+	TR << "dH: " << std::setw(6) << dH << std::endl;
+	TR << "-T*dS: " << std::setw(6) << TdS << std::endl;
+	TR << "Ligandname: "<< ligandname << " dG (dH-T*dS): " << dG << std::endl;
+
+}
+
+
 utility::vector1< core::Size >
 GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 	GridScorerCOP gridscore,
@@ -810,10 +860,10 @@ GALigandDock::calculate_free_ligand_score(
 	scfxn_ligmin->set_weight( core::scoring::coordinate_constraint, 1.0 );
 
 	//core::pose::Pose pose_premin( *pose );
-	for ( core::Size ires = 1; ires <pose->total_residue(); ++ires ) {
+	core::id::AtomID anchorid( 1, pose->fold_tree().root() );
+	for ( core::Size ires = 1; ires < pose->total_residue(); ++ires ) {
 		for ( core::Size iatm = 1; iatm <= pose->residue(ires).natoms(); ++iatm ) {
 			core::id::AtomID atomid( iatm, ires );
-			core::id::AtomID anchorid( 1, pose->total_residue() );
 			core::Vector const &xyz = pose->xyz( atomid );
 			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 			pose->add_constraint( core::scoring::constraints::ConstraintCOP
@@ -914,6 +964,9 @@ GALigandDock::apply_coord_cst_to_sctip( core::pose::PoseOP pose,
 	}
 	TR << reportline << std::endl;
 
+	//gz: The following use of CoordinateConstraint is incorrect
+	// but we are not using this function at this point
+	// fixing it in the future once we need to use this function
 	for ( core::Size i = 1; i <= cstatoms.size(); ++i ) {
 		core::id::AtomID const& atomid = cstatoms[i];
 		core::Vector const &xyz = pose->xyz( atomid );
@@ -1018,9 +1071,14 @@ GALigandDock::final_exact_cartmin(
 		TR << "Added " << addedCsts << " atmpair constraints to the pose." << std::endl;
 	}
 	if ( scfxn_relax_->get_weight( core::scoring::coordinate_constraint ) != 0 ) {
-		TR << "Adding constraints to pose before final relax..." << std::endl;
+		TR << "Adding constraints to protein CAs before final relax..." << std::endl;
+		core::pose::addVirtualResAsRoot(pose); //gz: add root virtual residue for CoordinateConstraint
+		core::id::AtomID anchoratomid(1, pose.fold_tree().root() );
+
 		for ( core::Size j=1; j<pose.size(); ++j ) {
 			if ( !mm->get_bb(j) ) continue;
+			if ( pose.residue(j).aa() == core::chemical::aa_vrt ) continue;
+			if ( !pose.residue(j).is_protein() ) continue;
 
 			core::id::AtomID atomid(pose.residue(j).atom_index("CA"),j);
 			core::Vector const &xyz = pose.xyz( atomid );
@@ -1029,7 +1087,7 @@ GALigandDock::final_exact_cartmin(
 			pose.add_constraint(
 				core::scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP(
 				new core::scoring::constraints::CoordinateConstraint
-				( atomid, atomid, xyz, fx ) ) ) );
+				( atomid, anchoratomid, xyz, fx ) ) ) );
 			addedCsts++;
 		}
 		TR << "Added " << addedCsts << " coord constraints to the pose." << std::endl;
@@ -1063,6 +1121,10 @@ GALigandDock::final_exact_cartmin(
 	relax.set_movemap( mm );
 	relax.set_movemap_disables_packing_of_fixed_chi_positions( true );
 	relax.apply( pose );
+	// delete added root virtual residue
+	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
+		pose.delete_residue_slow( pose.fold_tree().root() );
+	}
 	TR << "final_cartmin: score after relax: ";
 	TR << (*scfxn_relax_)(pose) <<std::endl;
 }
@@ -1073,7 +1135,17 @@ GALigandDock::final_exact_scmin(
 	LigandConformer const & gene,
 	core::pose::Pose &pose
 ) {
-	utility::vector1< core::Size > repack_scs = gene.moving_scs();
+
+	utility::vector1< core::Size > contact_scs;
+	if ( turnon_flexscs_at_relax_ ) {
+		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), 4.5 );
+		TR << "Redefined flexible sidechains: ";
+		for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
+		if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
+		TR << std::endl;
+	} else {
+		contact_scs = gene.moving_scs();
+	}
 
 	std::set< core::Size > frozen_residues;
 	if ( frozen_residues_ != nullptr ) {
@@ -1091,7 +1163,7 @@ GALigandDock::final_exact_scmin(
 		for ( auto resid : gene.ligand_ids() ) {
 			mm->set_chi( resid, true );
 		}
-		for ( auto resid : repack_scs ) {
+		for ( auto resid : contact_scs ) {
 			if ( frozen_residues.count(resid) == 0 ) {
 				mm->set_chi( resid, true );
 			}
@@ -1321,8 +1393,10 @@ GALigandDock::load_reference_pool(
 			}
 		} else if ( (tag.length() >= 3) && (tag.substr( tag.length()-3 )=="pdb") ) {
 			core::pose::PoseOP pose = core::import_pose::pose_from_file( tag, false, core::import_pose::PDB_file );
+			utility::vector1 < core::Size > lig_resids;
+			get_ligand_resids(*pose, lig_resids);
 			ref_ligs.push_back(
-				ConstraintInfo(*pose, gene_initial.ligand_ids(), use_pharmacophore_, (ipdb==1) )
+				ConstraintInfo(*pose, lig_resids, use_pharmacophore_, (ipdb==1) )
 			);
 
 		} else {
@@ -1334,8 +1408,10 @@ GALigandDock::load_reference_pool(
 			for ( auto iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 				core::pose::PoseOP pose(new core::pose::Pose);
 				iter->fill_pose( *pose );
+				utility::vector1 < core::Size > lig_resids;
+				get_ligand_resids(*pose, lig_resids);
 				ref_ligs.push_back(
-					ConstraintInfo(*pose, gene_initial.ligand_ids(), use_pharmacophore_, (ipdb==1) )
+					ConstraintInfo(*pose, lig_resids, use_pharmacophore_, (ipdb==1) )
 				);
 			}
 		}
@@ -1739,6 +1815,7 @@ GALigandDock::parse_my_tag(
 		fast_relax_script_file_ = tag->getOption<std::string>("fastrelax_script");
 	}
 	if ( tag->hasOption("move_water") ) { move_water_ = tag->getOption<bool>("move_water"); }
+	if ( tag->hasOption("turnon_flexscs_at_relax") ) { turnon_flexscs_at_relax_ = tag->getOption<bool>("turnon_flexscs_at_relax"); }
 	if ( tag->hasOption("redefine_flexscs_at_relax") ) { redefine_flexscs_at_relax_ = tag->getOption<bool>("redefine_flexscs_at_relax"); }
 
 	// grid params
@@ -1885,6 +1962,25 @@ GALigandDock::setup_params_for_runmode( std::string runmode )
 			stage2.maxiter = 25;
 			protocol_.push_back( stage2 );
 
+		} else if ( runmode.substr(2) == "S" ) {
+			// GZ: Reserved for VS-Standard
+			sidechains_ = "none";
+			nrelax_ = 20;
+			nreport_ = 1;
+
+			//1-round minimization
+			min_neighbor_ = false;
+			fast_relax_lines_.push_back("switch:torsion");
+			fast_relax_lines_.push_back("repeat 2");
+			fast_relax_lines_.push_back("ramp_repack_min 0.02  0.01   1.0 50");
+			fast_relax_lines_.push_back("ramp_repack_min 1.0   0.001  1.0 50");
+			fast_relax_lines_.push_back("accept_to_best");
+			fast_relax_lines_.push_back("endrepeat");
+
+			// repeats, npool, rmsdthreshold, pmut, maxiter, packcycles, smoothing, ramp_schedule
+			GADockStageParams stage1( 3, 100, 2.0, 0.2, 50, 25, 0.375, ramp_schedule );
+			protocol_.push_back( stage1 );
+
 		} else if ( runmode.substr(2) == "X" ) { // VS-eXpress
 			sidechains_ = "none";
 			nrelax_ = 5;
@@ -1909,6 +2005,9 @@ GALigandDock::setup_params_for_runmode( std::string runmode )
 		}
 	} else if ( runmode == "refine" ) {
 		//
+	} else if ( runmode == "eval" ) {
+		sidechains_ = "none";
+		estimate_dG_ = true;
 	} else {
 		die = true;
 	}
@@ -1977,6 +2076,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "final_solvate", xsct_rosetta_bool, "Solvate pose (via ExplicitWaterMover) in final optimize. Default: false");
 	attlist + XMLSchemaAttribute( "fastrelax_script", xs_string, "FastRelax script file for exact minimize.");
 	attlist + XMLSchemaAttribute( "move_water", xsct_rosetta_bool, "Move water at final relaxation.");
+	attlist + XMLSchemaAttribute( "turnon_flexscs_at_relax", xsct_rosetta_bool, "Turn on movable residues at final relaxation.");
 	attlist + XMLSchemaAttribute( "redefine_flexscs_at_relax", xsct_rosetta_bool, "Redefine movable residues at final relaxation.");
 	attlist + XMLSchemaAttribute( "exact", xsct_rosetta_bool, "Use exact scoring.");
 	attlist + XMLSchemaAttribute( "debug", xsct_rosetta_bool, "Debug grid scoring: report both exact and grid scores.");

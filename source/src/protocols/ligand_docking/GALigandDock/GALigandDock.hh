@@ -190,6 +190,10 @@ private:
 		LigandAligner &aligner,
 		OutputStructureStore &outputs );
 
+	void
+	eval_docked_pose( core::pose::Pose &pose,
+		utility::vector1< core::Size > const& lig_ids );
+
 	utility::vector1< core::Size >
 	get_movable_scs( core::pose::Pose const &pose,
 		GridScorerCOP gridscore,
@@ -296,6 +300,11 @@ private:
 		core::pose::Pose &pose
 	);
 
+	/// @brief  get ligand residue ids from pose
+	void
+	get_ligand_resids(core::pose::Pose const &pose,
+		utility::vector1 < core::Size >& lig_resids) const;
+
 private:
 	core::scoring::ScoreFunctionOP scfxn_; // scorefunction to be used in docking
 	core::scoring::ScoreFunctionOP scfxn_relax_; // scorefunction to be used in relax
@@ -331,6 +340,7 @@ private:
 	bool cartmin_lig_, min_neighbor_;  // more final relax properties
 
 	bool final_solvate_;
+	bool turnon_flexscs_at_relax_;
 	bool redefine_flexscs_at_relax_;
 	std::string fast_relax_script_file_; // script file for fast relax (EXACT ONLY!)
 	std::vector< std::string > fast_relax_lines_; // in explicit texts
