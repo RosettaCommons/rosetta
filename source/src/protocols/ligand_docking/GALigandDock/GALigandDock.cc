@@ -142,6 +142,7 @@ GALigandDock::GALigandDock() {
 	reference_frac_auto_ = true;
 	use_pharmacophore_ = true; // turn on by default!
 	torsion_sampler_percentage_ = 0.0;
+	contact_distance_ = 4.5;
 
 	multiple_ligands_ = utility::vector1< std::string >();
 	multi_ligands_maxRad_ = 0.0;
@@ -346,7 +347,7 @@ GALigandDock::apply( pose::Pose & pose )
 				premin_ligand( pose, lig_resids );
 			}
 
-			LigandConformer gene_initial( pose_working, lig_resids, movable_scs );
+			LigandConformer gene_initial( pose_working, lig_resids, movable_scs, freeze_ligand_backbone_ );
 			gene_initial.set_sample_ring_conformers( sample_ring_conformers_ );
 
 			OutputStructureStore temporary_outputs;
@@ -379,7 +380,7 @@ GALigandDock::apply( pose::Pose & pose )
 			premin_ligand( pose, lig_resids );
 		}
 
-		LigandConformer gene_initial( pose_working, lig_resids, movable_scs );
+		LigandConformer gene_initial( pose_working, lig_resids, movable_scs, freeze_ligand_backbone_ );
 		gene_initial.set_sample_ring_conformers( sample_ring_conformers_ );
 
 		pose = run_docking( gene_initial, gridscore, aligner, remaining_outputs_ );
@@ -1138,7 +1139,7 @@ GALigandDock::final_exact_scmin(
 
 	utility::vector1< core::Size > contact_scs;
 	if ( turnon_flexscs_at_relax_ ) {
-		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), 4.5 );
+		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), contact_distance_ );
 		TR << "Redefined flexible sidechains: ";
 		for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
 		if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
@@ -1229,7 +1230,7 @@ GALigandDock::final_cartligmin(
 	// Nov08!! (turn this off for pre-Nov08)
 	utility::vector1< core::Size > contact_scs;
 	if ( redefine_flexscs_at_relax_ ) {
-		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), 4.5 );
+		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), contact_distance_ );
 		TR << "Redefined flexible sidechains: ";
 		for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
 		if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
@@ -1733,6 +1734,8 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("use_mean_maxRad") ) { use_mean_maxRad_ = tag->getOption<bool>("use_mean_maxRad"); }
 	if ( tag->hasOption("stdev_multiplier") ) { stdev_multiplier_ = tag->getOption<core::Real>("stdev_multiplier"); }
 	if ( tag->hasOption("torsion_sampler_percentage") ) { torsion_sampler_percentage_ = tag->getOption<core::Real>("torsion_sampler_percentage"); }
+	if ( tag->hasOption("contact_distance") ) { contact_distance_ = tag->getOption<core::Real>("contact_distance"); }
+	if ( tag->hasOption("freeze_ligand_backbone") ) { freeze_ligand_backbone_ = tag->getOption<bool>("freeze_ligand_backbone"); }
 
 	if ( tag->hasOption("frozen_scs") ) {
 		std::string frozen_scs = tag->getOption<std::string>("frozen_scs");
@@ -2098,6 +2101,8 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "use_mean_maxRad", xsct_rosetta_bool, "Use mean maxRad for multi ligands? Default: false");
 	attlist + XMLSchemaAttribute( "stdev_multiplier", xsct_real, "Standard deviation multiplier for mean_maxRad. Default: 1.0");
 	attlist + XMLSchemaAttribute( "torsion_sampler_percentage", xsct_real, "The percentage of the initial gene sampled by torsion sampler.");
+	attlist + XMLSchemaAttribute( "contact_distance", xsct_real, "Distance cutoff for determining if ligand is in contact with a residue sidechain. Default: 4.5" );
+	attlist + XMLSchemaAttribute( "freeze_ligand_backbone", xsct_rosetta_bool, "Freeze peptide ligand backbone torsion, only works on peptide ligand. Default: false." );
 
 	// per-cycle parameters (defaults)
 	attlist + XMLSchemaAttribute( "ngen", xs_integer, "number of generations");

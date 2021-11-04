@@ -76,7 +76,8 @@ public:
 	LigandConformer(
 		core::pose::PoseCOP pose,
 		utility::vector1 <core::Size > const &ligids,
-		utility::vector1< core::Size > movingscs
+		utility::vector1< core::Size > movingscs,
+		bool freeze_ligand_backbone=false
 	);
 
 	// common pathway for parameter initialization
@@ -88,7 +89,8 @@ public:
 	initialize(
 		core::pose::PoseCOP pose,
 		utility::vector1 <core::Size > const &ligids,
-		utility::vector1< core::Size > movingscs
+		utility::vector1< core::Size > movingscs,
+		bool freeze_ligand_backbone
 	);
 
 	bool
@@ -289,6 +291,7 @@ private:
 	utility::vector1< core::chemical::ResidueTypeCOP > proteinrestypes_;
 	utility::vector1< utility::vector1< core::Real > > proteinchis_;
 	bool sample_ring_conformers_;
+	bool freeze_ligand_backbone_;
 
 	// the score
 	core::Real score_;

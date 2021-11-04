@@ -335,6 +335,8 @@ private:
 	bool sample_ring_conformers_;
 	core::Real torsion_sampler_percentage_;
 	TorsionSampler torsion_sampler_;
+	core::Real contact_distance_;
+	bool freeze_ligand_backbone_;
 
 	std::string final_exact_minimize_; // do the last iteration exactly?
 	bool cartmin_lig_, min_neighbor_;  // more final relax properties

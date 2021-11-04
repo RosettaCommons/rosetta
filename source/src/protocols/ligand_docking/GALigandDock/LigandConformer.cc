@@ -50,10 +50,11 @@ LigandConformer::~LigandConformer() {}
 LigandConformer::LigandConformer(
 	core::pose::PoseCOP pose,
 	utility::vector1< core::Size > const &ligids,
-	utility::vector1< core::Size > movingscs
+	utility::vector1< core::Size > movingscs,
+	bool freeze_ligand_backbone
 ) {
 	init_params();
-	initialize( pose, ligids, movingscs );
+	initialize( pose, ligids, movingscs, freeze_ligand_backbone );
 }
 
 void
@@ -68,17 +69,21 @@ LigandConformer::init_params() {
 	sample_ring_conformers_ = true;
 	jumpid_ = 0;
 	negTdS_ = 0;
+	freeze_ligand_backbone_ = false;
 }
 
 void
 LigandConformer::initialize(
 	core::pose::PoseCOP pose,
 	utility::vector1< core::Size > const &ligids,
-	utility::vector1< core::Size > movingscs
+	utility::vector1< core::Size > movingscs,
+	bool freeze_ligand_backbone
 ) {
 	ligids_ = ligids;
 	ref_pose_ = pose;
 	movingscs_ = movingscs;
+	freeze_ligand_backbone_ = freeze_ligand_backbone;
+
 
 	// 1) get jumpid
 	utility::vector1< core::kinematics::Edge > jumps = pose->fold_tree().get_jump_edges();
@@ -160,6 +165,7 @@ LigandConformer::update_conf( core::pose::PoseCOP pose ) {
 	for ( core::Size i : ligids_ ) {
 		core::conformation::Residue const & ligres = pose->residue(i);
 		for ( core::Size r=1; r<=2; ++r ) {
+			if ( freeze_ligand_backbone_ && r == 1 ) continue;
 			core::Size const n_torsions( r==1 ?ligres.mainchain_atoms().size() : ligres.nchi() );
 			for  ( core::Size j=1; j <= n_torsions; ++j ) {
 				core::id::TorsionType const id_tor_type( r == 1 ? core::id::BB : core::id::CHI );
