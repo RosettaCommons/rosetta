@@ -13,6 +13,7 @@
 ## @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 
 import os, sys, subprocess, math
+import re
 import benchmark
 import numpy as np
 from scipy.optimize import least_squares
@@ -78,7 +79,13 @@ def analyze_one_funnel( suffix='1A', expected_rmsd_of_lowest=0.3, expected_min_r
     print( "Read DG_folding=" + str(DG_folding) + " from " + logfile + "." )
     print( "Read DG_folding_to_lowest=" + str(DG_folding_to_lowest) + " from " + logfile + "." )
 
-    total_samples = int( str( subprocess.getoutput( 'grep "application completed" ' + logfile + " | awk '{print $15}'" ) ) )
+    sample_match = re.search("[1-90]+ jobs returned structures", str( subprocess.getoutput( 'grep "application completed" ' + logfile ) ) )
+    if sample_match is not None:
+        total_samples = int( sample_match.group().split()[0] )
+    else:
+        print("ERROR: Could not find the number of structures!")
+        total_samples = 0
+
     print ( "Determined that " + str( total_samples ) + " samples were performed." )
 
     # Check that total samples is high enough.

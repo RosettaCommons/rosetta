@@ -14,6 +14,7 @@
 ## @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 
 import os, sys, subprocess, math
+import re
 import benchmark
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into 	s
@@ -68,7 +69,13 @@ pnear_to_lowest = float( str( subprocess.getoutput( "grep PNearLowest: " + logfi
 print( "Read PNear=" + str(pnear) + " from " + logfile + "." )
 print( "Read PNearLowest=" + str(pnear_to_lowest) + " from " + logfile + "." )
 
-total_samples = int( str( subprocess.getoutput( 'grep "application completed" ' + logfile + " | awk '{print $8}'" ) ) )
+sample_match = re.search("simple_cycpep_predict application completed [1-90]+", str( subprocess.getoutput( 'grep "application completed" ' + logfile ) ) )
+if sample_match is not None:
+    total_samples = int( sample_match.group().split()[-1] )
+else:
+    print("ERROR: Could not find the number of structures!")
+    total_samples = 0
+
 print ( "Determined that " + str( total_samples ) + " samples were performed." )
 
 # Check that total samples is high enough.

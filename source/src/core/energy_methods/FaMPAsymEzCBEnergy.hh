@@ -57,20 +57,18 @@ public:
 	FaMPAsymEzCBEnergy();
 
 	/// @brief Create a clone of this energy method
-	virtual
 	core::scoring::methods::EnergyMethodOP
-	clone() const;
+	clone() const override;
 
 	// Scoring Methods ////////////////
 
 	/// @brief Evaluates the one-body energy for a residue
-	virtual
 	void
 	residue_energy(
 		core::conformation::Residue const & rsd,
 		core::pose::Pose const &,
 		core::scoring::EnergyMap &
-	) const;
+	) const override;
 
 private:
 
@@ -84,11 +82,9 @@ private:
 
 	ObjexxFCL::FArray2D< core::Real > asymEZ_CB_;
 
-	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_not_required*/ ) const;
+	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_not_required*/ ) const override;
 
-	virtual
-	core::Size version() const;
+	core::Size version() const override;
 
 };
 
