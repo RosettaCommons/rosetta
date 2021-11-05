@@ -58,3 +58,4 @@ read in [0-9.]+ s
 Found in [0-9.]+ s
 Your CPU supports instructions that this TensorFlow binary was not compiled to use
 CMAES_HELLO:
+core.init: Resolved executable path:
