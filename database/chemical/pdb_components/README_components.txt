@@ -1,19 +1,19 @@
 -----------------------
 Notes on pdb_components
 -----------------------
-Rhiju Das, 2017
 
-# How these files were prepared
+To update:
+----------
 
-1. Download components.cif from the PDB:
+Simply run update_components.sh. This will automatically download the current components.cif file from the wwPDB (using curl) and split it out into the respective alphabetized sub lists.
 
-https://www.wwpdb.org/data/ccd
+You should be able to simply commit and push the changes.
 
-2. gunzip the file. Manually split the file into two pieces (A-C, D-Z), and gzip again; to get the file size under 25 Mb.
+Overrides
+---------
 
-3. Update src/basic/options/options_rosetta.py PDB_components_file flag to point to the new files.
+Some of the component definitions from the wwPDB are junk. (The crystallographers which submitted them did only a perfunctory job of it.)
+Others are okay for the purposes of the PDB, but cause issues with the best-effort ResidueType generation system Rosetta has.
+To account for this, we have an overrides/ directory. 
 
-Andy Watkins, 2018
-
-Rhiju's proposed 'better strategy' -- divide the components by initial letter and let git version them -- have been updated. If you want to update the components, run update_components.sh in this directory, which only requires curl and python.
-
+Simply put the fixed definition (one file per ligand) into the overrides/ directory, and then put the filename/path to the file in the overrides.txt file. 
