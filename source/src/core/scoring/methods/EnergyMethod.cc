@@ -45,6 +45,40 @@ EnergyMethod::defines_high_order_terms( pose::Pose const & ) const
 	return false;
 }
 
+bool
+EnergyMethod::has_atomistic_energies() const
+{
+	return false;
+}
+
+bool
+EnergyMethod::has_atomistic_pairwise_energies() const
+{
+	return false;
+}
+
+void
+EnergyMethod::atomistic_energy(
+	core::Size,
+	conformation::Residue const &,
+	pose::Pose const &,
+	ScoreFunction const &,
+	EnergyMap &
+) const
+{}
+
+void
+EnergyMethod::atomistic_pair_energy(
+	core::Size,
+	conformation::Residue const &,
+	core::Size,
+	conformation::Residue const &,
+	pose::Pose const &,
+	ScoreFunction const &,
+	EnergyMap &
+) const
+{}
+
 /// @details default implementation noop
 void
 EnergyMethod::setup_for_packing( pose::Pose &, utility::vector1< bool > const &, utility::vector1< bool > const & ) const {}

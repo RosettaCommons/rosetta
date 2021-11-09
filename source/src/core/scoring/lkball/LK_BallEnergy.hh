@@ -338,6 +338,21 @@ public:
 
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
+	/// @details Has pairwise energies, but no single-atom ones.
+	bool
+	has_atomistic_pairwise_energies() const override { return true; }
+
+	void
+	atomistic_pair_energy(
+		core::Size , // Which atom in residue 1?
+		conformation::Residue const &, // Residue 1
+		core::Size , // Which atom in residue 2?
+		conformation::Residue const &, // Residue 2
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
+	) const override;
+
 
 	Real
 	eval_lk_fraction( Real const d2_delta, Real const width ) const;

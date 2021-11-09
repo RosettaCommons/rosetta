@@ -207,6 +207,58 @@ public:
 	bool
 	defines_high_order_terms( pose::Pose const & ) const;
 
+	/// @brief Does this EnergyMethod have a non-trivial implementation of the (one body) atomistic energy method?
+	/// Note that this may return false even if the score term theoretically could support atomistic energies.
+	/// And even if this function returns true, it's not necessarily the case that all atoms
+	/// will get assigned an energy, or that the sum over all atoms (or atom pairs) will result
+	/// in the same energy as the residue-level approach.
+	/// The atomistic functions are intended for supplemental informational purposes only.
+	/// The residue-level energies are the main interface for EnergyMethods.
+	virtual
+	bool
+	has_atomistic_energies() const;
+
+	/// @brief Does this EnergyMethod have a non-trivial implementation of the pairwise atomistic energy method?
+	/// NOTE: all the cautions of EnergyMethod::has_atomistic_energies() apply here.
+	virtual
+	bool
+	has_atomistic_pairwise_energies() const;
+
+	/// @brief Evaluate the (one body) energy associated with a particular atom
+	/// This may be a "self" energy, or it may be the single atom contribution from a whole structure term.
+	/// NOTE: all the cautions of EnergyMethod::has_atomistic_energies() apply here.
+	/// For most terms this is likely a no-op.
+	/// Terms which implement this non-trivially should return true from has_atomistic_energies()
+	/// @details This is return-by-reference in the EnergyMap - Implementations should accumulate, not replace.
+	virtual
+	void
+	atomistic_energy(
+		core::Size atmno, // Which atom?
+		conformation::Residue const & rsd, // which residue?
+		pose::Pose const & pose,
+		ScoreFunction const & scorefxn,
+		EnergyMap & emap
+	) const;
+
+	/// @brief Evaluate the energy for a particular pair of atoms
+	/// This function may be fed the same residue with different atom numbers
+	/// NOTE: all the cautions of EnergyMethod::has_atomistic_energies() apply here.
+	/// For most terms this is likely a no-op.
+	/// Terms which implement this non-trivially should return true from has_atomistic_pairwise_energies()
+	/// @details This is return-by-reference in the EnergyMap - Implementations should accumulate, not replace.
+	virtual
+	void
+	atomistic_pair_energy(
+		core::Size atmno1, // Which atom in residue 1?
+		conformation::Residue const & rsd1, // Residue 1
+		core::Size atomno2, // Which atom in residue 2?
+		conformation::Residue const & rsd2, // Residue 2
+		pose::Pose const & pose,
+		ScoreFunction const & scorefxn,
+		EnergyMap & emap
+	) const;
+
+
 	/// @brief Evaluate the XYZ derivative for an atom in the pose.
 	/// Called during the atomtree derivative calculation, atom_tree_minimize.cc,
 	/// through the ScoreFunction::eval_atom_derivative intermediary.

@@ -421,6 +421,21 @@ public:
 		return 0.0;
 	}
 
+	/// @brief Has pairwise energies, but no single-atom ones.
+	bool
+	has_atomistic_pairwise_energies() const override { return true; }
+
+	void
+	atomistic_pair_energy(
+		core::Size , // Which atom in residue 1?
+		conformation::Residue const &, // Residue 1
+		core::Size , // Which atom in residue 2?
+		conformation::Residue const &, // Residue 2
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
+	) const override;
+
 private:
 
 	hbtrie::HBondRotamerTrieOP

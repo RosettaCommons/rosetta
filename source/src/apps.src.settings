@@ -66,6 +66,7 @@ sources = {
 		"pH_protocol",
 	],
 	"public/analysis": [
+		"atom_energy_breakdown",
 		"batch_distances",
 		"contactMap",
 		"cst_info",

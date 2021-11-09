@@ -109,6 +109,22 @@ public:
 
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override {};
 
+	/// @details Has single atom energies, but not pairwise
+	/// (Note that the residue-level calculation does this as a pairwise term for implementation reasons.
+	/// The atomistic interface doesn't have the same limitations.)
+	bool
+	has_atomistic_energies() const override { return true; }
+
+	void
+	atomistic_energy(
+		core::Size atmno, // Which atom?
+		conformation::Residue const & rsd, // which residue?
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scorefxn,
+		scoring::EnergyMap & emap
+	) const override;
+
+
 private:
 	bool scoreSymmComplex_;
 

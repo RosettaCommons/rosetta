@@ -23,6 +23,8 @@
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
+#include <core/id/AtomID.hh>
+#include <core/pose/Pose.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
@@ -278,6 +280,161 @@ check_score_function_sanity(
 	// Likely sane score function
 	return true;
 }
+
+
+std::map< id::AtomID, utility::vector1< Real > >
+get_single_atom_energies(
+	core::pose::Pose & pose,
+	ScoreFunction const & scorefxn,
+	ScoreTypes const & types,
+	select::residue_selector::ResidueSubsetOP subset
+) {
+	if ( subset != nullptr && subset->size() != pose.size() ) {
+		utility_exit_with_message("Ill-formed residue subset: " + std::to_string( subset->size() ) + " entries for a pose of size " + std::to_string( pose.size() ) );
+	}
+
+	std::map< id::AtomID, utility::vector1< Real > > energy_map;
+
+	scorefxn( pose ); // Rescore to make sure we have proper scoring setup.
+
+	core::scoring::EnergyMap const & weights( scorefxn.weights() );
+	utility::vector1< methods::EnergyMethodCOP > onebody_terms;
+	for ( auto iter = scorefxn.all_energies_begin(); iter != scorefxn.all_energies_end(); ++iter ) {
+		if ( (*iter)->has_atomistic_energies() ) {
+			onebody_terms.push_back( *iter );
+		}
+	}
+
+	if ( onebody_terms.empty() ) { return energy_map; } // Nothing to do.
+
+	for ( core::Size ii(1); ii <= pose.size(); ++ii ) { // Residues
+		if ( subset && ! (*subset)[ii] ) { continue; } // Ignore if not part of selection
+
+		core::conformation::Residue const & res( pose.residue(ii) );
+		for ( core::Size aa(1); aa <= res.natoms(); ++aa ) {
+			EnergyMap onebody; // It accumulates
+			for ( auto const & term: onebody_terms ) {
+				term->atomistic_energy( aa, res, pose, scorefxn, onebody );
+			}
+			onebody *= weights;
+			if ( onebody.sum() == 0.0 ) { continue; }
+
+			utility::vector1< Real > energies;
+			for ( ScoreType st: types ) {
+				energies.push_back( onebody[ st ] );
+			}
+
+			energy_map[ id::AtomID( aa, ii ) ] = energies;
+		}
+	}
+
+	return energy_map;
+}
+
+std::map< std::pair< id::AtomID, id::AtomID >,  utility::vector1< Real > >
+get_pairwise_atom_energies(
+	core::pose::Pose & pose,
+	ScoreFunction const & scorefxn,
+	ScoreTypes const & types,
+	select::residue_selector::ResidueSubsetOP subset1,
+	select::residue_selector::ResidueSubsetOP subset2
+) {
+	if ( subset1 != nullptr && subset1->size() != pose.size() ) {
+		utility_exit_with_message("Ill-formed residue subset: " + std::to_string( subset1->size() ) + " entries for a pose of size " + std::to_string( pose.size() ) );
+	}
+	if ( subset2 != nullptr && subset2->size() != pose.size() ) {
+		utility_exit_with_message("Ill-formed secondary residue subset: " + std::to_string( subset2->size() ) + " entries for a pose of size " + std::to_string( pose.size() ) );
+	}
+
+	std::map< std::pair< id::AtomID, id::AtomID >, utility::vector1< Real > > energy_map;
+
+	scorefxn( pose ); // Rescore to make sure we have proper scoring setup.
+
+	core::scoring::EnergyMap const & weights( scorefxn.weights() );
+	utility::vector1< methods::EnergyMethodCOP > pairwise_terms;
+	for ( auto iter = scorefxn.all_energies_begin(); iter != scorefxn.all_energies_end(); ++iter ) {
+		if ( (*iter)->has_atomistic_pairwise_energies() ) {
+			pairwise_terms.push_back( *iter );
+		}
+	}
+
+	if ( pairwise_terms.empty() ) { return energy_map; } // Nothing to do.
+
+	for ( core::Size ii(1); ii <= pose.size(); ++ii ) { // Residues
+		// At this point, only ignore if we've defined both subsets and it's in neither
+		if ( subset1 && subset2 && !(*subset1)[ii] && !(*subset2)[ii] ) { continue; }
+
+		core::conformation::Residue const & res1( pose.residue(ii) );
+		for ( core::Size jj(ii); jj <= pose.size(); ++jj ) { // Residues (including the self interaction
+			// If a subset is given, at least one partner must be in it.
+			if ( subset1 && !(*subset1)[ii] && !(*subset1)[jj] ) { continue; }
+			if ( subset2 && !(*subset2)[ii] && !(*subset2)[jj] ) { continue; }
+
+			core::conformation::Residue const & res2( pose.residue(jj) );
+			for ( core::Size aa(1); aa <= res1.natoms(); ++aa ) {
+				for ( core::Size bb(1); bb <= res2.natoms(); ++bb ) {
+					if ( ii == jj && bb <= aa ) { continue; } // Only consider the same-residue pairing once.
+
+					EnergyMap twobody; // It accumulates
+					for ( auto const & term: pairwise_terms ) {
+						term->atomistic_pair_energy( aa, res1, bb, res2, pose, scorefxn, twobody );
+					}
+
+					twobody *= weights;
+					if ( twobody.sum() == 0.0 ) { continue; } // Don't include pairs with zero energy.
+
+					utility::vector1< Real > energies;
+					for ( ScoreType st: types ) {
+						energies.push_back( twobody[ st ] );
+					}
+
+					energy_map[ std::make_pair( id::AtomID( aa, ii ), id::AtomID( bb, jj ) ) ] = energies;
+				} // bb
+			} // aa
+		} // jj
+	} // ii
+
+	return energy_map;
+}
+
+std::map< id::AtomID, utility::vector1< Real > >
+get_atomistic_energies(
+	core::pose::Pose & pose,
+	ScoreFunction const & scorefxn,
+	ScoreTypes const & types,
+	select::residue_selector::ResidueSubsetOP subset
+) {
+	std::map< id::AtomID,  utility::vector1< Real > > energy_map = get_single_atom_energies(pose, scorefxn, types, subset );
+
+	for ( auto const & entry: get_pairwise_atom_energies(pose, scorefxn, types, subset ) ) {
+		id::AtomID const & id1 = entry.first.first;
+		id::AtomID const & id2 = entry.first.second;
+		utility::vector1< Real > energies = entry.second;
+		// Split the energies between the two atoms in the pair
+		for ( Size ii(1); ii <= energies.size(); ++ii ) {
+			energies[ii] /= 2.0;
+		}
+
+		if ( energy_map.count( id1 ) == 0 ) {
+			energy_map[ id1 ] = energies;
+		} else {
+			for ( Size ii(1); ii <= energies.size(); ++ii ) {
+				energy_map[ id1 ][ii] += energies[ii];
+			}
+		}
+
+		if ( energy_map.count( id2 ) == 0 ) {
+			energy_map[ id2 ] = energies;
+		} else {
+			for ( Size ii(1); ii <= energies.size(); ++ii ) {
+				energy_map[ id2 ][ii] += energies[ii];
+			}
+		}
+	}
+
+	return energy_map;
+}
+
 
 }
 }

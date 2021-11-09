@@ -375,6 +375,7 @@ sources = {
 		"test_rna_sfxn",
 		"UnfoldedStatePotential",
 		"use_bicubic_interpolation",
+		"util",
 		"VirtualResidues",
 	],
 	"scoring/aa_composition_energy" : [

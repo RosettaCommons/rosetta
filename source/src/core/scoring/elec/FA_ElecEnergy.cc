@@ -1519,6 +1519,124 @@ FA_ElecEnergy::indicate_required_context_graphs( utility::vector1< bool > & /* c
 {
 }
 
+void
+FA_ElecEnergy::atomistic_pair_energy(
+	core::Size atm1, // Which atom in residue 1?
+	conformation::Residue const & rsd1, // Residue 1
+	core::Size atm2, // Which atom in residue 2?
+	conformation::Residue const & rsd2, // Residue 2
+	pose::Pose const &, // pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const {
+	using namespace etable::count_pair;
+
+
+	if ( rsd1.seqpos() != rsd2.seqpos() ) {
+		// Residue-pair energy: a crib of residue_pair_energy(), expanded to account for the atomistic evaluation.
+		Real score(0.0);
+
+		if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
+
+		// NULL if no info
+		if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
+			// assuming only a single bond right now -- generalizing to arbitrary topologies
+			// also assuming crossover of 4, should be closest (?) to classic rosetta
+
+			bool const is_rsd1_ncaa_polymer = rsd1.is_polymer() && !rsd1.type().is_base_type();
+			bool const is_rsd2_ncaa_polymer = rsd2.is_polymer() && !rsd2.type().is_base_type();
+			bool const is_cp3full = count_pair_full_ ||
+				(count_pair_hybrid_ && ( rsd1.is_ligand() || rsd2.is_ligand() || is_rsd1_ncaa_polymer || is_rsd2_ncaa_polymer )); // if any of rsd1/rsd2 is ncaa_polymer
+
+			CountPairFunctionOP cpfxn = is_cp3full ?
+				CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
+				CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+
+			Real d2;
+			Size atm1_rep = get_countpair_representative_atom( rsd1.type(), atm1 );
+			Size atm2_rep = get_countpair_representative_atom( rsd2.type(), atm2 );
+
+			Real weight=1.0;
+			Size path_dist( 0 );
+			if ( cpfxn->count( atm1_rep, atm2_rep, weight, path_dist ) ) {
+				score += score_atom_pair( rsd1, rsd2, atm1, atm2, emap, weight, d2 );
+			} else {
+				d2 = rsd1.xyz(atm1).distance_squared( rsd2.xyz(atm2) );
+			}
+		} else {
+			Real d2;
+			Real weight=1.0;
+			score += score_atom_pair( rsd1, rsd2, atm1, atm2, emap, weight, d2 );
+		}
+
+		emap[ fa_elec ] += score;
+
+	} else {
+		// Pairwise atom energy within a single residue: crib of eval_intrares_energy, expanded to account for the atomistic evaluation.
+		if ( atm1 == atm2 ) { return; } // Same residue *and* same atom?
+		Real score(0.0);
+		core::conformation::Residue const & rsd = rsd1; // They should be the same.
+
+		if ( eval_intrares_ST_only() ) {
+			if ( !(rsd.aa() == chemical::aa_ser || rsd.aa() == chemical::aa_thr ||
+					rsd.aa() == chemical::aa_dse || rsd.aa() == chemical::aa_dth )
+					) return;
+
+			Size iOG=0, iHG=0, iN=0;
+			utility::vector1< Size > iHs;
+			iN = rsd.atom_index( "N" );
+			if ( rsd.is_lower_terminus() ) {
+				debug_assert( rsd.has("1H") && rsd.has("2H") && rsd.has("3H") );
+				iHs.resize(3);
+				iHs[1] = rsd.atom_index( "1H" );
+				iHs[2] = rsd.atom_index( "2H" );
+				iHs[3] = rsd.atom_index( "3H" );
+			} else {
+				iHs.push_back( rsd.atom_index( "H" ) );
+			}
+			if ( rsd.aa() == chemical::aa_ser || rsd.aa() == chemical::aa_dse ) {
+				debug_assert( rsd.has("HG") );
+				iOG = rsd.atom_index( "OG" );
+				iHG = rsd.atom_index( "HG" );
+			} else { // threonine
+				debug_assert( rsd.has("HG1") );
+				iOG = rsd.atom_index( "OG1" );
+				iHG = rsd.atom_index( "HG1" );
+			}
+
+			if ( !( ( atm1 == iN && atm2 == iOG ) || ( atm1 == iN && atm2 == iHG ) ||
+					( atm1 == atm2 && iHs.contains(atm2) ) || ( iHs.contains(atm1) && atm2 == iHG ) )
+					) return;
+		}
+
+		// assuming only a single bond right now -- generalizing to arbitrary topologies
+		// also assuming crossover of 4, should be closest (?) to classic rosetta
+		bool const is_ligand( rsd.is_ligand() );
+		// check if corresponds to base-type L/D-AA -- is there any better way to get base-type D-AA?
+		//bool const is_rsd_baseAA = (rsd.type().is_canonical_aa() || (core::chemical::is_canonical_D_aa(rsd.type().aa())) && rsd.type().is_base_type());
+		bool const is_rsd_baseAA = rsd.type().is_base_type();
+		bool const is_ncaa_polymer = rsd.is_polymer() && !is_rsd_baseAA;
+
+		bool intra_xover3 = ( ((is_ligand || is_ncaa_polymer) && count_pair_hybrid_) || count_pair_full_);
+		CountPairFunctionOP cpfxn = intra_xover3 ?
+			CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_3FULL ) :
+			CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4 );
+
+		Real d2;
+		Size ii_rep = get_countpair_representative_atom( rsd.type(), atm1 );
+		Size jj_rep = get_countpair_representative_atom( rsd.type(), atm2 );
+
+		Real weight=1.0;
+
+		Size path_dist( 0 );
+		if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) {
+			score += score_atom_pair( rsd1, rsd2, atm1, atm2, emap, weight, d2 );
+		}
+
+		emap[ fa_intra_elec ] += score;
+	}
+}
+
 
 void
 FA_ElecEnergy::setup_weight_triple(

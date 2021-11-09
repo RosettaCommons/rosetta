@@ -564,7 +564,6 @@ public:
 	EnergyMap const & weights
 	) const;*/
 
-
 };
 
 }

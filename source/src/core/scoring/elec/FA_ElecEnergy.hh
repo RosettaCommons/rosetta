@@ -379,6 +379,21 @@ public:
 
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
+	/// @brief fa_elec has pairwise energies, but not single atom energies
+	bool
+	has_atomistic_pairwise_energies() const override { return true; }
+
+	void
+	atomistic_pair_energy(
+		core::Size , // Which atom in residue 1?
+		conformation::Residue const &, // Residue 1
+		core::Size , // Which atom in residue 2?
+		conformation::Residue const &, // Residue 2
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
+	) const override;
+
 public:
 	/// @brief  How close two heavy atoms have to be such that their hydrogen atoms might interact, squared.
 	Real

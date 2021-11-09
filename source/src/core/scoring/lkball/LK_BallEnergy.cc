@@ -1570,6 +1570,32 @@ LK_BallEnergy::residue_pair_energy(
 	CountPairFactory::create_count_pair_function_and_invoke( rsd1, rsd2, crossover, invoker );
 }
 
+///@details This is a crib of residue_pair_energy(), expanded to account for the atomistic evaluation.
+void
+LK_BallEnergy::atomistic_pair_energy(
+	core::Size atm1, // Which atom in residue 1?
+	conformation::Residue const & rsd1, // Residue 1
+	core::Size atm2, // Which atom in residue 2?
+	conformation::Residue const & rsd2, // Residue 2
+	pose::Pose const &, // pose,
+	ScoreFunction const & sfxn,
+	EnergyMap & emap
+) const {
+	if ( rsd1.seqpos() == rsd2.seqpos() ) { return; } // We currently ignore intrares LK_Ball
+
+	using conformation::residue_datacache::LK_BALL_INFO;
+	LKB_ResidueInfo const *rsd1_info = dynamic_cast< LKB_ResidueInfo const * >( rsd1.data().get_raw_const_ptr( LK_BALL_INFO ) );
+	LKB_ResidueInfo const *rsd2_info = dynamic_cast< LKB_ResidueInfo const * >( rsd2.data().get_raw_const_ptr( LK_BALL_INFO ) );
+
+	debug_assert( rsd1_info );
+	debug_assert( rsd2_info );
+
+	using namespace etable::count_pair;
+	CPCrossoverBehavior crossover = (rsd1.is_polymer_bonded(rsd2) && rsd2.is_polymer_bonded(rsd1))? CP_CROSSOVER_4 : CP_CROSSOVER_3;
+	CountPairFunctionCOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, crossover );
+
+	evaluate_lk_ball_energy_for_atom_ranges( *this, rsd1, *rsd1_info, rsd2, *rsd2_info, sfxn, *cpfxn, atm1, atm1, atm2, atm2, emap );
+}
 
 
 /////////////////////////////////////////////////////////////////////////////

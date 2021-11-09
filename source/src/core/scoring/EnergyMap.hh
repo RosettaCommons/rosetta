@@ -72,7 +72,7 @@ public:
 	///     EMapVector.set
 	///     ScoreFunction
 	///     create_score_function
-	Real get(ScoreType st) { return (*this)[st]; }
+	Real get(ScoreType st) const { return (*this)[st]; }
 	/// @brief Sets the value for ScoreType  <st>  to  <val>
 	///
 	/// example(s):
@@ -215,7 +215,7 @@ public:
 
 	/// @brief * operator, for performing multiplication of a vector by a scalar
 	EMapVector
-	operator * ( Real scalar )
+	operator * ( Real scalar ) const
 	{
 		EMapVector result(*this);
 		result *= scalar;
@@ -224,7 +224,7 @@ public:
 
 	/// @brief * operator, for performing element-by-element multiplication of two vectors
 	EMapVector
-	operator * ( EMapVector const & src )
+	operator * ( EMapVector const & src ) const
 	{
 		EMapVector result(*this);
 		result *= src;
@@ -280,7 +280,7 @@ public:
 	///     ScoreFunction
 	///     create_score_function
 	Real
-	sum()
+	sum() const
 	{
 		Real total( 0.0 );
 		for ( Real ii : map_ ) {
@@ -291,7 +291,7 @@ public:
 
 	/// @brief accumulate the squared values of a subset of the positions
 	Real
-	norm_squared( ScoreTypes const & l )
+	norm_squared( ScoreTypes const & l ) const
 	{
 		Real total( 0.0 );
 		for ( auto iter : l ) {
@@ -304,7 +304,7 @@ public:
 
 	/// @brief Check that there aren't any non-finite (inf, NaN) entries.
 	bool
-	is_finite() {
+	is_finite() const {
 		for ( Real const val: map_ ) {
 			// We check for zero first here, because we expect that most entries in the map are likely
 			// to be zero, and checking for zero is much faster than doing the finite check.

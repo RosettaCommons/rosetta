@@ -17,12 +17,15 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-
+#include <core/id/AtomID.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 
 #include <string>
+#include <map>
 
 namespace core {
 namespace scoring {
@@ -140,6 +143,52 @@ bool check_score_function_sanity(
 	utility::options::OptionCollection const & options,
 	std::string const & scorefxn_key,
 	bool throw_exception = false );
+
+/// @brief Get the (pseudo-one-body) energies for a set of atoms.
+/// Only atoms with non-zero energies will be present in the returned map.
+/// The output vector will be ordered by the types in the passed ScoreTypes
+/// If subset is passed, only atoms in residues from the subset will be considered
+/// @details Pose will be rescored with the scorefunction (hence it being non-const)
+/// Not all energies are atomistic
+std::map< id::AtomID, utility::vector1< Real > >
+get_single_atom_energies(
+	core::pose::Pose & pose,
+	ScoreFunction const & scorefxn,
+	ScoreTypes const & types,
+	select::residue_selector::ResidueSubsetOP subset = nullptr
+);
+
+/// @brief Get the pairwise energies for a set of atoms.
+/// Only atom pairs with non-zero energies will be present in the returned map.
+/// The output vector will be ordered by the types in the passed ScoreTypes
+/// If both subsets are passed, only pairwise interactions between atoms in residues across the two sets will be considered
+/// If just subset1 is passed, only pairwise interactions which involve at least one atom in a residue in the set will be considered
+/// If neither is passed, all pairwise interactions will be considered.
+/// @details Pose will be rescored with the scorefunction (hence it being non-const)
+/// Not all energies are atomistic
+std::map< std::pair< id::AtomID, id::AtomID >,  utility::vector1< Real > >
+get_pairwise_atom_energies(
+	core::pose::Pose & pose,
+	ScoreFunction const & scorefxn,
+	ScoreTypes const & types,
+	select::residue_selector::ResidueSubsetOP subset1 = nullptr,
+	select::residue_selector::ResidueSubsetOP subset2 = nullptr
+);
+
+/// @brief Get the per-atom contributions to the energy.
+/// This differs from get_single_atom_energies() in that it also considers the atoms' contributions to pairwise energies.
+/// The output vector will be ordered by the types in the passed ScoreTypes
+/// If subset is passed, only atoms in residues from the subset will be considered
+/// @details Pose will be rescored with the scorefunction (hence it being non-const)
+/// Not all energies are atomistic
+std::map< id::AtomID,  utility::vector1< Real > >
+get_atomistic_energies(
+	core::pose::Pose & pose,
+	ScoreFunction const & scorefxn,
+	ScoreTypes const & types,
+	select::residue_selector::ResidueSubsetOP subset = nullptr
+);
+
 
 }
 }

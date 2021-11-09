@@ -496,6 +496,55 @@ FastDensEnergy::eval_residue_pair_derivatives(
 	} // for each heavyatom
 }
 
+///@details This is a crib of residue_pair_energy(), expanded to account for the atomistic evaluation.
+void
+FastDensEnergy::atomistic_energy(
+	core::Size atm, // Which atom in residue?
+	conformation::Residue const & rsd, // which residue
+	pose::Pose const & pose, // pose,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
+) const {
+	using namespace numeric::statistics;
+	if ( rsd.aa() == core::chemical::aa_vrt ) return;
+	if ( ! pose_is_setup_for_density_scoring( pose ) ) return; // already warned in setup
+
+	// The electron density is only defined over heavyatoms.
+	if ( atm > rsd.nheavyatoms() ) { return; }
+
+	core::Real scalefact = 1.0;
+	if ( rsd.aa() <= core::chemical::num_canonical_aas ) {
+		scalefact = sc_scale_byres_[(int)rsd.aa()];
+	}
+
+	Size r = rsd.seqpos();
+
+	// grab symminfo (if defined) from the pose
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
+	core::Size nsubunits = 1;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
+		nsubunits = symminfo->subunits();
+		if ( ! symminfo->bb_is_independent( r ) ) return;
+	}
+
+	core::Real cc = core::scoring::electron_density::getDensityMap().matchAtomFast( r, atm, rsd, pose, symminfo, scalefact );
+	Real edensScore = -cc;
+
+	if ( symminfo && scoreSymmComplex_ ) {
+		edensScore /= ((core::Real)nsubunits);
+		utility::vector1< core::Size > bbclones = symminfo->bb_clones( r );
+		for ( int i=1; i<=(int)bbclones.size(); ++i ) {
+			cc = core::scoring::electron_density::getDensityMap().matchResFast(
+				bbclones[i], pose.residue(bbclones[i]), pose, symminfo, scalefact );
+			edensScore -= cc / ((core::Real)nsubunits);
+		}
+	}
+
+	emap[ core::scoring::elec_dens_fast ] += edensScore;
+	return;
+}
+
 
 core::Size
 FastDensEnergy::version() const

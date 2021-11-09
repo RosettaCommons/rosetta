@@ -1434,6 +1434,174 @@ create_rotamer_descriptor(
 	}
 }
 
+
+void
+HBondEnergy::atomistic_pair_energy(
+	core::Size atm1, // Which atom in residue 1?
+	conformation::Residue const & rsd1, // Residue 1
+	core::Size atm2, // Which atom in residue 2?
+	conformation::Residue const & rsd2, // Residue 2
+	pose::Pose const & pose, // pose,
+	ScoreFunction const &,
+	EnergyMap & emap
+) const {
+	if ( rsd1.seqpos() == rsd2.seqpos() ) {
+		// Residue internal energy: a crib of eval_intrares_energy, expanded to account for the atomistic evaluation.
+		if ( ! calculate_intra_res_hbonds( rsd1, *options_ ) ) { return; }
+
+		TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
+		Size const rsd_nb = tenA_neighbor_graph.get_node( rsd1.seqpos() )->num_neighbors_counting_self_static();
+
+		HBondSet hbond_set( *options_ );
+		identify_intra_res_hbonds( *database_, rsd1, rsd_nb, false /*evaluate_derivative*/, hbond_set );
+
+		for ( HBondOP const & hb: hbond_set.hbonds() ) {
+			debug_assert( hb->don_res() == rsd1.seqpos() ); // Should be, as we're intrares.
+			debug_assert( hb->acc_res() == rsd1.seqpos() );
+			// Skip out if we have an hbond not between one of the atoms involved.
+			if ( hb->acc_atm() != atm1 && hb->don_hatm() != atm1 ) { continue; }
+			if ( hb->acc_atm() != atm2 && hb->don_hatm() != atm2 ) { continue; }
+
+			Real const weighted_energy = hb->energy() * hb->weight();
+			if ( options_->put_intra_into_total() ) {
+				emap[ hbond ]       += weighted_energy;
+			} else {
+				emap[ hbond_intra ] += weighted_energy;
+			}
+		}
+	} else {
+		// Residue pair energy: a crib of residue_pair_energy(), expanded to account for the atomistic evaluation.
+		if ( options_->exclude_DNA_DNA() && rsd1.is_DNA() && rsd2.is_DNA() ) return;
+
+		bool rsd1_is_donor = false;
+
+		if ( rsd1.Hpos_polar().has_value( atm1 ) ) {
+			if ( rsd2.accpt_pos().has_value( atm2 ) ) {
+				rsd1_is_donor = true;
+			} else { return; } // Not compatible
+		} else if ( rsd1.accpt_pos().has_value( atm1 ) ) {
+			if ( rsd2.Hpos_polar().has_value( atm2 ) ) {
+				rsd1_is_donor = false;
+			} else { return; } // Not compatible
+		} else { return; } // Not an hbonder
+
+		conformation::Residue const & don_rsd = rsd1_is_donor ? rsd1 : rsd2;
+		conformation::Residue const & acc_rsd = rsd1_is_donor ? rsd2 : rsd1;
+		Size const hatm = rsd1_is_donor ? atm1 : atm2;
+		Size const aatm = rsd1_is_donor ? atm2 : atm1;
+
+		auto const & hbond_set
+			( static_cast< hbonds::HBondSet const & >
+			( pose.energies().data().get( EnergiesCacheableDataType::HBOND_SET )));
+
+		bool const exclude_bb = !options_->decompose_bb_hb_into_pair_energies();
+		bool const exclude_sc = false;
+		bool exclude_bsc = false, exclude_scb = false;
+		if ( don_rsd.is_protein() ) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(don_rsd.seqpos());
+		if ( acc_rsd.is_protein() ) exclude_bsc = options_->bb_donor_acceptor_check() && hbond_set.acc_bbg_in_bb_bb_hbond(acc_rsd.seqpos());
+
+		Size const datm(don_rsd.atom_base(hatm));
+		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
+		if ( datm_is_bb ) {
+			if ( exclude_bb && exclude_scb ) return;
+		} else {
+			if ( exclude_sc && exclude_bsc ) return;
+		}
+		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
+		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
+
+		if ( acc_rsd.atom_is_backbone(aatm) ) {
+			if ( datm_is_bb ) {
+				if ( exclude_bb ) return;
+			} else {
+				if ( exclude_bsc ) return;
+			}
+		} else {
+			if ( datm_is_bb ) {
+				if ( exclude_scb ) return;
+			} else {
+				if ( exclude_sc ) return;
+			}
+		}
+
+		// rough filter for existence of hydrogen bond
+		if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) return;
+
+		HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
+
+		int const base ( acc_rsd.atom_base( aatm ) );
+		int const base2( acc_rsd.abase2( aatm ) );
+		debug_assert( base2 > 0 && base != base2 );
+
+		Real unweighted_energy( 0.0 );
+
+		hb_energy_deriv( *database_, *options_, hbe_type, datm_xyz, hatm_xyz,
+			acc_rsd.atom(aatm ).xyz(),
+			acc_rsd.atom(base ).xyz(),
+			acc_rsd.atom(base2).xyz(),
+			unweighted_energy, false, DUMMY_DERIVS);
+
+		if ( unweighted_energy >= options_->max_hb_energy() ) return;
+
+		core::Size const don_nb = hbond_set.nbrs(don_rsd.seqpos());
+		core::Size const acc_nb = hbond_set.nbrs(rsd2.seqpos());
+
+		core::Real environmental_weight;
+		if ( options_->Mbhbond() || options_->mphbond() ) {
+			environmental_weight =
+				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
+				acc_rsd.atom(aatm ).xyz());
+
+			// hydrate/SPaDES protocol for when bond is near water
+			if ( options_->water_hybrid_sf() ) {
+				if ( residue_near_water( pose, rsd1.seqpos() ) || residue_near_water( pose, rsd2.seqpos() ) ) {
+					environmental_weight = 1;
+				}
+			}
+		} else {
+			environmental_weight =
+				(!options_->use_hb_env_dep() ? 1 :
+				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, *options_));
+
+			// hydrate/SPaDES protocol for when bond is near water
+			if ( options_->water_hybrid_sf() ) {
+				if ( residue_near_water( pose, rsd1.seqpos() ) || residue_near_water( pose, rsd2.seqpos() ) ) {
+					environmental_weight = 1;
+				}
+			}
+
+			if ( get_hbond_weight_type(hbe_type.eval_type()) == hbw_SR_BB ) {
+				SSWeightParameters ssdep;
+				ssdep.ssdep_ = options_->length_dependent_srbb();
+				ssdep.l_ = options_->length_dependent_srbb_lowscale();
+				ssdep.h_ = options_->length_dependent_srbb_highscale();
+				ssdep.len_l_ = options_->length_dependent_srbb_minlength();
+				ssdep.len_h_ = options_->length_dependent_srbb_maxlength();
+				Real ssdep_weight_factor = get_ssdep_weight(rsd1, rsd2, pose, ssdep);
+
+				environmental_weight *= ssdep_weight_factor;
+			}
+		}
+
+		Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
+
+		// hydrate/SPaDES protocol scoring function
+		if ( options_->water_hybrid_sf() ) {
+			if ( ( don_rsd.name() == "TP3" && acc_rsd.name() != "TP3") || ( acc_rsd.name() == "TP3" && don_rsd.name() != "TP3" ) ) {
+				static core::scoring::func::FuncOP smoothed_step ( new core::scoring::func::SmoothStepFunc( -0.55,-0.45 ) );
+				emap[ wat_entropy ] += 1.0 - smoothed_step->func( unweighted_energy );
+			}
+			if ( (don_rsd.name() == "TP3" || acc_rsd.name() == "TP3") ) {
+				emap[ hbond_wat ] += hbE;
+				return;
+			}
+		}
+
+		increment_hbond_energy( hbe_type.eval_type(), emap, hbE );
+	}
+}
+
+
 hbtrie::HBondRotamerTrieOP
 HBondEnergy::create_rotamer_trie(
 	conformation::RotamerSetBase const & rotset,

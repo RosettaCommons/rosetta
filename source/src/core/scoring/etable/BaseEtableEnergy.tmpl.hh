@@ -1593,6 +1593,56 @@ BaseEtableEnergy< Derived >::eval_atom_derivative(
 	}
 }
 
+///@details This is a crib of residue_pair_energy(), expanded to account for the atomistic evaluation.
+/// Details from inline_residue_atom_pair_energy have also been incorporated.
+template < class Derived >
+void
+BaseEtableEnergy< Derived >::atomistic_pair_energy(
+	core::Size atm1, // Which atom in residue 1?
+	conformation::Residue const & rsd1, // Residue 1
+	core::Size atm2, // Which atom in residue 2?
+	conformation::Residue const & rsd2, // Residue 2
+	pose::Pose const & pose,
+	ScoreFunction const & sfxn,
+	EnergyMap & emap
+) const {
+	if ( rsd1.seqpos() != rsd2.seqpos() ) {
+		// Residue pair case: This is a crib of residue_pair_energy(), expanded to account for the atomistic evaluation.
+		// Details from inline_residue_atom_pair_energy have also been incorporated.
+		if ( rsd1.atom_type(atm1).is_virtual() || rsd2.atom_type(atm2).is_virtual() ) { return; }
+
+		prepare_for_residue_pair(rsd1.seqpos(),rsd2.seqpos(),pose);
+		if ( !calculate_interres( rsd1, rsd2 ) ) return;
+		count_pair::CPCrossoverBehavior crossover = determine_crossover_behavior( rsd1, rsd2, pose, sfxn );
+		count_pair::CountPairFunctionCOP cp = count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, crossover );
+
+		// There's some hydrate/SPaDES protocol stuff, but I'm skipping that because I'm not sure it's doing anything.
+
+		Real d2;
+		Real weight = 1.0;
+		Size pathdist;
+		if ( cp->count( atm1, atm2, weight, pathdist ) ) {
+			static_cast< Derived const & >(*this).interres_evaluator().atom_pair_energy( rsd1.atom(atm1), rsd2.atom(atm2), weight, emap, d2 );
+		}
+	} else {
+		// Residue internal case: a crib of inline_residue_atom_pair_energy/residue_fast_pair_energy_attached_H , expanded to account for the atomistic evaluation
+		if ( rsd1.atom_type(atm1).is_virtual() ) { return; }
+		if ( rsd2.atom_type(atm2).is_virtual() ) { return; }
+		if ( atm1 == atm2 ) { return; } // Why called with both?
+		if ( !calculate_intrares( rsd1 ) ) return;
+
+		count_pair::CountPairFunctionCOP cp = get_intrares_countpair( rsd1, pose, sfxn );
+
+		// There's some hydrate/SPaDES protocol stuff, but I'm skipping that because I'm not sure it's doing anything.
+
+		Real d2;
+		Real weight = 1.0;
+		Size pathdist;
+		if ( cp->count( atm1, atm2, weight, pathdist ) ) {
+			(static_cast< Derived const * > (this))->intrares_evaluator().atom_pair_energy( rsd1.atom(atm1), rsd2.atom(atm2), weight, emap, d2 );
+		}
+	}
+}
 
 /// @brief return the Etables atomic distance cutoff
 template < class Derived >
