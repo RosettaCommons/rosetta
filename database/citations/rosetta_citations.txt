@@ -73,7 +73,6 @@
     [END_DOI]
 [END_CITATION]
 
-# This is not a Rosetta citation, but is used by MHCEpitopeEnergy
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
         "Harpreet" "Singh" "H"
@@ -342,6 +341,38 @@
     [END_VOLUME_ISSUE_PAGES]
     [BEGIN_DOI]
         10.1371/journal.pone.0018934
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Michael D" "Tyka" "MD"
+        "Daniel A" "Keedy" "DA"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Ingemar" "André" "I"
+        "Frank" "Dimaio" "F"
+        "Yifan" "Song" "Y"
+        "David C" "Richardson" "DC"
+        "Jane S" "Richardson" "JS"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2011
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Alternate states of proteins revealed by detailed energy landscape mapping
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        J Mol Biol
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        405(2):607-18
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1016/j.jmb.2010.11.008
     [END_DOI]
 [END_CITATION]
 
@@ -1021,7 +1052,6 @@
     [END_DOI]
 [END_CITATION]
 
-# This is not a Rosetta citation, but is used by MHCEpitopeEnergy
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
         "Randi" "Vita" "R"
