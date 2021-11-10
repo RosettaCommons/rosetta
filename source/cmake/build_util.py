@@ -144,9 +144,9 @@ def list_external_files(path_to_mini, external_name):
 
         full_path = path_to_external + dir
 
-        if not os.path.exists(full_path) and (settings_dict.get('only_with_extras', False) or settings_dict.get('only_with_platforms', False)):
-            # This may be part of a submodule which isn't currently loaded, but isn't needed for the current build
-            # Don't crash (yet).
+        if (not os.path.exists(full_path) or len(os.listdir(full_path)) == 0) and (settings_dict.get('only_with_extras', False) or settings_dict.get('only_with_platforms', False)):
+            # This may be part of a submodule which isn't currently loaded, or otherwise isn't needed for the current build
+            # Don't crash (yet) if we don't have the directory, or if the directory is emtpy
             continue
 
         old_srcfiles = srcfiles
