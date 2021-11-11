@@ -6,6 +6,7 @@ VARIANT PROTONATED
 IO_STRING GLU E
 TYPE POLYMER #residue type
 AA GLU
+BACKBONE_AA GLU
 ROTAMER_AA GLU
 ATOM  N   Nbb  NH1  -0.47
 ATOM  CA  CAbb CT1  0.07
@@ -51,6 +52,8 @@ NBR_ATOM CB
 # APL CB to furthest side chain heavy atom distance -- max as observed from res 74 on ubiquitin
 NBR_RADIUS 3.6154
 FIRST_SIDECHAIN_ATOM CB
+RAMA_PREPRO_RESNAME GLU
+RAMA_PREPRO_FILENAME all.ramaProb prepro.ramaProb
 ACT_COORD_ATOMS CD OE1 OE2 END
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  
