@@ -923,7 +923,11 @@ Real NearNativeLoopCloser::close_loop(core::pose::Pose & pose) {
 	}
 	//do actual closer
 	//-------deal with multiple chains-for easier indexing-----------
-	if ( chainBeforeLoop_!=chainAfterLoop_ ) { //connecting chains
+	if ( (chainBeforeLoop_!=chainAfterLoop_) || (pose.chain( resBeforeLoop_) != pose.chain( resAfterLoop_ )) ) { //connecting chains
+		if ( !(chainBeforeLoop_!=chainAfterLoop_) ) {
+			chainBeforeLoop_ = get_chain_from_chain_id(pose.chain( resBeforeLoop_),pose);
+			chainAfterLoop_ =  get_chain_from_chain_id(pose.chain( resAfterLoop_),pose);
+		}
 		combine_chains(pose);
 	} else { //internal loop
 		vector1<int> chains = get_chains(pose);
