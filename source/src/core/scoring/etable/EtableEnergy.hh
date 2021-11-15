@@ -52,6 +52,8 @@ public:
 	EtableEvaluator( Etable const & etable );
 	~EtableEvaluator() override;
 
+	virtual EtableEvaluatorOP clone() const = 0;
+
 	void
 	set_weights(
 		EnergyMap const & weights
@@ -215,6 +217,8 @@ class AnalyticEtableEvaluator : public EtableEvaluator
 public:
 	AnalyticEtableEvaluator( Etable const & etable );
 	~AnalyticEtableEvaluator() override;
+
+	EtableEvaluatorOP clone() const override;
 
 	//Etable etable() const { return etable_; }
 
@@ -504,6 +508,8 @@ class TableLookupEvaluator : public EtableEvaluator
 public:
 	TableLookupEvaluator( Etable const & etable_in );
 	~TableLookupEvaluator() override;
+
+	EtableEvaluatorOP clone() const override;
 
 	/// Atom pair energy inline type resolution functions
 	void

@@ -136,7 +136,7 @@ ScoreFunction::list_options_read( utility::options::OptionKeyList & option_list 
 ScoreFunctionOP
 ScoreFunction::clone() const
 {
-	ScoreFunctionOP new_score_function( new ScoreFunction );
+	ScoreFunctionOP new_score_function( utility::pointer::make_shared< ScoreFunction >() );
 	new_score_function->assign(*this);
 	return new_score_function;
 }
@@ -145,7 +145,7 @@ ScoreFunction::clone() const
 ScoreFunctionOP
 ScoreFunction::clone_as_base_class() const
 {
-	ScoreFunctionOP new_score_function( new ScoreFunction );
+	ScoreFunctionOP new_score_function( utility::pointer::make_shared< ScoreFunction >() );
 	new_score_function->assign(*this);
 	return new_score_function;
 }
@@ -634,6 +634,9 @@ void
 ScoreFunction::assign( ScoreFunction const & src )
 {
 	if ( this == &src ) return;
+
+	// copy the name
+	name_ = src.name_;
 
 	// copy the weights
 	weights_ = src.weights_;

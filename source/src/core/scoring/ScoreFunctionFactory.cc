@@ -40,6 +40,7 @@
 #include <basic/citation_manager/CitationManager.hh>
 #include <sstream>
 
+#include <utility/thread/threadsafe_creation.hh>
 #include <utility/string_util.hh>
 
 static basic::Tracer TR( "core.scoring.ScoreFunctionFactory" );
@@ -72,59 +73,7 @@ ScoreFunctionFactory::create_score_function(
 	std::string const & weights_tag_in,
 	utility::vector1< std::string > const & patch_tags_in
 ) {
-	using namespace basic::options::OptionKeys;
-	std::string weights_tag( weights_tag_in );
-	utility::vector1< std::string > patch_tags( patch_tags_in ); // copy the input patches; we're going to modify them
-
-	// create a new scorefunction
-	ScoreFunctionOP scorefxn;
-	if ( options[ score::min_score_score ].user() ) {
-		scorefxn = utility::pointer::make_shared< MinScoreScoreFunction >( options[ score::min_score_score ]() );
-	} else if ( options[ score::docking_interface_score ]() ) {
-		scorefxn = utility::pointer::make_shared< DockingScoreFunction >();
-	} else {
-		scorefxn = utility::pointer::make_shared< ScoreFunction >( options );
-	}
-
-	// Avoid loading the score12 patch if we're using
-	// 1) standard weights,
-	// 2) the score12 patch, and
-	// 3) the flag "score12prime"
-	if ( weights_tag == PRE_TALARIS_2013_STANDARD_WTS &&
-			options[ corrections::score::score12prime ] ) {
-		bool sc12patch = false;
-		for ( Size ii = 1; ii <= patch_tags.size(); ++ii ) {
-			if ( patch_tags[ ii ] == SCORE12_PATCH ) {
-				patch_tags[ ii ] = "NOPATCH";
-				sc12patch = true;
-			}
-		}
-		if ( sc12patch ) {
-			weights_tag = "score12prime";
-		}
-	}
-
-	runtime_assert(validate_talaris(weights_tag, options) );
-	runtime_assert(validate_beta(weights_tag, options));
-	load_weights_file( weights_tag, scorefxn );
-	for ( utility::vector1< std::string >::const_iterator it = patch_tags.begin(); it != patch_tags.end(); ++it ) {
-		std::string const& patch_tag( *it );
-		if ( patch_tag.size() && patch_tag != "NOPATCH" ) {
-			//   TR.Debug << "SCOREFUNCTION: apply patch "  << patch_tag << std::endl;
-			scorefxn->apply_patch_from_file( patch_tag );
-		}
-	}
-
-	// allow user to change weights via options system
-	apply_user_defined_reweighting_( options, scorefxn );
-	scorefxn->name( weights_tag );
-
-	// Register this scorefunction with the citation manager:
-	basic::citation_manager::CitationCollectionList citations;
-	scorefxn->provide_citation_info( citations );
-	basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
-
-	return scorefxn;
+	return ScoreFunctionFactory::get_instance()->create_score_function_nonstatic( options, weights_tag_in, patch_tags_in );
 }
 
 /// @details If requested tag is talaris2013/talaris2014, but the user did not
@@ -241,6 +190,113 @@ ScoreFunctionFactory::validate_beta(
 	return true;
 } //ScoreFunctionFactory::validate_beta
 
+/********************** PRIVATE MEMBER FUNCTIONS *******************************/
+
+
+/// @brief Nonstatic version for storing the loaded scorefunction in this object.
+/// @details Loads scorefunction from disk if it has not yet been loaded (and caches it), or retrieves cached copy
+/// if it has been loaded already.  Returns clone of cached copy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+ScoreFunctionOP
+ScoreFunctionFactory::create_score_function_nonstatic(
+	utility::options::OptionCollection const & options,
+	std::string const & weights_tag,
+	utility::vector1< std::string > const & patch_tags
+) {
+	// The following is for threadsafe insertion of an entry into a map.  We create a std::function object, which allows
+	// a function to be packaged with a set of parameters passed to it, for calling later.  We then pass it to a function
+	// located in utility::thread which (a) locks the map mutex (to ensure that only one thread does the subsequent steps),
+	// (b) checks whether the map already contains the key (e.g. if anothe thread has already inserted it into the map),
+	// (c) calls the function if and only if the key is not in the map (so that only one thread ever loads the data from
+	// disk, and this is not repeated by a second thread that might be waiting on the mutex, (d) adds the key-value pair
+	// to the map, and (e) unlocks the mutex.  Any following threads waiting on the mutex will discover that the key is
+	// already in the map, and will not try to load the data again or add it again:
+	std::function< core::scoring::ScoreFunctionOP () > creator(
+		std::bind( &ScoreFunctionFactory::load_score_function_from_disk, std::cref( options ), std::cref( weights_tag ), std::cref( patch_tags ) )
+	);
+
+	std::ostringstream concatenated_patch_tags;
+	for ( core::Size i(1), imax(patch_tags.size()); i<=imax; ++i ) {
+		concatenated_patch_tags << patch_tags[i];
+		if ( i<imax ) {
+			concatenated_patch_tags << ",";
+		}
+	}
+
+	return ( utility::thread::safely_check_map_for_key_and_insert_if_absent(
+		creator,
+		SAFELY_PASS_MUTEX( loaded_scorefxns_mutex_ ),
+		ScoreFunctionKey( weights_tag, concatenated_patch_tags.str(), &options ),
+		loaded_scorefxns_
+		)
+		)->clone();
+}
+
+/// @brief Load a scorefunction from disk.
+/// @details TRIGGERS READ FROM DISK!  This function is needed for threadsafe creation.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+/*static*/
+core::scoring::ScoreFunctionOP
+ScoreFunctionFactory::load_score_function_from_disk(
+	utility::options::OptionCollection const & options,
+	std::string const & weights_tag_in,
+	utility::vector1< std::string > const & patch_tags_in
+) {
+	using namespace basic::options::OptionKeys;
+	std::string weights_tag( weights_tag_in );
+	utility::vector1< std::string > patch_tags( patch_tags_in ); // copy the input patches; we're going to modify them
+
+	// create a new scorefunction
+	ScoreFunctionOP scorefxn;
+	if ( options[ score::min_score_score ].user() ) {
+		scorefxn = utility::pointer::make_shared< MinScoreScoreFunction >( options[ score::min_score_score ]() );
+	} else if ( options[ score::docking_interface_score ]() ) {
+		scorefxn = utility::pointer::make_shared< DockingScoreFunction >();
+	} else {
+		scorefxn = utility::pointer::make_shared< ScoreFunction >( options );
+	}
+
+	// Avoid loading the score12 patch if we're using
+	// 1) standard weights,
+	// 2) the score12 patch, and
+	// 3) the flag "score12prime"
+	if ( weights_tag == PRE_TALARIS_2013_STANDARD_WTS &&
+			options[ corrections::score::score12prime ] ) {
+		bool sc12patch = false;
+		for ( Size ii = 1; ii <= patch_tags.size(); ++ii ) {
+			if ( patch_tags[ ii ] == SCORE12_PATCH ) {
+				patch_tags[ ii ] = "NOPATCH";
+				sc12patch = true;
+			}
+		}
+		if ( sc12patch ) {
+			weights_tag = "score12prime";
+		}
+	}
+
+	runtime_assert(validate_talaris(weights_tag, options) );
+	runtime_assert(validate_beta(weights_tag, options));
+	load_weights_file( weights_tag, scorefxn );
+	for ( utility::vector1< std::string >::const_iterator it = patch_tags.begin(); it != patch_tags.end(); ++it ) {
+		std::string const& patch_tag( *it );
+		if ( patch_tag.size() && patch_tag != "NOPATCH" ) {
+			//   TR.Debug << "SCOREFUNCTION: apply patch "  << patch_tag << std::endl;
+			scorefxn->apply_patch_from_file( patch_tag );
+		}
+	}
+
+	// allow user to change weights via options system
+	apply_user_defined_reweighting_( options, scorefxn );
+	scorefxn->name( weights_tag );
+
+	// Register this scorefunction with the citation manager:
+	basic::citation_manager::CitationCollectionList citations;
+	scorefxn->provide_citation_info( citations );
+	basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
+
+	return scorefxn;
+}
+
 ScoreFunctionOP
 ScoreFunctionFactory::create_score_function( std::string const & weights_tag, std::string const & patch_tag )
 {
@@ -253,8 +309,7 @@ ScoreFunctionFactory::create_score_function(
 	std::string const & weights_tag,
 	std::string const & patch_tag )
 {
-	utility::vector1< std::string > patch_tags;
-	patch_tags.push_back( patch_tag );
+	utility::vector1< std::string > const patch_tags {patch_tag};
 	return create_score_function( options, weights_tag, patch_tags );
 }
 

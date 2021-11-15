@@ -385,6 +385,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolE
 	hb_database_(src.hb_database_),
 	atom_type_set_ptr_( src.atom_type_set_ptr_ ),
 	hbond_set_(utility::pointer::make_shared< core::scoring::hbonds::HBondSet >(*src.hbond_set_)),
+	etable_evaluator_( src.etable_evaluator_ == nullptr ? nullptr  : src.etable_evaluator_->clone() ),
 	lk_safe_max_dis2_( src.lk_safe_max_dis2_ ),
 	verbose_( src.verbose_ )
 {

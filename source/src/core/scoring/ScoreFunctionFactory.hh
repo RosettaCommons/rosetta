@@ -22,7 +22,14 @@
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+#include <utility/SingletonBase.hh>
 #include <string>
+#include <map>
+#include <tuple>
+
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
 
 #ifdef WIN32 //VC++ needs full class declaration
 #include <core/scoring/ScoreFunction.hh> // WIN32 INCLUDE
@@ -36,9 +43,61 @@
 namespace core {
 namespace scoring {
 
-/// @brief A collection of functions for making a single score_function
-class ScoreFunctionFactory
+/// @brief A key for looking up previously-loaded scorefunctions (which the ScoreFunctionFactory stores
+/// in a map of owning pointers indexed by keys of this type).
+/// @details The key is the weights file name as a string, a comma-separated list of patches as another
+/// string, and a raw pointer to the options collection.  Note that a raw pointer is appropriate in this
+/// case since the goal is NOT to access the options collection, but simply to have a unique identifier
+/// for whether we've seen it before.  An owning pointer or even a weak pointer (access pointer) would
+/// incur unncessary overhead that we don't need for that goal.  If an OptionCollection could be hashed,
+/// that might be an even better unique identifier, but for now, we'll use the memory location.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+struct ScoreFunctionKey {
+
+public:
+
+	/// @brief Default constructor -- explicitly deleted.
+	ScoreFunctionKey() = delete;
+
+	/// @brief Options constructor -- used to set contents of key.
+	ScoreFunctionKey(
+		std::string const & weights_file,
+		std::string const & comma_separated_patches,
+		utility::options::OptionCollection const * const options_collection_ptr
+	) :
+		keytuple_( std::make_tuple( weights_file, comma_separated_patches, options_collection_ptr ) )
+	{}
+
+	~ScoreFunctionKey() = default;
+
+	/// @brief Comparison operator is needed to use this as the key for a map.
+	/// We'll just use a thin wrapper for std::tuple's less than operator.
+	bool
+	operator< (
+		ScoreFunctionKey const & other
+	) const {
+		return keytuple_ < other.keytuple_;
+	}
+
+private:
+
+	/// @brief Internally, we still use a tuple since tuple::operator< is already defined.
+	std::tuple < std::string, std::string, utility::options::OptionCollection const * > keytuple_;
+
+};
+
+/// @brief A static singleton for making a single score_function.
+class ScoreFunctionFactory : public utility::SingletonBase< ScoreFunctionFactory >
 {
+public:
+	friend class utility::SingletonBase< ScoreFunctionFactory >;
+
+private:
+
+	//private constructor
+	ScoreFunctionFactory() = default;
+	~ScoreFunctionFactory() = default;
+
 public:
 
 	/// @brief Returns a ScoreFunction from the database weights file  <weights_tag>
@@ -112,12 +171,44 @@ public:
 
 private:
 
+	/// @brief Nonstatic version for storing the loaded scorefunction in this object.
+	/// @details Loads scorefunction from disk if it has not yet been loaded (and caches it), or retrieves cached copy
+	/// if it has been loaded already.  Returns clone of cached copy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	ScoreFunctionOP
+	create_score_function_nonstatic( utility::options::OptionCollection const & options, std::string const & weights_tag, utility::vector1< std::string > const & patch_tags );
+
+	/// @brief Load a scorefunction from disk.
+	/// @details TRIGGERS READ FROM DISK!  This function is needed for threadsafe creation.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	static
+	core::scoring::ScoreFunctionOP
+	load_score_function_from_disk(
+		utility::options::OptionCollection const & options,
+		std::string const & weights_tag_in,
+		utility::vector1< std::string > const & patch_tags_in
+	);
+
 	/// @brief Applies user defined re-weighting from the options system. Reweights are applied as a
 	/// factor of the original, so -rg_reweight 0.5 would result in half of the previously defined
 	/// rg weight.
 	static void apply_user_defined_reweighting_( utility::options::OptionCollection const & options, core::scoring::ScoreFunctionOP scorefxn );
 
 	static void load_weights_file( std::string weights_tag, ScoreFunctionOP scorefxn );
+
+private:
+
+#ifdef MULTI_THREADED
+	/// @brief A mutex for the loaded_scorefxns_ map.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	mutable utility::thread::ReadWriteMutex loaded_scorefxns_mutex_;
+#endif
+
+	/// @brief A cache of all the scorefunctions we've loaded so far, by filename, so that we don't have to
+	/// load them from disk again.
+	/// @details This is indexed by weights tag, comma-separated patches, pointer to options collection.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	mutable std::map < ScoreFunctionKey, core::scoring::ScoreFunctionOP > loaded_scorefxns_;
 
 };
 

@@ -376,6 +376,10 @@ TableLookupEvaluator::TableLookupEvaluator(
 
 TableLookupEvaluator::~TableLookupEvaluator() = default;
 
+EtableEvaluatorOP
+TableLookupEvaluator::clone() const {
+	return utility::pointer::make_shared< TableLookupEvaluator >( *this );
+}
 
 /// @details atom-pair-energy inline type resolution function
 void
@@ -473,6 +477,11 @@ AnalyticEtableEvaluator::AnalyticEtableEvaluator( Etable const & etable ) :
 {}
 
 AnalyticEtableEvaluator::~AnalyticEtableEvaluator() = default;
+
+EtableEvaluatorOP
+AnalyticEtableEvaluator::clone() const {
+	return utility::pointer::make_shared< AnalyticEtableEvaluator >( *this );
+}
 
 
 /// @details atom-pair-energy inline type resolution function
