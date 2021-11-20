@@ -151,7 +151,6 @@ public:
 	}
 
 private:
-	mutable bool pose_is_proper;
 	core::Size version() const override;
 };
 

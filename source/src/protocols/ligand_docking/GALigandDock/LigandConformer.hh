@@ -290,8 +290,8 @@ private:
 	utility::vector1< core::Size > movingscs_;
 	utility::vector1< core::chemical::ResidueTypeCOP > proteinrestypes_;
 	utility::vector1< utility::vector1< core::Real > > proteinchis_;
-	bool sample_ring_conformers_;
-	bool freeze_ligand_backbone_;
+	bool sample_ring_conformers_ = true;
+	bool freeze_ligand_backbone_ = false;
 
 	// the score
 	core::Real score_;

@@ -96,10 +96,9 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 	kinematics::Edge const &root_edge( *pose.fold_tree().begin() );
 	int virt_res_idx = root_edge.start();
 	conformation::Residue const &root_res( pose.residue( virt_res_idx ) );
-	pose_is_proper = true;
 
 	if ( root_res.aa() != core::chemical::aa_vrt || root_edge.label() < 0 ) {
-		pose_is_proper = false;  // we may be able to recover from this some time but for now just exit
+		// we may be able to recover from this some time but for now just exit
 		utility_exit_with_message( "Fold tree is not set properly for density scoring!" );
 	}
 

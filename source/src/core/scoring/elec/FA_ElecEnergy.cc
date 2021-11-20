@@ -1552,16 +1552,14 @@ FA_ElecEnergy::atomistic_pair_energy(
 				CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3FULL ) :
 				CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
-			Real d2;
 			Size atm1_rep = get_countpair_representative_atom( rsd1.type(), atm1 );
 			Size atm2_rep = get_countpair_representative_atom( rsd2.type(), atm2 );
 
 			Real weight=1.0;
 			Size path_dist( 0 );
 			if ( cpfxn->count( atm1_rep, atm2_rep, weight, path_dist ) ) {
+				Real d2;
 				score += score_atom_pair( rsd1, rsd2, atm1, atm2, emap, weight, d2 );
-			} else {
-				d2 = rsd1.xyz(atm1).distance_squared( rsd2.xyz(atm2) );
 			}
 		} else {
 			Real d2;
