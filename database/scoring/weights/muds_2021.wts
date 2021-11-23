@@ -1,0 +1,8 @@
+# Motif_dock_score as reported in Marze et. al,2018 (10.1093/bioinformatics/bty355) and Fallas et. al, 2017 (10.1038/nchem.2673)
+# other score terms adapted as described in Alford et. al, 2017 (10.1021/acs.jctc.7b00125)
+motif_dock 1.0
+fa_rep 0.55
+fa_atr 1.0
+rama_prepro 0.5
+omega 0.48
+p_aa_pp 0.61
