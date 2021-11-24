@@ -279,7 +279,7 @@ SeqprofConsensusOperation::parse_profile_from_pose( Pose const & pose ) const {
 	using namespace core::scoring::constraints;
 	using namespace core::sequence;
 
-	SequenceProfileOP seqprof;
+	SequenceProfileOP seqprof = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 	tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
 
 	core::pose::PoseOP chain;
