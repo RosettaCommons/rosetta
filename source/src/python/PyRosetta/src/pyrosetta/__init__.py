@@ -13,6 +13,14 @@ from __future__ import absolute_import
 import os, sys, shlex
 
 import pyrosetta.rosetta as rosetta
+
+# for backward compatibility
+rosetta.utility.vector1_string = rosetta.utility.vector1_std_string
+
+rosetta.std.list_std_shared_ptr_core_pack_task_operation_TaskOperation_std_allocator_std_shared_ptr_core_pack_task_operation_TaskOperation_t = rosetta.std.list_std_shared_ptr_core_pack_task_operation_TaskOperation_t
+rosetta.std.vector_std_vector_double_std_allocator_double_t = rosetta.std.vector_std_vector_double_t
+rosetta.std.set_std_string_std_less_std_string_std_allocator_std_string_t = rosetta.std.set_std_string_t
+
 import pyrosetta.bindings
 import pyrosetta.protocols
 
@@ -45,9 +53,6 @@ from pyrosetta.io import pose_from_pdb, pose_from_file, poses_from_files, pose_f
 
 from pyrosetta.rosetta.core.scoring import get_score_function
 create_score_function = pyrosetta.rosetta.core.scoring.ScoreFunctionFactory.create_score_function
-
-rosetta.utility.vector1_string = rosetta.utility.vector1_std_string
-
 
 ###############################################################################
 # Exception handling.
@@ -244,7 +249,7 @@ def Set(list_in):
     elif all([isinstance(x, float) or isinstance(x, int) for x in list_in]):
         t = rosetta.std.set_double_t
     elif all([isinstance(x, str) for x in list_in]):
-        t = rosetta.std.set_std_string_std_less_std_string_std_allocator_std_string_t
+        t = rosetta.std.set_std_string_t
     else:
         raise Exception('Set: attemting to create vector of unknow type ' +
                         'or mixed type vector init_list = ' + str(list_in))

@@ -10,7 +10,7 @@ from pyrosetta.rosetta.protocols.indexed_structure_store import (
 from pyrosetta.rosetta.std import (
     vector_unsigned_long,
     vector_double,
-    vector_std_vector_double_std_allocator_double_t,
+    vector_std_vector_double_t,
     vector_std_string,
     vector_numeric_xyzVector_double_t,
 )
@@ -67,7 +67,7 @@ class H5PyFragmentStoreProvider(FragmentStoreProvider):
                 fragment_store.real_groups[group_field] = numbers
 
             elif group_type == "real_per_residue":
-                numbers_vector = vector_std_vector_double_std_allocator_double_t()
+                numbers_vector = vector_std_vector_double_t()
                 numbers = vector_double()
                 for set_of_numbers in indb[:][group_field]:
                     numbers.clear()

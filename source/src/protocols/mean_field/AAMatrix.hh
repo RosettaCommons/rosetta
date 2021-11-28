@@ -35,7 +35,7 @@
 
 // C++ headers
 
-#ifdef WIN32
+#if defined(WIN32) || defined(PYROSETTA)
 #include <protocols/mean_field/AAProb.hh>
 #endif
 

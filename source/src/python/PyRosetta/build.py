@@ -152,7 +152,8 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
 
     # llvm_version='9.0.0'  # v8 and v9 can not be build with Clang-3.4, we if need upgrade to v > 7 then we should probably dynamicly change LLVM version based on complier versions
     # llvm_version='7.1.0'  # compiling v7.* on clang-3.4 lead to lockup while compiling tools/clang/lib/Sema/SemaChecking.cpp
-    llvm_version='6.0.1'
+    llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang') if Platform == 'macos' and platform.machine() == 'arm64' else ('6.0.1', 'tools/clang/lib/Headers/clang-headers')
+
     prefix = prefix_root + '/llvm-' + llvm_version
 
     build_dir = prefix+'/llvm-' + llvm_version + '.' + platform.platform() + '.' + _machine_name_ + ('.debug' if debug else '.release')
@@ -161,7 +162,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     if res: binder_head = 'unknown'
     else: binder_head = output.split('\n')[0]
 
-    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.1, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.2, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
     signature_file_name = build_dir + '/.signature.json'
 
     disk_signature = dict(config = 'unknown', binder = 'unknown')
@@ -177,9 +178,13 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
 
         clang_path = "{prefix}/tools/clang".format(**locals())
 
-        if not os.path.isfile(prefix + '/CMakeLists.txt'): execute('Download LLVM source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxom && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
+        if not os.path.isfile(prefix + '/CMakeLists.txt'):
+            #execute('Download LLVM source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxom && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
+            execute('Download LLVM source...', 'cd {prefix_root} && curl -LJ https://github.com/llvm/llvm-project/releases/download/llvmorg-{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxom && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
 
-        if not os.path.isdir(clang_path): execute('Download Clang source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/cfe-{llvm_version}.src.tar.xz | tar -Jxom && mv cfe-{llvm_version}.src {clang_path}'.format(**locals()) )
+        if not os.path.isdir(clang_path):
+            #execute('Download Clang source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/cfe-{llvm_version}.src.tar.xz | tar -Jxom && mv cfe-{llvm_version}.src {clang_path}'.format(**locals()) )
+            execute('Download Clang source...', 'cd {prefix_root} && curl -LJ https://github.com/llvm/llvm-project/releases/download/llvmorg-{llvm_version}/clang-{llvm_version}.src.tar.xz | tar -Jxom && mv clang-{llvm_version}.src {clang_path}'.format(**locals()) )
 
         if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
 
@@ -222,10 +227,12 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
         if not os.path.isdir(build_dir): os.makedirs(build_dir)
         execute(
             'Building tool: {}...'.format(name), # -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=1
-            'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja binder tools/clang/lib/Headers/clang-headers {jobs}'.format( # was 'binder clang', we need to build Clang so lib/clang/<version>/include is also built
+            'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja binder {headers} {jobs}'.format( # was 'binder clang', we need to build Clang so lib/clang/<version>/include is also built
                 build_dir=build_dir, config=config,
                 jobs="-j{}".format(Options.jobs) if Options.jobs else "",
-                gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
+                gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else '',
+                headers=headers,
+            ),
             silence_output=True)
         print()
         # build_dir = prefix+'/build-ninja-' + release
@@ -873,7 +880,7 @@ def main(args):
                 else: execute('Updating Pybind11 Git submodule...', 'cd {}/.. && git submodule update --init -- source/external/pybind11'.format(rosetta_source_path) )  # --recursive
 
                 if Options.binder: print('NOTE: options `--binder` was specified, skipping Binder submodule update...')
-                else: execute('Updating Pybind11 Git submodule...', 'cd {}/.. && git submodule update --init -- source/src/python/PyRosetta/binder'.format(rosetta_source_path) )
+                else: execute('Updating Binder Git submodule...', 'cd {}/.. && git submodule update --init -- source/src/python/PyRosetta/binder'.format(rosetta_source_path) )
 
                 if main_repository_root == os.path.abspath(rosetta_source_path + '/../'):
                     output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)

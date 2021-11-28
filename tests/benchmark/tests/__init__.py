@@ -669,7 +669,9 @@ def local_open_ssl_install(prefix, build_prefix, jobs):
     '''
     #with tempfile.TemporaryDirectory('open_ssl_build', dir=prefix) as build_prefix:
 
-    url = 'https://www.openssl.org/source/openssl-1.1.1b.tar.gz'
+    url = 'https://www.openssl.org/source/openssl-1.1.1l.tar.gz'
+    #url = 'https://www.openssl.org/source/openssl-3.0.0.tar.gz'
+
 
     archive = build_prefix + '/' + url.split('/')[-1]
     build_dir = archive.rpartition('.tar.gz')[0]
@@ -733,11 +735,12 @@ def local_python_install(platform, config):
     python_sources = {
         '2.7' : 'https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz',
 
-        '3.5' : 'https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz',
-        '3.6' : 'https://www.python.org/ftp/python/3.6.12/Python-3.6.12.tgz',
-        '3.7' : 'https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz',
-        '3.8' : 'https://www.python.org/ftp/python/3.8.3/Python-3.8.3.tgz',
-        '3.9' : 'https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz',
+        '3.5'  : 'https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz',
+        '3.6'  : 'https://www.python.org/ftp/python/3.6.15/Python-3.6.15.tgz',
+        '3.7'  : 'https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz',
+        '3.8'  : 'https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tgz',
+        '3.9'  : 'https://www.python.org/ftp/python/3.9.8/Python-3.9.8.tgz',
+        '3.10' : 'https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -749,7 +752,7 @@ def local_python_install(platform, config):
     }
 
     #packages = '' if (python_version[0] == '2' or  python_version == '3.5' ) and  platform['os'] == 'mac' else 'pip setuptools wheel' # 2.7 is now deprecated on Mac so some packages could not be installed
-    packages = None
+    packages = ''
 
     url = python_sources[python_version]
 
@@ -759,7 +762,7 @@ def local_python_install(platform, config):
     extra = ('unset __PYVENV_LAUNCHER__ && ' + extra[0], extra[1])
 
     options = '--with-ensurepip' #'--without-ensurepip'
-    signature = f'v1.3.3 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
+    signature = f'v1.4.1 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
 
     h = hashlib.md5(); h.update( signature.encode('utf-8', errors='backslashreplace') ); hash = h.hexdigest()
 
@@ -792,8 +795,10 @@ def local_python_install(platform, config):
         if not os.path.isdir(root): os.makedirs(root)
         if not os.path.isdir(build_prefix): os.makedirs(build_prefix)
 
+        #if False and platform['os'] == 'mac' and platform_module.machine() == 'arm64' and tuple( map(int, python_version.split('.') ) ) >= (3, 9):
         if platform['os'] == 'mac' and python_version == '3.6':
             open_ssl_url = local_open_ssl_install(root, build_prefix, jobs)
+            options += f' --with-openssl={root}'
             #signature += 'OpenSSL install: ' + open_ssl_url + '\n'
 
         archive = build_prefix + '/' + url.split('/')[-1]
@@ -817,6 +822,9 @@ def local_python_install(platform, config):
         shutil.rmtree(build_prefix)
 
         #execute('Updating setuptools...', f'cd {root} && {root}/bin/pip{python_version} install --upgrade setuptools wheel' )
+
+        # if 'certifi' not in packages:
+        #     packages += ' certifi'
 
         if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --upgrade {packages}' )
         #if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {executable} -m pip install --upgrade {packages}' )
@@ -871,6 +879,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
         return NT(activate = ':', python = python_environment.python, root = python_environment.root, bin = python_environment.root + '/bin')
 
     else:
+        #if 'certifi' not in packages: packages += ' certifi'
 
         h = hashlib.md5()
         h.update(f'v1.0.0 platform: {python_environment.platform} python_source_url: {python_environment.url} python-hash: {python_environment.hash} packages: {packages}'.encode('utf-8', errors='backslashreplace') )

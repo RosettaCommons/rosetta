@@ -83,7 +83,7 @@ elimerTO = core.pack.rotamer_set.PyRotamerEliminatorTaskOperation()
 elimerTO.set_eliminator( elimer )
 
 pr2 = protocols.minimization_packing.PackRotamersMover()
-op_list = pyrosetta.rosetta.std.list_std_shared_ptr_core_pack_task_operation_TaskOperation_std_allocator_std_shared_ptr_core_pack_task_operation_TaskOperation_t()
+op_list = pyrosetta.rosetta.std.list_std_shared_ptr_core_pack_task_operation_TaskOperation_t()
 op_list.push_back( elimerTO )
 pr2.initialize_task_factory_with_operations( op_list )
 
