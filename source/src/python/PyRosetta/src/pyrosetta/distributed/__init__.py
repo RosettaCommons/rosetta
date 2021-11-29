@@ -71,7 +71,7 @@ def with_lock(func):
 def maybe_init(**kwargs):
     """Call pyrosetta.init with reformatted options and extra_options if not already initialized."""
 
-    assert tuple(sys.version_info) < (3, 9), 'Unsupported Python version for pyrosetta.distributed: %s' % str( sys.version_info )
+    #assert tuple(sys.version_info) < (3, 9), 'Unsupported Python version for pyrosetta.distributed: %s' % str( sys.version_info )
 
     for option in ["options", "extra_options"]:
         if option in kwargs:
