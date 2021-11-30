@@ -669,7 +669,7 @@ def local_open_ssl_install(prefix, build_prefix, jobs):
     '''
     #with tempfile.TemporaryDirectory('open_ssl_build', dir=prefix) as build_prefix:
 
-    url = 'https://www.openssl.org/source/openssl-1.1.1l.tar.gz'
+    url = 'https://www.openssl.org/source/openssl-1.1.1b.tar.gz'
     #url = 'https://www.openssl.org/source/openssl-3.0.0.tar.gz'
 
 
@@ -762,7 +762,7 @@ def local_python_install(platform, config):
     extra = ('unset __PYVENV_LAUNCHER__ && ' + extra[0], extra[1])
 
     options = '--with-ensurepip' #'--without-ensurepip'
-    signature = f'v1.4.1 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
+    signature = f'v1.4.2 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
 
     h = hashlib.md5(); h.update( signature.encode('utf-8', errors='backslashreplace') ); hash = h.hexdigest()
 
