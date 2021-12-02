@@ -924,6 +924,7 @@ def _get_path_to_conda_root(platform, config):
         'mac'    : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh',
         'linux'  : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh',
         'ubuntu' : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh',
+        'm1'     : 'https://repo.anaconda.com/miniconda/Miniconda3-py38_4.10.1-MacOSX-arm64.sh',
     }
 
     conda_sources = {
@@ -932,9 +933,11 @@ def _get_path_to_conda_root(platform, config):
         'ubuntu' : 'https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh',
     }
 
+    #platform_os = 'm1' if platform_module.machine() == 'arm64' else platform['os']
+    #url = miniconda_sources[ platform_os ]
 
-    #url = conda_sources[ platform['os'] ]
     url = miniconda_sources[ platform['os'] ]
+
 
     version = '1'
     channels = ''  # conda-forge

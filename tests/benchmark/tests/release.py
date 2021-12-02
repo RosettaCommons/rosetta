@@ -34,7 +34,7 @@ download_template = '''\
 </html>'''
 
 def get_platform_release_name(platform):
-    addon = dict(linux='.CentOS', ubuntu='.Ubuntu', mac='')
+    addon = dict(linux='.CentOS', ubuntu='.Ubuntu', mac='', m1='')
     return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'] ]
 
 

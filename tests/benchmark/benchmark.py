@@ -35,6 +35,9 @@ elif sys.platform == "cygwin" :      Platform['os'] = 'cygwin'
 elif sys.platform == "win32" :       Platform['os'] = 'windows'
 else:                                Platform['os'] = 'unknown'
 
+if platform.machine() == 'arm64': Platform['os'] = 'm1'
+
+
 #Platform['arch'] = platform.architecture()[0][:2]  # PlatformBits
 Platform['compiler'] = 'gcc' if Platform['os'] == 'linux' else 'clang'
 
@@ -68,7 +71,7 @@ def setup_from_options(options):
 
     if options.memory: memory = options.memory
     elif platform['os'] in ['linux', 'ubuntu']: memory = int( execute('Getting memory info...', 'free -m', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split('\n')[1].split()[1]) // 1024
-    elif platform['os'] == 'mac':   memory = int( execute('Getting memory info...', 'sysctl -a | grep hw.memsize', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split()[1]) // 1024 // 1024 // 1024
+    elif platform['os'] in ['mac', 'm1']:   memory = int( execute('Getting memory info...', 'sysctl -a | grep hw.memsize', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split()[1]) // 1024 // 1024 // 1024
 
     platform['compiler'] = options.compiler
 
