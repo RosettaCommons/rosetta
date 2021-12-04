@@ -17,8 +17,7 @@ import os, os.path, json, shutil, stat, glob, collections
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'  # api version
-
+_api_version_ = '1.1'  # api version
 
 def generate_rosetta_app_list(rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
 
@@ -45,6 +44,6 @@ def generate_rosetta_app_list(rosetta_dir, working_dir, platform, config, hpc_dr
     return {_StateKey_  : _S_passed_, _ResultsKey_ : results, _LogKey_ : '' }
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if test =='apps': return generate_rosetta_app_list(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if test =='apps': return generate_rosetta_app_list(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError(f'Unknown scripts test: {test}!')

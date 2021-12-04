@@ -22,7 +22,7 @@ import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
 
 
-_api_version_ = '1.0'  # api version
+_api_version_ = '1.1'
 
 _merge_size_failure_threshold_bytes_ = 1024 * 64
 
@@ -727,13 +727,13 @@ def run_merge_size_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
 
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if   test == 'serialization':        return run_serialization_test (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'clang_analysis':       return run_clang_analysis_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'clang_tidy':           return run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'cppcheck':             return run_cppcheck_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'beautification':       return run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'beautify':             return run_beautify_test      (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'submodule_regression': return run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'merge_size':           return run_merge_size_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if   test == 'serialization':        return run_serialization_test (repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'clang_analysis':       return run_clang_analysis_test(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'clang_tidy':           return run_clang_tidy_test(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'cppcheck':             return run_cppcheck_test(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'beautification':       return run_beautification_test(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'beautify':             return run_beautify_test      (repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'submodule_regression': return run_submodule_regression_test(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'merge_size':           return run_merge_size_test(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Build script does not support TestSuite-like run!')

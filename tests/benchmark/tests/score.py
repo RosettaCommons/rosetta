@@ -17,7 +17,7 @@ import os, shutil
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'
+_api_version_ = '1.1'
 
 ignore_files = 'command.sh observers'.split()
 
@@ -95,13 +95,13 @@ def run_score_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver
     return results
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if not test:          return run_score_tests('release', rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'debug': return run_score_tests('debug',   rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if not test:          return run_score_tests('release', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'debug': return run_score_tests('debug',   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Score Test script does not support run with test="{}"!'.format(test))
 
-    #if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    #else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    #if test: return run_test(test, repository_root, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    #else: return run_test_suite(repository_root, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
 
 # compare results of two tests run (new vs. previous)

@@ -19,7 +19,7 @@ import pprint
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'
+_api_version_ = '1.1'
 
 _TestSuite_ = True  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
 
@@ -121,14 +121,14 @@ def run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     return results
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if test == "valgrind": return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags="--valgrind --timeout 1440") # 24 hour time limit
-    if test == "valgrind_detailed": return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags="--valgrind --trackorigins --timeout 1440") # 24 hour time limit
-    elif test == "addsan":  return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, mode="addsan")
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if test == "valgrind": return run_test_suite(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags="--valgrind --timeout 1440") # 24 hour time limit
+    if test == "valgrind_detailed": return run_test_suite(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags="--valgrind --trackorigins --timeout 1440") # 24 hour time limit
+    elif test == "addsan":  return run_test_suite(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, mode="addsan")
     elif test == "ubsan":
         os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan
-        return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, mode="ubsan")
-    elif test == 'release': return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, mode='release')
-    #elif test: return run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == '': return run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+        return run_test_suite(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, mode="ubsan")
+    elif test == 'release': return run_test_suite(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, mode='release')
+    #elif test: return run_test(test, repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == '': return run_test_suite(repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknow scripts test: {}!'.format(test))

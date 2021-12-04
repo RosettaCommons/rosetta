@@ -20,10 +20,9 @@ import random
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'
+_api_version_ = '1.1'
 
-
-def run_state_test(rosetta_dir, working_dir, platform, config):
+def run_state_test(repository_root, working_dir, platform, config):
     revision_id = config['revision']
     states = (_S_passed_, _S_failed_, _S_build_failed_, _S_script_failed_)
     state = states[revision_id % len(states)]
@@ -41,7 +40,7 @@ The warm time, had already disappeared like dust. Broken rain, fragment of light
 -----
 '''
 
-def run_subtests_test(rosetta_dir, working_dir, platform, config):
+def run_subtests_test(repository_root, working_dir, platform, config):
     tests = {}
     for i in range(16):
         name = f's-{i:02}'
@@ -63,7 +62,7 @@ def run_subtests_test(rosetta_dir, working_dir, platform, config):
     return {_StateKey_ : _S_failed_,  _ResultsKey_ : {_TestsKey_: tests},  _LogKey_ : test_log }
 
 
-def run_regression_test(rosetta_dir, working_dir, platform, config):
+def run_regression_test(repository_root, working_dir, platform, config):
     const     = 'const'
     volatile  = 'volatile'
     new       = ''.join( random.sample( string.ascii_letters + string.digits, 8) )
@@ -93,7 +92,7 @@ def run_regression_test(rosetta_dir, working_dir, platform, config):
 
 
 
-def run_release_test(rosetta_dir, working_dir, platform, config):
+def run_release_test(repository_root, working_dir, platform, config):
     release_root = config['mounts'].get('release_root')
 
     branch = config['branch']
@@ -111,7 +110,7 @@ def run_release_test(rosetta_dir, working_dir, platform, config):
 
 
 
-def run_python_test(rosetta_dir, working_dir, platform, config):
+def run_python_test(repository_root, working_dir, platform, config):
 
     import zlib, ssl
 
@@ -199,11 +198,11 @@ def compare(test, results, files_path, previous_results, previous_files_path):
     return {_StateKey_: state, _LogKey_: 'Comparison dummy log...', _ResultsKey_: results}
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if   test == 'state':      return run_state_test      (rosetta_dir, working_dir, platform, config)
-    elif test == 'regression': return run_regression_test (rosetta_dir, working_dir, platform, config)
-    elif test == 'subtests':   return run_subtests_test   (rosetta_dir, working_dir, platform, config)
-    elif test == 'release':    return run_release_test    (rosetta_dir, working_dir, platform, config)
-    elif test == 'python':     return run_python_test     (rosetta_dir, working_dir, platform, config)
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if   test == 'state':      return run_state_test      (repository_root, working_dir, platform, config)
+    elif test == 'regression': return run_regression_test (repository_root, working_dir, platform, config)
+    elif test == 'subtests':   return run_subtests_test   (repository_root, working_dir, platform, config)
+    elif test == 'release':    return run_release_test    (repository_root, working_dir, platform, config)
+    elif test == 'python':     return run_python_test     (repository_root, working_dir, platform, config)
 
     else: raise BenchmarkError(f'Dummy test script does not support run with test={test!r}!')

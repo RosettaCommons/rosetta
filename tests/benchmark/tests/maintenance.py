@@ -17,7 +17,7 @@ import os, os.path, json, shutil, stat, glob
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'  # api version
+_api_version_ = '1.1'
 
 def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
     memory = config['memory']
@@ -154,9 +154,9 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
         # Remember that we checked that we were on the documentation directory's master branch
         execute('Cleaning up', 'cd {doc_dir} && ( git reset --hard origin/{doc_branch_name}; git clean -fd )'.format(**vars()) )
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
+def run(test, repository_root, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
-    if test == 'documentation': return run_documentation_update(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test == 'documentation': return run_documentation_update(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknown maintenace test: {}!'.format(test))

@@ -18,7 +18,7 @@ import codecs
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'  # api version
+_api_version_ = '1.1'
 
 # _TestSuite_ = False  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
 
@@ -150,11 +150,11 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     raise BenchmarkError('Build script does not support TestSuite-like run!')
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     if test == "cppcheck":
         # Backwards compatibility shim
         from .code_quality import run as code_quality_run
-        return code_quality_run(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug)
-    elif test and test.startswith('clean.'): return run_test_on_fresh_clone( test[ len('clean.') : ], rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test: return run_test(test, rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+        return code_quality_run(test, repository_root, working_dir, platform, config, hpc_driver, verbose, debug)
+    elif test and test.startswith('clean.'): return run_test_on_fresh_clone( test[ len('clean.') : ], repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test: return run_test(test, repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    else: return run_test_suite(repository_root, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)

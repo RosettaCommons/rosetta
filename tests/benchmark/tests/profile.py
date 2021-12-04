@@ -20,7 +20,7 @@ import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
 
 
-_api_version_ = '1.0'  # api version
+_api_version_ = '1.1'
 
 
 _failure_threshold_min_execution_time_   = 128
@@ -30,30 +30,30 @@ _failure_threshold_execution_time_pct_       = 25
 _failure_threshold_max_memory_allocated_pct_ = 4
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
 
     jobs = config['cpu_count']
 
     # Building Rosetta binaries
-    res, output, build_command_line = build_rosetta(rosetta_dir, platform, config)
+    res, output, build_command_line = build_rosetta(repository_root, platform, config)
     if res: return { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {},
                      _LogKey_ : u'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
     else:
         extension = calculate_extension(platform)
         compiler  = platform['compiler']
 
-        json_results_file = '{rosetta_dir}/tests/profile/.profile_test_results.json'.format( **vars() )
+        json_results_file = '{repository_root}/tests/profile/.profile_test_results.json'.format( **vars() )
         if os.path.isfile(json_results_file): os.remove(json_results_file)  # removing old results file if it is present
 
         output_log_file = '{working_dir}/profile_py.log'.format( **vars() )
 
         # running profile script on HPC cluster
-        # hpc_driver.execute(executable='cd'.format(**vars()), arguments='{rosetta_dir}/tests/profile && ./profile.py --compiler={compiler} --daemon >{output_log_file} 2>&1'.format(output_log_file=output_log_file, rosetta_dir=rosetta_dir, compiler=compiler),  # relax_native ligand_dock_script fixbb jd2test
+        # hpc_driver.execute(executable='cd'.format(**vars()), arguments='{repository_root}/tests/profile && ./profile.py --compiler={compiler} --daemon >{output_log_file} 2>&1'.format(output_log_file=output_log_file, rosetta_dir=repository_root, compiler=compiler),  # relax_native ligand_dock_script fixbb jd2test
         #                    working_dir=working_dir, name='profile', shell_wrapper=True)
 
-        execute('Running Profile tests...', 'cd {rosetta_dir}/tests/profile && ./profile.py --compiler={compiler} --daemon >{output_log_file} 2>&1'.format(output_log_file=output_log_file, rosetta_dir=rosetta_dir, compiler=compiler) )
+        execute('Running Profile tests...', 'cd {repository_root}/tests/profile && ./profile.py --compiler={compiler} --daemon >{output_log_file} 2>&1'.format(output_log_file=output_log_file, repository_root=repository_root, compiler=compiler) )
 
-        files_location = '{rosetta_dir}//tests/profile/tests'.format( **vars() )
+        files_location = '{repository_root}/tests/profile/tests'.format( **vars() )
 
         for d in os.listdir(files_location):
             if os.path.isdir(files_location + '/' + d)  and  os.path.isdir(files_location + '/' + d + '/output'):

@@ -18,7 +18,7 @@ import codecs
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'
+_api_version_ = '1.1'
 
 _number_of_rosetta_binary_revisions_to_keep_in_git_ = 1
 _number_of_py_rosetta_revisions_to_keep_in_git_ = 1
@@ -1001,7 +1001,7 @@ def py_rosetta4_conda_release(*args, **kwargs): return native_libc_py_rosetta4_c
 #def py_rosetta4_conda_release(*args, **kwargs): return conda_libc_py_rosetta4_conda_release(*args, **kwargs)
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
@@ -1009,23 +1009,23 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
     test = test.replace('PyRosetta4', 'PyRosetta')
 
-    if   test =='source': return rosetta_source_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='binary': return rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if   test =='source': return rosetta_source_release(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='binary': return rosetta_source_and_binary_release(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta.Debug':          return py_rosetta4_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.Release':        return py_rosetta4_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.MinSizeRel':     return py_rosetta4_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.Debug':          return py_rosetta4_release('Debug',          repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.Release':        return py_rosetta4_release('Release',        repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.MinSizeRel':     return py_rosetta4_release('MinSizeRel',     repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta.conda.Debug':          return py_rosetta4_conda_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.conda.Release':        return py_rosetta4_conda_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.conda.MinSizeRel':     return py_rosetta4_conda_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta.conda.RelWithDebInfo': return py_rosetta4_conda_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.Debug':          return py_rosetta4_conda_release('Debug',          repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.Release':        return py_rosetta4_conda_release('Release',        repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.MinSizeRel':     return py_rosetta4_conda_release('MinSizeRel',     repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.RelWithDebInfo': return py_rosetta4_conda_release('RelWithDebInfo', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta.documentation':  return py_rosetta4_documentaion('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.documentation':  return py_rosetta4_documentaion('MinSizeRel', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='ui': return ui_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='ui': return ui_release(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='self': return self_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='self': return self_release(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     else: raise BenchmarkError('Unknow release test: {}!'.format(test))

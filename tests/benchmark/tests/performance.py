@@ -18,7 +18,7 @@ import imp
 import codecs
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'  # api version
+_api_version_ = '1.1'
 
 _individual_test_run_time_ = 64  # time in seconds which individual tests allowed to run
 _failure_threshold_pct_    = 25  # specify how much execution time could deviate (percent) from previous value without raising the alarm
@@ -84,11 +84,11 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
 
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
+def run(test, repository_root, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
-    if test =='': return run_performance_tests(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test =='': return run_performance_tests(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknow performance test: {}!'.format(test))
 
 

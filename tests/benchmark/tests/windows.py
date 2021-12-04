@@ -19,7 +19,7 @@ from subprocess import getstatusoutput, getoutput
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'  # api version
+_api_version_ = '1.1'  # api version
 
 #_activate_cl_ = 'C:\\BuildTools\\Common7\\Tools\\VsDevCmd.bat -arch=x64 -host_arch=amd64'
 _activate_cl_ = '%ACTIVATE_MSVC%'
@@ -65,7 +65,7 @@ def build_rosetta(mode, rosetta_dir, working_dir, platform, config, hpc_driver, 
     return {_StateKey_  : res_code, _ResultsKey_ : {}, _LogKey_ : output}
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if test =='build.debug':   return build_rosetta('debug', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    if test =='build.release': return build_rosetta('release', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if test =='build.debug':   return build_rosetta('debug', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test =='build.release': return build_rosetta('release', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError(f'Unknown scripts test: {test}!')

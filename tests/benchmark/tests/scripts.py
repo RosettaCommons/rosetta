@@ -16,9 +16,7 @@
 import os, sys, imp, json, shutil, distutils.dir_util, codecs
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'
-
-
+_api_version_ = '1.1'
 
 def run_rosetta_scripts_test(name, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
@@ -189,17 +187,17 @@ def upgrade_submodule(submodule_path, rosetta_dir, working_dir, platform, config
 
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
-    if   test =='rosetta.parse':    return run_rosetta_scripts_test('parse',    rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='rosetta.verify':   return run_rosetta_scripts_test('verify',   rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='rosetta.validate': return run_rosetta_scripts_test('validate', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if   test =='rosetta.parse':    return run_rosetta_scripts_test('parse',    repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='rosetta.verify':   return run_rosetta_scripts_test('verify',   repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='rosetta.validate': return run_rosetta_scripts_test('validate', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='pyrosetta':        return run_pyrosetta_test(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='pyrosetta':        return run_pyrosetta_test(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='rosetta.update':   return upgrade_submodule('rosetta_scripts_scripts', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='pyrosetta.update': return upgrade_submodule('pyrosetta_scripts',       rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='rosetta.update':   return upgrade_submodule('rosetta_scripts_scripts', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='pyrosetta.update': return upgrade_submodule('pyrosetta_scripts',       repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     else: raise BenchmarkError('Unknow scripts test: {}!'.format(test))

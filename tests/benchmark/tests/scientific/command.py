@@ -18,9 +18,7 @@ import os, json
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
 
-
-_api_version_ = '1.0'  # api version
-
+_api_version_ = '1.1'
 
 def symlink(source, dest):
     ''' Similar to os.symlink but if dest is alread exisist and if type of *source and *dest does not match or if link points to different location : remove dest first
@@ -110,7 +108,7 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
     return result
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     # map from test name to a space-separated-string-of-python-packages to be installed, for example: docking='numpy panda==0.23.4'
     # If package have not-yet-stable-api please make sure to SPECIFY THE EXACT VERSION of package to use so our testing-scripts
     # will not accidentally break when a new version of upstream package got released in the future
@@ -139,7 +137,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         mp_f19_sequence_recovery    = 'numpy matplotlib==3.2',
         mp_f19_ddG_of_mutation      = 'numpy matplotlib==3.2',
         mp_f19_decoy_discrimination = 'numpy matplotlib==3.2',
-        
+
         mp_dock            = 'numpy matplotlib==3.2',
         mp_relax           = 'numpy matplotlib==3.2',
         mp_symdock         = 'numpy matplotlib==3.2',
@@ -243,7 +241,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     if test in tests:
         return run_multi_step_test(
             test = test, python_packages = tests[test],
-            rosetta_dir=rosetta_dir, working_dir=working_dir, platform=platform,
+            rosetta_dir=repository_root, working_dir=working_dir, platform=platform,
             config=config, hpc_driver=hpc_driver, verbose=verbose, variants=variants,
         )
 

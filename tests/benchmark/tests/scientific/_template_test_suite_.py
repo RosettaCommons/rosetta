@@ -23,12 +23,12 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../__init__.py
 _api_version_ = '1.0'  # api version
 
 
-def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
 
     jobs = config['cpu_count']
 
     # Building Rosetta binaries
-    res, output, build_command_line = build_rosetta(rosetta_dir, platform, config)
+    res, output, build_command_line = build_rosetta(repository_root, platform, config)
     if res: return { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {},
                      _LogKey_ : 'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
     else:
@@ -36,21 +36,21 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
         # running Rosetta executable on benchmark machine itself
         res, output = execute('Scoring PDB...',
-                              'cd  {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb'.format(**vars()), return_='tuple')
+                              'cd  {working_dir} && {repository_root}/source/bin/score.{extension} -s {repository_root}/source/test/core/io/test_in.pdb'.format(**vars()), return_='tuple')
 
 
         # running Rosetta executable on benchmark machine in parallel and using multiple CPU's (=jobs)
-        scoring_jobs = dict(scoring1='cd {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.1.sc'.format(**vars()),
-                            scoring2='cd {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.2.sc'.format(**vars()),
-                            scoring3='cd {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.3.sc'.format(**vars()),
-                            scoring4='cd {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.4.sc'.format(**vars()), )
+        scoring_jobs = dict(scoring1='cd {working_dir} && {repository_root}/source/bin/score.{extension} -s {repository_root}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.1.sc'.format(**vars()),
+                            scoring2='cd {working_dir} && {repository_root}/source/bin/score.{extension} -s {repository_root}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.2.sc'.format(**vars()),
+                            scoring3='cd {working_dir} && {repository_root}/source/bin/score.{extension} -s {repository_root}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.3.sc'.format(**vars()),
+                            scoring4='cd {working_dir} && {repository_root}/source/bin/score.{extension} -s {repository_root}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.4.sc'.format(**vars()), )
 
-        parallel_execute('parallel_scoring', scoring_jobs, rosetta_dir, working_dir, cpu_count=jobs, time=1)
+        parallel_execute('parallel_scoring', scoring_jobs, repository_root, working_dir, cpu_count=jobs, time=1)
 
 
         # running executable on HPC cluster
-        hpc_driver.execute(executable='{rosetta_dir}/source/bin/score.{extension}'.format(**vars()),
-                           arguments='-s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile hpc_score.sc'.format(**vars()),
+        hpc_driver.execute(executable='{repository_root}/source/bin/score.{extension}'.format(**vars()),
+                           arguments='-s {repository_root}/source/test/core/io/test_in.pdb -out:file:scorefile hpc_score.sc'.format(**vars()),
                            working_dir=working_dir, name='scoring')
 
         # insert result analyzing code here
