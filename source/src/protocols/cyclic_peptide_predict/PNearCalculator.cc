@@ -62,9 +62,15 @@ PNearCalculator::add_data_point(
 	core::Real const rmsd
 ) {
 	if ( rmsd < 0 ) return; //Do nothing for negative rmsd values.
-	core::Real const P( std::exp( -energy/kbt_ ) );
-	numerator_ += std::exp( -std::pow( rmsd/lambda_, 2 ) )*P;
-	denominator_ += P;
+
+	// Is this the lowest energy we've seen?
+	if ( energies_.empty() || energy < minenergy_ ) {
+		minenergy_ = energy;
+	}
+
+	energies_.push_back(energy);
+	rmsds_.push_back(rmsd);
+
 }
 
 /// @brief Compute PNear and DeltaG_folding given the data points that have been
@@ -77,8 +83,20 @@ PNearCalculator::compute_pnear_and_dgfolding(
 	core::Real &Keq,
 	core::Real &dgfolding
 ) const {
-	if ( denominator_ > 1.0e-14 ) {
-		pnear = numerator_ / denominator_;
+	core::Size const nentries(energies_.size());
+	debug_assert( nentries == rmsds_.size() );
+	core::Real numerator(0.0), denominator(0.0);
+
+	core::Real const lambdasq( lambda_*lambda_ );
+
+	for ( core::Size i(1); i<=nentries; ++i ) {
+		core::Real const P( std::exp( -(energies_[i] - minenergy_)/kbt_ ) );
+		numerator += std::exp( -rmsds_[i]*rmsds_[i]/lambdasq )*P;
+		denominator += P;
+	}
+
+	if ( denominator > 1.0e-14 ) {
+		pnear = numerator / denominator;
 	} else {
 		pnear = 0.0;
 	}

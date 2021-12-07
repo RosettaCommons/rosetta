@@ -24,6 +24,7 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace cyclic_peptide_predict {
@@ -59,11 +60,14 @@ public:
 
 private:
 
-	/// @brief Accumulator for the numerator.
-	core::Real numerator_ = 0.0;
+	/// @brief The lowest energy seen so far.
+	core::Real minenergy_ = 0.0;
 
-	/// @brief Accumulator for the denominator.
-	core::Real denominator_ = 0.0;
+	/// @brief A vector of all the energy values we've accumulated so far.
+	utility::vector1 < core::Real > energies_;
+
+	/// @brief A vector of all the RMSD values we've accumulated so far.
+	utility::vector1 < core::Real > rmsds_;
 
 	/// @brief Lambda parameter (see PNear equation).
 	/// @details Defaults to 0.5.
