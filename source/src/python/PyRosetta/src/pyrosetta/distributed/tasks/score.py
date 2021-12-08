@@ -24,10 +24,10 @@ class ScorePoseTask(taskbase.TaskBase):
         if not self.weights:
             return scoring.get_score_function()
         elif not self.patch:
-            sff = scoring.ScoreFunctionFactory()
+            sff = scoring.ScoreFunctionFactory.get_instance()
             return sff.create_score_function(self.weights)
         else:
-            sff = scoring.ScoreFunctionFactory()
+            sff = scoring.ScoreFunctionFactory.get_instance()
             return sff.create_score_function(
                 self.weights, self.patch)
 
