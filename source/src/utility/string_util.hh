@@ -239,19 +239,19 @@ string_split_multi_delim( std::string const & in, std::string splitchars = " \t"
 
 /// @brief convert a string to a float, returns -1 on failure
 float
-string2float( std::string st );
+string2float( std::string const & st );
 
 /// @brief convert a string to an int, returns -1 on failure
 int
-string2int( std::string st );
+string2int( std::string const & st );
 
 /// @brief convert a string to a Size, returns numeric::get_undefined_size() on failure
 platform::Size
-string2Size( std::string st );
+string2Size( std::string const & st );
 
 /// @brief convert a string to a Real, returns numeric::get_undefined_real() on failure
 platform::Real
-string2Real( std::string st );
+string2Real( std::string const & st );
 
 /// @brief convert a Real to string at a number of decimal places, optionally pad left.
 std::string

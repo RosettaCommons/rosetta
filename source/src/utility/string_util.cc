@@ -303,9 +303,9 @@ string_split_multi_delim( std::string const & in, std::string splitchars )
 
 
 /// @details convert a string to a float
-float string2float( std::string st ){
+float string2float( std::string const & st ){
 	float i;
-	std::stringstream ss( st );
+	std::istringstream ss( st );
 	ss >> i;
 	if ( !ss ) {
 		return -1;
@@ -314,9 +314,9 @@ float string2float( std::string st ){
 }
 
 /// @details convert a string to an int
-int string2int( std::string st ){
+int string2int( std::string const & st ){
 	int i;
-	std::stringstream ss( st );
+	std::istringstream ss( st );
 	ss >> i;
 	if ( !ss ) {
 		return -1;
@@ -325,9 +325,9 @@ int string2int( std::string st ){
 }
 
 /// @brief convert a string to a Size, returns numeric::get_undefined_size() on failure
-platform::Size string2Size( std::string st ){
+platform::Size string2Size( std::string const & st ){
 	platform::Size i;
-	std::stringstream ss( st );
+	std::istringstream ss( st );
 	ss >> i;
 	if ( !ss ) {
 		return get_undefined_size();
@@ -336,9 +336,9 @@ platform::Size string2Size( std::string st ){
 }
 
 /// @brief convert a string to a Real, returns numeric::get_undefined_real() on failure
-platform::Real string2Real( std::string st ){
+platform::Real string2Real( std::string const & st ){
 	platform::Real i;
-	std::stringstream ss( st );
+	std::istringstream ss( st );
 	ss >> i;
 	if ( !ss ) {
 		return get_undefined_real();
