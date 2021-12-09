@@ -138,10 +138,10 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
                 git_truncate = 'git checkout --orphan _temp_ {oldest_sha} && git commit -m "Truncating git history" && git rebase --onto _temp_ {oldest_sha} master && git checkout master && git branch -D _temp_'.format(**vars())  #
                 execute('Trimming git history...', 'cd {working_dir}/{git_repository_name} && {git_truncate}'.format(**vars()))
 
-            #execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+            #execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --force --prune=now && git remote prune origin && git push -f'.format(**vars()))
             execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git remote prune origin && git push -f'.format(**vars()))
 
-            execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
+            execute('Pruning origin...', 'cd {git_origin} && git gc --force --prune=now'.format(**vars()))
 
         if os.path.isdir(git_working_dir): shutil.rmtree(git_working_dir)  # removing git dir to keep size of database small
 
@@ -231,9 +231,9 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     if files:
         with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr='rosetta.source', link=files[-1]))
 
-    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --force --prune=now && git remote prune origin && git push -f'.format(**vars()))
 
-    execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
+    execute('Pruning origin...', 'cd {git_origin} && git gc --force --prune=now'.format(**vars()))
 
     results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : '' }
     with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
@@ -312,9 +312,9 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     if files:
         with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr='rosetta.binary', link=files[-1]))
 
-    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --force --prune=now && git remote prune origin && git push -f'.format(**vars()))
 
-    execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
+    execute('Pruning origin...', 'cd {git_origin} && git gc --force --prune=now'.format(**vars()))
 
     # release('PyRosetta4', release_name, package_dir, working_dir, platform, config)
     #distutils.dir_util.copy_tree(source, prefix, update=False)
