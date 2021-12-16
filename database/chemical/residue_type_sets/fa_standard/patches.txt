@@ -89,7 +89,7 @@ patches/branching/phg_cd2_conjugation.txt
 
 ## protein
 patches/Cterm_amidation.txt
-patches/VirtualProteinResidue.txt
+patches/VirtualResidue.txt
 patches/VirtualNterm.txt
 
 ##fpd

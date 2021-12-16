@@ -2679,6 +2679,7 @@ VirtualizeAll::apply( MutableResidueType & rsd ) const {
 		rsd.atom( atm ).charge( 0.0 );
 		rsd.atom( atm ).is_virtual( true );
 	}
+	rsd.net_formal_charge( 0 );
 	return false;
 }
 

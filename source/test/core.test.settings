@@ -38,6 +38,7 @@ sources = {
 		"ResidueTypeSetTests",
 		"ResidueTypeTests",
 		"util",
+		"VariantTypeTests",
 	],
 	"chemical/carbohydrates" : [
 		"CarbohydrateInfo",

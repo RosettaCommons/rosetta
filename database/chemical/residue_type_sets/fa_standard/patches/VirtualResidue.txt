@@ -1,0 +1,16 @@
+## this patch turns all protein atoms ito virtual atoms
+## useful if you want the residues in the pose as placeholders...
+## Refactored 15 Dec. 2021 by Vikram K. Mulligan (vmulligan@flatironinstitute.org) to apply
+## to any residue type.
+
+NAME Virtual_Residue
+TYPES    VIRTUAL_RESIDUE_VARIANT
+
+# BEGIN_SELECTOR
+# Can apply to any residue type, so no selector needed.
+# END_SELECTOR
+
+BEGIN_CASE ### The general case ###
+VIRTUALIZE_ALL
+ADD_PROPERTY VIRTUAL_RESIDUE
+END_CASE
