@@ -16,6 +16,7 @@ except ImportError: # workaround for B2 back-end's
 _T_slurm_array_job_template_ = '''\
 #!/bin/bash
 #
+#SBATCH --partition=benchmark
 #SBATCH --job-name={name}
 #SBATCH --output={log_dir}/.hpc.%x.%a.output
 #
@@ -31,6 +32,7 @@ srun {executable} {arguments}
 _T_slurm_mpi_job_template_ = '''\
 #!/bin/bash
 #
+#SBATCH --partition=benchmark
 #SBATCH --job-name={name}
 #SBATCH --output={log_dir}/.hpc.%x.output
 #
