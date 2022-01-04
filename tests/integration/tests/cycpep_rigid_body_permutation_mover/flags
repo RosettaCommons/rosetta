@@ -1,0 +1,4 @@
+-parser:protocol inputs/test.xml
+-nstruct 64
+-in:file:fullatom
+-in:file:s inputs/teststruct.pdb

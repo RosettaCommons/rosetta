@@ -114,6 +114,7 @@ static MoverRegistrator< cyclic_peptide::CreateAngleConstraintCreator > reg_Crea
 static MoverRegistrator< cyclic_peptide::CreateDistanceConstraintCreator > reg_CreateDistanceConstraintCreator;
 static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_CreateTorsionConstraintCreator;
 static MoverRegistrator< cyclic_peptide::CrosslinkerMoverCreator > reg_CrosslinkerMoverCreator;
+static MoverRegistrator< cyclic_peptide::CycpepRigidBodyPermutationMoverCreator > reg_CycpepRigidBodyPermutationMoverCreator;
 static MoverRegistrator< cyclic_peptide::PeptideCyclizeMoverCreator > reg_PeptideCyclizeMoverCreator;
 static MoverRegistrator< cyclic_peptide::DeclareBondCreator > reg_DeclareBondCreator;
 static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideStubMoverCreator;

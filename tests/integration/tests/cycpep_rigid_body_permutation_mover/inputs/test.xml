@@ -1,0 +1,29 @@
+<!-- <root
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="schema.xsd"
+/> -->
+<ROSETTASCRIPTS>
+	# Perform random cyclic permutation of a cyclic peptide
+	# bound to a target protein.
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_pep" resnums="230-237" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+		<DeclareBond name="connect_termini" res1="237" res2="230" atom1="C" atom2="N" add_termini="true" />
+		<CycpepRigidBodyPermutationMover name="permute"
+			allow_random_inversion="true" mode="randomized_permutation"
+			random_position_offset="0.5" random_orientation_perturbation="2.0"
+			residue_selector="select_pep"
+		/>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="connect_termini" />
+		<Add mover="permute" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+</ROSETTASCRIPTS>

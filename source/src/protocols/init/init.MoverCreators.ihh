@@ -101,6 +101,7 @@
 #include <protocols/cyclic_peptide/CreateDistanceConstraintCreator.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraintCreator.hh>
 #include <protocols/cyclic_peptide/CrosslinkerMoverCreator.hh>
+#include <protocols/cyclic_peptide/CycpepRigidBodyPermutationMoverCreator.hh>
 #include <protocols/cyclic_peptide/PeptideCyclizeMoverCreator.hh>
 #include <protocols/cyclic_peptide/DeclareBondCreator.hh>
 #include <protocols/cyclic_peptide/PeptideStubMoverCreator.hh>
