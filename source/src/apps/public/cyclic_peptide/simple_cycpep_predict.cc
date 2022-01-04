@@ -37,10 +37,23 @@
 #endif
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
 
+// for graphics
+#include <protocols/viewer/viewers.hh>
 
 //Tracer:
 static basic::Tracer TR( "apps.public.cyclic_peptide.simple_cycpep_predict" );
 
+/// @details only called by graphics code, so no MPI consideration.
+void*
+my_main( void* )
+{
+	protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication this_app;
+	this_app.run();
+	protocols::viewer::clear_conformation_viewers();
+	// Final citation manager output:
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
+	exit( 0 );
+}
 
 /*************************/
 /* MAIN: */
@@ -106,10 +119,15 @@ main( int argc, char * argv [] )
 			procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction, output_filename,
 			lambda, kbt, compute_rmsd_to_lowest, compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_slave
 		);
+		this_app.run();
+#else
+#ifdef GL_GRAPHICS
+		protocols::viewer::viewer_main( my_main );
 #else
 		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication this_app;
-#endif
 		this_app.run();
+#endif
+#endif
 
 	} catch (utility::excn::Exception& excn ) {
 		excn.display();

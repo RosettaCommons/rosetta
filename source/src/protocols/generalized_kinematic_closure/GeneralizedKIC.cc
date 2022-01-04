@@ -62,9 +62,6 @@ namespace generalized_kinematic_closure {
 
 static basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC" );
 
-
-
-
 /// @brief Constructor for GeneralizedKIC mover.
 ///
 GeneralizedKIC::GeneralizedKIC():

@@ -49,6 +49,11 @@
 #define SimpleCycpepPredictApplication_DISULFBOND_LENGTH 2.02
 #define SimpleCycpepPredictApplication_DISULFBOND_ANGLE 1.83259571459
 
+// just from 6qys for now
+#define SimpleCycpepPredictApplication_THIOETHER_BOND_LENGTH 1.827
+#define SimpleCycpepPredictApplication_THIOETHER_BOND_C_ANGLE 1.781 // 102.028 degrees
+#define SimpleCycpepPredictApplication_THIOETHER_BOND_N_ANGLE 1.960 // 112.284
+
 namespace protocols {
 namespace cyclic_peptide_predict {
 
@@ -58,6 +63,7 @@ namespace cyclic_peptide_predict {
 enum SCPA_cyclization_type {
 	SCPA_n_to_c_amide_bond = 1, //Keep this first
 	SCPA_terminal_disulfide,
+	SCPA_thioether_lariat,
 	SCPA_nterm_isopeptide_lariat,
 	SCPA_cterm_isopeptide_lariat,
 	SCPA_sidechain_isopeptide,
@@ -304,6 +310,13 @@ private:
 	/// cyclization, unless set to 0, in which case it finds the suitable types that are furthest apart.
 	void find_first_and_last_isopeptide_residues( core::pose::PoseCOP pose, core::Size &firstres, core::Size &lastres ) const;
 
+	/// @brief Given a pose, find the first and last thioether lariat bond-forming residues.
+	/// @details First residue is 1 by definition (chloroacetyl goes where??); last is
+	/// TYPICALLY C-term in the classic peptidream approach but does not have to be.
+	/// n.b. Suga has methods for incorporating additional cysteines into bicyclic
+	/// peptides, but for the moment "closest to the opposite terminus" is sufficient.
+	void find_first_and_last_thioether_lariat_residues( core::pose::PoseCOP pose, core::Size &firstres, core::Size &lastres ) const;
+
 	/// @brief Count the number of cis-peptide bonds in the pose.
 	///
 	core::Size count_cis_peptide_bonds(
@@ -387,6 +400,9 @@ private:
 	/// @brief Set up the mover that creates sidechain isopeptide bonds.
 	void set_up_sidechain_isopeptide_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
 
+	/// @brief Set up the mover that creates thioether lariat bonds.
+	void set_up_thioether_lariat_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+
 	/// @brief Set up the DeclareBond mover used to connect the termini, or whatever
 	/// atoms are involved in the cyclization.  (Handles different cyclization modes).
 	void
@@ -435,6 +451,13 @@ private:
 	/// @param[in] c_index The index of the C-terminal sidechain for an isopeptide bond.  Set to 0 for C-terminus.
 	void add_amide_bond_cyclic_constraints ( core::pose::PoseOP pose, core::Size n_index, core::Size c_index ) const;
 
+	/// @brief Function to add thioether lariat constraints to a pose.
+	/// @details This version does this for thioether lariats.
+	/// @param[in] pose The pose to modify.
+	/// @param[in] n_index The index of the N-terminal sidechain for an isopeptide bond.  Set to 0 for N-terminus.
+	/// @param[in] c_index The index of the C-terminal sidechain for an isopeptide bond.  Set to 0 for C-terminus.
+	void add_thioether_lariat_cyclic_constraints ( core::pose::PoseOP pose, core::Size n_index, core::Size c_index ) const;
+
 	/// @brief Function to add cyclic constraints to a pose.
 	/// @details Calls functions that do this for particular cyclization types.
 	void add_cyclic_constraints ( core::pose::PoseOP pose ) const;
@@ -465,6 +488,10 @@ private:
 	/// @brief Set up the logic to close the bond at the cyclization point.
 	/// @details This version is for all types of isopeptide bond cyclization.
 	void add_closebond_logic_isopeptide( core::pose::PoseCOP pose, core::Size const cyclization_point_start, core::Size const cyclization_point_end, protocols::generalized_kinematic_closure::GeneralizedKICOP genkic ) const;
+
+	/// @brief Set up the logic to close the bond at the cyclization point.
+	/// @details This version is for all types of thioether lariat cyclization.
+	void add_closebond_logic_thioether_lariat( core::pose::PoseCOP pose, core::Size const cyclization_point_start, core::Size const cyclization_point_end, protocols::generalized_kinematic_closure::GeneralizedKICOP genkic ) const;
 
 	/// @brief Set up the logic to close the bond at the cyclization point.
 	/// @details Calls different functions for different cyclization types.
@@ -700,6 +727,10 @@ private:
 	/// @brief Given a pose, add sidechain conjugation variant types to sidechains involved in making an isopeptide
 	/// bond, and strip termini from termini involved in the isopeptide bond.
 	void set_up_isopeptide_variants( core::pose::PoseOP pose ) const;
+
+	/// @brief Given a pose, add sidechain conjugation variant types to the C-terminal
+	/// cysteine and add a special acetyl terminus to the N-terminal residue.
+	void set_up_terminal_thioether_lariat_variants( core::pose::PoseOP pose ) const;
 
 	/// @brief Given the basename of a residue type, return true if this is a type that can donate the nitrogen to an
 	/// isopeptide bond, false otherwise.

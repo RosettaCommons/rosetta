@@ -768,6 +768,9 @@ GeneralizedKICfilter::apply_rama_prepro_check(
 	core::conformation::Residue const &this_residue( pose.residue(curres) );
 	utility::vector1 < core::Real > mainchain_torsions( this_residue.mainchain_torsions().size() - 1 );
 	for ( core::Size i=1, imax=mainchain_torsions.size(); i<=imax; ++i ) mainchain_torsions[i] = this_residue.mainchain_torsions()[i];
+	// Pass any residue without an actual upper_connect (e.g., C-terminal cysteine in a thioether loop)
+	if (!this_residue.has_upper_connect()) return true;
+
 	core::Size const &that_residue_index( this_residue.residue_connection_partner( this_residue.upper_connect().index() ) );
 
 	core::Real rama_out = rama.eval_rpp_rama_score(

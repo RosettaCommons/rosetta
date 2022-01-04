@@ -150,6 +150,8 @@ patches/his_methylated.txt
 patches/MethylatedProteinCterm.txt
 patches/AcetylatedProteinNterm.txt
 
+patches/AcetylatedProteinNtermConnection.txt
+
 ## patch for the make_mainchain_potential protocol
 patches/DimethylatedProteinCterm.txt
 

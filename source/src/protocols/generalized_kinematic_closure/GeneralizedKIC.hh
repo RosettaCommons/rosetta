@@ -94,28 +94,9 @@ public:
 	/// @details Also checks that the tail residues are all within the pose.
 	void check_tail_residues_sensible( core::pose::Pose const &pose );
 
-	// @brief Function to set the effect of this mover on parts of the pose that are covalently attached to
-	// the loop to be closed, but which aren't part of it.  Settings are:
-	// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
-	//      an anchor point.
-	// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
-	//    connections to non-child geometry.
-	// CURRENTLY DEPRECATED
-	//void set_mover_effect_on_bonded_geometry( core::Size const effect ); //TODO -- Make this do something.
-
-	// @brief Function to get the effect of this mover on parts of the pose that are covalently attached to
-	// the loop to be closed, but which aren't part of it.  Return values are:
-	// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
-	//      an anchor point.
-	// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
-	//    connections to non-child geometry.
-	// CURRENTLY DEPRECATED
-	//core::Size get_mover_effect_on_bonded_geometry() { return effect_on_bonded_geometry_; }
-
 	/// @brief Set whether or not this mover builds ideal geometry for the loop, or uses the existing geometry,
 	/// imperfect bond lengths/angles and all.
 	void set_build_ideal_geometry( bool const buildideal ) { build_ideal_geometry_ = buildideal; return; }
-
 
 	/// @brief Function to set the pivot atoms for kinematic closure:
 	void set_pivot_atoms(

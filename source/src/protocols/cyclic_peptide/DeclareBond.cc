@@ -28,6 +28,7 @@
 
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueConnection.hh>
 
 
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
