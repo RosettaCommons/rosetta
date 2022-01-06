@@ -1022,7 +1022,7 @@ settings = {
 
     "gcc, mpi" : {
         "appends" : {
-            "defines" : [ "USEMPI" ],
+            "defines" : [ "USEMPI", "OMPI_SKIP_MPICXX" ],
         },
         "overrides" : {
             "cc" : "mpicc",
@@ -1032,7 +1032,7 @@ settings = {
 
     "gcc, macos, mpi" : {
         "appends" : {
-            "defines" : [ "USEMPI" ],
+            "defines" : [ "USEMPI", "OMPI_SKIP_MPICXX" ],
         },
         "overrides" : {
             "cc" : "mpicc",
@@ -1660,7 +1660,7 @@ settings = {
 
     "icc, mpi" : {
         "appends" : {
-            "defines" : [ "USEMPI" ],
+            "defines" : [ "USEMPI", "OMPI_SKIP_MPICXX" ],
         },
         "overrides" : {
             "cc" : "mpicc",
@@ -2705,7 +2705,7 @@ settings = {
 
     "clang, mpi" : {
         "appends" : {
-            "defines" : [ "USEMPI" ],
+            "defines" : [ "USEMPI", "OMPI_SKIP_MPICXX" ],
         },
         "overrides" : {
             "cc" : "mpicc",
