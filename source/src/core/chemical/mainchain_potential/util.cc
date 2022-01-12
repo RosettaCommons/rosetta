@@ -84,7 +84,7 @@ void read_rama_map_file_shapovalov(
 
 	for ( core::Size i=1, imax=res_type_names.size(); i<=imax; ++i ) {
 		runtime_assert_string_msg( !mainchain_score_table_map.count( res_type_names[i] ), "Error in core::chemical::mainchain_potential::read_rama_map_file_shapovalov(): The residue type " + res_type_names[i] + " has already been parsed.  (It was included multiple times in the list of types to parse.)" );
-		MainchainScoreTableOP scoretable( new MainchainScoreTable );
+		MainchainScoreTableOP scoretable( utility::pointer::make_shared< MainchainScoreTable >() );
 		scoretable->parse_rama_map_file_shapovalov( filename, filecontents, res_type_names[i], use_polycubic_interpolation );
 		mainchain_score_table_map[ res_type_names[i] ] = MainchainScoreTableCOP( scoretable );
 	}
@@ -161,7 +161,7 @@ void read_rama_map_file_shapovalov(
 	newtables.clear();
 	newtables.reserve( namelist.size() );
 	for ( core::Size i=1, imax=namelist.size(); i<=imax; ++i ) {
-		MainchainScoreTableOP scoretable( new MainchainScoreTable );
+		MainchainScoreTableOP scoretable( utility::pointer::make_shared< MainchainScoreTable >() );
 		scoretable->parse_rama_map_file_shapovalov( filename, filecontents, namelist[i], use_polycubic_interpolation );
 		newtables.push_back( std::pair< std::string, MainchainScoreTableOP >(namelist[i], scoretable) );
 	}
