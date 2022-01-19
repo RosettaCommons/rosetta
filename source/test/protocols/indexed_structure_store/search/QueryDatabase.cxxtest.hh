@@ -101,7 +101,7 @@ public:
 		StructurePairQueryResult result = query_executor.query_results.at(0);
 		TS_ASSERT_EQUALS(result.fragment_a_start, 3);
 		TS_ASSERT_EQUALS(result.fragment_b_start, 8);
-		TS_ASSERT_DELTA(result.result_rmsd, 0, 1e-3);
+		TS_ASSERT_DELTA(result.result_rmsd, 0, 2e-3);
 	}
 
 

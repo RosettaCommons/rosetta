@@ -222,7 +222,7 @@ just assume the requested size is correct.
     if os == "macos":
         if requested != "*":
             actual = requested
-        else:
+        elif actual == "<unknown>":
             sysctlhwlines = _popen("/usr/sbin/sysctl hw").readlines()
             if "hw.optional.x86_64: 1\n" in sysctlhwlines:
                 # only x86_64 Macs default to building 64-bit binaries
