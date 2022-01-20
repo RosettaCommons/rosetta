@@ -231,9 +231,9 @@ def Vector1(list_in):
     elif all([isinstance(x, str) for x in list_in]):
         t = rosetta.utility.vector1_string
     elif all([isinstance(x, rosetta.core.id.AtomID) for x in list_in]):
-        t = rosetta.utility.vector1_AtomID
+        t = rosetta.utility.vector1_core_id_AtomID
     else:
-        raise Exception('Vector1: attemting to create vector of unknow type ' +
+        raise Exception('Vector1: attemting to create vector of unknown type ' +
                         'or mixed type vector init_list = ' + str(list_in))
 
     v = t()
