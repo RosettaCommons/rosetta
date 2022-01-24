@@ -189,6 +189,20 @@ get_atomistic_energies(
 	select::residue_selector::ResidueSubsetOP subset = nullptr
 );
 
+#ifdef PYROSETTA
+
+/// @brief Conceit to make the nested types bound in PYROSETTA
+/// Always returns true.
+inline
+bool
+are_atomid_vector_maps_enabled(
+	std::map< id::AtomID, utility::vector1< Real > >,
+	std::map< std::pair< id::AtomID, id::AtomID >,  utility::vector1< Real > >
+) {
+	return true;
+}
+
+#endif
 
 }
 }
