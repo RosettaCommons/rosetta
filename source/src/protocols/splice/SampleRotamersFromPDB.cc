@@ -683,7 +683,7 @@ void SampleRotamersFromPDB::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default(  "add_rotamer", xsct_rosetta_bool, "If true, add the sampled rotamer to rotamer vector, otherwise just delete rotamers that are not in input pdbs/rotamaer database" ,"1")
 		+ XMLSchemaAttribute::attribute_w_default(  "debug", xsct_rosetta_bool, "make output more verbose" ,"0" )
 		+ XMLSchemaAttribute::attribute_w_default(  "ccd", xsct_rosetta_bool, "do not modify residues with CUT_LOWER/CUT_UPPER property" ,"1" )
-                + XMLSchemaAttribute::attribute_w_default(  "db_file_name", xs_string, "The database name to use", "" )
+		+ XMLSchemaAttribute::attribute_w_default(  "db_file_name", xs_string, "The database name to use", "" )
 		+ XMLSchemaAttribute(  "aligned_positions", xsct_int_cslist, "only apply to this taskoperation to specific positions." );
 
 
