@@ -51,6 +51,7 @@ sources = {
 	"protocols/drug_design": [
 		"RDKitMetric",
 		"RDKitMetricsMover",
+		"ConformationSelectionToRDMol",
 	],
         "protocols/drug_design/bcl": [
                 "BCLFragmentBaseMover",

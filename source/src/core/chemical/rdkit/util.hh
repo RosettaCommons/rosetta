@@ -97,6 +97,13 @@ reprotonate_rdmol(::RDKit::RWMol & rdmol);
 void
 neutralize_rdmol(::RDKit::RWMol & rdmol, bool addHs=true);
 
+/// @brief Final neutralization process invoked in constructing an RDMol
+/// from a piece of a Pose
+void
+final_neutralize(
+	RDKit::RWMOL_SPTR const & rdmol
+);
+
 /// @brief Label a molecule with it's index values (for find_mapping, later)
 void
 label_with_index(  ::RDKit::ROMol & rdmol, std::string const & index_prop = "Orig_Index" );

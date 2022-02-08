@@ -327,6 +327,64 @@ reprotonate_rdmol(::RDKit::RWMol & rdmol) {
 }
 
 void
+final_neutralize(
+	RDKit::RWMOL_SPTR const & rdmol
+) {
+	bool progress = true;
+	while ( progress ) {
+		progress = false;
+		for ( core::Size ii(0); ii < rdmol->getNumAtoms(); ++ii ) {
+			::RDKit::Atom & a( *rdmol->getAtomWithIdx(ii) );
+			int formal_charge( a.getFormalCharge() );
+			if ( formal_charge == 0 ) {
+				continue;
+			} else if ( formal_charge > 0 ) {
+				// Positive formal charge.
+				// Heuristic - if there's an attached hydrogen, remove it and reduce the charge.
+				if ( a.getNumExplicitHs() >= 1 ) {
+					a.setNumExplicitHs( a.getNumExplicitHs() - 1 );
+					a.setFormalCharge( formal_charge - 1 );
+					progress = true;
+				} else if ( a.getNumImplicitHs() >= 1 ) {
+					// We don't need to reset implicit -- will be taken care of automatically
+					a.setFormalCharge( formal_charge - 1 );
+					progress = true;
+				}
+			} else {
+				// Negative formal charge
+				// Heuristic - add a hydrogen to neutralize negatively charged oxygen
+				// (Chlorides & other negatively charged atoms aren't covered.)
+				// Exception: if we're in a charge separation complex (e.g. Nitro groups)
+				// We don't want to adjust the charges.
+				if ( a.getAtomicNum() == 8 ) { // Oxygen
+					bool ylid( false );
+					::RDKit::ROMol::ADJ_ITER itr, itr_end;
+					// Yes, address of. RDKit wants a pointer.
+					for ( boost::tie(itr, itr_end) = rdmol->getAtomNeighbors(&a); itr != itr_end; ++itr ) {
+						if ( rdmol->getAtomWithIdx(*itr)->getFormalCharge() >= 1 ) {
+							ylid = true;
+						}
+					}
+					if ( ! ylid ) {
+						a.setNumExplicitHs( a.getNumExplicitHs() - 1 );
+						a.setFormalCharge( formal_charge - 1 );
+						progress = true;
+					}
+				}
+			}
+		}
+	}
+	// Re-sanitize the molecule -- the one from Roset
+	try {
+		::RDKit::MolOps::sanitizeMol(*rdmol);
+	} catch (::RDKit::MolSanitizeException &se){
+		TR.Error << "Cannot Sanitize molecule with RDKit after charge neutralization: " << se.message() << std::endl;
+		TR.Error << "    molecule: " << ::RDKit::MolToSmiles( *rdmol ) << std::endl;
+		utility_exit_with_message("Encountered molecule which cannot properly be represented in RDKit.");
+	}
+}
+
+void
 neutralize_rdmol(::RDKit::RWMol & rdmol, bool addHs) {
 
 	static const ChargeTransformList CHARGE_FIXUPS {

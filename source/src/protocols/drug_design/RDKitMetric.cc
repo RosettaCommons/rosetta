@@ -14,6 +14,7 @@
 // Unit headers
 #include <protocols/drug_design/RDKitMetric.hh>
 #include <protocols/drug_design/RDKitMetricCreator.hh>
+#include <protocols/drug_design/ConformationSelectionToRDMol.hh>
 
 #include <core/chemical/rdkit/RestypeToRDMol.hh>
 #include <core/chemical/rdkit/util.hh>
@@ -79,9 +80,8 @@ RDKitMetric::rdkit_metric( std::string const & setting ) {
 		std::map< std::string, std::string > const metrics( core::chemical::rdkit::get_metric_names() );
 		if ( metrics.count( setting ) == 0 ) {
 			TR.Error << "Metric " << setting << " not recognized by Rosetta as a valid RDKit metric. Valid metrics are:\n\n";
-			for ( std::map< std::string, std::string >::const_iterator itr( metrics.begin() ), itr_end( metrics.end());
-					itr != itr_end; ++itr ) {
-				TR.Error << itr->first << "\t-\t" << itr->second << "\n";
+			for ( auto const & metric : metrics ) {
+				TR.Error << metric.first << "\t-\t" << metric.second << "\n";
 			}
 			TR << std::endl;
 			utility_exit_with_message("Rosetta doesn't understand '"+setting+"' as an RDKit metric.");
@@ -141,23 +141,27 @@ RDKitMetric::calculate(const core::pose::Pose & pose ) const {
 		utility_exit_with_message("Must set residue for RDKitMetric.");
 	}
 	utility::vector1< core::Size > resnums = core::select::get_residues_from_subset( residue_->apply( pose ) );
+	::RDKit::RWMolOP rdmol = nullptr;
 	if ( resnums.size() != 1 ) {
-		TR.Error << "Can only apply RDKitMetric to a single residue. Got " << resnums.size() << " residues instead." << std::endl;
-		utility_exit_with_message("Can only apply RDKitMetric to one residue.");
+		// TR.Error << "Can only apply RDKitMetric to a single residue. Got " << resnums.size() << " residues instead." << std::endl;
+		// utility_exit_with_message("Can only apply RDKitMetric to one residue.");
+		TR.Warning << "Using experimental mode where RDKit assembles a single residue from multiple Rosetta residues." << std::endl;
+		TR.Warning << "Be certain that your ResidueSelector is well chosen!" << std::endl;
+
+		// Use a neutral, hydrogen free molecule for calculating the metric values - should be the default
+		protocols::drug_design::ConformationSelectionToRDMol converter( pose.conformation(), resnums );
+		rdmol = converter.Mol();
+	} else {
+		core::Size resnum( resnums[1] );
+
+		core::chemical::MutableResidueTypeOP restype( utility::pointer::make_shared< core::chemical::MutableResidueType >(pose.residue(resnum).type()) );
+		TR << "Calculating RDKit metric '" << rdkit_metric_ << "' value for residue " << resnum << ", of type " << restype->name() << std::endl;
+
+		// Use a neutral, hydrogen free molecule for calculating the metric values - should be the default
+		core::chemical::rdkit::RestypeToRDMol converter(*restype);
+		rdmol = converter.Mol();
 	}
-	core::Size resnum( resnums[1] );
-
-	core::chemical::MutableResidueTypeOP restype( utility::pointer::make_shared< core::chemical::MutableResidueType >(pose.residue(resnum).type()) );
-	TR << "Calculating RDKit metric '" << rdkit_metric_ << "' value for residue " << resnum << ", of type " << restype->name() << std::endl;
-
-	core::Real retval(0);
-
-	// Use a neutral, hydrogen free molecule for calculating the metric values - should be the default
-	core::chemical::rdkit::RestypeToRDMol converter(*restype);
-	::RDKit::RWMolOP rdmol(converter.Mol() );
-	retval = core::chemical::rdkit::rdkit_metric( *rdmol, rdkit_metric_ );
-
-	return retval;
+	return core::chemical::rdkit::rdkit_metric( *rdmol, rdkit_metric_ );
 }
 
 
