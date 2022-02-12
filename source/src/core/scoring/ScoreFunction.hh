@@ -1356,4 +1356,27 @@ CEREAL_FORCE_DYNAMIC_INIT( core_scoring_ScoreFunction )
 #endif // SERIALIZATION
 
 
+// #ifdef PYROSETTA
+// void inline PyRosetta_ScoreFunction_hh_helper(
+// 	core::scoring::ScoreFunction::AllMethods,
+// 	core::scoring::ScoreFunction::CI_2B_Methods,
+// 	core::scoring::ScoreFunction::CD_2B_Methods,
+// 	core::scoring::ScoreFunction::CI_1B_Methods,
+// 	core::scoring::ScoreFunction::CD_1B_Methods,
+// 	core::scoring::ScoreFunction::CI_LR_2B_Methods,
+// 	core::scoring::ScoreFunction::CD_LR_2B_Methods,
+// 	core::scoring::ScoreFunction::LR_2B_Methods,
+// 	core::scoring::ScoreFunction::TWO_B_Methods,
+// 	core::scoring::ScoreFunction::WS_Methods,
+// 	core::scoring::ScoreFunction::WS_MethodIterator,
+// 	core::scoring::ScoreFunction::LR_2B_MethodIterator,
+// 	core::scoring::ScoreFunction::TWO_B_MethodIterator,
+// 	core::scoring::ScoreFunction::AllMethodsIterator,
+// 	core::scoring::ScoreFunction::CI_LR_2B_MethodIterator,
+// 	core::scoring::ScoreFunction::CD_LR_2B_MethodIterator
+// )
+// {
+// }
+// #endif
+
 #endif // INCLUDED_core_scoring_ScoreFunction_HH
