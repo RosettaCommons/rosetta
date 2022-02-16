@@ -207,6 +207,7 @@ sources = {
 	"protocols/design_opt": [
 		"GreedyOptMutationMover",
 		"PointMutationCalculator",
+		"Supercharge",
 	],
 	"protocols/evolution": [
 		"AASynthesisFitnessCostFilter",
