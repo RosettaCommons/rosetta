@@ -127,11 +127,16 @@ void MergePDBMover::determine_overlap(Pose const pose,core::Size chain_id){
 			core::select::residue_selector::ResidueSubset selection_cmd = selector_cmd_->apply(pose);
 			core::Size cmd_first = core::select::residue_selector::selection_positions(selection_cmd).front();
 			core::Size cmd_last = selection_cmd.size();
+			//check if pose is symmetric; if so, take the ASU chain length instead
+			if ( pose::symmetry::is_symmetric(pose) ) {
+				cmd_last = pose::symmetry::get_nres_asymmetric_unit(pose);
+			}
 			overlap_scan_range_cmdLine_ = cmd_last-cmd_first+1;
 			//TR.Debug << "selection_cmd: " << selection_cmd << std::endl;
 			//TR.Debug << "selection_positions(selection_cmd): " << core::select::residue_selector::selection_positions(selection_cmd) << std::endl;
 			//TR.Debug << "selection_positions(selection_cmd).front(): " << core::select::residue_selector::selection_positions(selection_cmd).front() << std::endl;
 			//TR.Debug << "selection_cmd.size(): " << selection_cmd.size() << std::endl;
+			//TR.Debug << "pose::symmetry::get_nres_asymmetric_unit(pose): " << pose::symmetry::get_nres_asymmetric_unit(pose) << std::endl;
 			TR << "*NEW* overlap_scan_range_cmdLine_: " << overlap_scan_range_cmdLine_ << std::endl;
 		}
 
