@@ -206,8 +206,7 @@ public: // Creation
 
 	/// @brief Destructor
 	inline
-	~vector1() override
-	{}
+	~vector1() override = default;
 
 
 public: // Assignment

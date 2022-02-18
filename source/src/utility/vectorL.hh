@@ -229,8 +229,7 @@ public: // Creation
 	/// @brief Destructor
 	inline
 	virtual
-	~vectorL()
-	{}
+	~vectorL() = default;
 
 
 public: // Assignment
