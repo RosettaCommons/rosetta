@@ -155,11 +155,12 @@ def get_scores_dict(obj):
             raise IOError(
                 "The `input_file` argument parameter must end in '.pdb' or '.pdb.bz2'."
             )
+        scores_dict = None
         for line in reversed(pdbstring.split(os.linesep)):
             if line.startswith(IO.REMARK_FORMAT):
                 scores_dict = json.loads(line.split(IO.REMARK_FORMAT)[-1])
                 break
-        if not scores_dict:
+        if scores_dict is None:
             raise IOError("Could not parse the `input_file` argument parameter!")
         if not all(d in scores_dict for d in ["instance", "metadata", "scores"]):
             raise KeyError("Could not parse the `input_file` argument parameter!")
