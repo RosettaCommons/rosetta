@@ -16,7 +16,7 @@
 
 namespace numeric {
 
-class MathMatrix;
+template<typename T> class MathMatrix;
 
 }//end namespace numeric
 

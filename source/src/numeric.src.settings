@@ -48,6 +48,7 @@ sources = {
 	],
 	"numeric/geometry": [
 		"BoundingBox.srlz",
+		"projection_area",
 		"ring_plane.functions",
 	],
 	"numeric/geometry/hashing": [

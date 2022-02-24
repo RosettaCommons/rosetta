@@ -86,6 +86,7 @@
 #include <core/energy_methods/Burial_v2EnergyCreator.hh>
 #include <core/energy_methods/HRF_MSLabelingEnergyCreator.hh>
 #include <core/energy_methods/HRFDynamicsEnergyCreator.hh>
+#include <core/energy_methods/CCS_IMMSEnergyCreator.hh>
 #include <core/energy_methods/CovalentLabelingEnergyCreator.hh>
 #include <core/energy_methods/CovalentLabelingFAEnergyCreator.hh>
 #include <core/energy_methods/DEPC_MS_EnergyCreator.hh>
@@ -480,6 +481,7 @@ static EnergyMethodRegistrator< energy_methods::CovalentLabelingFAEnergyCreator>
 static EnergyMethodRegistrator< energy_methods::DEPC_MS_EnergyCreator > DEPC_MS_EnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::HRFDynamicsEnergyCreator > HRFDynamicsEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::HRF_MSLabelingEnergyCreator > HRF_MSLabelingEnergyCreator_registrator;
+static EnergyMethodRegistrator< energy_methods::CCS_IMMSEnergyCreator > CCS_IMMSEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::RG_Energy_FastCreator > RG_Energy_FastCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::RG_LocalEnergyCreator > RG_LocalEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::SA_EnergyCreator > SA_EnergyCreator_registrator;

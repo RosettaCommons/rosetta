@@ -1,0 +1,3 @@
+-ccs_nrots 300
+-in:file:s ./r_2MLT_0001.pdb
+-ccs_prad 1.0

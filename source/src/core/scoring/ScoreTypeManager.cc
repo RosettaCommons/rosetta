@@ -329,6 +329,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "covalent_labeling_fa" ] = covalent_labeling_fa;
 	name2score_type_[ "hrf_ms_labeling" ] = hrf_ms_labeling;
 	name2score_type_[ "hrf_dynamics" ] = hrf_dynamics;
+	name2score_type_[ "ccs_imms" ] = ccs_imms;
 	name2score_type_[ "depc_ms" ] = depc_ms;
 	name2score_type_[ "abego" ]  = abego;
 	name2score_type_[ "pair" ]   = pair;

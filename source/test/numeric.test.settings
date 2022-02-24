@@ -47,6 +47,7 @@ sources = {
 	],
 	"geometry" : [
 		"BoundingBox",
+		"projection_area",
 		"ring_plane.functions",
 	],
         "geometry/hashing" : [

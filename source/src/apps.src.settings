@@ -74,6 +74,7 @@ sources = {
                 "fast_clustering",
 		"InterfaceAnalyzer",
 		"interface_energy",
+		"parcs_ccs_calc",
 		"PeptideDeriver",
 		"per_residue_energies",
 		"per_residue_solvent_exposure",

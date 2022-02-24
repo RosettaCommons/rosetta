@@ -109,6 +109,7 @@ sources = {
 		"GenericBondedEnergy",
 		"HRFDynamicsEnergy",
 		"HRF_MSLabelingEnergy",
+		"CCS_IMMSEnergy",
 		"MultipoleElecEnergy",
 		"GoapEnergy",
 		"HybridVDW_Energy",
