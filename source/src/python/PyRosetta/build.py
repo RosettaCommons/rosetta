@@ -153,6 +153,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     # llvm_version='9.0.0'  # v8 and v9 can not be build with Clang-3.4, we if need upgrade to v > 7 then we should probably dynamicly change LLVM version based on complier versions
     # llvm_version='7.1.0'  # compiling v7.* on clang-3.4 lead to lockup while compiling tools/clang/lib/Sema/SemaChecking.cpp
     llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang') if Platform == 'macos' and platform.machine() == 'arm64' else ('6.0.1', 'tools/clang/lib/Headers/clang-headers')
+    #llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang')
 
     prefix = prefix_root + '/llvm-' + llvm_version
 

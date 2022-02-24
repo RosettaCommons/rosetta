@@ -89,7 +89,7 @@ class HPC_Driver:
         self.remove_signal_handler()
 
 
-    def execute(self, executable, arguments, working_dir, log_dir=None, name='_no_name_', memory=256, time=24, shell_wrapper=False, block=True):
+    def execute(self, executable, arguments, working_dir, log_dir=None, name='_no_name_', memory=3072, time=24, shell_wrapper=False, block=True):
         ''' Execute given command line on HPC cluster, must accumulate cpu hours in self.cpu_usage '''
         if log_dir==None: log_dir=self.working_dir
 
@@ -111,16 +111,16 @@ class HPC_Driver:
         must_be_implemented_in_inherited_classes
 
 
-    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True, shell_wrapper=False):
+    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=3072, time=12, block=True, shell_wrapper=False):
         print('submit_hpc_job is DEPRECATED and will be removed in near future, please use submit_serial_hpc_job  instead!')
         must_be_implemented_in_inherited_classes
 
 
-    def submit_serial_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True, shell_wrapper=False):
+    def submit_serial_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=3072, time=12, block=True, shell_wrapper=False):
         must_be_implemented_in_inherited_classes
 
 
-    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, memory=512, time=12, block=True, process_coefficient="1", requested_nodes=1, requested_processes_per_node=1):
+    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, memory=3072, time=12, block=True, process_coefficient="1", requested_nodes=1, requested_processes_per_node=1):
         ''' submit jobs as MPI job
             process_coefficient should be string representing fraction of process to launch on each node, for example '3 / 4' will start only 75% of MPI process's on each node
         '''

@@ -102,11 +102,12 @@ class Slurm_HPC_Driver(HPC_Driver):
         '''
 
         s = self.head_node_execute('', f'squeue -j {slurm_job_id} --noheader', return_='output', terminate_on_failure=False, silent=True)
-        if s: return False
-        else:
-            #self.tracer('Waiting for condor to finish the jobs... DONE')
+
+        if 'slurm_load_jobs error: Invalid job id specified' in s:
             self.jobs.remove(slurm_job_id)
-            return True  # jobs already finished, we return empty list to prevent double counting of cpu_usage
+            return True
+        else:
+            return False
 
 
     def cancel_job(self, slurm_job_id):
