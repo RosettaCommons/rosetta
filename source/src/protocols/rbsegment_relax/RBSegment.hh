@@ -124,6 +124,9 @@ public:
 	RBResidueRange & operator[](int i) { return segments_[i]; }
 	RBResidueRange const & operator[](int i) const { return segments_[i]; }
 
+	///@brief split a RBsegment of potentially discontinuous segments in a vector of multiple consecutive RBsegments
+	utility::vector1< RBSegment > split() const;
+
 private:
 	utility::vector1< RBResidueRange > segments_;
 

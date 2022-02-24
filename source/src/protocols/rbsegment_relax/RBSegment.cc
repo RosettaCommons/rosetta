@@ -422,6 +422,13 @@ RBSegment::RBSegment ( utility::vector1 < RBSegment > const &segs_in ) {
 	sigAxisR_ = sigAxisT_ = sigOffAxisR_ = sigOffAxisT_ = 0.0;
 }
 
+utility::vector1< RBSegment > RBSegment::split() const {
+	utility::vector1< RBSegment > output;
+	for ( auto const & iter : segments_  ) {
+		output.emplace_back( RBSegment( iter  )  );
+	}
+	return output;
+}
 
 }
 }

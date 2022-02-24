@@ -477,6 +477,7 @@ static MoverRegistrator< quantum_annealing::ExternalPackerResultLoaderCreator > 
 static MoverRegistrator< rbsegment_relax::MakeStarTopologyMoverCreator > reg_MakeStarTopologyMoverCreator;
 static MoverRegistrator< rbsegment_relax::OptimizeThreadingMoverCreator > reg_OptimizeThreadingMoverCreator;
 static MoverRegistrator< rbsegment_relax::IdealizeHelicesMoverCreator > reg_IdealizeHelicesMoverCreator;
+static MoverRegistrator< rbsegment_relax::ConfChangeMoverCreator > reg_ConfChangeMoverCreator;
 
 static MoverRegistrator< recces::scratch::ThermalSamplingMoverCreator > reg_ThermalSamplingMoverCreator;
 static MoverRegistrator< recces::scratch::ThermalMinimizerCreator > reg_ThermalMinimizerCreator;

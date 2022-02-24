@@ -217,7 +217,6 @@
 
 #include <protocols/glycopeptide_docking/GlycopeptideDockingProtocolCreator.hh>
 #include <protocols/glycan_docking/GlycanDockProtocolCreator.hh>
-
 #include <protocols/grafting/AnchoredGraftMoverCreator.hh>
 #include <protocols/grafting/CCDEndsGraftMoverCreator.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMoverCreator.hh>
@@ -460,6 +459,7 @@
 #include <protocols/rbsegment_relax/MakeStarTopologyCreator.hh>
 #include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>
 #include <protocols/rbsegment_relax/IdealizeHelicesCreator.hh>
+#include <protocols/rbsegment_relax/ConfChangeMoverCreator.hh>
 
 #include <protocols/recces/scratch/ThermalSamplingMoverCreator.hh>
 #include <protocols/recces/scratch/ThermalMinimizerCreator.hh>

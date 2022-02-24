@@ -134,6 +134,7 @@ sources = {
 	],
 	"protocols/rbsegment_relax": [
 		"AutoRBRelaxMover",
+        "ConfChangeMover",
 		"MakeStarTopology",
 		"FragInsertAndAlignMover",
 		"OptimizeThreading",
