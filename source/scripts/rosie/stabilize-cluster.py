@@ -898,6 +898,7 @@ def parse_build_analyze_inputs(pdb_file, input_resnum, aa_subs_option, fav_nativ
         fav_nat_list = [ "0.0" ]
     # Optional, user decides which aa substitutions are allowed during design
     if keep_native != 'null':
+        keep_native=parse_brackets_input_resid(keep_native)
         keep_native_list, num_res = parse_input_resid(pdb_file, keep_native)
     else:
         keep_native_list = [('999999', '999999', '999999', '999999')] # This residue is assumed to not be in the pdb file so no residues will be skipped with this option
