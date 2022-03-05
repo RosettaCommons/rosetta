@@ -951,25 +951,25 @@ void ConfChangeMover::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::D
 void ConfChangeMover::provide_xml_schema(utility::tag::XMLSchemaDefinition &xsd) {
 	utility::tag::AttributeList top_attlist;
 
-	top_attlist + utility::tag::XMLSchemaAttribute::attribute_w_default("template_pose", utility::tag::xs_string, "Template pose for restraints generation", "NONE") +
+	top_attlist + utility::tag::XMLSchemaAttribute::attribute_w_default("template_pose", utility::tag::xs_string, "Template pose for restraints generation (optional)", "NONE") +
 		utility::tag::XMLSchemaAttribute("stage1_scorefunction", utility::tag::xs_string, "Stage1 scorefunction") +
-		utility::tag::XMLSchemaAttribute("stage2_scorefunction", utility::tag::xs_string, "Stage 2 scorefunction") +
+		utility::tag::XMLSchemaAttribute("stage2_scorefunction", utility::tag::xs_string, "Stage2 scorefunction") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage1_moves", utility::tag::xsct_non_negative_integer, "Number of  moves to apply in stage 1",
 		"10000") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage1_move_restoring_segs", utility::tag::xsct_non_negative_integer,
-		"At this stage1 move, the initial segments corresponding to DSSP SSEs will be restored (i.e. they can move independently)",
+		"At this stage1 move, SSEs automatically calculated with DSSP will be restored. This option is useful to split stage1 sampling in domain movements followed by SSEs movements (optional)",
 		"0")
 
-		+ utility::tag::XMLSchemaAttribute("modify_segments", utility::tag::xs_string, "comma separated list of segments to modify in the format segIndex-firstRes-lastRes")
+		+ utility::tag::XMLSchemaAttribute("modify_segments", utility::tag::xs_string, "comma separated list of SSEs to modify in the format segIndex-firstRes-lastRes. The list of DSSP-calculated SSEs is printed during runtime (optional)")
 
-		+ utility::tag::XMLSchemaAttribute("add_segments", utility::tag::xs_string, "comma separated list of segments to add in the format firstRes-lastRes") +
+		+ utility::tag::XMLSchemaAttribute("add_segments", utility::tag::xs_string, "comma separated list of new SSEs (missing in the list) to add in the format firstRes-lastRes (optional)") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage1_rigid_residues", utility::tag::xs_string,
-		"comma separated list of residue selectors that should collectively be treated as rigid bodies during stage 1", "NONE")
+		"comma separated list of residue selectors that should collectively be treated as rigid bodies during stage 1 (optional)", "NONE")
 
 		+ utility::tag::XMLSchemaAttribute::attribute_w_default("stage1_multi_sse_freq", utility::tag::xsct_real,
 		"Frequency from 0 to 1 of simultaneous multi-SSE moves", "0.5") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage1_frag_freq", utility::tag::xsct_real,
-		"Frequency from 0 to 1 of fragment insertion moves in stage1",
+		"Frequency from 0 to 1 of PDB-derived fragments insertion moves in stage1",
 		"0.5") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage1_twist_freq", utility::tag::xsct_real, "Frequency from 0 to 1 of helical moves", "0.2") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage1_temperature", utility::tag::xsct_real, "Temperature used for Monte Carlo Metropolis criterion", "1.0")
@@ -983,7 +983,7 @@ void ConfChangeMover::provide_xml_schema(utility::tag::XMLSchemaDefinition &xsd)
 		+ utility::tag::XMLSchemaAttribute::attribute_w_default("rotation_stdev", utility::tag::xsct_real, "Rotation angle (standard deviation) applied to SSEs", "10") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("translation_stdev", utility::tag::xsct_real, "Translation distance (standard deviation) applied to SSEs", "1.0")
 
-		+ utility::tag::XMLSchemaAttribute("stage1_minimization", utility::tag::xsct_rosetta_bool, "Minimize during stage 1, default false")
+		+ utility::tag::XMLSchemaAttribute("stage1_minimization", utility::tag::xsct_rosetta_bool, "Minimize during stage 1 (default False)")
 		+
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage2_moves", utility::tag::xsct_non_negative_integer, "Number of moves to apply in stage 2", "1000") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage2_segment_freq", utility::tag::xsct_real,
@@ -994,11 +994,11 @@ void ConfChangeMover::provide_xml_schema(utility::tag::XMLSchemaDefinition &xsd)
 		"0.5") +
 		utility::tag::XMLSchemaAttribute::attribute_w_default("stage2_temperature", utility::tag::xsct_real, "Temperature used for Monte Carlo Metropolis criterion",
 		"1.0") +
-		utility::tag::XMLSchemaAttribute::attribute_w_default("stage2_models", utility::tag::xsct_non_negative_integer, "stage2 number of models that will be generated, models will different in stage2 sampling", "1")
+		utility::tag::XMLSchemaAttribute::attribute_w_default("stage2_models", utility::tag::xsct_non_negative_integer, "number of models that will be generated in stage2. Models will differ only in the stage2 sampling (optional)", "1")
 
-		+ utility::tag::XMLSchemaAttribute("frags3", utility::tag::xs_string, "3-mer fragment file for fragments insertion") +
-		utility::tag::XMLSchemaAttribute("frags9", utility::tag::xs_string, "9-mer fragment file for fragments insertion");
-	std::string description = "The mover sample new protein conformations in two steps: 1) Rigid-body perturbation of secondary structure elements (SSEs) with optional dihedrals change through fragments insertion, 2) Fragment-based loops closure and modeling";
+		+ utility::tag::XMLSchemaAttribute("frags3", utility::tag::xs_string, "3-mer fragment file for fragments insertion. Automatically calculated if no file is provided") +
+		utility::tag::XMLSchemaAttribute("frags9", utility::tag::xs_string, "9-mer fragment file for fragments insertion. Automatically calculated if no file is provided");
+	std::string description = "The mover samples new protein conformations in two steps: 1) Rigid-body perturbation of SSEs with optional dihedrals change through fragments insertion, 2) Fragments-based loops closure and modeling";
 	moves::xsd_type_definition_w_attributes(xsd, mover_name(), description, top_attlist);
 }
 

@@ -55,7 +55,7 @@ public:
 
 	ConfChangeMover();
 
-	~ConfChangeMover() = default;
+	~ConfChangeMover() override = default;
 
 	protocols::moves::MoverOP clone() const override;
 
