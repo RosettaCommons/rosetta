@@ -461,6 +461,7 @@ def aa_3_to_1(x):
         raise ValueError('Input length should be a multiple of three')
     y = ''
     for i in range(len(x)//3):
+        if x[3*i:3*i+3] in dict_321:
             y += dict_321[x[3*i:3*i+3]]
     return y
 
@@ -469,6 +470,7 @@ def aa_1_to_3(x):
         raise ValueError('Input length should be a multiple of three')
     y = ''
     for i in range(len(x)//1):
+        if x in dict_123:
             y += dict_123[x]
     return y
 
