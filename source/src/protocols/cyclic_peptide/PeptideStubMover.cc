@@ -44,6 +44,8 @@
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -325,6 +327,21 @@ std::string PeptideStubMover::get_name() const {
 
 std::string PeptideStubMover::mover_name() {
 	return "PeptideStubMover";
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+void
+PeptideStubMover::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	basic::citation_manager::CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		mover_name(),
+		basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1038/nature19791") );
+	citations.add( collection );
 }
 
 void PeptideStubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

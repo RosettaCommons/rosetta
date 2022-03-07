@@ -221,11 +221,11 @@ GALigandDock::apply( pose::Pose & pose )
 	}
 
 	if ( torsion_sampler_percentage_ > 0 ) {
-		torsion_sampler_ = TorsionSampler();
+		torsion_sampler_ = utility::pointer::make_shared<TorsionSampler>();
 	}
 
 	// [[1]] setup grid scoring
-	GridScorerOP gridscore( new GridScorer( scfxn_ ));
+	GridScorerOP gridscore( utility::pointer::make_shared< GridScorer >( scfxn_ ));
 	gridscore->set_voxel_spacing( grid_ );
 	gridscore->set_bbox_padding( padding_ );
 	gridscore->set_hash_gridding( hashsize_ );

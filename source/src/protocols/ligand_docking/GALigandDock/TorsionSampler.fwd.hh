@@ -15,11 +15,16 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_TorsionSampler_fwd_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_TorsionSampler_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace protocols {
 namespace ligand_docking {
 namespace ga_ligand_dock {
 
 class TorsionSampler;
+
+typedef utility::pointer::shared_ptr< TorsionSampler > TorsionSamplerOP;
+typedef utility::pointer::shared_ptr< TorsionSampler const > TorsionSamplerCOP;
 
 }
 }

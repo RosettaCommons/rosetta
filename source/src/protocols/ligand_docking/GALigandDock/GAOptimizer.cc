@@ -120,7 +120,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 void
 GAOptimizer::show_status(
 	LigandConformers & genes,
-	std::string comment,
+	std::string const & comment,
 	bool calculate_native_rmsd,
 	bool verbose
 ) {

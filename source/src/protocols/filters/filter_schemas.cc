@@ -12,6 +12,7 @@
 
 // Unit header
 #include <protocols/filters/filter_schemas.hh>
+#include <protocols/filters/FilterFactory.hh>
 
 // Package headers
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -39,17 +40,16 @@ xsd_type_definition_w_attributes(
 		local_attrs + utility::tag::optional_name_attribute();
 	}
 
-
 	if ( ! utility::tag::attribute_w_name_in_attribute_list( "confidence", local_attrs ) ) {
 		local_attrs + utility::tag::XMLSchemaAttribute::attribute_w_default( "confidence", utility::tag::xsct_real, "Probability that the pose will be filtered out if it does not pass this Filter", "1.0" );
 	}
 
-
+	std::string const citation_string( protocols::filters::FilterFactory::get_instance()->get_citation_humanreadable( filter_type ) );
 
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_filter )
 		.element_name( filter_type )
-		.description( description )
+		.description( description + "\n\n" + citation_string )
 		.add_attributes( local_attrs )
 		.write_complex_type_to_schema( xsd );
 }
@@ -73,10 +73,12 @@ xsd_type_definition_w_attributes_and_repeatable_subelements(
 		local_attrs + utility::tag::XMLSchemaAttribute::attribute_w_default( "confidence", utility::tag::xsct_real, "Probability that the pose will be filtered out if it does not pass this Filter", "1.0" );
 	}
 
+	std::string const citation_string( protocols::filters::FilterFactory::get_instance()->get_citation_humanreadable( filter_type ) );
+
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_filter )
 		.element_name( filter_type )
-		.description( description )
+		.description( description + "\n\n" + citation_string )
 		.add_attributes( local_attrs )
 		.set_subelements_repeatable( subelements )
 		.write_complex_type_to_schema( xsd );

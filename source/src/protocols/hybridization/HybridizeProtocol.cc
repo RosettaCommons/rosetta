@@ -376,17 +376,9 @@ HybridizeProtocol::init() {
 
 	// native
 	if ( option[ in::file::native ].user() ) {
-		native_ = utility::pointer::make_shared< core::pose::Pose >();
-		if ( option[in::file::fullatom]() ) {
-			core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
-		} else {
-			core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-			core::import_pose::pose_from_file( *native_, *residue_set, option[ in::file::native ]()  , core::import_pose::PDB_file);
-		}
+		native_needs_load_ = true;
 	} else if ( option[ evaluation::align_rmsd_target ].user() ) {
-		native_ = utility::pointer::make_shared< core::pose::Pose >();
-		utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
-		core::import_pose::pose_from_file( *native_, align_rmsd_target[1] , core::import_pose::PDB_file); // just use the first one for now
+		native_needs_load_from_align_rmsd_target_ = true;
 	}
 
 	// strand pairings
@@ -1063,6 +1055,25 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	using namespace core::pose::datacache;
 	using namespace core::io::silent;
 	using namespace ObjexxFCL::format;
+
+	if ( native_ == nullptr ) {
+		if ( native_needs_load_ ) {
+			native_ = utility::pointer::make_shared< core::pose::Pose >();
+			if ( option[in::file::fullatom]() ) {
+				core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
+			} else {
+				core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+				core::import_pose::pose_from_file( *native_, *residue_set, option[ in::file::native ]()  , core::import_pose::PDB_file);
+			}
+			native_needs_load_ = false;
+		} else if ( native_needs_load_from_align_rmsd_target_ ) {
+			native_ = utility::pointer::make_shared< core::pose::Pose >();
+			utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
+			core::import_pose::pose_from_file( *native_, align_rmsd_target[1] , core::import_pose::PDB_file); // just use the first one for now
+			native_needs_load_from_align_rmsd_target_ = false;
+		}
+	}
+
 	setup_templates_and_sampling_options(pose);
 
 	// number of residues in asu without VRTs

@@ -49,6 +49,11 @@ public:
 	virtual TaskOperationOP create_task_operation() const = 0;
 	virtual std::string keyname() const = 0;
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
+
+	/// @brief Indicate whether we skip adding citation information to the XML schema.
+	/// @details False for any real task operation.  True only for dummy task operations created
+	/// for unit tests.
+	virtual bool skip_citation_info_in_schema() const { return false; }
 };
 
 }

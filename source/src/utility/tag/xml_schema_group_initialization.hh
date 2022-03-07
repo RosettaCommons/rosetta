@@ -58,10 +58,10 @@ void define_xml_schema_group(
 
 	XMLSchemaModelGroup widget_group;
 	widget_group.group_name( widget_group_name );
-	XMLSchemaModelGroupOP widget_group_choice( new XMLSchemaModelGroup );
+	XMLSchemaModelGroupOP widget_group_choice( utility::pointer::make_shared< XMLSchemaModelGroup >() );
 	widget_group_choice->type( xsmgt_choice );
 	for ( typename CreatorMap::const_iterator iter = creator_map.begin(), iter_end = creator_map.end(); iter != iter_end; ++iter ) {
-		XMLSchemaElementOP widget_element( new XMLSchemaElement );
+		XMLSchemaElementOP widget_element( utility::pointer::make_shared< XMLSchemaElement >() );
 		widget_element->name( iter->first ).type_name( complex_type_name_for_widget_func( iter->first ));
 		widget_group_choice->append_particle( widget_element );
 	}

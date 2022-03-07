@@ -22,6 +22,9 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
+#include <core/import_pose/import_pose_options.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 
 #include <core/chemical/ResidueType.hh>
 
@@ -557,11 +560,16 @@ void HotspotStubSet::add_stub_( HotspotStubCOP stub ) {
 
 void HotspotStubSet::read_data( std::string const & filename ) {
 	// keep PDB header to preserve REMARKs
-	basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
+	core::import_pose::ImportPoseOptions imp_opts;
+	imp_opts.set_preserve_header(true);
 
 	// read all the poses in filename
+	core::chemical::ResidueTypeSet const & residue_set(
+		*( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) )
+	);
 	utility::vector1< core::pose::Pose > poses;
-	core::import_pose::pose_from_file( poses, filename , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( poses, residue_set, filename, imp_opts, false, core::import_pose::PDB_file);
+
 
 	core::pose::PoseOP nonconstpose( nullptr );//SJF pose will be attached later
 	for ( auto & pose : poses ) {

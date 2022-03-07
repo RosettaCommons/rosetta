@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/canonical_sampling/BiasEnergyMover.cc
+/// @file protocols/canonical_sampling/BiasEnergyMover.hh
 /// @brief BiasEnergy methods implemented
 /// @author
 
-#ifndef INCLUDED_protocols_canonical_sampling_AsyncMPITemperingBase_hh
-#define INCLUDED_protocols_canonical_sampling_AsyncMPITemperingBase_hh
+#ifndef INCLUDED_protocols_canonical_sampling_BiasEnergyMover_hh
+#define INCLUDED_protocols_canonical_sampling_BiasEnergyMover_hh
 
 
 #include <protocols/canonical_sampling/BiasEnergy.hh>
@@ -182,4 +182,4 @@ void BiasEnergy::Histogram<T>::write_to_string( std::string& str ) const {
 }
 }
 
-#endif // INCLUDED_protocols_canonical_sampling_AsyncMPITemperingBase_hh
+#endif // INCLUDED_protocols_canonical_sampling_BiasEnergyMover_hh

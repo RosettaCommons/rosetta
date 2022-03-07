@@ -147,7 +147,7 @@ TorsionSampler::TorsionSampler()
 
 
 void
-TorsionSampler::read_database( std::string filename)
+TorsionSampler::read_database( std::string const & filename)
 {
 	using namespace core::scoring;
 	utility::io::izstream instream;

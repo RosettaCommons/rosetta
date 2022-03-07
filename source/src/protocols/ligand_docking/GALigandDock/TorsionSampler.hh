@@ -63,7 +63,7 @@ public:
 
 
 private:
-	void read_database( std::string filename);
+	void read_database( std::string const & filename);
 
 private:
 	std::unordered_map< uint64_t, core::Size > tors_lookup_;

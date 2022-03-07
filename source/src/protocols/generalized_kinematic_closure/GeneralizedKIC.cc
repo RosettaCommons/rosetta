@@ -24,6 +24,7 @@
 #include <protocols/generalized_kinematic_closure/util.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/moves/MoverFactory.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -2396,7 +2397,7 @@ void GeneralizedKIC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		.set_subelements_repeatable( genkic_ssl )
 		.add_attributes( attlist )
 		.add_optional_name_attribute()
-		.description( "The GeneralizedKIC mover allows a user to define a chain of atoms whose conformation is to be sampled or altered subject to the constraint that it remain closed, or that it be closed if it starts out open.  The mover has myriad options for controlling sampling and selection of a solution, and can invoke other movers to apply to each closed solution that it finds.  It has been written to be fully general, and can operate on chains of atoms that pass through backbones, side-chains, ligands, etc.  No assumptions about alpha-amino acid backbones are hard-coded, so GeneralizedKIC should be fully compatible with any non-canonical entity." )
+		.description( "The GeneralizedKIC mover allows a user to define a chain of atoms whose conformation is to be sampled or altered subject to the constraint that it remain closed, or that it be closed if it starts out open.  The mover has myriad options for controlling sampling and selection of a solution, and can invoke other movers to apply to each closed solution that it finds.  It has been written to be fully general, and can operate on chains of atoms that pass through backbones, side-chains, ligands, etc.  No assumptions about alpha-amino acid backbones are hard-coded, so GeneralizedKIC should be fully compatible with any non-canonical entity.\n\n" + protocols::moves::MoverFactory::get_instance()->get_citation_humanreadable( mover_name() ) )
 		.write_complex_type_to_schema( xsd );
 }
 

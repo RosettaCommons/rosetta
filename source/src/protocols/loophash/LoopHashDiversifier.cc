@@ -101,9 +101,7 @@ LoopHashDiversifier::LoopHashDiversifier() :
 	loop_sizes_.clear();
 	loop_sizes_.push_back(window_size_);
 
-	library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes() , 1 , 0 );
-	library_->load_mergeddb();
-	library_->mem_foot_print();
+	/*library_ is still nullptr at this point, and must be loaded at runtime.*/
 }
 
 LoopHashDiversifier::LoopHashDiversifier(
@@ -155,9 +153,15 @@ LoopHashDiversifier::LoopHashDiversifier(
 	loop_sizes_.clear();
 	loop_sizes_.push_back(window_size_);
 
-	library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes() , 1 , 0 );
-	library_->load_mergeddb();
-	library_->mem_foot_print();
+	// Note: the following looks like a bug, since it throws away the input library and creates a new one,
+	// which defeats the purpose of having provided an input library in the first place.  As far as I can
+	// tell, this code isn't called anywhere or tested anywhere, which means that I can only guess at the
+	// intent.  I'm going to comment it out be leave it commented.
+	//      --VKM, 3 Sept. 2021.
+
+	// library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes() , 1 , 0 );
+	// library_->load_mergeddb();
+	// library_->mem_foot_print();
 }
 
 
@@ -165,6 +169,14 @@ void
 LoopHashDiversifier::apply( Pose & pose )
 {
 	using namespace core::io::silent;
+
+	if ( library_ == nullptr ) {
+		TR << "No LoopHash library has been loaded yet.  Loading library using default paths specified at commandline." << std::endl;
+		library_ = utility::pointer::make_shared< LoopHashLibrary >( loop_sizes() , 1 , 0 );
+		library_->load_mergeddb();
+		library_->mem_foot_print();
+	}
+
 	runtime_assert( library_ != nullptr );
 	Pose const saved_pose( pose );
 

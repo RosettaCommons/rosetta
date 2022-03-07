@@ -20,6 +20,7 @@
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -52,6 +53,14 @@ EnzdesFixBBProtocol::apply(
 
 	using namespace protocols::moves;
 	using namespace core::pack::task;
+
+	if ( native_needs_load() ) {
+		core::pose::PoseOP natpose( utility::pointer::make_shared< core::pose::Pose >() );
+		core::import_pose::pose_from_file( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() , core::import_pose::PDB_file);
+		(*scorefxn_)( *natpose);
+		this->set_native_pose( natpose );
+		set_native_needs_load( false );
+	}
 
 	// Scoring function already set up by superclass
 	tr.Info << "starting apply function..." << std::endl;

@@ -56,20 +56,9 @@ LrmsdFilter::LrmsdFilter( core::Size const rb_jump,core::Real const lower_thresh
 	lower_threshold_( lower_threshold ),
 	upper_threshold_(upper_threshold)
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ], core::import_pose::PDB_file);
-		native_pose_ = native_pose;
-	} else {
-		utility_exit_with_message("need to specify native pdb to calculate Lrmsd");
-	}
-
 	// scorefxn_->show(TR.Info);
 	movable_jumps_.push_back( rb_jump );
-	TR << "End constructer"<<std::endl;
-
+	//TR << "End constructor"<<std::endl;
 }
 
 LrmsdFilter::~LrmsdFilter() = default;
@@ -101,6 +90,18 @@ LrmsdFilter::parse_my_tag(
 
 bool
 LrmsdFilter::apply( core::pose::Pose const & pose ) const {
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( native_pose_ == nullptr ) {
+		if ( option[ in::file::native ].user() ) {
+			core::pose::PoseOP native_pose( utility::pointer::make_shared< core::pose::Pose >() );
+			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ], core::import_pose::PDB_file);
+			native_pose_ = native_pose;
+		} else {
+			utility_exit_with_message("Need to specify native pdb with -in:file:native to calculate Lrmsd.");
+		}
+	}
 
 	core::Real const Lrmsd( compute( pose ) );
 

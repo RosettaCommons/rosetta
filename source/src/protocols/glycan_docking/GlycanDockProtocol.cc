@@ -200,13 +200,6 @@ GlycanDockProtocol::set_cmd_line_defaults()
 {
 	using namespace basic::options;
 
-	// Only in:file:s is respected - not in:file:l
-	if ( ! option[ OptionKeys::in::file::s ].user() ) {
-		utility_exit_with_message("No input structure was provided "
-			"via the -in:file:s flag! "
-			"Nothing to do here. Exiting");
-	}
-
 	// Default behavior of a Rosetta protocol and specifically GlycanDockProtocol
 	// These options already have defaults and must be grabbed for the
 	// code to work, but the user could have also set an explicit value
@@ -225,35 +218,8 @@ GlycanDockProtocol::set_cmd_line_defaults()
 	prepack_only_ =
 		option[OptionKeys::carbohydrates::glycan_dock::prepack_only](); // default = false
 
-	// Check more flags that could immediately stop GlycanDock if not right
-	// We expect a two-body system (either standard GlycanDock,
-	// GlycanDock prepack_only, or GlycanDock refine_only, all of which
-	// require a protein-glycoligand system as input and their chain IDs)
-	if ( ! option[ OptionKeys::docking::partners ].user() ) {
-		utility_exit_with_message("Please provide the chain IDs that "
-			"define the protein-glycoligand docking "
-			"partners via the '-docking:partners' flag. "
-			"E.g -docking:partners AB_X, "
-			"where chain A and B define the upstream "
-			"protein receptor chains and chain X defines the "
-			"downstream glycoligand chain. Note, GlycanDock "
-			"has only been tested using glycoligands "
-			"defined by a single chain ID.");
-	} else {
-		// will need pose to ensure chain IDs passed exist and seem correct
-		partners_ = option[ OptionKeys::docking::partners ]();
-		if ( partners_ == "" ) {
-			utility_exit_with_message("During GlycanDock, the -docking:partners "
-				"flag was passed, but nothing was provided! "
-				"Check your input. For example, passing "
-				"-docking:partners AB_X tells GlycanDock "
-				"that chain A and B define the upstream "
-				"protein receptor chains and chain X "
-				"defines the downstream glycoligand chain. "
-				"Note, GlycanDock has only been tested using "
-				"glycoligands defined by a single chain ID.");
-		}
-	}
+	partners_provided_ = option[ OptionKeys::docking::partners ].user();
+	partners_ = option[ OptionKeys::docking::partners ]();
 
 	// For Stage 1 GlycanDock trajectory initialization
 	stage1_rot_mag_ =
@@ -932,6 +898,42 @@ GlycanDockProtocol::apply( core::pose::Pose & pose )
 	using namespace core::scoring; // fa_atr/fa_rep
 
 	TR.Debug << "Start GlycanDockProtocol apply" << std::endl;
+
+	// Only in:file:s is respected - not in:file:l
+	if ( ! option[ OptionKeys::in::file::s ].user() ) {
+		utility_exit_with_message("No input structure was provided "
+			"via the -in:file:s flag! "
+			"Nothing to do here. Exiting");
+	}
+
+	// Check more flags that could immediately stop GlycanDock if not right
+	// We expect a two-body system (either standard GlycanDock,
+	// GlycanDock prepack_only, or GlycanDock refine_only, all of which
+	// require a protein-glycoligand system as input and their chain IDs)
+	if ( ! partners_provided_ ) {
+		utility_exit_with_message("Please provide the chain IDs that "
+			"define the protein-glycoligand docking "
+			"partners via the '-docking:partners' flag. "
+			"E.g -docking:partners AB_X, "
+			"where chain A and B define the upstream "
+			"protein receptor chains and chain X defines the "
+			"downstream glycoligand chain. Note, GlycanDock "
+			"has only been tested using glycoligands "
+			"defined by a single chain ID.");
+	} else {
+		// will need pose to ensure chain IDs passed exist and seem correct
+		if ( partners_ == "" ) {
+			utility_exit_with_message("During GlycanDock, the -docking:partners "
+				"flag was passed, but nothing was provided! "
+				"Check your input. For example, passing "
+				"-docking:partners AB_X tells GlycanDock "
+				"that chain A and B define the upstream "
+				"protein receptor chains and chain X "
+				"defines the downstream glycoligand chain. "
+				"Note, GlycanDock has only been tested using "
+				"glycoligands defined by a single chain ID.");
+		}
+	}
 
 	//////////////////////////////
 	// Setup Step 0 - Adjust (cmd-line) options depending on

@@ -79,9 +79,11 @@ public:
 		utility::vector1<core::Real> const &ramping );
 
 	void show_status(
-		LigandConformers & genes, std::string comment="",
+		LigandConformers & genes,
+		std::string const & comment="",
 		bool calculate_native_rmsd = true,
-		bool verbose = false );
+		bool verbose = false
+	);
 
 	void set_max_rot_cumulative_prob( core::Real newval ) { max_rot_cumulative_prob_ = newval; }
 	void set_rot_energy_cutoff( core::Real newval ) { rot_energy_cutoff_ = newval; }

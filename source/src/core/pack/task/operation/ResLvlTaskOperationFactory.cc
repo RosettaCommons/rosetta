@@ -92,8 +92,13 @@ ResLvlTaskOperationFactory::get_citation_humanreadable(
 ) const {
 	using namespace basic::citation_manager;
 	CitationCollectionList citations;
-	ResLvlTaskOperationOP rlto( newRLTO( taskop_name ) );
-	runtime_assert_string_msg( rlto != nullptr, "Error in ResLvlTaskOperationFactory::get_citation_humanreadable(): Could not instantiate " + taskop_name + "!" );
+	std::string const errmsg( "Error in ResLvlTaskOperationFactory::get_citation_humanreadable(): " );
+
+	auto const iter( rltoc_map_.find( taskop_name ) );
+	runtime_assert_string_msg( iter != rltoc_map_.end(), errmsg + taskop_name + " is not known to the ResLvlTaskOperationFactory. Was its ResLvlTaskOperationCreator class registered at initialization?" );
+	if ( iter->second->skip_citation_info_in_schema() ) return "";
+	ResLvlTaskOperationOP rlto( iter->second->create_res_level_task_operation() );
+	runtime_assert_string_msg( rlto != nullptr, errmsg + "Could not instantiate " + taskop_name + "!" );
 	rlto->provide_citation_info(citations);
 	if ( citations.empty() ) return "";
 	std::ostringstream ss;

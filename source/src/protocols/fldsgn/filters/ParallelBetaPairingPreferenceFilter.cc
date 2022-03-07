@@ -53,31 +53,7 @@ ParallelBetaPairingPreferenceFilter::ParallelBetaPairingPreferenceFilter():
 	filter_value_( 0.0 ),
 	verbose_( false )
 {
-	using namespace core::chemical;
-
-	utility::io::izstream stream;
-	basic::database::open( stream, "parallel_beta_pairing_preference" );
-
-	score_pairmatrix_.resize( 20 );
-
-	String line;
-	while ( getline( stream, line ) ) {
-		utility::vector1< String > tokens ( utility::string_split( line, '\t' ) );
-		runtime_assert( tokens.size() == 21 );
-		AA aa = core::chemical::aa_from_oneletter_code( tokens[ 1 ][ 0 ] );
-		score_pairmatrix_[ core::Size ( aa ) ].resize( 20 );
-		for ( core::Size ii=1; ii<=20; ii++ ) {
-			Real value;
-			if ( aa == core::chemical::aa_pro ) {
-				value = 0.01;
-			} else {
-				value = boost::lexical_cast<Real>( tokens[ ii+1 ] );
-			}
-			score_pairmatrix_[ core::Size( aa ) ][ ii ] = -std::log( value );
-			// TR << tokens[ 0 ][ 0 ] << " " << ii << " " << tokens[ ii ] << std::endl;
-		}
-	}
-	stream.close();
+	//Initialization from file happens lazily at apply time.
 }
 
 
@@ -135,6 +111,8 @@ ParallelBetaPairingPreferenceFilter::score_pairmatrix( AA aa1, AA aa2 ) const
 ParallelBetaPairingPreferenceFilter::Real
 ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 {
+	initialize_filter(); //Does nothing if already initialized.
+
 	using core::scoring::dssp::Dssp;
 	using protocols::fldsgn::topology::calc_strand_pairing_set;
 	using protocols::fldsgn::topology::SS_Info2;
@@ -146,7 +124,7 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 	float dssp_hbond_threshold = -0.5;
 
 	Dssp dssp( pose );
-	SS_Info2_OP ssinfo( new SS_Info2( pose, dssp.get_dssp_secstruct() ) );
+	SS_Info2_OP ssinfo( utility::pointer::make_shared< SS_Info2 >( pose, dssp.get_dssp_secstruct() ) );
 	StrandPairingSet spairset = calc_strand_pairing_set( pose, ssinfo );
 
 	core::Size num_pair( 0 );
@@ -234,6 +212,42 @@ void ParallelBetaPairingPreferenceFilter::provide_xml_schema( utility::tag::XMLS
 		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "XRW TO DO", "0.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "XRW TO DO", "false" );
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+}
+
+/// @brief Initialize this filter.
+/// @details Does nothing if already initialized.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ParallelBetaPairingPreferenceFilter::initialize_filter() const {
+	using namespace core::chemical;
+
+	if ( initialized_ ) return;
+
+	utility::io::izstream stream;
+	basic::database::open( stream, "parallel_beta_pairing_preference" );
+
+	score_pairmatrix_.resize( 20 );
+
+	String line;
+	while ( getline( stream, line ) ) {
+		utility::vector1< String > tokens ( utility::string_split( line, '\t' ) );
+		runtime_assert( tokens.size() == 21 );
+		AA aa = core::chemical::aa_from_oneletter_code( tokens[ 1 ][ 0 ] );
+		score_pairmatrix_[ core::Size ( aa ) ].resize( 20 );
+		for ( core::Size ii=1; ii<=20; ii++ ) {
+			Real value;
+			if ( aa == core::chemical::aa_pro ) {
+				value = 0.01;
+			} else {
+				value = boost::lexical_cast<Real>( tokens[ ii+1 ] );
+			}
+			score_pairmatrix_[ core::Size( aa ) ][ ii ] = -std::log( value );
+			// TR << tokens[ 0 ][ 0 ] << " " << ii << " " << tokens[ ii ] << std::endl;
+		}
+	}
+	stream.close();
+
+	initialized_ = true;
 }
 
 std::string ParallelBetaPairingPreferenceFilterCreator::keyname() const {

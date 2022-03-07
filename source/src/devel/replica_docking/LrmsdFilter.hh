@@ -64,7 +64,7 @@ private:
 	core::Real upper_threshold_;
 	//  utility::vector1< core::Size > movable_jumps_;
 	protocols::docking::DockJumps movable_jumps_;
-	core::pose::PoseCOP native_pose_;
+	mutable core::pose::PoseCOP native_pose_;
 	bool options_registered_;
 };
 

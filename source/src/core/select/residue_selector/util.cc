@@ -257,9 +257,12 @@ xsd_type_definition_w_attributes(
 )
 {
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+
+	std::string const citation_string( ResidueSelectorFactory::get_instance()->get_citation_humanreadable( rs_type ) );
+
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
-		.description( description )
+		.description( description + "\n\n" + citation_string )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );
@@ -277,10 +280,12 @@ xsd_type_definition_w_attributes_and_optional_subselector(
 	XMLSchemaSimpleSubelementList subelement;
 	subelement.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name );
 
+	std::string const citation_string( ResidueSelectorFactory::get_instance()->get_citation_humanreadable( rs_type ) );
+
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
-		.description( description )
+		.description( description + "\n\n" + citation_string )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.set_subelements_single_appearance_optional( subelement )
@@ -299,10 +304,12 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 	XMLSchemaSimpleSubelementList subelement;
 	subelement.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name );
 
+	std::string const citation_string( ResidueSelectorFactory::get_instance()->get_citation_humanreadable( rs_type ) );
+
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
-		.description( description )
+		.description( description + "\n\n" + citation_string )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.set_subelements_repeatable( subelement )
@@ -323,10 +330,12 @@ xsd_type_definition_w_attributes_and_optional_subselectors(
 	XMLSchemaSimpleSubelementList subelement;
 	subelement.add_group_subelement( & ResidueSelectorFactory::residue_selector_xml_schema_group_name );
 
+	std::string const citation_string( ResidueSelectorFactory::get_instance()->get_citation_humanreadable( rs_type ) );
+
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_residue_selector )
 		.element_name( rs_type )
-		.description( description )
+		.description( description + "\n\n" + citation_string )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.set_subelements_repeatable( subelement, min_occurrence, max_occurrence )

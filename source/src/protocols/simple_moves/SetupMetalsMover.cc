@@ -18,6 +18,8 @@
 
 // Protocols headers
 #include <protocols/moves/mover_schemas.hh>
+#include <protocols/moves/MoverFactory.hh>
+
 //Core headers
 #include <core/util/metalloproteins_util.hh>
 #include <core/pose/Pose.hh>
@@ -186,7 +188,7 @@ SetupMetalsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
 		.element_name( SetupMetalsMover::mover_name() )
-		.description( "Mover that adds chemical bonds and distance/angle constraints between metal ions and their coordinating atoms. If a residue selector or resnum list are provided, only sets up the specified metals. Otherwise, sets up all metals."  )
+		.description( "Mover that adds chemical bonds and distance/angle constraints between metal ions and their coordinating atoms. If a residue selector or resnum list are provided, only sets up the specified metals. Otherwise, sets up all metals.\n\n" + protocols::moves::MoverFactory::get_instance()->get_citation_humanreadable( mover_name() ) )
 		.add_attributes( attlist )
 		.write_complex_type_to_schema( xsd );
 }

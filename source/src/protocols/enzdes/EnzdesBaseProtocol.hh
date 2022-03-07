@@ -188,6 +188,12 @@ protected:
 
 	bool include_all_design_targets_in_design_interface_;
 
+	/// @brief Do we need to (lazily) load the native pose?
+	bool native_needs_load() const;
+
+	/// @brief Set whether the native needs loading.
+	void set_native_needs_load( bool const setting );
+
 
 private:
 
@@ -212,6 +218,9 @@ private:
 	bool min_all_jumps_; // minimize protein jumps too?
 	bool minimize_all_ligand_torsions_;
 	core::Real lig_min_stddev_;
+
+	/// @brief Do we need to load a native pose?
+	bool native_needs_load_ = false;
 
 	bool exclude_protein_protein_fa_elec_, fix_catalytic_aa_;
 	utility::vector1< core::Size > rb_min_jumps_; //dflt empty vector; this supersedes rb_min_ above if it is defined, allowing the user to handpick which jumps to minimize. SJF 15Oct13

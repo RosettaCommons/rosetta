@@ -970,7 +970,7 @@ XMLSchemaDefinition::human_readable_summary(
 	std::string const &citation_text/*=""*/
 ) const {
 	std::string returnstring ( utility::xsd_util::generate_human_readable_summary( full_definition(), component_name, component_type ) );
-	if ( !(citation_text.empty()) ) {
+	if ( !( citation_text.empty() || returnstring.find( citation_text ) != std::string::npos ) ) {
 		returnstring += "\n\n" + citation_text;
 	}
 	return returnstring;
