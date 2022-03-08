@@ -148,6 +148,10 @@ CT3  CT2   222.500     1.5280 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
 CT3  CT3   222.500     1.5300 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
+CT   CT2   222.500    1.538   ! 10/98
+                ! from toppar_all22_pro_aliphatic_c27.str
+CT   CT3   222.500    1.538   ! 10/98
+                ! from toppar_all22_pro_aliphatic_c27.str
 CY   CA    350.000     1.3650 ! ALLOW   ARO
                 !adm jr., 5/08/91, indole CCDB structure search
 CY   CPT   350.000     1.4400 ! ALLOW   ARO
@@ -603,6 +607,11 @@ CPT  CY   CA   120.000    107.40   25.00   2.26100 ! ALLOW   ARO
                 !adm jr., 12/30/91, for jwk
 CPT  NY   CA    110.000   108.0000 ! ALLOW   ARO
                 !adm jr., 12/30/91, for jwk
+! from toppar_all22_pro_aliphatic_c27.str
+HA2  CT2  CT     26.500    110.10   22.53   2.179  ! alkane, 4/98
+HA3  CT3  CT     33.430    110.10   22.53   2.179  ! alkane, 4/98
+CT   CT2  CT2    58.350    113.50   11.16   2.561  ! glycerol
+
 CT1  CT1  C      52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! Alanine Dipeptide ab initio calc's (LK)
 CT1  CT1  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
@@ -699,6 +708,7 @@ CT1  CT2  CE1    52.000   111.9220 ! ALLOW   ALI PEP POL ARO
                 ! AMW: rampant unjustified hope
 CT2  CT2  CPB    70.000   113.0000 ! ALLOW HEM
                 ! Heme (6-liganded): substituents (KK 05/13/91)
+CT2  CT2  CTA   51.8      107.5000    !DTM trimer
 CT2  CT2  CT1   58.350    113.50   11.16   2.56100 ! ALLOW   ALI
                 ! alkane frequencies (MJF), alkane geometries (SF)
 CT2  CT2  CT2   58.350    113.60   11.16   2.56100 ! ALLOW   ALI
