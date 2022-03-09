@@ -95,7 +95,6 @@ void SheetTopologyFilter::filtered_sheet_topology( StrandPairingSetOP const & sp
 	filtered_sheet_topology_ = (*sps).name();
 }
 
-
 // @brief set filtered sheet_topology by SrandPairingSetOP
 void SheetTopologyFilter::filtered_sheet_topology( String const & sheet_topology )
 {
@@ -105,6 +104,36 @@ void SheetTopologyFilter::filtered_sheet_topology( String const & sheet_topology
 void SheetTopologyFilter::set_use_dssp( bool const use_dssp )
 {
 	use_dssp_ = use_dssp;
+}
+
+/// @brief Set to true to ignore register shifts.
+void SheetTopologyFilter::set_ignore_register_shift( bool const ignore_register_shift )
+{
+	ignore_register_shift_ = ignore_register_shift;
+}
+
+/// @brief get filtered sheet_topology by StrandPairingSetOP
+std::string SheetTopologyFilter::get_filtered_sheet_topology() const
+{
+	return filtered_sheet_topology_;
+}
+
+/// @brief set user-specified pose secondary structure
+std::string SheetTopologyFilter::set_secstruct() const
+{
+	return secstruct_input_;
+}
+
+/// @brief if true, and secstruct is unset, dssp is used on the input.  Otherwise, the pose.secstruct() is used
+bool SheetTopologyFilter::set_use_dssp() const
+{
+	return use_dssp_;
+}
+
+/// @brief Set to true to ignore register shifts.
+bool SheetTopologyFilter::set_ignore_register_shift() const
+{
+	return ignore_register_shift_;
 }
 
 core::Size

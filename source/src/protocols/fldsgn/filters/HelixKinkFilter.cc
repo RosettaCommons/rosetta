@@ -66,6 +66,107 @@ HelixKinkFilter::HelixKinkFilter():
 {}
 
 
+/// @brief Set the helix bend angle.
+void
+HelixKinkFilter::set_bend_angle( Real const bend_angle )
+{
+	bend_angle_ = bend_angle;
+}
+
+/// @brief Set the secondary structure string.
+void
+HelixKinkFilter::set_secstruct( String const &secstruct )
+{
+	secstruct_ = secstruct;
+}
+
+/// @brief Set the resnums (comma-separated string to be evaluated)
+/// @details This function sets string_resnums_ and select_resnums_.  select_resnums_ will be set to arguments'
+/// value.  If an empty string is passed (default), select_resnums_ will be set to false.  Otherwise,
+/// select_resnums_ will be set to true.
+void
+HelixKinkFilter::set_resnums( String const &resnums )
+{
+	if ( resnums.empty() ) {
+		select_resnums_ = false;
+	} else {
+		TR << "Only filter helix that contains residues specified in resnums" << std::endl;
+		select_resnums_ = true;
+		string_resnums_ = resnums;
+	}
+}
+
+/// @brief Set helix_start_, helix_end_, and select_range_
+/// @details This function sets helix_start_, helix_end_, and sets select_range_ to true
+void
+HelixKinkFilter::set_helix_range( core::Size const helix_start, core::Size const helix_end )
+{
+	if ( helix_start >= helix_end )  {
+		utility_exit_with_message("helix_start_ is greater than or equal to helix_end_");
+	}
+	TR << "Only filter helix that contains range specified by helix_start to helix_end" << std::endl;
+	select_range_ = true;
+	helix_start_ = helix_start;
+	helix_end_ = helix_end;
+}
+
+/// @brief Set select_range_
+void
+HelixKinkFilter::set_select_range( bool const select_range )
+{
+	select_range_ = select_range;
+}
+
+/// @brief Get the helix bend angle.
+core::Real
+HelixKinkFilter::get_bend_angle() const
+{
+	return bend_angle_;
+}
+
+/// @brief Get the secondary structure string.
+std::string
+HelixKinkFilter::get_secstruct() const
+{
+	return secstruct_;
+}
+
+/// @brief Get the resnum string.
+std::string
+HelixKinkFilter::get_string_resnums() const
+{
+	return string_resnums_;
+}
+
+/// @brief Get select_resnums_
+bool
+HelixKinkFilter::get_select_resnums() const
+{
+	return select_resnums_;
+}
+
+/// @brief Get helix_start_
+core::Size
+HelixKinkFilter::get_helix_start() const
+{
+	return helix_start_;
+}
+
+/// @brief Get helix_end_
+core::Size
+HelixKinkFilter::get_helix_end() const
+{
+	return helix_end_;
+}
+
+/// @brief Get select_range_
+bool
+HelixKinkFilter::get_select_range() const
+{
+	return select_range_;
+}
+
+
 /// @brief
 bool
 HelixKinkFilter::apply( Pose const & pose ) const
@@ -219,26 +320,17 @@ HelixKinkFilter::parse_my_tag(
 
 	// residues that need to contained in helix
 	if ( tag->hasOption( "resnums" ) ) {
-		TR << "Only filter helix that contains residues specified in resnums" << std::endl;
-		select_resnums_=true;
-		string_resnums_ = tag->getOption< std::string >( "resnums" );
+		set_resnums(tag->getOption< std::string >( "resnums" ));
 	} else {
 		select_resnums_=false;
 	}
 
 	// residues that need to contained in a single helix
 	if ( tag->hasOption( "helix_start" ) && tag->hasOption( "helix_end" ) ) {
-		TR << "Only filter helix that contains range specified by helix_start to helix_end" << std::endl;
-		select_range_=true;
-		helix_start_ = tag->getOption< core::Size >( "helix_start" );
-		helix_end_ = tag->getOption< core::Size >( "helix_end" );
-		if ( helix_start_>=helix_end_ )  {
-			utility_exit_with_message("helix_start_ is greater than or equal to helix_end_");
-		}
+		set_helix_range( tag->getOption< core::Size >( "helix_start" ), tag->getOption< core::Size >( "helix_end" ) );
 	} else {
 		select_range_=false;
 	}
-
 }
 
 

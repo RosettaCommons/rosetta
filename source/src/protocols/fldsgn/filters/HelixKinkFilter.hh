@@ -77,11 +77,47 @@ public:// virtual constructor
 	FilterOP fresh_instance() const override { return utility::pointer::make_shared< HelixKinkFilter >(); }
 
 
-public:// accessor
+public:// accessors and mutators
 
+	/// @brief Set the helix bend angle.
+	void set_bend_angle( Real const bend_angle );
 
-	// @brief get name of this filter
+	/// @brief Set the secondary structure string.
+	void set_secstruct( String const &secstruct );
 
+	/// @brief Set the resnums (comma-separated string to be evaluated)
+	/// @details This function sets string_resnums_ and select_resnums_.  select_resnums_ will be set to arguments'
+	/// value.  If an empty string is passed (default), select_resnums_ will be set to false.  Otherwise,
+	/// select_resnums_ will be set to true.
+	void set_resnums( String const &resnums = "" );
+
+	/// @brief Set helix_start_, helix_end_, and select_range_
+	/// @details This function sets helix_start_, helix_end_, and sets select_range_ to true
+	void set_helix_range( core::Size const helix_start, core::Size const helix_end );
+
+	/// @brief Set select_range_
+	void set_select_range( bool const select_range );
+
+	/// @brief Get the helix bend angle.
+	Real get_bend_angle() const;
+
+	/// @brief Get the secondary structure string.
+	String get_secstruct() const;
+
+	/// @brief Get the resnum string.
+	String get_string_resnums() const;
+
+	/// @brief Get select_resnums_
+	bool get_select_resnums() const;
+
+	/// @brief Get helix_start_
+	core::Size get_helix_start() const;
+
+	/// @brief Get helix_end_
+	core::Size get_helix_end() const;
+
+	/// @brief Get select_range_
+	bool get_select_range() const;
 
 public:// parser
 

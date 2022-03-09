@@ -94,7 +94,6 @@ public:// virtual constructor
 
 public:// mutator
 
-
 	// @brief set filtered sheet_topology by StrandPairingSetOP
 	void filtered_sheet_topology( StrandPairingSetOP const & sps );
 
@@ -107,9 +106,22 @@ public:// mutator
 	/// @brief if true, and secstruct is unset, dssp is used on the input.  Otherwise, the pose.secstruct() is used
 	void set_use_dssp( bool const use_dssp );
 
+	/// @brief Set to true to ignore register shifts.
+	void set_ignore_register_shift( bool const ignore_register_shift );
+
 public:// accessor
 
-	// @brief get name of this filter
+	/// @brief get filtered sheet_topology by StrandPairingSetOP
+	std::string get_filtered_sheet_topology() const;
+
+	/// @brief set user-specified pose secondary structure
+	std::string set_secstruct() const;
+
+	/// @brief if true, and secstruct is unset, dssp is used on the input.  Otherwise, the pose.secstruct() is used
+	bool set_use_dssp() const;
+
+	/// @brief Set to true to ignore register shifts.
+	bool set_ignore_register_shift() const;
 
 
 public:// parser
