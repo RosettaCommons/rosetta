@@ -19,6 +19,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <numeric/Quaternion.hh>
@@ -31,6 +32,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/types.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
+#include <utility/vector1.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
@@ -108,6 +110,18 @@ LigandConformer::initialize(
 	}
 
 	update_conf( pose );
+
+	core::pose::PoseOP ref_pose_ligand ( new core::pose::Pose );
+	for ( core::Size i=1; i<=ligids.size(); ++i ) {
+		if ( i==1 ) {
+			ref_pose_ligand->append_residue_by_jump( pose->residue( ligids[i] ), ref_pose_ligand->total_residue() );
+		} else {
+			ref_pose_ligand->append_residue_by_bond( pose->residue( ligids[i] ) );
+		}
+	}
+	core::pose::addVirtualResAsRoot( *ref_pose_ligand );
+
+	ref_pose_ligand_ = ref_pose_ligand;
 }
 
 void
@@ -568,6 +582,41 @@ LigandConformer::assign_ligand_trans( core::Vector transv ) {
 	for ( core::Size k = 5; k <= 7; ++k ) {
 		rb_[k] = transv[k-5];
 	}
+}
+
+
+void
+LigandConformer::superimpose_to_ref_pose( utility::vector1< core::id::AtomID > const & ids ) {
+	// init fullpose
+	core::pose::PoseOP fullpose ( new core::pose::Pose );
+	to_pose( fullpose );
+
+	// init pose_ligand
+	core::pose::PoseOP pose_ligand ( new core::pose::Pose );
+	for ( core::Size i=1; i<=ligids_.size(); ++i ) {
+		if ( i==1 ) {
+			pose_ligand->append_residue_by_jump( fullpose->residue( ligids_[i] ), pose_ligand->total_residue() );
+		} else {
+			pose_ligand->append_residue_by_bond( fullpose->residue( ligids_[i] ) );
+		}
+	}
+	core::pose::addVirtualResAsRoot( *pose_ligand );
+
+	// init atom_map
+	core::id::AtomID_Map< core::id::AtomID > atom_map;
+	core::pose::initialize_atomid_map(atom_map, *pose_ligand, core::id::AtomID::BOGUS_ATOM_ID());
+	for ( core::id::AtomID const & id : ids ) {
+		atom_map[id] = id;
+	}
+
+	// align pose_ligands
+	core::scoring::superimpose_pose( *pose_ligand, *ref_pose_ligand_, atom_map );
+
+	// update fullpose
+	for ( core::Size i=1; i<=ligids_.size(); ++i ) {
+		fullpose->replace_residue( ligids_.at(i), pose_ligand->residue(i), false );
+	}
+	update_conf( fullpose );
 }
 
 // mutation

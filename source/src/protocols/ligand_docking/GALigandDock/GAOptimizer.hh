@@ -17,6 +17,8 @@
 
 #include <protocols/ligand_docking/GALigandDock/GridScorer.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace ligand_docking {
@@ -88,6 +90,7 @@ public:
 	void set_max_rot_cumulative_prob( core::Real newval ) { max_rot_cumulative_prob_ = newval; }
 	void set_rot_energy_cutoff( core::Real newval ) { rot_energy_cutoff_ = newval; }
 	void set_favor_native( core::Real newval ) { favor_native_ = newval; }
+	void set_align_reference_atom_ids( utility::vector1< core::id::AtomID > newval ){ align_reference_atom_ids_ = newval; }
 
 private:
 	//// HELPER FUNCTIONS
@@ -120,6 +123,7 @@ private:
 	core::Real favor_native_;
 	utility::vector1< PlaceableRotamers > rotamer_data_;
 	RotamerPairEnergies rotamer_energies_;
+	utility::vector1< core::id::AtomID > align_reference_atom_ids_;
 };
 
 typedef utility::pointer::shared_ptr< GAOptimizer > GAOptimizerOP;

@@ -2314,7 +2314,13 @@ GridScorer::minimizer_loop(
 	LigandConformer &lig,
 	core::optimization::MinimizerOptions const &minopt
 ) {
-	core::Real finalscore=0.0;
+	core::Real finalscore;
+
+	if ( maxiter_minimize_ == 0 ) {
+		finalscore = score(lig);
+		return finalscore;
+	}
+
 	core::Size nSCs = lig.moving_scs().size();
 	core::Size nLigs = lig.ligand_ids().size();
 
@@ -2366,6 +2372,13 @@ GridScorer::packer_loop(
 	utility::vector1< PlaceableRotamers > &placeable_rotdb, // by non-const ref since we update "in place"
 	RotamerPairEnergies &rotamer_energies                   // by non-const ref since we update "in place"
 ) {
+	core::Real best_score;
+
+	if ( packer_cycles_ == 0 ) {
+		best_score = score(lig);
+		return best_score;
+	}
+
 	bool make_new = false;
 	for ( core::Size i=1; i<=ligids_.size(); ++i ) {
 		if ( lig.ligand_typename(i) != ref_pose_->residue(ligids_[i]).name() ) {
@@ -2471,7 +2484,7 @@ GridScorer::packer_loop(
 	}
 	bestRot_assignment = rotamer_assignment;
 
-	core::Real curr_score=0.0, best_score, test_score;
+	core::Real curr_score=0.0, test_score;
 	for ( core::Size ii=1; ii<=npos; ++ii ) {
 		curr_score += rotamer_energies.energyBG( ii, rotamer_assignment[ii] ).score( w_rep_ );
 		curr_score += rotamer_energies.energy1b( ii, rotamer_assignment[ii] ).score( w_rep_ );

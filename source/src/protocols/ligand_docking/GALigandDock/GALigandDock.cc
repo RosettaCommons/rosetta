@@ -69,6 +69,8 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 #include <basic/options/option.hh> // HACK
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -147,12 +149,14 @@ GALigandDock::GALigandDock() {
 	multiple_ligands_ = utility::vector1< std::string >();
 	multi_ligands_maxRad_ = 0.0;
 	initial_pool_ = "";
-	reference_pool_ = "";
+	reference_pool_ = "none";
 
 	use_mean_maxRad_ = false;
 	stdev_multiplier_ = 1.0; // most of the time, only mean value is too small
 
 	move_water_ = true;
+
+	align_reference_atom_ids_ = utility::vector1< core::id::AtomID >();
 
 	runmode_ = "dockflex"; // high-resolution pharmacophore docking
 }
@@ -318,7 +322,7 @@ GALigandDock::apply( pose::Pose & pose )
 
 	// Prepare ligand aligner
 	LigandAligner aligner;
-	if ( reference_pool_ != "" ) {
+	if ( reference_pool_ != "none" ) {
 		scfxn_->score( pose ); // make sure scored to get neighbor graph
 		TR << "Setting up Ligand aligner." << std::endl;
 		aligner = setup_ligand_aligner( pose, lig_resids, movable_scs );
@@ -422,7 +426,6 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		if ( TR.Debug.visible() ) {
 			pose_tmp->dump_pdb("premin."+std::to_string(i)+".pdb");
 		}
-
 
 		utility::vector1< core::Size > const &movable_scs = genes[i].moving_scs();
 		// idealize again... why do we need this again here?
@@ -1516,7 +1519,7 @@ GALigandDock::generate_perturbed_structures(
 	core::Size nstruct_input = genes_sel.size(), nstruct_ref=0;
 	int nleft = (int)npool - (int)nstruct_input;
 	if ( nleft <= 0 ) {
-		if ( reference_pool_ != "" ) {
+		if ( reference_pool_ != "none" ) {
 			TR << "WARN! Reference pool provided but will not be used.  Increase pool size!" << std::endl;
 		}
 		return genes_sel;
@@ -1531,7 +1534,7 @@ GALigandDock::generate_perturbed_structures(
 
 	/////
 	// 2: (optionally) load reference structures and randomly generate conformers
-	if ( reference_pool_ != "" ) {
+	if ( reference_pool_ != "none" ) {
 		// make a temporary gridscorer for align docking; keep movable scs fixed in grid
 		TR << "Construct a separate grid for LigandAligner, with 0.5 grid step and no movable scs." << std::endl;
 		core::pose::PoseOP pose( new core::pose::Pose );
@@ -1644,6 +1647,15 @@ GALigandDock::generate_perturbed_structures(
 		genes_rand.push_back( gene );
 	}
 
+	// 4 (optional): align structures to refrence
+	if ( !align_reference_atom_ids_.empty() ) {
+		for ( auto gene : genes_rand ) {
+			gene.superimpose_to_ref_pose( align_reference_atom_ids_ );
+			Real score_soft = gridscorer->score( gene, true ); // score with soft repulsive
+			gene.score( score_soft );
+		}
+	}
+
 	TR << "Generate " << nrand_sampler << " structures using TorsionSampler for random structures." << std::endl;
 
 	// select lowest random structures by energy while ensuring diversity
@@ -1723,10 +1735,18 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("sample_ring_conformers") ) { sample_ring_conformers_ = tag->getOption<bool>("sample_ring_conformers"); }
 
 	// input params
-	if ( tag->hasOption("use_pharmacophore") ) { use_pharmacophore_ = tag->getOption<bool>("use_pharmacophore"); }
+	if ( tag->hasOption("use_pharmacophore") ) {
+		use_pharmacophore_ = tag->getOption<bool>("use_pharmacophore");
+		if ( !use_pharmacophore_ ) reference_pool_ = "none";
+	}
 	if ( tag->hasOption("initial_pool") ) { initial_pool_ = tag->getOption<std::string>("initial_pool"); }
 	if ( tag->hasOption("reference_oversample") ) { reference_oversample_ = tag->getOption<core::Real>("reference_oversample"); }
-	if ( tag->hasOption("reference_pool") ) { reference_pool_ = tag->getOption<std::string>("reference_pool"); }
+	if ( tag->hasOption("reference_pool") ) {
+		reference_pool_ = tag->getOption<std::string>("reference_pool");
+		if ( !use_pharmacophore_ && reference_pool_!="none" ) {
+			TR.Warning << "Warning: pharmacophore is off but reference_pool is used, this will trigger a slower aligning algorithm!" << std::endl;
+		}
+	}
 	if ( tag->hasOption("reference_frac") ) { reference_frac_ = tag->getOption<core::Real>("reference_frac"); }
 	if ( tag->hasOption("reference_frac_auto") ) { reference_frac_auto_ = tag->getOption<bool>("reference_frac_auto"); }
 	if ( tag->hasOption("random_oversample") ) { random_oversample_ = tag->getOption<core::Real>("random_oversample"); }
@@ -1845,6 +1865,17 @@ GALigandDock::parse_my_tag(
 		utility::vector1<std::string> ramp_schedule_stringV( utility::string_split( ramp_schedule_string , ',' ) );
 		for ( std::string & scale : ramp_schedule_stringV ) {
 			ramp_schedule_.push_back( atof( scale.c_str() ) );
+		}
+	}
+
+	if ( tag->hasOption("align_reference_atom_ids") ) {
+		std::string align_reference_atom_ids_string = tag->getOption<std::string> ( "align_reference_atom_ids" );
+		utility::vector1< std::string > align_reference_atom_ids_stringV ( utility::string_split( align_reference_atom_ids_string , ',' ) );
+		for ( auto & atom_id_string : align_reference_atom_ids_stringV ) {
+			utility::vector1< std::string > atom_id_string_split = utility::string_split( atom_id_string , '-' );
+			core::Size atom_index = stoi(atom_id_string_split.at(1));
+			core::Size residue_index = stoi(atom_id_string_split.at(2));
+			align_reference_atom_ids_.push_back( core::id::AtomID( atom_index, residue_index ) );
 		}
 	}
 
@@ -2034,6 +2065,7 @@ GALigandDock::get_optimizer(
 	optimizer->set_max_rot_cumulative_prob( max_rot_cumulative_prob_ );
 	optimizer->set_rot_energy_cutoff( rot_energy_cutoff_ );  // at some point make this a parameter?
 	optimizer->set_favor_native( favor_native_ );
+	optimizer->set_align_reference_atom_ids( align_reference_atom_ids_ );
 	return optimizer;
 }
 
@@ -2103,6 +2135,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "torsion_sampler_percentage", xsct_real, "The percentage of the initial gene sampled by torsion sampler.");
 	attlist + XMLSchemaAttribute( "contact_distance", xsct_real, "Distance cutoff for determining if ligand is in contact with a residue sidechain. Default: 4.5" );
 	attlist + XMLSchemaAttribute( "freeze_ligand_backbone", xsct_rosetta_bool, "Freeze peptide ligand backbone torsion, only works on peptide ligand. Default: false." );
+	attlist + XMLSchemaAttribute( "align_reference_atom_ids", xs_string, "Atom ids to align after each cycle 'atom_num-residue_num,atom_num-residue_num,atom_num-residue_num...'");
 
 	// per-cycle parameters (defaults)
 	attlist + XMLSchemaAttribute( "ngen", xs_integer, "number of generations");
@@ -2162,4 +2195,3 @@ void GALigandDockCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 } // ga_dock
 } // ligand_docking
 } // protocols
-

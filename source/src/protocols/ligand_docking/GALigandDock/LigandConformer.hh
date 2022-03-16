@@ -27,6 +27,7 @@
 #include <numeric/Quaternion.hh>
 #include <utility/vector1.hh>
 #include <protocols/ligand_docking/GALigandDock/TorsionSampler.fwd.hh>
+#include <core/id/AtomID.hh>
 
 
 
@@ -279,9 +280,16 @@ public:
 	utility::vector1< TorsionType > const&
 	get_ligchi_types() const { return ligandchi_types_; }
 
+	// would be nice to generalize this method
+	void
+	superimpose_to_ref_pose( utility::vector1< core::id::AtomID > const & ids  );
+
 private:
 	// reference pose
 	core::pose::PoseCOP ref_pose_;
+
+	// reference pose ligand
+	core::pose::PoseCOP ref_pose_ligand_;
 
 	// the resid of the ligand
 	utility::vector1< core::Size > ligids_;

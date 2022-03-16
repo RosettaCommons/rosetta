@@ -29,6 +29,8 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 #include <chrono>
 
@@ -235,6 +237,10 @@ GAOptimizer::next_generation(
 
 			move = "crossover";
 			tag = "cross."+std::to_string(iparent)+"."+std::to_string(ipartner)+" ["+newgene.generation_tag()+"]";
+		}
+
+		if ( !align_reference_atom_ids_.empty() ) {
+			newgene.superimpose_to_ref_pose( align_reference_atom_ids_ );
 		}
 
 		newgene.set_generation_tag( tag );

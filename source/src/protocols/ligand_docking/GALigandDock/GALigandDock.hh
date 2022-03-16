@@ -31,6 +31,8 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 #include <queue>
 
@@ -372,6 +374,9 @@ private:
 
 	// handle multiple ligand types for virtual screening
 	utility::vector1< std::string > multiple_ligands_;
+
+	// atom ids to align back to reference after updates
+	utility::vector1< core::id::AtomID > align_reference_atom_ids_;
 
 	// handle multiple outputs
 	OutputStructureStore remaining_outputs_;
