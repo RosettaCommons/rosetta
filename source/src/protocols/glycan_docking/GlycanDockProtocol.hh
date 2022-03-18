@@ -466,7 +466,6 @@ private: // data
 	core::Size n_cycles_ = 10; // from benchmark, set by -run:ncycles
 	core::Size n_repeats_ = 3; // cmd line; benchmark used = 3
 	std::string partners_ = "_"; // req
-	bool partners_provided_ = false;
 	core::Real intf_pack_dist_ = 16; // cmd line
 
 	bool rand_glyc_jump_res_ = true; // cmd line

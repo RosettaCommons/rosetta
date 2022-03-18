@@ -66,13 +66,20 @@ FnatFilter::FnatFilter() :
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-
-	//native_contacts_ and native_pose_ are still an empty string and a nullptr, respectively, and must be set at apply time.
-
+	if ( option[ in::file::native_contacts ].user() ) {
+		native_contacts_ = option[ in::file::native_contacts ]();
+	} else if ( option[ in::file::native ].user() ) {
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
+		native_pose_ = native_pose;
+	} else {
+		utility_exit_with_message("need to specify native pdb to calculate Fnat");
+	}
 	scorefxn_ = core::scoring::get_score_function();
 	// scorefxn_->show(TR.Info);
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
-	//TR << "End constructor"<<std::endl;
+	TR << "End constructer"<<std::endl;
+
 }
 
 FnatFilter::FnatFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const rb_jump,core::Real const lower_threshold, core::Real const upper_threshold ) :
@@ -83,8 +90,22 @@ FnatFilter::FnatFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const rb
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-
-	//native_contacts_ and native_pose_ are still an empty string and a nullptr, respectively, and must be set at apply time.
+	if ( option[ in::file::native_contacts ].user() ) {
+		native_contacts_ = option[ in::file::native_contacts ]();
+	} else if ( option[ in::file::native ].user() ) {
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
+		native_pose_ = native_pose;
+	} else {
+		utility_exit_with_message("need to specify native pdb to calculate Fnat");
+	}
+	//  if ( option[ in::file::native ].user() ) {
+	//   core::pose::PoseOP native_pose = new core::pose::Pose();
+	//   core::import_pose::pose_from_file( *native_pose, option[ in::file::native ], core::import_pose::PDB_file);
+	//    native_pose_ = native_pose;
+	//  } else {
+	//   utility_exit_with_message("need to specify native pdb to calculate Fnat");
+	//  }
 
 	if ( !sfxn ) {
 		scorefxn_ = core::scoring::get_score_function();
@@ -94,7 +115,8 @@ FnatFilter::FnatFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const rb
 	TR.Info <<"FnatEvaluator: "<<"score" << std::endl;
 	// scorefxn_->show(TR.Info);
 	movable_jumps_.push_back( rb_jump );
-	//TR << "End constructor"<<std::endl;
+	TR << "End constructer"<<std::endl;
+
 }
 
 FnatFilter::~FnatFilter() = default;
@@ -131,20 +153,6 @@ FnatFilter::parse_my_tag(
 
 bool
 FnatFilter::apply( core::pose::Pose const & pose ) const {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	if ( native_contacts_.empty() && native_pose_ == nullptr ) {
-		if ( option[ in::file::native_contacts ].user() ) {
-			native_contacts_ = option[ in::file::native_contacts ]();
-		} else if ( option[ in::file::native ].user() ) {
-			core::pose::PoseOP native_pose( utility::pointer::make_shared< core::pose::Pose >() );
-			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
-			native_pose_ = native_pose;
-		} else {
-			utility_exit_with_message("Need to specify native pdb with -in:file:native, or native contacts with -in:file:native_contacts, to use the Fnat filter!");
-		}
-	}
 
 	core::Real const Fnat( compute( pose ) );
 

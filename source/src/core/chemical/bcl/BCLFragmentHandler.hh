@@ -51,7 +51,6 @@
 #endif
 
 // utility includes
-#include <utility/VirtualBase.hh>
 #include <utility/vector0.hh>
 #include <utility/exit.hh>
 #include <string>
@@ -60,7 +59,7 @@ namespace core {
 namespace chemical {
 namespace bcl {
 
-class BCLFragmentHandler : public utility::VirtualBase
+class BCLFragmentHandler
 {
 
 public:

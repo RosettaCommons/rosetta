@@ -67,6 +67,7 @@ public:
 		if ( basic::options::option[ basic::options::OptionKeys::enzdes::cstfile].user() ) {
 			//we need the residue type set, assuming FA standard is used
 			core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+			basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
 			constraints_ = utility::pointer::make_shared< protocols::toolbox::match_enzdes_util::EnzConstraintIO >( restype_set );
 			constraints_->read_enzyme_cstfile( basic::options::option[ basic::options::OptionKeys::enzdes::cstfile ] );
 
@@ -85,10 +86,6 @@ public:
 
 	void
 	apply( core::pose::Pose & pose ) override {
-
-		if ( !basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value() ) {
-			utility_exit_with_message( "The -run:preserve_header option was not set to true.  This protocol requires this!" );
-		}
 
 		if ( constraints_ ) {
 			constraints_->add_constraints_to_pose( pose, this->get_scorefxn(), false );

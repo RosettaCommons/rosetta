@@ -191,7 +191,10 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 
 	//set the native pose if requested
 	if ( basic::options::option[basic::options::OptionKeys::in::file::native].user() ) {
-		native_needs_load_ = true;
+		core::pose::PoseOP natpose( new core::pose::Pose() );
+		core::import_pose::pose_from_file( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() , core::import_pose::PDB_file);
+		(*scorefxn_)( *natpose);
+		this->set_native_pose( natpose );
 	}
 
 	//increase the chainbreak weight. 1.0 is apparently not enough for some constraints
@@ -480,6 +483,7 @@ EnzdesBaseProtocol::enzdes_pack(
 	bool favor_native
 ) const
 {
+
 	if ( pack_unconstrained ) remove_enzdes_constraints( pose, true );
 
 	if ( favor_native ) {
@@ -799,20 +803,6 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 	return true;
 
 } //exchange_ligands_in_pose
-
-/// @brief Do we need to (lazily) load the native pose?
-bool
-EnzdesBaseProtocol::native_needs_load() const {
-	return native_needs_load_;
-}
-
-/// @brief Set whether the native needs loading.
-void
-EnzdesBaseProtocol::set_native_needs_load(
-	bool const setting
-) {
-	native_needs_load_ = setting;
-}
 
 
 core::scoring::ScoreFunctionCOP

@@ -394,7 +394,7 @@ PackRotamersMover::complex_type_generator_for_pack_rotamers_mover( utility::tag:
 	rosetta_scripts::attributes_for_parse_score_function( attributes );
 	rosetta_scripts::attributes_for_parse_task_operations( attributes );
 
-	XMLSchemaComplexTypeGeneratorOP ct_gen( utility::pointer::make_shared< XMLSchemaComplexTypeGenerator >() );
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
 	ct_gen->complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.add_attributes( attributes )
 		.add_optional_name_attribute();

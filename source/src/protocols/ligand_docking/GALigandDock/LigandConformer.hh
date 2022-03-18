@@ -197,7 +197,7 @@ public:
 	randomize( core::Real transmax );
 
 	void
-	sample_conformation( core::Real transmax, TorsionSamplerCOP const & sampler);
+	sample_conformation( core::Real transmax, TorsionSampler const& sampler);
 
 	// Not defined yet
 	// void

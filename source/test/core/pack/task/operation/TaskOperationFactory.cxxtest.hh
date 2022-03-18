@@ -39,20 +39,20 @@ using namespace utility::tag;
 
 class DummyTaskOpCreator : public TaskOperationCreator {
 public:
-	TaskOperationOP create_task_operation() const override { return TaskOperationOP( 0 ); }
-	std::string keyname() const override { return "DummyTaskOperation"; }
-	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override
+	virtual TaskOperationOP create_task_operation() const { return TaskOperationOP( 0 ); }
+	virtual std::string keyname() const { return "DummyTaskOperation"; }
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 	{
 		task_op_schema_w_attributes( xsd, keyname(), AttributeList() );
 	}
-	bool skip_citation_info_in_schema() const override { return true; }
+
 };
 
 class DummyTaskOp2Creator : public TaskOperationCreator {
 public:
-	TaskOperationOP create_task_operation() const override { return TaskOperationOP( 0 ); }
-	std::string keyname() const override { return "DummyTaskOperation2"; }
-	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override
+	virtual TaskOperationOP create_task_operation() const { return TaskOperationOP( 0 ); }
+	virtual std::string keyname() const { return "DummyTaskOperation2"; }
+	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 	{
 		XMLSchemaComplexType ct;
 
@@ -62,8 +62,6 @@ public:
 
 		xsd.add_top_level_element( ct );
 	}
-
-	bool skip_citation_info_in_schema() const override { return true; }
 
 };
 

@@ -695,7 +695,7 @@ void HamiltonianExchange::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	TemperingBase::attributes_for_tempering_base( attlist, xsd );
 	attlist
 		+ XMLSchemaAttribute( "exchange_schedule", xs_string, "File specifying exchange schedule" );
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Implements replica exchange in the MetropolisHastingsMover framework.  Note that this mover requires compilation with extras=mpi (a Message Passing Interface build) to work.", attlist );
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Implements replica exchange in the MetropolisHastingsMover framework", attlist );
 }
 
 std::string HamiltonianExchangeCreator::keyname() const {

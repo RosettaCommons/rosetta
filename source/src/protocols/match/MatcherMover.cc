@@ -78,7 +78,10 @@ MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 	ligres_(/* NULL */),
 	selectors_(),
 	mcfi_list_vec_()
-{}
+{
+	//we need this for the output to be correct
+	basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
+}
 
 MatcherMover::~MatcherMover() = default;
 
@@ -105,11 +108,6 @@ MatcherMover::set_return_single_random_match( bool const single_random )
 void
 MatcherMover::apply( core::pose::Pose & pose )
 {
-	//we need this for the output to be correct
-	runtime_assert_string_msg(
-		basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(),
-		"Error in MatcherMover::apply(): The MatcherMover requires the -run:preserve_header option!"
-	);
 	if ( !pose.pdb_info() ) {
 		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose ) );
 	}
@@ -276,12 +274,6 @@ MatcherMover::parse_my_tag(
 	basic::datacache::DataMap & data
 )
 {
-	//we need this for the output to be correct
-	runtime_assert_string_msg(
-		basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(),
-		"Error in MatcherMover::parse_my_tag(): The MatcherMover requires the -run:preserve_header option!"
-	);
-
 	incorporate_matches_into_pose_ = tag->getOption<bool>( "incorporate_matches_into_pose", true );
 	if ( tag->hasOption( "residues_for_geomcsts" ) ) {
 		std::string const selector_str = tag->getOption< std::string >( "residues_for_geomcsts" );

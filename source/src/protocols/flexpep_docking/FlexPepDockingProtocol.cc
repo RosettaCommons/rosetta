@@ -151,7 +151,7 @@ FlexPepDockingProtocol::~FlexPepDockingProtocol() = default;
 // cloner
 protocols::moves::MoverOP FlexPepDockingProtocol::clone() const
 {
-	FlexPepDockingProtocolOP clonedObj( utility::pointer::make_shared< FlexPepDockingProtocol >( rb_jump_, fullatom_, view_ ) );
+	FlexPepDockingProtocolOP clonedObj( new FlexPepDockingProtocol( rb_jump_, fullatom_, view_ ) );
 	clonedObj->scorefxn_ = scorefxn_->clone();
 	clonedObj->flags_ = flags_;
 	return clonedObj;
@@ -178,9 +178,9 @@ void FlexPepDockingProtocol::set_default()
 	if_metrics_["I_unsat"] = 0.0;
 
 	// prepare unbound rotamer task-operation (reading from cmd-line -unboundrot)
-	rotamer_set::UnboundRotamersOperationOP unboundrot_oper( utility::pointer::make_shared< rotamer_set::UnboundRotamersOperation >() );
+	rotamer_set::UnboundRotamersOperationOP unboundrot_oper( new rotamer_set::UnboundRotamersOperation() );
 	unboundrot_oper->initialize_from_command_line();
-	operation::AppendRotamerSetOP append_ubrot_taskoper( utility::pointer::make_shared< operation::AppendRotamerSet >( unboundrot_oper ) );
+	operation::AppendRotamerSetOP append_ubrot_taskoper( new operation::AppendRotamerSet( unboundrot_oper ) );
 
 	// all-protein packer settings:
 	using core::pack::task::operation::TaskOperationCOP;
@@ -257,7 +257,11 @@ void FlexPepDockingProtocol::set_default()
 		loop_relax_mover_->refine("refine_kic");
 	}
 	if ( option[ OptionKeys::loops::frag_files ].user() ) {
-		fragment_files_need_load_ = true;
+		// these protocols optionally take a fragment set .. only load if
+		// specified
+		utility::vector1< core::fragment::FragSetOP > frag_libs;
+		protocols::loops::read_loop_fragments( frag_libs );
+		loop_relax_mover_->frag_libs( frag_libs );
 	}
 }
 
@@ -376,8 +380,8 @@ FlexPepDockingProtocol::set_receptor_constraints( core::pose::Pose & pose )
 	using namespace core::id;
 	using namespace core::scoring;
 
-	ConstraintSetOP cst_set( utility::pointer::make_shared< ConstraintSet >() );
-	core::scoring::func::HarmonicFuncOP spring( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( 0 /*mean*/, 1 /*std-dev*/) );
+	ConstraintSetOP cst_set( new ConstraintSet() );
+	core::scoring::func::HarmonicFuncOP spring( new core::scoring::func::HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/) );
 	conformation::Conformation const & conformation( pose.conformation() );
 	for ( core::Size i=flags_.receptor_first_res();
 			i <= flags_.receptor_last_res(); i++ ) {
@@ -478,7 +482,7 @@ FlexPepDockingProtocol::prepack_only(
 	using namespace core::pack;
 
 	// set up dofs: all side-chain DOFs except S-S bonds
-	core::kinematics::MoveMapOP mm_protein( utility::pointer::make_shared< core::kinematics::MoveMap >() );
+	core::kinematics::MoveMapOP mm_protein( new core::kinematics::MoveMap );
 	mm_protein->clear();
 	int const receptor_nres = flags_.receptor_nres();
 	core::Size pack_start = (ppk_receptor) ? 1            : receptor_nres+1;
@@ -500,19 +504,19 @@ FlexPepDockingProtocol::prepack_only(
 		task->nonconst_residue_task(resid).prevent_repacking();
 	}
 	// support cmd-line option for unbound rotamers
-	pack::rotamer_set::UnboundRotamersOperationOP unboundrot_oper( utility::pointer::make_shared< pack::rotamer_set::UnboundRotamersOperation >() );
+	pack::rotamer_set::UnboundRotamersOperationOP unboundrot_oper( new pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot_oper->initialize_from_command_line();
 	task->append_rotamerset_operation( unboundrot_oper );
-	protocols::minimization_packing::PackRotamersMoverOP prepack_protein( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( scorefxn_, task ) );
+	protocols::minimization_packing::PackRotamersMoverOP prepack_protein( new protocols::minimization_packing::PackRotamersMover( scorefxn_, task ) );
 
 	// set up min mover to pre-minimize the side chains + backbone // TODO: 1e-5 - is this a good threshold? optimize this
-	protocols::minimization_packing::MinMoverOP min_mover( utility::pointer::make_shared< protocols::minimization_packing::MinMover >(mm_protein, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  ) );
+	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover(mm_protein, scorefxn_, "lbfgs_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  ) );
 
 	//set up translate-by-axis movers
 	Real trans_magnitude = 1000;
-	rigid::RigidBodyTransMoverOP translate_away( utility::pointer::make_shared< rigid::RigidBodyTransMover >( pose, rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	translate_away->step_size( trans_magnitude );
-	rigid::RigidBodyTransMoverOP translate_back( utility::pointer::make_shared< rigid::RigidBodyTransMover >( pose, rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	translate_back->step_size( trans_magnitude );
 	translate_back->trans_axis().negate();
 
@@ -618,7 +622,7 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
 		TR << "COM distance : " << com_distance << std::endl;
 
 		// performing translation to align center of masses
-		rigid::RigidBodyTransMoverOP translate_com( utility::pointer::make_shared< rigid::RigidBodyTransMover >( pose, rb_jump_ ) );
+		rigid::RigidBodyTransMoverOP translate_com( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 		translate_com->trans_axis(com_align_axis);
 		translate_com->trans_axis().negate();
 		translate_com->step_size( com_distance );
@@ -722,7 +726,7 @@ void FlexPepDockingProtocol::SlideIntoContact( core::pose::Pose & pose, core::Ve
 
 	core::scoring::ScoreFunctionOP scorefxn_slide_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
 
-	rigid::RigidBodyTransMoverOP translate_mover( utility::pointer::make_shared< rigid::RigidBodyTransMover >( pose, rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate_mover( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	translate_mover->step_size(1.0);
 	translate_mover->trans_axis(translate_axis);
 
@@ -816,7 +820,7 @@ FlexPepDockingProtocol::random_rb_pert(
 	float new_score;
 	core::pose::Pose tmpPose;
 	// TODO: sepearate rotation and translation flags
-	rigid::RigidBodyPerturbMoverOP rb_mover( utility::pointer::make_shared< rigid::RigidBodyPerturbMover >(
+	rigid::RigidBodyPerturbMoverOP rb_mover( new rigid::RigidBodyPerturbMover(
 		rb_jump_ /*jump_num*/,
 		flags_.rb_rot_size /*rot*/,
 		flags_.rb_trans_size /*trans*/ ) );
@@ -841,7 +845,7 @@ FlexPepDockingProtocol::small_moves(
 	using namespace core::pose;
 	using namespace protocols;
 
-	simple_moves::SmallMoverOP small_mover( utility::pointer::make_shared< simple_moves::SmallMover >( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
 	small_mover->angle_max('L',flags_.smove_angle_range);
 	small_mover->apply(pose);
 
@@ -860,7 +864,7 @@ FlexPepDockingProtocol::shear_moves(
 	using namespace core::pose;
 	using namespace protocols;
 
-	simple_moves::ShearMoverOP shear_mover( utility::pointer::make_shared< simple_moves::ShearMover >( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
 	shear_mover->angle_max('L',flags_.smove_angle_range);
 	shear_mover->apply(pose);
 
@@ -992,7 +996,7 @@ FlexPepDockingProtocol::torsions_monte_carlo_minimize(
 
 	// create a monte_carlo object
 	const float temperature ( 0.8 ); // TODO: tune param
-	moves::MonteCarloOP mc( utility::pointer::make_shared< moves::MonteCarlo >(pose, *scorefxn_,temperature) );
+	moves::MonteCarloOP mc( new moves::MonteCarlo (pose, *scorefxn_,temperature) );
 	int n_accepted = 0; // diagnostic counter
 	const float rt_energycut = 0.05; // TODO: tune param
 
@@ -1062,7 +1066,7 @@ FlexPepDockingProtocol::rigidbody_monte_carlo_minimize(
 
 	// create a monte_carlo object
 	const float temperature ( 0.8 ); // TODO: tune param
-	moves::MonteCarloOP mc( utility::pointer::make_shared< moves::MonteCarlo >(pose, *scorefxn_,temperature) );
+	moves::MonteCarloOP mc( new moves::MonteCarlo (pose, *scorefxn_,temperature) );
 	int n_accepted = 0; // diagnostic counter
 	const float rt_energycut = 0.05; // TODO: tune param
 
@@ -1119,7 +1123,7 @@ FlexPepDockingProtocol::peptide_random_loop_model(
 	// set up and model a random loop
 	core::Size first_res =  flags_.peptide_first_res(); // TODO: make sure it is ok to use the N' residue
 	core::Size last_res = flags_.peptide_last_res() - 1; // TODO: add the C' terminal, Dan sais there might be a bug with C' followed by another chain
-	protocols::loops::LoopsOP loops( utility::pointer::make_shared< protocols::loops::Loops >() );
+	protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
 	loops->add_loop(first_res, last_res); // TODO: cut defaults to zero, is this a random cut?
 	for ( core::Size i = first_res; i <= last_res ; i++ ) {
 		runtime_assert( movemap_->get_bb(i) ); // verify loop is movable, this should have been always true for the peptide
@@ -1157,7 +1161,7 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 
 	// design operation settings:
 	/*if(flags_.design_peptide){
-	pack::task::TaskFactoryOP design_tf( utility::pointer::make_shared< pack::task::TaskFactory >() );
+	pack::task::TaskFactoryOP design_tf( new pack::task::TaskFactory );
 	if(! flags_.pep_fold_only)
 	{
 	receptor_protector_oper_ = utility::pointer::make_shared< core::pack::task::operation::RestrictResidueToRepacking >();
@@ -1263,16 +1267,6 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	using namespace core::pose;
 
 	TR << "apply" << std::endl;
-
-	// Load fragment files, if that needs to happen.
-	if ( fragment_files_need_load_ ) {
-		// these protocols optionally take a fragment set .. only load if
-		// specified
-		utility::vector1< core::fragment::FragSetOP > frag_libs;
-		protocols::loops::read_loop_fragments( frag_libs );
-		loop_relax_mover_->frag_libs( frag_libs );
-		fragment_files_need_load_ = false;
-	}
 
 	// if no native provided, use pose as pseudo-native reference
 	if ( get_native_pose().get() == nullptr ) {
@@ -1831,7 +1825,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 	// read native pose: (TODO: is this set automatically in scripts?)
 	// protocols::jd2::set_native_in_mover(*fpDock);
 	if ( tag->hasOption( "native" ) ) {
-		core::pose::PoseOP tmp_native_pose( utility::pointer::make_shared< core::pose::Pose >() );
+		core::pose::PoseOP tmp_native_pose( new core::pose::Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set;
 		bool centroid_input = tag->getOption<bool>( "centroid_input", false );
 		if ( centroid_input ) {

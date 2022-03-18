@@ -104,6 +104,9 @@ BCLFragmentMutateMover::BCLFragmentMutateMover() :
 	BCLFragmentBaseMover(),
 	max_mutate_retry_( 10)
 {
+	// extras=bcl required for construction of this class object
+	core::chemical::bcl::require_bcl();
+
 #ifdef USEBCL
 	mutate_ = ::bcl::util::Implementation< ::bcl::chemistry::FragmentMutateInterface>();
 #endif
@@ -192,9 +195,6 @@ void BCLFragmentMutateMover::apply(
 	core::pose::Pose & /* pose */ )
 #endif
 {
-	// extras=bcl required for construction of this class object
-	core::chemical::bcl::require_bcl();
-
 #ifdef USEBCL
 
 	// restrict chain  ID to single letter
@@ -302,9 +302,6 @@ void BCLFragmentMutateMover::set_mutate(
 //! @brief parse xml file
 void BCLFragmentMutateMover::parse_my_tag( TagCOP tag, basic::datacache::DataMap &data )
 {
-	// extras=bcl required for construction of this class object
-	core::chemical::bcl::require_bcl();
-
 	// parse the parent class tag
 	BCLFragmentBaseMover::parse_my_tag( tag, data);
 

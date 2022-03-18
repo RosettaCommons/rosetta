@@ -67,7 +67,7 @@ private:
 	//  utility::vector1< core::Size > movable_jumps_;
 	protocols::docking::DockJumps movable_jumps_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	mutable core::pose::PoseCOP native_pose_;
+	core::pose::PoseCOP native_pose_;
 	bool options_registered_;
 };
 

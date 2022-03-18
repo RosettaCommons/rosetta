@@ -47,7 +47,7 @@ public:
 
 	void setUp()
 	{
-		core_init_with_additional_options( "-run:preserve_header true" );
+		core_init();
 	}
 
 	void tearDown()

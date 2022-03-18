@@ -12,7 +12,6 @@
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 
 // Unit header
-#include <core/pack/palette/PackerPaletteFactory.hh>
 
 // Package headers
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -41,12 +40,10 @@ xsd_type_definition_w_attributes(
 		local_attrs + utility::tag::optional_name_attribute();
 	}
 
-	std::string const citation_string( PackerPaletteFactory::get_instance()->get_citation_humanreadable( packer_palette_type ) );
-
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_packer_palette )
 		.element_name( packer_palette_type )
-		.description( description + "\n\n" + citation_string )
+		.description( description )
 		.add_attributes( local_attrs )
 		.write_complex_type_to_schema( xsd );
 }
@@ -66,12 +63,10 @@ xsd_type_definition_w_attributes_and_repeatable_subelements(
 		local_attrs + utility::tag::optional_name_attribute();
 	}
 
-	std::string const citation_string( PackerPaletteFactory::get_instance()->get_citation_humanreadable( packer_palette_type ) );
-
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_packer_palette )
 		.element_name( packer_palette_type )
-		.description( description + "\n\n" + citation_string )
+		.description( description )
 		.add_attributes( local_attrs )
 		.set_subelements_repeatable( subelements )
 		.write_complex_type_to_schema( xsd );

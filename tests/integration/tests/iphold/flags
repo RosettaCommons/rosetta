@@ -1,4 +1,3 @@
--run:preserve_header true
 -in:file:s input/input.pdb
 -in:file:extra_res_fa input/lig.fa.params
 -in:file:extra_res_cen input/lig.cen.params

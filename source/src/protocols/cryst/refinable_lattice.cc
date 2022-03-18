@@ -264,18 +264,11 @@ void UpdateCrystInfoCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 ////////////////////////////////////////////////////
 
-CrystRMS::CrystRMS() {}
-
-void
-CrystRMS::apply( core::pose::Pose & pose ) {
+CrystRMS::CrystRMS() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	core::Real RMS=-1.0;
-	core::Real score = (*sf_)(pose);
-	core::pose::setPoseExtraScore( pose, "crystScore", score);
-
-	if ( native_ == nullptr && option[ in::file::native ].user() ) {
+	if ( option[ in::file::native ].user() ) {
 		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
 		MakeLatticeMover make_lattice;
@@ -283,6 +276,13 @@ CrystRMS::apply( core::pose::Pose & pose ) {
 		make_lattice.contact_dist( 30 );
 		make_lattice.apply( *native_ );
 	}
+}
+
+void
+CrystRMS::apply( core::pose::Pose & pose ) {
+	core::Real RMS=-1.0;
+	core::Real score = (*sf_)(pose);
+	core::pose::setPoseExtraScore( pose, "crystScore", score);
 
 	if ( native_ ) {
 		io::CrystInfo ci_native = (*native_).pdb_info()->crystinfo();

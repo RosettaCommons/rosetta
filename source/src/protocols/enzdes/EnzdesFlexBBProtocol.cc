@@ -38,7 +38,6 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pose/PDBInfo.hh> //for getting pdb name
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
@@ -159,14 +158,6 @@ EnzdesFlexBBProtocol::apply(
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::moves;
 	using namespace core::pack::task;
-
-	if ( native_needs_load() ) {
-		core::pose::PoseOP natpose( utility::pointer::make_shared< core::pose::Pose >() );
-		core::import_pose::pose_from_file( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() , core::import_pose::PDB_file);
-		(*scorefxn_)( *natpose);
-		this->set_native_pose( natpose );
-		set_native_needs_load( false );
-	}
 
 	//if ( ! basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 	// brub_mover_ = new protocols::backrub::BackrubMover();

@@ -222,14 +222,6 @@ protected:
 		core::Size const istub
 	);
 
-public: //Functions needed for the citation manager
-
-	/// @brief Provide citations to the passed CitationCollectionList.
-	void
-	provide_citation_info(
-		basic::citation_manager::CitationCollectionList & citations
-	) const override;
-
 private: //Functions
 
 	/// @brief Remove terminal types from the upper terminus.  Store the old psi and omega values.

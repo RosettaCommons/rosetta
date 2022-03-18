@@ -42,7 +42,6 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/MoverFactory.hh>
 
 // Package Headers
 #include <basic/datacache/DataMap.hh>
@@ -1358,7 +1357,7 @@ GenericMonteCarloMover::define_composition_schema( utility::tag::XMLSchemaDefini
 
 	XMLSchemaSimpleSubelementList genmc_subelements;
 	genmc_subelements.add_already_defined_subelement( "Filters", & gen_mc_ct_namer );
-	XMLSchemaComplexTypeGeneratorOP genmc_ct_gen( utility::pointer::make_shared< XMLSchemaComplexTypeGenerator >() );
+	XMLSchemaComplexTypeGeneratorOP genmc_ct_gen( new XMLSchemaComplexTypeGenerator);
 	genmc_ct_gen->element_name( mover_name() )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.add_attributes( attlist )
@@ -1366,9 +1365,7 @@ GenericMonteCarloMover::define_composition_schema( utility::tag::XMLSchemaDefini
 		.description(
 		"Allows sampling structures by MonteCarlo with a mover. "
 		"The score evaluation of pose during MC are done by Filters that can do "
-		"report_sm(), not only ScoreFunctions\n\n" +
-		protocols::moves::MoverFactory::get_instance()->get_citation_humanreadable( mover_name() )
-		)
+		"report_sm(), not only ScoreFunctions")
 		.set_subelements_repeatable( genmc_subelements );
 
 	return genmc_ct_gen;

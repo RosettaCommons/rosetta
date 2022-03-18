@@ -239,11 +239,9 @@ private:
 
 private:
 
-	/// @brief flag for failures in class operation
-	bool is_fail_;
+	bool is_fail_; // flag for failures in class operation
 
-	/// @brief all flags loaded from cmd-line options
-	FlexPepDockingFlags flags_;
+	FlexPepDockingFlags flags_; // all flags loaded from cmd-line options
 
 	core::Size nres_receptor_;
 	core::Size nres_peptide_;
@@ -251,22 +249,19 @@ private:
 	moves::MonteCarloOP mc_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_lowres_; // for low-res optimization
 
-	/// @brief for low-res optimization
-	core::scoring::ScoreFunctionOP scorefxn_lowres_;
-
-	/// @brief metrics calculator object
+	// metrics calculator object
 	FlexPepDockingPoseMetrics fpdock_metrics_;
-	/// @brief interface metrics
-	std::map < std::string, core::Real > if_metrics_;
+	std::map < std::string, core::Real > if_metrics_; // interface metrics
 
-	/// @brief taskfactory for all-protein repacking operations
+	// taskfactory for all-protein repacking operations
 	core::pack::task::TaskFactoryOP allprotein_tf_;
 
-	/// @brief task factory that restricts packing to the interface
+	// task factory that restricts packing to the interface
 	core::pack::task::TaskFactoryOP interface_tf_;
 
-	/// @brief for packing the docking interface
+	// for packing the docking interface
 	protocols::minimization_packing::PackRotamersMoverOP interface_packer_;
 
 	// for designing the peptide;
@@ -274,19 +269,14 @@ private:
 	//core::pack::task::PackerTaskOP design_task_;
 	//protocols::minimization_packing::PackRotamersMoverOP design_mover_;
 
-	/// @brief the flexpepdock protocol movemap
-	/// @details may change throughout the run
+	// the flexpepdock protocol movemap // may change throughout the run
 	core::kinematics::MoveMapOP movemap_;
 
-	/// @brief movemap for the minimizer
+	// movemap for the minimizer
 	core::kinematics::MoveMapOP movemap_minimizer_;
 
-	/// @brief loop mover for modeling loop closure
+	// loop mover for modeling loop closure
 	protocols::relax::loop::LoopRelaxMoverOP loop_relax_mover_;
-
-	/// @brief Do fragment files need to be loaded?
-	/// @details Done on first need (apply-time).
-	bool fragment_files_need_load_ = false;
 
 	// int num_jumps_;
 

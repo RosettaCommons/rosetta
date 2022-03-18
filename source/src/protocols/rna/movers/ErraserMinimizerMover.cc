@@ -143,8 +143,8 @@ ErraserMinimizerMover::ErraserMinimizerMover():
 	constrain_phosphate_( true ),
 	ready_set_only_( false ),
 	skip_minimize_( false ),
-	scorefxn_( utility::pointer::make_shared< ScoreFunction >() ),
-	edens_scorefxn_( utility::pointer::make_shared< ScoreFunction >() )
+	scorefxn_( new ScoreFunction() ),
+	edens_scorefxn_( new ScoreFunction() )
 {
 	initialize_from_options( option );
 }
@@ -165,18 +165,12 @@ void ErraserMinimizerMover::initialize_from_options( utility::options::OptionCol
 
 	if ( !ready_set_only_ ) {
 		//Setup score function.
-		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4"; //Changed from rna_res_level_energy4_elec_dens, which doesn't exist.  --VKM, 5 Mar 2020.
+		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4_elec_dens";
 		if ( options[ basic::options::OptionKeys::score::weights ].user() ) {
 			score_weight_file = options[ basic::options::OptionKeys::score::weights ]();
 			TR << "User passed in score:weight option: " << score_weight_file << std::endl;
 		}
-		try {
-			scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
-		} catch( utility::excn::Exception const & e ) {
-			TR.Warning << "Unable to create " + score_weight_file + " scorefunction during initialization of ErraserMinimizerMover.  Will attempt to use stepwise/rna/rna_res_level_energy4 scorefunction instead.  Error message was:\n" << TR.Red << e.msg() << TR.Reset << std::endl;
-			scorefxn_ = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy4" );
-			TR.Warning << "Recovering and carrying on with stepwise/rna/rna_res_level_energy4 scorefunction." << std::endl;
-		}
+		scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
 		//edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
 	}
 }

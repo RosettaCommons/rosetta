@@ -99,7 +99,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 	//std::string prefix = option[ out::prefix ]();
 	core::Size skim_size = option[ lh::skim_size ]();
 
-	LocalInserter_SimpleMinOP simple_inserter( utility::pointer::make_shared< LocalInserter_SimpleMin >() );
+	LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
 	LoopHashSampler  lsampler( library_, simple_inserter );
 
 
@@ -238,7 +238,7 @@ int loophash_main(){
 	using namespace protocols::loophash;
 
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-	LoopHashLibraryOP loop_hash_library( utility::pointer::make_shared< LoopHashLibrary >( loop_sizes ) );
+	LoopHashLibraryOP loop_hash_library( new LoopHashLibrary( loop_sizes ) );
 
 	// Run simple sampling run test or create the db ?
 	if ( option[lh::create_db]() ) { ;
@@ -247,7 +247,7 @@ int loophash_main(){
 		return 0;
 	}
 
-	Mover_LoopHashRefineOP lh_sampler( utility::pointer::make_shared< Mover_LoopHashRefine >( loop_hash_library ) );
+	Mover_LoopHashRefineOP lh_sampler( new Mover_LoopHashRefine( loop_hash_library ) );
 
 	// Normal mode with external loophash library
 	loop_hash_library->load_db();

@@ -42,7 +42,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
@@ -51,7 +50,6 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility>
 #include <utility/string_util.hh>
 
@@ -98,14 +96,6 @@ SecondaryMatchProtocol::apply(
 
 	using namespace basic::datacache;
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
-
-	if ( native_needs_load() ) {
-		core::pose::PoseOP natpose( utility::pointer::make_shared< core::pose::Pose >() );
-		core::import_pose::pose_from_file( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() , core::import_pose::PDB_file);
-		(*scorefxn_)( *natpose);
-		this->set_native_pose( natpose );
-		set_native_needs_load( false );
-	}
 
 	//in case we want to swich ligands, let's do it now
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::change_lig].user() ) {

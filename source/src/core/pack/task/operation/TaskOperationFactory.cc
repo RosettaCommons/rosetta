@@ -133,8 +133,6 @@ TaskOperationFactory::get_citation_humanreadable(
 	auto const iter( task_operation_creator_map_.find( taskop_name ) );
 	runtime_assert_string_msg( iter != task_operation_creator_map_.end(), "Error in TaskOperationFactory::get_citation_humanreadable(): Could not parse \"" + taskop_name + "\"!" );
 
-	if ( iter->second->skip_citation_info_in_schema() ) return ""; //ONLY for unit testing!
-
 	TaskOperationOP task_operation( iter->second->create_task_operation() );
 	runtime_assert_string_msg( task_operation != nullptr, "Error in TaskOperationFactory::get_citation_humanreadable(): Could not instantiate " + taskop_name + "!" );
 	task_operation->provide_citation_info(citations);

@@ -62,10 +62,20 @@ IrmsdFilter::IrmsdFilter() :
 	lower_threshold_( 0.0 ),
 	upper_threshold_(9999)
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( option[ in::file::native ].user() ) {
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
+		native_pose_ = native_pose;
+	} else {
+		utility_exit_with_message("need to specify native pdb to calculate Irms");
+	}
 	scorefxn_ = core::scoring::get_score_function();
 	// scorefxn_->show(TR.Info);
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
-	//TR << "End constructor"<<std::endl;
+	TR << "End constructer"<<std::endl;
+
 }
 
 IrmsdFilter::IrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const rb_jump,core::Real const lower_threshold, core::Real const upper_threshold ) :
@@ -73,6 +83,16 @@ IrmsdFilter::IrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const 
 	lower_threshold_( lower_threshold ),
 	upper_threshold_(upper_threshold)
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( option[ in::file::native ].user() ) {
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ], core::import_pose::PDB_file);
+		native_pose_ = native_pose;
+	} else {
+		utility_exit_with_message("need to specify native pdb to calculate Irms");
+	}
+
 	if ( !sfxn ) {
 		scorefxn_ = core::scoring::get_score_function();
 	} else {
@@ -81,7 +101,8 @@ IrmsdFilter::IrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const 
 	TR.Info <<"IrmsdEvaluator: "<<"score" << std::endl;
 	// scorefxn_->show(TR.Info);
 	movable_jumps_.push_back( rb_jump );
-	//TR << "End constructor"<<std::endl;
+	TR << "End constructer"<<std::endl;
+
 }
 
 IrmsdFilter::~IrmsdFilter() = default;
@@ -116,21 +137,7 @@ IrmsdFilter::parse_my_tag(
 }
 
 bool
-IrmsdFilter::apply(
-	core::pose::Pose const & pose
-) const {
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	if ( native_pose_ == nullptr ) {
-		if ( option[ in::file::native ].user() ) {
-			core::pose::PoseOP native_pose( utility::pointer::make_shared< core::pose::Pose >() );
-			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
-			native_pose_ = native_pose;
-		} else {
-			utility_exit_with_message("Need to specify native pdb with -in:file:native to calculate Irms.");
-		}
-	}
+IrmsdFilter::apply( core::pose::Pose const & pose ) const {
 
 	core::Real const Irms( compute( pose ) );
 

@@ -74,6 +74,7 @@ BackboneTorsionPerturbation::BackboneTorsionPerturbation() {
 BackboneTorsionPerturbation::~BackboneTorsionPerturbation() = default;
 
 void BackboneTorsionPerturbation::init() {
+	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "talaris2013" ) );
 	increase_cycles_ = 1.0;
 	temperature_ = 5.0;
 	recover_low_ = false;
@@ -243,13 +244,6 @@ void BackboneTorsionPerturbation::perturb(core::pose::Pose & pose,
 }
 
 void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
-	try {
-		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "talaris2013" ) );
-	} catch( utility::excn::Exception const & e ) {
-		TR.Warning << "Unable to create Talaris2013 legacy scorefunction during initialization of BackboneTorsionPerturbation mover.  Will attempt to use default scorefunction instead.  Error message was:\n" << TR.Red << e.msg() << TR.Reset << std::endl;
-		set_scorefunction( core::scoring::get_score_function() );
-		TR.Warning << "Recovering and carrying on with default scorefunction." << std::endl;
-	}
 	//core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
 	//local_tf->push_back(new core::pack::task::operation::RestrictToRepacking());
 	// if present, task_factory_ always overrides/regenerates task_

@@ -115,6 +115,9 @@ BCLFragmentBaseMover::BCLFragmentBaseMover() :
 	conf_sample_rings_( true),
 	conf_sample_bond_angles_( true)
 {
+	// extras=bcl required for construction of this class object
+	core::chemical::bcl::require_bcl();
+
 	// now setup the conformer sampler with the member data
 	init_fragment_sample_confs();
 }
@@ -249,10 +252,7 @@ double &BCLFragmentBaseMover::get_base_conf_clash_resolution()
 ////////////////
 
 //! @brief apply BCLFragmentBaseMover
-void BCLFragmentBaseMover::apply( core::pose::Pose & /* POSE */ ) {
-	// extras=bcl required for construction of this class object
-	core::chemical::bcl::require_bcl();
-}
+void BCLFragmentBaseMover::apply( core::pose::Pose & /* POSE */ ) {}
 
 //! @brief set the residue ID of the ligand to be mutated
 void BCLFragmentBaseMover::set_ligand( std::string const &ligand_chain_id)
@@ -436,9 +436,6 @@ void BCLFragmentBaseMover::init_fragment_sample_confs()
 //! @brief parse xml file
 void BCLFragmentBaseMover::parse_my_tag( TagCOP tag, basic::datacache::DataMap & /*data*/ )
 {
-	// extras=bcl required for construction of this class object
-	core::chemical::bcl::require_bcl();
-
 	// set the ligand pose residue index
 	this->set_ligand( tag->getOption< std::string>( "ligand_chain", ligand_chain_));
 
