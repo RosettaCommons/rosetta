@@ -513,7 +513,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 
 	core::Size const ncol( col2proton_.size() );
 	runtime_assert( col2islabel_.size() == ncol );
-	core::Real weight( 0.0 );
+	//core::Real weight( 0.0 );
 	std::string line;
 	if ( !getline( rest_is, line ) ) return;
 	tr.Trace << "rest_of_line: --" << line << "--" << std::endl;
@@ -602,9 +602,9 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 		if ( tag == "#VC" ) {
 			core::Real w;
 			line_stream >> w;
-			weight += w;
+			//weight += w;
 			line_stream >> tag;
-		} else weight += 1.0;
+		}/* else weight += 1.0;*/
 		if ( !line_stream.good() ) break;
 		//   if ( tag != "#QU" ) {
 		//       throw CREATE_EXCEPTION(EXCN_FileFormat,  "expected #QU " );

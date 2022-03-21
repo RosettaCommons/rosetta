@@ -243,10 +243,10 @@ void add_Cu_chains(
 
 	//Count the number of mainchain atoms that we'll be placing coppers over:
 	core::Size nres(pose.size() - 2);
-	core::Size natoms(0);
-	for ( core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir ) {
-		natoms += pose.residue(ir).n_mainchain_atoms();
-	}
+	//core::Size natoms(0);
+	// for ( core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir ) {
+	//  natoms += pose.residue(ir).n_mainchain_atoms();
+	// }
 
 	//Add the Cu residues:
 	PeptideStubMover stubmover;

@@ -160,13 +160,13 @@ PCS_file_data_Ts3::PCS_file_data_Ts3(std::string const & filename, core::Real co
 
 PCS_data_input_Ts3::PCS_data_input_Ts3(utility::vector1<std::string> const & filenames, utility::vector1<core::Real> const & weight){
 	// utility::vector1<std::string>::const_iterator it;
-	core::Real weight_sum;
+	//core::Real weight_sum;
 	core::Size i;
 
-	weight_sum = 0;
-	for ( i = 1; i <= filenames.size(); i++ ) {
-		weight_sum += weight[i];
-	}
+	// weight_sum = 0;
+	// for ( i = 1; i <= filenames.size(); i++ ) {
+	//  weight_sum += weight[i];
+	// }
 
 	for ( i = 1; i <= filenames.size(); i++ ) {
 		//core::Real my_weight(weight[i]/weight_sum);

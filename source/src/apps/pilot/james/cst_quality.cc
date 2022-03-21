@@ -155,7 +155,7 @@ main( int argc, char * argv [] )
 
 				if ( local_score == 0 ) continue;
 
-				Real kl_divergence( 0.0 );
+				//Real kl_divergence( 0.0 );
 				vector1< Real > scores, distances;
 				Real stepsize = 0.1;
 				Real const lower_dist( 2 );
@@ -174,12 +174,12 @@ main( int argc, char * argv [] )
 					scores.   push_back( temp_score );
 					distances.push_back( r          );
 
-					Real const prob( exp( -1 * temp_score ) );
+					//Real const prob( exp( -1 * temp_score ) );
 					/// might be < 0 due to rounding errors.
-					kl_divergence += std::max(
-						prob * std::log( prob / dgaussian( r, 18.991, 7.353, 1.0 ) ),
-						0.0
-					);
+					// kl_divergence += std::max(
+					//  prob * std::log( prob / dgaussian( r, 18.991, 7.353, 1.0 ) ),
+					//  0.0
+					// );
 
 					if ( temp_score < score_min ) {
 						dist_min  = r;

@@ -620,7 +620,7 @@ core::Real calculate_chi_k(
 ) {
 	core::Real prod(0);
 	core::Real square_obs_ (0);
-	core::Real sum_obs_ (0);
+	//core::Real sum_obs_ (0);
 	core::Size R;
 	for ( Size l=0; l <= lmax; ++l ) {
 		if ( l==k_iteration ) continue;
@@ -630,7 +630,7 @@ core::Real calculate_chi_k(
 			core::Real I_obs_ ( layer_lines_I[l][R]*layer_lines_I[l][R] );
 			prod += I_interpolated[l][bin]*I_obs_;
 			square_obs_ += I_obs_*I_obs_;
-			sum_obs_ +=  I_obs_;
+			//sum_obs_ +=  I_obs_;
 		}
 	}
 

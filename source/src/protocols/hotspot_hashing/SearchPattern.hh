@@ -54,6 +54,9 @@ public:
 
 	VectorPair(const VectorPair& ) = default;
 
+	/// @brief Assignment operator.
+	VectorPair & operator=( VectorPair const & ) = default;
+
 	Vector position;
 	Vector direction;
 };

@@ -188,7 +188,7 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, core::sco
 
 
 	utility::vector0< utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > > bessel_order_splines;
-	Size lsum=0;
+	//Size lsum=0;
 	for ( Size l=0; l <= lmax; ++l ) {
 		Size max_b_order( nvals[l].size() );
 		for ( Size b_order=1; b_order <= max_b_order; ++b_order ) {
@@ -204,7 +204,7 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, core::sco
 			utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > inter = fit_layer_lines_with_splines( Ra, Ia );
 			bessel_order_splines.push_back(inter);
 		}
-		lsum +=max_b_order;
+		//lsum +=max_b_order;
 	}
 	// outdebug.close();
 

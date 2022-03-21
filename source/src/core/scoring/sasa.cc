@@ -827,7 +827,9 @@ calc_per_atom_sasa(
 
 	Real const four_pi = 4.0f * Real( numeric::constants::d::pi );
 
+#ifdef FILE_DEBUG
 	int num_ones = 0;
+#endif
 	for ( Size ii=1; ii <= pose.size(); ++ii ) {
 		Residue const & rsd( pose.residue(ii) );
 		rsd_sasa[ ii ] = 0.0;
@@ -855,7 +857,9 @@ calc_per_atom_sasa(
 			for ( int bb = 1; bb <= num_bytes; ++bb ) {
 				ctr += bit_count[ iia_masks[bb] ]; // atm_masks(bb,iia,ii)
 			}
+#ifdef FILE_DEBUG
 			num_ones += ctr;
+#endif
 
 			Real const fraction_ones = static_cast< Real >( ctr ) / maskbits; //ronj this is equivalent to l(buried)/l(total)
 			Real const total_sa = four_pi * ( iia_rad * iia_rad ); //ronj total atom surface area
@@ -877,9 +881,9 @@ calc_per_atom_sasa(
 		} // iia
 #ifdef FILE_DEBUG
 		std::cout << "num_ones: " << num_ones << ", sasa: " << rsd_sasa[ ii ] << std::endl; // use std::cout NOT the TR
-#endif
 		// AMW: cppcheck falsely flags this; keep it
 		num_ones = 0;
+#endif
 
 	} // ii
 

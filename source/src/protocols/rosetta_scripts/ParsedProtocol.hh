@@ -64,6 +64,10 @@ public:
 		ParsedProtocolStep();
 		ParsedProtocolStep( ParsedProtocolStep const & ) = default;
 
+		/// @brief Assignment operator.
+		inline ParsedProtocolStep &
+		operator=( ParsedProtocolStep const & ) = default;
+
 		ParsedProtocolStep (
 			moves::MoverOP mover_in,
 			std::string const & mover_name,

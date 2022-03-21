@@ -1263,11 +1263,11 @@ private: // Functions
 			//std::cout << "num_shared_atoms[" << jj << "]: " << num_shared_atoms[jj] << ", natoms[ " << jj-1 << "]: " << rotamers[ jj -1 ].natoms() << std::endl;
 		}
 
-		Size count_num_shared_atoms = 0;
+		//Size count_num_shared_atoms = 0;
 		Size num_atoms_in_trie = rotamers[1].natoms();
 		for ( Size jj = 2; jj <= num_total_rotamers_; ++jj ) {
 			num_atoms_in_trie += rotamers[jj].natoms() - num_shared_atoms[jj];
-			count_num_shared_atoms += num_shared_atoms[jj];
+			//count_num_shared_atoms += num_shared_atoms[jj];
 		}
 		trie_.resize( num_atoms_in_trie );
 		num_total_atoms_ = num_atoms_in_trie;

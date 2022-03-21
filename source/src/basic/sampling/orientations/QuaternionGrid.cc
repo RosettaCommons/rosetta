@@ -324,7 +324,9 @@ QuaternionGrid::QuaternionGrid(std::string const & name, std::istream & in): nam
 	// cout << ntot << " " << fixed
 	// << setprecision(3) << maxrad_ << " "
 	// << setprecision(5) << coverage << endl;
+#ifndef NDEBUG
 	size_t ncell1 = 0;
+#endif
 	for ( size_t n = 0; n < nent; ++n ) {
 		long k, l, m;
 		size_t mult;
@@ -341,7 +343,9 @@ QuaternionGrid::QuaternionGrid(std::string const & name, std::istream & in): nam
 				pind(0.5 * t.c, delta, sigma)),
 				w);
 		}
+#ifndef NDEBUG
 		ncell1 += mult;
+#endif
 	}
 	debug_assert(in.good());
 	debug_assert(ncell1 == ncell);

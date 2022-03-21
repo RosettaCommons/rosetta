@@ -261,7 +261,7 @@ void AmbiguousNMRConstraint::show_def( std::ostream& out, pose::Pose const& pose
 Size
 AmbiguousNMRConstraint::show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold ) const
 {
-	Size total_viol = 0;
+	//Size total_viol = 0;
 	bool passed( false );
 	for ( auto const & cst_it : member_constraints() ) {
 		Size viol = cst_it->show_violations( out, pose, verbose_level, threshold);
@@ -270,7 +270,7 @@ AmbiguousNMRConstraint::show_violations( std::ostream& out, pose::Pose const& po
 			passed = true;
 			out << "\nResiduePairConstraints (" <<  pos_list[1] << ", " << pos_list[pos_list.size()] << " ) . of total: 1  0 violated" << std::endl;
 		}
-		total_viol += viol;
+		//total_viol += viol;
 	}
 	if ( !passed && verbose_level > 70 ) {
 		for ( auto const & cst_it : member_constraints() ) {

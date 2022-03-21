@@ -1263,7 +1263,7 @@ off_rotamer_pack_optimize(
 		Real ii_temperature = temps[ ii ];
 		/// 6.
 		Size naccepts( 0 );
-		Real accum_deltaE( 0 );
+		//Real accum_deltaE( 0 );
 		Size const jj_end = n_inner_iterations( ii_temperature, n_sample_rots );
 		for ( Size jj = 1; jj <= jj_end; ++jj ) {
 
@@ -1301,7 +1301,7 @@ off_rotamer_pack_optimize(
 			if ( curr_state.any_unassigned() || pass_metropolis( ii_temperature, deltaE ) ) {
 				/// Accept the substitution
 				++naccepts;
-				accum_deltaE += deltaE;
+				//accum_deltaE += deltaE;
 				ig.commit_change( ran_res );
 #ifdef APL_FULL_DEBUG
 				debug_pose = alt_pose;

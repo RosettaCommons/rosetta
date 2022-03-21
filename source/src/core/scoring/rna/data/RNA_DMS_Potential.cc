@@ -546,7 +546,7 @@ RNA_DMS_Potential::check_chbonded( pose::Pose const & pose,
 
 		if ( i == j ) continue;
 
-		Real energy( 0.0 ), angle( 0.0 ), res_res_energy( 0.0 );
+		Real energy( 0.0 ), angle( 0.0 )/*, res_res_energy( 0.0 )*/;
 		core::conformation::Residue const & don_rsd = pose.residue( j );
 		for ( Size const don_h_atm : don_rsd.Hpos_apolar() ) {
 
@@ -559,7 +559,7 @@ RNA_DMS_Potential::check_chbonded( pose::Pose const & pose,
 				// This should probably be *inside* the CH-bond potential.
 				angle = get_N1_lonepair_donor_angle( acc_rsd, don_rsd, don_h_atm );
 				if ( angle <= 90.0 ) {
-					res_res_energy += energy;
+					//res_res_energy += energy;
 					if ( energy < ENERGY_CUTOFF ) found_chbond = true;
 				}
 			}

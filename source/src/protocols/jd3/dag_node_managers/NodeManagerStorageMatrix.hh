@@ -53,6 +53,9 @@ struct ResultElements {
 
 	ResultElements( ResultElements const & ) = default;
 
+	/// @brief Assignment operator.
+	inline ResultElements & operator=( ResultElements const & ) = default;
+
 	ResultElements(
 		core::Size global_job_id_in,
 		core::Size local_result_id_in,

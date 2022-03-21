@@ -419,7 +419,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 	pdbout << "REMARK Loc, res, pos, pdb, chain, atom, x, y, z, res, pos, pdb, chain, atom, x, y, z, hbE, HAdis, xD, xH\n";
 
 	// total protein-BASE hydrogen-bonding energy
-	Real hb_spec( 0.0 );
+	//Real hb_spec( 0.0 );
 	std::string category("NONE");
 
 	DnaInterfaceFinder interface;
@@ -474,7 +474,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 			}
 		}
 		Real const weighted_E( hb.energy() * weight );
-		if ( category == "dna_base" || category == "dna_wat" ) hb_spec += weighted_E;
+		//if ( category == "dna_base" || category == "dna_wat" ) hb_spec += weighted_E;
 
 		// assume donH_i indexes a hydrogen whose only bonded neighbor is the donor heavy
 		core::Size const don_i( don_rsd.bonded_neighbor( donH_i ).front() );

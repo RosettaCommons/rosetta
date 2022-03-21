@@ -376,7 +376,7 @@ private:  // Private methods
 		//Residue information
 		core::Size overall_atom_clashes = 0;
 		core::Size overall_res_clashes_1 = 0;
-		core::Size overall_res_clashes_3 = 0;
+		//core::Size overall_res_clashes_3 = 0;
 		core::Size overall_res_clashes_5 = 0;
 
 		for ( auto const & it : data ) {
@@ -391,8 +391,8 @@ private:  // Private methods
 			core::Size res_clashes_1 = total_residue_clashes( it.second, 1);
 			overall_res_clashes_1 += res_clashes_1;
 
-			core::Size res_clashes_3 = total_residue_clashes( it.second, 3);
-			overall_res_clashes_3 += res_clashes_3;
+			//core::Size res_clashes_3 = total_residue_clashes( it.second, 3);
+			//overall_res_clashes_3 += res_clashes_3;
 
 			core::Size res_clashes_5 = total_residue_clashes( it.second, 5);
 			overall_res_clashes_5 += res_clashes_5;
@@ -437,7 +437,7 @@ private:  // Private methods
 	}
 
 	core::Size
-	total_residue_clashes(utility::vector1< core::Size > const clashes, core::Size at_least_x){
+	total_residue_clashes(utility::vector1< core::Size > const & clashes, core::Size at_least_x){
 		core::Size total_residue_clashes = 0;
 		for ( core::Size resnum = 1; resnum <= clashes.size(); ++resnum ) {
 			if ( clashes[resnum] >= at_least_x ) {
@@ -448,7 +448,7 @@ private:  // Private methods
 	}
 
 	core::Size
-	total_atom_clashes(utility::vector1< core::Size > const clashes ){
+	total_atom_clashes(utility::vector1< core::Size > const & clashes ){
 		core::Size total_atom_clashes = 0;
 		for ( core::Size resnum = 1; resnum <= clashes.size(); ++resnum ) {
 			total_atom_clashes += clashes[resnum];

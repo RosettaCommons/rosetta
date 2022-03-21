@@ -37,6 +37,8 @@ public:
 	ContextGraph(Size num_nodes);
 	ContextGraph( ContextGraph const & source ) = delete; // Directly calling parent Graph copy constructors doesn't work.
 
+	ContextGraph & operator=( ContextGraph const & ) = default;
+
 	virtual
 	Distance
 	neighbor_cutoff() const = 0;

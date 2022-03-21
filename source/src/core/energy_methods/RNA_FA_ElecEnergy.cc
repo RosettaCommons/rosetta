@@ -304,10 +304,10 @@ RNA_FA_ElecEnergy::residue_pair_energy_ext(
 	debug_assert( rsd1.seqpos() < rsd2.seqpos() );
 	debug_assert( utility::pointer::dynamic_pointer_cast< core::scoring::ResiduePairNeighborList const > (min_data.get_data( core::scoring::rna_elec_pair_nblist ) ));
 	auto const & nblist( static_cast< core::scoring::ResiduePairNeighborList const & > ( min_data.get_data_ref( core::scoring::rna_elec_pair_nblist ) ) );
-	Real dsq, score( 0.0 );
+	Real dsq/*, score( 0.0 )*/;
 	utility::vector1< core::scoring::SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	for ( auto const & neighb : neighbs ) {
-		score += score_atom_pair( rsd1, rsd2, neighb.atomno1(), neighb.atomno2(), emap, sfxn, neighb.weight(), dsq );
+		/*score += */score_atom_pair( rsd1, rsd2, neighb.atomno1(), neighb.atomno2(), emap, sfxn, neighb.weight(), dsq );
 	}
 	// Nothing done with score, only emap
 }

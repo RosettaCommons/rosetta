@@ -192,7 +192,7 @@ void PDDFEnergy::read_pddf(std::string file_name) {
 		utility_exit_with_message( "Unable to open reference spectrum file: " + file_name );
 	}
 	std::string line;
-	core::Real norm = 0.0;
+	//core::Real norm = 0.0;
 	while ( getline( input, line ) ) {
 		if ( line.substr(0,1) == "#" ) continue;
 		if ( line.length() < 4 ) continue;
@@ -200,7 +200,7 @@ void PDDFEnergy::read_pddf(std::string file_name) {
 		line_stream >> tX >> tY;
 		d_.push_back( tX );
 		reference_pddf_.push_back( tY );
-		norm += tY;
+		//norm += tY;
 		trPDDFEnergy.Trace << "Reference PDDF data: "<<tX<<" "<<tY<<std::endl;
 	}
 

@@ -57,6 +57,9 @@ public: // Creation
 	inline
 	NamedAtomID( NamedAtomID const & ) = default;
 
+	/// @brief Assignment operator
+	inline
+	NamedAtomID & operator=( NamedAtomID const & ) = default;
 
 	// @brief Property constructor
 	template <class T,

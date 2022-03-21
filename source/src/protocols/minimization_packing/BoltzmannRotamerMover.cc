@@ -233,10 +233,10 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 		utility::vector1<std::pair<core::Size, core::Real> > selected_rotamers;
 		core::Real amino_acid_partition_function = 0.0;
 		// select rotamer for each amino acid
-		core::Size aa_count = 0;
+		//core::Size aa_count = 0;
 		for ( core::Size aa_type = 1; aa_type <= boltzmann_factors.size(); aa_type++ ) {
 			if ( boltzmann_factors[aa_type].size() > 0 ) {
-				aa_count += 1;
+				//aa_count += 1;
 				core::Real rot = select_rotamer(boltzmann_factors[aa_type], rotamer_partition_funtions[aa_type]);
 				selected_rotamers.push_back(std::make_pair(boltzmann_factors[aa_type][rot].first,boltzmann_factors[aa_type][rot].second));
 				amino_acid_partition_function += boltzmann_factors[aa_type][rot].second;

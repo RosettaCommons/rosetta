@@ -3015,7 +3015,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, core::Size rangelo, core::S
 		if ( i > rangehi && i <= total_residues_ ) continue;
 		utility::vector1< Real > resatomdens;
 		utility::vector1< Real > scatomdens;
-		Real bbresiduedens = 0;
+		//Real bbresiduedens = 0;
 		Real residueworstatom = -999999;
 		Real worstscatom = -999999;
 		core::conformation::Residue currentres = pose.residue(i);
@@ -3036,7 +3036,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, core::Size rangelo, core::S
 			total_fast_dens += atomdens;
 			//track the backbone and sc density seperately
 			if ( j<=4 ) {
-				bbresiduedens += atomdens;
+				//bbresiduedens += atomdens;
 				resatomdens.push_back(atomdens);
 			}
 			if ( j>4 ) scatomdens.push_back(atomdens);

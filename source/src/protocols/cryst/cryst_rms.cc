@@ -286,7 +286,7 @@ crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy,
 
 	// 2 get decoy->native correspondence
 	utility::vector1<core::Size> map_decoy2native(nsubunits_decoy,1); // 1->1 by construction
-	core::Real sumdist = 0.0;
+	//core::Real sumdist = 0.0;
 	for ( core::Size j=2; j<=nsubunits_decoy; ++j ) {
 		Real mindist = 1e6;
 		core::Size minidx = 0;
@@ -296,7 +296,7 @@ crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy,
 			Real dist = (native_k_off - R*decoy_j_off).length();
 			if ( dist < mindist ) { mindist=dist; minidx=k; }
 		}
-		sumdist += mindist*mindist;
+		//sumdist += mindist*mindist;
 		map_decoy2native[j] = minidx;
 	}
 

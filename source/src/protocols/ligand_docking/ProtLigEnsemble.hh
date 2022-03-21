@@ -62,6 +62,8 @@ public:
 
 	ProtLigPair_info(): mut_resid(0), mut_target(0), lig_chain(0), bind_data(0), has_bind(false), wild_type(false){};
 	ProtLigPair_info(ProtLigPair_info const & ) = default;
+
+	ProtLigPair_info & operator=( ProtLigPair_info const & ) = default;
 };
 
 

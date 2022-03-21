@@ -380,7 +380,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 		if ( !made_cut && datamap_autocuts.empty() && env->auto_cut() ) {
 			utility::vector1< core::Real > masked_bias( bias.size(), 0 );
 
-			core::Real bias_sum = 0.0;
+			//core::Real bias_sum = 0.0;
 			for ( core::Size k = 1; k <= cycle.size(); ++k ) {
 				core::Size seqpos = cycle[k];
 				// you could do the following with mod, but 1 indexing makes it suck too.
@@ -396,7 +396,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 
 				} else {
 					masked_bias[cycle[k]] = bias[cycle[k]];
-					bias_sum += bias[cycle[k]];
+					//bias_sum += bias[cycle[k]];
 				}
 			}
 

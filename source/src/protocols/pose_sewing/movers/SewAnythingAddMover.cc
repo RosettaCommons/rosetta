@@ -395,11 +395,11 @@ SewAnythingAddMover::apply( core::pose::Pose& pose){
 		numeric::random::random_permutation(basis_pairs);
 
 
-		core::Size tries = 0;
+		//core::Size tries = 0;
 		non_triaged_basis_pairs.clear();
 		aligned_pieces.clear();
 		for ( core::Size current_try = 1; current_try <= basis_pairs.size(); ++current_try ) {
-			tries+=1;
+			//tries+=1;
 			local_basis_residue = basis_pairs[current_try].first;
 			incoming_basis_residue = basis_pairs[current_try].second;
 
@@ -432,9 +432,9 @@ SewAnythingAddMover::apply( core::pose::Pose& pose){
 	bool filters_passed = false;
 	if ( found_good_match ) {
 		core::pose::Pose original_pose = pose;
-		core::Size basis_pair_num = 0;
+		//core::Size basis_pair_num = 0;
 		for ( auto const & local_basis_pair : non_triaged_basis_pairs ) {
-			basis_pair_num+=1;
+			//basis_pair_num+=1;
 			pose = original_pose;
 			local_basis_residue = local_basis_pair.first;
 			//core::Size const local_basis_residue_const = local_basis_pair.first;

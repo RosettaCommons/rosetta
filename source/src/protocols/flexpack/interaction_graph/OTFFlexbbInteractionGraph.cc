@@ -860,7 +860,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 			core::Size ii_resid = changing_seqpos_[ ii ];
 			core::Size ii_moltenresid = resid_2_moltenres_[ ii_resid ];
 			//std::cout << "Real energies: " << ii_moltenresid;
-			Real ii_total( 0.0 );
+			//Real ii_total( 0.0 );
 			for ( utility::graph::Graph::EdgeListIter
 					ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
 					ire = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_end();
@@ -870,7 +870,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 				if ( jj_moltenresid == 0 ) continue;
 
 				Real ii_jj_energy = (static_cast< core::scoring::EnergyEdge const *> (*ir))->dot( oc_sfxn_->weights() );
-				ii_total += ii_jj_energy;
+				//ii_total += ii_jj_energy;
 
 				//std::cout << "Two-Body Energy Real: " << ii_moltenresid << " " << jj_moltenresid << " " << ii_jj_energy << std::endl;
 
@@ -913,7 +913,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 
 
 			//std::cout << "Real energies with background: " << ii_moltenresid;
-			ii_total = 0.0;
+			//ii_total = 0.0;
 			for ( utility::graph::Graph::EdgeListIter
 					ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
 					ire = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_end();
@@ -922,7 +922,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 				core::Size jj_moltenresid = resid_2_moltenres_[ jj_resid ];
 				if ( jj_moltenresid != 0 ) continue;
 				Real ii_jj_energy = (static_cast< core::scoring::EnergyEdge const *> (*ir))->dot(oc_sfxn_->weights());
-				ii_total += ii_jj_energy;
+				//ii_total += ii_jj_energy;
 				ii_one_body_and_background += ii_jj_energy;
 				//std::cout << " " << jj_resid << " " << ii_jj_energy ;
 

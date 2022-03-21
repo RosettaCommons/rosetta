@@ -2083,7 +2083,7 @@ void PlaidFingerprint::fp_compare_deriv( FingerprintBase & fp, core::Real const 
 	debug_assert( derivs_of_ray_distances_.size() == fp.triplet_fingerprint_data().size() );
 
 	core::Real Total_score = 0;
-	core::Real Differentiable_score = 0;
+	//core::Real Differentiable_score = 0;
 	core::Size num_rays = 0;
 	auto di = derivs_of_ray_distances_.begin();
 	for ( auto pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); (pi != fp.triplet_fingerprint_data().end()) && (li != triplet_fingerprint_data_.end()) && (di != derivs_of_ray_distances_.end()); ++pi, ++li, ++di ) {
@@ -2117,7 +2117,7 @@ void PlaidFingerprint::fp_compare_deriv( FingerprintBase & fp, core::Real const 
 				dE_dv6 += steric_weight * di->dDist_dv6;
 			}
 			Total_score += dist_deviation;
-			Differentiable_score += dist_deviation;
+			//Differentiable_score += dist_deviation;
 		}
 
 		num_rays++;

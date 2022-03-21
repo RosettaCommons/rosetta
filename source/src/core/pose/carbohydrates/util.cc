@@ -1200,7 +1200,7 @@ delete_carbohydrate_branch( Pose & pose, uint const delete_to )
 	vector1< Size > resnums_to_delete = resnums_and_tips.first;
 	vector1< Size > tips              = resnums_and_tips.second;
 
-	Size i = 0;
+	//Size i = 0;
 	std::string ref_pose_name = "temp_ref_pose" ;
 
 	Size current_delete_to = delete_to;
@@ -1234,7 +1234,7 @@ delete_carbohydrate_branch( Pose & pose, uint const delete_to )
 
 		//TR << pose << std::endl; //Debugging for now.
 
-		i+=1;
+		//i+=1;
 	}
 
 	// Update branching of starting_position residue.  After all this deletion, it will not have any branches and should be a tip.

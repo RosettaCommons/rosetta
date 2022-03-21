@@ -121,7 +121,7 @@ P_AA::read_P_AA()
 	stream.close();
 
 	// Check probabilities sum to ~ 1
-	debug_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
+	runtime_assert( numeric::eq_tol( probability_sum, Probability( 1.0 ), Probability( .0001 ), Probability( .0001 ) ) );
 }
 
 

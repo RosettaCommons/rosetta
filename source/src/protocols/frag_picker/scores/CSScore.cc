@@ -208,7 +208,7 @@ bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scor
 	//core::Size offset_v = fragment->get_first_index_in_vall() - 1;
 
 	core::Real totalScore = 0.0;
-	core::Real totalCount = 0.0;
+	//core::Real totalCount = 0.0;
 
 	for ( core::Size i = 1; i <= fragment->get_length(); i++ ) {
 		runtime_assert(fragment->get_first_index_in_vall() + i - 1 <= scores_.size());
@@ -222,7 +222,7 @@ bool CSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP scor
 		//tmp.second is the number of chemical shifts
 
 		totalScore += tmp.first;
-		totalCount += tmp.second;
+		//totalCount += tmp.second;
 	}
 
 	// runtime_assert( totalScore != NULL );

@@ -231,7 +231,7 @@ public:
 		core::scoring::dssp::Dssp dssp( pose );
 		dssp.insert_ss_into_pose( pose );
 
-		core::Real hbond_energies = 0; // to get average energy for structure;
+		//core::Real hbond_energies = 0; // to get average energy for structure;
 		Size nhbonds_used = 0;
 
 		std::cout << "don_chain don_resname don_resnum don_pdbresnum don_atomname - ";
@@ -324,7 +324,7 @@ public:
 			//scoring::hbonds::hb_energy_deriv( type, datm_xyz, hatm_xyz, aatm_xyz, base_xyz, base2_xyz, energy, true, deriv );
 			core::Real weight = bond.weight();
 
-			hbond_energies += energy;
+			//hbond_energies += energy;
 
 			// converts the atom element type (O, N, S, etc) to an integer - not sure for what so I'm commenting this out --ronj
 			//if ( ! donElement.compare( "O" ) ) { donElemNum = 8; }

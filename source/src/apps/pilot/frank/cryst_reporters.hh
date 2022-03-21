@@ -717,7 +717,7 @@ get_perresE( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf,utility:
 	//sfc->set_weight( core::scoring::cart_bonded, 0.0 );
 	//sfc->set_weight( core::scoring::res_type_constraint, 0.0 );
 
-	core::Real Etot=0.0, E1b=0.0;
+	//core::Real Etot=0.0, E1b=0.0;
 	core::scoring::methods::EnergyMethodOptions opts = sfc->energy_method_options();
 	core::scoring::hbonds::HBondOptions hbo = opts.hbond_options();
 	hbo.decompose_bb_hb_into_pair_energies( true );
@@ -733,7 +733,7 @@ get_perresE( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf,utility:
 	EnergyGraph & energy_graph( energies.energy_graph() );
 	for ( Size i=1, i_end = nres_asu; i<= i_end; ++i ) {
 		perresE[i] = energies.onebody_energies(i).dot(sfc->weights());
-		E1b += perresE[i];
+		//E1b += perresE[i];
 	}
 
 	for ( Size i=1, i_end = nres_asu; i<= i_end; ++i ) {
@@ -758,7 +758,7 @@ get_perresE( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf,utility:
 			} else {
 				perresE[i] += thisEdgeE;
 			}
-			Etot += thisEdgeE;
+			//Etot += thisEdgeE;
 		}
 	}
 
@@ -820,7 +820,7 @@ ddg (
 	int ncyc=1,
 	int nrepeats=3) {
 	core::Real ddg=0;
-	core::Real esymmPR=0.0,easymmPR=0.0;
+	//core::Real esymmPR=0.0,easymmPR=0.0;
 	esymm = easymm = 0.0;
 	perresddg.clear();
 
@@ -847,8 +847,8 @@ ddg (
 		easymm += (*sf_asu)(pose_asu)/ nrepeats;
 		for ( int i=1; i<=(int)perresSymm.size(); ++i ) {
 			perresddg[i] += (0.5*perresSymm[i] - perresAsymm[i]) / nrepeats;
-			esymmPR += 0.5*perresSymm[i] / nrepeats;
-			easymmPR += perresAsymm[i] / nrepeats;
+			//esymmPR += 0.5*perresSymm[i] / nrepeats;
+			//easymmPR += perresAsymm[i] / nrepeats;
 		}
 	}
 

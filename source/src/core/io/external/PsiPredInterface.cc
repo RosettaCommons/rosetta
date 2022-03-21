@@ -385,7 +385,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 //@brief wrapper for run_psired that returns a vector of probabilities. 1 vector is returned for each chain
 utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInterface::run_psipred_prob(core::pose::Pose const & pose){
 	utility::vector1<utility::vector1< utility::vector1< core::Real > > > combined_results;
-	core::Size start_residue = 1;
+	//core::Size start_residue = 1;
 	for ( core::Size i=1; i<=pose.conformation().num_chains(); ++i ) {
 		// check pose split to see if there are protein residues present
 		TR << "Running psipred for chain " << i << " of " << pose.conformation().num_chains() << std::endl;
@@ -444,7 +444,7 @@ utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInt
 		// clean up psipred files
 		cleanup_after_psipred( psipred_filename,fasta_filename );
 
-		start_residue += seq.size();
+		//start_residue += seq.size();
 
 		// parse and save result in the cache
 	}

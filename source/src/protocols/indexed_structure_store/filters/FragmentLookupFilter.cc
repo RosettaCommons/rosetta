@@ -156,15 +156,15 @@ void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & )
 	using utility::json_spirit::Pair;
 
 	Object result_container;
-	core::Size num_failed_matches=0;
+	//core::Size num_failed_matches=0;
 	for ( result_t::value_type &r : cached_lookup_result_ ) {
 		Object result_object;
 
 		result_object.push_back(Pair("found_match", r.second.found_match));
 
-		if ( !r.second.found_match ) {
-			num_failed_matches+=1;
-		}
+		// if ( !r.second.found_match ) {
+		//  num_failed_matches+=1;
+		// }
 
 		if ( r.second.found_match ) {
 			result_object.push_back(Pair("match_score", r.second.match_score));

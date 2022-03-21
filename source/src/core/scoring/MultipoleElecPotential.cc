@@ -2156,8 +2156,8 @@ MultipoleElecPotential::get_res_res_elecE(
 		cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_34 );
 	}
 
-	Real RFelecE = 0.0;
-	Real PolelecE = 0.0;
+	//Real RFelecE = 0.0;
+	//Real PolelecE = 0.0;
 	Real elecE = 0.0;
 
 	// For a description of the polytensor formulation, see
@@ -2274,7 +2274,7 @@ MultipoleElecPotential::get_res_res_elecE(
 				//    TR << "Energy " << this_energy << " will be weighted by " << weight << std::endl;
 				//TR << "Polarization " << this_polarization_energy << " will be weighted by " << 0.5 * polar_weight << std::endl;
 
-				PolelecE += 0.5 * polar_weight * this_polarization_energy;
+				//PolelecE += 0.5 * polar_weight * this_polarization_energy;
 
 				atom_atomE = 332.063714 * ( weight * this_energy + 0.5 * polar_weight * this_polarization_energy );
 				//    atom_atomE = 332.063714 * ( 0.5 * polar_weight * this_polarization_energy );
@@ -2346,7 +2346,7 @@ MultipoleElecPotential::get_res_res_elecE(
 				//    TR << "RFE " << rsd1.xyz(atm1) << " " << rsd2.xyz(atm2) << " " << rf_energy << std::endl;
 
 				atom_atomE += rf_energy;
-				RFelecE += rf_energy;
+				//RFelecE += rf_energy;
 			}
 
 			elecE += atom_atomE;

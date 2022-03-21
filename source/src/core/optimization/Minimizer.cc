@@ -811,10 +811,10 @@ Minimizer::lbfgs(
 		}
 
 		line_min->_deriv_sum = 0.0;
-		core::Real deriv_new = 0.0;
+		//core::Real deriv_new = 0.0;
 		for ( int i = 1; i <= N; ++i ) {
 			line_min->_deriv_sum += D[i]*GP[i];
-			deriv_new += D[i]*G[i];
+			//deriv_new += D[i]*G[i];
 		}
 
 		// LBFGS updates
@@ -826,12 +826,13 @@ Minimizer::lbfgs(
 		//   ys = y^t \cdot s = 1 / \rho.
 		//   yy = y^t \cdot y.
 		// Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor).
-		core::Real ys=0, yy=0;
+		// VKM Edit, 18 March 2022: no, it appears not to be used for anything.  Commenting out.
+		core::Real ys=0/*, yy=0*/;
 		for ( int i = 1; i <= N; ++i ) {
 			Xtemp[i] = X[i] - XP[i];
 			Gtemp[i] = G[i] - GP[i];
 			ys += Gtemp[i]*Xtemp[i];
-			yy += Gtemp[i]*Gtemp[i];
+			//yy += Gtemp[i]*Gtemp[i];
 		}
 
 		if ( std::fabs( ys ) < 1e-6 ) {

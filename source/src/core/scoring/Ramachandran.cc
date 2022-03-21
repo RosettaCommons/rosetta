@@ -894,7 +894,7 @@ Ramachandran::read_rama_map_file (
 	std::istream & iunit
 ) {
 	int aa_num,phi_bin,psi_bin,ss_type;
-	Real check,min_prob,max_prob;
+	Real /*check,*/ min_prob, max_prob;
 	core::Real entropy;
 	char line[60];
 	int scan_count;
@@ -903,7 +903,7 @@ Ramachandran::read_rama_map_file (
 	for ( int i = 1; i <= n_aa_ ; ++i ) {
 		for ( int ii = 1; ii <= 3; ++ii ) {
 			entropy = 0.0;
-			check = 0.0;
+			//check = 0.0;
 			min_prob = 1e36;
 			max_prob = -min_prob;
 			for ( int j = 1; j <= 36; ++j ) {
@@ -946,7 +946,7 @@ Ramachandran::read_rama_map_file (
 					//      iunit >> skip;
 					//     }
 
-					check += ram_probabil_(j,k,ii,i);
+					//check += ram_probabil_(j,k,ii,i);
 					entropy += ram_probabil_(j,k,ii,i) *
 						std::log( static_cast< core::Real >( ram_probabil_(j,k,ii,i) ) );
 					min_prob = std::min(ram_probabil_(j,k,ii,i),min_prob);

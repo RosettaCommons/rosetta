@@ -1064,7 +1064,7 @@ Real check_jump( pose::Pose const& pose, pose::Pose const& native, JumpSample co
 	Stub test_down;
 	rt.make_jump( native_up, test_down );
 
-	Real zero_rms ( 0.0 );
+	//Real zero_rms ( 0.0 );
 	Real rms ( 0.0 );
 
 	for ( Size i=1; i<=3; i++ ) {
@@ -1074,7 +1074,7 @@ Real check_jump( pose::Pose const& pose, pose::Pose const& native, JumpSample co
 		Vector d = nv-tv;
 		Vector zd = nv-ztv;
 		rms += d.length();
-		zero_rms += zd.length();
+		//zero_rms += zd.length();
 	}
 	tr.Info << " : " << F(10,3,rms) <<  std::endl;
 	return rms;

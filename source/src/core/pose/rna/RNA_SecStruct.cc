@@ -307,12 +307,12 @@ RNA_SecStruct::figure_out_stems()
 	// Parse out stems
 	vector1< bool > already_in_stem( numres, false );
 
-	Size stem_count( 0 );
+	//Size stem_count( 0 );
 	for ( Size i = 1; i <= numres; i++ ) {
 		if ( pair_map.find( i ) != pair_map.end() && !already_in_stem[ i ] ) {
 			// In a base pair
 			Size k = i;
-			stem_count += 1;
+			//stem_count += 1;
 			vector1< std::pair< Size, Size > > stem_res;
 
 			stem_res.push_back( std::make_pair( k, pair_map[k] ) );

@@ -488,6 +488,7 @@ build_random_dna_rotamers(
 		for ( int i=1; i<= 4; ++i ) v2[i] /= l2;
 
 		// confirm orthogonality
+#ifndef NDEBUG
 		Real tmp1(0.0), tmp2(0.0), tmp12(0.0);
 		for ( int i=1; i<= 4; ++i ) {
 			tmp1  += v1[i] * v1[i];
@@ -495,7 +496,7 @@ build_random_dna_rotamers(
 			tmp12 += v1[i] * v2[i];
 		}
 		debug_assert( std::abs(tmp1-1)<1e-3 && std::abs(tmp2-1)<1e-3 && std::abs(tmp12)<1e-3 );
-
+#endif
 
 		// now try a bunch of moves:
 		for ( int rot_ii=1; rot_ii <= nrot_to_build-1; ++rot_ii ) {

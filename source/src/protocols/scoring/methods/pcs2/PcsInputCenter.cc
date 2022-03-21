@@ -85,13 +85,13 @@ PcsInputCenter::get_PcsInputFile_all(){
 
 PcsInputCenter::PcsInputCenter(utility::vector1<std::string> const & filenames, utility::vector1<core::Real> const & weight){
 	// TR_PcsInputCenter << " constructor called" << std::endl;
-	core::Real weight_sum;
+	//core::Real weight_sum;
 	core::Size i;
 
-	weight_sum = 0;
-	for ( i = 1; i <= filenames.size(); i++ ) {
-		weight_sum += weight[i];
-	}
+	// weight_sum = 0;
+	// for ( i = 1; i <= filenames.size(); i++ ) {
+	//  weight_sum += weight[i];
+	// }
 
 	for ( i = 1; i <= filenames.size(); i++ ) {
 		//core::Real my_weight(weight[i]/weight_sum);

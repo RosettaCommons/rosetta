@@ -203,12 +203,12 @@ PerturbRotamerSidechainMover::compute_rotdensities(
 
 	Real max_new_rot_prob(0);
 	Real max_old_rot_prob(0);
-	Real norm_prob(0);
+	//Real norm_prob(0);
 	//Real const inv_nrot( 1.0 / rotamers.size() );
 
-	for ( core::Size jj=1; jj <= rotamers.size(); ++jj ) {
-		norm_prob+=rotamers[jj].probability();
-	}
+	// for ( core::Size jj=1; jj <= rotamers.size(); ++jj ) {
+	//  norm_prob+=rotamers[jj].probability();
+	// }
 	//if ( std::abs( norm_prob - 1.0 ) > 0.00001 ) {
 	//TR.Warning << "ALARM: probs are not normalized correctly: " << norm_prob << std::endl;
 	//}

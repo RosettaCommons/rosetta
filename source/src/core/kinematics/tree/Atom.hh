@@ -92,6 +92,10 @@ protected: // Creation
 	inline
 	Atom() = default;
 
+	/// @brief Copy constructor
+	inline
+	Atom( Atom const & ) = default;
+
 
 public: // self pointers
 

@@ -1231,10 +1231,12 @@ get_base_step_params(
 		}
 
 		// check sign conventions
+#ifndef NDEBUG
 		Real phi_prime( arccos( dot( rt, MBT.col_y() ) ) );
 		if ( dot( cross( rt, MBT.col_y() ), MBT.col_z() ) < 0.0f ) {
 			phi_prime *= -1.0f;
 		}
+#endif
 
 		Vector tmp( cross( M2.col_x(), M1.col_x() ) );
 		debug_assert( cross( tmp, MBT.col_z() ).length() <1e-2 );

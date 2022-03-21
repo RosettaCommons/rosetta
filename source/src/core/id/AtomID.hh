@@ -55,6 +55,10 @@ public: // Creation
 	inline
 	AtomID( AtomID const & ) = default;
 
+	/// @brief Assignment operator
+	inline
+	AtomID & operator=( AtomID const & ) = default;
+
 	/// @brief Property constructor
 	inline
 	AtomID(

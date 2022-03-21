@@ -3097,13 +3097,13 @@ void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpus() {
 	TR << std::endl;
 
 
-	Real cross_entropy( 0.0 );
+	//Real cross_entropy( 0.0 );
 	TR << "amino acid frequency: obs (exp):";
 	for ( core::Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 		TR << " " << core::chemical::oneletter_code_from_aa( core::chemical::AA( ii ) )
 			<< ": " << ((Real) aa_obs_[ ii ] ) / total_positions_ << " (" << ((Real) aa_exp_[ ii ] ) / total_positions_<< ")";
 		//if ( ii % 5 == 0 ) TR << std::endl;
-		cross_entropy -= (((Real) aa_exp_[ ii ] ) / total_positions_) * std::log(  ((Real) aa_obs_[ ii ] ) / total_positions_ + 1e-5  );
+		//cross_entropy -= (((Real) aa_exp_[ ii ] ) / total_positions_) * std::log(  ((Real) aa_obs_[ ii ] ) / total_positions_ + 1e-5  );
 	}
 	TR << std::endl;
 

@@ -60,6 +60,13 @@ public: // Creation
 	inline
 	PartialAtomID( PartialAtomID const & ) = default;
 
+	/// @brief Assignment operator.
+	inline
+	PartialAtomID &
+	operator=(
+		PartialAtomID const &
+	) = default;
+
 	/// @brief AtomID-like constructor; this ID is fully (not partially) resolved
 	inline
 	PartialAtomID(

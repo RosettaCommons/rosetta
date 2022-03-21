@@ -73,6 +73,10 @@ public: // Creation
 	inline
 	TorsionID( TorsionID const & ) = default;
 
+	/// @brief Assignment operator.
+	inline
+	TorsionID & operator=( TorsionID const & ) = default;
+
 	/// @brief Property constructor
 	inline
 	TorsionID(

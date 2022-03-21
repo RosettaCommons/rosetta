@@ -1100,7 +1100,8 @@ int MotifHits::stat_motifs( MotifHitStats & stats) const {
 	using std::map;
 	using std::pair;
 	using std::make_pair;
-	Real hh=0,he=0,hl=0,ee=0,el=0,ll=0,pp=0,totscore=0,totsqstscore=0,count=0;
+	//Real hh=0,he=0,hl=0,ee=0,el=0,ll=0,pp=0,totscore=0,totsqstscore=0,count=0;
+	Real hh=0,he=0,ee=0,count=0;
 	Reals scores;
 	map<pair<int,int>,Real> pairscores;
 	map<int,Real> resscores;
@@ -1122,20 +1123,20 @@ int MotifHits::stat_motifs( MotifHitStats & stats) const {
 		else                                 score *= 0.50;
 		if ( sm.ss1()==ss1 && sm.ss2()==ss2 ) score *= 1.00;
 		else                                 score *= 0.30;
-		totscore += score;
-		totsqstscore += sqrt(score);
+		//totscore += score;
+		//totsqstscore += sqrt(score);
 		scores.push_back(score);
 		pairscores[make_pair(ir,jr)] += score;
 		resscores [ir        ] += score;
 		resscores [jr+1000000] += score;
 		count += 1.0;
-		if ( (sm.dssp1()=='P' && sm.dssp2()=='P') ) pp += 1.0;
-		else if ( (sm.ss1()=='H' && sm.ss2()=='H') /*|| (sm.ss1()=='H' && sm.ss2()=='H')*/ ) hh += 1.0;
+		//if ( (sm.dssp1()=='P' && sm.dssp2()=='P') ) pp += 1.0;
+		/*else */if ( (sm.ss1()=='H' && sm.ss2()=='H') /*|| (sm.ss1()=='H' && sm.ss2()=='H')*/ ) hh += 1.0;
 		else if ( (sm.ss1()=='H' && sm.ss2()=='E') || (sm.ss1()=='E' && sm.ss2()=='H') ) he += 1.0;
-		else if ( (sm.ss1()=='H' && sm.ss2()=='L') || (sm.ss1()=='L' && sm.ss2()=='H') ) hl += 1.0;
+		//else if ( (sm.ss1()=='H' && sm.ss2()=='L') || (sm.ss1()=='L' && sm.ss2()=='H') ) hl += 1.0;
 		else if ( (sm.ss1()=='E' && sm.ss2()=='E') /*|| (sm.ss1()=='E' && sm.ss2()=='E')*/ ) ee += 1.0;
-		else if ( (sm.ss1()=='E' && sm.ss2()=='L') || (sm.ss1()=='L' && sm.ss2()=='E') ) el += 1.0;
-		else if ( (sm.ss1()=='L' && sm.ss2()=='L') /*|| (sm.ss1()=='L' && sm.ss2()=='L')*/ ) ll += 1.0;
+		//else if ( (sm.ss1()=='E' && sm.ss2()=='L') || (sm.ss1()=='L' && sm.ss2()=='E') ) el += 1.0;
+		//else if ( (sm.ss1()=='L' && sm.ss2()=='L') /*|| (sm.ss1()=='L' && sm.ss2()=='L')*/ ) ll += 1.0;
 		else std::cerr << "BAD SS IN MOTIF " << sm.ss1() << " " << sm.ss2() << endl;
 	}
 
