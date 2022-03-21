@@ -27,6 +27,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/types.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -68,6 +69,11 @@ get_jump_for_resid(
 }
 
 }
+
+JumpForResidue::JumpForResidue( core::Size const resid ):
+	JumpSelector(),
+	selector_( utility::pointer::make_shared< residue_selector::ResidueIndexSelector >( resid ) )
+{}
 
 JumpSelectorOP JumpForResidue::clone() const { return utility::pointer::make_shared< JumpForResidue >(*this); }
 

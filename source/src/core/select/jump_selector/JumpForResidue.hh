@@ -21,6 +21,7 @@
 #include <core/select/jump_selector/JumpSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -43,6 +44,9 @@ public:
 
 	JumpForResidue( JumpForResidue && ) = default;
 	JumpForResidue & operator=( JumpForResidue && ) = default;
+
+	// helpful ctor
+	JumpForResidue( core::Size const resid );
 
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
