@@ -29,6 +29,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
+#include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/annealer/FASTERAnnealer.hh>
@@ -446,7 +448,30 @@ void PackDaemon::calculate_background_energies()
 			background_energies_ += score_function_->weights().dot( emap );
 		}
 
+		for ( auto lr_iter = score_function_->long_range_energies_begin();
+				lr_iter != score_function_->long_range_energies_end();
+				++lr_iter ) {
+			LREnergyContainerCOP lrec = energies.long_range_container( (*lr_iter)->long_range_type() );
+			if ( !lrec || lrec->empty() ) {
+				continue;
+			}
+			for ( ResidueNeighborConstIteratorOP
+					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					(*rni) != (*rniend); ++(*rni) ) {
+
+				core::Size jj = rni->upper_neighbor_id();
+				if ( task_->being_packed( jj ) ) {
+					continue;
+				}
+				EnergyMap emap;
+				rni->retrieve_energy(emap);
+				background_energies_ += score_function_->weights().dot( emap );
+			}
+		}
 	}
+
+	// NOTE: Whole structure energies are not accummulated here. Should they be?
 }
 
 DaemonSet::DaemonSet() :
