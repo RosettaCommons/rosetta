@@ -49,7 +49,8 @@ public:
 	/// @brief test that we select all the residues in trpcage
 	void test_chain_selector_chain_A_select_all() {
 		ChainSelectorOP chain_rs( new ChainSelector );
-		utility::vector1< std::string > chain_strings; chain_strings.push_back( "A" );
+		utility::vector1< std::string > chain_strings;
+		chain_strings.push_back( "A" );
 		chain_rs->set_chain_strings( chain_strings );
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
@@ -76,6 +77,18 @@ public:
 		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
 			TS_ASSERT( subset[ ii ] == ( ii <= 10 ) );
 		}
+
+		utility::vector1< core::Size > const positions = chain_rs->selection_positions( trpcage );
+		for ( core::Size ii = 1; ii <= trpcage.size(); ++ii ) {
+			auto const iter = std::find( positions.begin(), positions.end(), ii );
+			bool const present = ( iter != positions.end() );
+			if ( ii <= 10 ) {
+				TS_ASSERT( present );
+			} else {
+				TS_ASSERT( ! present );
+			}
+		}
+
 	}
 
 	/// @brief hack trpcage to set half its residues to chain B

@@ -13,6 +13,7 @@
 
 // Unit headers
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
@@ -44,6 +45,12 @@ void ResidueSelector::parse_my_tag(
 void
 ResidueSelector::provide_citation_info(basic::citation_manager::CitationCollectionList & ) const {
 	// do nothing
+}
+
+/// @brief Calls apply and returns the Rosetta numbering corresponding to the selected residues
+utility::vector1< core::Size >
+ResidueSelector::selection_positions( core::pose::Pose const & pose ) const {
+	return residue_selector::selection_positions( apply( pose ) );
 }
 
 } //namespace residue_selector

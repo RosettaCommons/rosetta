@@ -19,6 +19,7 @@
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -76,6 +77,10 @@ public:
 	virtual
 	std::string
 	get_name() const = 0;
+
+	/// @brief Calls apply and returns the Rosetta numbering corresponding to the selected residues
+	utility::vector1< core::Size >
+	selection_positions( core::pose::Pose const & pose ) const;
 
 public: //Functions needed for the citation manager
 

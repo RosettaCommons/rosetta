@@ -72,6 +72,10 @@ public:
 			TS_ASSERT( sele.size() == 2 );
 			TS_ASSERT( sele[ 1 ] );
 			TS_ASSERT( not sele[ 2 ] );
+
+			utility::vector1< core::Size > jumps = js.selection_jumps( three_chains );
+			TS_ASSERT_EQUALS( jumps.size(), 1 );
+			TS_ASSERT_EQUALS( jumps.front(), 1 );
 		}
 
 		{ //select chain 3
@@ -82,6 +86,10 @@ public:
 			TS_ASSERT( sele.size() == 2 );
 			TS_ASSERT( not sele[ 1 ] );
 			TS_ASSERT( sele[ 2 ] );
+
+			utility::vector1< core::Size > jumps = js.selection_jumps( three_chains );
+			TS_ASSERT_EQUALS( jumps.size(), 1 );
+			TS_ASSERT_EQUALS( jumps.front(), 2 );
 		}
 
 		/*{ //select chain 4
@@ -118,6 +126,11 @@ public:
 			TS_ASSERT( sele.size() == 2 );
 			TS_ASSERT( sele[ 1 ] );
 			TS_ASSERT( sele[ 2 ] );
+
+			utility::vector1< core::Size > jumps = js.selection_jumps( three_chains );
+			TS_ASSERT_EQUALS( jumps.size(), 2 );
+			TS_ASSERT_EQUALS( jumps.front(), 1 );
+			TS_ASSERT_EQUALS( jumps.back(), 2 );
 		}
 
 		// OTHER

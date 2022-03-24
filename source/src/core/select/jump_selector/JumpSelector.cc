@@ -13,6 +13,7 @@
 
 // Unit headers
 #include <core/select/jump_selector/JumpSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
@@ -32,6 +33,12 @@ void JumpSelector::parse_my_tag(
 	basic::datacache::DataMap &
 )
 {}
+
+/// @brief Calls apply and returns a vector of the selected jump ids
+utility::vector1< core::Size >
+JumpSelector::selection_jumps( pose::Pose const & pose ) const {
+	return residue_selector::selection_positions( apply( pose ) );
+}
 
 } //namespace jump_selector
 } //namespace select

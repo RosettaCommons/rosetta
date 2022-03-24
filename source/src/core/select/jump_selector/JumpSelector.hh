@@ -19,6 +19,7 @@
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -70,6 +71,10 @@ public:
 	virtual
 	std::string
 	get_name() const = 0;
+
+	/// @brief Calls apply and returns a vector of the selected jump ids
+	utility::vector1< core::Size >
+	selection_jumps( core::pose::Pose const & pose ) const;
 
 };
 
