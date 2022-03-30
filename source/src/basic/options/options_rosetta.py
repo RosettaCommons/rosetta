@@ -2754,6 +2754,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'dun_normsd', 'Boolean', desc="Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians", default="false" ),
 			Option( 'dun_entropy_correction', 'Boolean', desc="Add Shannon entropy correction to rotamer energy: E = -logP + S", default="false" ),
 			Option( 'no_autogen_cart_improper', 'Boolean', desc="Ignore the auto parameter generation of improper torsions (undefined torsions) in CartesianBondedEnergy, generate_impropers_map_res."),
+                        Option( 'gridscore_outbox_penalty_weight', 'Real', desc = "The weight of the out-of-box penalty in gridscorer, i.e. out_of_bound_e_", default="100"),
 		), #-corrections:score
 
 		Option_Group( 'chemical',

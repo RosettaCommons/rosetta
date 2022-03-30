@@ -4,3 +4,4 @@
 -crystal_refine
 -in::file::load_PDB_components false
 -extra_res_fa inputs/LG.params
+-out:levels protocols.ligand_docking.GALigandDock.GAOptimizer:500

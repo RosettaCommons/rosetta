@@ -109,7 +109,7 @@
 
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
 
 // option key includes
@@ -1722,7 +1722,7 @@ SimpleCycpepPredictApplication::run() const {
 		}
 
 		//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
-		protocols::cyclic_peptide::DeclareBondOP termini( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
+		protocols::simple_moves::DeclareBondOP termini( utility::pointer::make_shared< protocols::simple_moves::DeclareBond >() );
 		set_up_cyclization_mover( termini, pose ); //Handles the cyclization appropriately, contingent on the cyclization type.
 		termini->apply(*pose);
 
@@ -2149,7 +2149,7 @@ SimpleCycpepPredictApplication::do_final_fastrelax(
 	}
 
 	//Mover to update terminal peptide bond O and H atoms:
-	protocols::cyclic_peptide::DeclareBondOP final_termini( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
+	protocols::simple_moves::DeclareBondOP final_termini( utility::pointer::make_shared< protocols::simple_moves::DeclareBond >() );
 	set_up_cyclization_mover( final_termini, pose );
 
 	(*sfxn)(*pose);
@@ -2380,7 +2380,7 @@ SimpleCycpepPredictApplication::read_sequence (
 /// atoms dependent on the amide bond.
 void
 SimpleCycpepPredictApplication::set_up_n_to_c_cyclization_mover (
-	protocols::cyclic_peptide::DeclareBondOP termini,
+	protocols::simple_moves::DeclareBondOP termini,
 	core::pose::PoseCOP pose,
 	bool const native,
 	core::Size const last_res
@@ -2407,7 +2407,7 @@ SimpleCycpepPredictApplication::set_up_n_to_c_cyclization_mover (
 ///
 void
 SimpleCycpepPredictApplication::set_up_terminal_disulfide_cyclization_mover (
-	protocols::cyclic_peptide::DeclareBondOP termini,
+	protocols::simple_moves::DeclareBondOP termini,
 	core::pose::PoseCOP pose,
 	bool const native,
 	core::Size const last_disulf_res,
@@ -2432,7 +2432,7 @@ SimpleCycpepPredictApplication::set_up_terminal_disulfide_cyclization_mover (
 /// @brief Set up the mover that creates N-terminal isopeptide bonds.
 void
 SimpleCycpepPredictApplication::set_up_nterm_isopeptide_cyclization_mover(
-	protocols::cyclic_peptide::DeclareBondOP termini,
+	protocols::simple_moves::DeclareBondOP termini,
 	core::pose::PoseCOP pose
 ) const {
 	debug_assert(termini); //Should already exist.
@@ -2455,7 +2455,7 @@ SimpleCycpepPredictApplication::set_up_nterm_isopeptide_cyclization_mover(
 /// @brief Set up the mover that creates C-terminal isopeptide bonds.
 void
 SimpleCycpepPredictApplication::set_up_cterm_isopeptide_cyclization_mover(
-	protocols::cyclic_peptide::DeclareBondOP termini,
+	protocols::simple_moves::DeclareBondOP termini,
 	core::pose::PoseCOP pose
 ) const {
 	debug_assert(termini); //Should already exist.
@@ -2478,7 +2478,7 @@ SimpleCycpepPredictApplication::set_up_cterm_isopeptide_cyclization_mover(
 /// @brief Set up the mover that creates sidechain isopeptide bonds.
 void
 SimpleCycpepPredictApplication::set_up_sidechain_isopeptide_cyclization_mover(
-	protocols::cyclic_peptide::DeclareBondOP termini,
+	protocols::simple_moves::DeclareBondOP termini,
 	core::pose::PoseCOP pose
 ) const {
 	debug_assert(termini); //Should already exist.
@@ -2507,7 +2507,7 @@ SimpleCycpepPredictApplication::set_up_sidechain_isopeptide_cyclization_mover(
 /// @brief Set up the mover that creates thioether lariat bonds.
 void
 SimpleCycpepPredictApplication::set_up_thioether_lariat_cyclization_mover(
-	protocols::cyclic_peptide::DeclareBondOP termini,
+	protocols::simple_moves::DeclareBondOP termini,
 	core::pose::PoseCOP pose
 ) const {
 	debug_assert(termini); //Should already exist.
@@ -2537,7 +2537,7 @@ SimpleCycpepPredictApplication::set_up_thioether_lariat_cyclization_mover(
 /// atoms are involved in the cyclization.  (Handles different cyclization modes).
 void
 SimpleCycpepPredictApplication::set_up_cyclization_mover (
-	protocols::cyclic_peptide::DeclareBondOP termini,
+	protocols::simple_moves::DeclareBondOP termini,
 	core::pose::PoseCOP pose,
 	bool const native, /*=false*/
 	core::Size const last_res, /*=0*/
@@ -2672,7 +2672,7 @@ SimpleCycpepPredictApplication::set_up_native (
 	}
 
 	//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
-	protocols::cyclic_peptide::DeclareBondOP termini( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
+	protocols::simple_moves::DeclareBondOP termini( utility::pointer::make_shared< protocols::simple_moves::DeclareBond >() );
 	set_up_cyclization_mover( termini, native_pose, true, last_res );
 	termini->apply(*native_pose);
 }
@@ -3419,7 +3419,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	protocols::rosetta_scripts::ParsedProtocolOP pp( utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >() );
 
 	//Update O and H atoms at the cyclization point:
-	protocols::cyclic_peptide::DeclareBondOP update_OH( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
+	protocols::simple_moves::DeclareBondOP update_OH( utility::pointer::make_shared< protocols::simple_moves::DeclareBond >() );
 	set_up_cyclization_mover( update_OH, pose );
 	if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ) {
 		pp->add_step( update_OH, "Update_cyclization_point_polymer_dependent_atoms_1", nullptr );
@@ -4354,7 +4354,7 @@ SimpleCycpepPredictApplication::depermute (
 	}
 
 	//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
-	protocols::cyclic_peptide::DeclareBondOP termini( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
+	protocols::simple_moves::DeclareBondOP termini( utility::pointer::make_shared< protocols::simple_moves::DeclareBond >() );
 	set_up_cyclization_mover( termini, newpose );
 	termini->apply(*newpose);
 

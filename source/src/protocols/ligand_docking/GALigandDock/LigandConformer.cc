@@ -28,6 +28,8 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/random_xyz.hh>
 #include <numeric/conversions.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/RamaPrePro.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/types.hh>
@@ -108,7 +110,6 @@ LigandConformer::initialize(
 	for ( auto ligid : ligids ) {
 		ligand_typenames_.push_back( pose->residue_type(ligid).name() );
 	}
-
 	update_conf( pose );
 
 	core::pose::PoseOP ref_pose_ligand ( new core::pose::Pose );
@@ -178,6 +179,7 @@ LigandConformer::update_conf( core::pose::PoseCOP pose ) {
 	AtomID atid1, atid2, atid3, atid4;
 	for ( core::Size i : ligids_ ) {
 		core::conformation::Residue const & ligres = pose->residue(i);
+		ligid_restype_map_[i] = ligres.type_ptr();
 		for ( core::Size r=1; r<=2; ++r ) {
 			if ( freeze_ligand_backbone_ && r == 1 ) continue;
 			core::Size const n_torsions( r==1 ?ligres.mainchain_atoms().size() : ligres.nchi() );
@@ -489,9 +491,26 @@ LigandConformer::randomize( core::Real transmax ) {
 	}
 
 	// ligand chis
+	core::scoring::RamaPrePro const& rama_prepro( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
 	core::Size nligchi = ligandchis_.size();
 	for ( core::Size j=1; j<=nligchi; ++j ) {
+		core::id::TorsionID const& torid=ligandtorsionids_[j];
 		core::Real angle_j = 360.0 * numeric::random::rg().uniform();
+		core::Size ligid = torid.rsd();
+		core::chemical::ResidueTypeCOP restype( ligid_restype_map_[ligid] );
+		if ( torid.type() == core::id::BB && torid.torsion() == core::id::phi_torsion && ligid_restype_map_.count(ligid+1) > 0 ) {
+			utility::vector1 < core::Real > torsions;
+			rama_prepro.random_mainchain_torsions(ref_pose_->conformation(), restype, ligid_restype_map_[ligid+1], torsions);
+			ligandchis_[j] = torsions[1];
+			j++;
+			ligandchis_[j] = torsions[2];
+			continue;
+		}
+		// a quick fix for omega torsion, set them to trans
+		if ( torid.type() == core::id::BB && torid.torsion() == core::id::omega_torsion ) {
+			ligandchis_[j] = 180.0;
+			continue;
+		}
 		ligandchis_[j] = angle_j;
 	}
 
@@ -499,7 +518,7 @@ LigandConformer::randomize( core::Real transmax ) {
 
 	// ligand nus
 	// load ring confs
-	if ( sample_ring_conformers_ && ligids_.size() > 1 ) {
+	if ( sample_ring_conformers_ && ligids_.size() == 1 ) {
 		core::chemical::ResidueType const &ligrt = ref_pose_->residue(ligids_[1]).type();
 		core::Size const n_rings( ligrt.n_rings() );
 		core::Size offset = 0;
@@ -555,7 +574,7 @@ LigandConformer::sample_conformation(
 
 	// ligand nus
 	// load ring confs
-	if ( sample_ring_conformers_ ) {
+	if ( sample_ring_conformers_ && ligids_.size() == 1 ) {
 		core::chemical::ResidueType const &ligrt = ref_pose_->residue(ligids_[1]).type();
 		core::Size const n_rings( ligrt.n_rings() );
 		core::Size offset = 0;

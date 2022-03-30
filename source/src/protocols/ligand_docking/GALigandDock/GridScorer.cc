@@ -51,6 +51,7 @@
 
 #include <basic/options/option.hh> // HACK
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
@@ -262,6 +263,9 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	hash_grid_ = 6.0;
 	hash_subgrid_ = 1;
 	out_of_bound_e_ = 100.0;
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::gridscore_outbox_penalty_weight ].user() ) {
+		out_of_bound_e_ = basic::options::option[ basic::options::OptionKeys::corrections::score::gridscore_outbox_penalty_weight ]();
+	}
 
 	maxdis_ = 0; // initialized in build_grid
 

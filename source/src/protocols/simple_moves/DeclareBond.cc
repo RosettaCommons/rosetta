@@ -12,8 +12,8 @@
 /// @author Yifan Song
 /// @author Modified by Vikram K. Mulligan (vmullig@uw.edu)
 
-#include <protocols/cyclic_peptide/DeclareBond.hh>
-#include <protocols/cyclic_peptide/DeclareBondCreator.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBondCreator.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
@@ -41,10 +41,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
+static basic::Tracer TR( "protocols.simple_moves.DeclareBond" );
 
 namespace protocols {
-namespace cyclic_peptide {
+namespace simple_moves {
 
 namespace {
 ///@brief run the residue selector on the pose, assert that only one residue is selected, return the resid for that selected residue

@@ -103,7 +103,6 @@
 #include <protocols/cyclic_peptide/CrosslinkerMoverCreator.hh>
 #include <protocols/cyclic_peptide/CycpepRigidBodyPermutationMoverCreator.hh>
 #include <protocols/cyclic_peptide/PeptideCyclizeMoverCreator.hh>
-#include <protocols/cyclic_peptide/DeclareBondCreator.hh>
 #include <protocols/cyclic_peptide/PeptideStubMoverCreator.hh>
 #include <protocols/cyclic_peptide/SymmetricCycpepAlignCreator.hh>
 #include <protocols/cyclic_peptide/TryDisulfPermutationsCreator.hh>
@@ -549,6 +548,7 @@
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
 #include <protocols/calc_taskop_movers/CreateSequenceMotifMoverCreator.hh>
 #include <protocols/simple_ddg/ddGCreator.hh>
+#include <protocols/simple_moves/DeclareBondCreator.hh>
 #include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>

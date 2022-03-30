@@ -312,6 +312,7 @@ private:
 	utility::vector1< core::Real > ligandchis_;
 	utility::vector1< TorsionType > ligandchi_types_;
 	utility::vector1< core::id::TorsionID > ligandtorsionids_;
+	std::map< core::Size, core::chemical::ResidueTypeCOP > ligid_restype_map_;
 	utility::vector1< core::Real > ligandnus_;    // ring torsions
 	utility::vector1< core::Real > ligandtaus_; // ring angles
 

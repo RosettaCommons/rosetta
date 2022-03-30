@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/cyclic_peptide/DeclareBond.fwd.hh
+/// @file   protocols/simple_moves/DeclareBond.fwd.hh
 /// @brief  Defines owning pointers for DeclareBond mover class.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
-#ifndef INCLUDED_protocols_cyclic_peptide_DeclareBond_fwd_hh
-#define INCLUDED_protocols_cyclic_peptide_DeclareBond_fwd_hh
+#ifndef INCLUDED_protocols_simple_moves_DeclareBond_fwd_hh
+#define INCLUDED_protocols_simple_moves_DeclareBond_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
 namespace protocols {
-namespace cyclic_peptide {
+namespace simple_moves {
 
 class DeclareBond; // fwd declaration
 typedef utility::pointer::shared_ptr< DeclareBond > DeclareBondOP;
@@ -26,7 +26,7 @@ typedef utility::pointer::shared_ptr< DeclareBond const > DeclareBondCOP;
 typedef utility::vector1<DeclareBondOP> DeclareBondOPs;
 typedef utility::vector1<DeclareBondCOP> DeclareBondCOPs;
 
-} // namespace cyclic_peptide
+} // namespace simple_moves
 } // namespace protocols
 
-#endif // INCLUDED_protocols_cyclic_peptide_DeclareBond_fwd_hh
+#endif // INCLUDED_protocols_simple_moves_DeclareBond_fwd_hh

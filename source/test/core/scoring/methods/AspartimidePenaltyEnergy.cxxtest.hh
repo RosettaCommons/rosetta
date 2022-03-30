@@ -28,7 +28,7 @@
 
 
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 
 //Auto Headers
 
@@ -65,7 +65,7 @@ public:
 		// Set up test pose and cyclize
 		core::pose::Pose pose;
 		make_pose_from_sequence( pose, "AAAAAAAA", "fa_standard");
-		protocols::cyclic_peptide::DeclareBond connect_ends;
+		protocols::simple_moves::DeclareBond connect_ends;
 		connect_ends.set( 8, "C", 1, "N", false );
 		connect_ends.apply(pose);
 

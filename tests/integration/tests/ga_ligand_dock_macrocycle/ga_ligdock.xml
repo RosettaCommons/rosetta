@@ -1,0 +1,25 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="dockscore" weights="beta_cart">
+      <Reweight scoretype="fa_rep" weight="0.2"/>
+    </ScoreFunction>
+    <ScoreFunction name="relaxscore" weights="beta_cart"/>
+  </SCOREFXNS>
+
+  <TASKOPERATIONS>
+  </TASKOPERATIONS>
+
+  <FILTERS>
+  </FILTERS>
+
+  <MOVERS>
+    <GALigandDock name="dock" scorefxn="dockscore" scorefxn_relax="relaxscore" runmode="dockrigid" macrocycle_ligand="1" freeze_ligand_backbone="1" >
+      <Stage repeats="4" npool="4" pmut="0.2" smoothing="0.375" rmsdthreshold="1.5" maxiter="50" pack_cycles="100" ramp_schedule="0.1,1.0"/>
+    </GALigandDock>
+  </MOVERS>
+
+  <PROTOCOLS>
+    <Add mover="dock"/>
+  </PROTOCOLS>
+  <OUTPUT scorefxn="relaxscore"/>
+</ROSETTASCRIPTS>

@@ -193,6 +193,11 @@ private:
 		OutputStructureStore &outputs );
 
 	void
+	eval_docked_pose_helper( core::pose::Pose &pose,
+		utility::vector1< core::Size > const& lig_ids,
+		utility::vector1< core::Size > &movable_scs );
+
+	void
 	eval_docked_pose( core::pose::Pose &pose,
 		utility::vector1< core::Size > const& lig_ids );
 
@@ -307,6 +312,15 @@ private:
 	get_ligand_resids(core::pose::Pose const &pose,
 		utility::vector1 < core::Size >& lig_resids) const;
 
+	core::pose::PoseOP
+	replace_ligand(core::pose::Pose pose_complex, core::pose::Pose& pose_ligand, bool align=true) const;
+
+	void
+	add_macrocycle_constraints(
+		core::pose::Pose &pose,
+		utility::vector1< core::Size > const &ligids
+	) const;
+
 private:
 	core::scoring::ScoreFunctionOP scfxn_; // scorefunction to be used in docking
 	core::scoring::ScoreFunctionOP scfxn_relax_; // scorefunction to be used in relax
@@ -339,6 +353,7 @@ private:
 	TorsionSampler torsion_sampler_;
 	core::Real contact_distance_;
 	bool freeze_ligand_backbone_ = false;
+	bool macrocycle_ligand_;
 
 	std::string final_exact_minimize_; // do the last iteration exactly?
 	bool cartmin_lig_, min_neighbor_;  // more final relax properties
@@ -374,6 +389,7 @@ private:
 
 	// handle multiple ligand types for virtual screening
 	utility::vector1< std::string > multiple_ligands_;
+	utility::vector1< std::string > ligand_file_list_;
 
 	// atom ids to align back to reference after updates
 	utility::vector1< core::id::AtomID > align_reference_atom_ids_;

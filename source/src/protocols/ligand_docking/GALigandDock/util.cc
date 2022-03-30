@@ -15,10 +15,23 @@
 #include <protocols/ligand_docking/GALigandDock/util.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/extra_pose_info_util.hh>
 #include <core/conformation/Residue.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/rms_util.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/optimization/CartesianMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
 //#include <utility/graph/Graph.hh>
 
 #include <core/types.hh>
@@ -31,7 +44,7 @@ namespace ga_ligand_dock {
 
 using namespace core;
 
-static basic::Tracer TR( "protocols.ligand_docking.GALigandDock" );
+static basic::Tracer TR( "protocols.ligand_docking.GALigandDock.util" );
 
 core::Size
 count_neighbors_on_coord( core::pose::Pose const &pose,
@@ -163,6 +176,69 @@ get_atomic_contacting_sidechains(
 	} // ires
 
 	return contact_scs;
+}
+
+void
+constraint_relax( core::pose::Pose &pose,
+	utility::vector1< core::Size > const &ligids,
+	utility::vector1< core::Size > const &movable_scs
+) {
+	core::pose::Pose pose0(pose); //copy input pose for rmsd calculation
+	core::scoring::ScoreFunctionOP scfxn = core::scoring::get_score_function();
+	core::Real w_cart = (*scfxn)[core::scoring::cart_bonded];
+	if ( w_cart<1.0e-5 ) {
+		scfxn->set_weight(core::scoring::cart_bonded, 0.5);
+		scfxn->set_weight(core::scoring::pro_close, 0.0);
+	}
+	core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
+	mm->set_bb(false); mm->set_chi(false); mm->set_jump(false);
+	for ( core::Size i=1; i<=movable_scs.size(); ++i ) {
+		mm->set_chi(movable_scs[i], true);
+	}
+	for ( core::Size i=1; i<=ligids.size(); ++i ) {
+		mm->set_chi(ligids[i], true);
+		mm->set_bb(ligids[i], true);
+	}
+
+	pose.remove_constraints();
+	core::id::AtomID anchorid( 1, pose.fold_tree().root() );
+	for ( core::Size ires = 1; ires <= movable_scs.size(); ++ires ) {
+		for ( core::Size iatm = 1; iatm <= pose.residue(ires).natoms(); ++iatm ) {
+			core::id::AtomID atomid( iatm, ires );
+			core::Vector const &xyz = pose.xyz( atomid );
+			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+			pose.add_constraint( core::scoring::constraints::ConstraintCOP
+				( core::scoring::constraints::ConstraintOP
+				( new core::scoring::constraints::CoordinateConstraint( atomid, anchorid, xyz, fx ) )));
+		}
+	}
+
+	for ( core::Size ires = 1; ires <= ligids.size(); ++ires ) {
+		for ( core::Size iatm = 1; iatm <= pose.residue(ires).natoms(); ++iatm ) {
+			core::id::AtomID atomid( iatm, ires );
+			core::Vector const &xyz = pose.xyz( atomid );
+			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+			pose.add_constraint( core::scoring::constraints::ConstraintCOP
+				( core::scoring::constraints::ConstraintOP
+				( new core::scoring::constraints::CoordinateConstraint( atomid, anchorid, xyz, fx ) )));
+		}
+	}
+
+	core::optimization::CartesianMinimizer minimizer;
+	core::optimization::MinimizerOptions options("lbfgs_armijo", 0.0001, true, false);
+	options.max_iter(50);
+	minimizer.run(pose, *mm, *scfxn, options);
+
+	core::Real rms_scs = core::scoring::all_atom_rmsd_nosuper( pose0, pose,
+		movable_scs, movable_scs );
+	core::Real rms_lig = core::scoring::all_atom_rmsd_nosuper( pose0, pose,
+		ligids, ligids );
+	core::pose::setPoseExtraScore( pose, "cst_rms_scs", rms_scs );
+	core::pose::setPoseExtraScore( pose, "cst_rms_lig", rms_lig );
+	if ( TR.Debug.visible() ) {
+		TR << "After minimization, sidechain rms: " << rms_scs << ", " << "ligand rms: " << rms_lig << std::endl;
+	}
+
 }
 
 } // ga_dock

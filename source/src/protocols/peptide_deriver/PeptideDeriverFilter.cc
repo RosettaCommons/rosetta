@@ -52,7 +52,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/cyclic_peptide/PeptideCyclizeMover.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -896,7 +896,7 @@ PeptideDeriverFilter::generate_N2C_cyclic_peptide_protein_complex(core::pose::Po
 	N2C_minimizer.apply( *pose_for_N2C_cyclization );
 	// additional bond declaration to correct the position of the amide proton and the carboxyl oxygen,
 	// as the N-ter phi and C-ter psi are not sampled during minimization
-	protocols::cyclic_peptide::DeclareBondOP declare_N2C_bond ( new protocols::cyclic_peptide::DeclareBond() );
+	protocols::simple_moves::DeclareBondOP declare_N2C_bond ( new protocols::simple_moves::DeclareBond() );
 	declare_N2C_bond->set(pep_nter_idx,"N",pep_cter_idx,"C",false /*add_termini*/,false /*run KIC*/, 0 /*KIC res1 */, 0 /*KIC res2*/, false /*rebuild_fold_tree*/);
 	declare_N2C_bond->apply(*pose_for_N2C_cyclization);
 	return pose_for_N2C_cyclization;

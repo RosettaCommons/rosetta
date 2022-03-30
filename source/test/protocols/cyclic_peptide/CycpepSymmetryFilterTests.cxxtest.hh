@@ -19,7 +19,7 @@
 #include <protocols/cyclic_peptide/CycpepSymmetryFilter.hh>
 
 // Protocols Headers
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 
 // Core Headers
 #include <core/pose/Pose.fwd.hh>
@@ -45,12 +45,12 @@ public:
 		c2m_symm_peptide_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/c2m_symm.pdb", false, core::import_pose::PDB_file);
 		c4m_bad_peptide_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/c4m_bad.pdb", false, core::import_pose::PDB_file);
 
-		protocols::cyclic_peptide::DeclareBond bond;
+		protocols::simple_moves::DeclareBond bond;
 		bond.set( 8, "C", 1, "N", false );
 		bond.apply( *asymm_peptide_ );
 		bond.apply( *c2_symm_peptide_ );
 		bond.apply( *c2m_symm_peptide_ );
-		protocols::cyclic_peptide::DeclareBond bond2;
+		protocols::simple_moves::DeclareBond bond2;
 		bond2.set( 12, "C", 1, "N", false );
 		bond2.apply( *c4m_bad_peptide_ );
 

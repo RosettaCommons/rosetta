@@ -29,7 +29,7 @@
 // Protocols Headers
 #include <protocols/cyclic_peptide/SymmetricCycpepAlign.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
@@ -53,7 +53,7 @@ public:
 	void test_basic_and_symmetric_scoring() {
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "core/pack/guidance_scoreterms/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
-		protocols::cyclic_peptide::DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
 		decbond.apply(pose);
 		pose.update_residue_neighbors();
@@ -78,7 +78,7 @@ public:
 		protocols::symmetry::SetupForSymmetryMover setupsymm;
 		setupsymm.process_symmdef_file( "core/pack/guidance_scoreterms/hbnet_energy/S4.symm" );
 		setupsymm.apply(pose2);
-		protocols::cyclic_peptide::DeclareBond decbond2;
+		protocols::simple_moves::DeclareBond decbond2;
 		decbond2.set( 24, "C", 1, "N", false, false, 0, 0, false );
 		decbond2.apply(pose2);
 		pose2.update_residue_neighbors();
@@ -97,7 +97,7 @@ public:
 	void test_quadratic_scoring() {
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "core/pack/guidance_scoreterms/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
-		protocols::cyclic_peptide::DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
 		decbond.apply(pose);
 		pose.update_residue_neighbors();
@@ -119,7 +119,7 @@ public:
 	void test_max_network_size() {
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "core/pack/guidance_scoreterms/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
-		protocols::cyclic_peptide::DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
 		decbond.apply(pose);
 		pose.update_residue_neighbors();
@@ -147,7 +147,7 @@ public:
 	void test_linear_scoring() {
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "core/pack/guidance_scoreterms/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
-		protocols::cyclic_peptide::DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
 		decbond.apply(pose);
 		pose.update_residue_neighbors();
@@ -169,7 +169,7 @@ public:
 	void test_log_scoring() {
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "core/pack/guidance_scoreterms/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
-		protocols::cyclic_peptide::DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
 		decbond.apply(pose);
 		pose.update_residue_neighbors();
@@ -192,7 +192,7 @@ public:
 	void test_sqrt_scoring() {
 		core::pose::Pose pose;
 		core::import_pose::pose_from_file( pose, "core/pack/guidance_scoreterms/hbnet_energy/hbnet_energy_test1.pdb", false, core::import_pose::PDB_file );
-		protocols::cyclic_peptide::DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( pose.total_residue(), "C", 1, "N", false, false, 0, 0, false );
 		decbond.apply(pose);
 		pose.update_residue_neighbors();

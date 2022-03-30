@@ -32,7 +32,7 @@
 #include <core/chemical/AA.hh>
 
 // Protocols headers
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraint.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
@@ -118,7 +118,7 @@ TMA_Helper::add_linker_bonds_asymmetric(
 	runtime_assert( res_indices.size() == 3 );
 
 	//Declare covalent bonds:
-	protocols::cyclic_peptide::DeclareBond bond1, bond2, bond3;
+	protocols::simple_moves::DeclareBond bond1, bond2, bond3;
 	bond1.set( linker_index, "CM1", res_indices[1], get_sidechain_amide_name( pose.residue_type(res_indices[1]) ), false );
 	bond2.set( linker_index, "CM2", res_indices[2], get_sidechain_amide_name( pose.residue_type(res_indices[2]) ), false );
 	bond3.set( linker_index, "CM3", res_indices[3], get_sidechain_amide_name( pose.residue_type(res_indices[3]) ), false );
@@ -197,7 +197,7 @@ TMA_Helper::add_linker_bonds_symmetric(
 		symm_count() == 3 && symm_type() == 'C',
 		"Error in Error in protocols::cyclic_peptide::TMA_Helper::add_linker_bonds_symmetric(): TMA requires a C3-symmetric pose."
 	);
-	protocols::cyclic_peptide::DeclareBond bond1, bond2;
+	protocols::simple_moves::DeclareBond bond1, bond2;
 	bond1.set( res1, get_sidechain_amide_name(pose.residue_type(res1)), linker_index1, "CM1", false );
 	bond2.set( linker_index2, "C1", linker_index1, "C2", false );
 	bond1.apply(pose);

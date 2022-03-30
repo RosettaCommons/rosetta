@@ -37,7 +37,7 @@
 #include <core/types.hh>
 
 // Project Headers
-#include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
+#include <protocols/simple_moves/DeclareBond.fwd.hh>
 #include <protocols/filters/BasicFilters.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/Ramachandran.hh>

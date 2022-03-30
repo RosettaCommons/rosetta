@@ -26,7 +26,7 @@
 
 // Protocols Headers (for convenience)
 #include <protocols/cyclic_peptide/PeptideStubMover.hh> //To build peptides easily
-#include <protocols/cyclic_peptide/DeclareBond.hh> //Quick and dirty way to correct termini variants.
+#include <protocols/simple_moves/DeclareBond.hh> //Quick and dirty way to correct termini variants.
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
@@ -63,7 +63,7 @@ public:
 			builder1.add_residue( "Append", "ALA", 2, false, "", 0, 1, nullptr, "" );
 			builder1.add_residue( "Append", "ALA", 3, false, "", 0, 2, nullptr, "" );
 			builder1.apply(pose1);
-			protocols::cyclic_peptide::DeclareBond fix_termini;
+			protocols::simple_moves::DeclareBond fix_termini;
 			fix_termini.set( 1, "C", 2, "N", true );
 			fix_termini.apply(pose1);
 		}
@@ -73,7 +73,7 @@ public:
 			builder2.add_residue( "Append", "ALA", 2, false, "", 0, 1, nullptr, "" );
 			builder2.add_residue( "Append", "GLU:SidechainConjugation", 3, false, "CD", 0, 1, nullptr, "N" );
 			builder2.apply(pose2);
-			protocols::cyclic_peptide::DeclareBond fix_termini;
+			protocols::simple_moves::DeclareBond fix_termini;
 			fix_termini.set( 1, "C", 2, "N", true );
 			fix_termini.apply(pose2);
 		}
@@ -110,7 +110,7 @@ public:
 			builder1.add_residue( "Append", "ALA", 2, false, "", 0, 1, nullptr, "" );
 			builder1.add_residue( "Append", "ALA", 3, false, "", 0, 2, nullptr, "" );
 			builder1.apply(pose1);
-			protocols::cyclic_peptide::DeclareBond fix_termini;
+			protocols::simple_moves::DeclareBond fix_termini;
 			fix_termini.set( 1, "C", 2, "N", true );
 			fix_termini.apply(pose1);
 		}
@@ -120,7 +120,7 @@ public:
 			builder2.add_residue( "Append", "ALA", 2, false, "", 0, 1, nullptr, "" );
 			builder2.add_residue( "Append", "DPP:SidechainConjugation", 3, false, "NG", 0, 2, nullptr, "C" );
 			builder2.apply(pose2);
-			protocols::cyclic_peptide::DeclareBond fix_termini;
+			protocols::simple_moves::DeclareBond fix_termini;
 			fix_termini.set( 1, "C", 2, "N", true );
 			fix_termini.apply(pose2);
 		}

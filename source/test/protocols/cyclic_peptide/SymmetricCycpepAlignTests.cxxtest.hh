@@ -18,7 +18,7 @@
 
 // Project Headers
 #include <protocols/cyclic_peptide/SymmetricCycpepAlign.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // Core Headers
@@ -44,13 +44,13 @@ public:
 		core_init_with_additional_options("-write_all_connect_info -extra_res_fa crosslinker/1.3.5_trisbromomethylbenzene.params sidechain_conjugation/CYX.params");
 
 		core::pose::PoseOP pose_asymm( core::import_pose::pose_from_file( "protocols/cyclic_peptide/asymm.pdb", false, core::import_pose::PDB_file) );
-		protocols::cyclic_peptide::DeclareBond bond0;
+		protocols::simple_moves::DeclareBond bond0;
 		bond0.set( 8, "C", 1, "N", false );
 		bond0.apply( *pose_asymm );
 		pose_asymm_ = pose_asymm;
 
 		core::pose::PoseOP pose_c4m( core::import_pose::pose_from_file( "protocols/cyclic_peptide/c4m_symm.pdb", false, core::import_pose::PDB_file) );
-		protocols::cyclic_peptide::DeclareBond bond1;
+		protocols::simple_moves::DeclareBond bond1;
 		bond1.set( 20, "C", 1, "N", false );
 		bond1.apply( *pose_c4m );
 		pose_c4m_ = pose_c4m;
@@ -60,7 +60,7 @@ public:
 		mut1.apply( *pose_c3_tbmb );
 		mut2.apply( *pose_c3_tbmb );
 		mut3.apply( *pose_c3_tbmb );
-		protocols::cyclic_peptide::DeclareBond bond2, bond3, bond4, bond5;
+		protocols::simple_moves::DeclareBond bond2, bond3, bond4, bond5;
 		bond2.set( 18, "C", 1, "N", false );
 		bond3.set( 10, "SG", 19, "CM1", false );
 		bond4.set( 16, "SG", 19, "CM2", false );

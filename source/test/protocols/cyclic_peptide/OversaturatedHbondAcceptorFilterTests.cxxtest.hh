@@ -17,7 +17,7 @@
 
 // Project Headers
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilter.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 
 // Core Headers
 #include <core/pose/Pose.fwd.hh>
@@ -41,7 +41,7 @@ public:
 		oversaturated_bb_bb_bb_ = core::import_pose::pose_from_file( "protocols/cyclic_peptide/oversaturated_bb_bb_bb.pdb", false, core::import_pose::PDB_file);
 
 		//Link the termini:
-		protocols::cyclic_peptide::DeclareBond decbond1;
+		protocols::simple_moves::DeclareBond decbond1;
 		decbond1.set( 1, "N", 8, "C", false );
 		decbond1.apply(*oversaturated_bb_bb_bb_);
 

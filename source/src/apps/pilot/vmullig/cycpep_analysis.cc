@@ -20,7 +20,7 @@
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <numeric/angle.functions.hh>
@@ -62,7 +62,7 @@ ensure_cyclic(
 	if ( pose->residue(1).has_lower_connect() && pose->residue(nres).has_upper_connect() && pose->residue(1).is_polymer_bonded(nres) ) {
 		TR << "Pose " << count << " is already cyclic." << std::endl;
 	} else {
-		protocols::cyclic_peptide::DeclareBond cyclize;
+		protocols::simple_moves::DeclareBond cyclize;
 		cyclize.set( 1, "N", nres, "C", false );
 		cyclize.apply( *pose );
 		TR << "Cyclizing pose " << count << "." << std::endl;

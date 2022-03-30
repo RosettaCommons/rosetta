@@ -116,7 +116,6 @@ static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_Cr
 static MoverRegistrator< cyclic_peptide::CrosslinkerMoverCreator > reg_CrosslinkerMoverCreator;
 static MoverRegistrator< cyclic_peptide::CycpepRigidBodyPermutationMoverCreator > reg_CycpepRigidBodyPermutationMoverCreator;
 static MoverRegistrator< cyclic_peptide::PeptideCyclizeMoverCreator > reg_PeptideCyclizeMoverCreator;
-static MoverRegistrator< cyclic_peptide::DeclareBondCreator > reg_DeclareBondCreator;
 static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideStubMoverCreator;
 static MoverRegistrator< cyclic_peptide::SymmetricCycpepAlignCreator > reg_SymmetricCycpepAlignCreator;
 static MoverRegistrator< cyclic_peptide::TryDisulfPermutationsCreator > reg_TryDisulfPermutationsCreator;
@@ -568,6 +567,7 @@ static MoverRegistrator< simple_moves::ConvertVirtualToRealMoverCreator > reg_Co
 static MoverRegistrator< simple_moves::CopyRotamerMoverCreator > reg_CopyRotamerMoverCreator;
 static MoverRegistrator< simple_moves::CoupledMoverCreator> reg_CoupledMoverCreator;
 static MoverRegistrator< calc_taskop_movers::CreateSequenceMotifMoverCreator > reg_CreateSequenceMotifMoverCreator;
+static MoverRegistrator< simple_moves::DeclareBondCreator > reg_DeclareBondCreator;
 static MoverRegistrator< simple_moves::DeleteChainMoverCreator> reg_DeleteChainMoverCreator;
 static MoverRegistrator< simple_moves::DeleteChainsMoverCreator> reg_DeleteChainsMoverCreator;
 static MoverRegistrator< simple_ddg::ddGCreator> reg_ddGCreator;

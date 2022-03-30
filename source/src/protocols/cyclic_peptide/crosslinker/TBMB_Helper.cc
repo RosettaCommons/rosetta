@@ -31,7 +31,7 @@
 
 // Protocols headers
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraint.hh>
 
@@ -135,7 +135,7 @@ TBMB_Helper::add_linker_bonds_asymmetric(
 	runtime_assert_string_msg( res_indices.size() == 3, "Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_bonds_asymmetric(): The wrong number of residues was passed to this function.  A vector of exactly three residues is expected." );
 
 	//Declare covalent bonds:
-	protocols::cyclic_peptide::DeclareBond bond1, bond2, bond3;
+	protocols::simple_moves::DeclareBond bond1, bond2, bond3;
 	bond1.set( linker_index, "CM1", res_indices[1], "SG", false );
 	bond2.set( linker_index, "CM2", res_indices[2], "SG", false );
 	bond3.set( linker_index, "CM3", res_indices[3], "SG", false );
@@ -230,7 +230,7 @@ TBMB_Helper::add_linker_bonds_symmetric(
 	);
 
 	//Declare covalent bonds:
-	protocols::cyclic_peptide::DeclareBond bond1, bond4;
+	protocols::simple_moves::DeclareBond bond1, bond4;
 	bond1.set( linker_index1, "CM1", res1, "SG", false );
 	bond4.set( linker_index1, "C2", linker_index2, "C1", false );
 	bond1.apply(pose);

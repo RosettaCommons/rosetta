@@ -11,16 +11,16 @@
 /// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_cyclic_peptide_DeclareBond_hh
-#define INCLUDED_protocols_cyclic_peptide_DeclareBond_hh
+#ifndef INCLUDED_protocols_simple_moves_DeclareBond_hh
+#define INCLUDED_protocols_simple_moves_DeclareBond_hh
 
-#include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
+#include <protocols/simple_moves/DeclareBond.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 
 namespace protocols {
-namespace cyclic_peptide {
+namespace simple_moves {
 
 class DeclareBond : public moves::Mover {
 public:

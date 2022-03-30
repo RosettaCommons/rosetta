@@ -23,7 +23,7 @@
 #include <protocols/cyclic_peptide/CycpepRigidBodyPermutationMover.hh>
 
 // Protocols Headers
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 
 // Core Headers
 #include <core/types.hh>
@@ -142,7 +142,7 @@ public:
 		using namespace protocols::cyclic_peptide;
 
 		core::pose::PoseOP master_pose( core::import_pose::pose_from_file("protocols/cyclic_peptide/NDM1_bound_example.pdb") );
-		DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( 239, "C", 232, "N", false );
 		decbond.apply(*master_pose);
 

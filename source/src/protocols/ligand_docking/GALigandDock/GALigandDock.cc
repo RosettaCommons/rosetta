@@ -34,6 +34,8 @@
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -41,11 +43,14 @@
 #include <protocols/simple_moves/ExplicitWaterMover.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/func/TopOutFunc.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/import_pose/import_pose.hh>
@@ -59,6 +64,7 @@
 #include <utility/vector1.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/relax/FastRelax.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -145,8 +151,11 @@ GALigandDock::GALigandDock() {
 	use_pharmacophore_ = true; // turn on by default!
 	torsion_sampler_percentage_ = 0.0;
 	contact_distance_ = 4.5;
+	freeze_ligand_backbone_ = false;
+	macrocycle_ligand_ = false;
 
 	multiple_ligands_ = utility::vector1< std::string >();
+	ligand_file_list_ = utility::vector1< std::string >();
 	multi_ligands_maxRad_ = 0.0;
 	initial_pool_ = "";
 	reference_pool_ = "none";
@@ -165,6 +174,7 @@ void
 GALigandDock::get_ligand_resids(pose::Pose const& pose,
 	utility::vector1 < core::Size >& lig_resids) const
 {
+	lig_resids.clear();
 	core::Size lastres = pose.total_residue();
 	while ( pose.residue(lastres).is_virtual_residue() && lastres>1 ) lastres--;
 	lig_resids.push_back( lastres );
@@ -184,6 +194,49 @@ GALigandDock::get_ligand_resids(pose::Pose const& pose,
 			extending = false; // hit n-term
 		}
 	}
+}
+
+//pass by value of pose_complex
+core::pose::PoseOP
+GALigandDock::replace_ligand(core::pose::Pose pose_complex, core::pose::Pose& pose_ligand, bool align) const
+{
+	utility::vector1 < core::Size > lig_resids;
+	get_ligand_resids(pose_complex, lig_resids);
+	if ( align ) {
+		numeric::xyzVector< core::Real > com_tgt(0.0, 0.0, 0.0);
+		numeric::xyzVector< core::Real > com_src(0.0, 0.0, 0.0);
+		for ( core::Size ligid:lig_resids ) com_tgt += pose_complex.residue(ligid).nbr_atom_xyz();
+		com_tgt /= lig_resids.size();
+
+		for ( core::Size i=1; i<=pose_ligand.size(); ++i ) com_src += pose_ligand.residue(i).nbr_atom_xyz();
+		com_src /= pose_ligand.size();
+
+		numeric::xyzVector< core::Real > t_vec(com_tgt-com_src);
+
+		for ( core::Size i=1; i<=pose_ligand.size(); ++i ) {
+			for ( core::Size j=1; j<=pose_ligand.residue(i).natoms(); ++j ) {
+				pose_ligand.set_xyz(core::id::AtomID( j,i), pose_ligand.residue(i).xyz(j)+t_vec );
+			}
+		}
+	}
+
+	core::Size startid, endid;
+	startid = ( lig_resids[1] <= lig_resids.back())? lig_resids[1] : lig_resids.back() ;
+	endid = ( lig_resids[1] > lig_resids.back())? lig_resids[1] : lig_resids.back() ;
+	pose_complex.delete_residue_range_slow( startid, endid );
+
+	core::Size rec_size(pose_complex.size());
+	bool new_chain(false);
+	core::pose::PoseOP pose_new( new core::pose::Pose(pose_complex) );
+	append_pose_to_pose( *pose_new, pose_ligand, new_chain );
+
+	if ( macrocycle_ligand_ ) {
+		protocols::simple_moves::DeclareBondOP bond_close(new protocols::simple_moves::DeclareBond);
+		bond_close->set(pose_new->size(),"C",rec_size+1,"N",false,false,0,0,false); //res1, atom1, res2, atom2, add_termini, run_kic, kic_res1, kic_res2, rebuild_fold_tree
+		bond_close->apply(*pose_new);
+	}
+
+	return pose_new;
 }
 
 void
@@ -258,17 +311,18 @@ GALigandDock::apply( pose::Pose & pose )
 		sconly.push_back( true );
 	}
 
+	std::vector<core::Real> maxRads;
+	use_mean_maxRad_ = use_mean_maxRad_ && ( multiple_ligands_.size()>1 or ligand_file_list_.size()>1 );
+
 	if ( multiple_ligands_.size() > 0 ) {
 		if ( lig_resids.size() > 1 ) {
 			utility_exit_with_message("GALigandDock: multiple_ligands only works with single-res ligands!");
 		}
-		core::Real mean_maxRad = 0.0;
-		std::vector<core::Real> maxRads;
-		use_mean_maxRad_ = use_mean_maxRad_ && ( multiple_ligands_.size()>1 );
 		for ( core::Size ilig = 1; ilig <= multiple_ligands_.size(); ++ilig ) {
 			TR << "Building multiple_ligands: "<< multiple_ligands_[ilig] << std::endl;
 			core::conformation::ResidueOP ligand = core::conformation::get_residue_from_name( multiple_ligands_[ilig] );
 			rsds_to_build_grids.push_back( *ligand );
+			sconly.push_back( false );
 			if ( use_mean_maxRad_ ) {
 				numeric::xyzVector< core::Real > com(0,0,0);
 				for ( core::Size i=1; i<=ligand->natoms(); ++i ) com += ligand->xyz(i);
@@ -277,27 +331,88 @@ GALigandDock::apply( pose::Pose & pose )
 				for ( core::Size i=1; i<=ligand->natoms(); ++i ) maxRad = std::max( maxRad, com.distance(ligand->xyz(i)) );
 				maxRads.push_back(maxRad);
 				TR << "Building multiple_ligands: "<< multiple_ligands_[ilig] << " maxRad: " << maxRad << std::endl;
-				mean_maxRad += maxRad;
 			}
-		}
-		if ( use_mean_maxRad_ ) {
-			mean_maxRad /= (core::Real)maxRads.size();
-			core::Real sum_square(0.0), stdev(0.0);
-			for ( auto maxRad:maxRads ) {
-				sum_square += (maxRad-mean_maxRad) * (maxRad-mean_maxRad);
-			}
-			stdev = std::sqrt(sum_square/(maxRads.size()-1));
-
-			TR << "mean and stdev of maxRad: " << mean_maxRad <<
-				", " << stdev << std::endl;
-			multi_ligands_maxRad_ = mean_maxRad+stdev_multiplier_*stdev;
-			TR << "Setting new maxRad with mean + " << stdev_multiplier_ <<
-				" * " << "stdev: " << multi_ligands_maxRad_ << std::endl;
-			gridscore->set_grid_dim_with_maxRad(multi_ligands_maxRad_);
 		}
 	}
-	gridscore->get_grid_atomtypes( rsds_to_build_grids, sconly );
 
+	for ( std::string ligandfn:ligand_file_list_ ) {
+		std::vector<core::Real> maxRads;
+		numeric::xyzVector< core::Real > com(0,0,0);
+		// if structure file is a pdb file
+		if ( utility::endswith(ligandfn, "pdb") ) {
+			core::pose::PoseOP ligand_pose;
+			ligand_pose = core::import_pose::pose_from_file(ligandfn, core::import_pose::PDB_file);
+			if ( !ligand_pose ) utility_exit_with_message("error! ligand pose is not loaded" );
+			for ( core::Size resid=1; resid<=(*ligand_pose).size(); ++resid ) {
+				if ( (*ligand_pose).residue(resid).is_virtual_residue() ) continue;
+				rsds_to_build_grids.push_back( (*ligand_pose).residue(resid) );
+				sconly.push_back( false );
+			}
+			if ( use_mean_maxRad_ ) {
+				com = core::pose::get_center_of_mass( *ligand_pose );
+				core::Real maxRad(0.0);
+				for ( core::Size i=1; i<=(*ligand_pose).size(); ++i ) {
+					for ( core::Size j=1; j<= (*ligand_pose).residue(i).natoms(); ++j ) {
+						maxRad = std::max( maxRad, com.distance((*ligand_pose).residue(i).xyz(j)) );
+					}
+				}
+				maxRads.push_back(maxRad);
+				TR << "Building ligands from structure file: "<< ligandfn << " maxRad: " << maxRad << std::endl;
+			}
+		} //end reading pdb file
+
+		// if structure file is a silent file
+		if ( utility::endswith(ligandfn, "out") ) {
+			core::io::silent::SilentFileOptions opts; // initialized from the command line
+			core::io::silent::SilentFileData sfd( opts );
+			bool success = sfd.read_file( ligandfn );
+			if ( !success ) utility_exit_with_message("error when reading silent file: " + ligandfn );
+			for ( auto iter=sfd.begin(); iter!=sfd.end(); ++iter ) {
+				core::pose::PoseOP ligand_pose(new core::pose::Pose);
+				iter->fill_pose( *ligand_pose );
+				if ( !ligand_pose ) utility_exit_with_message("error! pose_ligand is not loaded" );
+				for ( core::Size resid=1; resid<=(*ligand_pose).size(); ++resid ) {
+					if ( (*ligand_pose).residue(resid).is_virtual_residue() ) continue;
+					rsds_to_build_grids.push_back( (*ligand_pose).residue(resid) );
+					sconly.push_back( false );
+				}
+				if ( use_mean_maxRad_ ) {
+					com = core::pose::get_center_of_mass( *ligand_pose );
+					core::Real maxRad(0.0);
+					for ( core::Size i=1; i<=(*ligand_pose).size(); ++i ) {
+						for ( core::Size j=1; j<= (*ligand_pose).residue(i).natoms(); ++j ) {
+							maxRad = std::max( maxRad, com.distance((*ligand_pose).residue(i).xyz(j)) );
+						}
+					}
+					maxRads.push_back(maxRad);
+					TR << "Building ligands from structure file: "<< ligandfn << " maxRad: " << maxRad << std::endl;
+				}
+			}
+		} //end reading silent file
+	} // end reading structure file list
+
+	if ( use_mean_maxRad_ ) {
+		core::Real mean_maxRad = 0.0;
+		for ( core::Real maxRad:maxRads ) mean_maxRad += maxRad;
+		mean_maxRad /= (core::Real)maxRads.size();
+		core::Real sum_square(0.0), stdev(0.0);
+		for ( auto maxRad:maxRads ) {
+			sum_square += (maxRad-mean_maxRad) * (maxRad-mean_maxRad);
+		}
+		stdev = std::sqrt(sum_square/(maxRads.size()-1));
+
+		TR << "mean and stdev of maxRad: " << mean_maxRad <<
+			", " << stdev << std::endl;
+		multi_ligands_maxRad_ = mean_maxRad+stdev_multiplier_*stdev;
+		TR << "Setting new maxRad with mean + " << stdev_multiplier_ <<
+			" * " << "stdev: " << multi_ligands_maxRad_ << std::endl;
+		gridscore->set_grid_dim_with_maxRad(multi_ligands_maxRad_);
+	}
+
+	if ( rsds_to_build_grids.size() != sconly.size() ) {
+		utility_exit_with_message("error! Number of residues of building grids doesn't match sconly size" );
+	}
+	gridscore->get_grid_atomtypes( rsds_to_build_grids, sconly );
 	// prepare the input pose
 	idealize_and_repack_pose( pose, movable_scs, lig_resids );
 
@@ -346,9 +461,18 @@ GALigandDock::apply( pose::Pose & pose )
 			core::pose::PoseOP pose_working =
 				make_starting_pose_for_virtual_screening( pose, lig_resids[1], multiple_ligands_[ilig] );
 
+			if ( TR.Debug.visible() ) pose_working->dump_pdb("pose.init."+std::to_string(ilig)+".pdb");
+
+			if ( TR.Debug.visible() ) {
+				for ( auto ligid: lig_resids ) {
+					TR.Debug << "Ligand id: " << ligid << ", ligand restype: " << pose_working->residue(ligid).type().name() << std::endl;
+				}
+			}
+
 			if ( premin_ligand_ ) {
 				TR << "Preminimize ligand." << std::endl;
-				premin_ligand( pose, lig_resids );
+				premin_ligand( *pose_working, lig_resids );
+				if ( TR.Debug.visible() ) pose_working->dump_pdb("pose.premin."+std::to_string(ilig)+".pdb");
 			}
 
 			LigandConformer gene_initial( pose_working, lig_resids, movable_scs, freeze_ligand_backbone_ );
@@ -374,14 +498,135 @@ GALigandDock::apply( pose::Pose & pose )
 			TR << "GALigand Dock took " << (diff).count() << " seconds." << std::endl;
 		}
 		pose = *remaining_outputs_.pop();
+	}
 
-	} else {
+
+	if ( ligand_file_list_.size() > 0 ) {
+		core::pose::Pose pose_complex(pose); //copy the initial pose
+		core::Size struct_count(0);
+		for ( core::Size i=1; i<=ligand_file_list_.size(); ++i ) {
+			std::string ligandfn(ligand_file_list_[i]);
+			if ( utility::endswith(ligandfn, "pdb") ) {
+				auto start = std::chrono::steady_clock::now();
+				TR << "===============================================================================" << std::endl;
+				TR << " Starting " << ligandfn
+					<< " (" << i << "/" << ligand_file_list_.size() << ")" << std::endl;
+				TR << "===============================================================================" << std::endl;
+				core::pose::PoseOP ligand_pose(new core::pose::Pose);
+				ligand_pose = core::import_pose::pose_from_file(ligandfn, core::import_pose::PDB_file);
+				if ( !ligand_pose ) utility_exit_with_message("error! pose_ligand is not loaded" );
+
+				core::pose::PoseOP pose_working = replace_ligand(pose_complex, *ligand_pose);
+				struct_count++;
+				if ( TR.Debug.visible() ) pose_working->dump_pdb("pose.init."+std::to_string(struct_count)+".pdb");
+
+				// new pose may very likely have different ligand residue ids
+				get_ligand_resids(*pose_working, lig_resids);
+				std::sort (lig_resids.begin(), lig_resids.end());
+
+				pose_working->energies().clear();
+				pose_working->data().clear();
+				if ( premin_ligand_ ) {
+					TR << "Preminimize ligand." << std::endl;
+					premin_ligand( *pose_working, lig_resids );
+					if ( TR.Debug.visible() ) pose_working->dump_pdb("pose.premin."+std::to_string(struct_count)+".pdb");
+				}
+
+				LigandConformer gene_initial( pose_working, lig_resids, movable_scs, freeze_ligand_backbone_ );
+				gene_initial.set_sample_ring_conformers( sample_ring_conformers_ );
+
+				OutputStructureStore temporary_outputs;
+
+				// take lowest score pose from each ligand
+				pose = run_docking( gene_initial, gridscore, aligner, temporary_outputs );
+				if ( pose.pdb_info() ) {
+					if ( TR.Debug.visible() ) TR.Debug << "Fixing pdb info." << std::endl;
+					core::Size newid(1);
+					for ( core::Size ligid : lig_resids ) {
+						pose.pdb_info()->chain( ligid, 'B' );
+						pose.pdb_info()->number( ligid, newid );
+						newid++;
+					}
+					pose.pdb_info()->obsolete( false );
+				}
+
+				// store to remaining outputs
+				core::Real score, rms, ligscore, recscore;
+				std::string ligandname;
+				score = (*scfxn_relax_)(pose);
+				core::pose::getPoseExtraScore( pose, "ligscore", ligscore );
+				core::pose::getPoseExtraScore( pose, "recscore", recscore );
+				core::pose::getPoseExtraScore( pose, "lig_rms", rms );
+				core::pose::getPoseExtraScore( pose, "ligandname", ligandname );
+				//ignore ranking_prerelax
+				remaining_outputs_.push( pose, score, rms, ligscore, recscore, 0, ligandname );
+				auto end = std::chrono::steady_clock::now();
+				std::chrono::duration<double> diff = end-start;
+				TR << "GALigand Dock took " << (diff).count() << " seconds." << std::endl;
+
+			} else if ( utility::endswith(ligandfn, "out") ) {
+				core::io::silent::SilentFileOptions opts; // initialized from the command line
+				core::io::silent::SilentFileData sfd( opts );
+				bool success = sfd.read_file( ligandfn );
+				if ( !success ) utility_exit_with_message("error when reading silent file: " + ligandfn );
+				for ( auto iter=sfd.begin(); iter!=sfd.end(); ++iter ) {
+					auto start = std::chrono::steady_clock::now();
+					core::pose::PoseOP ligand_pose(new core::pose::Pose);
+					iter->fill_pose( *ligand_pose );
+					if ( !ligand_pose ) {
+						utility_exit_with_message("error! pose_ligand is not loaded" );
+					}
+					core::pose::PoseOP pose_working = replace_ligand(pose_complex, *ligand_pose);
+					struct_count++;
+
+					// new pose may very likely have different ligand residue ids
+					get_ligand_resids(*pose_working, lig_resids);
+					std::sort (lig_resids.begin(), lig_resids.end());
+
+					LigandConformer gene_initial( pose_working, lig_resids, movable_scs, freeze_ligand_backbone_ );
+					gene_initial.set_sample_ring_conformers( sample_ring_conformers_ );
+
+					OutputStructureStore temporary_outputs;
+
+					// take lowest score pose from each ligand
+					pose = run_docking( gene_initial, gridscore, aligner, temporary_outputs );
+					if ( pose.pdb_info() ) {
+						if ( TR.Debug.visible() ) TR.Debug << "Fixing pdb info." << std::endl;
+						core::Size newid(1);
+						for ( core::Size ligid : lig_resids ) {
+							pose.pdb_info()->chain( ligid, 'B' );
+							pose.pdb_info()->number( ligid, newid );
+							newid++;
+						}
+						pose.pdb_info()->obsolete( false );
+					}
+
+					// store to remaining outputs
+					core::Real score, rms, ligscore, recscore;
+					std::string ligandname;
+					score = (*scfxn_relax_)(pose);
+					core::pose::getPoseExtraScore( pose, "ligscore", ligscore );
+					core::pose::getPoseExtraScore( pose, "recscore", recscore );
+					core::pose::getPoseExtraScore( pose, "lig_rms", rms );
+					core::pose::getPoseExtraScore( pose, "ligandname", ligandname );
+					//ignore ranking_prerelax
+					remaining_outputs_.push( pose, score, rms, ligscore, recscore, 0, ligandname );
+					auto end = std::chrono::steady_clock::now();
+					std::chrono::duration<double> diff = end-start;
+					TR << "GALigand Dock took " << (diff).count() << " seconds." << std::endl;
+				}
+			}
+		} //end for loop ligand_file_list
+		pose = *remaining_outputs_.pop();
+	}
+
+	if ( multiple_ligands_.size()==0 && ligand_file_list_.size()==0 ) {
 		core::pose::PoseOP pose_working( new core::pose::Pose( pose ) );
 		pose_working->energies().clear();
 		pose_working->data().clear();
 		if ( premin_ligand_ ) {
 			TR << "Preminimize ligand." << std::endl;
-			premin_ligand( pose, lig_resids );
+			premin_ligand( *pose_working, lig_resids );
 		}
 
 		LigandConformer gene_initial( pose_working, lig_resids, movable_scs, freeze_ligand_backbone_ );
@@ -424,7 +669,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		genes[i].to_pose( pose_tmp );
 
 		if ( TR.Debug.visible() ) {
-			pose_tmp->dump_pdb("premin."+std::to_string(i)+".pdb");
+			pose_tmp->dump_pdb("prefinalmin."+std::to_string(i)+".pdb");
 		}
 
 		utility::vector1< core::Size > const &movable_scs = genes[i].moving_scs();
@@ -502,12 +747,13 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		core::Real ligscore = calculate_free_ligand_score( *pose_tmp, gene_initial.ligand_ids() );
 		core::Real recscore = calculate_free_receptor_score( *pose_tmp, gene_initial.ligand_ids(), movable_scs, true );
 
+
 		std::string ligandname = pose_tmp->residue(gene_initial.ligand_ids()[1]).name();
 		for ( core::Size ires=2; ires <= gene_initial.ligand_ids().size(); ++ires ) {
 			ligandname += "-"+pose_tmp->residue(gene_initial.ligand_ids()[ires]).name();
 		}
 		outputs.push( *pose_tmp, score, rms, ligscore, recscore, i, ligandname );
-
+		if ( TR.Debug.visible() ) pose_tmp->dump_pdb("after_finalmin1."+std::to_string(i)+".pdb");
 	}
 
 	// lowest energy; use output class function instead of overrided one
@@ -533,17 +779,21 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		core::pose::setPoseExtraScore( *pose, "dG", dG );
 		//core::pose::setPoseExtraScore( *pose, "ligandname", pose->residue(lig_resno).name() );
 	}
-
 	return *pose; // return lowest energy one
 }
 
-
 void
-GALigandDock::eval_docked_pose( core::pose::Pose &pose,
-	utility::vector1< core::Size > const& lig_ids )
+GALigandDock::eval_docked_pose_helper( core::pose::Pose &pose,
+	utility::vector1< core::Size > const& lig_ids,
+	utility::vector1< core::Size > &movable_scs
+)
 {
+	if ( turnon_flexscs_at_relax_ ) {
+		if ( !pose_native_ ) movable_scs = get_atomic_contacting_sidechains( pose, lig_ids, contact_distance_ );
+		constraint_relax(pose, lig_ids, movable_scs);
+	}
 	TR << "Evaluating docked pose." << std::endl;
-	utility::vector1< core::Size > movable_scs;
+	auto time0 = std::chrono::steady_clock::now();
 	core::Real complex_score = (*scfxn_relax_)(pose);
 	core::Real ligscore = calculate_free_ligand_score( pose, lig_ids );
 	core::Real recscore = calculate_free_receptor_score( pose, lig_ids, movable_scs, true );
@@ -558,18 +808,74 @@ GALigandDock::eval_docked_pose( core::pose::Pose &pose,
 	core::pose::setPoseExtraScore( pose, "-TdS", TdS );
 	core::pose::setPoseExtraScore( pose, "dG", dG );
 
-
 	std::string ligandname = pose.residue(lig_ids[1]).name();
 	for ( core::Size ires=2; ires <= lig_ids.size(); ++ires ) {
 		ligandname += "-"+pose.residue(lig_ids[ires]).name();
 	}
-
+	auto time1 = std::chrono::steady_clock::now();
 	core::pose::setPoseExtraScore( pose, "ligandname", ligandname);
-
+	std::chrono::duration<double> time_diff = time1-time0;
 	TR << "Estimated Binding Free Energy (arbitrary energy unit, just for relative ranking)" << std::endl;
 	TR << "dH: " << std::setw(6) << dH << std::endl;
 	TR << "-T*dS: " << std::setw(6) << TdS << std::endl;
 	TR << "Ligandname: "<< ligandname << " dG (dH-T*dS): " << dG << std::endl;
+	TR << "Evaluating took " << time_diff.count() << " seconds." << std::endl;
+}
+
+void
+GALigandDock::eval_docked_pose( core::pose::Pose &pose,
+	utility::vector1< core::Size > const& lig_ids )
+{
+	core::pose::Pose pose_complex(pose);
+	utility::vector1< core::Size > movable_scs;
+	if ( pose_native_ ) {
+		utility::vector1 < core::Size > lig_resids;
+		get_ligand_resids(pose_complex, lig_resids);
+		if ( turnon_flexscs_at_relax_ ) {
+			movable_scs = get_atomic_contacting_sidechains( *pose_native_, lig_resids, contact_distance_ );
+		}
+	}
+
+	if ( ligand_file_list_.size() > 0 ) {
+		//copy the initial pose
+		core::Size struct_count(0);
+		for ( std::string ligandfn:ligand_file_list_ ) {
+			if ( utility::endswith(ligandfn, "pdb") ) {
+				core::pose::PoseOP ligand_pose(new core::pose::Pose);
+				ligand_pose = core::import_pose::pose_from_file(ligandfn, core::import_pose::PDB_file);
+				if ( !ligand_pose ) utility_exit_with_message("error! pose_ligand is not loaded" );
+
+				core::pose::PoseOP pose_working = replace_ligand(pose_complex, *ligand_pose, false);
+				struct_count++;
+				if ( TR.Debug.visible() ) pose_working->dump_pdb("pose.init."+std::to_string(struct_count)+".pdb");
+				utility::vector1 < core::Size > lig_resids;
+				get_ligand_resids(pose_complex, lig_resids);
+				eval_docked_pose_helper(pose_complex, lig_resids, movable_scs);
+
+			} else if ( utility::endswith(ligandfn, "out") ) {
+				core::io::silent::SilentFileOptions opts; // initialized from the command line
+				core::io::silent::SilentFileData sfd( opts );
+				bool success = sfd.read_file( ligandfn );
+				if ( !success ) utility_exit_with_message("error when reading silent file: " + ligandfn );
+				for ( auto iter=sfd.begin(); iter!=sfd.end(); ++iter ) {
+					core::pose::PoseOP ligand_pose(new core::pose::Pose);
+					iter->fill_pose( *ligand_pose );
+					if ( !ligand_pose ) {
+						utility_exit_with_message("error! pose_ligand is not loaded" );
+					}
+					core::pose::PoseOP pose_working = replace_ligand(pose_complex, *ligand_pose, false);
+					struct_count++;
+					if ( TR.Debug.visible() ) pose_working->dump_pdb("pose.init."+std::to_string(struct_count)+".pdb");
+					utility::vector1 < core::Size > lig_resids;
+					get_ligand_resids(pose_complex, lig_resids);
+					eval_docked_pose_helper(pose_complex, lig_resids, movable_scs);
+
+				}
+			}
+		}
+	} else {
+		eval_docked_pose_helper(pose, lig_ids, movable_scs);
+	}
 
 }
 
@@ -763,7 +1069,6 @@ GALigandDock::make_starting_pose_for_virtual_screening( core::pose::Pose const &
 	core::pose::PoseOP pose_working( new core::pose::Pose( pose ) );
 	pose_working->replace_residue( lig_resno, *ligand, false );
 
-	//numeric::xyzVector< core::Real > T2 = ligjump.get_translation();
 	ligjump.set_translation( T ); // no change in orientation; is this line necessary?
 	pose_working->set_jump( jumpid, ligjump );
 
@@ -785,9 +1090,10 @@ GALigandDock::calculate_free_receptor_score(
 	pose.data().clear();
 
 	// delete ligand
-	for ( auto ligid = lig_resnos.rbegin(); ligid != lig_resnos.rend(); ++ligid ) {
-		pose.delete_residue_slow( *ligid );
-	}
+	core::Size startid, endid;
+	startid = ( lig_resnos[1] <= lig_resnos.back())? lig_resnos[1] : lig_resnos.back() ;
+	endid = ( lig_resnos[1] > lig_resnos.back())? lig_resnos[1] : lig_resnos.back() ;
+	pose.delete_residue_range_slow(startid, endid);
 
 	if ( simple ) {
 		return (*scfxn_relax_)(pose);
@@ -851,10 +1157,13 @@ GALigandDock::calculate_free_ligand_score(
 	utility::vector1< core::Size > const& lig_resnos
 ) const {
 	// make a ligand-only pose; root ligand on virtual if no residues to anchor jump
+	utility::vector1< core::Size > freeligresids;
 	core::pose::PoseOP pose( new core::pose::Pose );
 	pose->append_residue_by_jump( pose_ref.residue(lig_resnos[1]), 0 );
+	freeligresids.push_back(pose->size());
 	for ( core::Size i=2; i<=lig_resnos.size(); ++i ) {
 		pose->append_residue_by_bond( pose_ref.residue(lig_resnos[i]) );
+		freeligresids.push_back(pose->size());
 	}
 	core::pose::initialize_disulfide_bonds( *pose );
 	core::pose::addVirtualResAsRoot(*pose);
@@ -862,6 +1171,13 @@ GALigandDock::calculate_free_ligand_score(
 	// optimize slightly...
 	core::scoring::ScoreFunctionOP scfxn_ligmin( scfxn_relax_ );
 	scfxn_ligmin->set_weight( core::scoring::coordinate_constraint, 1.0 );
+
+	if ( macrocycle_ligand_ ) {
+		scfxn_ligmin->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		scfxn_ligmin->set_weight( core::scoring::angle_constraint, 1.0 );
+		scfxn_ligmin->set_weight( core::scoring::dihedral_constraint, 1.0 );
+		add_macrocycle_constraints( *pose, freeligresids );
+	}
 
 	//core::pose::Pose pose_premin( *pose );
 	core::id::AtomID anchorid( 1, pose->fold_tree().root() );
@@ -982,6 +1298,64 @@ GALigandDock::apply_coord_cst_to_sctip( core::pose::PoseOP pose,
 	}
 }
 
+void
+GALigandDock::add_macrocycle_constraints(
+	core::pose::Pose &pose,
+	utility::vector1< core::Size > const &ligids
+) const {
+	runtime_assert( ligids[1] < ligids.back() );
+	//distance constraint
+	core::Size atomno1 = pose.residue_type(ligids.back()).atom_index("CA");
+	core::Size atomno2 = pose.residue_type(ligids.back()).atom_index("C");
+	core::Size atomno3 = pose.residue_type(ligids[1]).atom_index("N");
+	core::Size atomno4 = pose.residue_type(ligids[1]).atom_index("CA");
+	numeric::xyzVector< core::Real > xyz1 = pose.residue(ligids.back()).xyz(atomno1);
+	numeric::xyzVector< core::Real > xyz2 = pose.residue(ligids.back()).xyz(atomno2);
+	numeric::xyzVector< core::Real > xyz3 = pose.residue(ligids[1]).xyz(atomno3);
+	numeric::xyzVector< core::Real > xyz4 = pose.residue(ligids[1]).xyz(atomno4);
+
+	protocols::simple_moves::DeclareBondOP bond_close(new protocols::simple_moves::DeclareBond);
+	bond_close->set(ligids.back(),"C",ligids[1],"N",false,false,0,0,false); //res1, atom1, res2, atom2, add_termini, run_kic, kic_res1, kic_res2, rebuild_fold_tree
+	bond_close->apply(pose);
+
+	core::Real dist = pose.residue(ligids[1]).xyz(atomno3).distance(pose.residue(ligids.back()).xyz(atomno2));
+	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( dist, 0.01 ) );
+	pose.add_constraint( core::scoring::constraints::ConstraintCOP(
+		new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(atomno2,ligids.back()), core::id::AtomID(atomno3,ligids[1]), fx )
+		)
+	);
+
+	//angle constraint
+	core::Real angle1 = numeric::angle_radians(xyz1, xyz2, xyz3);
+	core::Real angle2 = numeric::angle_radians(xyz2, xyz3, xyz4);
+	core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc( angle1, 0.01 ) );
+	pose.add_constraint( core::scoring::constraints::ConstraintCOP(
+		new core::scoring::constraints::AngleConstraint( core::id::AtomID(atomno1,ligids.back()),
+		core::id::AtomID(atomno2,ligids.back()),
+		core::id::AtomID(atomno3,ligids[1]), fx1 )
+		)
+	);
+
+	core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc( angle2, 0.01 ) );
+	pose.add_constraint( core::scoring::constraints::ConstraintCOP(
+		new  core::scoring::constraints::AngleConstraint( core::id::AtomID(atomno2,ligids.back()),
+		core::id::AtomID(atomno3,ligids[1]),
+		core::id::AtomID(atomno4,ligids[1]), fx2 )
+		)
+	);
+
+	core::Real torsion1 = numeric::dihedral_radians(xyz1, xyz2, xyz3, xyz4);
+	core::scoring::func::FuncOP fx3( new core::scoring::func::CircularHarmonicFunc( torsion1, 0.01 ) );
+	pose.add_constraint( core::scoring::constraints::ConstraintCOP(
+		new core::scoring::constraints::DihedralConstraint(core::id::AtomID(atomno1,ligids.back()),
+		core::id::AtomID(atomno2,ligids.back()),
+		core::id::AtomID(atomno3,ligids[1]),
+		core::id::AtomID(atomno4,ligids[1]), fx3 )
+		)
+	);
+
+}
+
 // final optimziation cycle with sidechain flexibility
 void
 GALigandDock::final_exact_cartmin(
@@ -994,7 +1368,9 @@ GALigandDock::final_exact_cartmin(
 	if ( frozen_residues_ != nullptr ) {
 		frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
 	}
-
+	/////
+	// (0) let's clone the score function so that any changes to the score function here won't mess up the global score function
+	core::scoring::ScoreFunctionOP scfxn_cartmin = scfxn_relax_->clone();
 	/////
 	// (1) setup movemap
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
@@ -1045,7 +1421,7 @@ GALigandDock::final_exact_cartmin(
 	core::Real TOPOUT_WT=1/(TOPOUT_WIDTH*TOPOUT_WIDTH); // max penalty per cst = 1
 	core::Size addedCsts = 0;
 
-	if ( scfxn_relax_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
+	if ( scfxn_cartmin->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 		TR << "Adding constraints to pose before final relax..." << std::endl;
 
 		for ( core::Size j=1; j<pose.size(); ++j ) {
@@ -1074,7 +1450,7 @@ GALigandDock::final_exact_cartmin(
 		}
 		TR << "Added " << addedCsts << " atmpair constraints to the pose." << std::endl;
 	}
-	if ( scfxn_relax_->get_weight( core::scoring::coordinate_constraint ) != 0 ) {
+	if ( scfxn_cartmin->get_weight( core::scoring::coordinate_constraint ) != 0 ) {
 		TR << "Adding constraints to protein CAs before final relax..." << std::endl;
 		core::pose::addVirtualResAsRoot(pose); //gz: add root virtual residue for CoordinateConstraint
 		core::id::AtomID anchoratomid(1, pose.fold_tree().root() );
@@ -1096,20 +1472,28 @@ GALigandDock::final_exact_cartmin(
 		}
 		TR << "Added " << addedCsts << " coord constraints to the pose." << std::endl;
 	}
-	if ( scfxn_relax_->get_weight( core::scoring::cart_bonded ) == 0 ) {
-		scfxn_relax_->set_weight( core::scoring::cart_bonded, 0.5 );
-		scfxn_relax_->set_weight( core::scoring::pro_close, 0.0 );
+	if ( scfxn_cartmin->get_weight( core::scoring::cart_bonded ) == 0 ) {
+		scfxn_cartmin->set_weight( core::scoring::cart_bonded, 0.5 );
+		scfxn_cartmin->set_weight( core::scoring::pro_close, 0.0 );
 		TR << "scfxn_relax is not properly set for cartmin! setting cart_bonded=0.5 pro_close=0.0." << std::endl;
+	}
+
+	// ligand backbone is turned on in movemap, so we need to check it the ligand is a macrocyle and add proper constraints for it.
+	if ( macrocycle_ligand_ ) {
+		scfxn_cartmin->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		scfxn_cartmin->set_weight( core::scoring::angle_constraint, 1.0 );
+		scfxn_cartmin->set_weight( core::scoring::dihedral_constraint, 1.0 );
+		add_macrocycle_constraints( pose, gene.ligand_ids() );
 	}
 
 	protocols::relax::FastRelax relax;
 	if ( fast_relax_script_file_ != "" ) {
 		TR << "==== Use FastRelax script: " << fast_relax_script_file_ << std::endl;
-		relax=protocols::relax::FastRelax( scfxn_relax_, fast_relax_script_file_ );
+		relax=protocols::relax::FastRelax( scfxn_cartmin, fast_relax_script_file_ );
 	} else if ( fast_relax_lines_.size() > 0 ) {
 		lines = fast_relax_lines_;
 		relax.set_script_from_lines( lines );
-		relax.set_scorefxn( scfxn_relax_ );
+		relax.set_scorefxn( scfxn_cartmin );
 	} else {
 		TR << "==== Use FastRelax hardcoded. "<< std::endl;
 		lines.push_back( "switch:cartesian" );
@@ -1119,7 +1503,7 @@ GALigandDock::final_exact_cartmin(
 		lines.push_back( "accept_to_best" );
 		lines.push_back( "endrepeat" );
 		relax.set_script_from_lines( lines );
-		relax.set_scorefxn( scfxn_relax_ );
+		relax.set_scorefxn( scfxn_cartmin );
 	}
 
 	relax.set_movemap( mm );
@@ -1130,7 +1514,9 @@ GALigandDock::final_exact_cartmin(
 		pose.delete_residue_slow( pose.fold_tree().root() );
 	}
 	TR << "final_cartmin: score after relax: ";
-	TR << (*scfxn_relax_)(pose) <<std::endl;
+	TR << (*scfxn_cartmin)(pose) <<std::endl;
+	//should we keep all the constraints in the pose?
+	pose.remove_constraints();
 }
 
 // final optimziation cycle with sc flexibility only
@@ -1223,7 +1609,6 @@ GALigandDock::final_exact_scmin(
 	TR << "final_scmin: score after relax: " << (*scfxn_relax_)(pose) <<std::endl;
 }
 
-
 // final optimziation cycle with ligand flexibility only
 void
 GALigandDock::final_cartligmin(
@@ -1252,6 +1637,7 @@ GALigandDock::final_cartligmin(
 	} else {
 		for ( auto resid : gene.ligand_ids() ) {
 			mmlig->set_chi( resid, true );
+			mmlig->set_bb( resid, true );
 		}
 		if ( min_neighbor_ ) {
 			std::set< core::Size > frozen_residues;
@@ -1276,7 +1662,18 @@ GALigandDock::final_cartligmin(
 		scfxn_cartmin->set_weight( core::scoring::cart_bonded_ring, -0.5 );
 		scfxn_cartmin->set_weight( core::scoring::pro_close, 0.0 );
 	}
+
+	if ( macrocycle_ligand_ ) {
+		scfxn_cartmin->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		scfxn_cartmin->set_weight( core::scoring::angle_constraint, 1.0 );
+		scfxn_cartmin->set_weight( core::scoring::dihedral_constraint, 1.0 );
+		add_macrocycle_constraints( pose, gene.ligand_ids() );
+	}
+
 	minimizer.run( pose, *mmlig, *scfxn_cartmin, options );
+	// This is a final cart ligand minimization, so I remove the constraints in the end.
+	// But should we keep all the constraints in the pose?
+	pose.remove_constraints();
 }
 
 // use ExplicitWaterMover to solvate ligand
@@ -1487,9 +1884,10 @@ GALigandDock::setup_ligand_aligner( core::pose::Pose const & pose,
 			utility_exit_with_message("error!  pharmacophore docking requires reference_pool to be as 'INPUT'!" );
 		}
 		core::pose::PoseOP receptor( new core::pose::Pose( pose ) );
-		for ( auto ligid = lig_resnos.rbegin(); ligid != lig_resnos.rend(); ++ligid ) {
-			receptor->delete_residue_slow( *ligid );
-		}
+		core::Size startid, endid;
+		startid = ( lig_resnos[1] <= lig_resnos.back())? lig_resnos[1] : lig_resnos.back() ;
+		endid = ( lig_resnos[1] > lig_resnos.back())? lig_resnos[1] : lig_resnos.back() ;
+		receptor->delete_residue_range_slow(startid, endid);
 		scfxn_->score( *receptor ); // for energygraph!!
 		aligner.set_pharmacophore_reference( *receptor );
 	}
@@ -1756,6 +2154,7 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("torsion_sampler_percentage") ) { torsion_sampler_percentage_ = tag->getOption<core::Real>("torsion_sampler_percentage"); }
 	if ( tag->hasOption("contact_distance") ) { contact_distance_ = tag->getOption<core::Real>("contact_distance"); }
 	if ( tag->hasOption("freeze_ligand_backbone") ) { freeze_ligand_backbone_ = tag->getOption<bool>("freeze_ligand_backbone"); }
+	if ( tag->hasOption("macrocycle_ligand") ) { macrocycle_ligand_ = tag->getOption<bool>("macrocycle_ligand"); }
 
 	if ( tag->hasOption("frozen_scs") ) {
 		std::string frozen_scs = tag->getOption<std::string>("frozen_scs");
@@ -1783,12 +2182,34 @@ GALigandDock::parse_my_tag(
 		if ( myfile.is_open() ) {
 			while ( myfile.good() ) {
 				std::getline(myfile, line);
-				if ( line.empty() ) continue;
+				if ( line.empty() or line.find('#')==0 ) continue;
 				if ( ! residue_set->has_name( line ) ) {
 					TR.Warning << "No residue info found, skip "<< line << std::endl;
 					continue;
 				}
 				multiple_ligands_.push_back(line);
+			}
+			myfile.close();
+		} else {
+			TR.Error << "Cannot open " << ligands_file << std::endl;
+			utility_exit();
+		}
+	}
+
+	if ( tag->hasOption("ligand_structure_file") ) {
+		std::string ligands_string = tag->getOption<std::string>("ligand_structure_file");
+		ligand_file_list_ = utility::string_split( ligands_string, ',' );
+	}
+
+	if ( tag->hasOption("ligand_structure_filelist") ) {
+		std::string ligands_file = tag->getOption<std::string>("ligand_structure_filelist");
+		std::string line;
+		std::ifstream myfile(ligands_file);
+		if ( myfile.is_open() ) {
+			while ( myfile.good() ) {
+				std::getline(myfile, line);
+				if ( line.empty() or line.find('#')==0 ) continue;
+				ligand_file_list_.push_back(line);
 			}
 			myfile.close();
 		} else {
@@ -1825,7 +2246,7 @@ GALigandDock::parse_my_tag(
 
 	if ( tag->hasOption("final_solvate") ) {
 		final_solvate_ = tag->getOption<bool>("final_solvate");
-		if ( final_exact_minimize_ == "none" ) {
+		if ( final_solvate_ && final_exact_minimize_ == "none" ) {
 			TR.Error << "The option 'final_solvate' requires a final minimize set!" << std::endl;
 			utility_exit();
 		}
@@ -2057,7 +2478,7 @@ GALigandDock::get_optimizer(
 ) const {
 	GAOptimizerOP optimizer(new GAOptimizer(gridscorer));
 	if ( pose_native_ ) {
-		LigandConformer gene_native( pose_native_, gene_initial.ligand_ids(), gene_initial.moving_scs() );
+		LigandConformer gene_native( pose_native_, gene_initial.ligand_ids(), gene_initial.moving_scs(), freeze_ligand_backbone_ );
 		optimizer->set_native( gene_native );
 	}
 
@@ -2119,6 +2540,8 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "initial_pool", xs_string, "Include these structures in the initial pool.");
 	attlist + XMLSchemaAttribute( "multiple_ligands", xs_string, "Scan ligands with these residue types.");
 	attlist + XMLSchemaAttribute( "multiple_ligands_file", xs_string, "Scan ligands with these residue types in a text file.");
+	attlist + XMLSchemaAttribute( "ligand_structure_file", xs_string, "Scan ligands with these ligand structure files (pdb or silent file).");
+	attlist + XMLSchemaAttribute( "ligand_structure_filelist", xs_string, "Scan ligands with ligand structure files (pdb or silent file) in a text file.");
 	attlist + XMLSchemaAttribute( "random_oversample", xsct_real, "scale factor to ntrial of initial random pool generation");
 	attlist + XMLSchemaAttribute( "reference_oversample", xsct_real, "scale factor to ntrial of initial reference pool generation");
 	attlist + XMLSchemaAttribute( "reference_pool", xs_string, "Use this structures as _references_ to generate the initial pool.");
@@ -2135,6 +2558,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "torsion_sampler_percentage", xsct_real, "The percentage of the initial gene sampled by torsion sampler.");
 	attlist + XMLSchemaAttribute( "contact_distance", xsct_real, "Distance cutoff for determining if ligand is in contact with a residue sidechain. Default: 4.5" );
 	attlist + XMLSchemaAttribute( "freeze_ligand_backbone", xsct_rosetta_bool, "Freeze peptide ligand backbone torsion, only works on peptide ligand. Default: false." );
+	attlist + XMLSchemaAttribute( "macrocycle_ligand", xsct_rosetta_bool, "If the ligand is macrocyle or cyclic peptide, if true, constraints will be added to ensure the ring closure. Default: false." );
 	attlist + XMLSchemaAttribute( "align_reference_atom_ids", xs_string, "Atom ids to align after each cycle 'atom_num-residue_num,atom_num-residue_num,atom_num-residue_num...'");
 
 	// per-cycle parameters (defaults)

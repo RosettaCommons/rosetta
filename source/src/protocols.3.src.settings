@@ -692,6 +692,8 @@ sources = {
 		"DME_FilterMover",
 		"DOFHistogramRecorder",
 
+    "DeclareBond",
+
 		"DisulfideInsertionMover",
 		"DisulfideInsertionMoverCreator",
 

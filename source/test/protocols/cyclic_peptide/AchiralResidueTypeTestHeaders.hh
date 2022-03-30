@@ -36,7 +36,7 @@
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/FlipChiralityMover.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/ModifyVariantTypeMover.hh>
@@ -107,7 +107,7 @@ public:
 		symm_setup.apply(*pose);
 		symm_setup.apply(*pose2);
 
-		::protocols::cyclic_peptide::DeclareBond bond;
+		::protocols::simple_moves::DeclareBond bond;
 		bond.set( 4, "C", 5, "N", false );
 		bond.apply(*pose);
 		bond.apply(*pose2);

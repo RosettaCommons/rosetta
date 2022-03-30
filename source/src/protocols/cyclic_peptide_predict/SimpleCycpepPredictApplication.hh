@@ -26,7 +26,7 @@
 
 // Project Headers
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
-#include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
+#include <protocols/simple_moves/DeclareBond.fwd.hh>
 #include <protocols/denovo_design/movers/FastDesign.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
@@ -374,7 +374,7 @@ private:
 	/// atoms dependent on the amide bond.
 	void
 	set_up_n_to_c_cyclization_mover (
-		protocols::cyclic_peptide::DeclareBondOP termini,
+		protocols::simple_moves::DeclareBondOP termini,
 		core::pose::PoseCOP pose,
 		bool const native,
 		core::Size const last_res
@@ -384,7 +384,7 @@ private:
 	///
 	void
 	set_up_terminal_disulfide_cyclization_mover (
-		protocols::cyclic_peptide::DeclareBondOP termini,
+		protocols::simple_moves::DeclareBondOP termini,
 		core::pose::PoseCOP pose,
 		bool const native,
 		core::Size const last_disulf_res,
@@ -392,22 +392,22 @@ private:
 	) const;
 
 	/// @brief Set up the mover that creates N-terminal isopeptide bonds.
-	void set_up_nterm_isopeptide_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+	void set_up_nterm_isopeptide_cyclization_mover( protocols::simple_moves::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
 
 	/// @brief Set up the mover that creates C-terminal isopeptide bonds.
-	void set_up_cterm_isopeptide_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+	void set_up_cterm_isopeptide_cyclization_mover( protocols::simple_moves::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
 
 	/// @brief Set up the mover that creates sidechain isopeptide bonds.
-	void set_up_sidechain_isopeptide_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+	void set_up_sidechain_isopeptide_cyclization_mover( protocols::simple_moves::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
 
 	/// @brief Set up the mover that creates thioether lariat bonds.
-	void set_up_thioether_lariat_cyclization_mover( protocols::cyclic_peptide::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+	void set_up_thioether_lariat_cyclization_mover( protocols::simple_moves::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
 
 	/// @brief Set up the DeclareBond mover used to connect the termini, or whatever
 	/// atoms are involved in the cyclization.  (Handles different cyclization modes).
 	void
 	set_up_cyclization_mover (
-		protocols::cyclic_peptide::DeclareBondOP termini,
+		protocols::simple_moves::DeclareBondOP termini,
 		core::pose::PoseCOP pose,
 		bool const native=false,
 		core::Size const last_res=0,

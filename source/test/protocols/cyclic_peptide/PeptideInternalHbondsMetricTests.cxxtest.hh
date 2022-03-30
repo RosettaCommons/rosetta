@@ -22,7 +22,7 @@
 
 // Protocols Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -62,7 +62,7 @@ public:
 		using namespace protocols::cyclic_peptide;
 
 		core::pose::PoseOP pose( core::import_pose::pose_from_file( "protocols/cyclic_peptide/sample_cycpep_8mer.pdb" ) );
-		DeclareBond declbond;
+		protocols::simple_moves::DeclareBond declbond;
 		declbond.set( 8, "C", 1, "N", false );
 		declbond.apply(*pose);
 
@@ -100,7 +100,7 @@ public:
 		using namespace protocols::cyclic_peptide;
 
 		core::pose::PoseOP pose( core::import_pose::pose_from_file( "protocols/cyclic_peptide/sample_cycpep_8mer.pdb" ) );
-		DeclareBond declbond;
+		protocols::simple_moves::DeclareBond declbond;
 		declbond.set( 8, "C", 1, "N", false );
 		declbond.apply(*pose);
 
@@ -134,7 +134,7 @@ public:
 		core::pose::Pose pose;
 		builder.apply(pose);
 
-		DeclareBond declbond;
+		protocols::simple_moves::DeclareBond declbond;
 		declbond.set( 10, "C", 1, "N", false );
 		declbond.apply(pose);
 

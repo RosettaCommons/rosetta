@@ -17,7 +17,7 @@
 // Test headers
 
 // Project Headers
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>

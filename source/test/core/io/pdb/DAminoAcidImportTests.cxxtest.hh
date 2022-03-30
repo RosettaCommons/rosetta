@@ -25,7 +25,7 @@
 #include <core/chemical/ResidueType.hh>
 
 // Protocols Headers (for conveneience, for setup):
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
@@ -55,7 +55,7 @@ public:
 
 		TS_ASSERT_EQUALS( pose.total_residue(), 10 );
 
-		protocols::cyclic_peptide::DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( 10, "C", 1, "N", false );
 		decbond.apply(pose);
 
@@ -82,7 +82,7 @@ public:
 
 		TS_ASSERT_EQUALS( pose.total_residue(), 8 );
 
-		protocols::cyclic_peptide::DeclareBond decbond;
+		protocols::simple_moves::DeclareBond decbond;
 		decbond.set( 8, "C", 1, "N", false );
 		decbond.apply(pose);
 

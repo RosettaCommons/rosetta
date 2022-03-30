@@ -11,13 +11,13 @@
 /// @brief This class will create instances of Mover ConstraintSetMover for the MoverFactory
 /// @author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_cyclic_peptide_DeclareBondCreator_hh
-#define INCLUDED_protocols_cyclic_peptide_DeclareBondCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_DeclareBondCreator_hh
+#define INCLUDED_protocols_simple_moves_DeclareBondCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace cyclic_peptide {
+namespace simple_moves {
 
 class DeclareBondCreator : public protocols::moves::MoverCreator {
 public:

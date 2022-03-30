@@ -29,7 +29,7 @@
 #include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraint.fwd.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraint.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 //Numeric Headers
@@ -371,12 +371,12 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 	//TR << "we are setting the torsion function " << cst_func_torsion_ << " between " << res1_torsion_ << atom1_torsion_ << " and " << res2_torsion_ << atom2_torsion_ << " and " << res3_torsion_ << atom3_torsion_ << " and " << res4_torsion_ << atom4_torsion_ << std::endl;
 
 	if ( !bond_assigned_ ) {
-		protocols::cyclic_peptide::DeclareBondOP bond_close(new protocols::cyclic_peptide::DeclareBond);
+		protocols::simple_moves::DeclareBondOP bond_close(new protocols::simple_moves::DeclareBond);
 		bond_close->set(res1_[1],atom1_[1],res2_[1],atom2_[1],add_termini_[1],false,0,0,rebuild_fold_tree_[1]);
 		bond_close->apply(pose);
 	} else {
 		for ( core::Size i=1; i<=counter_; i++ ) {
-			protocols::cyclic_peptide::DeclareBondOP bond_close(new protocols::cyclic_peptide::DeclareBond);
+			protocols::simple_moves::DeclareBondOP bond_close(new protocols::simple_moves::DeclareBond);
 			bond_close->set(res1_[i],atom1_[i],res2_[i],atom2_[i],add_termini_[i],false,0,0,rebuild_fold_tree_[i]);
 			bond_close->apply(pose);
 		}

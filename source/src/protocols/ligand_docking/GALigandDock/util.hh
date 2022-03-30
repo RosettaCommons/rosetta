@@ -39,6 +39,12 @@ get_atomic_contacting_sidechains( core::pose::Pose const &pose,
 	utility::vector1< core::Size > const &ligids,
 	core::Real const atomic_distance_cut = 4.0 );
 
+void
+constraint_relax( core::pose::Pose &pose,
+	utility::vector1< core::Size > const &ligids,
+	utility::vector1< core::Size > const &movable_scs
+);
+
 }
 }
 }

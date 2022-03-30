@@ -46,7 +46,7 @@
 //Protocols headers
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/cyclic_peptide/CycpepSymmetryFilter.hh>
-#include <protocols/cyclic_peptide/DeclareBond.hh>
+#include <protocols/simple_moves/DeclareBond.hh>
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/analysis/simple_metrics/RunSimpleMetricsMover.hh>
@@ -1703,7 +1703,7 @@ EnergyBasedClusteringProtocol::add_cyclic_constraints (
 	}
 
 	//Declare a chemical bond connecting the termini:
-	protocols::cyclic_peptide::DeclareBond decbond;
+	protocols::simple_moves::DeclareBond decbond;
 	decbond.set( 1, "N", mypose.size(), "C", false );
 	decbond.apply(mypose);
 

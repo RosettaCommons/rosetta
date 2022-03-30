@@ -17,7 +17,6 @@ sources = {
 		"CrosslinkerMover",
 		"CycpepRigidBodyPermutationMover",
 		"CycpepSymmetryFilter",
-		"DeclareBond",
 		"FlipChiralityMover",
 		"OversaturatedHbondAcceptorFilter",
 		"PeptideCyclizeMover",
