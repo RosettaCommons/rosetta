@@ -21,7 +21,8 @@ namespace residue_datacache {
 
 enum ResidueDataCacheIndex {
 	LK_BALL_INFO = 1,
-	n_cacheable_types = LK_BALL_INFO
+	LK_DOME_INFO,
+	n_cacheable_types = LK_DOME_INFO
 };
 
 

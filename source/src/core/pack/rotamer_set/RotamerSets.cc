@@ -673,7 +673,7 @@ RotamerSets::prepare_otf_graph(
 				RotamerSetCOP jj_rotset = set_of_rotamer_sets_[ jj ];
 
 				sparse_conn_info = false;
-				Distance const sfxn_reach = scfxn.info()->max_atomic_interaction_distance();
+				Distance const sfxn_reach = scfxn.max_atomic_interaction_cutoff();
 				for ( Size kk = 1, kk_end = ii_rotset->get_n_residue_groups(); kk <= kk_end; ++kk ) {
 					Size kk_example_rotamer_index = ii_rotset->get_residue_group_begin( kk );
 					conformation::Residue const & kk_rotamer( *ii_rotset->rotamer( kk_example_rotamer_index ) );

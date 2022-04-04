@@ -595,6 +595,8 @@ sources = {
 	"core/scoring/lkball": [
 		"LK_BallEnergy", # LKBTrieEvaluator depends on this
 		"LK_BallInfo",
+		"LK_DomeEnergy",
+		"LK_DomeInfo",
 	],
 	"core/scoring/lkball/lkbtrie": [
 		"LKBAtom",

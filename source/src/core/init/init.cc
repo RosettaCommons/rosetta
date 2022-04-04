@@ -167,6 +167,8 @@
 #include <core/scoring/lkball/LK_BallEnergyCreator.hh>
 #include <core/energy_methods/LinearChainbreakEnergyCreator.hh>
 #include <core/energy_methods/LinearBranchEnergyCreator.hh>
+#include <core/scoring/lkball/LK_DomeEnergyCreator.hh>
+#include <core/pack/guidance_scoreterms/lk_dome/LK_DomePackEnergyCreator.hh>
 #include <core/scoring/methods/MMBondAngleEnergyCreator.hh>
 #include <core/scoring/methods/MMBondLengthEnergyCreator.hh>
 #include <core/energy_methods/CartesianBondedEnergyCreator.hh>
@@ -564,6 +566,8 @@ static EnergyMethodRegistrator< energy_methods::LK_hackCreator > LK_hackCreator_
 static EnergyMethodRegistrator< scoring::lkball::LK_BallEnergyCreator > LK_BallEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::LinearChainbreakEnergyCreator > LinearChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::LinearBranchEnergyCreator > LinearBranchEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::lkball::LK_DomeEnergyCreator > LK_DomeEnergyCreator_registrator;
+static EnergyMethodRegistrator< pack::guidance_scoreterms::lk_dome::LK_DomePackEnergyCreator > LK_DomePackEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MMBondAngleEnergyCreator > MMBondAngleEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::CartesianBondedEnergyCreator > CartesianBondedEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MMBondLengthEnergyCreator > MMBondLengthEnergyCreator_registrator;

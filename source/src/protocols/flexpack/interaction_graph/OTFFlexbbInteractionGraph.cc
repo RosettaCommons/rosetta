@@ -565,7 +565,7 @@ OTFFlexbbEdge::prepare_for_simulated_annealing()
 	/// compute sr_aa_neighbors_ table
 	using namespace core;
 
-	Real const sfxn_reach = sfxn_->info()->max_atomic_interaction_distance();
+	Real const sfxn_reach = sfxn_->max_atomic_interaction_cutoff();
 
 	core::Size const naatypes = sr_aa_neighbors_.size1();
 	for ( int ii = 1; ii <= num_bb( 0 ); ++ii ) {

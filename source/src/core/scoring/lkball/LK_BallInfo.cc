@@ -621,6 +621,9 @@ LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & /*src*/ ) = default;
 
 LKB_ResidueInfo::LKB_ResidueInfo() = default;
 
+LKB_ResidueInfo &
+LKB_ResidueInfo::operator=( LKB_ResidueInfo const & ) = default;
+
 void
 LKB_ResidueInfo::build_waters( Residue const & rsd, bool compute_derivs )
 {

@@ -100,6 +100,10 @@ sources = {
 	"core/pack/guidance_scoreterms/hbnet_energy": [
 		"HBNetEnergy",
 	],
+	"core/pack/guidance_scoreterms/lk_dome": [
+		"LK_DomeHelper",
+		"LK_DomePackEnergy",
+	],
 	"core/pack/guidance_scoreterms/sap" : [
 		   "SapConstraint",
 		   "SapConstraintEnergy",

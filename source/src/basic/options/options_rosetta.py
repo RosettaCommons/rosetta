@@ -5489,6 +5489,16 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'lk_ball_waters_ring', 'RealVector', desc = 'The geometry of ring acceptor waters in lk_ball. Format: ( <length_A> <angle_degrees> <torsion_degrees> )+  Default: 2.65 180 0.  No limit on #, but all three params must be specified for each'),
 			Option( 'lk_ball_waters_donor', 'Real', desc = 'The geometry of donor waters in lk_ball. Length along N-H vector'),
 			Option( 'lk_ball_bridge_angle_widthscale', 'Real', desc = 'The width scaling on the angular component of lk_ball_bridge (lower = tighter)', default='0.0'),
+			Option( 'lk_dome_max_angle', 'Real', desc = 'The max angle for the lk_dome. 180 is as high as this can go.', default='180'),
+			Option( 'lk_dome_min_angle', 'Real', desc = 'The min angle for the lk_dome. 0 is as high as this can go.', default='104.40720'),
+			Option( 'lk_dome_occlusion_min', 'Real', desc = 'What is the minimum occlusion value below which lk_dome is full power.', default='3.21592'),
+			Option( 'lk_dome_occlusion_max', 'Real', desc = 'How occluded must the lk_ball water be before lk_dome turns off.', default='5.09299'),
+			Option( 'lk_dome_h2o_radius', 'Real', desc = 'Radius for lk_dome waters.', default='1.4'),
+			Option( 'lk_dome_ramp_width_A2', 'Real', desc = 'Width in squared angstroms for fall-off region of lk_dome from water.', default='3.9'),
+			Option( 'lk_dome_overlap_width_A2', 'Real', desc = 'Width in squared angstroms for the size of the water-water lk_dome interaction.', default='5.0'),
+			Option( 'lk_dome_ball_overlap_width_A2', 'Real', desc = 'Width in squared angstroms for the size of the water-water lk_ball_bridge2 interaction.', default='5.0'),
+			Option( 'lk_dome_water_dist', 'Real', desc = 'Distance from lk_ball water to lk_dome water', default='2.7436'),
+			Option( 'lk_dome_water_adjust', 'Real', desc = 'Adjustment to lk_ball water distance for lk_dome calcs.', default='-1.275'),
 		), # -dna:specificity
 
 		# ashworth

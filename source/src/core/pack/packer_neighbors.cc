@@ -95,7 +95,7 @@ create_packer_graph(
 
 		// find max radius
 		Distance const max_radius = utility::max( residue_radii );
-		Distance const atomic_itxn_dist = scfxn.info()->max_atomic_interaction_distance();
+		Distance const atomic_itxn_dist = scfxn.max_atomic_interaction_cutoff();
 
 		// create point graph and detect neighbors
 		core::conformation::PointGraphOP point_graph( new core::conformation::PointGraph );

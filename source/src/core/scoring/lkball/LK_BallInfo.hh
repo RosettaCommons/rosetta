@@ -206,6 +206,9 @@ public:
 
 	LKB_ResidueInfo( LKB_ResidueInfo const & src );
 
+	LKB_ResidueInfo &
+	operator=( LKB_ResidueInfo const & src );
+
 	LKB_ResidueInfo();
 
 	void

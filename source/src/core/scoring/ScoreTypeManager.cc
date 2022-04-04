@@ -65,6 +65,13 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "lk_ball_iso" ] = lk_ball_iso;
 	name2score_type_[ "lk_ball_bridge" ] = lk_ball_bridge;
 	name2score_type_[ "lk_ball_bridge_uncpl" ] = lk_ball_bridge_uncpl;
+	name2score_type_[ "lk_dome" ] = lk_dome;
+	name2score_type_[ "lk_dome_iso" ] = lk_dome_iso;
+	name2score_type_[ "lk_dome_bridge" ] = lk_dome_bridge;
+	name2score_type_[ "lk_dome_bridge_uncpl" ] = lk_dome_bridge_uncpl;
+	name2score_type_[ "lk_ball_bridge2" ] = lk_ball_bridge2;
+	name2score_type_[ "lk_ball_bridge_uncpl2" ] = lk_ball_bridge_uncpl2;
+	name2score_type_[ "lk_dome_pack" ] = lk_dome_pack;
 	name2score_type_[ "lk_costheta" ] = lk_costheta;
 	name2score_type_[ "lk_polar" ] = lk_polar;
 	name2score_type_[ "lk_nonpolar" ] = lk_nonpolar;

@@ -533,7 +533,8 @@ sources = {
 		"HBondGraph",
 	],
         "scoring/lkball" : [
-                "LK_BallEnergy"
+                "LK_BallEnergy",
+                "LK_DomeEnergy"
         ],
         "scoring/loop_graph" : [
                 "LoopGraphTest"
