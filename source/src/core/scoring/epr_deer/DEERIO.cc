@@ -182,8 +182,7 @@ DEERIO::parse_input() const {
 	}
 
 	// Now we process the "PAIR" data
-	Size new_index = output.rbegin()->first + 1;
-
+    Size new_index = ( output.size() ) ? output.rbegin()->first + 1 : 1;
 	for ( auto const & pair_line : pair_data ) {
 
 		// These two lines are placeholders for the lines that would be present
