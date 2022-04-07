@@ -1130,8 +1130,8 @@ public:
 		// Size CZ_type_index = phe.atom_type_index(CZ_no);
 
 		bool found = false;
-		Size water_iatom = 0;
-		(void)water_iatom;
+		//Size water_iatom = 0;
+		//(void)water_iatom;
 		Size water_iwat = 0;
 		Size water_offset = 0;
 		for ( Size iatom = 1; iatom <= lys.nheavyatoms(); iatom++ ) {
@@ -1140,7 +1140,7 @@ public:
 				Real dist = suspected_water_pos.distance( lys_info.waters()[iwat + offset] );
 				if ( dist < 0.1 ) {
 					found = true;
-					water_iatom = iatom;
+					//water_iatom = iatom;
 					water_iwat = iwat;
 					water_offset = offset;
 				} else {
