@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pack/annealer/SequenceSymmetricAnnealer.cxxtest.hh
+/// @file   core/pack/interaction_graph/SequenceSymmetricAnnealer.cxxtest.hh
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 /// @author Updated by Tim Neary, timdot10@gmail.com
 
