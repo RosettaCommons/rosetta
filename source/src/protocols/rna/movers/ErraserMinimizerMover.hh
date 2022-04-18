@@ -55,7 +55,7 @@ public:
 
 	void minimize_protein( bool const setting ) { minimize_protein_ = setting; }
 
-	void initialize_from_options( utility::options::OptionCollection const & options );
+	void initialize_from_options( utility::options::OptionCollection const & options, bool const initialize_scorefxn = true );
 
 	core::kinematics::MoveMap
 	movemap_setup( Pose & pose, std::set< core::Size > & cut_upper, std::set< core::Size > & cut_lower, ObjexxFCL::FArray1D< bool > & allow_insert );

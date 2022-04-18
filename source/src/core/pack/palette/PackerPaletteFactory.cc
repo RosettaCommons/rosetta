@@ -280,6 +280,12 @@ PackerPaletteFactory::initialize_packer_palette_from_global_defaults() {
 	return utility::pointer::make_shared< DefaultPackerPalette >();
 }
 
+/// @brief Access the map of packer palette name to PackerPaletteCreator.
+PackerPaletteFactory::PackerPaletteCreatorMap const &
+PackerPaletteFactory::packer_palette_creator_map() const {
+	return packer_palette_creator_map_;
+}
+
 } //namespace palette
 } //namespace pack
 } //namespace core

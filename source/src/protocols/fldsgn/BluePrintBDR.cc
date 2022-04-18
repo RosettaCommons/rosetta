@@ -71,7 +71,6 @@ static basic::Tracer TR( "protocols.fldsgn.BluePrintBDR" );
 BluePrintBDR::BluePrintBDR() :
 	Super( "BluePrintBDR" ),
 	blueprint_( /* NULL */ ),
-	sfx_( core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen" ) ),
 	loop_mover_str_( "RemodelLoopMover" ),
 	use_fullmer_( false ),
 	num_fragpick_( 200 ),
@@ -96,7 +95,6 @@ BluePrintBDR::BluePrintBDR() :
 /// @brief value constructor
 BluePrintBDR::BluePrintBDR( String const & filename, bool const ss_from_blueprint ) :
 	Super( "BluePrintBDR" ),
-	sfx_( core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen" ) ),
 	loop_mover_str_( "RemodelLoopMover" ),
 	use_fullmer_( false ),
 	num_fragpick_( 200 ),
@@ -432,6 +430,10 @@ BluePrintBDR::apply( Pose & pose )
 	using protocols::moves::FAIL_DO_NOT_RETRY;
 	using protocols::moves::FAIL_BAD_INPUT;
 	using protocols::moves::FAIL_RETRY;
+
+	if ( sfx_ == nullptr ) {
+		sfx_ = core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen" );
+	}
 
 	//set instruction by blueprint file and store secondary structure information
 	if ( !blueprint_ && !initialized_ ) {

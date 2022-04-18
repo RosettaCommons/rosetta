@@ -36,20 +36,21 @@ using namespace utility::tag;
 
 class DummyRLTOCreator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const { return ResLvlTaskOperationOP( 0 ); }
-	virtual std::string keyname() const { return "DummyResLvlTaskOperation"; }
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+	ResLvlTaskOperationOP create_res_level_task_operation() const override { return ResLvlTaskOperationOP( 0 ); }
+	std::string keyname() const override { return "DummyResLvlTaskOperation"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override
 	{
 		res_lvl_task_op_schema_empty( xsd, keyname() );
 	}
+	bool skip_citation_info_in_schema() const override { return true; }
 
 };
 
 class DummyRLTO2Creator : public ResLvlTaskOperationCreator {
 public:
-	virtual ResLvlTaskOperationOP create_res_level_task_operation() const { return ResLvlTaskOperationOP( 0 ); }
-	virtual std::string keyname() const { return "DummyResLvlTaskOperation2"; }
-	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+	ResLvlTaskOperationOP create_res_level_task_operation() const override { return ResLvlTaskOperationOP( 0 ); }
+	std::string keyname() const override { return "DummyResLvlTaskOperation2"; }
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override
 	{
 		XMLSchemaComplexType ct;
 
@@ -59,6 +60,7 @@ public:
 
 		xsd.add_top_level_element( ct );
 	}
+	bool skip_citation_info_in_schema() const override { return true; }
 
 };
 

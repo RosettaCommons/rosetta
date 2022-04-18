@@ -1,6 +1,7 @@
 -run
  -constant_seed
  -rng mt19937
+ -preserve_header true
 -in
  -file
   -s inputs/7cpa_7cpa_input.pdb

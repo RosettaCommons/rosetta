@@ -77,9 +77,6 @@ ParallelTempering::ParallelTempering() :
 	start_time_(0),
 	total_mpi_wait_time_(0)
 {
-#ifndef USEMPI
-	utility_exit_with_message( "ParallelTempering requires MPI build" );
-#endif
 #ifdef USEMPI
 	mpi_comm_ = MPI_COMM_NULL;
 #endif
@@ -128,6 +125,10 @@ ParallelTempering::initialize_simulation(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
+#ifndef USEMPI
+	utility_exit_with_message( "ParallelTempering requires an MPI build of Rosetta (extras=mpi during compilation).  Failing." );
+#endif
+
 	tr.Trace << "ParallelTempering::initialize_simul1... " << std::endl;
 	Parent::initialize_simulation(pose, metropolis_hastings_mover,cycle);
 	tr.Trace << "ParallelTempering::initialize_simul2... " << std::endl;
@@ -351,7 +352,11 @@ void ParallelTempering::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	using namespace utility::tag;
 	AttributeList attlist;
 	TemperingBase::attributes_for_tempering_base( attlist, xsd );
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Perform parallel tempering at two temperatures specified on the command line", attlist );
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Perform parallel tempering at two temperatures specified on the command line.  Requires an MPI build of Rosetta (compilation with extras=mpi).",
+		attlist
+	);
 }
 
 std::string ParallelTemperingCreator::keyname() const {

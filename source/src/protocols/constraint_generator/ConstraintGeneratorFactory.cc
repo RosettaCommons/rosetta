@@ -130,9 +130,12 @@ ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attribute
 	utility::tag::AttributeList const & attributes)
 {
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
+
+	std::string const citation_string( get_instance()->get_citation_humanreadable( constraint_type ) );
+
 	ct_gen.complex_type_naming_func( & complex_type_name_for_constraint_generator )
 		.element_name( constraint_type )
-		.description( description )
+		.description( description + "\n\n" + citation_string )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );

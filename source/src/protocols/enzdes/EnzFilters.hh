@@ -470,7 +470,7 @@ private:
 	bool no_packstat_calc_, native_comparison_;
 	bool repack_no_lig_, keep_rnl_pose_;
 	mutable core::pose::PoseOP rnl_pose_;
-	core::scoring::ScoreFunctionOP sfxn_;
+	mutable core::scoring::ScoreFunctionOP sfxn_;
 	toolbox::match_enzdes_util::EnzConstraintIOCOP enzcst_io_;
 
 	mutable std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > > residue_calculators_;

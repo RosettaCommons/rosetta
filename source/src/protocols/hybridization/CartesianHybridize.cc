@@ -180,17 +180,6 @@ CartesianHybridize::init() {
 	skip_long_min_ = false;
 
 	temperature_ = option[cm::hybridize::stage2_temperature]();
-
-	// default scorefunctions
-	if ( cenrot_ ) {
-		set_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_relax_cart" ) );
-		set_min_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_cartmin" ) );
-		set_pack_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_repack" ) );
-	} else {
-		set_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
-		set_min_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
-		set_pack_scorefunction (core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
-	}
 }
 
 // set all three
@@ -418,6 +407,29 @@ CartesianHybridize::apply( Pose & pose ) {
 	using namespace core::pack::task;
 	using core::pack::task::operation::TaskOperationCOP;
 
+	// default scorefunctions
+	if ( cenrot_ ) {
+		if ( lowres_scorefxn_ == nullptr ) {
+			lowres_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_relax_cart" );
+		}
+		if ( min_scorefxn_ == nullptr ) {
+			min_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_cartmin" );
+		}
+		if ( cenrot_repack_scorefxn_ == nullptr ) {
+			cenrot_repack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score4_cenrot_repack" );
+		}
+	} else {
+		if ( lowres_scorefxn_ == nullptr ) {
+			lowres_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
+		}
+		if ( min_scorefxn_ == nullptr ) {
+			min_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
+		}
+		if ( cenrot_repack_scorefxn_ == nullptr ) {
+			cenrot_repack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
+		}
+	}
+
 	core::Size nres_nonvirt = get_num_residues_nonvirt(pose);
 
 	// if no movement specified, make everything movable by default
@@ -432,16 +444,16 @@ CartesianHybridize::apply( Pose & pose ) {
 
 	if ( cenrot_ ) {
 		pack_rotamers = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
-		TaskFactoryOP main_task_factory( new TaskFactory );
+		TaskFactoryOP main_task_factory( utility::pointer::make_shared< TaskFactory >() );
 		main_task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
 		pack_rotamers->task_factory( main_task_factory );
 		pack_rotamers->score_function( cenrot_repack_scorefxn_ );
 
-		protocols::moves::MoverOP tocenrot( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT ) );
+		protocols::moves::MoverOP tocenrot( utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::CENTROID_ROT ) );
 		tocenrot->apply( pose );
 		pack_rotamers->apply(pose);
 	} else {
-		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
+		protocols::moves::MoverOP tocen( utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	}
 
@@ -587,7 +599,7 @@ CartesianHybridize::apply( Pose & pose ) {
 		lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
 
 		(*lowres_scorefxn_)(pose);
-		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, temperature_ ) );
+		protocols::moves::MonteCarloOP mc( utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *lowres_scorefxn_, temperature_ ) );
 		//cenrot may use higher temp
 
 		auto neffcycles = (core::Size)(ncycles_*increase_cycles_);

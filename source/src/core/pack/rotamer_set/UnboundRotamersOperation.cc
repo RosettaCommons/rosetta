@@ -81,6 +81,8 @@ Size UnboundRotamersOperation::total_residue()
 
 void UnboundRotamersOperation::initialize_from_command_line()
 {
+	if ( is_initialized_ ) return;
+	is_initialized_ = true;
 	using namespace basic::options;
 	if ( !option[ OptionKeys::packing::unboundrot ].active() ) return;
 	for ( Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i ) {
@@ -144,6 +146,12 @@ UnboundRotamersOperation::alter_rotamer_set(
 			TR.Debug << "Residue names do not match. Skipping 'unbound' rotamer at position " << seqnum << std::endl;
 		}
 	}
+}
+
+/// @brief Has this object been initialized?
+bool
+UnboundRotamersOperation::is_initialized() const {
+	return is_initialized_;
 }
 
 

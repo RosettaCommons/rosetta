@@ -63,7 +63,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-run:preserve_header true" );
 		scorefxn = utility::pointer::make_shared< scoring::ScoreFunction >();
 		scorefxn->reset();
 		scorefxn->set_weight( scoring::atom_pair_constraint, 1.0);
@@ -79,7 +79,7 @@ public:
 		sheet_csts_badpair->set_id( "sheet_csts_unit2" );
 
 		sheet_cst_rcg = protocols::forge::remodel::RemodelConstraintGeneratorOP(
-			new protocols::forge::remodel::GenericRemodelConstraintGenerator( "sheet_csts_unit1_rcg", sheet_csts ) );
+			utility::pointer::make_shared< protocols::forge::remodel::GenericRemodelConstraintGenerator >( "sheet_csts_unit1_rcg", sheet_csts ) );
 		rm_csts.set_generator( sheet_cst_rcg );
 	}
 

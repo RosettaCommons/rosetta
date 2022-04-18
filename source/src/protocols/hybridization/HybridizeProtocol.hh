@@ -266,6 +266,14 @@ private:
 	bool keep_pose_constraint_;
 	std::string coord_cst_res_;
 	utility::vector1 < core::Size > user_csts_;
+
+	/// @brief Do we need to load the native state from disk?
+	/// @details Done once, lazily.
+	bool native_needs_load_=false;
+
+	/// @brief Do we need to load the native state from disk using the
+	/// align_rmsd_target option?
+	bool native_needs_load_from_align_rmsd_target_=false;
 };
 
 } // hybridization

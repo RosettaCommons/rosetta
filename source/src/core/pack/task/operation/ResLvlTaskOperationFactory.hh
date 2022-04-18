@@ -90,6 +90,9 @@ public:
 	/// @brief The name given to the XML schema group of all ResLvlTaskOperation s.
 	static std::string res_lvl_task_op_xml_schema_group_name();
 
+	/// @brief Access the creator map (for unit testing).
+	RLTOC_Map const & creator_map() const;
+
 private:
 
 	ResLvlTaskOperationFactory();

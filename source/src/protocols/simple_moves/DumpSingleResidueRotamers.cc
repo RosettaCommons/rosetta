@@ -106,7 +106,13 @@ DumpSingleResidueRotamers::apply( core::pose::Pose & pose ){
 	using namespace core::chemical;
 	using namespace core::pose;
 
-	runtime_assert( rsd_index_ >= 1 && rsd_index_ <= pose.total_residue() );
+	runtime_assert_string_msg( !pose.empty(), "Error in DumpSingleResidueRotamers::apply():  This mover cannot be applied to an empty pose." );
+
+	runtime_assert_string_msg(
+		rsd_index_ >= 1 && rsd_index_ <= pose.total_residue(),
+		"Error in DumpSingleResidueRotamers::apply(): The residue index " + std::to_string(rsd_index_) +
+		" was out of range.  (The pose's residues run from 1 to " + std::to_string(pose.total_residue()) + ".)"
+	);
 
 	// Set up the single residue dunbrack library
 	ResidueType const & concrete_residue( pose.residue( rsd_index_ ).type() );
@@ -305,7 +311,7 @@ void DumpSingleResidueRotamers::init_from_options() {
 	if ( option[ OptionKeys::ralford::dump_rotamers::rsd_index ].user() ) {
 		rsd_index_ = option[ OptionKeys::ralford::dump_rotamers::rsd_index ];
 	} else {
-		utility_exit_with_message( "Residue index at which to sample rotamers not specified! Exiting..." );
+		rsd_index_ = 0;
 	}
 
 	if ( option[ OptionKeys::ralford::dump_rotamers::rotamer_info_prefix ].user() ) {

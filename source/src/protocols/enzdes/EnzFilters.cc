@@ -509,7 +509,7 @@ core::Real
 EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::pose;
 	using namespace core::scoring;
-	PoseOP in_pose( new Pose( pose ) );
+	PoseOP in_pose( utility::pointer::make_shared< Pose >( pose ) );
 
 	core::Real weight(0.0), score(0.0);
 	if ( whole_pose_ ) {
@@ -771,7 +771,6 @@ EnzdesScorefileFilter::EnzdesScorefileFilter()
 	repack_no_lig_(basic::options::option[basic::options::OptionKeys::enzdes::final_repack_without_ligand]),
 	keep_rnl_pose_(basic::options::option[basic::options::OptionKeys::enzdes::dump_final_repack_without_ligand_pdb]),
 	rnl_pose_(/* NULL */),
-	sfxn_(core::scoring::ScoreFunctionFactory::create_score_function("enzdes") ),
 	enzcst_io_(/* NULL */),
 	native_comp_(/* NULL */),
 	reqfile_name_("")
@@ -796,7 +795,7 @@ EnzdesScorefileFilter::EnzdesScorefileFilter( EnzdesScorefileFilter const & othe
 	repack_no_lig_( other.repack_no_lig_),
 	keep_rnl_pose_( other.keep_rnl_pose_),
 	rnl_pose_( other.rnl_pose_),
-	sfxn_( other.sfxn_->clone() ),
+	sfxn_( other.sfxn_ == nullptr ? nullptr : other.sfxn_->clone() ),
 	enzcst_io_( other.enzcst_io_),
 	residue_calculators_(other.residue_calculators_),
 	native_compare_calculators_(other.native_compare_calculators_),
@@ -868,6 +867,10 @@ EnzdesScorefileFilter::examine_pose(
 	core::pose::Pose const & pose ) const
 {
 	using namespace core::io::silent;
+
+	if ( sfxn_ == nullptr ) {
+		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function("enzdes");
+	}
 
 	silent_Es_.clear();
 	//flo jan 2010 with the new cst cache, some calcs that take the
@@ -977,7 +980,7 @@ EnzdesScorefileFilter::examine_pose(
 	//if repack without lig requested
 	if ( repack_no_lig_ ) {
 
-		core::pose::PoseOP rnlpose( new core::pose::Pose( pose ) );
+		core::pose::PoseOP rnlpose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 		protocols::enzdes::RepackLigandSiteWithoutLigandMover rnl_mov( sfxn_, true );
 		if ( enzcst_io_ ) rnl_mov.set_cstio( enzcst_io_ );
 		rnl_mov.apply( *rnlpose );
@@ -1144,31 +1147,31 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 
 	//before starting, we make sure that all necessary calculators are instantiated
 	if ( !CalculatorFactory::Instance().check_calculator_exists( hbond_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP hb_calc( new protocols::simple_pose_metric_calculators::NumberHBondsCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP hb_calc( utility::pointer::make_shared< protocols::simple_pose_metric_calculators::NumberHBondsCalculator >() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hb_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( burunsat_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( new protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", hbond_calc_name) );
+		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( utility::pointer::make_shared< protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator >("default", hbond_calc_name) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( packstat_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP pstat_calc( new protocols::pose_metric_calculators::PackstatCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP pstat_calc( utility::pointer::make_shared< protocols::pose_metric_calculators::PackstatCalculator >() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( packstat_calc_name, pstat_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( noligpackstat_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP noligpstat_calc( new protocols::pose_metric_calculators::PackstatCalculator( true ) );
+		core::pose::metrics::PoseMetricCalculatorOP noligpstat_calc( utility::pointer::make_shared< protocols::pose_metric_calculators::PackstatCalculator >( true ) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( noligpackstat_calc_name, noligpstat_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( nonlocalcontacts_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP nlcontacts_calc( new protocols::pose_metric_calculators::NonlocalContactsCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP nlcontacts_calc( utility::pointer::make_shared< protocols::pose_metric_calculators::NonlocalContactsCalculator >() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( nonlocalcontacts_calc_name, nlcontacts_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( surface_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP surface_calc( new protocols::pose_metric_calculators::SurfaceCalculator( true ) );
+		core::pose::metrics::PoseMetricCalculatorOP surface_calc( utility::pointer::make_shared< protocols::pose_metric_calculators::SurfaceCalculator >( true ) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( surface_calc_name, surface_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) ) {
-		core::pose::metrics::PoseMetricCalculatorOP charge_calc( new protocols::pose_metric_calculators::ChargeCalculator() );
+		core::pose::metrics::PoseMetricCalculatorOP charge_calc( utility::pointer::make_shared< protocols::pose_metric_calculators::ChargeCalculator >() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( charge_calc_name, charge_calc );
 	}
 
@@ -1246,11 +1249,11 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 				std::string lig_interface_e_calc_name = "interf_E_" + prot_ch_string + "_" + lig_ch_string;
 
 				if ( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_neighbor_calc_name ) ) {
-					PoseMetricCalculatorOP lig_neighbor_calc( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( prot_chain, lig_chain ) );
+					PoseMetricCalculatorOP lig_neighbor_calc( utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator >( prot_chain, lig_chain ) );
 					CalculatorFactory::Instance().register_calculator( lig_interface_neighbor_calc_name, lig_neighbor_calc );
 				}
 				if ( !CalculatorFactory::Instance().check_calculator_exists( lig_dsasa_calc_name ) ) {
-					PoseMetricCalculatorOP lig_dsasa_calc( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( prot_chain, lig_chain ) );
+					PoseMetricCalculatorOP lig_dsasa_calc( utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator >( prot_chain, lig_chain ) );
 					CalculatorFactory::Instance().register_calculator( lig_dsasa_calc_name, lig_dsasa_calc );
 				}
 				if ( !CalculatorFactory::Instance().check_calculator_exists( lig_interface_e_calc_name ) ) {
@@ -1261,7 +1264,7 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 						score_types_to_ignore.push_back( ScoreType( angle_constraint ) );
 						score_types_to_ignore.push_back( ScoreType( dihedral_constraint ) );
 					}
-					PoseMetricCalculatorOP lig_interf_E_calc( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( lig_interface_neighbor_calc_name, score_types_to_ignore ) );
+					PoseMetricCalculatorOP lig_interf_E_calc( utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator >( lig_interface_neighbor_calc_name, score_types_to_ignore ) );
 					CalculatorFactory::Instance().register_calculator( lig_interface_e_calc_name, lig_interf_E_calc );
 				}
 
@@ -1380,10 +1383,10 @@ ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP tag, basic::datacache:
 void
 ResidueConformerFilter::initialize_internal_data()
 {
-	match::downstream::LigandConformerBuilderOP lcbuilder( new match::downstream::LigandConformerBuilder() );
+	match::downstream::LigandConformerBuilderOP lcbuilder( utility::pointer::make_shared< match::downstream::LigandConformerBuilder >() );
 	lcbuilder->set_idealize_conformers( false ); //not necessary if we're not matching
 	lcbuilder->set_rmsd_unique_cutoff( max_rms_ );
-	core::conformation::ResidueOP dummy_res( new core::conformation::Residue( *restype_, true ) );
+	core::conformation::ResidueOP dummy_res( utility::pointer::make_shared< core::conformation::Residue >( *restype_, true ) );
 
 	lcbuilder->initialize_from_residue( 1, 2, 3, 1, 2, 3, *dummy_res ); //all atoms set to arbitrary 1,2,3, since we're not matching
 	lcbuilder->determine_redundant_conformer_groups( relevant_atom_indices_ ); //maybe this isn't even necessary

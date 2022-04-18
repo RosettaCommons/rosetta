@@ -1156,6 +1156,7 @@ Options = Option_Group( '',
 		##),
 		Option( 'preserve_header', 'Boolean',
 			desc="Maintain header info from input PDB when writing output PDBs",
+			default="false"
 			),
 		#Option( 'output_silent_gz', 'Boolean', # moved to -out::silent_gz
 		#       desc="Use gzipped compressed output (silent run level)",

@@ -167,9 +167,6 @@ CartesianSampler::init() {
 	selection_bias_ = "none";
 	cumulate_prob_ = false;
 
-	// default scorefunction
-	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
-	set_fa_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" ) );
 }
 
 void
@@ -712,13 +709,20 @@ compute_fragment_bias(
 }
 
 void
-CartesianSampler::
-apply(
+CartesianSampler::apply(
 	core::pose::Pose & pose
 ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
+
+	// Load scorefunctions if not loaded
+	if ( scorefxn_ == nullptr ) {
+		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+	}
+	if ( fa_scorefxn_ == nullptr ) {
+		set_fa_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" ) );
+	}
 
 	// autogenerate fragments if they are not loaded yet
 	if ( fragments_.size() == 0 ) {

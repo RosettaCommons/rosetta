@@ -146,7 +146,7 @@ private: //data
 
 	/// @brief The scorefunction to use for hydrogen bond scoring.
 	/// @details If no scorefunction is provided, then the default scorefunction is used.
-	core::scoring::ScoreFunctionOP scorefxn_;
+	mutable core::scoring::ScoreFunctionOP scorefxn_;
 
 	/// @brief Ways of specifying for which residues we'll be searching for hydrogen bond partners
 	/// @details If none are provided, all residues in the pose forming hydrogen bonds will be selected.

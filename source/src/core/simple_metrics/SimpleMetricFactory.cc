@@ -135,5 +135,11 @@ SimpleMetricFactory::get_citation_humanreadable(
 	return ss.str();
 }
 
+/// @brief Access the map of name->creator.  Used only for testing.
+SimpleMetricFactory::CreatorMap const &
+SimpleMetricFactory::creator_map() const {
+	return creator_map_;
+}
+
 } //namespace simple_metrics
 } //namespace core

@@ -149,9 +149,6 @@ FragmentExtension::FragmentExtension( ) {
 	pack_min_cycles_ = 2;
 	looporder_ = 0;
 	maxloopsize_ = 8;
-	sf_ = core::scoring::get_score_function();
-	cen_sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
-	cenrot_sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_relax");
 	direction_ = 1;
 	parametercheck_= false;
 	minimize_= true;
@@ -194,6 +191,16 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
+
+	if ( sf_ == nullptr ) {
+		sf_ = core::scoring::get_score_function();
+	}
+	if ( cen_sf_ == nullptr ) {
+		cen_sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
+	}
+	if ( cenrot_sf_ == nullptr ) {
+		cenrot_sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_relax");
+	}
 
 	// native
 	if ( option[ in::file::native ].user() ) {

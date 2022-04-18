@@ -37,7 +37,9 @@ namespace core {
 namespace simple_metrics {
 
 class SimpleMetricFactory : public utility::SingletonBase< SimpleMetricFactory > {
-private:
+
+public:
+
 	typedef std::map< std::string, SimpleMetricCreatorOP > CreatorMap;
 
 public:
@@ -71,6 +73,9 @@ public:
 	get_citation_humanreadable(
 		std::string const & metric_name
 	) const;
+
+	/// @brief Access the map of name->creator.  Used only for testing.
+	CreatorMap const & creator_map() const;
 
 private:
 	CreatorMap creator_map_;

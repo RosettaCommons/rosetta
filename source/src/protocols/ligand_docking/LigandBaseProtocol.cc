@@ -98,50 +98,24 @@ LigandBaseProtocol::LigandBaseProtocol():
 	Mover::type( "LigandBaseProtocol" );
 
 	unboundrot_ = utility::pointer::make_shared< core::pack::rotamer_set::UnboundRotamersOperation >();
-	unboundrot_->initialize_from_command_line();
 
 	using namespace basic::options;
 	use_soft_rep_ = option[ OptionKeys::docking::ligand::soft_rep ];
-	bool const rosetta_electrostatics = option[ OptionKeys::docking::ligand::old_estat ];
-	bool const hbonds_downweight = true;
+	rosetta_electrostatics_ = option[ OptionKeys::docking::ligand::old_estat ];
 
-	// Set up scoring function
-	// Meiler & Baker 06 uses the soft-repulsive weights, but David wants me to use the hard ones...
-
-	if ( option[ OptionKeys::docking::ligand::tweak_sxfn ] ) {
-		TR.Debug << "Using regular tweaked scorefunctions" << std::endl;
-		hard_scorefxn_ = make_tweaked_scorefxn("ligand", rosetta_electrostatics, rosetta_electrostatics, hbonds_downweight);
-		soft_scorefxn_ = make_tweaked_scorefxn("ligand_soft_rep", rosetta_electrostatics, rosetta_electrostatics, hbonds_downweight);
-	} else {
-		// Use plain scorefunctions - user specified ones if given, else the regular ones (but non-tweaked).
-		// Note that you should now be able to specify exclude_protein_protein_fa_elec in the weights files.
-		if ( option[ OptionKeys::score::weights ].user() || option[ OptionKeys::score::patch ].user() ) {
-			TR.Debug << "Using untweaked command-line specified (hard) scorefunction. " << std::endl;
-			hard_scorefxn_ = core::scoring::get_score_function();
-		} else {
-			TR.Debug << "Using untweaked ligand.wts hard scorefunction." << std::endl;
-			hard_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("ligand.wts");
-		}
-		if ( option[ OptionKeys::score::soft_wts ].user() ) {
-			TR.Debug << "Using untweaked -score:soft_wts specified soft scorefunction." << std::endl;
-			soft_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( option[ OptionKeys::score::soft_wts ] );
-		} else {
-			TR.Debug << "Using untweaked ligand_soft_rep.wts soft scorefunction." << std::endl;
-			soft_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("ligand_soft_rep.wts");
-		}
-	}
-
-	// "Default" score is always hard;  use soft-rep only inside of apply()
-	scorefxn_ = hard_scorefxn_; //( use_soft_rep_ ? soft_scorefxn_ : hard_scorefxn_ );
 }
 
 
 LigandBaseProtocol::~LigandBaseProtocol() = default;
 
 core::scoring::ScoreFunctionOP LigandBaseProtocol::get_scorefxn() {
+	if ( scorefxn_ == nullptr ) {
+		initialize_scorefxns();
+	}
 	return scorefxn_;
 }
 core::scoring::ScoreFunctionCOP LigandBaseProtocol::get_scorefxn() const {
+	runtime_assert( scorefxn_ != nullptr );
 	return scorefxn_;
 }
 
@@ -163,15 +137,14 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 {
 	using namespace core::scoring;
 
-	ScoreFunctionOP sfxn( new ScoreFunction() );
-	sfxn->reset();
+	ScoreFunctionOP sfxn(
+		core::scoring::ScoreFunctionFactory::get_instance()->create_score_function( weights_tag )
+	);
 
 	// manipulate EnergyMethodOptions here
 	methods::EnergyMethodOptions options( sfxn->energy_method_options() );
 	options.exclude_protein_protein_fa_elec( estat_exclude_protein );
 	sfxn->set_energy_method_options( options );
-
-	sfxn->add_weights_from_file( basic::database::full_name( "scoring/weights/"+weights_tag+".wts" ) );
 
 	// Tiny weight here (like standard.wts) presumably eliminates the worst intra-ligand clashes...
 	// Weight increased because I was still getting significant overlaps between ligand atoms,
@@ -423,7 +396,7 @@ LigandBaseProtocol::make_movemap(
 ) const
 {
 	// All DOF start false (frozen)
-	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
+	core::kinematics::MoveMapOP movemap( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 	movemap->set_jump(jump_id, true);
 	//if( include_backbone ) movemap->set_bb(true); // held in check by restraints (elsewhere)
 
@@ -494,6 +467,9 @@ LigandBaseProtocol::make_packer_task(
 
 	PackerTaskOP pack_task = TaskFactory::create_packer_task(pose, palette);
 	pack_task->initialize_from_command_line(); // -ex1 -ex2  etc.
+	if ( !unboundrot_->is_initialized() ) {
+		unboundrot_->initialize_from_command_line();
+	}
 	pack_task->append_rotamerset_operation( unboundrot_ );
 	//pack_task->restrict_to_repacking(); // all residues -- now set individually below
 
@@ -706,8 +682,7 @@ LigandBaseProtocol::restrain_protein_Calphas(
 	utility::vector1< bool > const & is_restrained,
 	//core::Real stddev_Angstroms,
 	core::scoring::func::FuncOP restr_func
-) const
-{
+) {
 	using namespace core::scoring::constraints;
 	using core::chemical::ResidueType;
 	using core::chemical::AtomIndices;
@@ -725,7 +700,7 @@ LigandBaseProtocol::restrain_protein_Calphas(
 		if ( pose.residue(i).is_protein() && is_restrained[i] ) { // protein residues
 			Residue const & rsd = pose.residue(i);
 			ResidueType const & rsd_type = pose.residue_type(i);
-			ConstraintOP constraint( new CoordinateConstraint(
+			ConstraintOP constraint( utility::pointer::make_shared< CoordinateConstraint >(
 				AtomID(rsd_type.atom_index("CA"), i),
 				fixed_pt,
 				rsd.xyz("CA"),
@@ -737,8 +712,9 @@ LigandBaseProtocol::restrain_protein_Calphas(
 	}
 
 	// You can adjust later, but at least make sure it's enabled!
-	if ( scorefxn_->has_zero_weight(core::scoring::coordinate_constraint) ) {
-		scorefxn_->set_weight( core::scoring::coordinate_constraint, 1.0 );
+	core::scoring::ScoreFunction & sfxn( *scorefxn() );
+	if ( sfxn.has_zero_weight(core::scoring::coordinate_constraint) ) {
+		sfxn.set_weight( core::scoring::coordinate_constraint, 1.0 );
 	}
 }
 
@@ -757,14 +733,14 @@ LigandBaseProtocol::restrain_ligand_nbr_atom(
 	using core::conformation::Residue;
 	using core::id::AtomID;
 
-	core::scoring::func::FuncOP restr_func( new core::scoring::func::HarmonicFunc(0, stddev_Angstroms) );
+	core::scoring::func::FuncOP restr_func( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >(0, stddev_Angstroms) );
 	// An atom that should never move in terms of absolute coordinates.
 	// Needed as a proxy for the origin, b/c Rosetta assumes all energies are
 	// translation-invariant.  So it's a "two-body" energy with this fixed atom.
 	AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
 
 	Residue const & rsd = pose.residue(lig_id);
-	ConstraintOP constraint( new CoordinateConstraint(
+	ConstraintOP constraint( utility::pointer::make_shared< CoordinateConstraint >(
 		AtomID(rsd.nbr_atom(), lig_id),
 		fixed_pt,
 		rsd.nbr_atom_xyz(),
@@ -813,11 +789,107 @@ LigandBaseProtocol::setup_bbmin_foldtree(
 		allow_move_bb[i] = mobile_bb[i];
 	}
 	// Add constraints
-	core::scoring::func::FuncOP restr_func( new core::scoring::func::HarmonicFunc(0, stddev_Angstroms) );
+	core::scoring::func::FuncOP restr_func( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >(0, stddev_Angstroms) );
 	restrain_protein_Calphas(pose, allow_move_bb, restr_func);
 
 }//setup_bbmin_foldtree
 
+/// @brief Nonconst access to the unboundrot_ object.
+/// @details Triggers initialization if it is uninitialized.
+core::pack::rotamer_set::UnboundRotamersOperationOP
+LigandBaseProtocol::unboundrot() {
+	if ( !unboundrot_->is_initialized() ) {
+		unboundrot_->initialize_from_command_line();
+	}
+	return unboundrot_;
+}
+
+/// @brief Access the scorefunction.
+core::scoring::ScoreFunctionOP
+LigandBaseProtocol::scorefxn() {
+	if ( !scorefxns_initialized_ ) {
+		initialize_scorefxns();
+	}
+	return scorefxn_;
+}
+
+/// @brief Set the scorefunction (cloning the input).
+void
+LigandBaseProtocol::set_scorefxn( core::scoring::ScoreFunctionCOP const & sfxn_in ) {
+	if ( sfxn_in == nullptr ) {
+		scorefxn_ = nullptr;
+	} else {
+		scorefxn_ = sfxn_in->clone();
+	}
+}
+
+/// @brief Access the hard scorefunction.
+core::scoring::ScoreFunctionOP
+LigandBaseProtocol::hard_scorefxn() {
+	if ( !scorefxns_initialized_ ) {
+		initialize_scorefxns();
+	}
+	return hard_scorefxn_;
+}
+
+/// @brief Access the soft scorefunction.
+core::scoring::ScoreFunctionOP
+LigandBaseProtocol::soft_scorefxn() {
+	if ( !scorefxns_initialized_ ) {
+		initialize_scorefxns();
+	}
+	return soft_scorefxn_;
+}
+
+/// @brief Set the sc_interface_padding.
+void LigandBaseProtocol::set_sc_interface_padding( core::Real const setting ) { sc_interface_padding_ = setting; }
+
+/// @brief Set the bb_interface_cutoff.
+void LigandBaseProtocol::set_bb_interface_cutoff( core::Real const setting ) { bb_interface_cutoff_ = setting; }
+
+/// @brief Load the scorefunctions that we'll be using.
+/// @details Done lazily so that this mover can be instantiated without a lot of overhead.
+void
+LigandBaseProtocol::initialize_scorefxns() {
+	using namespace basic::options;
+
+	if ( scorefxns_initialized_ ) return;
+	scorefxns_initialized_ = true;
+
+	// VKM, 20 March 2022: everything below this comment was moved from the constructor, so that this is
+	// now done lazily:
+
+	// Set up scoring function
+	// Meiler & Baker 06 uses the soft-repulsive weights, but David wants me to use the hard ones...
+
+	bool const hbonds_downweight = true;
+
+	if ( option[ OptionKeys::docking::ligand::tweak_sxfn ] ) {
+		TR.Debug << "Using regular tweaked scorefunctions" << std::endl;
+		hard_scorefxn_ = make_tweaked_scorefxn("ligand", rosetta_electrostatics_, rosetta_electrostatics_, hbonds_downweight);
+		soft_scorefxn_ = make_tweaked_scorefxn("ligand_soft_rep", rosetta_electrostatics_, rosetta_electrostatics_, hbonds_downweight);
+	} else {
+		// Use plain scorefunctions - user specified ones if given, else the regular ones (but non-tweaked).
+		// Note that you should now be able to specify exclude_protein_protein_fa_elec in the weights files.
+		if ( option[ OptionKeys::score::weights ].user() || option[ OptionKeys::score::patch ].user() ) {
+			TR.Debug << "Using untweaked command-line specified (hard) scorefunction. " << std::endl;
+			hard_scorefxn_ = core::scoring::get_score_function();
+		} else {
+			TR.Debug << "Using untweaked ligand.wts hard scorefunction." << std::endl;
+			hard_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("ligand.wts");
+		}
+		if ( option[ OptionKeys::score::soft_wts ].user() ) {
+			TR.Debug << "Using untweaked -score:soft_wts specified soft scorefunction." << std::endl;
+			soft_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( option[ OptionKeys::score::soft_wts ] );
+		} else {
+			TR.Debug << "Using untweaked ligand_soft_rep.wts soft scorefunction." << std::endl;
+			soft_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("ligand_soft_rep.wts");
+		}
+	}
+
+	// "Default" score is always hard;  use soft-rep only inside of apply()
+	scorefxn_ = hard_scorefxn_; //( use_soft_rep_ ? soft_scorefxn_ : hard_scorefxn_ );
+}
 
 /// @brief reorders a fold tree such that movement in the mobile regions will
 /// @brief have zero effect on the non-mobile regions. for every contiguous string
@@ -1010,7 +1082,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 
 	//let's see if this works
 	//utility::graph::GraphOP neighbor_graph = pack::create_packer_graph( pose, *scofx, help_task );
-	utility::graph::GraphOP neighbor_graph( new utility::graph::Graph( pose.energies().energy_graph() ) );
+	utility::graph::GraphOP neighbor_graph( utility::pointer::make_shared<  utility::graph::Graph >( pose.energies().energy_graph() ) );
 
 	chemical::ResidueTypeCOP res_type = pose.residue_type_ptr( seqpos );
 	conformation::Residue const & existing_residue( pose.residue( seqpos ) );

@@ -143,13 +143,13 @@ ErraserMinimizerMover::ErraserMinimizerMover():
 	constrain_phosphate_( true ),
 	ready_set_only_( false ),
 	skip_minimize_( false ),
-	scorefxn_( new ScoreFunction() ),
-	edens_scorefxn_( new ScoreFunction() )
+	scorefxn_( utility::pointer::make_shared< ScoreFunction >() ),
+	edens_scorefxn_( utility::pointer::make_shared< ScoreFunction >() )
 {
-	initialize_from_options( option );
+	initialize_from_options( option, false );
 }
 
-void ErraserMinimizerMover::initialize_from_options( utility::options::OptionCollection const & options ) {
+void ErraserMinimizerMover::initialize_from_options( utility::options::OptionCollection const & options, bool const initialize_scorefxn ) {
 	// We're going to keep this default true -- if you have to turn it on with this option, then
 	// that turns it on for stepwise steps too. That's terrible.
 	//vary_bond_geometry_ = options[ basic::options::OptionKeys::rna::vary_geometry ].value();
@@ -163,14 +163,20 @@ void ErraserMinimizerMover::initialize_from_options( utility::options::OptionCol
 
 	cutpoint_list_ = options[ full_model::cutpoint_open ].value();
 
-	if ( !ready_set_only_ ) {
+	if ( initialize_scorefxn && !ready_set_only_ ) {
 		//Setup score function.
-		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4_elec_dens";
-		if ( options[ basic::options::OptionKeys::score::weights ].user() ) {
-			score_weight_file = options[ basic::options::OptionKeys::score::weights ]();
+		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4"; //Changed from rna_res_level_energy4_elec_dens, which doesn't exist.  --VKM, 5 Mar 2020.
+		if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
+			score_weight_file = basic::options::option[ basic::options::OptionKeys::score::weights ]();
 			TR << "User passed in score:weight option: " << score_weight_file << std::endl;
 		}
-		scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
+		try {
+			scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
+		} catch( utility::excn::Exception const & e ) {
+			TR.Warning << "Unable to create " + score_weight_file + " scorefunction during initialization of ErraserMinimizerMover.  Will attempt to use stepwise/rna/rna_res_level_energy4 scorefunction instead.  Error message was:\n" << TR.Red << e.msg() << TR.Reset << std::endl;
+			scorefxn_ = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy4" );
+			TR.Warning << "Recovering and carrying on with stepwise/rna/rna_res_level_energy4 scorefunction." << std::endl;
+		}
 		//edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
 	}
 }
@@ -192,7 +198,7 @@ void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
 
 	if ( !ready_set_only_ ) {
 		//Setup score function.
-		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4_elec_dens";
+		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4"; //Changed from a default that doesn't exist.  VKM, 20 Mar 2022.
 		if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
 			score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
 			TR << "User passed in score:weight option: " << score_weight_file << std::endl;
@@ -864,6 +870,24 @@ void
 ErraserMinimizerMover::apply(
 	Pose & pose
 ) {
+
+	if ( scorefxn_ == nullptr && !ready_set_only_ ) {
+		//Setup score function.
+		std::string score_weight_file = "stepwise/rna/rna_res_level_energy4"; //Changed from rna_res_level_energy4_elec_dens, which doesn't exist.  --VKM, 5 Mar 2020.
+		if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
+			score_weight_file = basic::options::option[ basic::options::OptionKeys::score::weights ]();
+			TR << "User passed in score:weight option: " << score_weight_file << std::endl;
+		}
+		try {
+			scorefxn_ = ScoreFunctionFactory::create_score_function( score_weight_file );
+		} catch( utility::excn::Exception const & e ) {
+			TR.Warning << "Unable to create " + score_weight_file + " scorefunction during initialization of ErraserMinimizerMover.  Will attempt to use stepwise/rna/rna_res_level_energy4 scorefunction instead.  Error message was:\n" << TR.Red << e.msg() << TR.Reset << std::endl;
+			scorefxn_ = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy4" );
+			TR.Warning << "Recovering and carrying on with stepwise/rna/rna_res_level_energy4 scorefunction." << std::endl;
+		}
+		//edens_scorefxn_->set_weight( elec_dens_atomwise, scorefxn_->get_weight( elec_dens_atomwise ) );
+	}
+
 	// OK: if rank is zero and nproc is greater than one, then all you're doing is handing out chunks and merging results back in.
 	// Otherwise, all you're doing is acting on chunks.
 

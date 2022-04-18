@@ -94,14 +94,14 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 
 	// Scoring function already set up by superclass
 	// BUG:  currently need to score pose explicitly to get everything initialized properly
-	(*scorefxn_)( pose );
+	(*scorefxn())( pose );
 
 	// Repack all sidechains
 	PackerTaskOP pack_task = core::pack::task::TaskFactory::create_packer_task(pose);
 	pack_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 	pack_task->restrict_to_repacking(); // all residues
 	pack_task->or_include_current(true); // may already be in lowest E conf
-	pack_task->append_rotamerset_operation( unboundrot_ );
+	pack_task->append_rotamerset_operation( unboundrot() );
 	// Disable packing completely for ligands b/c we want them to stay put
 	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( !pose.residue(i).is_polymer() ) {
@@ -112,22 +112,22 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 	//core::pack::rtmin(pose, *scorefxn_, pack_task);
 	//return;
 
-	protocols::minimization_packing::PackRotamersMoverOP fullRepack( new protocols::minimization_packing::PackRotamersMover(scorefxn_, pack_task) );
+	protocols::minimization_packing::PackRotamersMoverOP fullRepack( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(scorefxn(), pack_task) );
 	fullRepack->apply(pose);
 
 	// Is this necessary?  How well does the repack converge?
-	protocols::minimization_packing::RotamerTrialsMoverOP rotamerTrials( new protocols::minimization_packing::RotamerTrialsMover(scorefxn_, *pack_task) );
+	protocols::minimization_packing::RotamerTrialsMoverOP rotamerTrials( utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(scorefxn(), *pack_task) );
 	rotamerTrials->apply(pose);
 
 	// Set up move map for minimizing.
 	// Only want to minimize protein sc;  keep ligand the same as reference point
-	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
+	core::kinematics::MoveMapOP movemap( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 	for ( int i = 1, end_i = pose.size(); i <= end_i; ++i ) {
 		if ( pose.residue(i).is_polymer() ) {
 			movemap->set_chi(i, true);
 		}
 	}
-	protocols::minimization_packing::MinMoverOP dfpMinTightTol( new protocols::minimization_packing::MinMover( movemap, scorefxn_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP dfpMinTightTol( utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap, scorefxn(), "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 
@@ -162,7 +162,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::register_options();
 
 		// Build overall docking protocol Mover
-		LigandRepackMinimizeProtocolOP dockingProtocol( new LigandRepackMinimizeProtocol() );
+		LigandRepackMinimizeProtocolOP dockingProtocol( utility::pointer::make_shared< LigandRepackMinimizeProtocol >() );
 
 		protocols::jd2::JobDistributor::get_instance()->go(dockingProtocol);
 	} catch (utility::excn::Exception const & e ) {

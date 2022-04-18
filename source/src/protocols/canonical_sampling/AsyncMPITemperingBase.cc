@@ -74,7 +74,7 @@ AsyncMPITemperingBase::AsyncMPITemperingBase() :
 	finished_recv_requests_ = NULL;
 	mpi_comm_ = MPI_COMM_NULL;
 #else
-	utility_exit_with_message( "AsyncMPITemperingBase requires MPI build" );
+	tr << tr.Red << "Warning! AsyncMPITemperingBase and derived classes require MPI build, and will fail if used in a non-MPI context." << tr.Reset << std::endl;
 #endif
 	allocate_buffers();
 }
@@ -98,7 +98,7 @@ AsyncMPITemperingBase::AsyncMPITemperingBase( AsyncMPITemperingBase const& other
 	finished_recv_requests_ = NULL;
 	mpi_comm_ = MPI_COMM_NULL;
 #else
-	utility_exit_with_message( "AsyncMPITemperingBase requires MPI build" );
+	tr << tr.Red << "Warning! AsyncMPITemperingBase and derived classes require MPI build, and will fail if used in a non-MPI context." << tr.Reset << std::endl;
 #endif
 	allocate_buffers();
 }
@@ -174,6 +174,10 @@ AsyncMPITemperingBase::initialize_simulation(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle   //non-zero if trajectory is restarted
 ) {
+#ifndef USEMPI
+	utility_exit_with_message( "Failure in AsyncMPITemperingBase::initialize_simulation(): This mover cannot be used in a non-MPI build." );
+#endif
+
 	Parent::initialize_simulation( pose, metropolis_hastings_mover, cycle );
 #ifdef USEMPI
 	set_mpi_comm( jd2::current_mpi_comm() );

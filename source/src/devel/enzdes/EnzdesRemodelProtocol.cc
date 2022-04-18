@@ -127,13 +127,15 @@ EnzdesRemodelProtocol::apply(
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "EnzdesRemodel" );
 #endif
 
+	core::scoring::ScoreFunction & sfxn( *scorefxn() );
+
 	//score pose to make sure everything is initialised correctly
-	(*scorefxn_)( pose );
+	(sfxn)( pose );
 
 	//set the native pose if requested
 	if ( ! basic::options::option[basic::options::OptionKeys::in::file::native].user() ) {
-		core::pose::PoseOP natpose( new core::pose::Pose( pose ) );
-		(*scorefxn_)( *natpose );
+		core::pose::PoseOP natpose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
+		(sfxn)( *natpose );
 		this->set_native_pose( natpose );
 	}
 
@@ -141,7 +143,7 @@ EnzdesRemodelProtocol::apply(
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 		enable_constraint_scoreterms();
 		setup_enzdes_constraints( pose, basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch]  );
-		(*scorefxn_)( pose );
+		(sfxn)( pose );
 	}
 
 	//create packer task (read resfile, etc)
@@ -152,7 +154,7 @@ EnzdesRemodelProtocol::apply(
 
 		tr.Info << "starting cst_opt minimization..." << std::endl;
 		cst_minimize(pose, orig_task, true);
-		(*scorefxn_)( pose );
+		(sfxn)( pose );
 		tr.Info << "done cst_opt minimization." << std::endl;
 		orig_task =  create_enzdes_pack_task( pose );
 
@@ -176,11 +178,11 @@ EnzdesRemodelProtocol::apply(
 		seq_mapping = remodel_mover.get_seq_mapping();
 	}
 
-	(*scorefxn_)(pose);
+	(sfxn)(pose);
 
 	//remap task according to indels after remodelling
 	tr << "task remapping " << std::endl;
-	mod_task -> remap_residue_level_tasks( seq_mapping, pose  );
+	mod_task->remap_residue_level_tasks( seq_mapping, pose  );
 
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_design] ) {
 
@@ -192,11 +194,11 @@ EnzdesRemodelProtocol::apply(
 		if ( basic::options::option[basic::options::OptionKeys::enzdes::favor_native_res].user() ) favor_native_res = true;
 
 		tr.Info << "starting design" << std::endl;
-		enzdes_pack( pose, mod_task, scorefxn_, design_min_cycles, basic::options::option[basic::options::OptionKeys::enzdes::cst_min], false, favor_native_res );
+		enzdes_pack( pose, mod_task, scorefxn(), design_min_cycles, basic::options::option[basic::options::OptionKeys::enzdes::cst_min], false, favor_native_res );
 
 	} //if cst_design
 
-	(*scorefxn_)(pose);
+	(sfxn)(pose);
 
 	//remap PDB remark info for enzyme design constraints
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP cstio( protocols::enzdes::enzutil::get_enzcst_io( pose ) );
@@ -465,13 +467,13 @@ EnzdesRemodelMover::remodel_pose(
 
 	Interval interval( flex_region_->start(), flex_region_->stop() );
 
-	SegmentRebuildOP build_instr( new SegmentRebuild( interval, secstruct ) );
+	SegmentRebuildOP build_instr( utility::pointer::make_shared< SegmentRebuild >( interval, secstruct ) );
 
 	BuildManager bmanager;
 
 	bmanager.add( build_instr );
 
-	VarLengthBuildOP vlb_op( new VarLengthBuild(bmanager) );
+	VarLengthBuildOP vlb_op( utility::pointer::make_shared< VarLengthBuild >(bmanager) );
 	VarLengthBuild & vlb = *vlb_op;
 
 	//set the scorefunction that contains our constrained weights
@@ -520,13 +522,13 @@ EnzdesRemodelMover::remodel_pose(
 			res_to_repack.insert( flex_region_->start() + num_aa_each_side_to_replace );
 			pose.replace_residue( flex_region_->start() + num_aa_each_side_to_replace, core::conformation::Residue( *(init_aa_[num_aa_each_side_to_replace+1].lock()), true), true);
 		}
-		core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_( pose ) );
+		core::pack::task::PackerTaskOP task( utility::pointer::make_shared< core::pack::task::PackerTask_ >( pose ) );
 		task->initialize_from_command_line();
 		for ( core::Size i = 1; i <= task->total_residue(); ++i ) {
 			if ( res_to_repack.find( i ) != res_to_repack.end() ) task->nonconst_residue_task( i ).restrict_to_repacking();
 			else task->nonconst_residue_task( i ).prevent_repacking();
 		}
-		protocols::minimization_packing::PackRotamersMoverOP packrot( new protocols::minimization_packing::PackRotamersMover( enz_prot_->get_scorefxn(), task ) );
+		protocols::minimization_packing::PackRotamersMoverOP packrot( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( enz_prot_->get_scorefxn(), task ) );
 		packrot->apply( pose );
 		(*enz_prot_->reduced_scorefxn())( pose );
 	} // if(keep_existing_aa_identities)
@@ -657,7 +659,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 	//score pose in reduced scorefxn to set up score filter correctly
 	(*enz_prot_->reduced_scorefxn())( pose );
 
-	protocols::score_filters::ScoreCutoffFilterOP score_filter( new protocols::score_filters::ScoreCutoffFilter() );
+	protocols::score_filters::ScoreCutoffFilterOP score_filter( utility::pointer::make_shared< protocols::score_filters::ScoreCutoffFilter >() );
 
 
 	//setting the predesign score filter to a pretty generous cutoff.
@@ -700,7 +702,7 @@ EnzdesRemodelMover::setup_packer_neighbor_graph_filter( core::pose::Pose const &
 	nl_calc.get( (std::string) "nlcontacts_graph", mval_graph, pose );
 
 
-	protocols::simple_filters::PackerNeighborGraphFilterOP png_filter( new protocols::simple_filters::PackerNeighborGraphFilter( orig_task_, enz_prot_->get_scorefxn() ) );
+	protocols::simple_filters::PackerNeighborGraphFilterOP png_filter( utility::pointer::make_shared< protocols::simple_filters::PackerNeighborGraphFilter >( orig_task_, enz_prot_->get_scorefxn() ) );
 
 	png_filter->add_required_connections_between_regions( remodel_positions_, other_design_positions_, mval_size.value() );
 
@@ -933,7 +935,7 @@ EnzdesRemodelMover::translate_res_interactions_to_rvinfos(
 	if ( res_ints.targ_base_atom_names().size() != 0 ) translate_atomnames_to_restype_set_atomids( pose, restype_set, targ_pos, res_ints.targ_base_atom_names(), targ_base_atom_ids );
 	if ( res_ints.targ_base2_atom_names().size() != 0 ) translate_atomnames_to_restype_set_atomids( pose, restype_set, targ_pos, res_ints.targ_base2_atom_names(), targ_base2_atom_ids );
 
-	protocols::forge::remodel::ResidueVicinityInfoOP to_return( new protocols::forge::remodel::ResidueVicinityInfo( targ_pos, targ_atom_ids, loopres_atom_ids, res_ints.num_interactions() ) );
+	protocols::forge::remodel::ResidueVicinityInfoOP to_return( utility::pointer::make_shared< protocols::forge::remodel::ResidueVicinityInfo >( targ_pos, targ_atom_ids, loopres_atom_ids, res_ints.num_interactions() ) );
 
 	//have to translate distance information in resints into proper function explicityly
 	core::Real min_dis = std::max(0.0, res_ints.dis()->ideal_val() - res_ints.dis()->tolerance() );
@@ -987,7 +989,7 @@ EnzdesRemodelMover::setup_cached_observers(
 ){
 
 	if ( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR ) ) {
-		core::pose::datacache::LengthEventCollectorOP lencollect( new core::pose::datacache::LengthEventCollector() );
+		core::pose::datacache::LengthEventCollectorOP lencollect( utility::pointer::make_shared< core::pose::datacache::LengthEventCollector >() );
 
 		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, lencollect );
 	}
@@ -1084,7 +1086,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 	if ( !ligres || !(ligres->type().is_ligand()) ) ligres = core::conformation::ResidueCOP( utility::pointer::make_shared< core::conformation::Residue >( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true ) );
 
 	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( nullptr ); //wipe this out for now, matcher will overwrite
-	protocols::match::MatcherMoverOP matcher_mover( new protocols::match::MatcherMover() );
+	protocols::match::MatcherMoverOP matcher_mover( utility::pointer::make_shared< protocols::match::MatcherMover >() );
 
 	//generate the positions
 	utility::vector1< core::Size > match_positions;
@@ -1201,7 +1203,7 @@ EnzdesRemodelMover::setup_rcgs_from_inverse_rotamers(
 	for ( core::Size i =1; i <= target_inverse_rotamers_.size(); ++i ) {
 		using namespace protocols::forge::constraints;
 		using namespace protocols::forge::remodel;
-		RemodelConstraintGeneratorOP newrcg( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) );
+		RemodelConstraintGeneratorOP newrcg( utility::pointer::make_shared< InverseRotamersRCG >( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) );
 		newrcg->set_id( "invrot1" );
 		vlb.add_rcg( newrcg );
 

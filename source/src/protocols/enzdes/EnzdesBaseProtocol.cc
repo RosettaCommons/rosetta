@@ -139,43 +139,41 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 	// scorefxn_->initialize_from_file( basic::database::full_name( "scoring/weights/"+weights_tag+".wts" ) );
 	//}
 	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-		scorefxn_ = core::scoring::get_score_function(); // This call handles the database vs working directory resolution -- DONT SUBVERT OR DUPLICATE IT
+		set_scorefxn( core::scoring::get_score_function() ); // This call handles the database vs working directory resolution -- DONT SUBVERT OR DUPLICATE IT
 	} else {
-		scorefxn_ = ScoreFunctionFactory::create_score_function( "talaris2013_cst", option[ OptionKeys::score::patch ]() ); //02/25/14 sboyken; changed default to talaris2013_cst
-		/*   if( score_patch == "" ) scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("enzdes");
-		else scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("enzdes", score_patch);
-		*/
-
+		set_scorefxn( ScoreFunctionFactory::create_score_function( "talaris2013_cst", option[ OptionKeys::score::patch ]() ) ); //02/25/14 sboyken; changed default to talaris2013_cst
 	}
 
-	if ( scorefxn_->has_zero_weight( core::scoring::coordinate_constraint ) ) {
+	core::scoring::ScoreFunction & sfxn( *scorefxn() );
+
+	if ( sfxn.has_zero_weight( core::scoring::coordinate_constraint ) ) {
 		constraint_weights_[core::scoring::coordinate_constraint] = 1.0;
 	} else {
-		constraint_weights_[core::scoring::coordinate_constraint] = scorefxn_->weights()[core::scoring::coordinate_constraint];
+		constraint_weights_[core::scoring::coordinate_constraint] = sfxn.weights()[core::scoring::coordinate_constraint];
 	}
-	if ( scorefxn_->has_zero_weight( core::scoring::atom_pair_constraint ) ) {
+	if ( sfxn.has_zero_weight( core::scoring::atom_pair_constraint ) ) {
 		constraint_weights_[core::scoring::atom_pair_constraint] = 1.0;
 	} else {
-		constraint_weights_[core::scoring::atom_pair_constraint] = scorefxn_->weights()[core::scoring::atom_pair_constraint];
+		constraint_weights_[core::scoring::atom_pair_constraint] = sfxn.weights()[core::scoring::atom_pair_constraint];
 	}
-	if ( scorefxn_->has_zero_weight( core::scoring::angle_constraint ) ) {
+	if ( sfxn.has_zero_weight( core::scoring::angle_constraint ) ) {
 		constraint_weights_[core::scoring::angle_constraint] = 1.0;
 	} else {
-		constraint_weights_[core::scoring::angle_constraint] = scorefxn_->weights()[core::scoring::angle_constraint];
+		constraint_weights_[core::scoring::angle_constraint] = sfxn.weights()[core::scoring::angle_constraint];
 	}
-	if ( scorefxn_->has_zero_weight( core::scoring::dihedral_constraint ) ) {
+	if ( sfxn.has_zero_weight( core::scoring::dihedral_constraint ) ) {
 		constraint_weights_[core::scoring::dihedral_constraint] = 1.0;
 	} else {
-		constraint_weights_[core::scoring::dihedral_constraint] = scorefxn_->weights()[core::scoring::dihedral_constraint];
+		constraint_weights_[core::scoring::dihedral_constraint] = sfxn.weights()[core::scoring::dihedral_constraint];
 	}
 
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::favor_native_res].user() || basic::options::option[ basic::options::OptionKeys::in::file::pssm ].user() ) {
-		if ( scorefxn_->has_zero_weight( core::scoring::res_type_constraint ) ) {
+		if ( sfxn.has_zero_weight( core::scoring::res_type_constraint ) ) {
 			constraint_weights_[core::scoring::res_type_constraint] = 1.0;
 		} else {
-			constraint_weights_[core::scoring::res_type_constraint] = scorefxn_->weights()[core::scoring::res_type_constraint];
+			constraint_weights_[core::scoring::res_type_constraint] = sfxn.weights()[core::scoring::res_type_constraint];
 		}
-	} else constraint_weights_[core::scoring::res_type_constraint] = scorefxn_->weights()[core::scoring::res_type_constraint];
+	} else constraint_weights_[core::scoring::res_type_constraint] = sfxn.weights()[core::scoring::res_type_constraint];
 
 	enable_constraint_scoreterms();
 
@@ -183,18 +181,15 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 		exclude_protein_protein_fa_elec_ = basic::options::option[ basic::options::OptionKeys::docking::ligand::old_estat ];
 	}
 	if ( exclude_protein_protein_fa_elec_ ) {
-		core::scoring::methods::EnergyMethodOptions options( scorefxn_->energy_method_options() );
+		core::scoring::methods::EnergyMethodOptions options( sfxn.energy_method_options() );
 		options.exclude_protein_protein_fa_elec( true );
-		scorefxn_->set_energy_method_options( options );
+		sfxn.set_energy_method_options( options );
 	}
 
 
 	//set the native pose if requested
 	if ( basic::options::option[basic::options::OptionKeys::in::file::native].user() ) {
-		core::pose::PoseOP natpose( new core::pose::Pose() );
-		core::import_pose::pose_from_file( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() , core::import_pose::PDB_file);
-		(*scorefxn_)( *natpose);
-		this->set_native_pose( natpose );
+		native_needs_load_ = true;
 	}
 
 	//increase the chainbreak weight. 1.0 is apparently not enough for some constraints
@@ -296,7 +291,7 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 	//make sure the design targets are up to date
 	design_targets( pose );
 
-	DetectProteinLigandInterfaceOP detect_enzdes_interface( new DetectProteinLigandInterface() );
+	DetectProteinLigandInterfaceOP detect_enzdes_interface( utility::pointer::make_shared< DetectProteinLigandInterface >() );
 	detect_enzdes_interface->set_design(design);
 	if ( include_all_design_targets_in_design_interface_ ) {
 		detect_enzdes_interface->set_design_target_res( design_targets_ );
@@ -312,7 +307,7 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 		taskfactory.push_back( utility::pointer::make_shared< AddRigidBodyLigandConfs >() );
 	}
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface].value() ) {
-		SetCatalyticResPackBehaviorOP catpack( new SetCatalyticResPackBehavior() );
+		SetCatalyticResPackBehaviorOP catpack( utility::pointer::make_shared< SetCatalyticResPackBehavior >() );
 		catpack->set_fix_catalytic_aa( this->fix_catalytic_aa_ );
 		taskfactory.push_back( catpack );
 	}
@@ -321,7 +316,7 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 	}
 
 	PackerTaskOP task = taskfactory.create_task_and_apply_taskoperations( pose );
-	task->append_rotamerset_operation( unboundrot_ );
+	task->append_rotamerset_operation( unboundrot() );
 
 	setup_sequence_recovery_cache( pose, *task );
 	return task;
@@ -361,8 +356,7 @@ EnzdesBaseProtocol::create_enzdes_movemap(
 	core::pose::Pose & pose,
 	core::pack::task::PackerTaskCOP task,
 	bool min_all_jumps
-) const
-{
+) {
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	movemap->set_jump( false );
 	movemap->set_chi( false );
@@ -439,8 +433,8 @@ void
 EnzdesBaseProtocol::setup_bbmin_ft_and_csts(
 	core::pose::Pose & pose,
 	utility::vector1< bool > allow_move_bb,
-	core::Size jump_id ) const
-{
+	core::Size jump_id
+) {
 	core::Size const lig_id = jump_id !=0 ? get_ligand_id(pose, jump_id): 0;
 	//restraining function for Calphas. should allow fairly liberal movement ~0.1A from the original position,
 	//but severly limits movement beyond this
@@ -481,9 +475,7 @@ EnzdesBaseProtocol::enzdes_pack(
 	bool minimize_after_packing,
 	bool pack_unconstrained,
 	bool favor_native
-) const
-{
-
+) {
 	if ( pack_unconstrained ) remove_enzdes_constraints( pose, true );
 
 	if ( favor_native ) {
@@ -499,7 +491,7 @@ EnzdesBaseProtocol::enzdes_pack(
 		//because we really don't want any clashes
 		bool soft_rep ( basic::options::option[basic::options::OptionKeys::packing::soft_rep_design] && usetask->design_any() && (cycle < cycles ) );
 
-		if ( soft_rep ) packsfxn = soft_scorefxn_;
+		if ( soft_rep ) packsfxn = soft_scorefxn();
 		else packsfxn = scorefxn;
 		protocols::minimization_packing::PackRotamersMoverOP enzdes_pack( new protocols::minimization_packing::PackRotamersMover(packsfxn, usetask) );
 
@@ -576,8 +568,7 @@ EnzdesBaseProtocol::cst_minimize(
 	core::pose::Pose & pose,
 	core::pack::task::PackerTaskCOP task,
 	bool cst_opt
-) const
-{
+) {
 
 
 	core::pose::Pose old_Pose = pose; //copy old pose
@@ -598,7 +589,7 @@ EnzdesBaseProtocol::cst_minimize(
 
 		protocols::toolbox::pose_manipulation::construct_poly_ala_pose( pose, positions_to_replace, true, true, true );
 
-	} else { min_scorefxn = scorefxn_; }
+	} else { min_scorefxn = scorefxn(); }
 
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::enz_debug] ) {
 		//debug stage: only interested in constraints minimization for now
@@ -690,30 +681,32 @@ EnzdesBaseProtocol::is_catalytic_position( core::pose::Pose const & pose, core::
 
 void
 EnzdesBaseProtocol::enable_constraint_scoreterms(){
-
-	scorefxn_->set_weight(core::scoring::coordinate_constraint, constraint_weights_[core::scoring::coordinate_constraint] );
-	scorefxn_->set_weight(core::scoring::atom_pair_constraint, constraint_weights_[core::scoring::atom_pair_constraint] );
-	scorefxn_->set_weight(core::scoring::angle_constraint, constraint_weights_[core::scoring::angle_constraint] );
-	scorefxn_->set_weight(core::scoring::dihedral_constraint, constraint_weights_[core::scoring::dihedral_constraint] );
-	scorefxn_->set_weight(core::scoring::res_type_constraint, constraint_weights_[core::scoring::res_type_constraint] );
+	core::scoring::ScoreFunction & sfxn( *scorefxn() );
+	sfxn.set_weight(core::scoring::coordinate_constraint, constraint_weights_[core::scoring::coordinate_constraint] );
+	sfxn.set_weight(core::scoring::atom_pair_constraint, constraint_weights_[core::scoring::atom_pair_constraint] );
+	sfxn.set_weight(core::scoring::angle_constraint, constraint_weights_[core::scoring::angle_constraint] );
+	sfxn.set_weight(core::scoring::dihedral_constraint, constraint_weights_[core::scoring::dihedral_constraint] );
+	sfxn.set_weight(core::scoring::res_type_constraint, constraint_weights_[core::scoring::res_type_constraint] );
 
 }
 
 void
 EnzdesBaseProtocol::disable_constraint_scoreterms(){
 
-	constraint_weights_.clear();
-	constraint_weights_[core::scoring::coordinate_constraint] = scorefxn_->weights()[core::scoring::coordinate_constraint];
-	constraint_weights_[core::scoring::atom_pair_constraint] = scorefxn_->weights()[core::scoring::atom_pair_constraint];
-	constraint_weights_[core::scoring::angle_constraint] = scorefxn_->weights()[core::scoring::angle_constraint];
-	constraint_weights_[core::scoring::dihedral_constraint] = scorefxn_->weights()[core::scoring::dihedral_constraint];
-	constraint_weights_[core::scoring::res_type_constraint] = scorefxn_->weights()[core::scoring::res_type_constraint];
+	core::scoring::ScoreFunction & sfxn( *scorefxn() );
 
-	scorefxn_->set_weight(core::scoring::coordinate_constraint, 0.0 );
-	scorefxn_->set_weight(core::scoring::atom_pair_constraint, 0.0 );
-	scorefxn_->set_weight(core::scoring::angle_constraint, 0.0 );
-	scorefxn_->set_weight(core::scoring::dihedral_constraint, 0.0 );
-	scorefxn_->set_weight(core::scoring::res_type_constraint, 0.0 );
+	constraint_weights_.clear();
+	constraint_weights_[core::scoring::coordinate_constraint] = sfxn.weights()[core::scoring::coordinate_constraint];
+	constraint_weights_[core::scoring::atom_pair_constraint] = sfxn.weights()[core::scoring::atom_pair_constraint];
+	constraint_weights_[core::scoring::angle_constraint] = sfxn.weights()[core::scoring::angle_constraint];
+	constraint_weights_[core::scoring::dihedral_constraint] = sfxn.weights()[core::scoring::dihedral_constraint];
+	constraint_weights_[core::scoring::res_type_constraint] = sfxn.weights()[core::scoring::res_type_constraint];
+
+	sfxn.set_weight(core::scoring::coordinate_constraint, 0.0 );
+	sfxn.set_weight(core::scoring::atom_pair_constraint, 0.0 );
+	sfxn.set_weight(core::scoring::angle_constraint, 0.0 );
+	sfxn.set_weight(core::scoring::dihedral_constraint, 0.0 );
+	sfxn.set_weight(core::scoring::res_type_constraint, 0.0 );
 
 }
 
@@ -803,6 +796,20 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 	return true;
 
 } //exchange_ligands_in_pose
+
+/// @brief Do we need to (lazily) load the native pose?
+bool
+EnzdesBaseProtocol::native_needs_load() const {
+	return native_needs_load_;
+}
+
+/// @brief Set whether the native needs loading.
+void
+EnzdesBaseProtocol::set_native_needs_load(
+	bool const setting
+) {
+	native_needs_load_ = setting;
+}
 
 
 core::scoring::ScoreFunctionCOP
@@ -934,7 +941,7 @@ EnzdesBaseProtocol::read_ligand_superposition_file( std::string filename )
 void
 EnzdesBaseProtocol::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){
 
-	scorefxn_ = scorefxn->clone();
+	LigandBaseProtocol::set_scorefxn( scorefxn );
 
 }
 

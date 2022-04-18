@@ -350,7 +350,7 @@ private:
 	bool premin_ligand_;
 	bool sample_ring_conformers_;
 	core::Real torsion_sampler_percentage_;
-	TorsionSampler torsion_sampler_;
+	TorsionSamplerCOP torsion_sampler_;
 	core::Real contact_distance_;
 	bool freeze_ligand_backbone_ = false;
 	bool macrocycle_ligand_;

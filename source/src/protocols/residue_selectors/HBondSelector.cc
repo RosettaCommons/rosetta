@@ -62,8 +62,6 @@ HBondSelector::HBondSelector():
 	input_set_defined_( false ),
 	use_input_set_selector_( true )
 {
-	//Set default score function
-	scorefxn_ = core::scoring::get_score_function();
 	//If the input set is not defined, then we'll use all residues
 	input_set_selector_ = utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >();
 }
@@ -87,7 +85,7 @@ HBondSelector::clone() const{
 }
 
 core::select::residue_selector::ResidueSubset
-HBondSelector::apply( core::pose::Pose const & pose ) const{
+HBondSelector::apply( core::pose::Pose const & pose ) const {
 	//Initialize input set
 	core::pose::PoseOP copy_pose = pose.clone();
 	std::set< core::Size > input_set;
@@ -95,9 +93,13 @@ HBondSelector::apply( core::pose::Pose const & pose ) const{
 
 	//Make sure the score function is correctly initialized
 	//Sorry, you're on your own!
-	core::scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn_->energy_method_options() );
-	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
-	scorefxn_->set_energy_method_options( energymethodoptions );
+	if ( scorefxn_ == nullptr ) {
+		scorefxn_ = core::scoring::get_score_function();
+		core::scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn_->energy_method_options() );
+		energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
+		scorefxn_->set_energy_method_options( energymethodoptions );
+	}
+
 	scorefxn_->score( *copy_pose );
 	//Now we'll find the hydrogen bonds
 	core::scoring::hbonds::HBondSet hbond_set;
@@ -255,6 +257,9 @@ HBondSelector::get_include_bb_bb() const{
 void
 HBondSelector::set_scorefxn( core::scoring::ScoreFunctionCOP sfxn ){
 	scorefxn_ = sfxn->clone();
+	core::scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn_->energy_method_options() );
+	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
+	scorefxn_->set_energy_method_options( energymethodoptions );
 }
 
 core::scoring::ScoreFunctionCOP

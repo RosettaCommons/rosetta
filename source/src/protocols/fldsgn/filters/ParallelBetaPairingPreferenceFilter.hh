@@ -134,6 +134,10 @@ public:// parser
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+private:
+
+	/// @brief Initialize this filter.
+	void initialize_filter() const;
 
 
 private:
@@ -143,10 +147,13 @@ private:
 	Real filter_value_;
 
 	/// @brief
-	utility::vector1< utility::vector1< Real > >  score_pairmatrix_;
+	mutable utility::vector1< utility::vector1< Real > >  score_pairmatrix_;
 
 	/// @brief
 	bool verbose_;
+
+	/// @brief Has this been initialized?
+	mutable bool initialized_ = false;
 
 
 };

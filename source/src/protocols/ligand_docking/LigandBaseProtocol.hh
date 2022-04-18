@@ -121,7 +121,7 @@ public:
 		utility::vector1< bool > const & is_restrained,
 		//core::Real stddev_Angstroms,
 		core::scoring::func::FuncOP restr_func
-	) const;
+	);
 
 	void
 	reorder_foldtree_around_mobile_regions(
@@ -237,10 +237,50 @@ protected:
 		core::Real stddev_Angstroms
 	);
 
-
 protected:
 
+	/// @brief Nonconst access to the unboundrot_ object.
+	/// @details Triggers initialization if it is uninitialized.
+	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot();
+
+	/// @brief Access the scorefunction.
+	core::scoring::ScoreFunctionOP scorefxn();
+
+	/// @brief Set the scorefunction (cloning the input).
+	void set_scorefxn( core::scoring::ScoreFunctionCOP const & sfxn_in );
+
+	/// @brief Access the hard scorefunction.
+	core::scoring::ScoreFunctionOP hard_scorefxn();
+
+	/// @brief Access the soft scorefunction.
+	core::scoring::ScoreFunctionOP soft_scorefxn();
+
+	/// @brief Access the sc_interface_padding.
+	inline core::Real sc_interface_padding() const { return sc_interface_padding_; }
+
+	/// @brief Access the bb_interface_cutoff.
+	inline core::Real bb_interface_cutoff() const { return bb_interface_cutoff_; }
+
+	/// @brief Set the sc_interface_padding.
+	void set_sc_interface_padding( core::Real const setting );
+
+	/// @brief Set the bb_interface_cutoff.
+	void set_bb_interface_cutoff( core::Real const setting );
+
+	/// @brief Are we using soft repulsion?
+	inline bool use_soft_rep() const { return use_soft_rep_; }
+
+private:
+
+	/// @brief Load the scorefunctions that we'll be using.
+	/// @details Done lazily so that this mover can be instantiated without a lot of overhead.
+	void initialize_scorefxns();
+
+private:
+
 	bool use_soft_rep_;
+	bool rosetta_electrostatics_ = true;
+	bool scorefxns_initialized_ = false;
 	core::scoring::ScoreFunctionOP scorefxn_, hard_scorefxn_, soft_scorefxn_;
 	core::Real sc_interface_padding_; //< if using subset of residues, extra distance to use
 	core::Real bb_interface_cutoff_; //< if using subset of residues, absolute distance to use

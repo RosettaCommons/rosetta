@@ -92,8 +92,13 @@ ResLvlTaskOperationFactory::get_citation_humanreadable(
 ) const {
 	using namespace basic::citation_manager;
 	CitationCollectionList citations;
-	ResLvlTaskOperationOP rlto( newRLTO( taskop_name ) );
-	runtime_assert_string_msg( rlto != nullptr, "Error in ResLvlTaskOperationFactory::get_citation_humanreadable(): Could not instantiate " + taskop_name + "!" );
+	std::string const errmsg( "Error in ResLvlTaskOperationFactory::get_citation_humanreadable(): " );
+
+	auto const iter( rltoc_map_.find( taskop_name ) );
+	runtime_assert_string_msg( iter != rltoc_map_.end(), errmsg + taskop_name + " is not known to the ResLvlTaskOperationFactory. Was its ResLvlTaskOperationCreator class registered at initialization?" );
+	if ( iter->second->skip_citation_info_in_schema() ) return "";
+	ResLvlTaskOperationOP rlto( iter->second->create_res_level_task_operation() );
+	runtime_assert_string_msg( rlto != nullptr, errmsg + "Could not instantiate " + taskop_name + "!" );
 	rlto->provide_citation_info(citations);
 	if ( citations.empty() ) return "";
 	std::ostringstream ss;
@@ -160,6 +165,13 @@ void ResLvlTaskOperationFactory::define_res_lvl_task_op_xml_schema( utility::tag
 std::string ResLvlTaskOperationFactory::res_lvl_task_op_xml_schema_group_name()
 {
 	return "res_lvl_task_op";
+}
+
+
+/// @brief Access the creator map (for unit testing).
+ResLvlTaskOperationFactory::RLTOC_Map const &
+ResLvlTaskOperationFactory::creator_map() const {
+	return rltoc_map_;
 }
 
 } //namespace operation

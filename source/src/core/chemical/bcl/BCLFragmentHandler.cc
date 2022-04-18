@@ -81,13 +81,11 @@ static basic::Tracer TR("core.chemical.bcl.BCLFragmentHandler");
 //////////////////////////////////
 
 BCLFragmentHandler::BCLFragmentHandler() :
+	utility::VirtualBase(),
 	index_to_vd_(utility::get_undefined_size(), ResidueGraph::null_vertex()),
 	vd_to_index_( ResidueGraph::null_vertex(), utility::get_undefined_size()),
 	nbr_(utility::get_undefined_size())
 {
-	// extras=bcl required for construction of this class object
-	core::chemical::bcl::require_bcl();
-
 #ifdef USEBCL
 	bcl_fragment_ = ::bcl::chemistry::FragmentComplete();
 #endif
@@ -99,6 +97,7 @@ BCLFragmentHandler::BCLFragmentHandler
 (
 	::bcl::chemistry::FragmentComplete const &fragment
 ) :
+	utility::VirtualBase(),
 	bcl_fragment_( fragment),
 	index_to_vd_( utility::get_undefined_size(), ResidueGraph::null_vertex()),
 	vd_to_index_( ResidueGraph::null_vertex(), utility::get_undefined_size()),
@@ -115,6 +114,7 @@ BCLFragmentHandler::BCLFragmentHandler
 (
 	MutableResidueTypeCOP restype
 ) :
+	utility::VirtualBase(),
 	bcl_fragment_( ::bcl::chemistry::FragmentComplete()),
 	rosetta_restype_( restype),
 	index_to_vd_( utility::get_undefined_size(), ResidueGraph::null_vertex()),

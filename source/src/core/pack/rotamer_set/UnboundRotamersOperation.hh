@@ -67,9 +67,14 @@ public:
 		core::pack::rotamer_set::RotamerSet & rotamer_set
 	) override;
 
+	/// @brief Has this object been initialized?
+	bool is_initialized() const;
+
 private:
 	Size total_rot_;
 	utility::vector1< core::pose::PoseCOP > poses_;
+
+	bool is_initialized_ = false;
 
 }; // UnboundRotamersOperation
 

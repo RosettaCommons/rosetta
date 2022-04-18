@@ -76,10 +76,6 @@ DisulfideInsertionMover::DisulfideInsertionMover() :
 	min_dist_multiplier_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::min_dslf_dist_multiplier ]();
 	max_dist_multiplier_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::max_dslf_dist_multiplier ]();
 	constraint_weight_ = basic::options::option[ basic::options::OptionKeys::DisulfideInsertion::constraint_weight ]();
-
-	if ( scorefxn_ == nullptr ) {
-		scorefxn_ = core::scoring::get_score_function();
-	}
 }
 
 DisulfideInsertionMover::DisulfideInsertionMover(DisulfideInsertionMover const &other) :
@@ -210,6 +206,10 @@ DisulfideInsertionMover::determine_cyclization_viability(
 void
 DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 {
+	if ( scorefxn_ == nullptr ) {
+		scorefxn_ = core::scoring::get_score_function();
+	}
+
 	set_last_move_status(protocols::moves::FAIL_RETRY);
 	core::Size this_pose_n_cyd;
 	core::Size this_pose_c_cyd;

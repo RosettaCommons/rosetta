@@ -62,7 +62,6 @@ namespace flxbb {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 InterlockAroma::InterlockAroma() :
 	Mover( "InterlockAroma" ),
-	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::SOFT_REP_WTS ) ),
 	input_ss_( "" ),
 	max_repulsion_energy_( 30.0 ),
 	min_env_energy_( -0.5 ),
@@ -111,6 +110,10 @@ InterlockAroma::apply( Pose & pose )
 	using protocols::fldsgn::topology::SS_Info2_OP;
 	using protocols::pose_creation::MakePolyXMover;
 
+	if ( scorefxn_ == nullptr ) {
+		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::SOFT_REP_WTS );
+	}
+
 	// set pose to fullatom
 	runtime_assert( pose.is_fullatom() );
 
@@ -123,7 +126,7 @@ InterlockAroma::apply( Pose & pose )
 		Dssp dssp( pose );
 		ss = dssp.get_dssp_secstruct();
 	}
-	SS_Info2_OP ssinfo( new SS_Info2( pose, ss ) );
+	SS_Info2_OP ssinfo( utility::pointer::make_shared< SS_Info2 >( pose, ss ) );
 
 	// create packer task
 	TaskFactory taskf;
@@ -229,7 +232,7 @@ InterlockAroma::parse_my_tag(
 	// read secondary structure info through blueprint
 	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
 	if ( blueprint != "" ) {
-		protocols::parser::BluePrintOP bop( new protocols::parser::BluePrint( blueprint ) );
+		protocols::parser::BluePrintOP bop( utility::pointer::make_shared< protocols::parser::BluePrint >( blueprint ) );
 		input_ss_ = bop->secstruct();
 	}
 

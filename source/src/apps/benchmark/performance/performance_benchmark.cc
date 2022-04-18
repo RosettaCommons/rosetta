@@ -82,8 +82,14 @@ PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
 #include <apps/benchmark/performance/xml_parsing.bench.hh>
 XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
-
-
+#include <apps/benchmark/performance/InstantiateModules.bench.hh>
+InstantiateModulesBenchmark instantiate_modules_movers( "instantiate_modules_movers", ModuleType::MOVER );
+InstantiateModulesBenchmark instantiate_modules_filters( "instantiate_modules_filters", ModuleType::FILTER );
+InstantiateModulesBenchmark instantiate_modules_task_operations( "instantiate_modules_task_operations", ModuleType::TASK_OPERATION );
+InstantiateModulesBenchmark instantiate_modules_res_level_task_operations( "instantiate_modules_res_level_task_operations", ModuleType::RES_LEVEL_TASK_OPERATION );
+InstantiateModulesBenchmark instantiate_modules_residue_selectors( "instantiate_modules_residue_selectors", ModuleType::RESIDUE_SELECTOR );
+InstantiateModulesBenchmark instantiate_modules_simple_metrics( "instantiate_modules_simple_metrics", ModuleType::SIMPLE_METRIC );
+InstantiateModulesBenchmark instantiate_modules_packer_palettes( "instantiate_modules_packer_palettes", ModuleType::PACKER_PALETTE );
 
 // option key includes
 

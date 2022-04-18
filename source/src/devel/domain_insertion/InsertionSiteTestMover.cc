@@ -44,6 +44,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSpanSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
@@ -78,7 +79,6 @@ InsertionSiteTestMover::InsertionSiteTestMover()
 	test_insert_ss_("LLLLLLLL"), insert_allowed_score_increase_(10.0),
 	insert_attempt_sasa_cutoff_(30.0),
 	length_of_insert_(test_insert_ss_.size() ), num_repeats_(5), pdb_numbering_(true),
-	enz_flexbb_prot_( utility::pointer::make_shared< protocols::enzdes::EnzdesFlexBBProtocol >() ),
 	insert_seqmap_(/* NULL */)
 	//mostly arbitrary numbers, but can be modified through RS tag
 {
@@ -91,7 +91,7 @@ InsertionSiteTestMover::InsertionSiteTestMover( InsertionSiteTestMover const & o
 	insert_allowed_score_increase_(other.insert_allowed_score_increase_),
 	insert_attempt_sasa_cutoff_(other.insert_attempt_sasa_cutoff_), length_of_insert_(other.length_of_insert_),
 	num_repeats_(other.num_repeats_), pdb_numbering_(other.pdb_numbering_),
-	enz_flexbb_prot_( utility::pointer::make_shared< protocols::enzdes::EnzdesFlexBBProtocol >() ), insert_seqmap_(other.insert_seqmap_)
+	insert_seqmap_(other.insert_seqmap_)
 {
 	if ( other.insert_test_pos_ ) {
 		insert_test_pos_ = other.insert_test_pos_->clone(); // Because we modify it for adding spans.
@@ -113,9 +113,17 @@ InsertionSiteTestMover::clone() const{
 void
 InsertionSiteTestMover::apply( core::pose::Pose & pose )
 {
+	if ( sfxn_ == nullptr ) {
+		sfxn_ = core::scoring::get_score_function();
+	}
 
 	core::pose::Pose input_pose = pose;
 	core::Real input_score = (*sfxn_)(input_pose);
+
+	if ( enz_flexbb_prot_ == nullptr ) {
+		enz_flexbb_prot_ = utility::pointer::make_shared< protocols::enzdes::EnzdesFlexBBProtocol >();
+	}
+	enz_flexbb_prot_->set_scorefxn( sfxn_ );
 
 	utility::vector1< core::Size > insert_test_pos;
 	if ( insert_test_pos_ ) {
@@ -185,6 +193,9 @@ InsertionSiteTestMover::parse_my_tag(
 {
 	using namespace core::select::residue_selector;
 	sfxn_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn", data )->clone();
+	if ( enz_flexbb_prot_ == nullptr ) {
+		enz_flexbb_prot_ = utility::pointer::make_shared< protocols::enzdes::EnzdesFlexBBProtocol >();
+	}
 	enz_flexbb_prot_->set_scorefxn( sfxn_ );
 
 	if ( tag->hasOption("test_insert_ss") ) {

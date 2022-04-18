@@ -198,7 +198,7 @@ private:
 	core::Size upper_threshold_;
 	core::Size jump_num_;
 	core::select::residue_selector::ResidueSelectorOP residue_selector_;
-	core::scoring::ScoreFunctionCOP sfxn_;
+	mutable core::scoring::ScoreFunctionCOP sfxn_;
 	core::pack::task::TaskFactoryOP task_factory_; // dflt nullptr; only residues defined as packable by the taskoperations will be tested for burial
 };
 

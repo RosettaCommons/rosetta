@@ -107,7 +107,6 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 		burial_cutoff_ = basic::options::option[basic::options::OptionKeys::bunsat_calc2::sasa_burial_cutoff];
 		residue_surface_cutoff_ = 20.0;
 	}
-	sfxn_ = core::scoring::get_score_function();
 }
 
 // if calling from code, specifying reporter options using setter functions, if desired
@@ -166,7 +165,6 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 		burial_cutoff_ = basic::options::option[basic::options::OptionKeys::bunsat_calc2::sasa_burial_cutoff];
 		residue_surface_cutoff_ = 20.0;
 	}
-	sfxn_ = core::scoring::get_score_function();
 	if ( legacy_options_ ) {
 		set_legacy_options();
 	}
@@ -365,6 +363,10 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		}
 	}
 	buried_unsat_hbond_filter_tracer << std::endl << "/////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
+
+	if ( sfxn_ == nullptr ) {
+		sfxn_ = core::scoring::get_score_function();
+	}
 
 	core::Size total_res( pose.size() );
 

@@ -113,8 +113,8 @@ LigandDockProtocol::LigandDockProtocol():
 	rottrials_all_rsds_ = false;
 	ligand_protonation_ = option[ OptionKeys::docking::ligand::mutate_same_name3 ];
 	minimize_water_     = true;
-	sc_interface_padding_  = 0.0;//5.0; // 5A ends up repacking half the protein! (literally)
-	bb_interface_cutoff_   = 7.0; //5.0;
+	set_sc_interface_padding( 0.0 ); //5.0; // 5A ends up repacking half the protein! (literally)
+	set_bb_interface_cutoff( 7.0 ); //5.0;
 	ligand_chi_stddev_deg_ = option[ OptionKeys::docking::ligand::harmonic_torsions ];
 	protein_CA_stddev_Ang_ = option[ OptionKeys::docking::ligand::harmonic_Calphas ];
 	ligand_shear_moves_    = (core::Size) option[ OptionKeys::docking::ligand::shear_moves ];
@@ -164,8 +164,8 @@ LigandDockProtocol::LigandDockProtocol(
 	ligand_torsion_restraints_()
 {
 	Mover::type( "LigandDockProtocol" );
-	sc_interface_padding_= 0.0;//5.0; // 5A ends up repacking half the protein! (literally)
-	bb_interface_cutoff_ = 7.0; //5.0;
+	set_sc_interface_padding( 0.0 ); //5.0; // 5A ends up repacking half the protein! (literally)
+	set_bb_interface_cutoff( 7.0 ); //5.0;
 
 	using basic::options::option;
 	using namespace basic::options;
@@ -203,7 +203,9 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	if ( protocol_ == "rescore" ) return;
 
 	// Run most of search with soft-rep, but do final minimization and scoring with hard-rep.
-	scorefxn_ = ( use_soft_rep_ ? soft_scorefxn_ : hard_scorefxn_ );
+	set_scorefxn( use_soft_rep() ? soft_scorefxn() : hard_scorefxn() );
+
+	core::scoring::ScoreFunction & sfxn( *scorefxn() );
 
 	// If we change the fold tree during the course of this run,
 	// we should restore it afterwards for scoring and output!
@@ -214,7 +216,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 
 	// Scoring function already set up by superclass
 	// BUG:  currently need to score pose explicitly to get everything initialized properly
-	(*scorefxn_)( pose );
+	(sfxn)( pose );
 
 	if ( protocol_ != "unbound" ) random_conformer(pose); // now only "pose" parameter is needed, actually
 
@@ -235,7 +237,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 		// Initialize loop_mover
 		loop_mover = pointer::make_shared<relax::loop::LoopRelaxMover>();
 
-		protocols::loops::LoopsOP loops( new protocols::loops::Loops( true ) );
+		protocols::loops::LoopsOP loops( utility::pointer::make_shared< protocols::loops::Loops >( true ) );
 		loop_mover->loops( loops );
 
 		if ( option[OptionKeys::loops::frag_files].user() ) {
@@ -284,10 +286,10 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 
 	// Modifies pose (foldtree) and jump_id!
 	if ( minimize_backbone_ ) {
-		setup_bbmin_foldtree(pose, jump_id, bb_interface_cutoff_, protein_CA_stddev_Ang_);
+		setup_bbmin_foldtree(pose, jump_id, bb_interface_cutoff(), protein_CA_stddev_Ang_);
 	}
 	// Put the move-map here so the interface matches up with the backbone constraints!
-	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding_, minimize_all_rsds_, minimize_backbone_, minimize_ligand_, minimize_water_);
+	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding(), minimize_all_rsds_, minimize_backbone_, minimize_ligand_, minimize_water_);
 
 	// iphold BEGIN
 	if ( fa_cycles ) {
@@ -312,14 +314,14 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 
 		// Create a MonteCarlo object
 		// Want to do this after perturb so we don't reset to pre-perturb state
-		MonteCarloOP monteCarlo( new MonteCarlo(pose, *scorefxn_, 2.0 /* temperature, from RosettaLigand paper */) );
+		MonteCarloOP monteCarlo( utility::pointer::make_shared< MonteCarlo >(pose, sfxn, 2.0 /* temperature, from RosettaLigand paper */) );
 
-		if ( protocol_ == "meiler2006" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 50, 8); // Meiler and Baker 2006
+		if ( protocol_ == "meiler2006" ) classic_protocol(pose, jump_id, scorefxn(), monteCarlo, 50, 8); // Meiler and Baker 2006
 		// pack - rottrials - rottrials - rottrials - pack
-		else if ( protocol_ == "abbreviated" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 5, 4); // Davis ca. 2007
+		else if ( protocol_ == "abbreviated" ) classic_protocol(pose, jump_id, scorefxn(), monteCarlo, 5, 4); // Davis ca. 2007
 		// pack - RT - RT - pack - RT - RT (avoids ending on pack to avoid noise?)
-		else if ( protocol_ == "abbrev2" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 6, 3); // Davis ca. April 2008
-		else if ( protocol_ == "shear_min" ) shear_min_protocol(pose, jump_id, scorefxn_, monteCarlo, 20);
+		else if ( protocol_ == "abbrev2" ) classic_protocol(pose, jump_id, scorefxn(), monteCarlo, 6, 3); // Davis ca. April 2008
+		else if ( protocol_ == "shear_min" ) shear_min_protocol(pose, jump_id, scorefxn(), monteCarlo, 20);
 		else if ( protocol_ == "min_only" || protocol_ == "unbound" ) {} // no docking steps, just minimize (mostly for debugging/testing)
 		else utility_exit_with_message("Unknown protocol '"+protocol_+"'");
 
@@ -336,7 +338,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	// iphold END
 
 	// Run most of search with soft-rep, but do final minimization and scoring with hard-rep.
-	scorefxn_ = hard_scorefxn_;
+	set_scorefxn( hard_scorefxn() );
 
 
 	//movemap->show(TR, pose.size());
@@ -344,7 +346,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	// Set up move map for minimizing.
 	// Have to do this after initial perturb so we get the "right" interface defn.
 	// Putting it here, we will get a slightly different interface than is used during classic_protocol() ...
-	protocols::minimization_packing::MinMoverOP dfpMinTightTol( new protocols::minimization_packing::MinMover( movemap, scorefxn_, "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP dfpMinTightTol( utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap, scorefxn(), "lbfgs_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 
@@ -392,22 +394,22 @@ LigandDockProtocol::classic_protocol(
 	// Set up move map for minimizing.
 	// Have to do this after initial perturb so we get the "right" interface defn.
 	//core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding_, minimize_all_rsds_, minimize_backbone_, minimize_ligand_);
-	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding_, minimize_all_rsds_, false /*minimize_backbone_*/, minimize_ligand_, minimize_water_);
+	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding(), minimize_all_rsds_, false /*minimize_backbone_*/, minimize_ligand_, minimize_water_);
 
 	// Set up the packer task
-	PackerTaskOP repack_task = make_packer_task(pose, jump_id, sc_interface_padding_, repack_all_rsds_, ligand_protonation_);
-	PackerTaskOP rottrials_task = make_packer_task(pose, jump_id, sc_interface_padding_, rottrials_all_rsds_, ligand_protonation_);
+	PackerTaskOP repack_task = make_packer_task(pose, jump_id, sc_interface_padding(), repack_all_rsds_, ligand_protonation_);
+	PackerTaskOP rottrials_task = make_packer_task(pose, jump_id, sc_interface_padding(), rottrials_all_rsds_, ligand_protonation_);
 
 	// Rigid body exploration
-	MoverOP simple_rigbod( new rigid::RigidBodyPerturbMover( jump_id, numeric::conversions::degrees(0.05), 0.1) );
+	MoverOP simple_rigbod( utility::pointer::make_shared< rigid::RigidBodyPerturbMover >( jump_id, numeric::conversions::degrees(0.05), 0.1) );
 
 	for ( core::Size cycle = 1; cycle <= num_cycles; ++cycle ) {
 		// RotamerTrialsMover actually asks for a non-const OP to scorefxn, sadly.
 		// this problem did not manifest until I fixed the ScoreFunctionCOP definition in ScoreFunction.fwd.hh
 		MoverOP pack_mover(
 			(cycle % repack_every_Nth == 1) ?
-			(Mover *) new protocols::minimization_packing::PackRotamersMover(scorefxn, repack_task) :
-			(Mover *) new protocols::minimization_packing::RotamerTrialsMover(scorefxn, *rottrials_task)
+			utility::pointer::static_pointer_cast< Mover >( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(scorefxn, repack_task) ) :
+			utility::pointer::static_pointer_cast< Mover >( utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(scorefxn, *rottrials_task) )
 		);
 		// Wrap it in something to disable the torsion constraints before packing!
 		pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, ligand_torsion_restraints_ );
@@ -415,7 +417,7 @@ LigandDockProtocol::classic_protocol(
 		//MoverOP dockmcm_mover = make_dockmcm_mover(pose, jump_id, pack_mover, simple_rigbod, movemap, scorefxn, monteCarlo);
 		//dockmcm_mover->apply(pose);
 		{
-			protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+			protocols::minimization_packing::MinMoverOP min_mover( utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 			min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 			core::Real const score1 = (*scorefxn)( pose );
@@ -467,7 +469,7 @@ LigandDockProtocol::shear_min_protocol(
 
 	// Set up move map for minimizing.
 	// Have to do this after initial perturb so we get the "right" interface defn.
-	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding_, minimize_all_rsds_, /*include_backbone=*/ false, minimize_ligand_, minimize_water_);
+	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding(), minimize_all_rsds_, /*include_backbone=*/ false, minimize_ligand_, minimize_water_);
 	//// Really simple movemap -- just ligand DOFs
 	//// This works very poorly!
 	//core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
@@ -477,7 +479,7 @@ LigandDockProtocol::shear_min_protocol(
 	//monteCarlo->reset_counters();
 	for ( core::Size cycle = 1; cycle <= num_cycles; ++cycle ) {
 		//TR << "shear_min_protocol(), cycle " << cycle << std::endl;
-		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+		protocols::minimization_packing::MinMoverOP min_mover( utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 		//core::Real const score1 = (*scorefxn)( pose );
 
@@ -528,11 +530,9 @@ LigandDockProtocol::random_conformer(
 	if ( option[ OptionKeys::docking::ligand::random_conformer ]() ) {
 		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue(i).is_polymer() ) continue;
-			//(*scorefxn_)( pose ); scorefxn_->accumulate_residue_total_energies( pose ); std::cout << "Constraints before: " << pose.energies().total_energies()[ core::scoring::dihedral_constraint ] << std::endl;
-			RandomConformerMoverOP rcm( new RandomConformerMover(i) );
-			UnconstrainedTorsionsMoverOP utm( new UnconstrainedTorsionsMover( rcm, ligand_torsion_restraints_ ) );
+			RandomConformerMoverOP rcm( utility::pointer::make_shared< RandomConformerMover >(i) );
+			UnconstrainedTorsionsMoverOP utm( utility::pointer::make_shared< UnconstrainedTorsionsMover >( rcm, ligand_torsion_restraints_ ) );
 			utm->apply(pose);
-			//(*scorefxn_)( pose ); scorefxn_->accumulate_residue_total_energies( pose ); std::cout << "Constraints after: " << pose.energies().total_energies()[ core::scoring::dihedral_constraint ] << std::endl;
 		}
 	}
 
@@ -591,7 +591,7 @@ LigandDockProtocol::optimize_orientation3(
 		grid->write_to_BRIX( option[ OptionKeys::docking::ligand::grid::grid_map ]().name() );
 	}
 
-	MoverOP initialPerturb( new protocols::docking::DockingInitialPerturbation(jump_id, false /*don't slide*/) );
+	MoverOP initialPerturb( utility::pointer::make_shared< protocols::docking::DockingInitialPerturbation >(jump_id, false /*don't slide*/) );
 	// Make sure the initial perturb lands our nbr_atom in an empty space.
 	{
 		core::pose::Pose const orig_pose( pose );
@@ -762,22 +762,22 @@ LigandDockProtocol::make_dockmcm_mover(
 {
 	using namespace protocols::moves;
 
-	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
+	protocols::minimization_packing::MinMoverOP min_mover( utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap, scorefxn, "lbfgs_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 	min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
-	MoverOP sequence_mover( new SequenceMover(
+	MoverOP sequence_mover( utility::pointer::make_shared< SequenceMover >(
 		rigbod_mover,
 		repack_mover
 		) );
 
-	MoverOP jump_out_mover( new JumpOutMover(
+	MoverOP jump_out_mover( utility::pointer::make_shared< JumpOutMover >(
 		sequence_mover,
 		min_mover,
 		scorefxn,
 		15.0 // energy units, taken from Rosetta++ docking_minimize.cc
 		) );
 
-	TrialMoverOP mctrial( new TrialMover( jump_out_mover, monteCarlo ) );
+	TrialMoverOP mctrial( utility::pointer::make_shared< TrialMover >( jump_out_mover, monteCarlo ) );
 
 	//mctrial->set_keep_stats(false); // big time sink for MC
 	mctrial->keep_stats_type( no_stats );
@@ -836,7 +836,7 @@ LigandDockProtocol::append_ligand_docking_scores(
 	// once separated, but Chu's JMB paper found this doesn't really help,
 	// at least for protein-protein docking.
 	// Also, it's very slow, requiring 10+ independent repacks.
-	core::pose::PoseOP after_unbound( new core::pose::Pose( after ) );
+	core::pose::PoseOP after_unbound( utility::pointer::make_shared< core::pose::Pose >( after ) );
 	// If constraints aren't removed, pulling the components apart gives big penalties.
 	if ( constraint_io ) constraint_io->remove_constraints_from_pose(*after_unbound, /*keep_covalent=*/ false, /*fail_on_constraints_missing=*/ true);
 

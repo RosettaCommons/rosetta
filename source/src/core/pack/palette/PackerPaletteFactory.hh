@@ -123,6 +123,9 @@ public:
 	/// makes a CustomBaseTypePackerPalette.
 	PackerPaletteOP create_packer_palette_from_global_defaults() const;
 
+	/// @brief Access the map of packer palette name to PackerPaletteCreator.
+	PackerPaletteCreatorMap const & packer_palette_creator_map() const;
+
 private:
 	/// @brief Private constructor.
 	///

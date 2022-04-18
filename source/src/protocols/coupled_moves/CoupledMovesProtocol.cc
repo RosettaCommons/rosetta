@@ -132,7 +132,6 @@ NEW_OPT(coupled_moves::output_prefix, "prefix for output files", "");
 */
 
 CoupledMovesProtocol::CoupledMovesProtocol(): Mover(),
-	score_fxn_(utility::pointer::make_shared< core::scoring::ScoreFunction >()),
 	main_task_factory_(utility::pointer::make_shared< core::pack::task::TaskFactory >())
 {
 	using namespace basic::options;
@@ -146,13 +145,11 @@ CoupledMovesProtocol::CoupledMovesProtocol(): Mover(),
 	if ( option[ packing::resfile ].user() ) {
 		main_task_factory_->push_back( utility::pointer::make_shared< operation::ReadResfile >() );
 	} else {
-		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
+		operation::RestrictToRepackingOP rtrop( utility::pointer::make_shared< operation::RestrictToRepacking >() );
 		main_task_factory_->push_back( rtrop );
 	}
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
 	//main_task_factory_->push_back( new operation::PreserveCBeta );
-	score_fxn_ = core::scoring::get_score_function();
-	configure_score_fxn();
 }
 
 CoupledMovesProtocol::CoupledMovesProtocol( CoupledMovesProtocol const & /*cmp*/ ) = default;
@@ -201,6 +198,12 @@ void CoupledMovesProtocol::configure_score_fxn() {
 void CoupledMovesProtocol::initialize_from_options() {
 	TR << "CoupledMovesProtocol is examining the options system to set itself up.  If parse_my_tag and an active command line option disagree on a setting, the option is going to win." << std::endl;
 	TR << "This applies only for ligand options at this time." << std::endl;
+
+	if ( score_fxn_ == nullptr ) {
+		score_fxn_ = core::scoring::get_score_function();
+		configure_score_fxn();
+	}
+
 	initialize_ligand_from_options();
 	return;
 }
@@ -216,9 +219,9 @@ void CoupledMovesProtocol::initialize_ligand_from_options() {
 }
 
 void CoupledMovesProtocol::exclude_nonclashing_positions( core::pose::PoseOP pose ) {
-	core::pack::task::operation::ClashBasedRepackShellOP cbrs( new core::pack::task::operation::ClashBasedRepackShell() );
+	core::pack::task::operation::ClashBasedRepackShellOP cbrs( utility::pointer::make_shared< core::pack::task::operation::ClashBasedRepackShell >() );
 	core::pack::task::PackerTaskOP task_for_cbss( main_task_factory_->create_task_and_apply_taskoperations( *pose ) );
-	core::pack::task::residue_selector::ClashBasedShellSelectorOP rs( new core::pack::task::residue_selector::ClashBasedShellSelector( task_for_cbss, true ) ); // second argument sets focus_on_designable to true, so that ClashBasedShellSelector will find clashes for positions set to designable (NOT repackable) in task. This maintains the original behavior from (Ollikainen 2015).
+	core::pack::task::residue_selector::ClashBasedShellSelectorOP rs( utility::pointer::make_shared< core::pack::task::residue_selector::ClashBasedShellSelector >( task_for_cbss, true ) ); // second argument sets focus_on_designable to true, so that ClashBasedShellSelector will find clashes for positions set to designable (NOT repackable) in task. This maintains the original behavior from (Ollikainen 2015).
 	cbrs->selector( rs );
 	main_task_factory_->push_back( cbrs );
 	return;
@@ -287,10 +290,10 @@ protocols::simple_moves::CoupledMoverOP CoupledMovesProtocol::setup_coupled_move
 		runtime_assert_string_msg(pose_copy->residue_type(this_res).is_ligand(), "in CoupledMovesProtocol, more ligands were requested than were present at the end of the Pose.  Note all designable ligands must be at the end of the input PDB.");
 	}
 	runtime_assert_string_msg((ligand_resnums_.size() > 0), "in CoupledMovesProtocol, ligand_resnums vector is empty - check that the number_ligands was set properly");
-	coupled_mover = protocols::simple_moves::CoupledMoverOP(new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task, ligand_resnums_[1]));
+	coupled_mover = protocols::simple_moves::CoupledMoverOP( utility::pointer::make_shared< protocols::simple_moves::CoupledMover >(pose_copy, score_fxn_, task, ligand_resnums_[1]));
 	coupled_mover->set_ligand_resnum( ligand_resnums_[1], pose_copy );
 	coupled_mover->set_ligand_weight( ligand_weight_ );
-	core::pack::task::IGEdgeReweighterOP reweight_ligand( new protocols::toolbox::IGLigandDesignEdgeUpweighter( ligand_weight_ ) );
+	core::pack::task::IGEdgeReweighterOP reweight_ligand( utility::pointer::make_shared< protocols::toolbox::IGLigandDesignEdgeUpweighter >( ligand_weight_ ) );
 	task->set_IGEdgeReweights()->add_reweighter( reweight_ligand );
 	return coupled_mover;
 } //setup_coupled_mover_for_ligand()
@@ -348,7 +351,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose & pose ){
 	output_tag += option[OptionKeys::coupled_moves::output_prefix];
 
 	// start with a fresh copy of the optimized pose
-	core::pose::PoseOP pose_copy( new core::pose::Pose(pose) );
+	core::pose::PoseOP pose_copy( utility::pointer::make_shared< core::pose::Pose >(pose) );
 	// add constraints if supplied by via constraints::cst_file option
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(*pose_copy);
 
@@ -364,11 +367,11 @@ void CoupledMovesProtocol::apply( core::pose::Pose & pose ){
 	if ( option[OptionKeys::coupled_moves::initial_repack] ) {
 		if ( option[OptionKeys::coupled_moves::min_pack] ) {
 			TR << "Performing initial minpack." << TR.Reset << std::endl;
-			protocols::minimization_packing::MinPackMoverOP minpack(new protocols::minimization_packing::MinPackMover( score_fxn_, task ));
+			protocols::minimization_packing::MinPackMoverOP minpack( utility::pointer::make_shared< protocols::minimization_packing::MinPackMover >( score_fxn_, task ));
 			minpack->apply(*pose_copy);
 		} else {
 			TR << "Performing initial pack." << TR.Reset << std::endl;
-			protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( score_fxn_, task, 1 ) );
+			protocols::minimization_packing::PackRotamersMoverOP pack( utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( score_fxn_, task, 1 ) );
 			pack->apply(*pose_copy);
 		}
 	}

@@ -96,9 +96,9 @@ public: //Accessors
 	void add_author( std::string const & author_name, std::string const & affiliation, std::string const & email, std::string const & notes );
 
 	/// @brief List authors in the format:
-	/// Name, Institution <email>
-	/// Name, Institution <email>
-	/// Name, Institution <email>
+	/// Name, Institution [email]
+	/// Name, Institution [email]
+	/// Name, Institution [email]
 	/// ...
 	void get_author_list( std::ostream & outstream ) const;
 

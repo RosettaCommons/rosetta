@@ -1,3 +1,4 @@
+-run:preserve_header true
 -in
  -file
   -s inputs/7cpa_7cpa_input.pdb

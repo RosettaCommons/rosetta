@@ -144,9 +144,9 @@ UnpublishedModuleInfo::add_author(
 }
 
 /// @brief List authors in the format:
-/// Name, Institution <email>
-/// Name, Institution <email>
-/// Name, Institution <email>
+/// Name, Institution [email]
+/// Name, Institution [email]
+/// Name, Institution [email]
 /// ...
 void
 UnpublishedModuleInfo::get_author_list(
@@ -155,7 +155,7 @@ UnpublishedModuleInfo::get_author_list(
 	for ( auto const & author : authors_ ) {
 		outstream << author->author_name();
 		if ( !(author->affiliation().empty()) ) outstream << ", " << author->affiliation();
-		if ( !(author->email_address().empty()) ) outstream << " <" << author->email_address() << ">";
+		if ( !(author->email_address().empty()) ) outstream << " [" << author->email_address() << "]";
 		if ( !(author->notes().empty()) ) outstream << "  (" << author->notes() << ")";
 		outstream << "\n";
 	}

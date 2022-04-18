@@ -543,7 +543,7 @@ LigandConformer::randomize( core::Real transmax ) {
 void
 LigandConformer::sample_conformation(
 	core::Real transmax,
-	TorsionSampler const& sampler )
+	TorsionSamplerCOP const & sampler )
 {
 	ligand_xyz( ); // force synch
 
@@ -565,7 +565,7 @@ LigandConformer::sample_conformation(
 	core::Size nligchi = ligandchis_.size();
 	for ( core::Size j=1; j<=nligchi; ++j ) {
 		TorsionType const& ttype = ligandchi_types_[j];
-		core::Real degree = sampler.sample(ttype.bn, ttype.br, ttype.at1,
+		core::Real degree = sampler->sample(ttype.bn, ttype.br, ttype.at1,
 			ttype.at2,ttype.at3,ttype.at4);
 		ligandchis_[j] = degree;
 	}

@@ -38,6 +38,7 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pose/PDBInfo.hh> //for getting pdb name
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
@@ -132,17 +133,18 @@ EnzdesFlexBBProtocol::EnzdesFlexBBProtocol()
 	}
 	}
 	*/
+	core::scoring::ScoreFunction & sfxn( *scorefxn() );
 	if ( ! basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
-		if ( scorefxn_->has_zero_weight( core::scoring::mm_bend ) ) { scorefxn_->set_weight( core::scoring::mm_bend, 1.0 ); }
+		if ( sfxn.has_zero_weight( core::scoring::mm_bend ) ) { sfxn.set_weight( core::scoring::mm_bend, 1.0 ); }
 
 		if ( reduced_sfxn_->has_zero_weight( core::scoring::mm_bend ) ) { reduced_sfxn_->set_weight( core::scoring::mm_bend, 1.0 ); }
 	}
 
-	if ( scorefxn_->has_zero_weight( core::scoring::rama ) ) {
+	if ( sfxn.has_zero_weight( core::scoring::rama ) ) {
 
 		if ( reduced_sfxn_->has_zero_weight( core::scoring::rama ) ) {
-			scorefxn_->set_weight( core::scoring::rama, 1.0 );
-		} else scorefxn_->set_weight( core::scoring::rama, reduced_sfxn_->weights()[core::scoring::rama] );
+			sfxn.set_weight( core::scoring::rama, 1.0 );
+		} else sfxn.set_weight( core::scoring::rama, reduced_sfxn_->weights()[core::scoring::rama] );
 
 	}
 
@@ -159,6 +161,16 @@ EnzdesFlexBBProtocol::apply(
 	using namespace protocols::moves;
 	using namespace core::pack::task;
 
+	core::scoring::ScoreFunction & sfxn( *scorefxn() );
+
+	if ( native_needs_load() ) {
+		core::pose::PoseOP natpose( utility::pointer::make_shared< core::pose::Pose >() );
+		core::import_pose::pose_from_file( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() , core::import_pose::PDB_file);
+		(sfxn)( *natpose);
+		this->set_native_pose( natpose );
+		set_native_needs_load( false );
+	}
+
 	//if ( ! basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 	// brub_mover_ = new protocols::backrub::BackrubMover();
 	// brub_mover_->set_native_pose( & pose );
@@ -172,8 +184,8 @@ EnzdesFlexBBProtocol::apply(
 
 	if ( ! basic::options::option[basic::options::OptionKeys::in::file::native].user() ) {
 
-		core::pose::PoseOP natpose( new core::pose::Pose( pose ) );
-		(*scorefxn_)( *natpose );
+		core::pose::PoseOP natpose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
+		(sfxn)( *natpose );
 		this->set_native_pose( natpose );
 	}
 
@@ -192,14 +204,14 @@ EnzdesFlexBBProtocol::apply(
 
 	tr.Info << "Done setting up the task and constraints... " << std::endl;
 	//score pose to make sure everything is initialised correctly
-	(*scorefxn_)( pose );
+	(sfxn)( pose );
 
 	//cst opt stage, if demanded
 	if ( basic::options::option[basic::options::OptionKeys::enzdes::cst_opt] ) {
 		fixbb_pack_task =  create_enzdes_pack_task( pose );
 		tr.Info << "starting cst_opt minimization..." << std::endl;
 		cst_minimize(pose, fixbb_pack_task, true);
-		(*scorefxn_)( pose );
+		(sfxn)( pose );
 		tr.Info << "done cst_opt minimization." << std::endl;
 	}
 
@@ -225,14 +237,14 @@ EnzdesFlexBBProtocol::apply(
 			}
 
 		}
-		core::pose::PoseOP poly_ala_pose( new core::pose::Pose(pose) );
+		core::pose::PoseOP poly_ala_pose( utility::pointer::make_shared< core::pose::Pose >(pose) );
 
 		protocols::toolbox::pose_manipulation::construct_poly_ala_pose( *poly_ala_pose, positions_to_replace, true, true, true );
 		protocols::toolbox::pose_manipulation::construct_poly_ala_pose( pack_region_ala_pose_, all_pack_positions, true, true, true );
 
-		core::scoring::EnergyMap const cur_emap = scorefxn_->weights();
+		core::scoring::EnergyMap const cur_emap = sfxn.weights();
 
-		scorefxn_->set_weight( core::scoring::fa_sol, 0.0);
+		sfxn.set_weight( core::scoring::fa_sol, 0.0);
 
 
 		if ( !this->recover_loops_from_file( *poly_ala_pose ) ) {
@@ -263,19 +275,19 @@ EnzdesFlexBBProtocol::apply(
 			utility_exit_with_message( "Exiting as requested by option enzdes::dump_loop_samples" );
 		}
 
-		scorefxn_->set_weight(core::scoring::fa_sol, cur_emap[ core::scoring::fa_sol ]);
+		sfxn.set_weight(core::scoring::fa_sol, cur_emap[ core::scoring::fa_sol ]);
 
 		//ok, we have our ensembles sorted by designability, now assemble combinations
 		//of ensemble members in order of best energies
 		//note: we can't minimize bond angles yet, so set them to 0
-		scorefxn_->set_weight( core::scoring::mm_bend, 0.0 );
+		sfxn.set_weight( core::scoring::mm_bend, 0.0 );
 
 		PackerTaskOP flex_pack_task = enzutil::recreate_task( pose, *design_pack_task_template );
 
-		core::scoring::ScoreFunctionCOP flexpack_sfxn = scorefxn_;
-		if ( basic::options::option[basic::options::OptionKeys::packing::soft_rep_design] ) flexpack_sfxn = soft_scorefxn_;
+		core::scoring::ScoreFunctionCOP flexpack_sfxn = scorefxn();
+		if ( basic::options::option[basic::options::OptionKeys::packing::soft_rep_design] ) flexpack_sfxn = soft_scorefxn();
 
-		flexpack::FlexPackerOP flex_packer( new flexpack::FlexPacker( flex_pack_task, flex_regions_, flexpack_sfxn ) );
+		flexpack::FlexPackerOP flex_packer( utility::pointer::make_shared< flexpack::FlexPacker >( flex_pack_task, flex_regions_, flexpack_sfxn ) );
 
 		time_t flex_start_time = time( nullptr );
 		flex_packer->apply( pose );
@@ -293,7 +305,7 @@ EnzdesFlexBBProtocol::apply(
 
 			PackerTaskOP fix_pack_task = enzutil::recreate_task( pose, *design_pack_task_template );
 
-			enzdes_pack( pose, fix_pack_task, scorefxn_, fixbb_cycles, basic::options::option[basic::options::OptionKeys::enzdes::cst_min], false, option[ OptionKeys::enzdes::favor_native_res].user() );
+			enzdes_pack( pose, fix_pack_task, scorefxn(), fixbb_cycles, basic::options::option[basic::options::OptionKeys::enzdes::cst_min], false, option[ OptionKeys::enzdes::favor_native_res].user() );
 
 
 		}
@@ -301,7 +313,7 @@ EnzdesFlexBBProtocol::apply(
 		//do a repack without constraints
 		if ( ! basic::options::option[basic::options::OptionKeys::enzdes::no_unconstrained_repack] ) {
 			PackerTaskOP repack_task = create_enzdes_pack_task( pose, false );
-			enzdes_pack( pose, repack_task, scorefxn_, basic::options::option[basic::options::OptionKeys::enzdes::cst_min].user(), true, true, false );
+			enzdes_pack( pose, repack_task, scorefxn(), basic::options::option[basic::options::OptionKeys::enzdes::cst_min].user(), true, true, false );
 		}
 
 	} //if cst_design
@@ -521,7 +533,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 	if ( toolbox::match_enzdes_util::get_enzdes_observer( pose ) && toolbox::match_enzdes_util::get_enzdes_observer( pose )->enzdes_loops_file() ) enz_loops_file_ = toolbox::match_enzdes_util::get_enzdes_observer( pose )->enzdes_loops_file();
 	else if ( !enz_loops_file_ && basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ].user() ) {
 
-		toolbox::match_enzdes_util::EnzdesLoopsFileOP loops_file( new toolbox::match_enzdes_util::EnzdesLoopsFile() );
+		toolbox::match_enzdes_util::EnzdesLoopsFileOP loops_file( utility::pointer::make_shared< toolbox::match_enzdes_util::EnzdesLoopsFile >() );
 
 		if ( !loops_file->read_loops_file( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ] ) ) {
 			utility_exit_with_message("Reading enzdes loops file failed");
@@ -714,13 +726,13 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	kinematic_mover_->set_pivots(rbegin, rmid, rend);
 
-	protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber( new protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber(
+	protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber( utility::pointer::make_shared< protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber >(
 		protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP( kinematic_mover_ )
 		) );
 
 	if ( basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 
-		protocols::score_filters::ScoreCutoffFilterOP bump_filter( new protocols::score_filters::ScoreCutoffFilter() );
+		protocols::score_filters::ScoreCutoffFilterOP bump_filter( utility::pointer::make_shared< protocols::score_filters::ScoreCutoffFilter >() );
 		bump_filter->set_positions( flex_regions_[region]->positions() );
 		bump_filter->set_score_type( core::scoring::fa_rep );
 		bump_filter->set_cutoff( bump_filter->get_score( pose ) + region_size * 0.2 );
@@ -825,7 +837,7 @@ EnzdesFlexBBProtocol::generate_alc_ensemble_for_region(
 	core::Size const len = rend - rbegin + 1;
 
 	utility::vector1< core::pose::PoseOP > loop_poses; loop_poses.reserve( loop_ensemble_size_ );
-	core::pose::PoseOP native_loop_pose( new core::pose::Pose() );
+	core::pose::PoseOP native_loop_pose( utility::pointer::make_shared< core::pose::Pose >() );
 	utility::vector1< core::Real > rmsd_to_native; rmsd_to_native.reserve( loop_ensemble_size_ );
 	flex_regions_[region]->fragment_as_pose( 1, *native_loop_pose, this->restype_set() );
 	native_loop_pose->prepend_polymer_residue_before_seqpos( pose.residue( flex_regions_[region]->start() - 1) , 1, false );
@@ -1028,7 +1040,7 @@ EnzdesFlexBBProtocol::generate_backrub_ensemble_for_region(
 	brub_mover_->optimize_branch_angles( pose );
 
 	utility::vector1< core::pose::PoseOP > loop_poses;
-	core::pose::PoseOP native_loop_pose( new core::pose::Pose() );
+	core::pose::PoseOP native_loop_pose( utility::pointer::make_shared< core::pose::Pose >() );
 
 	utility::vector1< core::Real > rmsd_to_native;
 
@@ -1426,7 +1438,7 @@ EnzdesFlexibleRegion::assemble_enzdes_fragdata(
 
 	using namespace core::fragment;
 
-	FragDataOP new_fragdata( new FragData() );
+	FragDataOP new_fragdata( utility::pointer::make_shared< FragData >() );
 	EnzdesFlexBBProtocolCOP enzdes_protocol( enzdes_protocol_ );
 
 	// tex 8/16/08
@@ -1535,7 +1547,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 	protocols::toolbox::pose_manipulation::construct_poly_ala_pose( pose, other_design_res, true, true, true );
 	//pose.dump_pdb("sortala_reg"+utility::to_string(index_)+".pdb");
 
-	IGEdgeReweighterOP ig_up( new protocols::toolbox::ResidueGroupIGEdgeUpweighter( 0.5, this->positions(), other_design_res) );
+	IGEdgeReweighterOP ig_up( utility::pointer::make_shared< protocols::toolbox::ResidueGroupIGEdgeUpweighter >( 0.5, this->positions(), other_design_res) );
 	looptask_template->set_IGEdgeReweights()->add_reweighter( ig_up );
 
 	tr << "Beginning designability screen for " << this->nr_frags() << " ensemble members of flexible region " << index_ << "... " << std::endl;
@@ -1638,7 +1650,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 	core::Real dtps(0);
 
 	//first, build a rotamer set
-	core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets() );
+	core::pack::rotamer_set::RotamerSetsOP rotsets( utility::pointer::make_shared< core::pack::rotamer_set::RotamerSets >() );
 	utility::graph::GraphOP packer_neighbor_graph = core::pack::create_packer_graph( pose, *scorefxn, task );
 
 	rotsets->set_task( task );
@@ -1648,7 +1660,7 @@ EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 	rotsets->prepare_sets_for_packing( pose, *scorefxn );
 
 	//ig = InteractionGraphFactory::create_interaction_graph( *task, *rotsets, pose, *scorefxn, *packer_neighbor_graph );
-	core::pack::interaction_graph::PDInteractionGraphOP ig( new core::pack::interaction_graph::PDInteractionGraph( task->num_to_be_packed() ) );
+	core::pack::interaction_graph::PDInteractionGraphOP ig( utility::pointer::make_shared< core::pack::interaction_graph::PDInteractionGraph >( task->num_to_be_packed() ) );
 
 	ig->initialize( *rotsets );
 
@@ -2056,7 +2068,7 @@ EnzdesFlexibleRegion::minimize_region(
 	core::Real cbE_start = pose.energies().total_energies()[ core::scoring::chainbreak ];
 
 	//2. now set up the correct movemap, including the CA bond angles
-	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
+	core::kinematics::MoveMapOP movemap( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 	movemap->clear();
 
 	for ( core::Size i = this->start(); i <= this->end(); ++i ) {
@@ -2080,7 +2092,7 @@ EnzdesFlexibleRegion::minimize_region(
 	//trial_score->set_weight( core::scoring::mm_bend, 0.0 );
 	//(*trial_score)(pose);
 	(*min_scorefxn)(pose);
-	protocols::minimization_packing::MinMoverOP dfpMinTightTol( new protocols::minimization_packing::MinMover( movemap, min_scorefxn, "lbfgs_armijo_nonmonotone_atol", min_tolerance, true  ) );
+	protocols::minimization_packing::MinMoverOP dfpMinTightTol( utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap, min_scorefxn, "lbfgs_armijo_nonmonotone_atol", min_tolerance, true  ) );
 	dfpMinTightTol->apply(pose);
 	core::Real totE_end = (*scorefxn)(pose);
 	core::Real cbE_end = pose.energies().total_energies()[ core::scoring::chainbreak ];
@@ -2198,7 +2210,7 @@ EnzdesFlexBBProtocol::test_flexbb_rotamer_sets(
 	core::pack::task::PackerTaskCOP task
 ){
 
-	flexpack::rotamer_set::FlexbbRotamerSetsOP flexset( new flexpack::rotamer_set::FlexbbRotamerSets( task ) );
+	flexpack::rotamer_set::FlexbbRotamerSetsOP flexset( utility::pointer::make_shared< flexpack::rotamer_set::FlexbbRotamerSets >( task ) );
 
 	std::cerr << "FlexbbRotamerSet test: done initialising set." << std::endl;
 
@@ -2206,11 +2218,11 @@ EnzdesFlexBBProtocol::test_flexbb_rotamer_sets(
 
 	std::cerr << "FlexbbRotamerSet test: done setting frames." << std::endl;
 
-	utility::graph::GraphOP flex_graph = flexset->flexpack_neighbor_graph( pose, *scorefxn_, task );
+	utility::graph::GraphOP flex_graph = flexset->flexpack_neighbor_graph( pose, *scorefxn(), task );
 
 	std::cerr << "FlexbbRotamerSet test: done setting up flexpack neighbor graph." << std::endl;
 
-	flexset->build_rotamers( pose, *scorefxn_, *flex_graph );
+	flexset->build_rotamers( pose, *scorefxn(), *flex_graph );
 
 	std::cerr << "FlexbbRotamerSet test: done building rotamers." << std::endl;
 

@@ -67,10 +67,6 @@ SampleTiltAngles::SampleTiltAngles():
 {
 	using namespace core::scoring;
 
-	ref_sfxn1_ = get_score_function();
-	ref_sfxn2_ = ScoreFunctionFactory::create_score_function( "mpframework_fa_2007" );
-	ref_sfxn3_ = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012" );
-
 }
 
 SampleTiltAngles::SampleTiltAngles(
@@ -160,6 +156,16 @@ SampleTiltAngles::apply( core::pose::Pose& pose ){
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::rigid;
 	using namespace numeric;
+
+	if ( ref_sfxn1_ == nullptr ) {
+		ref_sfxn1_ = get_score_function();
+	}
+	if ( ref_sfxn2_ == nullptr ) {
+		ref_sfxn2_ = ScoreFunctionFactory::create_score_function( "mpframework_fa_2007" );
+	}
+	if ( ref_sfxn3_ == nullptr ) {
+		ref_sfxn3_ = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012" );
+	}
 
 	// Determine the membrane jump number (pre-determined in the framework)
 	core::Size membrane_jump( pose.conformation().membrane_info()->membrane_jump() );
