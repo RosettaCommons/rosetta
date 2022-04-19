@@ -157,17 +157,28 @@ void FixbbSimAnnealer::run()
 	/// (default=true) so that water molecules may be virtualized 50% of the time
 	bool include_vrt = basic::options::option[ basic::options::OptionKeys::corrections::water::include_vrt ].value();
 
+	/// Revert this to restore old temperature schedule with a second hill-climbing event (usually without a second hill-falling attempt. The hill falling is the useful part, which is why we skip this altogether now).
+	constexpr bool skip_second_wave = true;
+
 	std::ofstream annealer_trajectory;
 	if ( record_annealer_trajectory_ ) {
 		annealer_trajectory.open(trajectory_file_name_.c_str() );
 	}
+
+	core::Real prev_temp = 999999.0;
 
 	AnnealerObserverOP observer = get_annealer_observer();
 	if ( observer != nullptr ) observer->setup_for_mc( rotamer_sets() );
 
 	//outer loop
 	for ( int nn = 1; nn <= outeriterations; ++nn ) {
+
 		setup_temperature(loopenergy,nn);
+		if ( skip_second_wave && nn < outeriterations && get_temperature() > prev_temp ) {
+			nn = outeriterations - 1;
+			continue;
+		}
+
 		if ( quench() ) {
 			currentenergy = bestenergy();
 			state_on_node = best_state_on_node;
@@ -266,6 +277,7 @@ void FixbbSimAnnealer::run()
 				}
 			}
 
+			prev_temp = get_temperature();
 		} // end of inneriteration loop
 	} //end of outeriteration loop
 
