@@ -2,3 +2,4 @@
 -mp:setup:transform_into_membrane 1
 -mp:transform:optimize_embedding 1
 -mp:scoring:hbond true
+-mp:restore_lazaridis_imm_behavior 1

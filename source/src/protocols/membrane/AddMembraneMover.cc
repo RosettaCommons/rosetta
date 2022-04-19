@@ -51,6 +51,7 @@
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
+#include <core/conformation/membrane/MembraneGeometry.hh>
 
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
@@ -130,7 +131,9 @@ AddMembraneMover::AddMembraneMover() :
 	membrane_core_( 15 ),
 	/* Read from Database Info */
 	database_table_(""),
-	db_session_()
+	db_session_(),
+	/* membrane geometry */
+	mp_geometry_( core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB )
 {
 	register_options();
 	init_from_cmd();
@@ -164,7 +167,9 @@ AddMembraneMover::AddMembraneMover(
 	membrane_core_( 15 ),
 	/* Read from Database Info */
 	database_table_(""),
-	db_session_()
+	db_session_(),
+	/* membrane geometry */
+	mp_geometry_( core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB )
 {
 	register_options();
 	init_from_cmd();
@@ -197,7 +202,9 @@ AddMembraneMover::AddMembraneMover(
 	membrane_core_( 15 ),
 	/* Read from Database Info */
 	database_table_(""),
-	db_session_()
+	db_session_(),
+	/* membrane geometry */
+	mp_geometry_( core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB )
 {
 	register_options();
 	init_from_cmd();
@@ -232,7 +239,9 @@ AddMembraneMover::AddMembraneMover(
 	membrane_core_( 15 ),
 	/* Read from Database Info */
 	database_table_(""),
-	db_session_()
+	db_session_(),
+	/* membrane geometry */
+	mp_geometry_( core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB )
 {
 	register_options();
 	init_from_cmd();
@@ -267,7 +276,9 @@ AddMembraneMover::AddMembraneMover(
 	membrane_core_( 15 ),
 	/* Read from Database Info */
 	database_table_(""),
-	db_session_()
+	db_session_(),
+	/* membrane geometry */
+	mp_geometry_( core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB )
 {
 	register_options();
 	init_from_cmd();
@@ -338,7 +349,6 @@ AddMembraneMover::apply( Pose & pose ) {
 	// Step 3: Initialize the membrane Info Object
 	core::Size numjumps = pose.fold_tree().num_jump();
 	if ( restore_lazaridis_IMM1_behavior_ ) {
-
 		// Setup a default membrane info object
 		MembraneInfoOP mem_info = MembraneInfoOP( new MembraneInfo(
 			static_cast< core::Size >( membrane_pos ),
@@ -346,12 +356,13 @@ AddMembraneMover::apply( Pose & pose ) {
 			membrane_core_,
 			thickness_,
 			steepness_,
-			topology_ )
+			topology_,
+			mp_geometry_,
+			pose.conformation() )
 		);
+
 		pose.conformation().set_membrane_info( mem_info );
-
 	} else {
-
 		// Initialize a membrane info object with ImplicitLipidInfo
 		MembraneInfoOP mem_info = MembraneInfoOP( new MembraneInfo(
 			static_cast< core::Size >( membrane_pos ),
@@ -414,6 +425,7 @@ AddMembraneMover::apply( Pose & pose ) {
 			pose.conformation().membrane_info()->implicit_lipids()->make_no_pore_parameters();
 		}
 	}
+
 
 
 
@@ -666,7 +678,7 @@ AddMembraneMover::parse_my_tag(
 		steepness_ = tag->getOption< core::Real >( "steepness" );
 	}
 
-
+	//Read in membrane geometry options
 	// Read in membrane core
 	if ( tag->hasOption( "membrane_core" ) ) {
 		membrane_core_ = tag->getOption< core::Real >( "membrane_core" );
@@ -753,6 +765,28 @@ AddMembraneMover::parse_my_tag(
 		TR << "finished reading span from sub tags (xml) " << std::endl;
 	}
 
+	//Read in transition function geometry parameters from xml
+	if ( tag->hasOption( "transition_geometry" ) ) {
+		TR << "Setting mp_geometry" << std::endl;
+		std::string const & mp_geo(tag->getOption< std::string >( "transition_geometry" ));
+		if ( mp_geo == "slab" ) {
+			TR << "Setting membrane geometry as SLAB" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB;
+		} else if ( mp_geo == "bicelle" ) {
+			TR << "Setting membrane geometry as BICELLE" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::BICELLE;
+		} else if ( mp_geo == "vesicle" ) {
+			TR << "Setting membrane geometry as VESICLE" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::VESICLE;
+		} else if ( mp_geo == "double_vesicle" ) {
+			TR << "Setting membrane geometry as DOUBLE_VESICLE" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::DOUBLE_VESICLE;
+		} else {
+			TR << "Warning: Unrecognized membrane geometry. Setting to Slab" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB;
+		}
+	}
+
 }
 
 /// @brief Register options from JD2
@@ -772,6 +806,7 @@ AddMembraneMover::register_options() {
 	option.add_relevant( OptionKeys::mp::steepness );
 	option.add_relevant( OptionKeys::mp::membrane_core );
 	option.add_relevant( OptionKeys::mp::restore_lazaridis_imm_behavior );
+	option.add_relevant( OptionKeys::mp::geometry);
 
 }
 
@@ -833,6 +868,27 @@ AddMembraneMover::init_from_cmd() {
 	if ( option[ OptionKeys::mp::membrane_core ].user() ) {
 		TR << "Warning: About to set a new membrane core not currently optimized for the scoring function" << std::endl;
 		membrane_core_ = option[ OptionKeys::mp::membrane_core ]();
+	}
+
+	//Read in geometry parameters
+	if ( option[ OptionKeys::mp::geometry ].user() ) {
+		TR << "Setting mp_geometry" << std::endl;
+		if ( option[ OptionKeys::mp::geometry ]() == "slab" ) {
+			TR << "Setting membrane geometry as SLAB" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB;
+		} else if ( option[ OptionKeys::mp::geometry ]() == "bicelle" ) {
+			TR << "Setting membrane geometry as BICELLE" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::BICELLE;
+		} else if ( option[ OptionKeys::mp::geometry] () == "vesicle" ) {
+			TR << "Setting membrane geometry as VESICLE" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::VESICLE;
+		} else if ( option[ OptionKeys::mp::geometry] () == "double_vesicle" ) {
+			TR << "Setting membrane geometry as DOUBLE_VESICLE" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::DOUBLE_VESICLE;
+		} else {
+			TR << "Warning: Unrecognized membrane geometry. Setting to Slab" << std::endl;
+			mp_geometry_ = core::conformation::membrane::MP_GEOMETRY_TRANSITION::SLAB;
+		}
 	}
 
 	// Use general method to read in center/normal from the command line
@@ -910,7 +966,8 @@ void AddMembraneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute( "span_ends", xsct_residue_number_cslist, "comma separated list of span ending residues" )
 		+ XMLSchemaAttribute( "span_starts_num", xs_string, "comma separated list of span starting residues, in rosetta numbering" )
 		+ XMLSchemaAttribute( "span_ends_num", xs_string, "comma separated list of span ending residues in rosetta_numbering" )
-		+ XMLSchemaAttribute( "span_orientations", xs_string, "comma separated list of span orientations, only in2out or out2in allowed" );
+		+ XMLSchemaAttribute( "span_orientations", xs_string, "comma separated list of span orientations, only in2out or out2in allowed" )
+		+ XMLSchemaAttribute( "transition_geometry", xs_string, "Geometry of implicit membrane");
 
 	AttributeList span_subtag_attributes;
 	span_subtag_attributes + XMLSchemaAttribute( "start", xsct_non_negative_integer, "residue where span starts" )

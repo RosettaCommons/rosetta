@@ -4,4 +4,5 @@
 -in:membrane 
 -nstruct 1 
 -packing:pack_missing_sidechains false 
--parser:protocol membrane_interface.xml 
+-parser:protocol membrane_interface.xml
+-mp:restore_lazaridis_imm_behavior 1 

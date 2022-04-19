@@ -117,31 +117,6 @@ private: // helper methods
 	void
 	init( pose::Pose & pose ) const;
 
-	/// @brief Helper Method - Compute Fa Proj
-	core::Real
-	compute_fa_proj(
-		core::Real z_position,
-		core::Real thickness,
-		core::Real steepness
-	) const;
-
-	/// @brief Helper Method - Compute Fa Derivatives
-	core::Real
-	compute_fa_deriv(
-		core::Real z_position,
-		core::Real thickness,
-		core::Real steepness
-	) const;
-
-	/// @brief Helper Method - Compute Fa Proj coordinate
-	core::Vector
-	compute_fa_proj_coord(
-		core::Real z_position,
-		core::Vector xyz,
-		core::Vector center,
-		core::Vector normal
-	) const;
-
 	/// @brief Allocate memory for derivatives
 	void setup_for_fullatom( pose::Pose & pose ) const;
 
@@ -159,9 +134,8 @@ private:
 
 	// Arrays used for computing derivatives
 	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_;
-	mutable utility::vector1 < utility::vector1 < Real > > fa_z_position_;
-	mutable utility::vector1 < utility::vector1 < Vector > > fa_proj_coord_;
-	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_deriv_;
+	mutable utility::vector1 < utility::vector1 < Vector > > fa_f1_;
+	mutable utility::vector1 < utility::vector1 < Vector > > fa_f2_;
 
 };
 

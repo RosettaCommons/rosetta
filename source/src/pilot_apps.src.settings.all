@@ -1100,7 +1100,14 @@ sources = {
 	 "pilot/wojtek" : [
                 "FiberDiffractionTest",
         ],
-	 
+	
+	 "pilot/woodsh" : [
+		"mp_transition_bfactor",
+		"set_radius",
+		"mp_optimize_geometry_params",
+
+	],
+
 	# X ######################################################################
 
 	# Y ######################################################################

@@ -34,6 +34,7 @@
 // Unit Headers
 #include <protocols/membrane/AddMembraneMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <core/conformation/membrane/MembraneGeometry.fwd.hh>
 
 // Project Headers
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
@@ -217,6 +218,9 @@ private:
 	// Optional: members for initializing memrbane data from a relational database
 	std::string database_table_;
 	utility::sql_database::sessionOP db_session_;
+
+	//membrane geometry variables
+	core::conformation::membrane::MP_GEOMETRY_TRANSITION mp_geometry_;
 
 };
 

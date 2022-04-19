@@ -8,3 +8,4 @@
 -out:file:scorefile 2zup_rescored.rsc
 -packing:pack_missing_sidechains false 
 -restore_talaris_behavior
+-mp:restore_lazaridis_imm_behavior 1

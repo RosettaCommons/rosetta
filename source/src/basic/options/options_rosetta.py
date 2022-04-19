@@ -3418,7 +3418,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	),
 
 	#New Membrane Protein Option group (RosettaMP)
-	Option_Group( 'mp',
+	Option_Group( 'mp',		
 
 		# Option to restore previous energy function behavior (IMM1 - 2003)
 		Option( "restore_lazaridis_imm_behavior", "Boolean", desc="Restore energy function behavior to Lazaridis IMM1", default="false" ),
@@ -3427,6 +3427,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'thickness', 'Real', desc='Thickness of the membrane used by the high resolution scoring function. Overwrites default thickness of 30A.'),
 		Option( 'membrane_core', 'Real', desc='set membrane core thickness for Lazaridis-Karplus. default is 10A, i.e (-10, 10)' ),
 		Option( 'steepness', 'Real', desc='Control transition region between polar and nonpoar phases for the membrane model used by the high resolution energy function. Default = 10 gives a 6A transition region.'),
+		Option( 'geometry', 'String', desc="Geometry of implicit membrane, default is slab. Other options include bicelle, vesicle, and double_vesicle. For a micelle like geometry, you can set the inner_radius for the bicelle geometry (using -mp:geo:bicelle_radius) to a relatively small value. See description of -mp:geo:bicelle_radius for more information." ),
 
 		# Embedding options - advanced (these are currently not used)
 		Option( 'center_start', 'RealVector', desc='Starting point for center search. Example: 3 2 4.'),
@@ -3507,6 +3508,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'tm_alpha', 'Boolean', desc="Is the main secondary structure in the membrane helical?", default='true' ),
 		  #Option( 'radius_cutoff', 'Real', desc="Cutoff radius (from COM) to compute structure-based lipid accessibility, in Angstrom.", default='10' ),
 		  #Option( 'rel_sasa_cutoff', 'Real', desc="Relative SASA cutoff to compute structure-based lipid accessibility.", default='0.2' ),
+		),
+		Option_Group( 'geo',
+			Option( 'bicelle_radius', 'Real', desc="Inner radius of bicelle. The bicelle inner_radius is the radius of the flat cylinder of the bicelle shape, the outer radius is the inner_radius+membrane_thickness. Setting the bicelle_radius as 0, would create an ellipsoid with a radius=membrane_thickness (default 15). Keep in mind that when setting the bicelle_radius, the size of the bicelle created is not dependent on the size of the protein. You will want to take the size of your protein into account when setting the bicelle_radius." ),
+			Option( 'vesicle_radius', 'Real', desc="Radius of vesicle. Distance from center of the vesicle/sphere to the center of the membrane." ),
+			Option( 'double_vesicle_distance', 'Real', desc="Distance between outer edge of inner vesicle membrane and inner edge of outer vesicle membrane. " ),
 		),
 
 		# For transforming protein into the membrane

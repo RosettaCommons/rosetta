@@ -25,6 +25,7 @@
 // Project Headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneGeometry.hh>
 
 
 // Package headers
@@ -207,65 +208,31 @@ FaMPSolvEnergy::eval_atom_derivative(
 			//Vector const d_ij_norm = d_ij.normalized();
 
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-			Vector f1( 0.0 ), f2( 0.0 );
+			Vector f1_ij( 0.0 ), f2_ij( 0.0 );
 
 			Real const dE_dR_over_r
-				( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2, proj_m, proj_n ) );
+				( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1_ij, f2_ij, proj_m, proj_n ) );
 
 			//now calculate f1 and f2 with respect to distance from membrane center
-			//need to end up with F1 = f1d*dE/dd + f1z*dE/dz
-			//                    F2 = f2d*dE/dd + f2z*dE/dz
 			//F1 and F2 are defined in H. Abe, W. Braun, T. Noguti, N. Go, Computers & Chemistry 1984
 
 			//needed for derivative with respect to distance from membrane center
 			Real solvE1( 0.0 ), solvE2( 0.0 ), membsolvE1( 0.0 ), membsolvE2( 0.0 );
 			solvationE( rsd1.atom(m), rsd2.atom(n), d2, solvE1, solvE2, membsolvE1, membsolvE2);
 
-			//derivative with respect to distance from membrane center of atom m
-			Real dE_dZ_i = fa_proj_deriv_[rsd1.seqpos() ][ m ] * (solvE1 - membsolvE1 );
+			Real diff = membsolvE1 - solvE1;
 
-			// projection of atom onto membrane plane, this is reference atom for this part
-			Vector fa_proj_coord_i = fa_proj_coord_[ rsd1.seqpos() ][ m ];
-
-			// Extracellular
-			// .............................................................................
-			//               * <- atom(m)
-			//                  |
-			//               |
-			// -----Membrane Center--------Origin->*-------* <-fa_proj_coord------------------
-			//
-			//
-			//
-			// .............................................................................
-			// Intracelluar
-
-
-			Vector f1_iz( 0.0 ), f2_iz( 0.0 );
-
-			Vector const d_iz = heavy_atom_i - fa_proj_coord_i;
-			Real const d_iz_norm = d_iz.length();
-			if ( d_iz_norm != Real(0.0) ) {
-				Real const invd_iz = 1.0 / d_iz_norm;
-				f2_iz = d_iz * invd_iz;
-				f1_iz = heavy_atom_i.cross(fa_proj_coord_i);
-				f1_iz *= invd_iz;
-			}
-
-			Real const invd_iz = 1.0 / d_iz_norm;
-			f2_iz = d_iz * invd_iz;
-			f1_iz = heavy_atom_i.cross(fa_proj_coord_i);
-			f1_iz *= invd_iz;
-
-
-			if ( dE_dR_over_r == 0.0 && dE_dZ_i == 0.0 ) continue;
+			Vector f1( 0.0 ), f2( 0.0 );
+			f1 = (dE_dR_over_r * f1_ij) + fa_f1_[ rsd1.seqpos() ][ m ]*diff;
+			f2 = (dE_dR_over_r * f2_ij) + fa_f2_[ rsd1.seqpos() ][ m ]*diff;
 
 			if ( same_res ) {
-				F1 += 0.5 * fa_weight_ * cp_weight * ( (dE_dR_over_r * f1) + (dE_dZ_i * f1_iz) );
-				F2 += 0.5 * fa_weight_ * cp_weight * ( (dE_dR_over_r * f2) + (dE_dZ_i * f2_iz) );
+				F1 += 0.5 * fa_weight_ * cp_weight * f1;
+				F2 += 0.5 * fa_weight_ * cp_weight * f2;
 
 			} else {
-				F1 += fa_weight_ * cp_weight * ( (dE_dR_over_r  * f1) + (dE_dZ_i * f1_iz) );
-				F2 += fa_weight_ * cp_weight * ( (dE_dR_over_r * f2) + (dE_dZ_i * f2_iz) );
+				F1 += fa_weight_ * cp_weight * f1;
+				F2 += fa_weight_ * cp_weight * f2;
 
 			}
 
@@ -508,12 +475,7 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 	setup_for_fullatom( pose );
 
 	core::conformation::Conformation const & conf( pose.conformation() );
-
-	Real thickness = conf.membrane_info()->membrane_thickness();
-	Real steepness = conf.membrane_info()->membrane_steepness();
-
-	Vector center = conf.membrane_info()->membrane_center(conf);
-	Vector normal = conf.membrane_info()->membrane_normal(conf);
+	core::conformation::membrane::MembraneGeometryCOP mp_geometry( conf.membrane_info()->membrane_geometry() );
 
 	// For convenience - grab nres
 	Real nres = pose.size();
@@ -523,63 +485,15 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 
 			Vector const xyz( pose.residue( i ).xyz( j ) );
 
-			// Compute Standard Z Position
-			fa_z_position_[i][j] = pose.conformation().membrane_info()->atom_z_position( pose.conformation(), i, j );
+			//Compute transition function
+			fa_proj_[i][j] = mp_geometry->f_transition( conf, i, j );
 
-			// Compute Fa Projection
-			fa_proj_[i][j] = compute_fa_proj( fa_z_position_[i][j], thickness, steepness );
-
-
-			fa_proj_deriv_[i][j] = compute_fa_deriv( fa_z_position_[i][j], thickness, steepness );
-
-			fa_proj_coord_[i][j] = compute_fa_proj_coord( fa_z_position_[i][j], xyz, center, normal );
+			// Compute derivatives
+			fa_f1_[i][j] = mp_geometry->f_transition_f1( conf, i, j );
+			fa_f2_[i][j] = mp_geometry->f_transition_f2( conf, i, j );
 
 		}
 	}
-}
-
-/// @brief Helper Method - Compute Fa Proj
-Real
-FaMPSolvEnergy::compute_fa_proj(
-	Real z_position,
-	Real thickness,
-	Real steepness
-) const {
-
-	Real z = std::abs( z_position )/thickness;
-	Real zn = std::pow( z, steepness );
-	Real result = zn/(1 + zn);
-
-	return result;
-}
-
-/// @brief Helper Method - Compute Fa Derivatives
-Real
-FaMPSolvEnergy::compute_fa_deriv(
-	Real z_position,
-	Real thickness,
-	Real steepness
-) const {
-
-	Real z = std::abs( z_position )/thickness;
-	Real zn = std::pow( z, steepness );
-	Real znm1 = std::pow( z, steepness-1 );
-	Real deriv = steepness * znm1 * std::pow((1+zn),-2);
-
-	return ( deriv /= thickness );
-}
-
-/// @brief Helper Method - Compute Fa Proj coordinate
-Vector
-FaMPSolvEnergy::compute_fa_proj_coord(
-	Real z_position,
-	Vector const & xyz,
-	Vector const & center,
-	Vector const & normal
-) const {
-	Vector proj_i = center + z_position * normal;
-	Vector i_ip = proj_i - xyz;
-	return ( center - i_ip );
 }
 
 //solvation of atom i and j in water and chex
@@ -831,10 +745,10 @@ FaMPSolvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 
 	Real nres = pose.size();
 
-	fa_z_position_.resize( (Size)nres );
 	fa_proj_.resize( (Size)nres );
-	fa_proj_coord_.resize( (Size)nres );
-	fa_proj_deriv_.resize( (Size)nres );
+	fa_f1_.resize( (core::Size)nres );
+	fa_f2_.resize( (core::Size)nres );
+
 
 	static Size const MAX_AMINOACID_SIZE = 15;
 
@@ -842,16 +756,15 @@ FaMPSolvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 
 		Size const max_size = std::max( MAX_AMINOACID_SIZE, pose.residue( i ).nheavyatoms() );
 
-		fa_z_position_[i].resize( max_size );
 		fa_proj_[i].resize( max_size );
-		fa_proj_coord_[i].resize( max_size );
-		fa_proj_deriv_[i].resize( max_size );
+		fa_f1_[i].resize( max_size );
+		fa_f2_[i].resize( max_size );
 
 		for ( Size j = 1; j <= max_size; ++j ) {
-			fa_z_position_[i][j] = 0.0;
 			fa_proj_[i][j] = 0.0;
-			fa_proj_coord_[i][j].assign(0.0,0.0,0.0);
-			fa_proj_deriv_[i][j] = 0.0;
+			fa_f1_[i][j].assign(0.0,0.0,0.0);
+			fa_f2_[i][j].assign(0.0,0.0,0.0);
+
 
 		}
 	}

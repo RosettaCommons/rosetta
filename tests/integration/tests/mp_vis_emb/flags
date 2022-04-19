@@ -4,3 +4,4 @@
 -mp:scoring:hbond true
 -restore_talaris_behavior
 -pack_missing_sidechains 0
+-mp:restore_lazaridis_imm_behavior 1

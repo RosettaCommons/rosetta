@@ -19,7 +19,6 @@
 ///
 /// @note     This object is a member of Conformation and should only be accessed using
 ///           pose.conformation().membrane_info(). Do not access MEM outside of the framework!
-/// @note     Last Updated: 6/22/18
 ///
 /// @author   Rebecca Alford (ralford3@jhu.edu)
 
@@ -30,6 +29,12 @@
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneParams.hh>
+#include <core/conformation/membrane/MembraneGeometry.hh>
+#include <core/conformation/membrane/membrane_geometry/Bicelle.hh>
+#include <core/conformation/membrane/membrane_geometry/Slab.hh>
+#include <core/conformation/membrane/membrane_geometry/Vesicle.hh>
+#include <core/conformation/membrane/membrane_geometry/DoubleVesicle.hh>
+
 
 // Package Headers
 #include <core/conformation/Conformation.hh>
@@ -88,7 +93,8 @@ MembraneInfo::MembraneInfo(
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	spanning_topology_( topology ),
-	implicit_lipids_( nullptr )
+	implicit_lipids_( nullptr ),
+	membrane_geometry_( utility::pointer::make_shared< membrane_geometry::Slab >( thickness, steepness ) )
 {}
 
 /// @brief Create MembraneInfo from initialized data
@@ -111,6 +117,69 @@ MembraneInfo::MembraneInfo(
 
 }
 
+//Create MembraneInfo from initialized data with membrane geometry transition enum
+MembraneInfo::MembraneInfo(
+	core::Size membrane_pos,
+	core::SSize membrane_jump,
+	core::Size membrane_core,
+	core::Real thickness,
+	core::Real steepness,
+	SpanningTopologyOP topology,
+	MP_GEOMETRY_TRANSITION mp_geometry,
+	Conformation const & conf
+) :
+	thickness_( thickness ),
+	steepness_( steepness ),
+	membrane_core_( membrane_core ),
+	membrane_rsd_num_( membrane_pos ),
+	membrane_jump_( membrane_jump ),
+	spanning_topology_( topology )
+{
+	switch ( mp_geometry )
+			{
+			case MP_GEOMETRY_TRANSITION::SLAB :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Slab >( steepness, thickness );
+				TR << "SLAB geometry" << std::endl;
+				break;
+				//MP_GEOMETRY_TRANSITION::MICELLE == BICELLE == NANODISC so you only need one case for any of these
+			case MP_GEOMETRY_TRANSITION::BICELLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Bicelle >( steepness, thickness, conf, membrane_pos );
+				TR << "BICELLE geometry" << std::endl;
+				break;
+			case MP_GEOMETRY_TRANSITION::VESICLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Vesicle >( steepness, thickness );
+				TR << "VESICLE geometry" << std::endl;
+				break;
+			case MP_GEOMETRY_TRANSITION::DOUBLE_VESICLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::DoubleVesicle >( steepness, thickness );
+				TR << "DOUBLE_VESICLE geometry" << std::endl;
+				break;
+			default :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Slab >( steepness, thickness );
+				TR << "SLAB geometry" << std::endl;
+				break;
+			}
+}
+
+//Create MembraneInfo from initialized data with membrane geometry transition enum
+MembraneInfo::MembraneInfo(
+	core::Size membrane_pos,
+	core::SSize membrane_jump,
+	core::Size membrane_core,
+	core::Real thickness,
+	core::Real steepness,
+	SpanningTopologyOP topology,
+	MembraneGeometryCOP membrane_geometry
+) :
+	thickness_( thickness ),
+	steepness_( steepness ),
+	membrane_core_( membrane_core ),
+	membrane_rsd_num_( membrane_pos ),
+	membrane_jump_( membrane_jump ),
+	spanning_topology_( topology ),
+	membrane_geometry_( membrane_geometry )
+{}
+
 /// @brief Create a deep copy of all data in this object.
 MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	utility::VirtualBase(),
@@ -119,10 +188,11 @@ MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
 	membrane_jump_( src.membrane_jump_ ),
 	spanning_topology_( src.spanning_topology_ ),
-	implicit_lipids_( src.implicit_lipids_ )
+	implicit_lipids_( src.implicit_lipids_ ),
+	membrane_geometry_(src.membrane_geometry_ )
 {}
 
-/// @brief create a deep copy of all data in thsi object upon assignment
+/// @brief create a deep copy of all data in this object upon assignment
 MembraneInfo &
 MembraneInfo::operator=( MembraneInfo const & src ) {
 
@@ -138,6 +208,7 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	this->membrane_jump_ = src.membrane_jump_;
 	this->spanning_topology_ = src.spanning_topology_;
 	this->implicit_lipids_ = src.implicit_lipids_;
+	this->membrane_geometry_ = src.membrane_geometry_;
 
 	return *this;
 }
@@ -315,6 +386,16 @@ MembraneInfo::implicit_lipids() const {
 	return implicit_lipids_;
 }
 
+/// @brief Get const membrane_geometry information
+MembraneGeometryCOP
+MembraneInfo::membrane_geometry() const {
+	return membrane_geometry_;
+}
+
+void
+MembraneInfo::set_membrane_geometry( MembraneGeometryCOP mem_geo ) {
+	membrane_geometry_ = mem_geo;
+}
 
 /// @brief Show MembraneInfo method for pyrosetta
 std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
@@ -344,6 +425,7 @@ core::conformation::membrane::MembraneInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( membrane_jump_ ) ); // core::SSize
 	arc( CEREAL_NVP( spanning_topology_ ) ); // SpanningTopologyOP
 	arc( CEREAL_NVP( implicit_lipids_ ) ); // ImplicitLipidInfoOP
+	arc( CEREAL_NVP( membrane_geometry_ ) ); //MembraneGeometryCOP
 }
 
 /// @brief Automatically generated deserialization method
@@ -357,6 +439,8 @@ core::conformation::membrane::MembraneInfo::load( Archive & arc ) {
 	arc( membrane_jump_ ); // core::SSize
 	arc( spanning_topology_ ); // SpanningTopologyOP
 	arc( implicit_lipids_ ); // ImplicitLipidInfoOP
+	arc( membrane_geometry_ ); // MembraneGeometryCOP
+
 }
 SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::MembraneInfo );
 CEREAL_REGISTER_TYPE( core::conformation::membrane::MembraneInfo )

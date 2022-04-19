@@ -171,8 +171,15 @@ sources = {
 		"Span",
 		"SpanningTopology",
 		"ImplicitLipidInfo",
+		"MembraneGeometry",
 		"MembraneInfo",
 		"util",
+	],
+	"core/conformation/membrane/membrane_geometry": [
+		"Slab",
+		"Bicelle",
+		"Vesicle",
+		"DoubleVesicle",
 	],
 	"core/conformation/orbitals": [
 		"OrbitalXYZCoords",

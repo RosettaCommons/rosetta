@@ -173,29 +173,6 @@ private: // helper methods
 	void
 	init( pose::Pose & pose ) const;
 
-	/// @brief Helper Method - Compute Fa Proj
-	Real
-	compute_fa_proj(
-		Real z_position,
-		Real thickness,
-		Real steepness
-	) const;
-
-	Real
-	compute_fa_deriv(
-		Real z_position,
-		Real thickness,
-		Real steepness
-	) const;
-
-	Vector
-	compute_fa_proj_coord(
-		Real z_position,
-		Vector const & xyz,
-		Vector const & center,
-		Vector const & normal
-	) const;
-
 	//solvation component of full atom membrane solvation energy of atom i and j in water and chex
 	void
 	solvationE(
@@ -286,11 +263,9 @@ private: // data
 
 	// Arrays used for computing derivatives
 	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_;
-	mutable utility::vector1 < utility::vector1 < Real > > fa_z_position_;
 
-
-	mutable utility::vector1 < utility::vector1 < Vector > > fa_proj_coord_;
-	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_deriv_;
+	mutable utility::vector1 < utility::vector1 < Vector > > fa_f1_;
+	mutable utility::vector1 < utility::vector1 < Vector > > fa_f2_;
 };
 
 } // scoring

@@ -31,6 +31,8 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.fwd.hh>
+#include <core/conformation/membrane/MembraneGeometry.fwd.hh>
+
 
 // Project Headers
 #include <core/types.hh>
@@ -50,6 +52,7 @@
 namespace core {
 namespace conformation {
 namespace membrane {
+
 
 /// @brief Data describing the relationship between protein(s) and a membrane environment
 class MembraneInfo : public utility::VirtualBase {
@@ -82,6 +85,33 @@ public: // Constructors & Setup
 		SpanningTopologyOP topology,
 		std::string lipid_composition_name,
 		core::Real lipid_composition_temp
+	);
+
+	/// @brief Create MembraneInfo from initialized data
+	/// @details Creates a MembraneInfo object by linking the conformation
+	/// to the pose, specify the  membrane residue number, membrane jump number,
+	/// spanning topology object and optional lipophilicity data. Thickness and
+	/// steepness are currently constants
+	MembraneInfo(
+		core::Size membrane_pos,
+		core::SSize membrane_jump,
+		core::Size membrane_core,
+		core::Real thickness,
+		core::Real steepness,
+		SpanningTopologyOP topology,
+		MP_GEOMETRY_TRANSITION mp_geometry,
+		Conformation const & conf
+	);
+
+
+	MembraneInfo(
+		core::Size membrane_pos,
+		core::SSize membrane_jump,
+		core::Size membrane_core,
+		core::Real thickness,
+		core::Real steepness,
+		SpanningTopologyOP topology,
+		MembraneGeometryCOP membrane_geometry
 	);
 
 	/// @brief Create a deep copy of all data in this object.
@@ -155,6 +185,14 @@ public: // implicit lipid information
 	/// @brief Get implicit lipid information
 	ImplicitLipidInfoOP implicit_lipids() const;
 
+public: // membrane geometry information
+
+	/// @brief Get membrane_geometry info
+	MembraneGeometryCOP membrane_geometry() const;
+
+	void set_membrane_geometry( MembraneGeometryCOP mem_geo );
+
+
 private: // default constructor
 
 	/// @brief Create a default version of MembraneInfo (DONT USE)
@@ -180,6 +218,10 @@ private: // data
 	// Implicit lipid information
 	ImplicitLipidInfoOP implicit_lipids_;
 
+	//membrane geometry information
+	MembraneGeometryCOP membrane_geometry_;
+
+
 #ifdef    SERIALIZATION
 public:
 	friend class cereal::access;
@@ -191,6 +233,7 @@ public:
 
 /// @brief Show MembraneInfo method for pyrosetta
 std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info );
+
 
 } // membrane
 } // conformation
