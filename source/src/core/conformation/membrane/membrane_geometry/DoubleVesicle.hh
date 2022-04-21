@@ -63,7 +63,7 @@ public: // Constructors & Setup
 	DoubleVesicle( core::Real steepness, core::Real thickness, core::Real outer_radius, core::Real distance );
 
 	/// @brief Destructor
-	~DoubleVesicle();
+	~DoubleVesicle() override;
 
 	DoubleVesicleOP
 	clone() const;

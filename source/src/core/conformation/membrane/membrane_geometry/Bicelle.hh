@@ -65,7 +65,7 @@ public: // Constructors & Setup
 	Bicelle( core::Real steepness, core::Real thickness, core::Real bicelle_inner_radius );
 
 	/// @brief Destructor
-	~Bicelle();
+	~Bicelle() override;
 
 	BicelleOP
 	clone() const;

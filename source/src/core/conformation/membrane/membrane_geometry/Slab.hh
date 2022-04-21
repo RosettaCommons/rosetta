@@ -59,7 +59,7 @@ public: // Constructors & Setup
 	Slab( core::Real steepness, core::Real thickness );
 
 	/// @brief Destructor
-	~Slab();
+	~Slab() override;
 
 	SlabOP
 	clone() const;

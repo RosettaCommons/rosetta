@@ -70,7 +70,7 @@ public: // Constructors & Setup
 	);
 
 	/// @brief Destructor
-	virtual ~MembraneGeometry() override;
+	~MembraneGeometry() override;
 
 	/// @brief Generate a string representation of information represented by this MembraneGeometry and send it to std::cout
 	virtual void show() const = 0;

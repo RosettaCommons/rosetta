@@ -61,7 +61,7 @@ public: // Constructors & Setup
 	Vesicle( core::Real steepness, core::Real thickness, core::Real radius );
 
 	/// @brief Destructor
-	~Vesicle();
+	~Vesicle() override;
 
 	VesicleOP
 	clone() const;
