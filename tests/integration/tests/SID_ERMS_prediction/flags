@@ -1,0 +1,6 @@
+-in:file:s ./inputs/relax_1swb_ABCD_0001.pdb
+-complex_type ./inputs/1SWB_complex_type.tsv
+-out:file:o 1SWB_ERMS_pred.tsv
+-ERMS ./inputs/1SWB_ERMS.tsv
+-RMSE
+
