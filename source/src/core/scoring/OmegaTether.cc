@@ -223,7 +223,8 @@ OmegaTether::eval_omega_score_residue(
 		if ( aa == core::chemical::aa_gly ) {
 			table = 2;
 		}
-		if ( aa == core::chemical::aa_pro || aa ==  core::chemical::aa_dpr ) {
+		// remember that phi/psi are adapted for betas (omega-1 and omega-2)
+		if ( aa == core::chemical::aa_pro || aa ==  core::chemical::aa_dpr || aa == core::chemical::aa_b3p ) {
 			table = 3;
 		}
 		if ( aa == core::chemical::aa_ile || aa == core::chemical::aa_val || aa == core::chemical::aa_dil || aa == core::chemical::aa_dva ) {

@@ -27,6 +27,8 @@ void OmegaPerturber::perturb_subset(
 	Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
 	using core::chemical::aa_pro;
+	using core::chemical::aa_dpr;
+	using core::chemical::aa_b3p;
 	using numeric::random::gaussian;
 	using numeric::random::uniform;
 	using numeric::conversions::DEGREES;
@@ -40,7 +42,7 @@ void OmegaPerturber::perturb_subset(
 
 		// Pick which omega to apply.  For pre-prolines, the cis torsion is picked
 		// 0.1% of the time.  For everything else , the trans is always picked.
-		Real cis_prob = (pose.aa(residue + 1) == aa_pro) ? 0.001 : 0;
+		Real cis_prob = (pose.aa(residue + 1) == aa_pro || pose.aa(residue + 1) == aa_dpr || pose.aa(residue + 1) == aa_b3p) ? 0.001 : 0;
 		Real omega = (cis_prob > uniform()) ? cis_omega : trans_omega;
 
 		// Apply the omega to the closure problem.

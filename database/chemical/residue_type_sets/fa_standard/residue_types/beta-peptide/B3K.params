@@ -62,6 +62,8 @@ PROPERTIES PROTEIN BETA_AA L_AA POLAR CHARGED POSITIVE_CHARGE METALBINDING
 MAINCHAIN_ATOMS N CA CM C
 METAL_BINDING_ATOMS O
 NBR_ATOM CB
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/beta_aa/B3A.rama scoring/score_functions/rama/beta_aa/B3A_prepro.rama
+RAMA_PREPRO_RESNAME GENERIC_BETA3_LAA
 # APL CB to side chain heavyatom distance --  max observed in residue 74 of ubiquitin
 NBR_RADIUS 5.0084
 FIRST_SIDECHAIN_ATOM CB

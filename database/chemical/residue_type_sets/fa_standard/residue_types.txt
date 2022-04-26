@@ -902,6 +902,7 @@ residue_types/peptoids/633.params
 #residue_types/peptoids/413.params
 
 ## Beta peptides
+residue_types/beta-peptide/B2A.params
 residue_types/beta-peptide/B3A.params
 residue_types/beta-peptide/B3C.params
 residue_types/beta-peptide/B3D.params

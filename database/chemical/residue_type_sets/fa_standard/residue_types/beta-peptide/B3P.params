@@ -49,6 +49,8 @@ PROPERTIES PROTEIN BETA_AA L_AA ALIPHATIC METALBINDING
 MAINCHAIN_ATOMS N CA CM C
 METAL_BINDING_ATOMS O
 NBR_ATOM CB
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/beta_aa/B3P.rama scoring/score_functions/rama/beta_aa/B3P_prepro.rama
+RAMA_PREPRO_RESNAME BETA3_PRO
 # APL Declare that the NV atom should shadow the N atom to the cart-bonded term.
 VIRTUAL_SHADOW NV N
 # APL O to CB distance; max observed in ubiquitin

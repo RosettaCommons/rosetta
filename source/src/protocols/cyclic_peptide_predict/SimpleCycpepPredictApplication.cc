@@ -3883,7 +3883,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && i == cyclization_point_start ) { continue; }
 		else if ( cyclization_type() == SCPA_thioether_lariat && i == cyclization_point_end ) { continue; }
 
-		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() || pose->residue_type(i).is_peptoid() || pose->residue_type(i).is_aramid() ) {
+		if ( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_oligourea() || pose->residue_type(i).is_peptoid() || pose->residue_type(i).is_aramid() || pose->residue_type(i).is_beta_aa() ) {
 			core::Size const res_in_original( original_position(i, cyclic_offset, pose->size() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
 			if ( user_set_alpha_dihedrals_.count(res_in_original) ) { //If this position is being set to a particular value...
 				runtime_assert_string_msg( pose->residue_type(i).is_alpha_aa() || pose->residue_type(i).is_peptoid(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication: dihedral setting currently only works for alpha-amino acids and peptoids." );
@@ -3933,7 +3933,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			}
 		} else {
 			//TODO Randomize mainchain torsions here for beta- and gamma-amino acids.
-			utility_exit_with_message( "Handling of beta- and gamma-amino acids in setup of the genKIC perturber in the simple_cycpep_predict app has not yet been written.  TODO." );
+			utility_exit_with_message( "Handling of gamma-amino acids, peptoids, and other exotic backbones in setup of the genKIC perturber in the simple_cycpep_predict app has not yet been written.  TODO." );
 		}
 	}
 

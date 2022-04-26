@@ -376,7 +376,7 @@ get_hb_don_chem_type(
 		case aa_dil: case aa_dle: case aa_dme: case aa_dpr: case aa_dva:
 		case aa_b3a: case aa_b3c: case aa_b3d: case aa_b3e: case aa_b3f:
 		case aa_b3g: case aa_b3i: case aa_b3l: case aa_b3m: case aa_b3p: case aa_b3v:
-		case ou3_ala : case ou3_cys : case ou3_asp : case ou3_glu : case ou3_phe : case ou3_aib :
+		case aa_b2a: case ou3_ala : case ou3_cys : case ou3_asp : case ou3_glu : case ou3_phe : case ou3_aib :
 		case ou3_gly : case ou3_ile : case ou3_leu : case ou3_met : case ou3_pro : case ou3_val :
 		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3transACPC : //Common cyclic beta-3 amino acids
 			return hbdon_NONE;
@@ -609,7 +609,7 @@ get_hb_acc_chem_type(
 		case aa_dme: case aa_dpr: case aa_dva: case aa_dty:
 		case aa_b3a: case aa_b3c: case aa_b3f: case aa_b3g: case aa_b3i: case aa_b3l:
 		case aa_b3m: case aa_b3p: case aa_b3v: case aa_b3y :
-		case ou3_ala: case ou3_cys: case ou3_phe: case ou3_gly: case ou3_ile: case ou3_leu:
+		case aa_b2a: case ou3_ala: case ou3_cys: case ou3_phe: case ou3_gly: case ou3_ile: case ou3_leu:
 		case ou3_met: case ou3_pro: case ou3_val: case ou3_tyr: case ou3_aib :
 			return hbacc_AHX;
 		case aa_ser: case aa_thr: case aa_dse: case aa_dth: case aa_b3s: case aa_b3t : case ou3_ser: case ou3_thr :

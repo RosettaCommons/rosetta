@@ -1128,6 +1128,7 @@ sources = {
 		"plot_scoreterm",
 		#"simple_cycpep_predict",
 		"symmetrize_old_ramamap",
+		"symmetrize_3d_ramamap",
 		"tensorflow_test1",
 		"test_multithreaded_ig_correctness",
 		"test_multithreaded_packing_performance",

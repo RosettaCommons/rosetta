@@ -61,6 +61,8 @@ PROPERTIES PROTEIN BETA_AA L_AA AROMATIC HYDROPHOBIC METALBINDING
 MAINCHAIN_ATOMS N CA CM C
 METAL_BINDING_ATOMS O OH
 NBR_ATOM CB
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/beta_aa/B3A.rama scoring/score_functions/rama/beta_aa/B3A_prepro.rama
+RAMA_PREPRO_RESNAME GENERIC_BETA3_LAA
 # APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
 NBR_RADIUS 5.6694
 FIRST_SIDECHAIN_ATOM CB

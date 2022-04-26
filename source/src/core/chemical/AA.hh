@@ -127,6 +127,11 @@ enum AA {
 	aa_b3cisACHC,
 	last_beta3_aa = aa_b3cisACHC,
 
+	//Beta-2-amino acids 72-72.  Keep these together as a group, and ensure that last_beta3_aa is set to whatever is last.
+	aa_b2a,
+	first_beta2_aa = aa_b2a,
+	last_beta2_aa = aa_b2a,
+
 	// L-RNA
 	na_lra,
 	na_lrc,

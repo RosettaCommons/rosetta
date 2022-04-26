@@ -144,6 +144,20 @@ apply_symm_gly_corrections(
 	std::string &torsion_atom
 );
 
+/// @brief Symmetrize the b3g params file (if the user has used the -symmetric_gly_tables option).
+/// @details Ugh.  Special-case logic.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+void
+apply_symm_b3g_corrections(
+	std::string const &child_atom,
+	core::Real &phi,
+	core::Real &theta,
+	core::Real &d,
+	std::string &parent_atom,
+	std::string &angle_atom,
+	std::string &torsion_atom
+);
+
 } // chemical
 } // core
 

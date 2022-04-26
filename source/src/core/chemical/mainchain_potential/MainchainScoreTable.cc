@@ -209,6 +209,16 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 			check_linestream(linestream, filename);
 			runtime_assert_string_msg( prob > 0.0, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Found 0 probability in rama_prepro map " + filename + ".  Line was \"" + linestream.str() + "\"."  );
 			linestream >> minusLogProb; //Get -k_B*T*ln(P).
+			runtime_assert_string_msg( utility::isfinite( minusLogProb ),
+				"Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): "
+				"Non-finite value in a data line in file " + filename + ".  Line was \"" + linestream.str() + "\"." );
+
+			// TR.Trace << "Check:" << std::endl;
+			// TR.Trace << "\"" << aa_name << "\" ";
+			// for ( core::Size i=1; i <= n_mainchain_torsions; ++i ) {
+			//  TR.Trace << "\"" << scoring_grid_torsion_values[i] << "\" ";
+			// }
+			// TR.Trace << "\"" << prob << "\" \"" << minusLogProb << "\"" << std::endl;
 			runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Extra columns found in a data line in file " + filename + ".  Line was \"" + linestream.str() + "\"." );
 			runtime_assert_string_msg( minusLogProb != 0.0 && !linestream.fail() && !linestream.bad(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Could not parse line " + line + " in file " + filename + ".  Line was \"" + linestream.str() + "\"." );
 
@@ -242,7 +252,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 	}
 
 	// Symmetrize the gly table, if we should:
-	if ( symmetrize_gly_ && res_type_name == "GLY" ) {
+	if ( symmetrize_gly_ && ( res_type_name == "GLY" || res_type_name == "BETA3_GLY" ) ) {
 		symmetrize_tensor( probabilities_ );
 		energies_from_probs( energies_, probabilities_, 1.0 );
 		for ( core::Size i=1, imax=offsets.size(); i<=imax; ++i ) {

@@ -31,6 +31,8 @@ BOND  C    O
 PROPERTIES PROTEIN BETA_AA METALBINDING ACHIRAL_BACKBONE
 METAL_BINDING_ATOMS O
 NBR_ATOM CA
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/beta_aa/B3G.rama scoring/score_functions/rama/beta_aa/B3G_prepro.rama
+RAMA_PREPRO_RESNAME BETA3_GLY
 # APL CA to O distance -- not yet measured; default to max CB to O distance
 NBR_RADIUS 3.4473
 FIRST_SIDECHAIN_ATOM NONE

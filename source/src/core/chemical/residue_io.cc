@@ -1169,6 +1169,10 @@ read_topology_file(
 				apply_symm_gly_corrections( child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom  );
 			}
 
+			if ( symm_gly_corrections && rsd->aa() == core::chemical::aa_b3g ) {
+				apply_symm_b3g_corrections( child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom  );
+			}
+
 			phi = radians(phi); theta = radians(theta); // in degrees in the file for human readability
 
 			// set icoor
@@ -1867,6 +1871,48 @@ setup_icoor_reassignments_from_commandline(
 
 		icoor_reassignments[ atom_name ] = new_icoor_params;
 	}
+}
+
+
+/// @brief Symmetrize the glycine params file (if the user has used the -symmetric_gly_tables option).
+/// @details Ugh.  Special-case logic.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+void
+apply_symm_b3g_corrections(
+	std::string const &child_atom,
+	core::Real &phi,
+	core::Real &theta,
+	core::Real &d,
+	std::string &/*parent_atom*/,
+	std::string &/*angle_atom*/,
+	std::string &torsion_atom
+) {
+
+	if ( child_atom == "UPPER" ) {
+		phi = 180.0;
+	} else if ( child_atom == "1HA" ) {
+		d = 1.089761;
+		phi = 120;
+		theta = 70.92;
+	} else if ( child_atom == "2HA" ) {
+		d = 1.089761;
+		phi = -120;
+		theta = 70.92;
+		torsion_atom = "C";
+	} else if ( child_atom == "1HM" ) {
+		d = 1.0892;
+		phi = 120;
+		theta = 69.875;
+	} else if ( child_atom == "2HM" ) {
+		d = 1.0892;
+		phi = -120;
+		theta = 69.875;
+		torsion_atom = "C";
+	} else if ( child_atom == "LOWER" ) {
+		phi = 180.0;
+	}
+
+	return;
 }
 
 /// @brief Symmetrize the glycine params file (if the user has used the -symmetric_gly_tables option).

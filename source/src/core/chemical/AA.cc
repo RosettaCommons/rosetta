@@ -106,6 +106,8 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "TAC" ] = aa_b3transACPC;
 	n2aa[ "CAH" ] = aa_b3cisACHC;
 
+	n2aa[ "B2A" ] = aa_b2a;
+
 	// oligoureas
 	n2aa[ "OU3_ALA" ] = ou3_ala;
 	n2aa[ "OU3_CYS" ] = ou3_cys;

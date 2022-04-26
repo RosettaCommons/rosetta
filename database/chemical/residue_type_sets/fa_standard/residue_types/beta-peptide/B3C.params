@@ -40,6 +40,8 @@ MAINCHAIN_ATOMS N CA CM C
 METAL_BINDING_ATOMS O SG
 DISULFIDE_ATOM_NAME SG
 NBR_ATOM CB
+RAMA_PREPRO_FILENAME scoring/score_functions/rama/beta_aa/B3A.rama scoring/score_functions/rama/beta_aa/B3A_prepro.rama
+RAMA_PREPRO_RESNAME GENERIC_BETA3_LAA
 # APL O to CB distance -- max O-CB observed in ubiquitin
 NBR_RADIUS 3.4473
 FIRST_SIDECHAIN_ATOM CB

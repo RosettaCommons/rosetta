@@ -374,7 +374,7 @@ RamaPrePro::is_N_substituted(
 	core::chemical::ResidueTypeCOP restype
 ) const {
 	core::chemical::AA const aa( restype->aa() );
-	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || aa == core::chemical::ou3_pro || restype->is_n_methylated() || restype->is_peptoid() );
+	return ( aa == core::chemical::aa_pro || aa == core::chemical::aa_dpr || aa == core::chemical::aa_b3p || aa == core::chemical::ou3_pro || restype->is_n_methylated() || restype->is_peptoid() );
 }
 
 /// @brief Ensure that the RamaPrePro scoring tables for the 20 canonical amino acids are set up, and that we are storing
