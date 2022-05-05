@@ -119,7 +119,7 @@ class Slurm_HPC_Driver(HPC_Driver):
     #     return self.submit_serial_hpc_job(name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory, time, block, shell_wrapper)
 
 
-    def submit_serial_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=3072, time=12, block=True, shell_wrapper=False):
+    def submit_serial_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=3900, time=12, block=True, shell_wrapper=False):
 
         arguments = arguments.format(process='%a') # %a is SLURM array index
         time = int( math.ceil(time*60) )
@@ -148,7 +148,7 @@ class Slurm_HPC_Driver(HPC_Driver):
         else: return slurm_job_id
 
 
-    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, ntasks, memory=3072, time=12, block=True, shell_wrapper=False):
+    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, ntasks, memory=3900, time=12, block=True, shell_wrapper=False):
         ''' submit jobs as MPI job
         '''
         arguments = arguments.format(process='0')
