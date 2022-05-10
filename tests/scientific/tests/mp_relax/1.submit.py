@@ -43,6 +43,7 @@ command_line = '''
 -run:multiple_processes_writing_to_one_directory 1
 -packing:pack_missing_sidechains 0
 -no_color
+-mp:restore_lazaridis_imm_behavior true
 '''.replace('\n', ' ').replace('  ', ' ')
 
 #==> EDIT HERE

@@ -38,6 +38,7 @@ command_line = '''
 -nstruct {nstruct}
 -mp:assembly:TM_pose_number {tm_pose}
 -mp:assembly:poses {pose}
+-mp:restore_lazaridis_imm_behavior true
 -out:path:pdb {prefix}
 -out:file:scorefile {prefix}/{target}.score
 -multiple_processes_writing_to_one_directory true
