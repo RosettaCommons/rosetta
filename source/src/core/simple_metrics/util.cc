@@ -117,11 +117,14 @@ xsd_simple_metric_type_definition_w_attributes(
 {
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
 
-	std::string const citation_string( SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type ) );
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type );
+	}
 
 	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
 		.element_name( rs_type )
-		.description( description + "\n\n" + citation_string )
+		.description( description + citation_string )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );
@@ -138,11 +141,14 @@ xsd_simple_metric_type_definition_w_attributes_and_repeatable_subelements(
 {
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
 
-	std::string const citation_string( SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type ) );
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type );
+	}
 
 	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
 		.element_name( rs_type )
-		.description( description + "\n\n" + citation_string )
+		.description( description + citation_string )
 		.add_attributes( attributes )
 		.set_subelements_repeatable( subelements )
 		.add_optional_name_attribute()
@@ -159,12 +165,15 @@ xsd_per_residue_real_metric_type_definition_w_attributes(
 {
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
 
-	std::string const citation_string( SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type ) );
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type );
+	}
 
 	PerResidueRealMetric::add_schema( ct_gen );
 	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
 		.element_name( rs_type )
-		.description( description + "\n\n" + citation_string )
+		.description( description + citation_string )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );
@@ -180,13 +189,16 @@ xsd_per_residue_string_metric_type_definition_w_attributes(
 {
 	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
 
-	std::string const citation_string( SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type ) );
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type );
+	}
 
 	PerResidueStringMetric::add_schema( ct_gen );
 
 	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
 		.element_name( rs_type )
-		.description( description + "\n\n" + citation_string )
+		.description( description + citation_string )
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );

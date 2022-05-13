@@ -526,6 +526,11 @@ public:
 	/// @brief Returns the full XML schema definition, in XML format.
 	std::string full_definition() const;
 
+	/// @brief Adding citation info requires instantiating classes.
+	/// If we don't need it (e.g. during Validation) just skip it.
+	bool include_citation_info() const;
+	void include_citation_info(bool setting);
+
 	/// @brief Returns a human-readable summary of the XML schema definition.
 	/// @details SLOW!  Must generate the summary for every invocation.
 	/// @note If component_name and component_type are provided, then summary information is only returned for that particular
@@ -538,6 +543,8 @@ public:
 private:
 
 	void validate_new_top_level_element( std::string const & element_name, std::string const & definition );
+
+	bool include_citation_info_ = true;
 
 	std::list< std::string > elements_in_order_;
 	std::map< std::string, std::string > top_level_elements_;

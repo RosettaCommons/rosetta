@@ -64,7 +64,7 @@ RosettaScriptsSchemaValidator::RosettaScriptsSchemaValidator() :
 		" compiled into Rosetta and will need to be fixed by a developer.";
 	std::string schema;
 	try {
-		schema = xsd_for_rosetta_scripts();
+		schema = xsd_for_rosetta_scripts(false); // We don't need citations for the validator.
 	} catch ( utility::excn::Exception const & e ) {
 		oss << "An error was encountered while the string of the schema was being generated; this is before the schema is analyzed for whether it is correct or not.\n";
 		oss << e.msg() << "\n";
@@ -91,11 +91,12 @@ RosettaScriptsSchemaValidator::RosettaScriptsSchemaValidator() :
 }
 
 std::string
-RosettaScriptsSchemaValidator::xsd_for_rosetta_scripts()
+RosettaScriptsSchemaValidator::xsd_for_rosetta_scripts( bool include_citations )
 {
 	TR << "Generating XML Schema for rosetta_scripts..." << std::endl;
 	using namespace utility::tag;
 	XMLSchemaDefinition xsd;
+	xsd.include_citation_info( include_citations );
 
 	write_ROSETTASCRIPTS_complex_type( xsd );
 

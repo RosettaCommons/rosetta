@@ -84,8 +84,8 @@ ConservativeDesignOperation::ConservativeDesignOperation(std::string data_source
 ConservativeDesignOperation::~ConservativeDesignOperation() = default;
 
 void
-ConservativeDesignOperation::set_defaults(){
-	conserved_mutations_.resize(20);
+ConservativeDesignOperation::set_defaults() {
+	conserved_mutations_ = nullptr; // Empty is a signal to regenerate
 	pose_sequence_.clear();
 	include_native_aa_ = true;
 	data_source_ = "NA";
@@ -109,7 +109,7 @@ ConservativeDesignOperation::set_data_source( std::string const & data_source ) 
 	}
 
 	if ( original_data_source != data_source_ ) {
-		load_data_from_db();
+		conserved_mutations_ = nullptr; // Signal we need to regenerate.
 	}
 }
 
@@ -127,11 +127,11 @@ ConservativeDesignOperation::ConservativeDesignOperation(ConservativeDesignOpera
 
 void
 ConservativeDesignOperation::init_for_equal_operator_and_copy_constructor(ConservativeDesignOperation& lhs, ConservativeDesignOperation const & rhs){
-	lhs.conserved_mutations_ = rhs.conserved_mutations_;
 	lhs.include_native_aa_ = rhs.include_native_aa_;
 	lhs.positions_ = rhs.positions_;
 	lhs.pose_sequence_ = rhs.pose_sequence_;
 	lhs.data_source_ = rhs.data_source_;
+	// Skip conserved_mutations_, as the contents are determined by other settings
 	std::sort( lhs.positions_.begin(), lhs.positions_.end() );
 }
 
@@ -165,10 +165,24 @@ ConservativeDesignOperation::use_pose_sequence_as_native( core::pose::Pose const
 	set_native_sequence( pose.sequence() );
 }
 
-void
-ConservativeDesignOperation::load_data_from_db() {
+utility::vector1<bool> const &
+ConservativeDesignOperation::conserved_mutations( core::chemical::AA aa ) const {
+	if ( ! conserved_mutations_ ) {
+		// Load-on-first use.
+		conserved_mutations_ = load_data_from_db();
+	}
 
-	conserved_mutations_.resize(20);
+	return conserved_mutations_->conserved_mutations[ aa ];
+}
+
+
+
+ConservativeDesignOperation::ConservedMutationDataOP
+ConservativeDesignOperation::load_data_from_db() const {
+
+	ConservedMutationDataOP retval = utility::pointer::make_shared< ConservedMutationData >();
+	retval->conserved_mutations.resize(20);
+
 	TR << "Loading conservative mutational data " <<  std::endl;
 	std::string default_path = basic::database::full_name("/sequence/resinfo2.db");
 	utility::sql_database::sessionOP session = basic::database::get_db_session(default_path);
@@ -200,8 +214,11 @@ ConservativeDesignOperation::load_data_from_db() {
 			//TR <<"enabling " << i << " " << conserved_char[ i ] <<std::endl;
 			allowed_aminos[amino] = true;
 		}
-		conserved_mutations_[aa_index] = allowed_aminos;
+
+		retval->conserved_mutations[aa_index] = allowed_aminos;
 	}
+
+	return retval;
 }
 
 void
@@ -230,7 +247,7 @@ ConservativeDesignOperation::apply( core::pose::Pose const & pose, core::pack::t
 
 		core::chemical::AA native_amino = core::chemical::aa_from_oneletter_code(seq[i-1]);
 
-		vector1< bool > allowed_aminos = conserved_mutations_[ native_amino ];
+		vector1< bool > allowed_aminos = conserved_mutations( native_amino );
 
 		//TR<< utility::to_string(allowed_aminos) << std::endl;
 		if ( include_native_aa_ ) {

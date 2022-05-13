@@ -24,6 +24,7 @@
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+#include <core/chemical/AA.hh>
 
 #include <core/types.hh> // AUTO IWYU For Size
 #include <utility/vector1.hh> // AUTO IWYU For vector1
@@ -111,9 +112,15 @@ protected:
 
 private:
 
-	void load_data_from_db();
+	struct ConservedMutationData {
+		utility::vector1< utility::vector1<bool> > conserved_mutations; //AA index in alphabetical order -> conservative mutations.
+	};
+	typedef utility::pointer::shared_ptr< ConservedMutationData > ConservedMutationDataOP;
 
-	//void load_data_from_file();
+	utility::vector1<bool> const &
+	conserved_mutations( core::chemical::AA aa ) const;
+
+	ConservedMutationDataOP load_data_from_db() const;
 
 	void init_for_equal_operator_and_copy_constructor( ConservativeDesignOperation & lhs, ConservativeDesignOperation const & rhs);
 
@@ -124,7 +131,7 @@ private:
 
 private:
 
-	utility::vector1< utility::vector1<bool> > conserved_mutations_; //AA index in alphabetical order -> conservative mutations.
+	mutable ConservedMutationDataOP conserved_mutations_;
 
 	//An AND operation will be performed between these two, unless positions_ is empty.
 	utility::vector1< core::Size > positions_;

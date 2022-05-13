@@ -57,9 +57,11 @@ task_op_schema_empty(
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_task_op( task_op_name ));
 
-	std::string const citation_string(
-		TaskOperationFactory::get_instance()->get_citation_humanreadable( task_op_name ) );
-	task_op_def.description( description + "\n\n" + citation_string ) ;
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + TaskOperationFactory::get_instance()->get_citation_humanreadable( task_op_name );
+	}
+	task_op_def.description( description + citation_string ) ;
 
 	append_name_and_attributes_to_complex_type( AttributeList(), task_op_def );
 	xsd.add_top_level_element( task_op_def );
@@ -77,9 +79,11 @@ task_op_schema_w_attributes(
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_task_op( task_op_name ));
 
-	std::string const citation_string(
-		TaskOperationFactory::get_instance()->get_citation_humanreadable( task_op_name ) );
-	task_op_def.description( description + "\n\n" + citation_string ) ;
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + TaskOperationFactory::get_instance()->get_citation_humanreadable( task_op_name );
+	}
+	task_op_def.description( description + citation_string ) ;
 
 	append_name_and_attributes_to_complex_type( attributes, task_op_def );
 	xsd.add_top_level_element( task_op_def );
@@ -96,9 +100,11 @@ res_lvl_task_op_schema_empty(
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_res_lvl_task_op( task_op_name ));
 
-	std::string const citation_string(
-		ResLvlTaskOperationFactory::get_instance()->get_citation_humanreadable( task_op_name ) );
-	task_op_def.description( description + "\n\n" + citation_string ) ;
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + ResLvlTaskOperationFactory::get_instance()->get_citation_humanreadable( task_op_name );
+	}
+	task_op_def.description( description + citation_string ) ;
 
 	append_name_and_attributes_to_complex_type( AttributeList(), task_op_def );
 	xsd.add_top_level_element( task_op_def );
@@ -116,9 +122,11 @@ res_lvl_task_op_schema_w_attributes(
 	XMLSchemaComplexType task_op_def;
 	task_op_def.name( complex_type_name_for_res_lvl_task_op( task_op_name ));
 
-	std::string const citation_string(
-		ResLvlTaskOperationFactory::get_instance()->get_citation_humanreadable( task_op_name ) );
-	task_op_def.description( description + "\n\n" + citation_string ) ;
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + ResLvlTaskOperationFactory::get_instance()->get_citation_humanreadable( task_op_name );
+	}
+	task_op_def.description( description + citation_string ) ;
 
 	append_name_and_attributes_to_complex_type( attributes, task_op_def );
 	xsd.add_top_level_element( task_op_def );

@@ -236,13 +236,6 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	predesign_filters_ = utility::pointer::make_shared< protocols::filters::FilterCollection >();
 	postdesign_filters_ = utility::pointer::make_shared< protocols::filters::FilterCollection >();
 
-	vlb_sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" );
-	//turn on the constraint weights in the remodel scorefunction for our purposes
-	vlb_sfxn_->set_weight(core::scoring::coordinate_constraint, 1.0 );
-	vlb_sfxn_->set_weight(core::scoring::atom_pair_constraint, 1.0);
-	vlb_sfxn_->set_weight(core::scoring::angle_constraint, 1.0 );
-	vlb_sfxn_->set_weight(core::scoring::dihedral_constraint, 1.0 );
-	vlb_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
 	non_remodel_match_pos_.clear();
 	init_aa_.clear();
 	user_provided_ss_.clear();
@@ -284,15 +277,6 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 	for ( core::Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) remodel_positions_.insert( i );
 
 	tr << "ss_sim got set to " << ss_similarity_probability_ << std::endl;
-
-	vlb_sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" );
-
-	//turn on the constraint weights in the remodel scorefunction for our purposes
-	vlb_sfxn_->set_weight(core::scoring::coordinate_constraint, 1.0 );
-	vlb_sfxn_->set_weight(core::scoring::atom_pair_constraint, 1.0);
-	vlb_sfxn_->set_weight(core::scoring::angle_constraint, 1.0 );
-	vlb_sfxn_->set_weight(core::scoring::dihedral_constraint, 1.0 );
-	vlb_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
 
 	non_remodel_match_pos_.clear();
 	user_provided_ss_.clear();
@@ -449,6 +433,19 @@ EnzdesRemodelMover::initialize(
 	this->set_task( enz_prot_->modified_task( pose, *orig_task_ ) );
 }
 
+core::scoring::ScoreFunctionOP
+EnzdesRemodelMover::create_vlb_sfxn() const {
+	core::scoring::ScoreFunctionOP vlb_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" );
+	//turn on the constraint weights in the remodel scorefunction for our purposes
+	vlb_sfxn->set_weight(core::scoring::coordinate_constraint, 1.0 );
+	vlb_sfxn->set_weight(core::scoring::atom_pair_constraint, 1.0);
+	vlb_sfxn->set_weight(core::scoring::angle_constraint, 1.0 );
+	vlb_sfxn->set_weight(core::scoring::dihedral_constraint, 1.0 );
+	vlb_sfxn->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
+
+	return vlb_sfxn;
+}
+
 bool
 EnzdesRemodelMover::remodel_pose(
 	core::pose::Pose & pose,
@@ -475,9 +472,10 @@ EnzdesRemodelMover::remodel_pose(
 
 	VarLengthBuildOP vlb_op( utility::pointer::make_shared< VarLengthBuild >(bmanager) );
 	VarLengthBuild & vlb = *vlb_op;
+	core::scoring::ScoreFunctionOP vlb_sfxn = create_vlb_sfxn();
 
 	//set the scorefunction that contains our constrained weights
-	vlb.scorefunction( *vlb_sfxn_ );
+	vlb.scorefunction( *vlb_sfxn );
 	vlb.ignore_cmdline_enzdes_cstfile(true);
 
 	setup_rcgs( pose, vlb );

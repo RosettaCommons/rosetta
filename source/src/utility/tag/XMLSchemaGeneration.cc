@@ -956,6 +956,16 @@ std::string XMLSchemaDefinition::full_definition() const
 	return oss.str();
 }
 
+bool
+XMLSchemaDefinition::include_citation_info() const {
+	return include_citation_info_;
+}
+
+void
+XMLSchemaDefinition::include_citation_info(bool setting) {
+	include_citation_info_ = setting;
+}
+
 /// @brief Returns a human-readable summary of the XML schema definition.
 /// @details SLOW!  Must generate the summary for every invocation.
 /// @note If component_name and component_type are provided, then summary information is only returned for that particular

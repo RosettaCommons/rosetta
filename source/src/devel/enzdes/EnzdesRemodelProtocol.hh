@@ -234,10 +234,14 @@ protected:
 
 private:
 
+	core::scoring::ScoreFunctionOP
+	create_vlb_sfxn() const;
+
+private:
+
 	protocols::enzdes::EnzdesFlexBBProtocolOP enz_prot_;
 	core::pack::task::PackerTaskCOP orig_task_;
 	protocols::enzdes::EnzdesFlexibleRegionCOP flex_region_;
-	core::scoring::ScoreFunctionOP vlb_sfxn_;
 
 	std::set< core::Size > remodel_positions_;
 	std::set< core::Size > other_design_positions_;

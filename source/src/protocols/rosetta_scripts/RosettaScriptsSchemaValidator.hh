@@ -48,7 +48,7 @@ public:
 public:
 	virtual ~RosettaScriptsSchemaValidator();
 
-	static std::string xsd_for_rosetta_scripts();
+	static std::string xsd_for_rosetta_scripts(bool include_citations = true);
 	static void write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string rosetta_scripts_element_name(); // returns "ROSETTASCRIPTS"
 	static std::string rosetta_scripts_complex_type_naming_func( std::string const & element_name );

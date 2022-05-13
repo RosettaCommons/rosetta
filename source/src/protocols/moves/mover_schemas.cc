@@ -16,9 +16,12 @@
 
 // Package headers
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace moves {
+
+static basic::Tracer TR("protocols.moves.mover_schemas");
 
 std::string
 complex_type_name_for_mover( std::string const & mover_name )
@@ -40,12 +43,15 @@ xsd_type_definition_w_attributes(
 		local_attrs + utility::tag::optional_name_attribute();
 	}
 
-	std::string const citation_string( protocols::moves::MoverFactory::get_instance()->get_citation_humanreadable( mover_type ) );
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + protocols::moves::MoverFactory::get_instance()->get_citation_humanreadable( mover_type );
+	}
 
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_mover )
 		.element_name( mover_type )
-		.description( description + "\n\n" + citation_string )
+		.description( description + citation_string )
 		.add_attributes( local_attrs )
 		.write_complex_type_to_schema( xsd );
 }
@@ -65,12 +71,15 @@ xsd_type_definition_w_attributes_and_repeatable_subelements(
 		local_attrs + utility::tag::optional_name_attribute();
 	}
 
-	std::string const citation_string( protocols::moves::MoverFactory::get_instance()->get_citation_humanreadable( mover_type ) );
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + protocols::moves::MoverFactory::get_instance()->get_citation_humanreadable( mover_type );
+	}
 
 	utility::tag::XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.complex_type_naming_func( & complex_type_name_for_mover )
 		.element_name( mover_type )
-		.description( description + "\n\n" + citation_string )
+		.description( description + citation_string )
 		.add_attributes( local_attrs )
 		.set_subelements_repeatable( subelements )
 		.write_complex_type_to_schema( xsd );
