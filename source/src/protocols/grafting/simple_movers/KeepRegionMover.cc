@@ -139,7 +139,7 @@ KeepRegionMover::apply(core::pose::Pose& pose) {
 	PyAssert(start != 0, "Cannot keep region starting with 0 - make sure region is set for KeepRegionMover");
 	PyAssert(end !=0, "Cannot keep region ending with 0 - make sure region is set for KeepRegionMover");
 	PyAssert(end > start, "Cannot keep region where end > start");
-	PyAssert(end < pose.size(), "Cannot keep region where end is > pose size");
+	PyAssert(end <= pose.size(), "Cannot keep region where end is > pose size");
 
 
 	core::pose::Pose temp_pose = protocols::grafting::return_region(pose, start - nter_overhang_, end + cter_overhang_);
