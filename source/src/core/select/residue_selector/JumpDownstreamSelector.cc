@@ -24,6 +24,9 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Edge.hh>
+#include <core/select/jump_selector/JumpSelector.hh>
+#include <core/select/jump_selector/util.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -47,14 +50,11 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-JumpDownstreamSelector::JumpDownstreamSelector():
-	jump_(0) {}
+JumpDownstreamSelector::JumpDownstreamSelector() = default;
 
 /// @brief Copy constructor
 ///
-JumpDownstreamSelector::JumpDownstreamSelector( JumpDownstreamSelector const &src) :
-	jump_( src.jump_ )
-{}
+JumpDownstreamSelector::JumpDownstreamSelector( JumpDownstreamSelector const &) = default;
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
@@ -65,38 +65,70 @@ JumpDownstreamSelector::JumpDownstreamSelector( int jump )
 	jump_ = jump;
 }
 
+JumpDownstreamSelector::JumpDownstreamSelector( core::select::jump_selector::JumpSelectorCOP sele ) :
+	jump_selector_( sele )
+{}
 
 JumpDownstreamSelector::~JumpDownstreamSelector() = default;
 
 ResidueSubset
 JumpDownstreamSelector::apply( core::pose::Pose const & pose ) const
 {
-	debug_assert( jump_ > 0 );
+	core::Size jump = jump_;
+	if ( jump_selector_ != nullptr ) {
+		utility::vector1< core::Size > const jumps = jump_selector_->selection_jumps( pose );
+		runtime_assert_msg( jumps.size() == 1, "Please make sure the selector passed to JumpDownstreamSelector selects exactly one jump. Currently selects " + std::to_string( jumps.size() ) + " jumps!" );
+		jump = jumps.front();
+	}
+
+	runtime_assert( jump > 0 );
 
 	ResidueSubset subset( pose.size(), false );
 
 	ObjexxFCL::FArray1D_bool upstream( pose.size() );
-	pose.fold_tree().partition_by_jump( jump_, upstream );
+	pose.fold_tree().partition_by_jump( jump, upstream );
 
 	for ( core::Size ii = 1; ii <= upstream.size(); ++ii ) {
 		subset[ ii ] = !upstream( ii );
 	}
+
+	core::Size const downstream_resid_for_jump = pose.fold_tree().jump_edge(jump).stop();
+	if ( ! subset[downstream_resid_for_jump] ) {
+		//We need to flip the bools
+		//This sometimes happens with non-standard foldtrees
+		for ( core::Size ii = 1; ii <= upstream.size(); ++ii ) {
+			subset[ ii ] = !subset[ ii ];
+		}
+	}
+	runtime_assert( subset[downstream_resid_for_jump] );
+
 	return subset;
 }
 
 void
-JumpDownstreamSelector::parse_my_tag(
+JumpDownstreamSelector::parse_my_tag (
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &)
-{
-	try {
+	basic::datacache::DataMap & data
+) {
+	bool jump_or_jump_selector_was_provided = false;
+
+	if ( tag->hasOption( "jump" ) ) {
 		set_jump( tag->getOption< int >( "jump" ) );
-	} catch ( utility::excn::Exception & e ) {
-		std::stringstream err_msg;
-		err_msg << "Failed to access required option 'jump' from JumpDownstreamSelector::parse_my_tag.\n";
-		err_msg << e.msg();
-		throw CREATE_EXCEPTION(utility::excn::Exception,  err_msg.str() );
+		jump_or_jump_selector_was_provided = true;
 	}
+
+	if ( tag->hasOption( "jump_selector" ) ) {
+		std::string const jump_selector_name =
+			tag->getOption< std::string >( "jump_selector", "" );
+		if ( ! jump_selector_name.empty() ) {
+			set_jump_selector( core::select::jump_selector::get_jump_selector( jump_selector_name, data ) );
+			jump_or_jump_selector_was_provided = true;
+		} else {
+			set_jump_selector( nullptr );
+		}
+	}
+
+	runtime_assert_string_msg( jump_or_jump_selector_was_provided, "Please provide either a jump or a jump_selector to the JumpDownstreamSelector" );
 }
 
 void
@@ -117,9 +149,10 @@ void
 JumpDownstreamSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute::required_attribute(
-		"jump", xs_integer,
-		"The integer given for the \"jump\" argument should refer to a Jump that is present in the Pose." );
+	attributes
+		+ XMLSchemaAttribute( "jump", xs_integer, "The integer given for the \"jump\" argument should refer to a Jump that is present in the Pose." )
+		+ XMLSchemaAttribute::attribute_w_default( "jump_selector", xs_string, "Jump selector to be used as an alternative to the 'jump' option. This selector should only select one jump." , "" );
+
 	xsd_type_definition_w_attributes(
 		xsd, class_name(),
 		"The JumpDownstreamSelector sets the positions corresponding to "
@@ -157,6 +190,7 @@ void
 core::select::residue_selector::JumpDownstreamSelector::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( CEREAL_NVP( jump_ ) ); // int
+	arc( CEREAL_NVP( jump_selector_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -165,6 +199,7 @@ void
 core::select::residue_selector::JumpDownstreamSelector::load( Archive & arc ) {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( jump_ ); // int
+	arc( jump_selector_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::JumpDownstreamSelector );

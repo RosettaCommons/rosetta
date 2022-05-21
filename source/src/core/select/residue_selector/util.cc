@@ -527,6 +527,18 @@ utility::vector1< core::Size > selection_positions( ResidueSubset const & select
 	}
 	return results;
 }
+/// @brief Returns the Rosetta Numbering corresponding to the unselected residues
+utility::vector1< core::Size > unselection_positions( ResidueSubset const & selection )
+{
+	auto sele = []( bool i ) { return ! i; };
+	auto it = std::find_if ( std::begin( selection ), std::end( selection ), sele );
+	utility::vector1< core::Size > results;
+	while ( it != std::end( selection ) ) {
+		results.push_back( std::distance( std::begin( selection ), it ) + 1 );
+		it = std::find_if( std::next( it ), std::end( selection ), sele );
+	}
+	return results;
+}
 /// @brief Evaluate if two ResidueSubsets are equal
 bool are_selections_equal( ResidueSubset const & selection1, ResidueSubset const & selection2 )
 {

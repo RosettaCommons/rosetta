@@ -137,6 +137,7 @@
 #include <protocols/docking/DockMinMoverCreator.hh>
 #include <protocols/docking/DockSetupMoverCreator.hh>
 #include <protocols/docking/DockingSlideIntoContactCreator.hh>
+#include <protocols/docking/EnsureExclusivelySharedJumpMoverCreator.hh>
 
 
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>

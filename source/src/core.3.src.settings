@@ -832,6 +832,7 @@ sources = {
 	],
 	"core/select/jump_selector": [
 		"AndJumpSelector",
+		"ExclusivelySharedJumpSelector",
 		"InterchainJumpSelector",
 		"JumpForResidue",
 		"JumpIndexSelector",

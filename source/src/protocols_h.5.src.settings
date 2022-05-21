@@ -32,6 +32,7 @@ sources = {
 		"DockMinMover",
 		"DockSetupMover",
 		"EllipsoidalRandomizationMover",
+		"EnsureExclusivelySharedJumpMover",
                 "RigidBodyInfo",
 		"DockTaskFactory",
 		"metrics",

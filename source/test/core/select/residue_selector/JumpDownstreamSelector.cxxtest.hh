@@ -20,7 +20,9 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Edge.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
@@ -28,6 +30,7 @@
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <string>
@@ -36,7 +39,7 @@
 #include <iostream> // AUTO IWYU For operator<<, basic_ostream, endl, cerr
 
 using namespace core::select::residue_selector;
-
+static basic::Tracer TR( "tests.core.select.residue_selector.JumpDownstreamSelector" );
 
 class JumpDownstreamSelectorTests : public CxxTest::TestSuite {
 
@@ -54,10 +57,10 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP jump_d_rs( new JumpDownstreamSelector );
+		JumpDownstreamSelector jump_d_rs;
 
 		try {
-			jump_d_rs->parse_my_tag( tag, dm );
+			jump_d_rs.parse_my_tag( tag, dm );
 
 		} catch (utility::excn::Exception & e ) {
 			std::cerr << "Exception!" << e.msg() << std::endl;
@@ -69,7 +72,7 @@ public:
 		ft.new_jump(3, 7, 5);
 		trpcage.fold_tree(ft);
 
-		ResidueSubset subset = jump_d_rs->apply( trpcage );
+		ResidueSubset subset = jump_d_rs.apply( trpcage );
 		TS_ASSERT_EQUALS( subset.size(), trpcage.size() );
 
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
@@ -85,14 +88,41 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP jump_d_rs( new JumpDownstreamSelector );
-		try {
-			jump_d_rs->parse_my_tag( tag, dm );
-			TS_ASSERT( false ); //parsing should fail!
-		} catch (utility::excn::Exception & e ) {
-			// std::cerr << "Exception (fail_no_resnums): " << e.msg();
-			std::string expected_err = "Failed to access required option 'jump' from JumpDownstreamSelector::parse_my_tag."; //\nOption jump not found.\n
-			TS_ASSERT( e.msg().find(expected_err) != std::string::npos );
+		JumpDownstreamSelector jump_d_rs;
+		TS_ASSERT_THROWS_ANYTHING( jump_d_rs.parse_my_tag( tag, dm ) );
+	}
+
+	///@author Jack Maguire
+	void test_JumpDownstreamSelector_simple_two_chains() {
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence( pose, "AAA/GGG", "fa_standard" );
+		JumpDownstreamSelector const selector( 1 );
+		{
+			utility::vector1< bool > const selection = selector.apply( pose );
+			TS_ASSERT( !selection[1] );
+			TS_ASSERT( !selection[2] );
+			TS_ASSERT( !selection[3] );
+			TS_ASSERT( selection[4] );
+			TS_ASSERT( selection[5] );
+			TS_ASSERT( selection[6] );
+		}
+
+		//Re-root
+		core::kinematics::FoldTree ft = pose.fold_tree();
+		bool const reorder_success = ft.reorder( 4 );
+		TS_ASSERT( reorder_success );
+		pose.fold_tree( ft );
+		for ( core::kinematics::Edge const & e : pose.fold_tree() ) {
+			TR << e << std::endl;
+		}
+		{
+			utility::vector1< bool > const selection = selector.apply( pose );
+			TS_ASSERT( selection[1] );
+			TS_ASSERT( selection[2] );
+			TS_ASSERT( selection[3] );
+			TS_ASSERT( !selection[4] );
+			TS_ASSERT( !selection[5] );
+			TS_ASSERT( !selection[6] );
 		}
 	}
 

@@ -18,6 +18,7 @@
 #include <numeric/HomogeneousTransform.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Edge.hh>
 
 #include <utility/excn/Exceptions.hh>
 //#include <stdexcept>
@@ -38,11 +39,20 @@ assert_atoms_are_downstream_of_jump(
 	core::Size const jump_id,
 	AlignmentAtomArray const & atom_arr
 ){
-	utility::vector1< bool > const partition =
+	utility::vector1< bool > is_downstream =
 		conformation.fold_tree().partition_by_jump( jump_id );
+	core::Size const resid_that_should_be_downstream =
+		conformation.fold_tree().jump_edge( jump_id ).stop();
+
+	//Flip partition if needed
+	if ( !is_downstream[ resid_that_should_be_downstream ] ) {
+		for ( core::Size ii = 1; ii <= is_downstream.size(); ++ii ) {
+			is_downstream[ ii ] = !is_downstream[ ii ];
+		}
+	}
 
 	for ( AlignmentAtom const & aa : atom_arr.atoms ) {
-		if ( partition[ aa.id.rsd() ] ) {
+		if ( ! is_downstream[ aa.id.rsd() ] ) {
 			throw CREATE_EXCEPTION( utility::excn::BadInput, "Residue " + std::to_string(aa.id.rsd()) + " is being used to calculate jump " + std::to_string(jump_id) + " even though this residue is not downstream of this jump." );
 		}
 	}

@@ -152,6 +152,7 @@ static MoverRegistrator< docking::DockMCMProtocolCreator > DockMCMProtocolCreato
 static MoverRegistrator< docking::DockMinMoverCreator > reg_DockMinMoverCreator;
 static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
 static MoverRegistrator< docking::DockingSlideIntoContactCreator > reg_DockingSlideIntoContactCreator;
+static MoverRegistrator< docking::EnsureExclusivelySharedJumpMoverCreator > reg_EnsureExclusivelySharedJumpMoverCreator;
 
 static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator;
 static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator;

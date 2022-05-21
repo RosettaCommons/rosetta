@@ -19,6 +19,7 @@
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/jump_selector/JumpSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
@@ -53,6 +54,8 @@ public:
 	ResidueSelectorOP clone() const override;
 
 	JumpDownstreamSelector( int jump );
+	JumpDownstreamSelector( core::select::jump_selector::JumpSelectorCOP sele );
+
 	~JumpDownstreamSelector() override;
 
 	ResidueSubset apply( core::pose::Pose const & pose ) const override;
@@ -73,8 +76,16 @@ public:
 	*/
 	void set_jump( int jump );
 
+	///@brief this overrides the integer setting if this is not null
+	void
+	set_jump_selector( core::select::jump_selector::JumpSelectorCOP sele ){
+		jump_selector_ = sele;
+	}
+
 private: // data members
-	int jump_;
+	int jump_ = 0; //this is used iff jump_selector_ == nullptr
+	core::select::jump_selector::JumpSelectorCOP jump_selector_ = nullptr;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

@@ -233,6 +233,10 @@ count_selected( ResidueSubset const & selection );
 utility::vector1< core::Size >
 selection_positions( ResidueSubset const & selection );
 
+/// @brief Returns the Rosetta Numbering corresponding to the unselected residues
+utility::vector1< core::Size >
+unselection_positions( ResidueSubset const & selection );
+
 /// @brief Evaluate if two ResidueSubsets are equal
 bool
 are_selections_equal( ResidueSubset const & selection1, ResidueSubset const & selection2 );

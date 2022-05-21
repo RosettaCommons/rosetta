@@ -337,13 +337,14 @@
 #include <core/pack/palette/NoDesignPackerPaletteCreator.hh>
 
 // for creating and registering JumpSelectors:
-#include <core/select/jump_selector/JumpSelectorRegistrator.hh>
 #include <core/select/jump_selector/AndJumpSelectorCreator.hh>
-#include <core/select/jump_selector/OrJumpSelectorCreator.hh>
-#include <core/select/jump_selector/NotJumpSelectorCreator.hh>
-#include <core/select/jump_selector/JumpIndexSelectorCreator.hh>
+#include <core/select/jump_selector/ExclusivelySharedJumpSelectorCreator.hh>
 #include <core/select/jump_selector/InterchainJumpSelectorCreator.hh>
 #include <core/select/jump_selector/JumpForResidueCreator.hh>
+#include <core/select/jump_selector/JumpIndexSelectorCreator.hh>
+#include <core/select/jump_selector/JumpSelectorRegistrator.hh>
+#include <core/select/jump_selector/NotJumpSelectorCreator.hh>
+#include <core/select/jump_selector/OrJumpSelectorCreator.hh>
 
 #endif
 
@@ -841,11 +842,12 @@ static ResidueSelectorRegistrator< SimpleMetricSelectorCreator > reg_SimpleMetri
 // Jump Selectors
 using namespace core::select::jump_selector;
 static JumpSelectorRegistrator< AndJumpSelectorCreator > reg_AndJumpSelectorCreator;
-static JumpSelectorRegistrator< OrJumpSelectorCreator > reg_OrJumpSelectorCreator;
-static JumpSelectorRegistrator< NotJumpSelectorCreator > reg_NotJumpSelectorCreator;
-static JumpSelectorRegistrator< JumpIndexSelectorCreator > reg_JumpIndexSelectorCreator;
+static JumpSelectorRegistrator< ExclusivelySharedJumpSelectorCreator > reg_ExclusivelySharedJumpSelectorCreator;
 static JumpSelectorRegistrator< InterchainJumpSelectorCreator > reg_InterchainJumpSelectorCreator;
 static JumpSelectorRegistrator< JumpForResidueCreator > reg_JumpForResidueCreator;
+static JumpSelectorRegistrator< JumpIndexSelectorCreator > reg_JumpIndexSelectorCreator;
+static JumpSelectorRegistrator< NotJumpSelectorCreator > reg_NotJumpSelectorCreator;
+static JumpSelectorRegistrator< OrJumpSelectorCreator > reg_OrJumpSelectorCreator;
 
 // register PackerPaletteCreators
 using namespace core::pack::palette;
