@@ -108,6 +108,14 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
+##Test CrosslinkerMover_Helper
+ echo test_crosslinker_mover_helper
+ %(python)s %(template_dir)s/generate_templates.py --test --type crosslinker_mover_helper --class_name TestCrosslinkerMoverHelper --brief "testing templates" --namespace protocols cyclic_peptide crosslinker >> crosslinker_mover_helper_log 2>&1
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+
 ##Test util
  echo test_util
  %(python)s %(template_dir)s/generate_templates.py --test --type util --brief "testing templates" --namespace protocols test_templates >> util_log 2>&1

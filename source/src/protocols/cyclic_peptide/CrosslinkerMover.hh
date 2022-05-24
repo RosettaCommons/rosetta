@@ -44,6 +44,7 @@ enum class CrossLinker {
 	TBMB,
 	One_Four_BBMB,
 	TMA,
+	thioether,
 	tetrahedral_metal,
 	octahedral_metal,
 	trigonal_planar_metal,
@@ -154,7 +155,7 @@ public:
 
 	/// @brief Set the filtering behaviour of this mover.
 	///
-	void set_filter_behaviour( bool const filter_by_sidechain_distance, bool const filter_by_constraints_energy, bool const filter_by_total_score, core::Real const &filter_by_total_score_cutoff_energy, core::Real const & sidechain_distance_filter_multiplier, core::Real const & constraints_energy_filter_multiplier );
+	void set_filter_behaviour( bool const filter_by_sidechain_distance, bool const filter_by_constraints_energy, bool const filter_by_total_score, core::Real const filter_by_total_score_cutoff_energy, core::Real const sidechain_distance_filter_multiplier, core::Real const constraints_energy_filter_multiplier );
 
 	/// @brief Get whether we're adding the linker.
 	///
@@ -227,7 +228,17 @@ public:
 	/// @brief For metal-mediated crosslinkers, what metal mediates the crosslink?
 	inline std::string const & metal_type() const { return metal_type_; }
 
+	/// @brief Provide the citation.
+	void
+	provide_citation_info(
+		basic::citation_manager::CitationCollectionList & citations
+	) const override;
+
 private: // methods
+
+	/// @brief Generate the CrosslinkerMoverHelper based on the setting of linker_.
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP
+	crosslinkermover_helper_from_type() const;
 
 	/// @brief Apply the mover to a symmetric pose.
 	/// @details Requires symmetry in the pose matching the expected symmetry.

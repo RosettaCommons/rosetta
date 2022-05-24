@@ -107,6 +107,9 @@
 #include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/OctahedralMetal_Helper.hh>
 
+//Thioether cyclization
+#include <protocols/cyclic_peptide/crosslinker/thioether_util.hh>
+
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/simple_moves/DeclareBond.hh>
@@ -1725,6 +1728,11 @@ SimpleCycpepPredictApplication::run() const {
 		protocols::simple_moves::DeclareBondOP termini( utility::pointer::make_shared< protocols::simple_moves::DeclareBond >() );
 		set_up_cyclization_mover( termini, pose ); //Handles the cyclization appropriately, contingent on the cyclization type.
 		termini->apply(*pose);
+		if ( cyclization_type() == SCPA_thioether_lariat ) {
+			core::Size firstres, lastres;
+			find_first_and_last_thioether_lariat_residues( pose, firstres, lastres );
+			protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *pose, firstres, lastres );
+		}
 
 		//Add cyclic constraints:
 		if ( cyclization_type() == SCPA_n_to_c_amide_bond  && use_chainbreak_energy() ) {
@@ -2510,27 +2518,15 @@ SimpleCycpepPredictApplication::set_up_thioether_lariat_cyclization_mover(
 	protocols::simple_moves::DeclareBondOP termini,
 	core::pose::PoseCOP pose
 ) const {
-	debug_assert(termini); //Should already exist.
-	debug_assert(cyclization_type() == SCPA_thioether_lariat); //Should be true.
+	runtime_assert( termini != nullptr ); //Should already exist.
+	debug_assert( cyclization_type() == SCPA_thioether_lariat ); //Should be true.
 
 	core::Size firstres, lastres;
 	find_first_and_last_thioether_lariat_residues( pose, firstres, lastres );
 
-	//Get the name of the first sidechain connection atom:
-	core::chemical::ResidueType const &restype( pose->residue_type(firstres) );
-	core::Size const firstres_sc_connection_id( restype.n_possible_residue_connections() ); //We will assume that the highest-numbered residue connection is the sidechain connection ID.
-	core::Size const firstres_sc_connection_atom_index( restype.residue_connect_atom_index( firstres_sc_connection_id ) );
-	std::string const firstres_sc_connection_atom( restype.atom_name( firstres_sc_connection_atom_index ) );
-
-	//Get the name of the second sidechain connection atom:
-	core::chemical::ResidueType const &restype2( pose->residue_type(lastres) );
-	core::Size const lastres_sc_connection_id( restype2.n_possible_residue_connections() ); //We will assume that the highest-numbered residue connection is the sidechain connection ID.
-	core::Size const lastres_sc_connection_atom_index( restype2.residue_connect_atom_index( lastres_sc_connection_id ) );
-	std::string const lastres_sc_connection_atom( restype2.atom_name( lastres_sc_connection_atom_index ) );
-
-	TR << "Setting up thioether lariat from " << restype.name3() << firstres << " to residue " << restype2.name3() << lastres << "." << std::endl;
-
-	termini->set( lastres, lastres_sc_connection_atom, firstres, firstres_sc_connection_atom, false );
+	protocols::cyclic_peptide::crosslinker::set_up_thioether_bond_mover(
+		*termini, *pose, firstres, lastres
+	);
 }
 
 /// @brief Set up the DeclareBond mover used to connect the termini, or whatever
@@ -2675,6 +2671,9 @@ SimpleCycpepPredictApplication::set_up_native (
 	protocols::simple_moves::DeclareBondOP termini( utility::pointer::make_shared< protocols::simple_moves::DeclareBond >() );
 	set_up_cyclization_mover( termini, native_pose, true, last_res );
 	termini->apply(*native_pose);
+	if ( cyclization_type() == SCPA_thioether_lariat ) {
+		protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *native_pose, 1, last_res );
+	}
 }
 
 /// @brief Add cutpoint variants to the terminal residues of an N-to-C cyclic peptide.
@@ -2791,68 +2790,11 @@ SimpleCycpepPredictApplication::add_thioether_lariat_cyclic_constraints (
 	core::Size n_index,
 	core::Size c_index
 ) const {
-
-	// The central bond that's not part of the scoring function is from the
-	// c_index cysteine SG to the n_index acetyl CP2.
-	using namespace core::pose;
-	using namespace core::scoring::constraints;
-	using namespace core::scoring::func;
-	using namespace core::id;
-
-	TR << "Setting up thioether lariat constraints." << std::endl;
-
-	//The residue types of the N and C residues:
-	core::chemical::ResidueType const & ntype( pose->residue_type(n_index) );
-	core::chemical::ResidueType const & ctype( pose->residue_type(c_index) );
-
-	//The four atoms defining the peptide bond:
-	AtomID const atom_a(
-		ctype.icoor(ctype.residue_connect_atom_index(ctype.n_possible_residue_connections())).stub_atom1().atomno(),
-		c_index );
-	AtomID const atom_b(
-		ctype.residue_connect_atom_index( ctype.n_possible_residue_connections() ),
-		c_index );
-	AtomID const atom_c(
-		ntype.residue_connect_atom_index( ntype.n_possible_residue_connections() ),
-		n_index );
-	AtomID const atom_d(
-		ntype.icoor( ntype.residue_connect_atom_index( ntype.n_possible_residue_connections() ) ).stub_atom1().atomno(),
-		n_index );
-
-	TR << "The following four atoms define the thioether bond:" << std::endl;
-	TR << "1.\tRes=" << atom_a.rsd() << "\tAtom=" << pose->residue(atom_a.rsd()).atom_name(atom_a.atomno()) << std::endl;
-	TR << "2.\tRes=" << atom_b.rsd() << "\tAtom=" << pose->residue(atom_b.rsd()).atom_name(atom_b.atomno()) << std::endl;
-	TR << "3.\tRes=" << atom_c.rsd() << "\tAtom=" << pose->residue(atom_c.rsd()).atom_name(atom_c.atomno()) << std::endl;
-	TR << "4.\tRes=" << atom_d.rsd() << "\tAtom=" << pose->residue(atom_d.rsd()).atom_name(atom_d.atomno()) << std::endl;
-
-	{//Thioether bond length constraint:
-		FuncOP harmfunc1( utility::pointer::make_shared< HarmonicFunc >( SimpleCycpepPredictApplication_THIOETHER_BOND_LENGTH, 0.01) );
-		ConstraintCOP distconst1( utility::pointer::make_shared< AtomPairConstraint >( atom_b, atom_c, harmfunc1 ) );
-		pose->add_constraint (distconst1);
-	}
-
-	{ //Thioether dihedral angle constraints, from methionine
-		// (TODO -- change these if we sample a trans-proline.)
-		FuncOP circharmfunc1( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi, 0.24, 1 ) );
-		ConstraintCOP dihedconst1( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, circharmfunc1) );
-		pose->add_constraint (dihedconst1);
-		FuncOP circharmfunc2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.37, 3 ) );
-		ConstraintCOP dihedconst2( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, circharmfunc2) );
-		pose->add_constraint (dihedconst2);
-	}
-
-	{ //Thioether bond angle constraints:
-		FuncOP circharmfunc2a( utility::pointer::make_shared< CircularHarmonicFunc >( SimpleCycpepPredictApplication_THIOETHER_BOND_C_ANGLE, 0.02) );
-		FuncOP circharmfunc2b( utility::pointer::make_shared< CircularHarmonicFunc >( SimpleCycpepPredictApplication_THIOETHER_BOND_N_ANGLE, 0.02) );
-		ConstraintCOP angleconst1( utility::pointer::make_shared< AngleConstraint >( atom_a, atom_b, atom_c, circharmfunc2a) );
-		ConstraintCOP angleconst2( utility::pointer::make_shared< AngleConstraint >( atom_b, atom_c, atom_d, circharmfunc2b) );
-		pose->add_constraint (angleconst1);
-		pose->add_constraint (angleconst2);
-	}
-
-	TR << "Finished setting up constraints." << std::endl;
-
-	return;
+	protocols::cyclic_peptide::crosslinker::set_up_thioether_constraints(
+		*pose,
+		n_index,
+		c_index
+	);
 }
 
 /// @brief Function to add cyclic constraints to a pose.
@@ -3226,9 +3168,9 @@ SimpleCycpepPredictApplication::add_closebond_logic_thioether_lariat(
 		cyclization_point_end,
 		endatom,
 		0, "", 0, "",
-		SimpleCycpepPredictApplication_THIOETHER_BOND_LENGTH,
-		SimpleCycpepPredictApplication_THIOETHER_BOND_N_ANGLE/numeric::constants::d::pi*180.0,
-		SimpleCycpepPredictApplication_THIOETHER_BOND_C_ANGLE/numeric::constants::d::pi*180.0,
+		protocols::cyclic_peptide::crosslinker::THIOETHER_UTIL_THIOETHER_BOND_LENGTH,
+		protocols::cyclic_peptide::crosslinker::THIOETHER_UTIL_THIOETHER_BOND_N_ANGLE/numeric::constants::d::pi*180.0,
+		protocols::cyclic_peptide::crosslinker::THIOETHER_UTIL_THIOETHER_BOND_C_ANGLE/numeric::constants::d::pi*180.0,
 		180.0, false, false );
 
 	//Randomize sidechains:
@@ -4810,14 +4752,8 @@ SimpleCycpepPredictApplication::set_up_terminal_thioether_lariat_variants(
 	core::Size firstres, lastres;
 	find_first_and_last_thioether_lariat_residues(pose, firstres, lastres);
 
-	core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, lastres );
 	core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
-	core::pose::add_variant_type_to_pose_residue( *pose, core::chemical::ACETYLATED_NTERMINUS_CONNECTION_VARIANT, firstres );
-
-	pose->update_residue_neighbors();
-	// This connects to ii+1 by default, but that's appropriate -- it just got this connection harmed
-	// by adding the patch anyway.
-	pose->conformation().update_polymeric_connection( firstres );
+	protocols::cyclic_peptide::crosslinker::set_up_thioether_variants( *pose, firstres, lastres );
 }
 
 /// @brief Given the basename of a residue type, return true if this is a type that can donate the nitrogen to an

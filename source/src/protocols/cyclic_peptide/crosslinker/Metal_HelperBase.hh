@@ -150,11 +150,6 @@ public: // public defined methods
 	/// @brief Get the current metal type, as a string.
 	std::string metal_type_string() const;
 
-	/// @brief Does this helper add a residue to the pose?
-	/// @details True for most crosslinkers, but overridden here to return "false" because this helper acts by
-	/// patching existing residues instead of appending geometry.
-	bool adds_crosslinker_residue() const override { return false; }
-
 protected: // private methods
 
 	/// @brief Check that the correct number of residues have been selected, that they are within the pose, and that they are allowed residue types.

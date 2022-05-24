@@ -148,6 +148,10 @@ sources = {
 		"SymmetricCycpepAlignTests",
 	],
 
+	"cyclic_peptide/crosslinker" : [
+		"Thioether_Helper_Tests",
+	],
+
 	"cyclic_peptide_predict" : [
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_betanov15",

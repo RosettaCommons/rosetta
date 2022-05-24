@@ -187,6 +187,10 @@ class GenerateRosettaTemplates(object):
                 print("\n See Wiki for How to serialize your Selector: \n" \
                     "   "+"https://wiki.rosettacommons.org/index.php/SerializationFAQ")
 
+            elif self.options.type == "crosslinker_mover_helper" :
+                print( "\n CrosslinkerMoverHelpers need to be registered in protocols_a.6 (where the CrosslinkerMoverHelper base class is registered) or higher." )
+                print( " They also need to be tied into the CrosslinkerMover, since there is no factory system for helpers.  The src/protocols/cyclic_peptide/CrosslinkerMover.cc file must include the new header file, and CrosslinkerMover::crosslinkermover_helper_from_type() function's switch statement must be modified to create an instance of the new helper class.  It is also necessary to modify CrosslinkerMover::get_crosslinker_name(), CrosslinkerMover::provide_xml_schema() (particularly the linker_possibles string), and the Crosslinker enum class in the header file, CrosslinkerMover.hh.")
+
             elif self.options.type == "singleton":
                 print("\n Singletons do not need to be registered.  " \
                       "To get the current instance from anywhere, use:\n" \

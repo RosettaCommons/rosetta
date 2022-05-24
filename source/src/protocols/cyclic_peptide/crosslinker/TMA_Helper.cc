@@ -39,6 +39,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/exit.hh>
 
 static basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TMA_Helper" );
@@ -68,6 +69,22 @@ TMA_Helper::~TMA_Helper()= default;
 //////////////////////
 /// Public Methods ///
 //////////////////////
+
+/// @brief Provide an opportunity to provide a citation for this crosslinker type.
+/// @details The base class implementation does nothing.  This override indicates that this helper is
+/// unpublished.
+void
+TMA_Helper::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	citations.add(
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		"TMA_Helper", basic::citation_manager::CitedModuleType::CrosslinkerMoverHelper,
+		"Vikram K. Mulligan", "Systems Biology Group, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org", "Added support for trimesic acid crosslinking to the CrosslinkerMover."
+		)
+	);
+}
 
 /// @brief Given a pose and a selection of exactly three residues, add the TMA linker,
 /// align it crudely to the selected residues, and set up covalent bonds.

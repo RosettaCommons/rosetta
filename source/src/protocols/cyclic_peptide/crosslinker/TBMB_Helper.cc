@@ -37,6 +37,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 static basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.TBMB_Helper" );
 
@@ -65,6 +67,24 @@ TBMB_Helper::~TBMB_Helper()= default;
 //////////////////////
 /// Public Methods ///
 //////////////////////
+
+/// @brief Provide an opportunity to provide a citation for this crosslinker type.
+/// @details The base class implementation does nothing.  This override indicates that this helper is
+/// published in Dang, Wu, Mulligan et al. 2017.
+void
+TBMB_Helper::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"TBMB_Helper", basic::citation_manager::CitedModuleType::CrosslinkerMoverHelper
+		)
+	);
+	cc->add_citation(
+		basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1073/pnas.1710695114" )
+	);
+	citations.add(cc);
+}
 
 /// @brief Given a pose and a selection of exactly three residues, add the TBMB linker,
 /// align it crudely to the selected residues, and set up covalent bonds.

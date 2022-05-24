@@ -24,6 +24,8 @@
 
 
 // Basic/Utility headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.cyclic_peptide.crosslinker.SquarePyramidalMetal_Helper" );
@@ -68,6 +70,23 @@ SquarePyramidalMetal_Helper::~SquarePyramidalMetal_Helper(){}
 /// Public Methods  ///
 ///////////////////////
 
+/// @brief Provide an opportunity to provide a citation for this crosslinker type.
+/// @details The base class implementation does nothing.  This override indicates that this helper was
+/// published in Mulligan, Kang, et al. 2021.
+void
+SquarePyramidalMetal_Helper::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"SquarePyramidalMetal_Helper", basic::citation_manager::CitedModuleType::CrosslinkerMoverHelper
+		)
+	);
+	cc->add_citation(
+		basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1002/pro.3974" )
+	);
+	citations.add(cc);
+}
 
 ///////////////////////
 /// Private Methods ///

@@ -49,6 +49,14 @@ public: //Constructors
 
 public: // public methods
 
+	/// @brief Provide an opportunity to provide a citation for this crosslinker type.
+	/// @details The base class implementation does nothing.  This override indicates that this helper was
+	/// published in Mulligan, Kang, et al. 2021.
+	void
+	provide_citation_info(
+		basic::citation_manager::CitationCollectionList & citations
+	) const override;
+
 protected: // protected methods
 
 	/// @brief Check that the correct number of residues have been selected, that they are within the pose, and that they are allowed residue types.

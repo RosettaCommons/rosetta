@@ -117,7 +117,8 @@ CitationCollection::get_enumerated_module_type_name(
 		{ CitedModuleType::ConstraintGenerator, "ConstraintGenerator" },
 		{ CitedModuleType::NeuralNetwork, "Neural Network" },
 		{ CitedModuleType::Singleton, "Singleton" },
-		{ CitedModuleType::Application, "Application" }
+		{ CitedModuleType::Application, "Application" },
+		{ CitedModuleType::CrosslinkerMoverHelper, "CrosslinkerMover helper" }
 		};
 	debug_assert( module_type_strings.count( module_type ) != 0 );
 	return module_type_strings.at( module_type );

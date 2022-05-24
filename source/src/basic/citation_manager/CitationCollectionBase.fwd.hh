@@ -38,6 +38,7 @@ enum class CitedModuleType {
 	NeuralNetwork,
 	Singleton,
 	Application,
+	CrosslinkerMoverHelper,
 	CustomType, //Keep second-to-last
 	end_of_list = CustomType //Keep last
 };

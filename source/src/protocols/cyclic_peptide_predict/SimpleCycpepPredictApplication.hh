@@ -49,11 +49,6 @@
 #define SimpleCycpepPredictApplication_DISULFBOND_LENGTH 2.02
 #define SimpleCycpepPredictApplication_DISULFBOND_ANGLE 1.83259571459
 
-// just from 6qys for now
-#define SimpleCycpepPredictApplication_THIOETHER_BOND_LENGTH 1.827
-#define SimpleCycpepPredictApplication_THIOETHER_BOND_C_ANGLE 1.781 // 102.028 degrees
-#define SimpleCycpepPredictApplication_THIOETHER_BOND_N_ANGLE 1.960 // 112.284
-
 namespace protocols {
 namespace cyclic_peptide_predict {
 

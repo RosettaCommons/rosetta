@@ -36,6 +36,8 @@ sources = {
 		"SquarePyramidalMetal_Helper",
 		"TBMB_Helper",
 		"TetrahedralMetal_Helper",
+		"Thioether_Helper",
+		"thioether_util",
 		"TrigonalPlanarMetal_Helper",
 		"TrigonalPyramidalMetal_Helper",
 		"TMA_Helper",

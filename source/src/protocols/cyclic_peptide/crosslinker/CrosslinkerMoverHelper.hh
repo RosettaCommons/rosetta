@@ -27,6 +27,7 @@
 
 // Basic/Utility headers
 #include <utility/VirtualBase.hh>
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 namespace protocols {
 namespace cyclic_peptide {
@@ -80,12 +81,12 @@ public: // public pure virtual methods
 
 	/// @brief Given indices of residues that are already linked to a linker, get the index
 	/// of the linker.
-	/// @details Throws an error if the residues are not all linked to the same linker residue.  Must be defined by derived classes.
+	/// @details Returns zero for this class, since no linker is added.
 	virtual core::Size get_linker_index_asymmetric( core::pose::Pose const &pose, utility::vector1< core::Size > const & res_indices ) const = 0;
 
 	/// @brief Given indices of residues that are already linked to pieces of a linker, get
 	/// of the indices of the symmetric pieces of the linker.
-	/// @details Throws an error if a residue is not linked to something.  Must be defined by derived classes.
+	/// @details Returns zero for this class, since no linker is added.
 	virtual void get_linker_indices_symmetric( core::pose::Pose const &pose, utility::vector1< core::Size > const & res_indices, utility::vector1< core::Size > & linker_indices ) const = 0;
 
 	/// @brief Given a pose with residues selected to be linked by a linker, determine whether the residues are too far apart.
@@ -113,13 +114,16 @@ public: // public pure virtual methods
 
 public: // public defined methods
 
+	/// @brief Provide an opportunity to provide a citation for this crosslinker type.
+	/// @details The base class implementation does nothing.  Derived classes may override this.
+	virtual
+	void
+	provide_citation_info(
+		basic::citation_manager::CitationCollectionList & citations
+	) const;
+
 	/// @brief Set the symmetry for this crosslinker helper.
 	void set_symmetry( char const symm_type_in, core::Size const symm_count_in );
-
-	/// @brief Does this helper add a residue to the pose?
-	/// @details True for most crosslinkers, but some can be added by patching existing residues.  In those cases, this function
-	/// should be overridden to return "false".  Returns "true" if not overridden.
-	virtual bool adds_crosslinker_residue() const { return true; }
 
 	/// @brief Given a ResidueSubset with N residues selected, pull out the indices into a vector.
 	/// @details Overwrites res_indices.

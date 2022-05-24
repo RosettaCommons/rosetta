@@ -971,7 +971,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	// ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == nullptr ) {
-		utility_exit_with_message( "Unable to find desired variant residue '" + init_rsd.name() +
+		utility_exit_with_message( "Unable to find desired residue '" + init_rsd.name() + "' with variant '" + new_type +
 			"'. Attempted to add target variant(s) to ResidueType using both"
 			" ResidueType base name '" + base_name +
 			"' and base ResidueType. Was attempting to add new variant type '" +
@@ -1022,7 +1022,7 @@ ResidueTypeSet::get_residue_type_with_custom_variant_added(
 	// ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == nullptr ) {
-		utility_exit_with_message( "Unable to find desired variant residue '" + init_rsd.name() +
+		utility_exit_with_message( "Unable to find desired residue '" + init_rsd.name() + "' with variant '" + new_type +
 			"'. Attempted to add target variant(s) to ResidueType using both"
 			" ResidueType base name '" + base_name +
 			"' and base ResidueType. Was attempting to add new custom variant type '" +

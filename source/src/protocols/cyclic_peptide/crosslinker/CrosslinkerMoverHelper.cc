@@ -25,7 +25,6 @@
 // Protocols headers
 #include <protocols/constraint_movers/ClearConstraintsMover.hh>
 
-
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 
@@ -69,6 +68,15 @@ CrosslinkerMoverHelper::~CrosslinkerMoverHelper()= default;
 //////////////////////
 /// Public Methods ///
 //////////////////////
+
+/// @brief Provide an opportunity to provide a citation for this crosslinker type.
+/// @details The base class implementation does nothing.  Derived classes may override this.
+void
+CrosslinkerMoverHelper::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & //citations
+) const {
+	//GNDN.
+}
 
 /// @brief Set the symmetry for this crosslinker helper.
 void

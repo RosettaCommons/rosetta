@@ -18,6 +18,7 @@
 #include <protocols/cyclic_peptide/CrosslinkerMoverCreator.hh>
 #include <protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/Thioether_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/1_4_BBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
@@ -44,6 +45,8 @@
 #include <protocols/moves/mover_schemas.hh>
 
 // Basic/Utility headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -87,38 +90,7 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 	core::select::residue_selector::ResidueSubset const selection( residue_selector()->apply(pose) );
 
 	//Create the helper, which has the functions that set up specific types of crosslinkers:
-	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper;
-	switch( linker_ ) {
-	case CrossLinker::TBMB :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TBMB_Helper >();
-		break;
-	case CrossLinker::One_Four_BBMB :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::One_Four_BBMB_Helper >();
-		break;
-	case CrossLinker::TMA :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TMA_Helper >();
-		break;
-	case CrossLinker::tetrahedral_metal :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper >( metal_type() );
-		break;
-	case CrossLinker::octahedral_metal :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::OctahedralMetal_Helper >( metal_type() );
-		break;
-	case CrossLinker::trigonal_planar_metal :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_Helper >( metal_type() );
-		break;
-	case CrossLinker::trigonal_pyramidal_metal :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_Helper >( metal_type() );
-		break;
-	case CrossLinker::square_planar_metal :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_Helper >(metal_type() );
-		break;
-	case CrossLinker::square_pyramidal_metal :
-		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_Helper >(metal_type() );
-		break;
-	default :
-		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
-	}
+	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper( crosslinkermover_helper_from_type() );
 
 	helper->set_symmetry( symm_type(), symm_count() );
 
@@ -145,6 +117,8 @@ CrosslinkerMover::get_crosslinker_name(
 		return "1_4_BBMB";
 	case CrossLinker::TMA :
 		return "TMA";
+	case CrossLinker::thioether :
+		return "thioether";
 	case CrossLinker::tetrahedral_metal :
 		return "tetrahedral_metal";
 	case CrossLinker::octahedral_metal :
@@ -241,7 +215,7 @@ CrosslinkerMover::provide_xml_schema(
 	using namespace utility::tag;
 
 	XMLSchemaRestriction linker_names_allowed;
-	std::string const linker_possibles("TBMB|1_4_BBMB|TMA|tetrahedral_metal|octahedral_metal|trigonal_planar_metal|trigonal_pyramidal_metal|square_planar_metal|square_pyramidal_metal");
+	std::string const linker_possibles("TBMB|1_4_BBMB|TMA|thioether|tetrahedral_metal|octahedral_metal|trigonal_planar_metal|trigonal_pyramidal_metal|square_planar_metal|square_pyramidal_metal");
 	linker_names_allowed.name("linker_names_allowed");
 	linker_names_allowed.base_type( xs_string );
 	linker_names_allowed.add_restriction( xsr_pattern, linker_possibles + "(," + linker_possibles + ")+" );
@@ -358,9 +332,9 @@ CrosslinkerMover::set_filter_behaviour(
 	bool const filter_by_sidechain_distance,
 	bool const filter_by_constraints_energy,
 	bool const filter_by_total_score,
-	core::Real const &filter_by_total_score_cutoff_energy,
-	core::Real const &sidechain_distance_filter_multiplier,
-	core::Real const &constraints_energy_filter_multiplier
+	core::Real const filter_by_total_score_cutoff_energy,
+	core::Real const sidechain_distance_filter_multiplier,
+	core::Real const constraints_energy_filter_multiplier
 ) {
 	filter_by_sidechain_distance_ = filter_by_sidechain_distance;
 	filter_by_constraints_energy_ = filter_by_constraints_energy;
@@ -463,6 +437,27 @@ operator<<( std::ostream & os, CrosslinkerMover const & mover )
 	return os;
 }
 
+/// @brief Provide the citation.
+void
+CrosslinkerMover::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"CrosslinkerMover", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation(
+		basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1073/pnas.1710695114" )
+	);
+
+	citations.add( cc );
+
+	if ( linker_ != CrossLinker::no_crosslinker ) {
+		crosslinkermover_helper_from_type()->provide_citation_info( citations );
+	}
+}
+
 /////////////// Creator ///////////////
 
 protocols::moves::MoverOP
@@ -488,6 +483,37 @@ CrosslinkerMoverCreator::provide_xml_schema(
 ///////////////////////
 /// private methods ///
 ///////////////////////
+
+/// @brief Generate the CrosslinkerMoverHelper based on the setting of linker_.
+protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP
+CrosslinkerMover::crosslinkermover_helper_from_type() const {
+	switch( linker_ ) {
+	case CrossLinker::TBMB :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TBMB_Helper >();
+	case CrossLinker::One_Four_BBMB :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::One_Four_BBMB_Helper >();
+	case CrossLinker::TMA :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TMA_Helper >();
+	case CrossLinker::thioether :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::Thioether_Helper >();
+	case CrossLinker::tetrahedral_metal :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper >( metal_type() );
+	case CrossLinker::octahedral_metal :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::OctahedralMetal_Helper >( metal_type() );
+	case CrossLinker::trigonal_planar_metal :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_Helper >( metal_type() );
+	case CrossLinker::trigonal_pyramidal_metal :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_Helper >( metal_type() );
+	case CrossLinker::square_planar_metal :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_Helper >(metal_type() );
+	case CrossLinker::square_pyramidal_metal :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_Helper >(metal_type() );
+	default :
+		utility_exit_with_message( "Error in protocols::cyclic_peptide::CrosslinkerMover::apply(): Invalid crosslinker specified." );
+	}
+
+	return nullptr; //Keep older compilers happy, though we never reach here.
+}
 
 /// @brief Apply the mover to a symmetric pose.
 /// @details Requires symmetry in the pose matching the expected symmetry.
@@ -760,7 +786,7 @@ CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 				}
 				helper->get_linker_indices_symmetric(pose, res_indices, linker_indices);
 			} else {
-				if ( helper->adds_crosslinker_residue() ) {
+				if ( helper->helper_adds_linker_residue() ) {
 					linker_indices.resize(1);
 					linker_indices[1] = helper->get_linker_index_asymmetric( pose, res_indices );
 				}
@@ -778,7 +804,7 @@ CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 				movemap->set_chi(linker_indices[i], true);
 			}
 			if ( symmetric ) {
-				if ( helper->adds_crosslinker_residue() ) {
+				if ( helper->helper_adds_linker_residue() ) {
 					utility::vector1< core::Size > jump_indices;
 					get_jump_indices_for_symmetric_crosslinker( pose, linker_indices, jump_indices );
 					for ( core::Size i(1), imax(jump_indices.size()); i<=imax; ++i ) {
@@ -786,7 +812,7 @@ CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 					}
 				}
 			} else {
-				if ( helper->adds_crosslinker_residue() ) {
+				if ( helper->helper_adds_linker_residue() ) {
 					movemap->set_jump( get_jump_index_for_crosslinker( pose, linker_indices[1] ), true );
 				}
 			}

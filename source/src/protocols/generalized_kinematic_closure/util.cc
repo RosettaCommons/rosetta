@@ -106,7 +106,7 @@ void set_loop_pose (
 	}
 	}*/
 
-	pose.update_residue_neighbors();
+	//pose.update_residue_neighbors();
 
 	//pose.dump_pdb("after.pdb"); //DELETE ME -- for debugging only.
 

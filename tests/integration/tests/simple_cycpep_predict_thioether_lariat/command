@@ -35,6 +35,10 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if
 
+# The following should ensure that at least one PDB file was written
+ls -1 *.pdb >/dev/null 2>/dev/null
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 #
 # After that, do whatever you want.
 # Files will be diffed verbatim, so if you want to log output and compare it,
