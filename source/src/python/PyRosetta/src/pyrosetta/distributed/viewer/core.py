@@ -163,7 +163,7 @@ class Viewer:
 
         def view(i=0):
 
-            _viewer = py3Dmol.view(*self.window_size)
+            _viewer = py3Dmol.view(width=self.window_size[0], height=self.window_size[1])
             _pose = self.poses[i]
             _pdbstring = self.pdbstrings[i]
 
