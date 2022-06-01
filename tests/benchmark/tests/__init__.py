@@ -55,7 +55,7 @@ _multi_step_config_ = 'config.json'
 _multi_step_error_  = 'error.json'
 _multi_step_result_ = 'result.json'
 
-PyRosetta_unix_memory_requirement_per_cpu = 6  # Memory per sub-process in Gb's
+PyRosetta_unix_memory_requirement_per_cpu = 3.9  # Memory per sub-process in Gb's
 PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-process in Gb's for running PyRosetta unit tests
 
 # Commands to run all the scripts needed for setting up Rosetta compiles. (Run from main/source directory)
@@ -752,7 +752,7 @@ def local_python_install(platform, config):
     }
 
     #packages = '' if (python_version[0] == '2' or  python_version == '3.5' ) and  platform['os'] == 'mac' else 'pip setuptools wheel' # 2.7 is now deprecated on Mac so some packages could not be installed
-    packages = ''
+    packages = 'setuptools'
 
     url = python_sources[python_version]
 
@@ -863,7 +863,7 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --upgrade pip && {bin}/python {bin}/pip install --progress-bar off {packages}'.format(**vars()) )
+    if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --upgrade pip setuptools && {bin}/python {bin}/pip install --progress-bar off {packages}'.format(**vars()) )
     #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
@@ -944,7 +944,7 @@ def _get_path_to_conda_root(platform, config):
 
     #packages = ['conda-build gcc libgcc', 'libgcc=5.2.0'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
-    packages = ['conda-build anaconda-client',]
+    packages = ['conda-build anaconda-client conda-verify',]
 
     signature = f'url: {url}\nversion: {version}\channels: {channels}\npackages: {packages}\n'
 
@@ -961,7 +961,6 @@ def _get_path_to_conda_root(platform, config):
 
     if os.path.isfile(signature_file_name) and open(signature_file_name).read() == signature:
         print( f'Install for MiniConda is detected, skipping installation procedure...' )
-        pass
 
     else:
         print( f'Installing MiniConda, using {url}...' )
@@ -993,6 +992,7 @@ def _get_path_to_conda_root(platform, config):
 
         print( f'Installing MiniConda, using {url}... Done.' )
 
+    execute(f'Updating conda base...', f'{activate} && conda update --all --yes' )
     return NT(conda=executable, root=root, activate=activate, url=url)
 
 
@@ -1009,7 +1009,7 @@ def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
 
     command_line = f'conda create --quiet --yes --prefix {prefix} python={python_version}'
 
-    execute( f'Setting up Conda for Python-{python_version} virtual environment...', f'cd {working_dir} && {activate} && ( {command_line} || ( conda -y clean && {command_line} ) )' )
+    execute( f'Setting up Conda for Python-{python_version} virtual environment...', f'cd {working_dir} && {activate} && ( {command_line} || ( conda clean --yes && {command_line} ) )' )
 
     activate = f'{activate} && conda activate {prefix}'
 

@@ -282,6 +282,7 @@ def get_compiler_version():
         _, version_output = execute('Getting clang version...'.format(**locals()), 'clang --version', return_='tuple', silent=True)
 
         if version_output.startswith('Apple clang version') or version_output.startswith('Apple LLVM version'): version = version_output.split()[3]
+        elif version_output.startswith('Ubuntu clang version'): version = version_output.split()[3].partition('-')[0]
         else: version = version_output.split()[2].split('-')[0]
 
     else:

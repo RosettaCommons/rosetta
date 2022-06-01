@@ -421,7 +421,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
         else:
 
-            TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating package...')
+            TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating PyRosetta package...')
 
             package_dir = working_dir + '/' + release_name
 
@@ -652,7 +652,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
         else:
 
-            TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating package...')
+            TR('Running PyRosetta4 release test: Build and Unit tests passged! Now creating PyRosetta package...')
 
             package_dir = working_dir + '/' + release_name
 
@@ -696,8 +696,11 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
             with FileLock( '{conda_release_path}/.{os}.python{python_version}.release.lock'.format(os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars()) ):
 
-                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet --channel conda-forge {recipe_dir}  --output-folder {conda_release_path}'
-                conda_package = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True).split()[0]  # removing '\n' at the end
+                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet --channel conda-forge {recipe_dir} --output-folder {conda_release_path}'
+                conda_package_output = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True)
+
+                m = re_module.search(r"pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE)
+                conda_package = m.group(0) if m else 'unknown'
 
                 TR(f'Building Conda package: {conda_package}...')
                 res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
@@ -712,7 +715,8 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                 with FileLock( f'{conda_release_path}/.release.lock' ):
                     execute('Regenerating Conda package index...', f'{conda.activate_base} && cd {conda_release_path} && conda index .')
 
-                conda_package_version = conda_package.split('/')[-1].split('-')[1]
+                conda_package_version = conda_package.split('/')[-1].partition('-')[2]
+                print(f'Determent conda_package_version for package {conda_package!r}: {conda_package_version!r}...')
                 with open(f'{working_dir}/index.html', 'w') as f: f.write( _index_html_template_.format(**vars() ) )
 
 
