@@ -696,7 +696,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
             with FileLock( '{conda_release_path}/.{os}.python{python_version}.release.lock'.format(os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars()) ):
 
-                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet --channel conda-forge {recipe_dir} --output-folder {conda_release_path}'
+                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir} --output-folder {conda_release_path}' # --channel conda-forge
                 conda_package_output = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True)
 
                 m = re_module.search(r"pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE)
