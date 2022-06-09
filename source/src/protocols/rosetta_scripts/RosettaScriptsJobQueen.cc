@@ -36,6 +36,7 @@
 #include <utility/pointer/memory.hh>
 
 // Basic headers
+#include <basic/datacache/DataMap.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 
@@ -50,6 +51,8 @@
 // Utility headers
 #include <utility/options/OptionCollection.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/VBWrapper.hh>
+
 
 
 
@@ -129,12 +132,30 @@ RosettaScriptsJobQueen::complete_larval_job_maturation(
 		utility::pointer::make_shared< CacheableString > ( larval_job->job_tag_with_index_suffix( index )));
 	mature_job->pose( pose );
 
+	debug_assert( (*job_options)[ basic::options::OptionKeys::parser::protocol ].user() );
+
+	basic::datacache::DataMap datamap;
+	datamap.add(
+		"JobLabels",
+		"nstruct_index",
+		utility::make_shared_vb_wrapper(core::Size(larval_job->nstruct_index()))
+	);
+
 	parser_->set_recursion_limit( *job_options );
-	protocols::rosetta_scripts::ParsedProtocolOP mover_protocol = parser_->generate_mover(
-		job_options,
+	utility::tag::TagCOP tag = parser_->create_tag_from_xml(
+		(*job_options)[ basic::options::OptionKeys::parser::protocol ],
+		*job_options
+	);
+
+	protocols::rosetta_scripts::ParsedProtocolOP mover_protocol = parser_->generate_mover_for_protocol(
+		tag,
+		*job_options,
+		datamap,
 		larval_job->input_tag(),
 		larval_job->job_tag_with_index_suffix( index ),
-		resource_manager_ );
+		nullptr,
+		resource_manager_
+	);
 
 	mature_job->set_mover( mover_protocol );
 	return mature_job;

@@ -28,6 +28,8 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
+#include <utility/VBWrapper.hh>
+
 
 static basic::Tracer TR( "protocols.multistage_rosetta_scripts.TagManager" );
 
@@ -116,7 +118,8 @@ TagManager::register_data_tags_for_input_pose_id(
 
 ParsedTagCacheOP
 TagManager::generate_data_for_input_pose_id(
-	PrelimJobNodeID input_pose_id
+	PrelimJobNodeID input_pose_id,
+	NStructIndex nstruct_ind
 ){
 	NoFailDataMapOP data_map( pointer::make_shared< NoFailDataMap >() );
 
@@ -130,6 +133,13 @@ TagManager::generate_data_for_input_pose_id(
 	filters::FilterOP false_filter( pointer::make_shared< filters::FalseFilter >() );
 	data_map->add( "filters", "true_filter", true_filter );
 	data_map->add( "filters", "false_filter", false_filter );
+
+	TR << "Storing nstruct_index of " << nstruct_ind << std::endl;
+	data_map->add(
+		"JobLabels",
+		"nstruct_index",
+		utility::make_shared_vb_wrapper(core::Size(nstruct_ind))
+	);
 
 	moves::MoverFactory const * mover_factory = moves::MoverFactory::get_instance();
 	filters::FilterFactory const * filter_factory = filters::FilterFactory::get_instance();

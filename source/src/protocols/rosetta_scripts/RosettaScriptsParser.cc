@@ -26,6 +26,7 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/XmlObjects.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsSchemaValidator.hh>
+#include <protocols/jd2/util.hh>
 
 // Project headers
 #include <core/pack/palette/PackerPalette.hh>
@@ -49,6 +50,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
 #include <utility/pointer/memory.hh>
+#include <utility/VBWrapper.hh>
 
 // ObjexxFCL Headers
 
@@ -390,6 +392,16 @@ RosettaScriptsParser::initialize_data_map(
 		data.add_resource("options", local_options_);
 	}
 
+	// Store the nstruct index for this job if we're using JD2
+	if ( jd2::jd2_used() ) {
+		Size nstruct_ind = jd2::current_nstruct_index();
+		TR.Debug << "Setting nstruct_index JobLabel as " << nstruct_ind << std::endl;
+		data.add(
+			"JobLabels",
+			"nstruct_index",
+			std::make_shared<utility::VBWrapper<core::Size>>(nstruct_ind)
+		);
+	}
 }
 
 
@@ -455,7 +467,20 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	basic::resource_manager::ResourceManagerOP resource_manager
 ) {
 	basic::datacache::DataMap data; // abstract objects, such as scorefunctions, to be used by filter and movers
+	return generate_mover_for_protocol(tag, options, data, current_input_name,
+		current_output_name, xml_objects, resource_manager);
+}
 
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_for_protocol(
+	TagCOP tag,
+	utility::options::OptionCollection const & options,
+	basic::datacache::DataMap & data,
+	std::string const & current_input_name /* = "" */,
+	std::string const & current_output_name /* = "" */,
+	XmlObjectsOP xml_objects,
+	basic::resource_manager::ResourceManagerOP resource_manager
+) {
 	initialize_data_map( data, options );
 
 	// Set the names for this job -- the input names and the output names

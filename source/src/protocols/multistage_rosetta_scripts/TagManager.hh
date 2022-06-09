@@ -109,7 +109,8 @@ public:
 	);
 
 	ParsedTagCacheOP generate_data_for_input_pose_id(
-		jd3::PrelimJobNodeID input_pose_id
+		jd3::PrelimJobNodeID input_pose_id,
+		jd3::NStructIndex nstruct_ind
 	);
 
 	std::vector< TagListOP > const & tag_list_for_input_pose_id() const {

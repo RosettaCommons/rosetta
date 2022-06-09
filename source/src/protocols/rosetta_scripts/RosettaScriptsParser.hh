@@ -262,6 +262,26 @@ public:
 	///
 	///@details
 	///
+	/// Load the datamap with the predefined object,
+	/// then go through tags, generating object and the ParsedProtocol Mover.
+	/// READS from LOCAL OptionCollection.
+	ParsedProtocolOP
+	generate_mover_for_protocol(
+		utility::tag::TagCOP protocol_tag,
+		utility::options::OptionCollection const & options,
+		basic::datacache::DataMap & data,
+		std::string const & current_input_name = "",
+		std::string const & current_output_name = "",
+		XmlObjectsOP xml_objects = nullptr,
+		basic::resource_manager::ResourceManagerOP resource_manager = nullptr
+	);
+
+	///@brief
+	///
+	/// Create the ParsedProtocolMover for the protocol using a tag.
+	///
+	///@details
+	///
 	/// Uses the passed DataMap for passing to parse_my_tag.
 	/// This function does the heavy lifting.
 	///

@@ -614,6 +614,7 @@ static MoverRegistrator< simple_moves::SetupMetalsMoverCreator > reg_SetupMetals
 static MoverRegistrator< simple_moves::ShearMoverCreator > reg_ShearMoverCreator;
 static MoverRegistrator< simple_moves::ShortBackrubMoverCreator > reg_ShortBackrubMoverCreator;
 static MoverRegistrator< simple_moves::SimpleThreadingMoverCreator > reg_SimpleThreadingMoverCreator;
+static MoverRegistrator< simple_moves::SixDoFGridDockMoverCreator > reg_SixDoFGridDockMoverCreator;
 static MoverRegistrator< simple_moves::SmallMoverCreator > reg_SmallMoverCreator;
 static MoverRegistrator< simple_moves::StorePoseSnapshotCreator > reg_StorePoseSnapshotCreator;
 static MoverRegistrator< simple_moves::StructProfileMoverCreator > reg_StructProfileMoverCreator;

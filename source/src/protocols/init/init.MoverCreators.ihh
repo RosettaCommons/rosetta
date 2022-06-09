@@ -594,6 +594,7 @@
 #include <protocols/simple_moves/SetupMetalsMoverCreator.hh>
 #include <protocols/simple_moves/ShortBackrubMoverCreator.hh>
 #include <protocols/simple_moves/SimpleThreadingMoverCreator.hh>
+#include <protocols/simple_moves/SixDoFGridDockMoverCreator.hh>
 #include <protocols/simple_moves/StorePoseSnapshotCreator.hh>
 #include <protocols/simple_moves/StructProfileMoverCreator.hh>
 #include <protocols/simple_moves/SuperimposeMoverCreator.hh>

@@ -73,6 +73,7 @@
 
 #include <protocols/jd3/output/OutputSpecification.hh> // AUTO IWYU For OutputSpecification
 
+
 static basic::Tracer TR( "protocols.multistage_rosetta_scripts.MRSJobQueen" );
 
 using namespace utility;
@@ -284,7 +285,11 @@ MRSJobQueen::complete_larval_job_maturation(
 	msp_job->set_pose( pose );
 	msp_job->set_cluster_metric_tag( cluster_metric_tag_for_stage_[ stage ] );
 
-	ParsedTagCacheOP const data_for_job = tag_manager_.generate_data_for_input_pose_id( jd3::PrelimJobNodeID( input_pose_id ) );
+	ParsedTagCacheOP const data_for_job = tag_manager_.generate_data_for_input_pose_id(
+		jd3::PrelimJobNodeID( input_pose_id ),
+		job->nstruct_index()
+	);
+
 	msp_job->parse_my_tag(
 		tag_for_stage_[ stage ],
 		data_for_job
@@ -1026,7 +1031,10 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 		TR << "Confirming validity of tags for input job " << ii << std::endl;
 
 		ParsedTagCacheOP const data_for_job =
-			tag_manager_.generate_data_for_input_pose_id( PrelimJobNodeID( ii ) );
+			tag_manager_.generate_data_for_input_pose_id(
+			PrelimJobNodeID( ii ),
+			NStructIndex(1)
+		);
 
 		short unsigned int stage_count = 0;
 		for ( utility::tag::TagCOP tag : tag_for_stage_ ) {
