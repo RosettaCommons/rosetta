@@ -431,7 +431,7 @@ AntibodyDesignMover::parse_my_tag(
 	mutate_framework_for_cluster_ = tag->getOption< bool >("mutate_framework_for_cluster", mutate_framework_for_cluster_);
 
 	//Epitope Constraints
-	tag->getOption<bool>("use_epitope_csts", use_epitope_constraints_);
+	use_epitope_constraints_ = tag->getOption<bool>("use_epitope_csts", use_epitope_constraints_);
 	if ( use_epitope_constraints_ && tag->hasOption("epitope_residues") ) {
 		vector1<std::string> epitope_res_strings = utility::string_split_multi_delim(tag->getOption<std::string>("epitope_residues"), ",+;");
 		epitope_residues_ = protocols::antibody::design::get_pdb_numbering_from_strings(epitope_res_strings);
