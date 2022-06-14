@@ -356,7 +356,7 @@ void SliceResidueSelector::parse_my_tag(
 		set_slice_mode( slice_mode );
 	}
 	if ( tag->hasOption( "oob_mode" ) ) {
-		std::string str_mode = tag->getOption< std::string >( "slice_mode" );
+		std::string str_mode = tag->getOption< std::string >( "oob_mode" );
 		slice_enums::OutOfBoundsMode oob_mode = slice_enums::ERROR;
 		if ( str_mode == "ERROR" ) {
 			oob_mode = slice_enums::ERROR;
