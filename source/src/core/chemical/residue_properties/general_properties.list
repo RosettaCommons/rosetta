@@ -180,6 +180,7 @@ AMINO_SUGAR
 ACETYLAMINO_SUGAR  # specific for N-acetylations
 GLYCOLYLAMINO_SUGAR  # specific for N-acetylations
 ACETYL_SUGAR  # specific for O-acetylations
+BUTYRYL_SUGAR # addition of butyryl patch to O6
 LACTYL_SUGAR  # specific for O-lactylations
 R3PRIMEHYDROXYBUTYRYLAMINO_SUGAR
 PHOSPHORYLATED_SUGAR

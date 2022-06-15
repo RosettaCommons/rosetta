@@ -4,6 +4,7 @@
 # Modification Name     Full Name     Implies  Affix  (no position)  Position      Position  End Suffix  Suffix     Word/Phrase
   amino_sugar           amino         deoxy    N      NH3+                  2             0  ose         oside      N/A
   acetyl_sugar          acetyl        N/A      Ac     Ac                    5             0  ose         oside      N/A
+  butyryl_sugar         butyryl        N/A      Bu     Bu                   6             0  ose         oside      N/A
   acetylamino_sugar     acetylamino   deoxy    NAc    AcNH                  2             0  ose         oside      N/A
   glycolyl_sugar        glycolyl      N/A      Gc     Gc                    5             0  ose         oside      N/A
   glycolylamino_sugar   glycolylamino deoxy    NGc    GcNH                  2             0  ose         oside      N/A

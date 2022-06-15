@@ -92,7 +92,7 @@ main( int argc, char *argv[] )
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
 			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
 			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, propargyl_sugar, lactyl_sugar, ligand_sugar,
-			methyl_sugar, glycolylamino_sugar, thio_sugar, phosphorylated_sugar, pdb_code_pdb, bad_pdb, sucrose, trehalose;
+			methyl_sugar, glycolylamino_sugar, thio_sugar, phosphorylated_sugar, pdb_code_pdb, bad_pdb, sucrose, trehalose, butyryl_sugar;
 
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -398,6 +398,14 @@ main( int argc, char *argv[] )
 		make_pose_from_saccharide_sequence( Ac_sugar, "alpha-d-Glcp6Ac", *residue_set );
 
 		test_sugar( Ac_sugar );
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating an O-butyrylated sugar from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( butyryl_sugar, "alpha-d-Glcp6Bu", *residue_set );
+
+		test_sugar( butyryl_sugar );
+
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

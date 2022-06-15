@@ -1,0 +1,93 @@
+## full-atom 6-butyryl sugar patch
+
+NAME 6-Bu
+TYPES O6_BUTYRYL_SUGAR
+
+##if statement, proceed if true
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT UPPER_ATOM O6
+NOT VARIANT_TYPE C6_BRANCH_POINT
+NOT PROPERTY C6_MODIFIED
+END_SELECTOR
+
+##real patch modification begins here
+BEGIN_CASE
+
+# First, make the H invisible.
+SET_ATOM_TYPE HO6 VIRT
+SET_MM_ATOM_TYPE HO6 VIRT
+SET_ATOMIC_CHARGE HO6 0.00
+
+# Next, change the oxygen atom type
+SET_ATOM_TYPE  O6  OOC  # We really need an ester atom type in Rosetta.
+SET_MM_ATOM_TYPE  O6   OS
+SET_ATOMIC_CHARGE  O6  -0.34
+
+# Next, add the new atoms 
+ADD_ATOM  CO6 CObb C          0.11 #or CD based on Charmm27; Charmm22 possibly C
+ADD_ATOM CAO6  CH2          CT2    -0.08
+ADD_ATOM CBO6     CH2       CT2    -0.18  #CH2 coding got from N5-glycolylation
+ADD_ATOM CCO6     CH3       CT3    -0.27 #took CH3 code from O3 methylation
+ADD_ATOM OCO6     OCbb O         0        # O for Charmm27 coding but may not work due to older version of Charmm22; Ocbb stands for Carbonyl oxygen with carbon back bone.
+ADD_ATOM 1HA6 Hapo HA   0.09   
+ADD_ATOM 2HA6 Hapo HA   0.09
+ADD_ATOM 1HB6 Hapo HA   0.09   
+ADD_ATOM 2HB6 Hapo HA   0.09
+ADD_ATOM 1HC6 Hapo HA   0.09   
+ADD_ATOM 2HC6 Hapo HA   0.09
+ADD_ATOM 3HC6 Hapo HA   0.09
+
+# Now, the bonds
+ADD_BOND  O6   CO6
+ADD_BOND_TYPE  CO6 OCO6 DOUBLE
+ADD_BOND  CO6 CAO6
+ADD_BOND CAO6 CBO6
+ADD_BOND CBO6 CCO6
+ADD_BOND CAO6 1HA6 
+ADD_BOND CAO6 2HA6
+ADD_BOND CBO6 1HB6
+ADD_BOND CBO6 2HB6
+ADD_BOND CCO6 1HC6 
+ADD_BOND CCO6 2HC6
+ADD_BOND CCO6 3HC6 
+
+#add additional chi bonds added in the patch
+#N+1 for last chi bond then 4 backbone atoms to measure torsion angles 
+ADD_CHI N+1  C6   O6   CO6  CAO6 
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  180 0
+
+ADD_CHI N+1  O6   CO6  CAO6  CBO6
+ADD_CHI_ROTAMER N    -60 0 #what are the zeros for?
+ADD_CHI_ROTAMER N    60 0
+ADD_CHI_ROTAMER N  180 0
+
+ADD_CHI N+1  CO6  CAO6  CBO6 CCO6 
+ADD_CHI_ROTAMER N    -60 0
+ADD_CHI_ROTAMER N    60 0
+ADD_CHI_ROTAMER N  180 0
+
+ADD_CHI N+1  CAO6  CBO6 CCO6 3HC6 
+ADD_CHI_ROTAMER N    -60 0
+ADD_CHI_ROTAMER N    60 0
+ADD_CHI_ROTAMER N  180 0
+
+SET_ICOOR  CO6 180.0   61.5   1.42   O6   C6   C5
+SET_ICOOR CAO6  180.0    55.7   1.50   CO6  O6 C6
+SET_ICOOR CBO6  180.0  71.8   1.55   CAO6  CO6  O6 
+SET_ICOOR CCO6  180.0   70.0  1.53   CBO6 CAO6 CO6 
+SET_ICOOR OCO6   0.0   62.1   1.24  CO6  O6   C6  
+SET_ICOOR 1HA6  +60.0   68.0  1.09  CAO6  CO6  O6 
+SET_ICOOR 2HA6   -60.0   71.3   1.11  CAO6  CO6  O6 
+SET_ICOOR 1HB6  +60.0   70.0   1.10 CBO6 CAO6  CO6 
+SET_ICOOR 2HB6  -60.0   70.6   1.10  CBO6 CAO6  CO6 
+SET_ICOOR 1HC6 -60.0   70.5   1.09  CCO6 CBO6 CAO6 
+SET_ICOOR 2HC6  +60.0   70.5   1.09  CCO6 CBO6 CAO6 
+SET_ICOOR 3HC6 180.0   70.5   1.09  CCO6 CBO6 CAO6 
+
+
+ADD_PROPERTY C6_MODIFIED
+ADD_PROPERTY BUTYRYL_SUGAR
+
+END_CASE
