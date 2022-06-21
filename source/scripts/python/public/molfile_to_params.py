@@ -1534,10 +1534,10 @@ and for visualizing exactly what was done to the ligand.
     # many depend on atom/bond variables set by earlier calls.
     infile_lc = infile.lower()
     if infile_lc.endswith(".mol2") or infile_lc.endswith(".mol2.gz"):
-        molfiles = list(read_tripos_mol2(infile, do_find_rings=False))
+        molfiles = read_tripos_mol2(infile, do_find_rings=False)
     elif infile_lc.endswith(".mol") or infile_lc.endswith(".mdl") or infile_lc.endswith(".sdf") or \
 			infile_lc.endswith(".mol.gz") or infile_lc.endswith(".mdl.gz") or infile_lc.endswith(".sdf.gz"):
-        molfiles = list(read_mdl_sdf(infile, do_find_rings=False))
+        molfiles = read_mdl_sdf(infile, do_find_rings=False)
     else:
         print("Unrecognized file type, must be .mol/.sdf or .mol2!")
         return 6

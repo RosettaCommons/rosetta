@@ -240,7 +240,7 @@ def read_mdl_molfile(f, do_find_rings=True):
 
     f may be a file name or file handle.'''
     if isinstance(f, str):
-        f = gz_open(f, 'r')
+        f = gz_open(f, 'rU')
         ret = read_mdl_molfile(f)
         f.close()
         return ret
@@ -344,18 +344,21 @@ def write_mdl_molfile(f, molfile):
 
 @file_or_filename
 def read_mdl_sdf(f, do_find_rings=True):
-    '''Lazily reads an sdf and returns an iterator over Molfile objects.
-    To get a list of all molfiles, do:  list(read_mdl_sdf(...))
-    To get just the first molfile, do:  next(read_mdl_sdf(...))
+    '''Reads an sdf and returns a list of Molfile objects.
 
     f may be a file name or file handle.'''
-    molfiles = 0
+    if isinstance(f, str):
+        f = gz_open(f, 'rU')
+        ret = read_mdl_sdf(f, do_find_rings)
+        f.close()
+        return ret
+    molfiles = []
     while True:
         molfile = read_mdl_molfile(f, do_find_rings)
         if molfile is None: break
-        molfiles += 1
-        yield molfile
-    if molfiles == 0: raise ValueError("no entries in SDF file")
+        molfiles.append(molfile)
+    if len(molfiles) == 0: raise ValueError("no entries in SDF file")
+    return molfiles
 
 def write_mdl_sdf(f, molfiles):
     '''Writes a list of Molfile objects to a file.
@@ -376,11 +379,14 @@ def write_mdl_sdf(f, molfiles):
 
 @file_or_filename
 def read_tripos_mol2(f, do_find_rings=True):
-    '''Lazily reads a mol2 and returns an iterator over Molfile objects.
-    To get a list of all molfiles, do:  list(read_tripos_mol2(...))
-    To get just the first molfile, do:  next(read_tripos_mol2(...))
+    '''Reads a mol2 and returns a list of Molfile objects.
 
     f may be a file name or file handle.'''
+    if isinstance(f, str):
+        f = gz_open(f, 'rU')
+        ret = read_tripos_mol2(f, do_find_rings)
+        f.close()
+        return ret
     # Line generator function to deal with comments and continuations
     line_num = [0] # stupid Python can't assign to outer variables!
     def read_mol2_lines(f):
@@ -403,14 +409,12 @@ def read_tripos_mol2(f, do_find_rings=True):
                     yield full_line
                     full_line = ""
     line_itr = read_mol2_lines(f)
-    molfile = None
+    molfiles = []
     mode = ""
     for line in line_itr:
         if line == "@<TRIPOS>MOLECULE":
-            if molfile is not None:
-                if do_find_rings: find_rings(molfile.bonds)
-                yield molfile
             molfile = Molfile()
+            molfiles.append(molfile)
             mode = line
             linecnt = 0
         elif line == "@<TRIPOS>ATOM":
@@ -440,7 +444,7 @@ def read_tripos_mol2(f, do_find_rings=True):
                 try:
                     atom.rsd_id = int(f[6])
                 except ValueError:
-                    # Pymol produced mol2 files don't conform to the standard - ignore its error gracefully
+                    print("Pymol produced mol2 files don't conform to the standard - ignore its error gracefully")
                     f = f[:6]
             if len(f) >= 8:
                 atom.rsd_name = f[7]
@@ -466,10 +470,10 @@ def read_tripos_mol2(f, do_find_rings=True):
             molfile.bonds.append(bond)
         else:
             molfile.footer.append(line+"\n")
-    if molfile is not None:
-        if do_find_rings: find_rings(molfile.bonds)
-        yield molfile
-    else: raise ValueError("no entries in MOL2 file")
+    if len(molfiles) == 0: raise ValueError("no entries in MOL2 file")
+    if do_find_rings:
+        for molfile in molfiles: find_rings(molfile.bonds)
+    return molfiles
 
 def write_tripos_mol2(f, molfiles):
     '''Writes a list of Molfile objects to a file.
@@ -586,8 +590,8 @@ def uniquify_atom_names(atoms, force=False):
         atom_names.add(name)
     return True # names modified
 
-def main(argv):
-    ms = list(read_tripos_mol2("1aq1.mol2"))
+#def main(argv):
+    #ms = list(read_tripos_mol2("1aq1.mol2"))
     #write_mdl_sdf("tmp.sdf", ms)
     #m = read_mdl_molfile("1aq1_ligand.mol")
     #for b in m.bonds: print b
@@ -596,5 +600,5 @@ def main(argv):
     #sort_for_rosetta(m)
     #write_mdl_molfile("tmp.mol", m)
 
-if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+#if __name__ == "__main__":
+    #sys.exit(main(sys.argv[1:]))
