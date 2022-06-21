@@ -1,0 +1,24 @@
+-out:level 300
+-mute all_high_mpi_rank_filebuf
+-out:nstruct 4
+-run:n_replica 1
+
+-in:file:s P.pdb
+-in:file:native native.pdb
+-parser:protocol dock.xml
+-evaluation:DockMetrics
+-DockMetrics true
+
+-score:weights ref2015
+-partners A_B
+
+-out::file::output_pose_cache_data false
+-out:path:all output
+-out:file:silent decoys.out
+-out:file:scorefile scores.fsc
+-run:intermediate_structures
+
+-out:mpi_tracer_to_file logs/log
+-jd2:mpi_timeout_factor 0
+
+-multiple_processes_writing_to_one_directory

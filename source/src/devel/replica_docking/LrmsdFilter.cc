@@ -136,6 +136,19 @@ LrmsdFilter::jump( core::Size const jump_id )
 
 core::Real
 LrmsdFilter::compute( core::pose::Pose const & pose ) const {
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( native_pose_ == nullptr ) {
+		if ( option[ in::file::native ].user() ) {
+			core::pose::PoseOP native_pose( utility::pointer::make_shared< core::pose::Pose >() );
+			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
+			native_pose_ = native_pose;
+		} else {
+			utility_exit_with_message("Need to specify native pdb with -in:file:native to calculate Irms.");
+		}
+	}
+
 	TR<<"compute Lrmsd"<< std::endl;
 
 	core::Real lrmsd = protocols::docking::calc_Lrmsd( pose, *native_pose_, movable_jumps_ );

@@ -179,6 +179,19 @@ CaIrmsdFilter::jump( core::Size const jump_id )
 
 core::Real
 CaIrmsdFilter::compute( core::pose::Pose const & pose ) const {
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( native_pose_ == nullptr ) {
+		if ( option[ in::file::native ].user() ) {
+			core::pose::PoseOP native_pose( utility::pointer::make_shared< core::pose::Pose >() );
+			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
+			native_pose_ = native_pose;
+		} else {
+			utility_exit_with_message("Need to specify native pdb with -in:file:native to calculate Irms.");
+		}
+	}
+
 	TR<<"compute Irms"<< std::endl;
 	core::Real irms = protocols::docking::calc_CA_Irmsd( pose, *native_pose_, scorefxn_, movable_jumps_ );
 	return( irms );

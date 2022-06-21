@@ -1,0 +1,6 @@
+GRID_DIM 1
+GLOBAL_PATCH atom_pair_constraint = 5
+1 1.0 muds_2021 NOPATCH fa_rep *= 1.0
+2 2.0 muds_2021 NOPATCH fa_rep *= 0.75
+3 3.0 muds_2021 NOPATCH fa_rep *= 0.5
+#ETABLE FA_STANDARD_SOFT10 fa_rep *= 1.1

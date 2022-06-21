@@ -1,0 +1,47 @@
+<ROSETTASCRIPTS>
+<SCOREFXNS>
+    <ScoreFunction name="score_dock_low" weights="ref2015"/>
+</SCOREFXNS>
+<FILTERS>
+</FILTERS>
+<RESIDUE_SELECTORS>
+    <Chain name="chA" chains="A" />
+    <Chain name="chB" chains="B" />
+    <Neighborhood name="chA_neighbours" selector="chA" distance="8.0"/>
+    <Neighborhood name="chB_neighbours" selector="chB" distance="8.0"/>
+    <And name="interfaceA" selectors="chB_neighbours,chA"/>
+    <And name="interfaceB" selectors="chA_neighbours,chB"/>
+    <Or name="interfaceAB" selectors="interfaceA,interfaceB"/>
+</RESIDUE_SELECTORS>
+<MOVE_MAP_FACTORIES>
+    <MoveMapFactory name="Interface">
+            <Backbone residue_selector="interfaceAB"/>
+            <Chi residue_selector="interfaceAB"/>
+    </MoveMapFactory>
+</MOVE_MAP_FACTORIES>
+<SIMPLE_METRICS>
+</SIMPLE_METRICS>
+<MOVERS>
+    <DockSetupMover name="setup_jump"/>
+    <AddEncounterConstraintMover name="encounter_cst" gap="8" />
+    <RigidBodyPerturbNoCenter name="rb_mover" rot_mag="2" trans_mag="2"/>
+    <HamiltonianExchange name="h_exchange" temp_file="hamiltonians_cen.txt"  temp_stride="1000" stats_file="tempering.stats"/>
+    <DockingInitialPerturbation name="init_pert" slide="1" />
+    <TrialCounterObserver name="count" file="trial.stats"/>
+    <SilentTrajectoryRecorder name="traj" score_stride="1" stride="1000" cumulate_replicas="1" />
+    <Backrub name="bbmover" movemap_factory="Interface" max_angle_disp_4="3.1" max_angle_disp_7="3.0" max_angle_disp_slope="-0.5" require_mm_bend="0"/>
+    <MetropolisHastings name="sampler" trials="1000" scorefxn="score_dock_low" > <!--trial number normally use 10000000 for productive simulation-->
+        <Add mover_name="h_exchange"/>
+        <Add mover_name="traj"/>
+        <Add mover_name="count"/>
+        <Add mover_name="rb_mover"/>
+	<Add mover_name="bbmover"/>
+    </MetropolisHastings>
+ </MOVERS>
+ <PROTOCOLS>
+     <Add mover_name="setup_jump"/>
+     <Add mover_name="encounter_cst"/>
+     <Add mover_name="init_pert"/>
+     <Add mover_name="sampler"/>
+</PROTOCOLS>
+</ROSETTASCRIPTS>
