@@ -937,7 +937,7 @@ get_scores_as_json(
 
 void
 run_single_iteration(
-    MutationSet mutations, 
+    MutationSet & mutations, 
     core::pose::Pose & work_pose, 
     core::scoring::ScoreFunctionOP score_fxn,
     const core::Size round,

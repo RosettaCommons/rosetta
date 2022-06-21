@@ -219,7 +219,7 @@ interface_separate_and_score(
 ///@brief Runs a single mutation optimization and reporting iteration.
 void
 run_single_iteration(
-    MutationSet mutations,
+    MutationSet & mutations,
     core::pose::Pose & work_pose,
     core::scoring::ScoreFunctionOP score_fxn,
     const core::Size round,
