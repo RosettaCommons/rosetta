@@ -135,17 +135,17 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
     elem_atom_num = {'B':5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'NA': 11, 'MG': 12, 'P':15, 'S':16, 'CL':17, 'K':19, 'CA':20,
                      'FE':26, 'ZN':30, 'BR':35, 'I':53, 'SE':34, 'X':-1}
     # find alpha carbon or the ""alpha nitrogen" for peptoids (still called ca_index below)
-    print "PEPTOID" , peptoid
+    #print "PEPTOID" , peptoid
     if peptoid:
         for ca_index, atom in enumerate(atoms):
             if atom.poly_n_bb:
-                print atom
+                #print atom
                 break
     else:
         for ca_index, atom in enumerate(atoms):
             if atom.poly_ca_bb:
                 break
-    print "CA or NA index is %d" % ca_index
+    #print "CA or NA index is %d" % ca_index
     # assign heavy atom and hydrogen pdb_elem
     for atom in atoms:
         atom.pdb_elem = atom.elem
@@ -162,15 +162,15 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
         all_all_dist[i] = dijkstra( start = atoms[i], nodes = atoms, nbr = lambda a: nbrs[a], dist = path_dist )
     #print "ALL TO ALL DIST"
     #debug
-    for i,a in enumerate(atoms):
-        print a, all_all_dist[i]
+    #for i,a in enumerate(atoms):
+        #print a, all_all_dist[i]
     #print "ALL TO ALL DIST CA INDEX"
     #print all_all_dist[ca_index] #DEBUG
     for i, a in enumerate(atoms):
         if peptoid:
             if not a.is_H and not a.poly_ignore and not a.poly_n_bb and not a.poly_c_bb and not a.poly_o_bb and not a.poly_upper and not a.poly_lower:
-                print "ATOM: ", a
-                print "DISTANCE: %f" % (all_all_dist[ca_index][i]-1) 
+                #print "ATOM: ", a
+                #print "DISTANCE: %f" % (all_all_dist[ca_index][i]-1) 
                 a.pdb_greek_dist = greek_alphabet[all_all_dist[ca_index][i]-1]
         else:
             if not a.is_H and not a.poly_ignore and not a.poly_backbone:
@@ -195,11 +195,11 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
                 index = k+1
                 atoms[t].pdb_postfix_num = "%d" % index
     #debug
-    for a in atoms:
-        if a.poly_ca_bb:
-            print "DEBUG CA_BB: ", a, ":", a.pdb_prefix_num, ":", a.pdb_elem, ":", a.pdb_greek_dist, ":", a.pdb_postfix_num
-            for b in a.bonds:
-                print b
+    #for a in atoms:
+        #if a.poly_ca_bb:
+            #print "DEBUG CA_BB: ", a, ":", a.pdb_prefix_num, ":", a.pdb_elem, ":", a.pdb_greek_dist, ":", a.pdb_postfix_num
+            #for b in a.bonds:
+                #print b
     # assign hydrogen pdb_greek_dist and pdb_postfix_num
     for a in atoms:
         if a.is_H and not a.poly_c_bb:
@@ -224,10 +224,10 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
     for a in atoms:
         a.pdb_name = a.pdb_prefix_num + a.pdb_elem + a.pdb_greek_dist + a.pdb_postfix_num
     #debug
-    for a in atoms:
-        if a.poly_ca_bb:
-            for b in a.bonds:
-                print "DEBUG: ", b.a2.pdb_name
+    #for a in atoms:
+        #if a.poly_ca_bb:
+            #for b in a.bonds:
+                #print "DEBUG: ", b.a2.pdb_name
 
 def polymer_reorder_atoms(molfile):
     ''' Reorders the atoms acording to the pdb ordering so that the order of the internal coords is correct '''

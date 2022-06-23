@@ -163,7 +163,7 @@ and for visualizing exactly what was done to the ligand.
 
     m = molfiles[0]
     #m = molfiles
-    print(m)
+    #print(m)
 
     ctr = r3.Triple()
     if args.centroid != None:
@@ -284,10 +284,10 @@ and for visualizing exactly what was done to the ligand.
 
             # m is used for names, molfile is used for XYZ
             write_ligand_pdb(pdb_file, m, molfile, args.name, ctr)
-            print "Wrote PDB file %s" % pdb_file
+            print "Wrote PDB file %s" % pdb_file_name
 
         # Append PDB_ROTAMERS file to params
-        if args.use_pdb_rotamers and args.use_parent_rotamers is None:
+        if args.use_pdb_rotamers == True and args.use_parent_rotamers is None:
             print("Using PDB rotamers")
             if num_frags == 1: param_file = "%s.params" % args.name
             else: param_file = "%s%i.params" % (args.pdb, i+1)

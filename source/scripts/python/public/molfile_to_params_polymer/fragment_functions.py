@@ -267,7 +267,7 @@ def calc_internal_coords(child, input_stub1, input_stub2, input_stub3):
             #print "WARNING: nearly parallel theta=%f for %s" % (theta, child.name)
             phi = 0.0
         else:
-            print("PHI: " + child.pdb_name + " " + input_stub1.pdb_name + " " + input_stub2.pdb_name + " " + input_stub3.pdb_name)
+            #print("PHI: " + child.pdb_name + " " + input_stub1.pdb_name + " " + input_stub2.pdb_name + " " + input_stub3.pdb_name)
             phi = r3.dihedral(child, input_stub1, input_stub2, input_stub3)
     return (d, theta, phi)
 

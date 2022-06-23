@@ -3,7 +3,7 @@ cd %(workdir)s
 [ -x %(pyapps)s/public/molfile_to_params_polymer.py ] || exit 1
 
 for f in *.sdf; do
-    %(python2)s %(pyapps)s/public/molfile_to_params_polymer.py --clobber --all-in-one-pdb --name $(basename $f) -i $f >> log 2>&1 
+    %(python2)s %(pyapps)s/public/molfile_to_params_polymer.py --clobber --all-in-one-pdb --name $(basename $f .sdf) -i $f --use-pdb-rotamers >> log 2>&1 
     
     test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 done

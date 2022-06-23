@@ -399,7 +399,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     if not peptoid:
         for bond, a, b, c, d in rot_bond_iter(sorted_bonds):
             if a.poly_upper == False and b.poly_upper == False and c.poly_upper == False and d.poly_upper == False and a.poly_lower == False and b.poly_lower == False and c.poly_lower == False and d.poly_lower == False:
-                print d.poly_n_bb, d.pdb_name, c.pdb_name, b.pdb_name, a.pdb_name
+                #print d.poly_n_bb, d.pdb_name, c.pdb_name, b.pdb_name, a.pdb_name
                 if not d.poly_n_bb:
                     sorted_bonds.reverse()
                     print "REVERSED!!!"
@@ -492,7 +492,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
         if a.poly_o_bb == True: obb = a
         if a.poly_upper == True: upper = a
         if a.poly_lower == True: lower = a
-    print(nbb)
+    #print(nbb)
 
     # For writing the pdb names of atoms used to compute internal coords
     nbb.input_stub1,  nbb.input_stub2,  nbb.input_stub3  = nbb, cabb, cbb
@@ -516,7 +516,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
 
     def write_icoords(a):
         if not a.poly_n_bb and not a.poly_ca_bb and not a.poly_c_bb and not a.poly_upper and not a.poly_o_bb:
-            print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (a.pdb_name, a.phi, a.theta, a.d, a.input_stub1.pdb_name, a.input_stub2.pdb_name, a.input_stub3.pdb_name))
+            #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (a.pdb_name, a.phi, a.theta, a.d, a.input_stub1.pdb_name, a.input_stub2.pdb_name, a.input_stub3.pdb_name))
             f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (a.pdb_name, a.phi, a.theta, a.d, a.input_stub1.pdb_name, a.input_stub2.pdb_name, a.input_stub3.pdb_name));
         for child in a.children:
             if not child.poly_ignore:
@@ -524,11 +524,11 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
 
     # Reporting 
     print("WRITING ICOOR_INTERNAL: ")
-    print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (nbb.pdb_name, nbb.phi, nbb.theta, nbb.d, nbb.input_stub1.pdb_name, nbb.input_stub2.pdb_name, nbb.input_stub3.pdb_name))
-    print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (cabb.pdb_name, cabb.phi, cabb.theta, cabb.d, cabb.input_stub1.pdb_name, cabb.input_stub2.pdb_name, cabb.input_stub3.pdb_name))
-    print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (cbb.pdb_name, cbb.phi, cbb.theta, cbb.d, cbb.input_stub1.pdb_name, cbb.input_stub2.pdb_name, cbb.input_stub3.pdb_name))
-    print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (upper.pdb_name, upper.phi, upper.theta, upper.d, upper.input_stub1.pdb_name, upper.input_stub2.pdb_name, upper.input_stub3.pdb_name))
-    print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (obb.pdb_name, obb.phi, obb.theta, obb.d, obb.input_stub1.pdb_name, obb.input_stub2.pdb_name, obb.input_stub3.pdb_name))
+    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (nbb.pdb_name, nbb.phi, nbb.theta, nbb.d, nbb.input_stub1.pdb_name, nbb.input_stub2.pdb_name, nbb.input_stub3.pdb_name))
+    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (cabb.pdb_name, cabb.phi, cabb.theta, cabb.d, cabb.input_stub1.pdb_name, cabb.input_stub2.pdb_name, cabb.input_stub3.pdb_name))
+    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (cbb.pdb_name, cbb.phi, cbb.theta, cbb.d, cbb.input_stub1.pdb_name, cbb.input_stub2.pdb_name, cbb.input_stub3.pdb_name))
+    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (upper.pdb_name, upper.phi, upper.theta, upper.d, upper.input_stub1.pdb_name, upper.input_stub2.pdb_name, upper.input_stub3.pdb_name))
+    #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (obb.pdb_name, obb.phi, obb.theta, obb.d, obb.input_stub1.pdb_name, obb.input_stub2.pdb_name, obb.input_stub3.pdb_name))
 
     # Writing
     f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n" % (nbb.pdb_name, nbb.phi, nbb.theta, nbb.d, nbb.input_stub1.pdb_name, nbb.input_stub2.pdb_name, nbb.input_stub3.pdb_name));
