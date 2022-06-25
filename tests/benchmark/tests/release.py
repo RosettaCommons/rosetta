@@ -211,15 +211,16 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     release_path = '{}/rosetta/archive/{}/source/'.format(config['release_root'], config['branch'])  # , platform['os']
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
-    execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git . && git add *'.format(**vars()))
+    execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git . && git add --force *'.format(**vars()))
     #execute('Adding Binder submodule...', 'cd {working_dir}/{git_repository_name} && git submodule add https://github.com/RosettaCommons/binder.git main/source/src/python/PyRosetta/binder && git submodule update --init --recursive'.format(**vars()))
     #execute('Setting Binder submodule SHA1...', 'cd {working_dir}/{git_repository_name}/main/source/src/python/PyRosetta/binder && git checkout {binder_sha1}'.format(**vars()))
     execute('Commiting new release...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{release_name}"'.format(**vars()))
 
-    execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
-    execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
-    execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
-    execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./test/run.py --compiler={compiler} -j{jobs} --mute all'.format(**vars()))  # ignoring --extras={extras}
+    if not debug:
+        execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
+        execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
+        execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
+        execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./test/run.py --compiler={compiler} -j{jobs} --mute all'.format(**vars()))  # ignoring --extras={extras}
 
     # We moving archive and pushing new revision to upstream only *after* all test runs passed
     shutil.move(archive, release_path+release_name+'.tar.bz2')
@@ -668,20 +669,21 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                     version = version['version'],
                 ),
                 requirements = dict(
-                    build = [f'python =={platform["python"]}'],
-                    host  = [f'python =={platform["python"]}', 'setuptools', 'zlib'],
+                    build = [f'python {platform["python"]}'],
+                    host  = [f'python {platform["python"]}', 'setuptools', 'zlib'],
                     #run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
-                    run   = [f'python =={platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True),
+                    run   = [f'python {platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True),
                 ),
 
                 about = dict( home ='http://www.pyrosetta.org' ),
             )
 
-            if python_version_as_tuple < (3, 9):
-                recipe['test'] = dict(
-                    requires = [f'python =={platform["python"]}'],
-                    commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke']
-                )
+            # now tested in T900_distributed.py
+            # if python_version_as_tuple < (3, 9):
+            #     recipe['test'] = dict(
+            #         requires = [f'python {platform["python"]}'],
+            #         commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke']
+            #     )
 
             with open( recipe_dir + '/meta.yaml', 'w' ) as f: json.dump(recipe, f, sort_keys=True, indent=2)
 
@@ -870,9 +872,9 @@ def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfor
             version = version['version'],
         ),
         requirements = dict(
-            build = [f'python =={platform["python"]}', 'gcc', "{{ compiler('c') }}", "{{ compiler('cxx') }}", ], # 'cmake', 'ninja'
-            host  = [f'python =={platform["python"]}', 'setuptools', 'numpy', 'zlib'],
-            run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
+            build = [f'python {platform["python"]}', 'gcc', "{{ compiler('c') }}", "{{ compiler('cxx') }}", ], # 'cmake', 'ninja'
+            host  = [f'python {platform["python"]}', 'setuptools', 'numpy', 'zlib'],
+            run   = [f'python {platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
         ),
 
         about = dict( home ='http://www.pyrosetta.org' ),

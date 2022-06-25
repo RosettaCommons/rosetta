@@ -918,7 +918,7 @@ def generate_version_information(rosetta_dir, **kwargs):
 
 def _get_path_to_conda_root(platform, config):
     ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
-        this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` below
+        this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` defined below
     '''
     miniconda_sources = {
         'mac'    : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh',
