@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/simple_metrics/metrics/CustomStringValueMetric.cc
-/// @brief A simple metric that allows an arbitrary, user- or developer-set string to be cached in a pose.
+/// @file core/simple_metrics/metrics/CustomRealValueMetric.cc
+/// @brief A simple metric that allows an arbitrary, user- or developer-set floating-point value to be cached in a pose.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 // Unit headers
-#include <core/simple_metrics/metrics/CustomStringValueMetric.hh>
-#include <core/simple_metrics/metrics/CustomStringValueMetricCreator.hh>
+#include <core/simple_metrics/metrics/CustomRealValueMetric.hh>
+#include <core/simple_metrics/metrics/CustomRealValueMetricCreator.hh>
 
 // Core headers
 #include <core/simple_metrics/RealMetric.hh>
@@ -26,7 +26,6 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // XSD Includes
@@ -40,7 +39,7 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-static basic::Tracer TR( "core.simple_metrics.metrics.CustomStringValueMetric" );
+static basic::Tracer TR( "core.simple_metrics.metrics.CustomRealValueMetric" );
 
 
 namespace core {
@@ -52,68 +51,68 @@ namespace metrics {
 /////////////////////
 
 /// @brief Default constructor
-CustomStringValueMetric::CustomStringValueMetric():
-	core::simple_metrics::StringMetric()
+CustomRealValueMetric::CustomRealValueMetric():
+	core::simple_metrics::RealMetric()
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-CustomStringValueMetric::CustomStringValueMetric( CustomStringValueMetric const &  ) = default;
+CustomRealValueMetric::CustomRealValueMetric( CustomRealValueMetric const &  ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-CustomStringValueMetric::~CustomStringValueMetric(){}
+CustomRealValueMetric::~CustomRealValueMetric(){}
 
 core::simple_metrics::SimpleMetricOP
-CustomStringValueMetric::clone() const {
-	return core::simple_metrics::SimpleMetricOP(new CustomStringValueMetric( *this ) );
+CustomRealValueMetric::clone() const {
+	return utility::pointer::make_shared< CustomRealValueMetric >( *this );
 
 }
 
 std::string
-CustomStringValueMetric::name() const {
+CustomRealValueMetric::name() const {
 	return name_static();
 }
 
 std::string
-CustomStringValueMetric::name_static() {
-	return "CustomStringValueMetric";
+CustomRealValueMetric::name_static() {
+	return "CustomRealValueMetric";
 
 }
 std::string
-CustomStringValueMetric::metric() const {
-	return get_custom_type().empty() ? "custom_string_valued_metric" : get_custom_type();
+CustomRealValueMetric::metric() const {
+	return get_custom_type().empty() ? "custom_real_valued_metric" : get_custom_type();
 }
 
 void
-CustomStringValueMetric::parse_my_tag(
+CustomRealValueMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &  )
 {
 	SimpleMetric::parse_base_tag( tag );
-	set_value( tag->getOption< std::string >( "value", "" ) );
+	set_value( tag->getOption< core::Real >( "value", 0.0 ) );
 }
 
 void
-CustomStringValueMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+CustomRealValueMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	using namespace core::select::residue_selector;
 
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::attribute_w_default("value", xs_string, "The custom string to cache in the pose.", "");
+	attlist + XMLSchemaAttribute::attribute_w_default("value", xsct_real, "The custom floating-point value to cache in the pose.", "");
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
-		"A metric for caching an arbitrary, user-defined string in a pose.", attlist);
+		"A metric for caching an arbitrary, user-defined floating-point value in a pose.", attlist);
 }
 
 /// @brief Provide the citation.
 void
-CustomStringValueMetric::provide_citation_info(
+CustomRealValueMetric::provide_citation_info(
 	basic::citation_manager::CitationCollectionList & citations
 ) const {
 	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
-		"CustomStringValueMetric", basic::citation_manager::CitedModuleType::SimpleMetric,
+		"CustomRealValueMetric", basic::citation_manager::CitedModuleType::SimpleMetric,
 		"Vikram K. Mulligan",
 		"Systems Biology Group, Center for Computational Biology, Flatiron Institute",
 		"vmulligan@flatironinstitute.org"
@@ -121,24 +120,24 @@ CustomStringValueMetric::provide_citation_info(
 	);
 }
 
-std::string
-CustomStringValueMetric::calculate(const core::pose::Pose & ) const {
+core::Real
+CustomRealValueMetric::calculate(const core::pose::Pose & ) const {
 	return value_;
 }
 
 void
-CustomStringValueMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
-	CustomStringValueMetric::provide_xml_schema( xsd );
+CustomRealValueMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	CustomRealValueMetric::provide_xml_schema( xsd );
 }
 
 std::string
-CustomStringValueMetricCreator::keyname() const {
-	return CustomStringValueMetric::name_static();
+CustomRealValueMetricCreator::keyname() const {
+	return CustomRealValueMetric::name_static();
 }
 
 core::simple_metrics::SimpleMetricOP
-CustomStringValueMetricCreator::create_simple_metric() const {
-	return core::simple_metrics::SimpleMetricOP( new CustomStringValueMetric );
+CustomRealValueMetricCreator::create_simple_metric() const {
+	return utility::pointer::make_shared< CustomRealValueMetric >();
 }
 
 } //core
@@ -152,23 +151,23 @@ CustomStringValueMetricCreator::create_simple_metric() const {
 
 template< class Archive >
 void
-core::simple_metrics::metrics::CustomStringValueMetric::save( Archive & arc ) const {
-	arc( cereal::base_class< core::simple_metrics::StringMetric>( this ) );
+core::simple_metrics::metrics::CustomRealValueMetric::save( Archive & arc ) const {
+	arc( cereal::base_class< core::simple_metrics::RealMetric>( this ) );
 	arc( CEREAL_NVP( value_ ) );
 
 }
 
 template< class Archive >
 void
-core::simple_metrics::metrics::CustomStringValueMetric::load( Archive & arc ) {
-	arc( cereal::base_class< core::simple_metrics::StringMetric >( this ) );
+core::simple_metrics::metrics::CustomRealValueMetric::load( Archive & arc ) {
+	arc( cereal::base_class< core::simple_metrics::RealMetric >( this ) );
 	arc( value_ );
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::simple_metrics::metrics::CustomStringValueMetric );
-CEREAL_REGISTER_TYPE( core::simple_metrics::metrics::CustomStringValueMetric )
+SAVE_AND_LOAD_SERIALIZABLE( core::simple_metrics::metrics::CustomRealValueMetric );
+CEREAL_REGISTER_TYPE( core::simple_metrics::metrics::CustomRealValueMetric )
 
-CEREAL_REGISTER_DYNAMIC_INIT( core_simple_metrics_metrics_CustomStringValueMetric )
+CEREAL_REGISTER_DYNAMIC_INIT( core_simple_metrics_metrics_CustomRealValueMetric )
 #endif // SERIALIZATION
 
 

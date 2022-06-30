@@ -22,6 +22,8 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::CalculatorMetricC
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::CustomStringValueMetricCreator > reg_CustomStringValueMetricCreator;
 
+static SimpleMetricRegistrator< core::simple_metrics::metrics::CustomRealValueMetricCreator > reg_CustomRealValueMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::DihedralDistanceMetricCreator > reg_DihedralDistanceMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::InteractionEnergyMetricCreator > reg_InteractionEnergyMetricCreator;

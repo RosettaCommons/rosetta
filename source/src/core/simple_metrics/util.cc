@@ -87,12 +87,7 @@ complex_type_name_for_simple_metric( std::string const & simple_metric_name){
 
 bool
 has_sm_data( core::pose::Pose const & pose ){
-	using namespace basic::datacache;
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA ) ) {
-		return true;
-	} else {
-		return false;
-	}
+	return pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA );
 }
 
 void

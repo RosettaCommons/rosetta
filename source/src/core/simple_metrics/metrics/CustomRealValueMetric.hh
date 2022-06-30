@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/simple_metrics/metrics/CustomStringValueMetric.hh
-/// @brief A simple metric that allows an arbitrary, user- or developer-set string to be cached in a pose.
+/// @file core/simple_metrics/metrics/CustomRealValueMetric.hh
+/// @brief A simple metric that allows an arbitrary, user- or developer-set floating-point value to be cached in a pose.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
-#ifndef INCLUDED_core_simple_metrics_metrics_CustomStringValueMetric_HH
-#define INCLUDED_core_simple_metrics_metrics_CustomStringValueMetric_HH
+#ifndef INCLUDED_core_simple_metrics_metrics_CustomRealValueMetric_HH
+#define INCLUDED_core_simple_metrics_metrics_CustomRealValueMetric_HH
 
-#include <core/simple_metrics/metrics/CustomStringValueMetric.fwd.hh>
-#include <core/simple_metrics/StringMetric.hh>
+#include <core/simple_metrics/metrics/CustomRealValueMetric.fwd.hh>
+#include <core/simple_metrics/RealMetric.hh>
 
 // Core headers
 #include <core/types.hh>
@@ -32,8 +32,8 @@ namespace core {
 namespace simple_metrics {
 namespace metrics {
 
-///@brief A simple metric that allows an arbitrary, user- or developer-set string to be cached in a pose.
-class CustomStringValueMetric : public core::simple_metrics::StringMetric{
+///@brief A simple metric that allows an arbitrary, user- or developer-set floating-point value to be cached in a pose.
+class CustomRealValueMetric : public core::simple_metrics::RealMetric{
 
 public:
 
@@ -42,14 +42,13 @@ public:
 	/////////////////////
 
 	/// @brief Default constructor
-	CustomStringValueMetric();
+	CustomRealValueMetric();
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
-	CustomStringValueMetric( CustomStringValueMetric const & src );
+	CustomRealValueMetric( CustomRealValueMetric const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	~CustomStringValueMetric() override;
-
+	~CustomRealValueMetric() override;
 
 public:
 
@@ -57,23 +56,15 @@ public:
 	/// Metric Methods ///
 	/////////////////////
 
-	///Defined in StringMetric:
-	///
-	/// @brief Calculate the metric and add it to the pose as a score.
-	///           labeled as prefix+metric+suffix.
-	///
-	/// @details Score is added through setExtraScorePose and is output
-	///            into the score tables/file at pose output.
-	//void
-	//apply( core::pose::Pose & pose, prefix="", suffix="" ) override;
-
 	/// @brief Calculate the metric.
 	/// @details Returns the cached value.
-	std::string
-	calculate( core::pose::Pose const & pose ) const override;
+	core::Real
+	calculate(
+		core::pose::Pose const & pose
+	) const override;
 
 	/// @brief Set the value that we're going to cache in the pose.
-	inline void set_value( std::string const &value_in ) { value_ = value_in; }
+	inline void set_value( core::Real const value_in ) { value_ = value_in; }
 
 public:
 
@@ -96,11 +87,19 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	static
 	void
-	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	provide_xml_schema(
+		utility::tag::XMLSchemaDefinition & xsd
+	);
+
+	core::simple_metrics::SimpleMetricOP
+	clone() const override;
+
+public: //Functions needed for the citation manager
 
 	/// @brief Provide the citation.
 	void
@@ -108,13 +107,10 @@ public:
 		basic::citation_manager::CitationCollectionList & citations
 	) const override;
 
-	core::simple_metrics::SimpleMetricOP
-	clone() const override;
-
 private: //Data
 
 	/// @brief The cached value.
-	std::string value_;
+	core::Real value_ = 0.0;
 
 #ifdef    SERIALIZATION
 public:
@@ -129,10 +125,10 @@ public:
 } //metrics
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( core_simple_metrics_metrics_CustomStringValueMetric )
+CEREAL_FORCE_DYNAMIC_INIT( core_simple_metrics_metrics_CustomRealValueMetric )
 #endif // SERIALIZATION
 
-#endif //core_simple_metrics_metrics_CustomStringValueMetric_HH
+#endif //core_simple_metrics_metrics_CustomRealValueMetric_HH
 
 
 

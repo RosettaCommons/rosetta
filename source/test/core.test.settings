@@ -180,7 +180,7 @@ sources = {
 		"hull",
 	],
 	"numeric_tests_that_are_easier_to_write_if_you_can_use_a_pose" : [
-	    "cyclic_coordinate_descent",
+		"cyclic_coordinate_descent",
 	],
 	"optimization" : [
 		"Minimizer",
@@ -537,13 +537,13 @@ sources = {
 	"scoring/hbonds/graph" : [
 		"HBondGraph",
 	],
-        "scoring/lkball" : [
-                "LK_BallEnergy",
-                "LK_DomeEnergy"
-        ],
-        "scoring/loop_graph" : [
-                "LoopGraphTest"
-        ],
+		"scoring/lkball" : [
+				"LK_BallEnergy",
+				"LK_DomeEnergy"
+		],
+		"scoring/loop_graph" : [
+				"LoopGraphTest"
+		],
 	"scoring/methods" : [
 		"AARepeatEnergy",
 		"ArgCationPiEnergy",
@@ -574,15 +574,15 @@ sources = {
 		"YHHPlanarityEnergy",
 	],
   "scoring/membrane" : [
-    "MPHelicality",
-    "MPResidueLipophilicity",
-    "MPSpanAngle",
-    "MPSpanInsertion",
-    "MPasymEZ",
-    "FaMPEnv",
-    "FaMPSolv",
-    "FaMbsolv",
-    "FaMbenv"
+	"MPHelicality",
+	"MPResidueLipophilicity",
+	"MPSpanAngle",
+	"MPSpanInsertion",
+	"MPasymEZ",
+	"FaMPEnv",
+	"FaMPSolv",
+	"FaMbsolv",
+	"FaMbenv"
   ],
   "scoring/mhc_epitope_energy" : [
 	"MHCEpitopeConstraint",
@@ -702,6 +702,7 @@ sources = {
 	],
 	"simple_metrics/metrics" : [
 		"CalculatorMetric",
+		"CustomRealValueMetricTests",
 		"SelectedResidueCountMetricTests",
 		"SequenceMetricTests",
 		"SequenceSimilarityMetricTests",
@@ -777,7 +778,7 @@ testinputfiles = [
 	"chemical/carbohydrates/sucrose.pdb",
 	"chemical/extra_atom_properties.txt",
 	"chemical/extra_mm_atom_properties.txt",
-    "chemical/gasteiger/AZO.params",
+	"chemical/gasteiger/AZO.params",
 	"chemical/gasteiger/GST.params",
 	"chemical/gasteiger/NXX.params",
 	"chemical/gasteiger/SXX.params",
@@ -1299,9 +1300,9 @@ testinputfiles = [
 	"scoring/mhc_epitope_energy/preload_csv.mhc",
 	"scoring/mhc_epitope_energy/propred8_5.mhc",
 	"scoring/mm_twist.data",
-    "scoring/mm/extra_mm_scoring/mm_bond_angle_params.txt",
-    "scoring/mm/extra_mm_scoring/mm_bond_length_params.txt",
-    "scoring/mm/extra_mm_scoring/mm_torsion_params.txt",
+	"scoring/mm/extra_mm_scoring/mm_bond_angle_params.txt",
+	"scoring/mm/extra_mm_scoring/mm_bond_length_params.txt",
+	"scoring/mm/extra_mm_scoring/mm_torsion_params.txt",
 	"scoring/mm/MMBondAngleScoreTests.u",
 	"scoring/mm/mm_torsion_params.txt",
 	"scoring/mm/par_all27_prot_na.prm",
