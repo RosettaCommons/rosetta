@@ -39,7 +39,7 @@ namespace epr_deer {
 /// @brief Alias to save space throughout core/scoring/epr_deer
 using PseudoSL = std::pair< numeric::xyzVector< Real >, Real >;
 
-/// @brief Alias to asve space when defining residues and spin labels
+/// @brief Alias to save space when defining residues and spin labels
 using PairSizeString = std::pair< Size, std::string >;
 
 /// @brief Object use to calculate VDW radii of centroid atoms

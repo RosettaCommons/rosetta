@@ -569,6 +569,7 @@ static MoverRegistrator< simple_moves::CopyRotamerMoverCreator > reg_CopyRotamer
 static MoverRegistrator< simple_moves::CoupledMoverCreator> reg_CoupledMoverCreator;
 static MoverRegistrator< calc_taskop_movers::CreateSequenceMotifMoverCreator > reg_CreateSequenceMotifMoverCreator;
 static MoverRegistrator< simple_moves::DeclareBondCreator > reg_DeclareBondCreator;
+static MoverRegistrator< simple_moves::DEEROptimizeCoordsMoverCreator> reg_DEEROptimizeCoordsMoverCreator;
 static MoverRegistrator< simple_moves::DeleteChainMoverCreator> reg_DeleteChainMoverCreator;
 static MoverRegistrator< simple_moves::DeleteChainsMoverCreator> reg_DeleteChainsMoverCreator;
 static MoverRegistrator< simple_ddg::ddGCreator> reg_ddGCreator;

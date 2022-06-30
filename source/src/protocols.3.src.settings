@@ -661,6 +661,7 @@ sources = {
 		"AddPDBInfoMover",
 		"AddSapConstraintMover",
 		"AddSapMathConstraintMover",
+		"DEEROptimizeCoordsMover",
 		"ReportXYZ",
 		"SaveSequenceToCommentsMover",
 		"WriteFiltersToPose",

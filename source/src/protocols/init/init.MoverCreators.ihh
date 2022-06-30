@@ -550,6 +550,7 @@
 #include <protocols/calc_taskop_movers/CreateSequenceMotifMoverCreator.hh>
 #include <protocols/simple_ddg/ddGCreator.hh>
 #include <protocols/simple_moves/DeclareBondCreator.hh>
+#include <protocols/simple_moves/DEEROptimizeCoordsMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
