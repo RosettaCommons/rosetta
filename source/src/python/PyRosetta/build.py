@@ -17,7 +17,12 @@
 
 from __future__ import print_function
 
-import os, sys, argparse, platform, subprocess, shutil, codecs, distutils.dir_util, json, hashlib
+import os, sys, argparse, platform, subprocess, shutil, codecs, json, hashlib
+
+try:
+    from setuptools.distutils import dir_util as dir_util_module
+except ModuleNotFoundError:
+    from distutils import dir_util as dir_util_module
 
 from collections import OrderedDict
 
@@ -729,7 +734,7 @@ def generate_documentation(rosetta_source_path, path, version):
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
     documentation_prefix = get_binding_build_root(rosetta_source_path, documentation=True)
 
-    distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/documentation', documentation_prefix, update=False)
+    dir_util_module.copy_tree(rosetta_source_path + '/src/python/PyRosetta/documentation', documentation_prefix, update=False)
 
     version_file = path + '/version.json'
     generate_version_file(rosetta_source_path, version_file)
@@ -754,7 +759,7 @@ def generate_documentation(rosetta_source_path, path, version):
 
     execute('Building documentation...', 'cd {documentation_prefix} && make clean && PATH={python_path}:$PATH PYTHONPATH={build_prefix}:$PYTHONPATH make html'.format(python_path=os.path.dirname(python), **vars()))
 
-    distutils.dir_util.copy_tree(documentation_prefix + '/build/html', path, update=False)
+    dir_util_module.copy_tree(documentation_prefix + '/build/html', path, update=False)
 
     print('Creating PyRosetta documentation at: {}... Done!'.format(path))
 
@@ -768,16 +773,16 @@ def create_package(rosetta_source_path, path):
 
     for f in 'self-test.py PyMOL-RosettaServer.py PyMOL-RosettaServer.python3.py PyMOL-Rosetta-relay-client.python2.py PyMOL-Rosetta-relay-client.python3.py'.split(): shutil.copy(rosetta_source_path + '/src/python/PyRosetta/src/' + f, path)
 
-    for d in 'demo test'.split(): distutils.dir_util.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/' + d, path + '/' + d, update=False)
+    for d in 'demo test'.split(): dir_util_module.copy_tree(rosetta_source_path + '/src/python/PyRosetta/src/' + d, path + '/' + d, update=False)
 
-    distutils.dir_util.copy_tree(rosetta_source_path + '/scripts/PyRosetta/public', path + '/apps', update=False)
+    dir_util_module.copy_tree(rosetta_source_path + '/scripts/PyRosetta/public', path + '/apps', update=False)
 
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
 
     for f in 'setup.py setup.cfg ez_setup.py'.split(): shutil.copy(build_prefix + '/' + f, package_prefix)
 
     for d in ['pyrosetta', 'rosetta']:
-        distutils.dir_util.copy_tree(build_prefix + '/' + d, package_prefix + '/' + d, update=False)
+        dir_util_module.copy_tree(build_prefix + '/' + d, package_prefix + '/' + d, update=False)
 
         #symlink = path + '/' + d
         #if os.path.islink(symlink): os.unlink(symlink)

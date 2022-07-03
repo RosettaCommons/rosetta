@@ -384,13 +384,12 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     python_version = tuple( map(int, platform.get('python', '3.6').split('.') ) )
 
 
-    if python_version < (3, 9):
+    if python_version <= (3, 8):
         packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1'
 
-    else:
-        #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
-        packages = 'numpy>=1.20.2'
-
+    elif python_version == (3, 9): packages = 'numpy>=1.20.2'
+    elif python_version == (3, 10): packages = 'numpy>=1.22.3'
+    else: packages = 'numpy>=1.23'
 
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
 
@@ -740,7 +739,7 @@ def local_python_install(platform, config):
         '3.7'  : 'https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz',
         '3.8'  : 'https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tgz',
         '3.9'  : 'https://www.python.org/ftp/python/3.9.8/Python-3.9.8.tgz',
-        '3.10' : 'https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz',
+        '3.10' : 'https://www.python.org/ftp/python/3.10.5/Python-3.10.5.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -762,7 +761,7 @@ def local_python_install(platform, config):
     extra = ('unset __PYVENV_LAUNCHER__ && ' + extra[0], extra[1])
 
     options = '--with-ensurepip' #'--without-ensurepip'
-    signature = f'v1.4.2 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
+    signature = f'v1.5.1 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
 
     h = hashlib.md5(); h.update( signature.encode('utf-8', errors='backslashreplace') ); hash = h.hexdigest()
 
@@ -795,10 +794,14 @@ def local_python_install(platform, config):
         if not os.path.isdir(root): os.makedirs(root)
         if not os.path.isdir(build_prefix): os.makedirs(build_prefix)
 
+        platform_is_mac = True if platform['os'] in ['mac', 'm1'] else False
+        platform_is_linux = not platform_is_mac
+
         #if False and platform['os'] == 'mac' and platform_module.machine() == 'arm64' and tuple( map(int, python_version.split('.') ) ) >= (3, 9):
-        if platform['os'] == 'mac' and python_version == '3.6':
+        if ( platform['os'] == 'mac' and python_version == '3.6' ) \
+           or ( platform_is_linux and python_version == '3.10' ):
             open_ssl_url = local_open_ssl_install(root, build_prefix, jobs)
-            options += f' --with-openssl={root}'
+            options += f' --with-openssl={root} --with-openssl-rpath=auto'
             #signature += 'OpenSSL install: ' + open_ssl_url + '\n'
 
         archive = build_prefix + '/' + url.split('/')[-1]

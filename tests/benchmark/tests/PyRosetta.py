@@ -12,8 +12,16 @@
 ## @brief  PyRosetta binding self tests
 ## @author Sergey Lyskov
 
-import os, os.path, json, shutil, distutils.dir_util
+import sys, os, os.path, json, shutil
 import codecs
+
+# if sys.version_info[:2] < (3, 10):
+#     from setuptools import distutils.dir_util
+# else:
+#     import distutils.dir_util
+
+try: from setuptools.distutils import dir_util as dir_util_module
+except ModuleNotFoundError: from distutils import dir_util as dir_util_module
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
@@ -32,7 +40,7 @@ def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     for f in os.listdir(result.pyrosetta_path + '/source'):
         if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)
-    distutils.dir_util.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
+    dir_util_module.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
 
     res_code = _S_failed_ if result.exitcode else _S_passed_
     if not result.exitcode: result.output = '...\n'+'\n'.join( result.output.split('\n')[-32:] )  # truncating log for passed builds.
@@ -56,7 +64,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     for f in os.listdir(result.pyrosetta_path + '/source'):
         if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)
-    distutils.dir_util.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
+    dir_util_module.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
 
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(result.output)
 
