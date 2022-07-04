@@ -110,6 +110,23 @@ public:
 		TS_ASSERT_DELTA(0, core::scoring::CA_rmsd(pose1, pose2, residues), 0.0001);
 	}
 
+	void test_mainchain_hevayatom_rmsd() {
+		PoseOP pose1( core::import_pose::pose_from_file("core/scoring/2GB3.pdb", core::import_pose::PDB_file) );
+		PoseOP pose2( pose1->clone() );
+		for ( core::Size ir(1), irmax(pose2->total_residue()); ir<=irmax; ++ir ) {
+			for ( core::Size ia(1), iamax(pose2->residue_type(ir).natoms()); ia<=iamax; ia +=2 ) {
+				if ( pose2->residue_type(ir).atom_is_sidechain(ia) ) continue;
+				if ( pose2->residue_type(ir).atom_is_hydrogen(ia) ) continue;
+				// If we move half the atoms to the right by 2 units, the RMSD should be 1.0.
+				pose2->set_xyz( core::id::AtomID( ia, ir ), pose2->xyz( core::id::AtomID(ia, ir) ) + core::PointPosition( 2, 0, 0 ) );
+			}
+		}
+
+		core::Real const rmsd( core::scoring::superimpose_polymer_heavyatoms( *pose2, *pose1, true ) );
+
+		TS_ASSERT_DELTA(1.0, rmsd, 0.0001);
+	}
+
 	/// @brief Test rmsd calculation as applied to a mixed D/L helical bundle.
 	/// @details This uses a parametrically-generated helical bundle as the native pose,
 	/// with aligned and unaligned helical bundles (CA RMSD=9.921 A) that are supposed to

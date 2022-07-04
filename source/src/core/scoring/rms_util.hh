@@ -247,6 +247,15 @@ is_nbr_atom(
 	core::Size atomno
 );
 
+/// @brief Returns true always.
+bool
+is_any_atom(
+	core::pose::Pose const &,
+	core::pose::Pose const &,
+	core::Size,
+	core::Size
+);
+
 /////////////////////////////////////////////
 // Predicate classes for more complex control
 
@@ -368,6 +377,7 @@ bb_rmsd(
 );
 
 /// @brief Compute rmsd for only backbone residues (including carboxyl oxygen)
+/// @details Protein-specific.
 core::Real
 bb_rmsd_including_O(
 	const core::pose::Pose & pose1,
@@ -392,8 +402,16 @@ CA_rmsd(
 	std::list<Size> residue_selection
 );
 
+/// @note This only does heavyatoms, not truly all atoms!
 core::Real
 all_atom_rmsd(
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2
+);
+
+/// @note This does heavyatoms and hydrogens.
+core::Real
+all_atom_rmsd_incl_hydrogens(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2
 );
@@ -540,6 +558,21 @@ superimpose_pose(
 	pose::Pose & mod_pose,
 	pose::Pose const & ref_pose,
 	std::map< id::AtomID, id::AtomID > const & atom_map, // from mod_pose to ref_pose
+	core::Real const & rms_calc_offset_val = 1.0e-7,
+	bool const realign=false,
+	bool const throw_on_failure=true
+);
+
+/// @brief Superimpose polymer heavyatoms of mod_pose onto ref_pose, and return
+/// the computed RMSD.  If mainchain_only is true, this restricts itself to mainchain
+/// heavyatoms; otherwise it does all polymer heavyatoms.
+/// @details General, for any heteropolymer.  Ignores ligands and hydrogen atoms.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+core::Real
+superimpose_polymer_heavyatoms(
+	core::pose::Pose & mod_pose,
+	core::pose::Pose const & ref_pose,
+	bool const mainchain_only,
 	core::Real const & rms_calc_offset_val = 1.0e-7,
 	bool const realign=false,
 	bool const throw_on_failure=true

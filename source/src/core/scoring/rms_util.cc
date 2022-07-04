@@ -585,6 +585,16 @@ is_nbr_atom(
 	return rsd.nbr_atom() == atomno;
 }
 
+bool
+is_any_atom(
+	core::pose::Pose const &,
+	core::pose::Pose const &,
+	core::Size,
+	core::Size
+) {
+	return true;
+}
+
 /////////////////////////////////////////////
 // Predicate classes for more complex control
 
@@ -644,7 +654,7 @@ CA_or_equiv_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;
 	FArray2D< core::Real > p2a;
-	PredicateOP pred( new ResRangePredicate( start, calc_end, utility::pointer::make_shared< IsMainAtomPredicate >() ) );
+	PredicateOP pred( utility::pointer::make_shared< ResRangePredicate >( start, calc_end, utility::pointer::make_shared< IsMainAtomPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { TR.Warning << "In CA_or_equiv_rmsd, residue range " << start << " to " << end
@@ -678,7 +688,7 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;
 	FArray2D< core::Real > p2a;
-	PredicateOP pred( new ResRangePredicate( start, calc_end, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
+	PredicateOP pred( utility::pointer::make_shared< ResRangePredicate >( start, calc_end, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { TR.Warning << "In CA_rmsd, residue range " << start << " to " << end
@@ -884,6 +894,17 @@ all_atom_rmsd(
 	Real rms = rmsd_with_super( pose1, pose2, is_heavyatom );
 	return rms;
 } // all atom rmsd
+
+/// @note This does heavyatoms and hydrogens.
+core::Real
+all_atom_rmsd_incl_hydrogens(
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2
+) {
+	using namespace core;
+	Real rms = rmsd_with_super( pose1, pose2, is_any_atom );
+	return rms;
+}
 
 core::Real
 all_scatom_rmsd_nosuper(
@@ -1260,6 +1281,54 @@ superimpose_pose(
 {
 	pose::MiniPose mini_ref_pose( ref_pose );  //minipose is a lightweight pose with just xyz positions (& fold tree)
 	return superimpose_pose(mod_pose, mini_ref_pose, atom_map, rms_calc_offset_val, realign, throw_on_failure );
+}
+
+/// @brief Superimpose polymer heavyatoms of mod_pose onto ref_pose, and return
+/// the computed RMSD.  If mainchain_only is true, this restricts itself to mainchain
+/// heavyatoms; otherwise it does all polymer heavyatoms.
+/// @details General, for any heteropolymer.  Ignores ligands and hydrogen atoms.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+core::Real
+superimpose_polymer_heavyatoms(
+	core::pose::Pose & mod_pose,
+	core::pose::Pose const & ref_pose,
+	bool const mainchain_only,
+	core::Real const & rms_calc_offset_val /*= 1.0e-7*/,
+	bool const realign/*=false*/,
+	bool const throw_on_failure/*=true*/
+) {
+	std::string const errmsg( "Error in core::scoring::superimpose_mainchain_heavyatoms(): " );
+
+	core::id::AtomID_Map< core::id::AtomID > atom_map;
+	core::pose::initialize_atomid_map( atom_map, mod_pose, id::AtomID::BOGUS_ATOM_ID() );
+	runtime_assert_string_msg( mod_pose.total_residue() == ref_pose.total_residue(), errmsg + "The alignment pose and reference pose must be the same length." );
+	for ( core::Size ir(1), irmax( mod_pose.total_residue() ); ir<=irmax; ++ir ) {
+		if ( !mod_pose.residue_type(ir).is_polymer() ) {
+			runtime_assert_string_msg( !ref_pose.residue_type(ir).is_polymer(), errmsg + "Residue " + std::to_string(ir) + " in the alignment pose is not a polymer residue, but the corresponding residue in the reference pose is a polymer residue." );
+			continue;
+		}
+		if ( mod_pose.residue_type(ir).is_virtual_residue() ) {
+			runtime_assert_string_msg( ref_pose.residue_type(ir).is_virtual_residue(), errmsg + "Residue " + std::to_string(ir) + " in the alignment pose is a virtual residue, but the corresponding residue in the reference pose is not a virtual residue." );
+			continue;
+		}
+		runtime_assert_string_msg( ref_pose.residue_type(ir).is_polymer(), errmsg + "Residue " + std::to_string(ir) + " in the alignment pose is a polymer residue, but the corresponding residue in the reference pose is not a polymer residue." );
+		runtime_assert_string_msg( !ref_pose.residue_type(ir).is_virtual_residue(), errmsg + "Residue " + std::to_string(ir) + " in the alignment pose is not a virtual residue, but the corresponding residue in the reference pose is a virtual residue." );
+		runtime_assert_string_msg( ref_pose.residue_type(ir).natoms() == mod_pose.residue_type(ir).natoms(), errmsg + "Residue " + std::to_string(ir) + " in the alignment pose has a different number of atoms than the corresponding residue in the reference pose." );
+		for ( core::Size ia(1), iamax( mod_pose.residue_type(ir).natoms() ); ia<=iamax; ++ia ) {
+			if ( mod_pose.residue_type(ir).atom_is_hydrogen( ia ) ) {
+				continue; //Skip hydrogen atoms.
+			}
+			if ( mainchain_only && mod_pose.residue_type(ir).atom_is_sidechain( ia ) ) {
+				//std::cout << "SKIPPING SIDECHAIN ATOM " << mod_pose.residue_type(ir).atom_name(ia) << " ON RESIDUE " << mod_pose.residue_type(ir).base_name() << ir << "." << std::endl; //Debugging output; comment me out.
+				continue; //Skip sidechain atoms if we are set to do so.
+			}
+			std::string const atname( mod_pose.residue_type(ir).atom_name(ia) );
+			runtime_assert_string_msg( ref_pose.residue_type(ir).has( atname ), errmsg + "Residue " + std::to_string(ir) + " of the reference pose has no atom named \"" + atname + "\"." );
+			atom_map.set( core::id::AtomID( ia, ir ), core::id::AtomID( ref_pose.residue_type(ir).atom_index(atname), ir ) );
+		}
+	}
+
+	return superimpose_pose( mod_pose, ref_pose, atom_map, rms_calc_offset_val, realign, throw_on_failure );
 }
 
 Real
