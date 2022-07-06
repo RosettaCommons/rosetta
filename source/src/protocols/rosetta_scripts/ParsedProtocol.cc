@@ -86,13 +86,14 @@ ParsedProtocol::ParsedProtocolStep::ParsedProtocolStep (
 	moves::MoverOP mover_in,
 	std::string const & mover_name,
 	filters::FilterOP filter_in,
-	FilterReportTime frt
+	FilterReportTime const frt,
+	bool const never_rerun
 ) :
 	mover( mover_in ),
 	mover_user_name( mover_name ),
 	filter( filter_in ),
 	report_time_( frt ),
-	never_rerun_filters_( basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]() )
+	never_rerun_filters_( never_rerun )
 {}
 
 bool
@@ -192,7 +193,7 @@ ParsedProtocol::apply( Pose & pose )
 		} else if ( mode_ =="single_random" ) {
 			random_single_protocol(pose);
 		} else {
-			TR.Warning << "mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
+			TR.Warning << "mode is " << mode_ << ".  As this is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
 		}
 
 		if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) { // no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
@@ -210,7 +211,7 @@ ParsedProtocol::apply( Pose & pose )
 		}
 
 	} catch( utility::excn::Exception & excn ) {
-		TR.Error << "Exception while processing procotol: " << excn.msg() << std::endl;
+		TR.Error << "Exception while processing protocol: " << excn.msg() << std::endl;
 		if ( protocols::jd2::jd2_used() ) {
 			ParsedProtocolAP this_weak_ptr(
 				utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
@@ -221,7 +222,7 @@ ParsedProtocol::apply( Pose & pose )
 		throw(excn);
 
 	} catch( ... ) { /*To handle other exceptions*/
-		TR.Error << "Exception while processing procotol:" << std::endl;
+		TR.Error << "Exception while processing protocol:" << std::endl;
 		if ( protocols::jd2::jd2_used() ) {
 			ParsedProtocolAP this_weak_ptr(
 				utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
@@ -287,6 +288,7 @@ ParsedProtocol::report_filters_to_pose( Pose & pose ) const {
 			if ( filter_value > -9999 ) {
 				setPoseExtraScore(pose, filter.get_user_defined_name(), (float)filter_value);
 			}
+			TR << "Set filter value for " << step.filter->get_user_defined_name() << " to: " << filter_value << std::endl;
 		}
 	}
 }
@@ -523,23 +525,29 @@ ParsedProtocol::parse_my_tag(
 		//Maintaining legacy behavior! Default is AT_END, second default is AFTER_APPLY, need to opt out of both to get NONE.
 		//Not saying this is perfect, but it matches legacy
 		FilterReportTime filter_report_setting = FilterReportTime::AT_END;
+		bool never_rerun( basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]() );
 		if ( tag_ptr->hasOption( "report_at_end" ) ) {
 			if ( ! tag_ptr->getOption< bool >( "report_at_end" ) ) {
 				filter_report_setting = FilterReportTime::AFTER_APPLY;
+			} else {
+				filter_report_setting = FilterReportTime::AT_END;
 			}
 		}
 		if ( tag_ptr->hasOption( "never_rerun_filter" ) ) {
 			if ( tag_ptr->getOption< bool >( "never_rerun_filter" ) ) {
-				runtime_assert_string_msg( !tag_ptr->hasOption( "report_at_end" ) || !tag_ptr->getOption< bool >( "report_at_end" ),
+				runtime_assert_string_msg( ! (tag_ptr->hasOption( "report_at_end" ) && tag_ptr->getOption< bool >( "report_at_end" ) ),
 					"The filter options 'never_rerun_filter' and 'report_at_end' are mutually exclusive!");
 				filter_report_setting = FilterReportTime::NONE;
+				never_rerun = true;
+			} else {
+				never_rerun = false;
 			}
 		}
 
 		if ( mover_to_add != nullptr ) {
 			mover_to_add = mover_to_add->clone();
 		}
-		ParsedProtocolStep step( mover_to_add, mover_name, filter_to_add, filter_report_setting );
+		ParsedProtocolStep step( mover_to_add, mover_name, filter_to_add, filter_report_setting, never_rerun );
 		step.metrics = metrics_to_add;
 		step.metric_labels = metric_labels;
 		steps_.push_back( step );
@@ -703,11 +711,14 @@ ParsedProtocol::apply_filter( Pose & pose, ParsedProtocolStep const & step ) {
 	bool pass = step.filter->apply( pose );
 	if ( step.report_after_apply() ) {
 		core::Real const filter_value( step.filter->report_sm( pose ) );
-		setPoseExtraScore(pose, step.filter->get_user_defined_name(), (float)filter_value);
+		setPoseExtraScore(pose, filter_name, filter_value);
+		TR << "Set filter value for " << filter_name << " in pose: " << filter_value << std::endl;
 
-		TR_report << "============Begin report for " << step.filter->get_user_defined_name() << "==================" << std::endl;
-		step.filter->report( TR_report, pose );
-		TR_report << "============End report for " << step.filter->get_user_defined_name() << "==================" << std::endl;
+		if ( TR_report.visible() ) {
+			TR_report << "============Begin report for " << step.filter->get_user_defined_name() << "==================" << std::endl;
+			step.filter->report( TR_report, pose );
+			TR_report << "============End report for " << step.filter->get_user_defined_name() << "==================" << std::endl;
+		}
 	}
 	TR << "=======================END FILTER " << filter_name << "=======================" << std::endl;
 

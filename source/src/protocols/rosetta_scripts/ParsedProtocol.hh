@@ -72,7 +72,8 @@ public:
 			moves::MoverOP mover_in,
 			std::string const & mover_name,
 			filters::FilterOP filter_in = nullptr,
-			FilterReportTime frt = FilterReportTime::AT_END
+			FilterReportTime const frt = FilterReportTime::AT_END,
+			bool const never_rerun = false
 		);
 
 		protocols::moves::MoverOP mover;
@@ -87,8 +88,8 @@ public:
 
 	private:
 		//Making report_time private so that commandline options can intervene
-		FilterReportTime report_time_;
-		bool never_rerun_filters_; //local cache of basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]()
+		FilterReportTime report_time_ = FilterReportTime::AT_END;
+		bool never_rerun_filters_ = false; //local cache of basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]()
 	};
 
 	typedef utility::vector1< ParsedProtocolStep > ParsedProtocolStepVector;
@@ -206,14 +207,14 @@ private:
 private:
 
 	ParsedProtocolStepVector steps_;
-	core::scoring::ScoreFunctionCOP final_scorefxn_ = nullptr;
-	std::string mode_;
+	core::scoring::ScoreFunctionCOP final_scorefxn_;
+	std::string mode_ = "sequence";
 	utility::vector1< core::Real > apply_probability_; // if mode_="single_random", assigns a probability of execution to each mover/filter pair. Defaults to equal probabilities to all.
-	core::Size last_attempted_mover_idx_; //index to last attempted mover; useful for adaptive monte carlo
-	bool report_call_order_; //dflt false; At the end of the run, write to out the sequence of mover/filter calls (good for stochastic application
+	core::Size last_attempted_mover_idx_ = 0; //index to last attempted mover; useful for adaptive monte carlo
+	bool report_call_order_ = false; //dflt false; At the end of the run, write to out the sequence of mover/filter calls (good for stochastic application
 	std::string call_order_; // saved call order, not writeable
 	protocols::moves::MoverOP last_mover_;
-	bool resume_support_;
+	bool resume_support_ = false;
 
 	core::Size n_steps_passed_in_previous_run_ = 0;
 	bool filter_status_ = true; //JAB - used by MultiStageRosettaScripts to properly fail if filter failed.

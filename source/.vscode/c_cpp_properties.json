@@ -14,7 +14,9 @@
                 "${workspaceFolder}/external/libxml2",
                 "${workspaceFolder}/src/platform/linux/",
                 "/usr/include",
-                "/usr/local/include"
+                "/usr/local/include",
+                "/usr/include/c++/9",
+                "/usr/include/x86_64-linux-gnu/c++/9"
             ],
             "defines": [
                 "PTR_STD"

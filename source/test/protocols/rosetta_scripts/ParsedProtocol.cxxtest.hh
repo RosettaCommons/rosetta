@@ -48,22 +48,26 @@ public:
 		report_count_( report_count )
 	{}
 
-	void report( std::ostream &, core::pose::Pose const & ) const override {
+	void report( std::ostream & os, core::pose::Pose const & ) const override {
 		++(*report_count_);
+		os << "report(): Filter reports " << (*report_count_) << " calls to this point." << std::endl;
 	}
 
 	core::Real report_sm( core::pose::Pose const & ) const override {
 		++(*report_count_);
-		return 0;
+		TR << "report_sm(): Filter reports " << (*report_count_) << " calls to this point." << std::endl;
+		return 0.0;
 	}
 
 	bool apply( core::pose::Pose const & ) const override {
 		++(*report_count_);
+		TR << "apply(): Filter reports " << (*report_count_) << " calls to this point." << std::endl;
 		return true;
 	}
 
 	core::Real score( core::pose::Pose & ) override {
 		++(*report_count_);
+		TR << "score(): Filter reports " << (*report_count_) << " calls to this point." << std::endl;
 		return 0;
 	}
 
@@ -86,11 +90,11 @@ class ParsedProtocolTests : public CxxTest::TestSuite {
 
 public:
 
-	void setUp() {}
+	void setUp() {
+		core_init_with_additional_options( "-mute protocols.rosetta_scripts.ParsedProtocol.REPORT" );
+	}
 
 	void test_filter_reporting() {
-
-		protocols_init();
 
 		using namespace protocols::rosetta_scripts;
 		using PP = ParsedProtocol; //for scoping
@@ -129,14 +133,12 @@ public:
 		core::pose::make_pose_from_sequence(test_pose, "MENTENAI", "fa_standard", false);
 		pp.apply( test_pose );
 
-		TS_ASSERT_EQUALS( step1_count, 2 );
-		TS_ASSERT_EQUALS( step2_count, 3 ); //Apply + report_sm + report. Wasteful if you ask me
+		TS_ASSERT_EQUALS( step1_count, 2 ); //Apply + end report_sm + end report, though end report is suppressed since report tracer is muted.  Also wasteful.
+		TS_ASSERT_EQUALS( step2_count, 2 ); //Apply + report_sm + report, though report is suppressed since report tracer is muted. Wasteful if you ask me
 		TS_ASSERT_EQUALS( step3_count, 1 );
 	}
 
 	void test_filter_reporting_commandline() {
-
-		protocols_init_with_additional_options( "-parser:never_rerun_filters true" );
 
 		using namespace protocols::rosetta_scripts;
 		using PP = ParsedProtocol; //for scoping
@@ -149,21 +151,24 @@ public:
 			NullMoverOP( new NullMover() ), //mover
 			"step1", //name
 			FilterOP( new ReportCounter( &step1_count ) ), //filter
-			PP::FilterReportTime::AT_END
+			PP::FilterReportTime::AT_END,
+			true
 		);
 
 		PP::ParsedProtocolStep const step2(
 			NullMoverOP( new NullMover() ), //mover
 			"step2", //name
 			FilterOP( new ReportCounter( &step2_count ) ), //filter
-			PP::FilterReportTime::AFTER_APPLY
+			PP::FilterReportTime::AFTER_APPLY,
+			true
 		);
 
 		PP::ParsedProtocolStep const step3(
 			NullMoverOP( new NullMover() ), //mover
 			"step3", //name
 			FilterOP( new ReportCounter( &step3_count ) ), //filter
-			PP::FilterReportTime::NONE
+			PP::FilterReportTime::NONE,
+			true
 		);
 
 		ParsedProtocol pp;
