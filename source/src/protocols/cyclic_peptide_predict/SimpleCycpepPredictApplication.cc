@@ -138,6 +138,7 @@
 #endif
 
 #include <utility/fixedsizearray1.hh> // AUTO IWYU For fixedsizearray1
+#include <utility/file/file_sys_util.hh>
 
 static basic::Tracer TR( "protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication" );
 
@@ -238,6 +239,12 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_mirroring           );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_angle_threshold     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_symmetry_perturbation        );
+	option.add_relevant( basic::options::OptionKeys::out::path::pdb);
+	option.add_relevant( basic::options::OptionKeys::out::path::all);
+	option.add_relevant( basic::options::OptionKeys::out::path::path);
+	option.add_relevant( basic::options::OptionKeys::out::prefix);
+	option.add_relevant( basic::options::OptionKeys::out::suffix);
+
 #ifdef USEMPI //Options that are only needed in the MPI version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_auto_2level_distribution         );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_processes_by_level               );
@@ -557,7 +564,11 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	required_symmetry_perturbation_(src.required_symmetry_perturbation_),
 	exclude_residues_from_rms_(src.exclude_residues_from_rms_),
 	lariat_sidechain_index_(src.lariat_sidechain_index_),
-	sidechain_isopeptide_indices_(src.sidechain_isopeptide_indices_)
+	sidechain_isopeptide_indices_(src.sidechain_isopeptide_indices_),
+	out_prefix_(src.out_prefix_),
+	out_suffix_(src.out_suffix_),
+	out_path_(src.out_path_)
+
 	//TODO -- copy variables here.
 {
 	if ( src.scorefxn_ ) scorefxn_ = (src.scorefxn_)->clone();
@@ -679,6 +690,22 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		silent_out_=false;
 	}
 	if ( option[out::file::scorefile].user() ) { out_scorefilename_=option[out::file::scorefile](); }
+
+	//Setup PDB suffix/directory/etc.
+	if ( option[out::prefix].user() ) {
+		out_prefix_ = option[out::prefix]();
+	}
+
+	if ( option[ out::suffix].user() ) {
+		out_suffix_ = option[out::suffix]();
+	}
+	if ( option[ out::path::pdb ].user() ) {
+		out_path_ = option[ out::path::pdb ]().path();
+	} else if ( option[ out::path::all ].user() ) {
+		out_path_ =  option[ out::path::all ]().path();
+	} else if ( option[ out::path::path ].user() ) {
+		out_path_ = option[ out::path::path ]().path();
+	}
 
 	//Figure out number of structures to try to generate:
 	if ( option[out::nstruct].user() ) {
@@ -1702,6 +1729,18 @@ SimpleCycpepPredictApplication::run() const {
 		}
 #endif
 
+		//JAB - Basic checkpointing by file ala JD2 for PDBs.
+		//Not sure how to reconcile this with the checkpointing system, which is very much not this.
+		if ( ! silent_out_ && ! silentlist_out_ && ! basic::options::option[basic::options::OptionKeys::out::overwrite]() ) {
+			char outstring[512];
+			sprintf(outstring, "%s%s%s%04lu%s.pdb", out_path_.c_str(), out_prefix_.c_str(), out_filename_.c_str(), static_cast<unsigned long>(irepeat), out_suffix_.c_str() );
+
+			if ( utility::file::file_exists(std::string(outstring)) ) {
+				TR << "nstruct " <<irepeat << " exists.  Continueing." << std::endl;
+				continue;
+			}
+		}
+
 		//Cyclic permutation of sequence.
 		core::Size cyclic_offset(0);
 		utility::vector1 < std::string > resnames_copy;
@@ -1907,8 +1946,10 @@ SimpleCycpepPredictApplication::run() const {
 				summarylist_->push_back( utility::pointer::make_shared< HierarchicalHybridJD_JobResultsSummary >( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), static_cast< core::Size >( std::round(final_hbonds) ), cis_peptide_bonds ) );
 			}
 		} else { //if pdb output
+
 			char outstring[512];
-			sprintf(outstring, "%s%04lu.pdb", out_filename_.c_str(), static_cast<unsigned long>(irepeat) );
+			sprintf(outstring, "%s%s%s%04lu%s.pdb", out_path_.c_str(), out_prefix_.c_str(), out_filename_.c_str(), static_cast<unsigned long>(irepeat), out_suffix_.c_str() );
+
 			pose->dump_scored_pdb( std::string(outstring), *sfxn_default );
 		}
 
@@ -3886,7 +3927,7 @@ SimpleCycpepPredictApplication::genkic_close(
 
 			if ( cyclization_type() == SCPA_n_to_c_amide_bond && i==1 && nres==anchor_res ) continue; //Can't perturb the anchor residue.
 			if ( i-1 == anchor_res ) continue; //Can't perturb the anchor residue.
-			if ( i == cyclization_point_end && ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide ) ) {
+			if ( i == cyclization_point_end && ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ) ) {
 				continue; //Can't perturb preceding bond if it's not in the loop.
 			}
 			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr || pose->residue_type(i).is_peptoid() || pose->residue_type(i).is_n_methylated() ) {

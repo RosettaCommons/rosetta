@@ -1242,6 +1242,18 @@ private:
 	/// @details If (0, 0), the default, then the most widely-separated pair of appropriate type is automatically chosen.
 	std::pair < core::Size, core::Size > sidechain_isopeptide_indices_;
 
+
+	//PDB Output options
+
+	/// @brief Output prefix for PDB files
+	std::string out_prefix_ = "";
+
+	/// @brief Output suffix for PDB files
+	std::string out_suffix_ = "";
+
+	/// @brief Output directory for PDB files
+	std::string out_path_ = "";
+
 };
 
 } //cyclic_peptide
