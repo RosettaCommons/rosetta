@@ -22,6 +22,7 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/pose/Pose.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -68,26 +69,51 @@ SymmetricalResidueSelector::apply( core::pose::Pose const & pose ) const
 	runtime_assert( selector_ );
 
 
-	//DO THINGS HERE
-	ResidueSubset subset_non= selector_->apply( pose );
-	ResidueSubset subset_sym= selector_->apply( pose );
+	// The asymmetric selection:
+	ResidueSubset const subset_non( selector_->apply( pose ) );
 
 	if ( ! core::pose::symmetry::is_symmetric(pose) ) return subset_non;
 
+	// Start the symmetric selection matching the asymmetric:
+	ResidueSubset subset_sym( subset_non );
+
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
-	for ( Size i = 1; i <= subset_non.size(); i++ ) {
-		if ( subset_non[i] == 1 ) {
-			TR.Debug << "Residue: " << i << " Selected: " << subset_non[i] << std::endl;
-			utility::vector1< core::Size > clones=sym_info->bb_clones( i );
-			TR.Debug << "bb_clones: ";
-			for ( Size j = 1; j <= clones.size(); j++ ) {
-				subset_sym[ clones[j] ] = true;
-				TR.Debug << clones[j] << " ";
+	// We have to do this in two passes:
+	// 1. For each independent position, check if dependents are selected.
+	// 2. For each dependent position, check if independent is selected.
+
+	for ( Size passes(1); passes <= 2; ++passes ) {
+		for ( Size i = 1, imax(pose.total_residue()); i <= imax; ++i ) {
+			if ( TR.Debug.visible() && passes == 1 ) {
+				TR.Debug << "Residue " << i << " selected in asymmetric selection: " << (subset_non[i] ? "TRUE" : "FALSE") << std::endl;
 			}
-			TR.Debug << std::endl;
-		} else {
-			TR.Debug << "Residue: " << i << " Selected: " << subset_non[i] << std::endl;
+			if ( passes == 1 ) {
+				// First pass: check the dependent positions and update the independent.
+				if ( sym_info->bb_is_independent( i ) ) {
+					if ( subset_non[i] ) {
+						subset_sym[i] = true;
+						continue;
+					}
+					utility::vector1< core::Size > clones=sym_info->bb_clones( i );
+					for ( Size j = 1, jmax(clones.size()); j <= jmax; ++j ) {
+						if ( subset_non[ clones[j] ] ) {
+							subset_sym[i] = true;
+							break;
+						}
+					}
+				}
+			} else {
+				// Second pass: check the dependent positions of the selected independent positions.
+				if ( sym_info->bb_is_independent( i ) ) {
+					if ( subset_sym[i] ) {
+						utility::vector1< core::Size > clones=sym_info->bb_clones( i );
+						for ( Size j = 1, jmax(clones.size()); j <= jmax; ++j ) {
+							subset_sym[ clones[j] ] = true;
+						}
+					}
+				}
+			}
 		}
 	}
 
