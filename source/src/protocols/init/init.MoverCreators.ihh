@@ -436,7 +436,6 @@
 #include <protocols/protein_interface_design/movers/RandomMutationCreator.hh>
 #include <protocols/protein_interface_design/movers/RepackMinimizeCreator.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechainsCreator.hh>
-#include <protocols/protein_interface_design/movers/SecretionOptimizationMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTreeCreator.hh>
 #include <protocols/protein_interface_design/movers/SetTemperatureFactorCreator.hh>
 #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMoverCreator.hh>

@@ -52,7 +52,7 @@ SecretionPredictionFilter::SecretionPredictionFilter():
 	Filter( "SecretionPredictionFilter" )
 {
 	window_size_=19;
-	dG_ins_threshold_=150;
+	dG_ins_threshold_=2.7;
 	keep_ = "DEKRQN";
 }
 

@@ -357,7 +357,6 @@ sources = {
 		"RandomMutation",
 		"RepackMinimize",
 		"SaveAndRetrieveSidechains",
-		"SecretionOptimizationMover",
 		"SetAtomTree",
 		"SetTemperatureFactor",
 		"SetupHotspotConstraintsMover",

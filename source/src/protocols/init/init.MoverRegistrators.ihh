@@ -452,7 +452,6 @@ static MoverRegistrator< protein_interface_design::movers::ProteinInterfaceMulti
 static MoverRegistrator< protein_interface_design::movers::RandomMutationCreator > reg_RandomMutationCreator;
 static MoverRegistrator< protein_interface_design::movers::RepackMinimizeCreator > reg_RepackMinimizeCreator;
 static MoverRegistrator< protein_interface_design::movers::SaveAndRetrieveSidechainsCreator > reg_SaveAndRetrieveSidechainsCreator;
-static MoverRegistrator< protein_interface_design::movers::SecretionOptimizationMoverCreator > reg_SecretionOptimizationMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SetAtomTreeCreator > reg_SetAtomTreeCreator;
 static MoverRegistrator< protein_interface_design::movers::SetTemperatureFactorCreator > reg_SetTemperatureFactorCreator;
 static MoverRegistrator< protein_interface_design::movers::SetupHotspotConstraintsMoverCreator > reg_SetupHotspotConstraintsMoverCreator;
