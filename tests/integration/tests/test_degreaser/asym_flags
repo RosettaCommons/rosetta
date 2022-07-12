@@ -1,0 +1,7 @@
+-parser:protocol inputs/asym_test.xml
+-beta
+-in:file:s inputs/test_asym.pdb
+-nstruct 1
+-mute all
+-unmute protocols.protein_interface_design.movers.SecretionOptimizationMover
+-score:weights beta

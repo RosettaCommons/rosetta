@@ -1,0 +1,18 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="beta" weights="beta" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<SecretionOptimizationMover name="degrease" dG_ins_threshold="2.7" dump_singles="false" dump_multis="false" score_tolerance="5" scorefxn="beta" aas_allowed="DEKRQN" />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="degrease" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

@@ -1,0 +1,8 @@
+-parser:protocol inputs/sym_test.xml
+-beta
+-in:file:s inputs/test_tet.pdb
+-nstruct 1
+-parser:script_vars sym_file=inputs/C4_Z.sym
+-score:weights beta
+-mute all
+-unmute protocols.protein_interface_design.movers.SecretionOptimizationMover
