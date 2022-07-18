@@ -1,6 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #Build Rosetta using CMake + Ninja.
+
 from __future__ import print_function
 
 import argparse

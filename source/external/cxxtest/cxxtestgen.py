@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 '''Usage: %s [OPTIONS] <input file(s)>
 Generate test source file for CxxTest.
 
@@ -25,6 +25,7 @@ import re
 import sys
 import getopt
 import glob
+import codecs
 
 # Global variables
 suites = []
@@ -191,7 +192,7 @@ def scanInputFiles(files):
 
 def scanInputFile(fileName):
     '''Scan single input file for test suites'''
-    file = open(fileName)
+    file = codecs.open(fileName, encoding='utf-8', errors='backslashreplace')
     lineNo = 0
     while 1:
         line = file.readline()

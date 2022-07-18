@@ -12,8 +12,14 @@
 ## @brief  Rosetta and PyRosetta release scripts
 ## @author Sergey Lyskov
 
-import os, os.path, json, shutil, tarfile, distutils.dir_util, datetime, re as re_module
+import os, os.path, json, shutil, tarfile, datetime, re as re_module
 import codecs
+
+try:
+    from setuptools.distutils import dir_util as dir_util_module
+except ModuleNotFoundError:
+    from distutils import dir_util as dir_util_module
+
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
@@ -318,7 +324,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     execute('Pruning origin...', 'cd {git_origin} && git gc --force --prune=now'.format(**vars()))
 
     # release('PyRosetta4', release_name, package_dir, working_dir, platform, config)
-    #distutils.dir_util.copy_tree(source, prefix, update=False)
+    #dir_util_module.copy_tree(source, prefix, update=False)
 
     results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : '' }
     with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
@@ -344,7 +350,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
     # package_dir = working_dir + '/' + release_name
 
     # #execute('Creating PyRosetta4 distribution package...', '{build_command_line} --create-package {package_dir}'.format(**vars()), return_='tuple')
-    # distutils.dir_util.copy_tree('/home/benchmark/rosetta/binder/main/source/build/PyRosetta/linux/clang/pyhton-2.7/minsizerel/build/pyrosetta',
+    # dir_util_module.copy_tree('/home/benchmark/rosetta/binder/main/source/build/PyRosetta/linux/clang/pyhton-2.7/minsizerel/build/pyrosetta',
     #                              package_dir, update=False)
 
     # release('PyRosetta4', release_name, package_dir, working_dir, platform, config)
@@ -366,7 +372,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
     for f in os.listdir(pyrosetta_path + '/source'):
         if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
-    distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
+    dir_util_module.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
 
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(result.output)
 
@@ -486,7 +492,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
 
     for f in os.listdir(pyrosetta_path + '/source'):
         if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
-    distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
+    dir_util_module.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
 
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(output)
 
@@ -592,7 +598,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
     TR('Running PyRosetta4 conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    conda = setup_conda_virtual_environment(working_dir, platform, config)
+    conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools')
 
     platform_name = get_platform_release_name(platform)
     release_name = 'PyRosetta4.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'][:3].replace('.', '') )
@@ -606,7 +612,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
     for f in os.listdir(pyrosetta_path + '/source'):
         if os.path.islink(pyrosetta_path + '/source/' + f): os.remove(pyrosetta_path + '/source/' + f)
-    distutils.dir_util.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
+    dir_util_module.copy_tree(pyrosetta_path + '/source', working_dir + '/source', update=False)
 
     codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(result.output)
 
@@ -659,7 +665,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
             execute( f'Creating PyRosetta4 distribution package...', f'{build_command_line} -sd --create-package {package_dir}' )
 
-            python_version_as_tuple = tuple( map(int, platform.get('python', '3.6').split('.') ) )
+            python_version_as_tuple = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
             recipe_dir = working_dir + '/recipe';  os.makedirs(recipe_dir)
 
@@ -862,7 +868,7 @@ def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfor
     version_file = working_dir + '/version.json'
     version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
 
-    python_version_as_tuple = tuple( map(int, platform.get('python', '3.6').split('.') ) )
+    python_version_as_tuple = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
     recipe_dir = working_dir + '/recipe';  os.makedirs(recipe_dir)
 
@@ -947,15 +953,15 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
             if not os.path.isdir(package_dir): os.makedirs(package_dir)
 
             if platform['os'] == 'mac':
-                distutils.dir_util.copy_tree(build_path + '/{a}/{a}.app'.format(**vars()), '{package_dir}/{a}.app'.format(**vars()), update=False)
-                if a not in does_not_require_database: distutils.dir_util.copy_tree(rosetta_dir + '/database', '{package_dir}/{a}.app/Contents/database'.format(**vars()), update=False)
+                dir_util_module.copy_tree(build_path + '/{a}/{a}.app'.format(**vars()), '{package_dir}/{a}.app'.format(**vars()), update=False)
+                if a not in does_not_require_database: dir_util_module.copy_tree(rosetta_dir + '/database', '{package_dir}/{a}.app/Contents/database'.format(**vars()), update=False)
 
             elif platform['os'] in ['linux', 'ubuntu']:
                 #os.makedirs( '{package_dir}/{a}'.format(**vars()) )
                 #shutil.copy(build_path + '/{a}/{a}'.format(**vars()), package_dir'{package_dir}'.format(**vars()) )
 
                 shutil.copy(build_path + '/{a}/{a}'.format(**vars()), package_dir)
-                if a not in does_not_require_database: distutils.dir_util.copy_tree(rosetta_dir + '/database', '{package_dir}/database'.format(**vars()), update=False)
+                if a not in does_not_require_database: dir_util_module.copy_tree(rosetta_dir + '/database', '{package_dir}/database'.format(**vars()), update=False)
 
 
             else: raise BenchmarkError('ui_release: ERROR, unsupported os: {platform[os]}!'.format(**vars()))

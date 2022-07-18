@@ -61,6 +61,8 @@ PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-proc
 # Commands to run all the scripts needed for setting up Rosetta compiles. (Run from main/source directory)
 PRE_COMPILE_SETUP_SCRIPTS = [ "./update_options.sh", "./update_submodules.sh", "./update_ResidueType_enum_files.sh", "python version.py" ]
 
+DEFAULT_PYTHON_VERSION='3.9'
+
 # Standard funtions and classes below ---------------------------------------------------------------------------------
 
 class BenchmarkError(Exception):
@@ -381,7 +383,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     #    blosc==1.8.3         \
     #    py3Dmol>=0.8.0       \
 
-    python_version = tuple( map(int, platform.get('python', '3.6').split('.') ) )
+    python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
 
     if python_version <= (3, 8):
@@ -391,7 +393,10 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     elif python_version == (3, 10): packages = 'numpy>=1.22.3'
     else: packages = 'numpy>=1.23'
 
-    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
+    if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
+    if platform['os'] == 'mac' and python_version == (3, 8): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
+
+    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
 
     for p in packages: assert '=' in p
 
@@ -410,7 +415,7 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         IMPORTANT: if PyRosetta build without serialization support or on Python-2 platform then we DO NOT REQUIRE any packages
     '''
 
-    python_version = tuple( map(int, platform.get('python', '3.6').split('.') ) )
+    python_version = tuple( map(int, platform.get('python', DEFAULT_PYTHON_VERSION).split('.') ) )
 
     if python_version < (3, 9):
         packages = '\
@@ -431,7 +436,7 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
 
     if conda: packages = packages.replace('blosc', 'python-blosc')
 
-    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
+    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
     for p in packages: assert '=' in p
     return packages
 
@@ -458,7 +463,7 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     command_line = f'cd {rosetta_dir}/source/src/python/PyRosetta && {py_env.python} build.py -j{jobs} --compiler {platform["compiler"]} --type {mode}{extra} {options}'
 
-    pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output').split()[0]
+    pyrosetta_path = execute('Getting PyRosetta build path...', command_line + ' --print-build-root', return_='output').split()[-1]
 
     if skip_compile:
         res, output = 0, '__init__.py:build_pyrosetta: skip_compile is enabled, skipping build...\n'
@@ -706,7 +711,7 @@ def local_python_install(platform, config):
     jobs = config['cpu_count']
     compiler, cpp_compiler = ('clang', 'clang++') if platform['os'] == 'mac' else ('gcc', 'g++')  # disregarding platform compiler setting and instead use default compiler for platform
 
-    python_version = platform.get('python', '3.6')
+    python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
 
     if python_version.endswith('.s'):
         assert python_version == f'{sys.version_info.major}.{sys.version_info.minor}.s'
@@ -1006,7 +1011,7 @@ def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
     conda_root_env = _get_path_to_conda_root(platform, config)
     activate = conda_root_env.activate
 
-    python_version = platform.get('python', '3.6')
+    python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
 
     prefix = os.path.abspath( working_dir + '/.conda-python-' + python_version )
 

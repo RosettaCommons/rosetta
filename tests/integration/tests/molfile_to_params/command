@@ -2,9 +2,13 @@ cd %(workdir)s
 
 [ -x %(pyapps)s/public/molfile_to_params.py ] || exit 1
 
+if [ "%(python2)s" = "PYTHON2_NOT_FOUND" ]; then
+    echo "PYTHON2 WAS NOTFOUND, EXITING..."
+    exit 0
+fi
+
 for f in *.{mol,mol2}; do
     %(python2)s %(pyapps)s/public/molfile_to_params.py -p $(basename $f) -k $f.kin $f >> log 2>&1
-    
+
     test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 done
-

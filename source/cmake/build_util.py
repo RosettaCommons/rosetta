@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import os, stat, shutil, sys, os.path
 from functools import reduce
 
@@ -11,7 +12,7 @@ def execfile(fname, settings):
 # Load projects.settings file and put resultant data into PROJECT_SETTINGS
 # This script (build_util.py) is in rosetta_source/cmake/, and want rosetta_source/projects.settings
 PROJECTS_SETTINGS = {}
-execfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.settings") ,PROJECTS_SETTINGS)
+exec(compile(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.settings"), "rb").read(), os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.settings"), 'exec'),PROJECTS_SETTINGS)
 print(PROJECTS_SETTINGS["projects"]["external"])
 KNOWN_PROJECTS = PROJECTS_SETTINGS["projects"]["src"]
 KNOWN_TESTS =PROJECTS_SETTINGS["projects"]["test"]
@@ -32,7 +33,7 @@ def list_project_files(path_to_source_dir, project_name, look_for_extension = 'a
     if project_name == 'pilot_apps' and not os.path.exists( settings_file_name ): settings_file_name += '.all'
 
     settings_dict = {}
-    execfile(settings_file_name, settings_dict)
+    exec(compile(open(settings_file_name, "rb").read(), settings_file_name, 'exec'), settings_dict)
 
     project_files = []
     for dir, srcfiles in settings_dict['sources'].items():
@@ -81,7 +82,7 @@ def list_test_files(path_to_source_dir, test_name):
     path_to_test = path_to_source_dir + 'test/'
     settings_file_name = path_to_test + test_name + '.test.settings'
     settings_dict = {}
-    execfile(settings_file_name, settings_dict)
+    exec(compile(open(settings_file_name, "rb").read(), settings_file_name, 'exec'), settings_dict)
 
     test_files = []
     for dir, srcfiles in settings_dict['sources'].items():
@@ -135,7 +136,7 @@ def list_external_files(path_to_mini, external_name):
     if not os.path.exists( settings_file_name ):
         return ( "", [] , [] )
     settings_dict = {}
-    execfile(settings_file_name, settings_dict)
+    exec(compile(open(settings_file_name, "rb").read(), settings_file_name, 'exec'), settings_dict)
 
     project_files = []
     for dir, srcfiles in settings_dict['sources'].items():
@@ -180,7 +181,7 @@ def list_external_files(path_to_mini, external_name):
 def update_libraries_list(projects):
     exclude = ['apps', 'pilot_apps']
     out = open( 'build/libraries.cmake', 'w')
-    out.write('SET( LIBRARIES ' + reduce(lambda x,y: x + ' ' + y, filter(lambda x: x not in exclude, projects)) + ')')
+    out.write('SET( LIBRARIES ' + reduce(lambda x,y: x + ' ' + y, [x for x in projects if x not in exclude]) + ')')
 
 def update_test_list(projects, test_path):
     out = open('build/test_libraries.cmake', 'w')
@@ -292,5 +293,3 @@ def project_main(path_to_source_dir, argv, project_callback):
 
         project_path, project_files = list_project_files(path_to_source_dir, project, look_for_extension)
         project_callback(project, project_path, project_files)
-
-

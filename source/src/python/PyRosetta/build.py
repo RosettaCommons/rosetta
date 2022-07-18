@@ -158,7 +158,9 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     # llvm_version='9.0.0'  # v8 and v9 can not be build with Clang-3.4, we if need upgrade to v > 7 then we should probably dynamicly change LLVM version based on complier versions
     # llvm_version='7.1.0'  # compiling v7.* on clang-3.4 lead to lockup while compiling tools/clang/lib/Sema/SemaChecking.cpp
     llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang') if Platform == 'macos' and platform.machine() == 'arm64' else ('6.0.1', 'tools/clang/lib/Headers/clang-headers')
+    #llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang') if Platform == 'macos' else ('6.0.1', 'tools/clang/lib/Headers/clang-headers')
     #llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang')
+    #if Platform == 'macos': headers += ' clang'
 
     prefix = prefix_root + '/llvm-' + llvm_version
 
@@ -168,7 +170,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     if res: binder_head = 'unknown'
     else: binder_head = output.split('\n')[0]
 
-    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.4, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.5.1, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
     signature_file_name = build_dir + '/.signature.json'
 
     disk_signature = dict(config = 'unknown', binder = 'unknown')
@@ -654,7 +656,7 @@ def generate_bindings(rosetta_source_path):
     defines  = ''.join( [' -D'+d for d in get_defines()] ) + ' -DPYROSETTA_BINDER'
 
     if Platform == 'macos':
-        if tuple( map(int, platform.mac_ver()[0].split('.') ) ) < (11, 4):
+        if False and tuple( map(int, platform.mac_ver()[0].split('.') ) ) < (11, 4):
             includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1'
             includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include'
         else:

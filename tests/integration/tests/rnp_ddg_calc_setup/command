@@ -32,6 +32,11 @@ cd %(workdir)s
 # making script terminate with error after any command that return non zero exit code
 set -e
 
+if [ "%(python2)s" = "PYTHON2_NOT_FOUND" ]; then
+    echo "PYTHON2 WAS NOTFOUND, EXITING..."
+    exit 0
+fi
+
 #
 # After that, do whatever you want.
 

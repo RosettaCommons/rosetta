@@ -1,4 +1,5 @@
 {
     "This file contains multipliers for individual timeout adjustment -- for tests that have just barely crossed a runtime threshold but that can't necessarily be modified to avoid that runtime threshold. (This option is also valuable when someone makes an infrastructural change, such as activating a greater level of scrutiny in debug mode, but is not necessarily qualified to fix every integration test timing issue that may result.) That said, if you are adding a new integration test, it's not a great idea to just show up here and ensure your integration test can consume a lot of compute!": 0.0,
+    "app_exception_handling": 2.0,
     "We used to have multipliers for the following tests at the following values... but ultimately, we recognized that that would mean having release-debug mode take four hours or so, which is of course ridiculous: mp_relax_w_ligand: 2.0, membrane_relax: 2.0,membrane_relax_hbond: 2.0,simple_cycpep_predict_octahedral_metal: 2.0, continuous_sewing_hasher: 4.0, discontinuous_sewing_hasher: 4.0 ": 0
 }

@@ -1,6 +1,8 @@
-#!/usr/bin/env python
-from __future__ import print_function
+#!/usr/bin/env python3
+
 # make_project.py - modified from mini-interactive by tex.
+
+from __future__ import print_function
 
 import os, sys, os.path, subprocess
 import timeit

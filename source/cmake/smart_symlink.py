@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # smart_symlink.py - quick script for symlinking binaries into mini/bin
 # usage: python ../smart_symlink.py gcc release
@@ -43,4 +43,4 @@ for filename in files:
             #print 'symlinking ', executable_name, ' to ', new_name_for_symlink
             os.symlink( os.path.abspath( executable_name ), new_name_for_symlink )
     else:
-         print "Warning: %s doesn't exist!" % ( executable_name )
+         print("Warning: %s doesn't exist!" % ( executable_name ))
