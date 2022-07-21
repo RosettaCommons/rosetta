@@ -24,7 +24,7 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 
 _api_version_ = '1.1'
 
-_merge_size_failure_threshold_bytes_ = 1024 * 64
+_merge_size_failure_threshold_bytes_ = 1024 * 128
 
 
 def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
