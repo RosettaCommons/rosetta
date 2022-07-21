@@ -115,7 +115,7 @@ GlycanPositionSelector::parse_my_tag(
 		auto position = tag->getOption< Size >("position");
 		positions_.push_back(position);
 	}
-	if ( tag->hasOption("range") | tag->hasOption("ranges") ) {
+	if ( tag->hasOption("range") || tag->hasOption("ranges") ) {
 		utility::vector1< std::string > range_strings;
 		if ( tag->hasOption("range") ) {
 			range_strings.push_back( tag->getOption< std::string>( "range"));

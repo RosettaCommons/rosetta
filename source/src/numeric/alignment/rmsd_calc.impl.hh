@@ -241,7 +241,7 @@ void coordinate_array_broadcast_rmsd(
 	}
 
 	if (
-			(first_coordinates.template getSize<0>()  != out.template getSize<0>()) |
+			(first_coordinates.template getSize<0>()  != out.template getSize<0>()) ||
 			(second_coordinates.template getSize<0>() != out.template getSize<1>())
 			) {
 		throw std::invalid_argument("out buffer of incorrect shape.");
@@ -317,7 +317,7 @@ void indexed_coordinate_array_broadcast_rmsd(
 	}
 
 	if (
-			(first_coordinate_indicies.template getSize<0>()  != out.template getSize<0>()) |
+			(first_coordinate_indicies.template getSize<0>()  != out.template getSize<0>()) ||
 			(second_coordinate_indicies.template getSize<0>() != out.template getSize<1>())
 			) {
 		throw std::invalid_argument("out buffer of incorrect shape.");

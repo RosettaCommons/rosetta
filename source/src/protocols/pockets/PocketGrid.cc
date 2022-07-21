@@ -5464,7 +5464,7 @@ EggshellGrid::EggshellGrid( const PocketGrid& gr ) :
 	for ( core::Size x=0; x<(gr.xdim_); x++ ) {
 		for ( core::Size y=0; y<(gr.ydim_); y++ ) {
 			for ( core::Size z=0; z<(gr.zdim_); z++ ) {
-				if ( (gr.grid_[x][y][z] == gr.HSURFACE) || (gr.grid_[x][y][z] == gr.PSURFACE) || (gr.grid_[x][y][z] == gr.T_SURFACE)| (gr.grid_[x][y][z] == gr.ST_SURFACE) /*||(gr.grid_[x][y][z]==gr.TP_SURF)*/ ) {
+				if ( (gr.grid_[x][y][z] == gr.HSURFACE) || (gr.grid_[x][y][z] == gr.PSURFACE) || (gr.grid_[x][y][z] == gr.T_SURFACE) || (gr.grid_[x][y][z] == gr.ST_SURFACE) /*||(gr.grid_[x][y][z]==gr.TP_SURF)*/ ) {
 					if ( x != 0 ) {
 						searchxmin=x-1;
 					} else {

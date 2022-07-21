@@ -103,7 +103,7 @@ ResfileCommandOperation::set_residue_selector( core::select::residue_selector::R
 void
 ResfileCommandOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task) const {
 
-	if ( (selector_ == nullptr) | ( command_ == "" ) ) {
+	if ( (selector_ == nullptr) || ( command_ == "" ) ) {
 		utility_exit_with_message("residue_selector and command must be set!");
 	}
 

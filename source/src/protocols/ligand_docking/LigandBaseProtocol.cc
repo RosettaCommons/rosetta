@@ -661,13 +661,13 @@ LigandBaseProtocol::find_interface_backbone(
 			// Track backwards
 			for ( core::Size j = i; j >= core::Size(std::max(1,int(i)-window)); --j ) {
 				if ( !pose.residue_type(j).is_polymer() || pose.residue(j).is_upper_terminus() ) break;
-				is_around_interface[i] = is_around_interface[i] | is_interface[j];
+				is_around_interface[i] = is_around_interface[i] || is_interface[j];
 				if ( pose.residue(j).is_lower_terminus() ) break;
 			}
 			// Track forwards
 			for ( core::Size j = i; j <= std::min(nres,i+window); ++j ) {
 				if ( !pose.residue_type(j).is_polymer() || pose.residue(j).is_lower_terminus() ) break;
-				is_around_interface[i] = is_around_interface[i] | is_interface[j];
+				is_around_interface[i] = is_around_interface[i] || is_interface[j];
 				if ( pose.residue(j).is_upper_terminus() ) break;
 			}
 		}

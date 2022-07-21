@@ -599,7 +599,7 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask 
 	//bool exclude=false;
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
-		if ( residue_mask[hbond.don_res()] & residue_mask[hbond.acc_res()] ) {
+		if ( residue_mask[hbond.don_res()] && residue_mask[hbond.acc_res()] ) {
 			hbonds_.push_back( utility::pointer::make_shared< HBond >( *src.hbonds_[i] ) );
 		}
 	}

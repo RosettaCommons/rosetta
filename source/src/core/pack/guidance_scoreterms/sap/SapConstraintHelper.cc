@@ -1111,7 +1111,7 @@ SapConstraintHelper::fill_block_params( core::pose::Pose const & pose, pack::rot
 			rotamer_sets.rotamer( irot ) :
 			pose.residue( irot - rotamer_sets.nrotamers() ).get_self_ptr();
 
-		bool warn = score_positions_[ rotamer->seqpos() ] | sap_calculate_positions_[ rotamer->seqpos() ];
+		bool warn = score_positions_[ rotamer->seqpos() ] || sap_calculate_positions_[ rotamer->seqpos() ];
 		std::pair< char, std::string > name1_name3 = db->get_name1_name3( *rotamer, warn );
 		if ( ! name1_name3.first ) {
 			score_positions_[ rotamer->seqpos() ] = false;
