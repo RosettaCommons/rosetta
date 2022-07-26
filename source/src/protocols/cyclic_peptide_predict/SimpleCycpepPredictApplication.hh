@@ -725,7 +725,8 @@ private:
 
 	/// @brief Given a pose, add sidechain conjugation variant types to the C-terminal
 	/// cysteine and add a special acetyl terminus to the N-terminal residue.
-	void set_up_terminal_thioether_lariat_variants( core::pose::PoseOP pose ) const;
+	/// @returns The thioether cysteine index.
+	core::Size set_up_terminal_thioether_lariat_variants( core::pose::PoseOP pose ) const;
 
 	/// @brief Given the basename of a residue type, return true if this is a type that can donate the nitrogen to an
 	/// isopeptide bond, false otherwise.

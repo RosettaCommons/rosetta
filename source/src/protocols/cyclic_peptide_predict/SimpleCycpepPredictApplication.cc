@@ -1755,10 +1755,12 @@ SimpleCycpepPredictApplication::run() const {
 		core::pose::PoseOP pose( utility::pointer::make_shared< core::pose::Pose >() );
 		build_polymer(pose, resnames_copy);
 
+		core::Size thioether_sidechain_index(0);
+
 		if ( cyclization_type() == SCPA_terminal_disulfide ) {
 			set_up_terminal_disulfide_variants( pose ); //Add disulfide variants, if we're doing disulfide cyclization.
 		} else if ( cyclization_type() == SCPA_thioether_lariat ) {
-			set_up_terminal_thioether_lariat_variants( pose ); //Add thioether lariat variant to the N-terminus, if we're doing that type of cyclization.
+			thioether_sidechain_index = set_up_terminal_thioether_lariat_variants( pose ); //Add thioether lariat variant to the N-terminus, if we're doing that type of cyclization.
 		} else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 			set_up_isopeptide_variants( pose );
 		}
@@ -1768,9 +1770,8 @@ SimpleCycpepPredictApplication::run() const {
 		set_up_cyclization_mover( termini, pose ); //Handles the cyclization appropriately, contingent on the cyclization type.
 		termini->apply(*pose);
 		if ( cyclization_type() == SCPA_thioether_lariat ) {
-			core::Size firstres, lastres;
-			find_first_and_last_thioether_lariat_residues( pose, firstres, lastres );
-			protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *pose, firstres, lastres );
+			runtime_assert( thioether_sidechain_index != 0  );
+			protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *pose, 1, thioether_sidechain_index );
 		}
 
 		//Add cyclic constraints:
@@ -2683,6 +2684,8 @@ SimpleCycpepPredictApplication::set_up_native (
 		);
 	}
 
+	core::Size thioether_sidechain_index(0); //Only used for thioethers.
+
 	if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat ) {
 		TR << "Stripping termini from native structure." << std::endl;
 		if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat ) {
@@ -2702,7 +2705,7 @@ SimpleCycpepPredictApplication::set_up_native (
 			}
 		}
 	} else if ( cyclization_type() == SCPA_thioether_lariat ) {
-		set_up_terminal_thioether_lariat_variants( native_pose );
+		thioether_sidechain_index = set_up_terminal_thioether_lariat_variants( native_pose ); // Returns thioether cysteine index.
 	} else if ( cyclization_type() == SCPA_terminal_disulfide ) {
 		//Set up disulfide variants, if we're doing disulfide cyclization.
 		set_up_terminal_disulfide_variants( native_pose );
@@ -2713,7 +2716,8 @@ SimpleCycpepPredictApplication::set_up_native (
 	set_up_cyclization_mover( termini, native_pose, true, last_res );
 	termini->apply(*native_pose);
 	if ( cyclization_type() == SCPA_thioether_lariat ) {
-		protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *native_pose, 1, last_res );
+		runtime_assert( thioether_sidechain_index != 0 ); //Should be true.
+		protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *native_pose, 1, thioether_sidechain_index );
 	}
 }
 
@@ -4784,7 +4788,8 @@ SimpleCycpepPredictApplication::set_up_isopeptide_variants(
 
 /// @brief Given a pose, add sidechain conjugation variant types to the C-terminal
 /// cysteine and add a special acetyl terminus to the N-terminal residue.
-void
+/// @returns The thioether cysteine index.
+core::Size
 SimpleCycpepPredictApplication::set_up_terminal_thioether_lariat_variants(
 	core::pose::PoseOP pose
 ) const {
@@ -4795,6 +4800,8 @@ SimpleCycpepPredictApplication::set_up_terminal_thioether_lariat_variants(
 
 	core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
 	protocols::cyclic_peptide::crosslinker::set_up_thioether_variants( *pose, firstres, lastres );
+
+	return lastres;
 }
 
 /// @brief Given the basename of a residue type, return true if this is a type that can donate the nitrogen to an
