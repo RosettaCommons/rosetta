@@ -715,6 +715,14 @@ private:
 	/// @details Throws an error if no residue is found.
 	core::Size find_last_disulf_res( core::pose::PoseCOP pose ) const;
 
+	/// @brief Find the first and last polymer residues in a pose.
+	void
+	find_first_and_last_polymer_residues(
+		core::pose::Pose const & pose,
+		core::Size & first_polymer_res,
+		core::Size & last_polymer_res
+	) const;
+
 	/// @brief Given a pose, add disulfide variant types to the first and last cysteine residues in the pose.
 	/// @details This should ONLY be called on a pose just before a bond is declared between these residues.
 	void set_up_terminal_disulfide_variants( core::pose::PoseOP pose ) const;

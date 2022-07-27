@@ -4723,6 +4723,24 @@ SimpleCycpepPredictApplication::find_last_disulf_res(
 	return 0;
 }
 
+/// @brief Find the first and last polymer residues in a pose.
+void
+SimpleCycpepPredictApplication::find_first_and_last_polymer_residues(
+	core::pose::Pose const & pose,
+	core::Size & first_polymer_res,
+	core::Size & last_polymer_res
+) const {
+	std::string const errmsg( "Error in SimpleCycpepPredictApplication::find_first_and_last_polymer_residues(): " );
+
+	for ( core::Size ir(1), irmax(pose.total_residue()); ir<=irmax; ++ir ) {
+		if ( pose.residue_type(ir).is_polymer() ) {
+			last_polymer_res = ir;
+			if ( first_polymer_res == 0 ) first_polymer_res = ir;
+		}
+	}
+	runtime_assert_string_msg( last_polymer_res != 0, errmsg + "No polymeric residue types were found in this pose!  This isn't a macrocycle!" );
+	runtime_assert_string_msg( last_polymer_res > first_polymer_res, errmsg + "Only one polymeric residue type was found in this pose!  This isn't a macrocycle!" );
+}
 
 /// @brief Given a pose, add disulfide variant types to the first and last cysteine residues in the pose.
 /// @details This should ONLY be called on a pose just before a bond is declared between these residues.
@@ -4734,14 +4752,7 @@ SimpleCycpepPredictApplication::set_up_terminal_disulfide_variants(
 	std::string const errmsg( "Error in SimpleCycpepPredictApplication::set_up_terminal_disulfide_variants():  ");
 
 	core::Size first_polymer_res(0), last_polymer_res(0);
-	for ( core::Size ir(1), irmax(pose->total_residue()); ir<=irmax; ++ir ) {
-		if ( pose->residue_type(ir).is_polymer() ) {
-			last_polymer_res = ir;
-			if ( first_polymer_res == 0 ) first_polymer_res = ir;
-		}
-	}
-	runtime_assert_string_msg( last_polymer_res != 0, errmsg + "No polymeric residue types were found in this pose!  This isn't a macrocycle!" );
-	runtime_assert_string_msg( last_polymer_res > first_polymer_res, errmsg + "Only one polymeric residue type was found in this pose!  This isn't a macrocycle!" );
+	find_first_and_last_polymer_residues( *pose, first_polymer_res, last_polymer_res );
 
 	protocols::simple_moves::ModifyVariantTypeMover add_disulf_var;
 	add_disulf_var.set_additional_type_to_add("DISULFIDE");
@@ -4769,6 +4780,9 @@ SimpleCycpepPredictApplication::set_up_isopeptide_variants(
 	core::Size firstres, lastres;
 	find_first_and_last_isopeptide_residues(pose, firstres, lastres);
 
+	core::Size first_polymer_res(0), last_polymer_res(0);
+	find_first_and_last_polymer_residues( *pose, first_polymer_res, last_polymer_res );
+
 	if ( cyclization_type() == SCPA_cterm_isopeptide_lariat ) {
 		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, firstres);
 		core::pose::remove_upper_terminus_type_from_pose_residue( *pose, lastres );
@@ -4776,12 +4790,12 @@ SimpleCycpepPredictApplication::set_up_isopeptide_variants(
 	} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat ) {
 		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, lastres);
 		core::pose::remove_lower_terminus_type_from_pose_residue( *pose, firstres );
-		core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
+		core::pose::add_upper_terminus_type_to_pose_residue( *pose, last_polymer_res );
 	} else if ( cyclization_type() == SCPA_sidechain_isopeptide ) {
 		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, firstres);
 		core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::SIDECHAIN_CONJUGATION, lastres);
 		core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
-		core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
+		core::pose::add_upper_terminus_type_to_pose_residue( *pose, last_polymer_res );
 	}
 	pose->update_residue_neighbors();
 }
@@ -4798,7 +4812,10 @@ SimpleCycpepPredictApplication::set_up_terminal_thioether_lariat_variants(
 	core::Size firstres, lastres;
 	find_first_and_last_thioether_lariat_residues(pose, firstres, lastres);
 
-	core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
+	core::Size first_polymer_res(0), last_polymer_res(0);
+	find_first_and_last_polymer_residues( *pose, first_polymer_res, last_polymer_res );
+
+	core::pose::add_upper_terminus_type_to_pose_residue( *pose, last_polymer_res );
 	protocols::cyclic_peptide::crosslinker::set_up_thioether_variants( *pose, firstres, lastres );
 
 	return lastres;
