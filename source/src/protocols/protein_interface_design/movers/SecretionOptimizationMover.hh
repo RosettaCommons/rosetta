@@ -191,7 +191,7 @@ public :
 	void DesignAroundApply( core::pose::Pose const & pose, utility::vector1<SecretionOptimizationMover::mutt>& targets) const; // updated (as of Nov 2017) DesignAroundApply that works with symmetry. Baked into this protocol because it's dependent on it, and maybe DesignAround will have been updated before I check this in
 
 	void packeruser( core::pose::Pose & pose) const; // just calls the Packer
-	virtual void test_move(core::pose::Pose & pose) override; // for UMoverTest testing (in theory)
+	void test_move(core::pose::Pose & pose) override; // for UMoverTest testing (in theory)
 
 private :
 	utility::vector1<SecretionOptimizationMover::mutt> resids_; //this is the list of residues that we can design to, specified for each position

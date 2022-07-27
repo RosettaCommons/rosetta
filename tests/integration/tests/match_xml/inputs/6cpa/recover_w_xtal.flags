@@ -1,4 +1,5 @@
 -s inputs/6cpa/6cpa_9_nohet.pdb
+-run:preserve_header
 -match:lig_name 6c1
 -match:grid_boundary inputs/6cpa/6cpa_9.gridlig
 -match:scaffold_active_site_residues inputs/6cpa/6cpa_9.pos
