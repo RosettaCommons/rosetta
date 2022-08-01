@@ -702,6 +702,7 @@ static ConstraintRegistrator< core::scoring::constraints::DihedralPairConstraint
 static ConstraintRegistrator< core::scoring::constraints::KofNConstraintCreator > KofNConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::LocalCoordinateConstraintCreator > LocalCoordinateConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::MultiConstraintCreator > MultiConstraintCreator_registrator;
+static ConstraintRegistrator< core::scoring::constraints::NamedAtomPairConstraintCreator > NamedAtomPairConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::NamedAngleConstraintCreator > NamedAngleConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::FabConstraintCreator > FabConstraintCreator_registrator;
 
