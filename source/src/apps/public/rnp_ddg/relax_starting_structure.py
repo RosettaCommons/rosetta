@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+from __future__ import print_function
 
 import os
 from sys import exit
@@ -31,7 +32,7 @@ relax_commands = [
 def main( args ):
 
 	if args.nstructs < 10:
-		print "Warning: the recommend number of structures (nstructs) is 100!"
+		print("Warning: the recommend number of structures (nstructs) is 100!")
 
 	# First make a directory for doing the relaxation
 	run_dir = os.getcwd()
@@ -40,7 +41,7 @@ def main( args ):
 	if not os.path.exists(relax_dir):
 		os.mkdir( relax_dir )
 	else:
-		print "Directory relax_%s already exists!" %(start_struct_pref)
+		print( "Directory relax_%s already exists!" %(start_struct_pref) )
 		exit( 0 )
 	command_file = open('ALL_RELAX_COMMANDS', 'w')
 	command_file.write( 'cd %s\n' %(relax_dir))
@@ -77,17 +78,17 @@ def main( args ):
 	command_file.write( 'cd %s\n' %(run_dir))
 	command_file.close()
 
-	print "################################################"
-	print "Done setting up relaxation runs!"
-	print "See instructions below to run."
-	print "################################################"
-	print "Commands for running relaxation have been written to ALL_RELAX_COMMANDS"
-	print "To run type: "
-	print "source ALL_RELAX_COMMANDS"
-	print ""
-	print "Alternatively, commands are separated out in the RELAX_COMMAND_* files."
-	print "(This is especially useful if you are running on a cluster: each command can be run separately.)"
-	print "These can also be run by typing e.g.: source RELAX_COMMAND_1"
+	print( "################################################" )
+	print( "Done setting up relaxation runs!" )
+	print( "See instructions below to run." )
+	print( "################################################" )
+	print( "Commands for running relaxation have been written to ALL_RELAX_COMMANDS" )
+	print( "To run type: " )
+	print( "source ALL_RELAX_COMMANDS" )
+	print( "" )
+	print( "Alternatively, commands are separated out in the RELAX_COMMAND_* files." )
+	print( "(This is especially useful if you are running on a cluster: each command can be run separately.)" )
+	print( "These can also be run by typing e.g.: source RELAX_COMMAND_1" )
 
 
 if __name__ == '__main__':

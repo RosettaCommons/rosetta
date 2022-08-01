@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+from __future__ import print_function
+
 import os, sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
-
-from sets import Set
 
 # Magic spell to make sure Rosetta python libs are on the PYTHONPATH:
 #sys.path.append( os.path.abspath( sys.path[0] ) )
@@ -56,7 +56,7 @@ def map_parent_resnames_three_to_one( key):
 
 def map_parent_resnames_one_to_three( key):
     d = {
-       
+
         'G':'GLY',
         'C':'CYS',
         'D':'ASP',
@@ -120,7 +120,7 @@ def write_ligand_kinemage(f, molfile):
     for a in molfile.atoms: f.write("{%.2f} %.3f %.3f %.3f\n" % (a.partial_charge, a.x, a.y, a.z))
     # Each fragment and its atom tree, distinguished by color
     colors = ['deadwhite', 'purple', 'blue', 'sky', 'cyan', 'sea', 'green', 'lime', 'yellow', 'gold', 'orange', 'red']
-    frag_ids = list(Set([a.fragment_id for a in molfile.atoms]))
+    frag_ids = list(set([a.fragment_id for a in molfile.atoms]))
     frag_ids.sort()
     for frag_id in frag_ids:
         color = colors[ frag_id % len(colors) ]
@@ -236,7 +236,7 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs):
             if is_sp2_proton(a, b, c, d): num_H_confs *= 6
             else: num_H_confs *= 9
     if num_H_confs > max_confs:
-        print "WARNING: skipping extra samples for proton chis; would give %i conformers" % num_H_confs
+        print( "WARNING: skipping extra samples for proton chis; would give %i conformers" % num_H_confs )
     num_chis = 0
     for bond, a, b, c, d in rot_bond_iter(sorted_bonds):
         num_chis += 1
@@ -299,7 +299,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     f may be a file name or file handle.
     '''
     close_file = False
-    if not isinstance(f, file):
+    if not hasattr(f, 'write'):
         f = open(f, 'w')
         close_file = True
     else: name = "%2.2s" % (name)
@@ -335,7 +335,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
                 f.write("ATOM %-4s %-4s %-4s %.2f\n" % (atom.pdb_name, atom.ros_type, atom.mm_type, atom.partial_charge))
             else:
                 f.write("ATOM %-4s %-4s %-4s %.2f\n" % (atom.pdb_name.lstrip(), atom.ros_type, atom.mm_type, atom.partial_charge))
-    # write bonds 
+    # write bonds
     for bond in bonds:
         if bond.a1.poly_lower != True and bond.a1.poly_upper != True and bond.a2.poly_lower != True and bond.a2.poly_upper != True:
             if bond.a1.elem == 'H':
@@ -399,10 +399,10 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     if not peptoid:
         for bond, a, b, c, d in rot_bond_iter(sorted_bonds):
             if a.poly_upper == False and b.poly_upper == False and c.poly_upper == False and d.poly_upper == False and a.poly_lower == False and b.poly_lower == False and c.poly_lower == False and d.poly_lower == False:
-                #print d.poly_n_bb, d.pdb_name, c.pdb_name, b.pdb_name, a.pdb_name
+                #print( d.poly_n_bb, d.pdb_name, c.pdb_name, b.pdb_name, a.pdb_name )
                 if not d.poly_n_bb:
                     sorted_bonds.reverse()
-                    print "REVERSED!!!"
+                    print( "REVERSED!!!" )
                     break
                 else:
                     break
@@ -411,16 +411,16 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     for bond, a, b, c, d in rot_bond_iter(sorted_bonds):
         if a.poly_upper == False and b.poly_upper == False and c.poly_upper == False and d.poly_upper == False and \
                 a.poly_lower == False and b.poly_lower == False and c.poly_lower == False and d.poly_lower == False:
-            
+
             # Do not include backbone chi (d and c cant be backbone atoms
             if d.poly_backbone == True and c.poly_backbone == True and \
                     b.poly_backbone == True and a.poly_backbone == True:
                 continue
-            # in peptoid case, there should C backbone should not be in any CHI angles 
+            # in peptoid case, there should C backbone should not be in any CHI angles
             if peptoid:
                 if d.pdb_name.strip() == "C" or c.pdb_name.strip() == "C" or b.pdb_name.strip() == "C" or a.pdb_name.strip() == "C":
                     continue
-            
+
             num_chis += 1
             # "Direction" of chi definition appears not to matter,
             # but we follow the convention of amino acids (root to tip)
@@ -449,7 +449,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     # calc theoretical max neighbor radius
     na = len(molfile.atoms) # Number of Atoms
     all_all_dist = [ [1e100] * na for i in range(na) ]
-    nbrs = dict([ (a,Set()) for a in molfile.atoms ])
+    nbrs = dict([ (a,set()) for a in molfile.atoms ])
     for a in molfile.atoms:
         nbrs[a].update([b.a2 for b in a.bonds])
     for i in range(0,na):
@@ -498,7 +498,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
     nbb.input_stub1,  nbb.input_stub2,  nbb.input_stub3  = nbb, cabb, cbb
     cabb.input_stub1, cabb.input_stub2, cabb.input_stub3 = nbb, cabb, cbb
     cbb.input_stub1,  cbb.input_stub2,  cbb.input_stub3  = cabb, nbb, cbb
-    obb.input_stub1,  obb.input_stub2,  obb.input_stub3  = cbb, cabb, upper 
+    obb.input_stub1,  obb.input_stub2,  obb.input_stub3  = cbb, cabb, upper
     upper.input_stub1, upper.input_stub2, upper.input_stub3 = cbb, cabb, nbb
     lower.input_stub1, lower.input_stub2, lower.input_stub3 = nbb, cabb, cbb
 
@@ -522,7 +522,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
             if not child.poly_ignore:
                 write_icoords(child)
 
-    # Reporting 
+    # Reporting
     print("WRITING ICOOR_INTERNAL: ")
     #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (nbb.pdb_name, nbb.phi, nbb.theta, nbb.d, nbb.input_stub1.pdb_name, nbb.input_stub2.pdb_name, nbb.input_stub3.pdb_name))
     #print("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s" % (cabb.pdb_name, cabb.phi, cabb.theta, cabb.d, cabb.input_stub1.pdb_name, cabb.input_stub2.pdb_name, cabb.input_stub3.pdb_name))
@@ -545,7 +545,7 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
 def write_pdb_rotamers( f, pdb_file_name):
     # Open params file
     close_file = False
-    if not isinstance(f, file):
+    if not hasattr(f, 'write'):
         f = open(f, 'a')
         close_file = True
     f.write( "PDB_ROTAMERS " + str(pdb_file_name))
@@ -559,14 +559,14 @@ def write_ligand_pdb(f, molfile_tmpl, molfile_xyz, resname, ctr=None, chain_id='
     while the actual XYZ coordinates are taken from molfile_xyz.
     resname provides the first two characters of the residue name.
     f may be a file name or file handle.'''
-    if not isinstance(f, file): f = open(f, 'w')
+    if not hasattr( f, 'write' ): f = open(f, 'w')
     # If ctr is set, make it an offset vector for recentering ligands
     if ctr is not None:
         curr_ctr = r3.centroid([a for a in molfile_xyz.atoms if not a.is_H])
         ctr = r3.sub(ctr, curr_ctr)
     else: ctr = r3.Triple(0,0,0)
     atom_num = 0
-    frag_ids = list(Set([a.fragment_id for a in molfile_tmpl.atoms]))
+    frag_ids = list(set([a.fragment_id for a in molfile_tmpl.atoms]))
     frag_ids.sort()
     for frag_id in frag_ids:
         ai = index_atoms(molfile_tmpl.atoms) # 1-based index

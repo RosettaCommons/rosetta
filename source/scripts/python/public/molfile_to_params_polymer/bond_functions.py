@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+from __future__ import print_function
+
 import os, sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
 from optparse import OptionParser
-from sets import Set
 
 # Magic spell to make sure Rosetta python libs are on the PYTHONPATH:
 #sys.path.append( os.path.abspath( sys.path[0] ) )
@@ -49,7 +50,7 @@ def check_bond_count(atoms):
             raise ValueError("Atom %s is a hydrogen with >1 bonds" % atom.name)
         # Valence 4.5 for e.g. carbon comes up in peptide bonds and at the joins in multi-ring systems.
         if sum([valence(bond) for bond in atom.bonds]) > 4.5:
-            print "WARNING:  atom %s has valence > 4" % atom.name
+            print( "WARNING:  atom %s has valence > 4" % atom.name )
 
 def check_aromaticity(bonds):
     '''Safety check for Kekule structures (alternating single/double bonds)
@@ -57,10 +58,10 @@ def check_aromaticity(bonds):
     aro_bonds = len([b for b in bonds if b.order == Bond.AROMATIC])
     dbl_bonds = len([b for b in bonds if b.order == Bond.DOUBLE])
     if aro_bonds == 0 and dbl_bonds > 0:
-        print "WARNING:  structure contains double bonds but no aromatic bonds"
-        print "  Aromatic bonds must be identified explicitly --"
-        print "  alternating single/double bonds (Kekule structure) won't cut it."
-        print "  This warning does not apply to you if your molecule really isn't aromatic."
+        print( "WARNING:  structure contains double bonds but no aromatic bonds" )
+        print( "  Aromatic bonds must be identified explicitly --" )
+        print( "  alternating single/double bonds (Kekule structure) won't cut it." )
+        print( "  This warning does not apply to you if your molecule really isn't aromatic." )
 
 def assign_rotatable_bonds(bonds):
     '''Rotatable bonds are single bonds outside of rings

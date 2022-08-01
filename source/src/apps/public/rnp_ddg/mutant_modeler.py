@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
 
+from __future__ import print_function
+
 from sys import exit
 from util import read_pdb
 from collections import OrderedDict
@@ -655,7 +657,7 @@ class MutantModeler:
 			#if i+protein_len < full_len-2:
 			#	rebuild_res.append('B'+str(i+protein_len+1))
 			#	rebuild_res_nums.append(i+protein_len+1)
-			print rebuild_res
+			print( rebuild_res )
 			surr_res, surr_chains = get_surrounding_res('temp_wt_complex_start_struct.pdb', rebuild_res, radius)
 			subset = [set(surr_res), rebuild_res_nums]
 			subset[0].add(rebuild_res_nums[0])
@@ -700,10 +702,10 @@ class MutantModeler:
 				for sub in range(len(sub_list[0])):
 					#compare the residues sets of the 2 subsets
 					if len(sub_list[0][sub][0]-curr_sub[0])==0:
-					#	print curr_sub
-					#	print curr_sub[0]
-					#	print mut_subsets_with_ID
-					#	print sub_list[0][sub][0]
+					#	print( curr_sub )
+					#	print( curr_sub[0] )
+					#	print( mut_subsets_with_ID )
+					#	print( sub_list[0][sub][0] )
 						# TODO: this is buggy, should fix it, but just do this hack for now:
 						if curr_sub in mut_subsets_with_ID:
 							mut_subsets_with_ID.remove(curr_sub)

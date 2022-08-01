@@ -4,8 +4,6 @@ import os, sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
-from sets import Set
-
 # Magic spell to make sure Rosetta python libs are on the PYTHONPATH:
 #sys.path.append( os.path.abspath( sys.path[0] ) )
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -26,6 +24,8 @@ if not hasattr(__builtins__, "all"):
         for el in itr:
             if not el: return False
         return True
+
+import functools
 
 def polymer_assign_backbone_atom_types(m):
     # first get POLY flags from molfile
@@ -98,7 +98,7 @@ def polymer_assign_backbone_atom_names(atoms, bonds, peptoid):
             else :
                 bonds[ index].a2.pdb_name = "%dHA " % (bond_id + 1)
             bond_id = bond_id + 1
-            
+
     # backbone nitrogen hydrogen(s)
     for bond in bonds:
         if bond.a1.poly_n_bb and bond.a2.is_H :
@@ -154,7 +154,7 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
         return 1
     na = len(atoms) # Number of Atoms
     all_all_dist = [ [1e100] * na for i in range(na) ]
-    nbrs = dict([ (a,Set()) for a in atoms ])
+    nbrs = dict([ (a,set()) for a in atoms ])
     for a in atoms:
         #nbrs[a].update([b.a2 for b in a.bonds if b.a2.is_H == False and b.a2.poly_ignore == False and b.a2.poly_backbone == False])
         nbrs[a].update([b.a2 for b in a.bonds if b.a2.is_H == False and b.a2.poly_ignore == False and b.a2.poly_n_bb == False and b.a2.poly_c_bb == False and b.a2.poly_o_bb == False and b.a2.poly_upper == False and b.a2.poly_lower == False])
@@ -170,7 +170,7 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
         if peptoid:
             if not a.is_H and not a.poly_ignore and not a.poly_n_bb and not a.poly_c_bb and not a.poly_o_bb and not a.poly_upper and not a.poly_lower:
                 #print "ATOM: ", a
-                #print "DISTANCE: %f" % (all_all_dist[ca_index][i]-1) 
+                #print "DISTANCE: %f" % (all_all_dist[ca_index][i]-1)
                 a.pdb_greek_dist = greek_alphabet[all_all_dist[ca_index][i]-1]
         else:
             if not a.is_H and not a.poly_ignore and not a.poly_backbone:
@@ -190,7 +190,7 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
     for i, g in enumerate(greek_alphabet):
         temp = [j for j,a in enumerate(atoms) if a.pdb_greek_dist == greek_alphabet[i]]
         if len(temp) > 1:
-            temp.sort(compare_atom_num)
+            temp.sort( key = lambda x: -1 * elem_atom_num[atoms[x].elem] )
             for k, t in enumerate(temp):
                 index = k+1
                 atoms[t].pdb_postfix_num = "%d" % index
@@ -273,4 +273,4 @@ def polymer_reorder_atoms(molfile):
                                         if atom1.pdb_prefix_num < atom2.pdb_prefix_num: return -1
                                         elif atom1.pdb_prefix_num > atom2.pdb_prefix_num: return 1
                                         else: return 0 #
-    molfile.atoms.sort(poly_atom_cmp)
+    molfile.atoms.sort(key=functools.cmp_to_key(poly_atom_cmp) )

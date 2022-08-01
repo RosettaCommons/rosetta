@@ -112,6 +112,10 @@ class Atom:
     def __str__(self):
         return "(%4s %2s %8.3f %8.3f %8.3f)" % (self.name, self.elem, self.x, self.y, self.z)
 
+    def __lt__(self, other):
+        '''A quick-and-dirty sorting method, to allow for decorate-sort-undecorate sorting of Atom lists.'''
+        return self.elem < other.elem
+
 def index_atoms(atoms):
     '''Returns a dictionary of the 1-based indices of given Atoms.'''
     ai = {}

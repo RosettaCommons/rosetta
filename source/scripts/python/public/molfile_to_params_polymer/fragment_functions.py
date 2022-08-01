@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+from __future__ import print_function
+
 import os, sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
-
-from sets import Set
 
 # Magic spell to make sure Rosetta python libs are on the PYTHONPATH:
 #sys.path.append( os.path.abspath( sys.path[0] ) )
@@ -48,7 +48,7 @@ def assign_rigid_ids(atoms):
 def fragment_ligand(molfile):
     '''Sets Atom.fragment_id, Atom.conn_bonds, and Bond.connection_id.
     Returns number of fragments created, i.e. the largest valid fragment id.'''
-    remaining_bonds = Set(molfile.bonds) # copy
+    remaining_bonds = set(molfile.bonds) # copy
     # Delete all split bonds from remaining_bonds
     # and number the connections they leave behind
     num_conn_id = 0
@@ -69,8 +69,8 @@ def fragment_ligand(molfile):
             #raise ValueError("Shouldn't split ROTATABLE bond between %s and %s" % (atom1.name, atom2.name))
         else:
             if b.can_rotate:
-                print "WARNING: spliting ROTATABLE bond between %s and %s" % (atom1.name, atom2.name)
-            print "Split bond between %s and %s" % (atom1.name, atom2.name)
+                print( "WARNING: spliting ROTATABLE bond between %s and %s" % (atom1.name, atom2.name) )
+            print( "Split bond between %s and %s" % (atom1.name, atom2.name) )
             num_conn_id += 1
             bond_to_remove.connection_id = num_conn_id
             bond_to_remove.mirror.connection_id = bond_to_remove.connection_id
@@ -97,7 +97,7 @@ def fragment_ligand(molfile):
             num_frag_id += 1
             assign_to_fragment(atom, num_frag_id)
     #for atom in molfile.atoms:
-    #    print atom.name, atom.fragment_id
+    #    print( atom.name, atom.fragment_id )
     # Assert that all atoms have been assigned to a fragment
     assert(len([a for a in molfile.atoms if a.fragment_id == 0]) == 0)
     # More than 9 fragments will break our current residue naming scheme,
@@ -106,7 +106,7 @@ def fragment_ligand(molfile):
         raise ValueError("More than 9 ligand fragments!")
     # No atom may have more than 1 connection outside the residue.
     # No two fragments may have more than one connection.
-    frag_frag_conns = Set()
+    frag_frag_conns = set()
     for atom in molfile.atoms:
         if len(atom.conn_bonds) > 1:
             raise ValueError("Cannot create more than one connection at same atom (%s)" % atom.name)
@@ -116,7 +116,7 @@ def fragment_ligand(molfile):
             #pair2 = (conn.a2.fragment_id, conn.a1.fragment_id)
             if pair1 in frag_frag_conns:
                 #raise ValueError("Cannot create multiple connections between fragments %i and %i" % pair1)
-                print "WARNING: Multiple connections between fragments (%i and %i) **NOT CURRENTLY SUPPORTED** by Rosetta!" % pair1
+                print( "WARNING: Multiple connections between fragments (%i and %i) **NOT CURRENTLY SUPPORTED** by Rosetta!" % pair1 )
             frag_frag_conns.add(pair1)
             #frag_frag_conns.add(pair2)
     # Fragments should be about the same size as other residues
@@ -127,18 +127,18 @@ def fragment_ligand(molfile):
         num_rot_bonds = len([b for b in molfile.bonds if b.a1.fragment_id == frag_id and b.a2.fragment_id == frag_id and b.can_rotate])
         if num_atoms < 3:
             # Mini-Rosetta atomtree requires at least 3 points to establish a coordinate system.
-            print "Fragment %i: %s" % (frag_id, [a.name for a in frag_atoms])
+            print( "Fragment %i: %s" % (frag_id, [a.name for a in frag_atoms]) )
             raise ValueError("Fragment %i has %i atoms; merge with another fragment or add virtual atoms to make 3 total" % (frag_id, num_atoms))
         if not (7 <= num_atoms <= 24):
-            print "WARNING: fragment %i has %i total atoms including H; protein residues have 7 - 24 (DNA: 33)" % (frag_id, num_atoms)
+            print( "WARNING: fragment %i has %i total atoms including H; protein residues have 7 - 24 (DNA: 33)" % (frag_id, num_atoms) )
         if not (4 <= num_heavy_atoms <= 22):
-            print "WARNING: fragment %i has %i non-H atoms; protein residues have 4 - 14 (DNA: 22)" % (frag_id, num_heavy_atoms)
+            print( "WARNING: fragment %i has %i non-H atoms; protein residues have 4 - 14 (DNA: 22)" % (frag_id, num_heavy_atoms) )
         if num_rot_bonds > 4:
-            print "WARNING: fragment %i has %i rotatable bonds; protein residues have 0 - 4" % (frag_id, num_rot_bonds)
-    print "Average %.1f atoms (%.1f non-H atoms) per fragment" % (
-        float(len(molfile.atoms)) / float(num_frag_id), float(len([a for a in molfile.atoms if not a.is_H])) / float(num_frag_id))
+            print( "WARNING: fragment %i has %i rotatable bonds; protein residues have 0 - 4" % (frag_id, num_rot_bonds) )
+    print( "Average %.1f atoms (%.1f non-H atoms) per fragment" % (
+        float(len(molfile.atoms)) / float(num_frag_id), float(len([a for a in molfile.atoms if not a.is_H])) / float(num_frag_id)) )
     # Average stats tabulated by IWD from Richardson's Top500 database
-    print "(Proteins average 15.5 atoms (7.8 non-H atoms) per residue)"
+    print( "(Proteins average 15.5 atoms (7.8 non-H atoms) per residue)" )
     return num_frag_id
 
 def build_fragment_trees(molfile):
@@ -149,11 +149,11 @@ def build_fragment_trees(molfile):
         if   line.startswith("M  ROOT"): molfile.atoms[ int(line.split()[2]) - 1 ].is_root = True
         elif line.startswith("M ROOT"):  molfile.atoms[ int(line.split()[2]) - 1 ].is_root = True
         elif line.startswith("MROOT"):   molfile.atoms[ int(line.split()[1]) - 1 ].is_root = True
-    for frag_id in Set([a.fragment_id for a in molfile.atoms]):
+    for frag_id in set([a.fragment_id for a in molfile.atoms]):
         # If we want to have a default way of choosing the root atom, this is the place:
         root_atoms = [a for a in molfile.atoms if a.fragment_id == frag_id and a.is_root]
         if len(root_atoms) == 0:
-            print "WARNING:  no root atom specified, using auto-selected NBR atom instead."
+            print( "WARNING:  no root atom specified, using auto-selected NBR atom instead." )
             (nbr, nbr_dist) = choose_neighbor_atom(molfile, frag_id)
             nbr.is_root = True
             root_atoms = [nbr]
@@ -165,7 +165,7 @@ def build_fragment_trees(molfile):
         def tree_dfs(parent):
             # Want to visit non-H children first
             tmp_children = [b.a2 for b in parent.bonds]
-            tmp_children.sort(lambda a,b: cmp(a.is_H, b.is_H))
+            tmp_children.sort(key= lambda a: a.is_H )
             for child in tmp_children:
                 if child.fragment_id != parent.fragment_id: continue
                 if child.parent is not None or child.is_root: continue
@@ -192,7 +192,7 @@ def build_fragment_trees(molfile):
     assert(len([a for a in molfile.atoms if not a.is_root and a.parent is None]) == 0)
 def assign_internal_coords(molfile):
     '''Sets up stubs/input_stubs and d,theta,phi for all atoms.'''
-    for frag_id in Set([a.fragment_id for a in molfile.atoms]):
+    for frag_id in set([a.fragment_id for a in molfile.atoms]):
         root_atoms = [a for a in molfile.atoms if a.fragment_id == frag_id and a.is_root]
         assert(len(root_atoms) == 1)
         root_atom = root_atoms[0]
@@ -214,7 +214,7 @@ def assign_internal_coords(molfile):
                 # Special case for first child of the root
                 if me.parent.is_root and me.stub3 == me:
                     me.stub3 = me.parent.stub3
-            #print "stubs", [x.name for x in (me, me.stub1, me.stub2, me.stub3)]
+            #print( "stubs", [x.name for x in (me, me.stub1, me.stub2, me.stub3)] )
             # Assign input stubs to children and calculate internal coords
             prev_sibling = me.stub3
             parent = me # rename to make logic clearer
@@ -225,9 +225,9 @@ def assign_internal_coords(molfile):
                 child.input_stub3 = prev_sibling # for first child, this is parent.stub3
                 # Special case for second child of the root
                 if parent.is_root and prev_sibling == parent.stub2:
-                    #print "activate second child case! stub3 =", parent.stub3.name
+                    #print( "activate second child case! stub3 =", parent.stub3.name )
                     child.input_stub3 = parent.stub3
-                #print "input_stubs", [x.name for x in (child, child.parent, child.input_stub1, child.input_stub2, child.input_stub3)]
+                #print( "input_stubs", [x.name for x in (child, child.parent, child.input_stub1, child.input_stub2, child.input_stub3)] )
                 # Now actually calculate spherical internal coordinates
                 child.d, child.theta, child.phi = calc_internal_coords(child, child.input_stub1, child.input_stub2, child.input_stub3)
                 # Recursive update of child's children
@@ -248,7 +248,7 @@ def assign_internal_coords(molfile):
 
 def calc_internal_coords(child, input_stub1, input_stub2, input_stub3):
     '''Returns (d, theta, phi) for a point given it's three input stub points.'''
-    #print "calc_internal_coords", [x.name for x in (child, input_stub1, input_stub2, input_stub3)]
+    #print( "calc_internal_coords", [x.name for x in (child, input_stub1, input_stub2, input_stub3)] )
     # Now actually calculate spherical internal coordinates
     # There's some weird "flip_stub" logic for first child of the root
     # iff theta is to be kept fixed (BondedAtom.cc) but I don't think it matters here.
@@ -257,14 +257,14 @@ def calc_internal_coords(child, input_stub1, input_stub2, input_stub3):
     # (except for CONNECT atoms, where we use different stubs!!)
     d = r3.distance(child, input_stub1)
     if d < 1e-2: # very small d;  theta, phi don't make sense
-        print "WARNING: very small d=%f for %s" % (d, child.name)
+        print( "WARNING: very small d=%f for %s" % (d, child.name) )
         theta = 0.0
         phi = 0.0
     else:
         theta = r3.angle( r3.from_to(input_stub2,input_stub1), r3.from_to(input_stub1,child) )
         if theta < 1e-2 or theta > 180 - 1e-2:
             # This always happens for first child of root:
-            #print "WARNING: nearly parallel theta=%f for %s" % (theta, child.name)
+            #print( "WARNING: nearly parallel theta=%f for %s" % (theta, child.name) )
             phi = 0.0
         else:
             #print("PHI: " + child.pdb_name + " " + input_stub1.pdb_name + " " + input_stub2.pdb_name + " " + input_stub3.pdb_name)
@@ -297,7 +297,7 @@ def choose_neighbor_atom(molfile, frag_id):
                 all_all_dist[j][i] = d
     else: # hard case -- flexible fragment
         # This will be queried several times so better to precompute it:
-        nbrs = dict([ (a,Set()) for a in atoms ])
+        nbrs = dict([ (a,set()) for a in atoms ])
         for a in atoms:
             # a's neighbors:  bonded and in same fragment
             nbrs[a].update([b.a2 for b in a.bonds if b.a2.fragment_id == frag_id])
@@ -328,15 +328,15 @@ def dijkstra(start, nodes, nbr, dist):
     # Tmp objects [dist_from_start,node] sort properly
     DIST = 0; NODE = 1
     queue = [ [1e100,node] for node in nodes ] # 1e100  ~  +Inf
-    #print "queue is ",queue #DEBUG
+    #print( "queue is ",queue #DEBUG )
     # Allows lookup of best distance by name
     shortest = dict([ (q[NODE],q) for q in queue ])
-    #print "start shortest is ", shortest[start][DIST] #DEBUG
+    #print( "start shortest is ", shortest[start][DIST] ) #DEBUG
     shortest[start][DIST] = 0 # start
     while len(queue) > 0:
         # return the index of the smallest element of the queue
         curr_idx = argmin(queue) # on first pass this is start
-        curr = queue.pop(curr_idx)[NODE] # pop out the node with smallest  
+        curr = queue.pop(curr_idx)[NODE] # pop out the node with smallest
         curr_shortest = shortest[curr][DIST]
         for n in nbr(curr):
             new_dist = curr_shortest + dist(curr,n)

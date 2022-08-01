@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+from __future__ import print_function
 
 import os
 import glob
@@ -21,9 +22,9 @@ def main( args ):
 	# write: ddG dG complex_score protein_score rna_score
 		df.write('%f %f %f %f %f\n' %(ddG, dG_wt_0, complex_score, wt_protein_score, rna_score))
 
-	print "####################################"
-	print "RESULTS:\n"
-	print "WT ddG: %0.2f kcal/mol" %(ddG)
+	print( "####################################" )
+	print( "RESULTS:\n" )
+	print( "WT ddG: %0.2f kcal/mol" %(ddG) )
 
 	# Loop through all wt_* dirs
 	for d in glob.glob( run_dir + '/wt_*' ):
@@ -36,7 +37,7 @@ def main( args ):
 		with open('dG_score.txt', 'w') as df:
 		# write dG complex_score protein_score rna_score
 			df.write( '%f %f %f %f\n' %(dG, complex_score, protein_score, rna_score))
-		print "%s ddG: %0.2f kcal/mol" %(d, ddG)
+		print( "%s ddG: %0.2f kcal/mol" %(d, ddG) )
 
 	# parse the sequences
 	seqs = {}
@@ -79,17 +80,17 @@ def main( args ):
 			gf.write( '%.5f %.5f %.5f %.5f %.5f\n' %(ddG, dG, complex_score, protein_score, rna_score))
 
 		if d not in seqs.keys():
-			print "Warning: problem with your sequence file..."
-			print "continuing."
+			print( "Warning: problem with your sequence file..." )
+			print( "continuing." )
 			continue
-		print "%s ddG: %0.2f kcal/mol" %(seqs[d], ddG)
+		print( "%s ddG: %0.2f kcal/mol" %(seqs[d], ddG) )
 
-	print "\n####################################"
-	print "Results are also written to the ddG_score.txt files in "
-	print "each mutant directory in %s" %(args.run_dir)
-	print "The format is:"
-	print "ddG dG complex_score protein_score rna_score"
-	print "####################################"
+	print( "\n####################################" )
+	print( "Results are also written to the ddG_score.txt files in " )
+	print( "each mutant directory in %s" %(args.run_dir) )
+	print( "The format is:" )
+	print( "ddG dG complex_score protein_score rna_score" )
+	print( "####################################" )
 
 
 def get_scores( wt_protein_score ): # works in the current directory
@@ -98,7 +99,7 @@ def get_scores( wt_protein_score ): # works in the current directory
 	with open('complex_score.txt', 'r') as cfil:
 		line = cfil.readline()
 		if len(line) < 2:
-			print "NO COMPLEX score in %s" %(os.getcwd())
+			print( "NO COMPLEX score in %s" %(os.getcwd()) )
 			return 0.0, 0.0, 0.0
 		complex_score = float(line.split()[-1].replace('\n',''))
 	# Get the protein score

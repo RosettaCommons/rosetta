@@ -7,11 +7,11 @@ See main() for usage or run with --help.
 Author: Ian W. Davis, Oanh Vu, Benjamin P. Brown
 '''
 
+from __future__ import print_function
+
 import os, sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
-
-from sets import Set
 
 # Magic spell to make sure Rosetta python libs are on the PYTHONPATH:
 sys.path.append( os.path.abspath( sys.path[0] ) )
@@ -23,9 +23,9 @@ import argparse
 
 # import helper functions
 from molfile_to_params_polymer.atom_functions import *
-from molfile_to_params_polymer.bond_functions import * 
-from molfile_to_params_polymer.fragment_functions import * 
-from molfile_to_params_polymer.polymer_functions import * 
+from molfile_to_params_polymer.bond_functions import *
+from molfile_to_params_polymer.fragment_functions import *
+from molfile_to_params_polymer.polymer_functions import *
 from molfile_to_params_polymer.IO_functions import *
 
 # Features from Python 2.5 that we want to use:
@@ -68,7 +68,7 @@ neighbor atom selection, fragments, etc -- very helpful for debugging
 and for visualizing exactly what was done to the ligand.
     """
 
-    parser = argparse.ArgumentParser(description='This script creates Rosetta params files' 
+    parser = argparse.ArgumentParser(description='This script creates Rosetta params files'
                                      'from the molecule\'s mol/sdf file')
     parser.add_argument("-i","--input", required=True,
                         help="name of the intput mol/sdf file")
@@ -108,24 +108,24 @@ and for visualizing exactly what was done to the ligand.
                         action = "store_true",
                         help = "skip writing .params files (for debugging)"
                        )
-    parser.add_argument("--no-pdb", 
+    parser.add_argument("--no-pdb",
                         default = False,
                         action = "store_true",
                         help = "skip writing .pdb files (for if not using PDB rotamers)"
                        )
-    parser.add_argument("--all-in-one-pdb", 
+    parser.add_argument("--all-in-one-pdb",
                         default = False,
                         action = "store_true",
                         help = "writing all pdb files into 1 file (for debugging or PDB rotamers)"
                        )
-    parser.add_argument("--use-pdb-rotamers", 
+    parser.add_argument("--use-pdb-rotamers",
                         default = False,
                         action = "store_true",
                         help = "Append PDB_ROTAMERS specification and corresponding file to params file"
                        )
     parser.add_argument("--use-parent-rotamers",
                         default=None,
-                        help="One-or three-letter code for the parent amino acid whose backbone and sidechain rotamers " 
+                        help="One-or three-letter code for the parent amino acid whose backbone and sidechain rotamers "
                        "and rama prepro terms will be used, e.g., 'TRP' or 'W' for tryptophan. All capital letters required. "
                        "No effect for non-polymer params files. Must be one of the 20 canonical amino acids",
                         metavar="PARENT_CAA"
@@ -138,14 +138,14 @@ and for visualizing exactly what was done to the ligand.
     parser.add_argument("--peptoid",
                         default = False,
                         action = "store_true",
-                        help = "modifier for the polymer flag, " + 
+                        help = "modifier for the polymer flag, " +
                         "adjusts PDB style naming to be correct for peptoids"
                        )
     parser.add_argument('--partial_charges',
                         default=None,
                         help="file that contains the partial charges of each atom in the input file",
                         metavar="FILE")
-    
+
     args = parser.parse_args()
 
     if args.pdb == 'LG': args.pdb = args.name
@@ -158,7 +158,7 @@ and for visualizing exactly what was done to the ligand.
     elif args.input.endswith(".mol") or args.input.endswith(".mdl") or args.input.endswith(".sdf"):
         molfiles = read_mdl_sdf(args.input)
     else:
-        print "Unrecognized file type, must be .mol/.sdf or .mol2!"
+        print( "Unrecognized file type, must be .mol/.sdf or .mol2!" )
         return 6
 
     m = molfiles[0]
@@ -172,7 +172,7 @@ and for visualizing exactly what was done to the ligand.
     else:
         print("No valid centroid coords are provided, calculate centroid manually")
         ctr = r3.centroid([a for a in m.atoms if not a.is_H])
-        print "Centering ligands at %s" % ctr
+        print("Centering ligands at %s" % ctr)
         # If -centroid not given, default is to center like first entry
 
     add_fields_to_atoms(m.atoms)
@@ -196,10 +196,10 @@ and for visualizing exactly what was done to the ligand.
         elif line.startswith("M  CHG"):
             charge_fields = line.split()[3:]
             net_charge = sum(int(c) for i,c in enumerate(charge_fields) if i%2 == 1)
-        elif line.startswith("M  POLY_CHG"): net_charge = float(line.split()[-1]) 
+        elif line.startswith("M  POLY_CHG"): net_charge = float(line.split()[-1])
     # If the partial charge info file is provided, then assign those charge values to atoms
     if args.partial_charges != None:
-        assign_partial_charges_from_values(m, 
+        assign_partial_charges_from_values(m,
                                            read_parital_charge_input(args.partial_charges),
                                            net_charge
                                           )
@@ -212,7 +212,7 @@ and for visualizing exactly what was done to the ligand.
     build_fragment_trees(m)
     assign_internal_coords(m)
     if args.polymer:
-        print "Preforming polymer modifications"
+        print("Preforming polymer modifications")
         polymer_assign_ignored_atoms_bonds(m)
         polymer_assign_pdb_like_atom_names_to_sidechain( m.atoms, m.bonds, args.peptoid )
         polymer_assign_backbone_atom_names( m.atoms, m.bonds, args.peptoid )
@@ -228,24 +228,24 @@ and for visualizing exactly what was done to the ligand.
             if num_frags == 1: param_file = "%s.params" % args.name
             else: param_file = "%s%i.params" % (args.pdb, i+1)
             if not args.clobber and os.path.exists(param_file):
-                print "File %s already exists -- aborting!" % param_file
-                print "Use --clobber to overwrite existing files."
+                print( "File %s already exists -- aborting!" % param_file )
+                print( "Use --clobber to overwrite existing files." )
                 return 2
             else:
                 if args.polymer:
                     write_poly_param_file(param_file, m, args.name, 1, args.peptoid, args.use_parent_rotamers)
-                    print "Wrote polymer params file %s" % param_file
+                    print( "Wrote polymer params file %s" % param_file )
                 else:
                     write_param_file(param_file, m, args.name, i+1, len(molfiles), args.max_confs)
-                    print "Wrote params file %s" % param_file
+                    print( "Wrote params file %s" % param_file )
     if args.kinemage is not None:
         if not args.clobber and os.path.exists(args.kinemage):
-            print "File %s already exists -- aborting!" % args.kinemage
-            print "Use --clobber to overwrite existing files."
+            print( "File %s already exists -- aborting!" % args.kinemage )
+            print( "Use --clobber to overwrite existing files." )
             return 3
         else:
             write_ligand_kinemage(args.kinemage, m)
-            print "Wrote kinemage file %s" % args.kinemage
+            print( "Wrote kinemage file %s" % args.kinemage )
 
     # Info for user
     if args.use_parent_rotamers is not None:
@@ -258,11 +258,11 @@ and for visualizing exactly what was done to the ligand.
         if args.all_in_one_pdb:
             pdb_file_name = "%s_rotamer.pdb" % (args.pdb)
             if not args.clobber and os.path.exists(pdb_file_name):
-                print "File %s already exists -- skip!" % pdb_file_name
-                print "Use --clobber to overwrite existing files."
+                print( "File %s already exists -- skip!" % pdb_file_name )
+                print( "Use --clobber to overwrite existing files." )
                 return(4)
             if args.clobber and os.path.exists(pdb_file_name):
-                print "File %s already exists -- empty file now" % pdb_file_name
+                print( "File %s already exists -- empty file now" % pdb_file_name )
                 open(pdb_file_name, 'w').close()
         for i, molfile in enumerate(molfiles):
             # if the molecule's atom order doent matched with that of the first molfile, skip
@@ -274,8 +274,8 @@ and for visualizing exactly what was done to the ligand.
                 pdb_file_name = "%s_%04i.pdb" % (args.pdb, i+1)
                 pdb_file = open(pdb_file_name, 'w')
                 if not args.clobber and os.path.exists(pdb_file):
-                    print "File %s already exists -- skip!" % pdb_file
-                    print "Use --clobber to overwrite existing files."
+                    print( "File %s already exists -- skip!" % pdb_file )
+                    print( "Use --clobber to overwrite existing files." )
                     break
             else:
                 # write into the only 1 pdb file
@@ -284,7 +284,7 @@ and for visualizing exactly what was done to the ligand.
 
             # m is used for names, molfile is used for XYZ
             write_ligand_pdb(pdb_file, m, molfile, args.name, ctr)
-            print "Wrote PDB file %s" % pdb_file_name
+            print("Wrote PDB file %s" % pdb_file_name)
 
         # Append PDB_ROTAMERS file to params
         if args.use_pdb_rotamers == True and args.use_parent_rotamers is None:
@@ -308,5 +308,5 @@ if __name__ == "__main__":
     #    if a.name.strip() != a.ros_type.strip():
     #        if a.name == "CH1" and a.ros_type.startswith("CH"): pass
     #        else: err_flag = "********" #raise ValueError("typing mismatch!")
-    #    print "%3i %4s --> %4s %s" % (i+1, a.name, a.ros_type, err_flag)
+    #    print( "%3i %4s --> %4s %s" % (i+1, a.name, a.ros_type, err_flag) )
 

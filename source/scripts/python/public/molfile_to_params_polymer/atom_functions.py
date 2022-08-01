@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+from __future__ import print_function
+
 import os, sys
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
-
-from sets import Set
 
 # Magic spell to make sure Rosetta python libs are on the PYTHONPATH:
 #sys.path.append( os.path.abspath( sys.path[0] ) )
@@ -13,7 +13,7 @@ from sets import Set
 #from rosetta_py.utility.rankorder import argmin
 #from rosetta_py.utility import r3
 
-from bond_functions import *
+from molfile_to_params_polymer.bond_functions import *
 def add_fields_to_atoms(atoms):
     '''Adds a bunch of member variable placeholders that we use.'''
     for atom in atoms:
@@ -68,14 +68,14 @@ def uniquify_atom_names(atoms):
         if len(atom.elem) == 1 and len(atom.name) <= 3: atom.name = " %-3s" % atom.name
         else: atom.name = "%-4s" % atom.name
     duplicate_names = False
-    atom_names = Set()
+    atom_names = set()
     for atom in atoms:
         if atom.name in atom_names:
             duplicate_names = True
             break
         atom_names.add(atom.name)
     if not duplicate_names: return
-    print "Atom names contain duplications -- renaming all atoms."
+    print( "Atom names contain duplications -- renaming all atoms." )
     # This is potentially bad (> 4 char names) for > 100 atoms:
     #for i,atom in enumerate(atoms):
     #    atom.name = "%s%i" % (atom.elem, i+1)
@@ -139,7 +139,7 @@ def assign_rosetta_types(atoms):
                     elif bond.order == Bond.AROMATIC:
                         if bond.a2.elem != "O": num_aro_nonO += 1
                         if bond.a2.elem == "N": num_aro_N += 1 # really if, not elif
-                #print i+1, a.name, num_aro_nonO, num_dbl_nonO, num_aro_N
+                #print( i+1, a.name, num_aro_nonO, num_dbl_nonO, num_aro_N )
                 if num_aro_nonO >= 2:   a.ros_type = "aroC"
                 elif num_dbl_nonO >= 1: a.ros_type = "aroC"
                 elif num_aro_N >= 1:    a.ros_type = "CNH2"
@@ -243,7 +243,7 @@ def assign_mm_types(atoms, peptoid):
         if attached.poly_ca_bb and not peptoid: return True
         else: return False
     def is_charmm_HR1(atom, attached):
-        ''' For nutral HIS HE1 hydrogen: (A) attached to an aromatic carbon that is between two N and only 
+        ''' For nutral HIS HE1 hydrogen: (A) attached to an aromatic carbon that is between two N and only
         one is prot or (B) attached to and aromatic carbon between an N and C and both ring N are protonated '''
         if is_aromatic(attached) and attached.elem == "C":
             attached_N = [bond.a2 for bond in attached.bonds if  bond.order == Bond.AROMATIC and bond.a2.elem == "N"]
@@ -331,7 +331,7 @@ def assign_mm_types(atoms, peptoid):
             if num_H == 0: return True
             else: return False
         else: return False
-    def is_charmm_CT1(atom): 
+    def is_charmm_CT1(atom):
         ''' For aliphatic sp3 C with 1 hydrogens: carbon with all single bonds one to hydrogen '''
         if is_saturated(atom) and len(atom.bonds) == 4:
             num_H = count_bonded(atom, lambda x: x.elem == "H")
@@ -650,11 +650,11 @@ def assign_mm_types(atoms, peptoid):
             elif is_charmm_NC(a):  a.mm_type = "NC"
             else: a.mm_type = "X"
         elif a.elem == "O" :
-            if   is_charmm_O(a):   a.mm_type = "O" 
-            elif is_charmm_OB(a):  a.mm_type = "OB" 
-            elif is_charmm_OC(a):  a.mm_type = "OC" 
-            elif is_charmm_OH1(a): a.mm_type = "OH1" 
-            elif is_charmm_OS(a):  a.mm_type = "OS" 
+            if   is_charmm_O(a):   a.mm_type = "O"
+            elif is_charmm_OB(a):  a.mm_type = "OB"
+            elif is_charmm_OC(a):  a.mm_type = "OC"
+            elif is_charmm_OH1(a): a.mm_type = "OH1"
+            elif is_charmm_OS(a):  a.mm_type = "OS"
             else: a.mm_type = "X"
         elif a.elem == "S" :
             if   is_charmm_SS(a):  a.mm_type = "SS"
@@ -687,10 +687,10 @@ def assign_partial_charges_from_values(molfile, partial_charges, net_charge=0):
     current_net_charge = 0.0
     for charge in partial_charges:
         current_net_charge += float(charge[2])
-        #print "charge is %s" % current_net_charge
+        #print( "charge is %s" % current_net_charge )
     assert abs(net_charge - current_net_charge) < 1e-4, "Error: sum of partial charges %1.3f is not equal to the net charge %1.3f " % (current_net_charge, net_charge)
     for i in range(len(atoms)):
-        assert atoms[i].elem == partial_charges[i][1].upper(),"Error: the elements %s in the sdf file and %s the partial charge file doesn't match" % (atoms[i].elem, partial_charges[i][1].upper())  
+        assert atoms[i].elem == partial_charges[i][1].upper(),"Error: the elements %s in the sdf file and %s the partial charge file doesn't match" % (atoms[i].elem, partial_charges[i][1].upper())
         atoms[i].partial_charge = float(partial_charges[i][2])
 def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
     '''Assigns Rosetta standard partial charges, then
@@ -749,7 +749,7 @@ def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
     abs_charge = sum(abs(a.partial_charge) for a in atoms if a.partial_charge is not None)
     if len(null_charge) == 0 and abs_charge > 0:
         net_charge = sum(a.partial_charge for a in atoms if a.partial_charge is not None)
-        print "Partial charges already fully assigned, no changes made; net charge %.3f" % net_charge
+        print( "Partial charges already fully assigned, no changes made; net charge %.3f" % net_charge )
         return
     elif 0 < len(null_charge) and len(null_charge) < len(atoms):
         raise ValueError("Only some partial charges were assigned -- must be all or none.")
@@ -760,13 +760,13 @@ def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
         curr_net_charge += a.partial_charge
     # check if the current sum of all partial charges is the same with the net charge
     charge_correction = (net_charge - curr_net_charge) / len(atoms)
-    print("Total naive charge %.3f, desired charge %.3f, offsetting all atoms by %.3f" % 
+    print("Total naive charge %.3f, desired charge %.3f, offsetting all atoms by %.3f" %
           (curr_net_charge, net_charge, charge_correction)
          )
     for a in atoms:
         a.partial_charge += charge_correction
         curr_net_charge += a.partial_charge
-    assert( abs(net_charge - curr_net_charge) < 1e-4, "charge correction failed")
+    assert abs(net_charge - curr_net_charge) < 1e-4, "charge correction failed"
 
 def compare_molfiles(m1, m2):
     '''
@@ -774,18 +774,18 @@ def compare_molfiles(m1, m2):
     Check if the molecule size and the atom order match
     '''
     # TODO: raise exception instead of assert as we can skip the molfile if things go wrong
-    if len(m1.atoms) != len(m2.atoms): 
+    if len(m1.atoms) != len(m2.atoms):
         print("Two molecules have different number of atoms %d %d" % (len(m1.atoms), len(m2.atoms)))
         return False
-    if len(m1.bonds) != len(m2.bonds): 
+    if len(m1.bonds) != len(m2.bonds):
         print("Two molecules have different number of bonds")
         return False
     for inx, atom in enumerate(m1.atoms):
         if atom.elem != m2.atoms[inx].elem:
             print("Two molecules have unmatched atoms %d %s %s" % (inx+1, atom.elem, m2.atoms[inx].elem))
             return False
-    return True    
-    
+    return True
+
 def copy_atom_and_bond_info(original, copy):
     '''
     Copies atom and bond information between from original to copy molefiles
@@ -839,5 +839,5 @@ def copy_atom_and_bond_info(original, copy):
             cbond.mirror.is_proton_chi   = bond.is_proton_chi
             cbond.mirror.connection_id   = bond.connection_id
             cbond.poly_ignore = bond.poly_ignore  # convience boolean
-        # after atoms and bonds info are copied over, 
-        # we can now reorder the atoms of both original and copy   
+        # after atoms and bonds info are copied over,
+        # we can now reorder the atoms of both original and copy

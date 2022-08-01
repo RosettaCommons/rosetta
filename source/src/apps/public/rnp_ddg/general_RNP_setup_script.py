@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+from __future__ import print_function
 
 import os
 import argparse
@@ -144,15 +145,15 @@ def main( args ):
 
 	local_file.close()
 
-	print "################################################"
-	print "Finished setting up ddG calculations!"
-	print "All files are in %s" %(output_dir)
-	print "To run type: "
-	print "source %s/ALL_COMMANDS" %(output_dir)
-	print ""
-	print "Alternatively, commands are separated out in the COMMAND_* files."
-	print "(This is especially useful if you are running on a cluster: each command can be run separately.)"
-	print "These can also be run by typing e.g.: source %s/COMMAND_0" %(output_dir)
+	print( "################################################" )
+	print( "Finished setting up ddG calculations!" )
+	print( "All files are in %s" %(output_dir) )
+	print( "To run type: " )
+	print( "source %s/ALL_COMMANDS" %(output_dir) )
+	print( "" )
+	print( "Alternatively, commands are separated out in the COMMAND_* files." )
+	print( "(This is especially useful if you are running on a cluster: each command can be run separately.)" )
+	print( "These can also be run by typing e.g.: source %s/COMMAND_0" %(output_dir) )
 
 def setup_file_and_dir_names( tag, overwrite, method ):
 	base_out_dir = 'ddG_' + tag + '_' + method
