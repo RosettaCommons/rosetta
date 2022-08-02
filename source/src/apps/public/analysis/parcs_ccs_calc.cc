@@ -55,12 +55,12 @@ int main(int argc, char * argv[])
 		devel::init (argc,argv);
 		core::Size nrot( option[ n_rots ].value() ); // Gets value from user input for number of rotations
 		core::Real prad( option[ p_rad ].value() ); // Gets value from user input for the size of probe radius in Angstroms
-		if (nrot <=0) utility_exit_with_message("Number of rotations cannot be less than or equal to 0");
-		if (prad <=0) utility_exit_with_message("Probe cannot be less than or equal to 0");
+		if ( nrot <=0 ) utility_exit_with_message("Number of rotations cannot be less than or equal to 0");
+		if ( prad <=0 ) utility_exit_with_message("Probe cannot be less than or equal to 0");
 		core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 		core::Size pose_counter(0);
 		std::ostringstream out;
-		out <<"File_Name\tCCS_PARCS" << std::endl;		
+		out <<"File_Name\tCCS_PARCS" << std::endl;
 		while ( input.has_another_pose() ) {
 			core::pose::PoseOP mypose( utility::pointer::make_shared < core::pose::Pose >() );
 			input.fill_pose ( *mypose );
@@ -69,13 +69,13 @@ int main(int argc, char * argv[])
 			core::Real parcs_ccs( core::energy_methods::parcs_ccs( *mypose, nrot, prad) );
 			std::string decoy_name("Empty_Tag");
 			if ( (*mypose).data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
-    			decoy_name = static_cast< basic::datacache::CacheableString const & >
-      			( (*mypose).data().get( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
-			  }
+				decoy_name = static_cast< basic::datacache::CacheableString const & >
+					( (*mypose).data().get( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ).str();
+			}
 			TR << pose_counter << "\t" << decoy_name << "\t" << parcs_ccs << std::endl;
 			out << decoy_name << "\t" << parcs_ccs << std::endl;
 		}
-		if (pose_counter == 0) utility_exit_with_message("No structures were given to the PARCS applications. This must be given with either -in:file:s your_pdb.pdb, -in:file:l your_pdb_list, or -in:file:silent your_rosetta_generated_silent_file.");
+		if ( pose_counter == 0 ) utility_exit_with_message("No structures were given to the PARCS applications. This must be given with either -in:file:s your_pdb.pdb, -in:file:l your_pdb_list, or -in:file:silent your_rosetta_generated_silent_file.");
 		std::string outfile = "CCS_default.out";
 		if ( option[ out::file::o ].user() ) {
 			outfile = option[ out::file::o ]();
