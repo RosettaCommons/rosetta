@@ -465,6 +465,17 @@ settings = {
     },
 
 
+    "gcc, 10.3" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+
+
     "gcc, 10.2" : {
         "removes" : {
             "flags" : {
