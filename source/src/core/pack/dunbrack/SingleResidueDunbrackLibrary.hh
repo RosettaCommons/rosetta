@@ -74,9 +74,7 @@ public:
 		Size const n_rotameric_chi,
 		bool dun02,
 		bool use_bicubic,
-		bool dun_entropy_correction,
-		core::Real prob_buried, // 0.98
-		core::Real prob_nonburied // 0.95
+		bool dun_entropy_correction
 	);
 
 public:
@@ -465,13 +463,9 @@ public:
 
 	/// @brief When creating rotamer, what position in the CDF should one build until?
 	/// Unlikely rotamers ( < 0.5 %) are numerous, but are very infrequently useful.
+	virtual
 	Real
-	probability_to_accumulate_while_building_rotamers( bool buried ) const;
-
-	/// @brief setters for accumulation probability cutoff (to support externally-controlled option dependence)
-	void prob_to_accumulate( Real, Real );
-	void prob_to_accumulate_buried( Real );
-	void prob_to_accumulate_nonburied( Real );
+	probability_to_accumulate_while_building_rotamers( core::pack::task::PackerTask const & task, bool buried ) const;
 
 	/// @brief Extract the number of rotamer bins (vector of bin counts for each chi) from the ResidueType
 	/// and store it in rot.
@@ -533,8 +527,6 @@ private:
 
 	Size n_packed_rots_;
 	Size n_possible_rots_; // prod( i in 1 to nchi, n_chi_bins_[ i ] );
-
-	Real prob_to_accumulate_buried_, prob_to_accumulate_nonburied_;
 
 	utility::vector1< bool > rotwell_exists_;
 	bool packed_rotno_conversion_data_current_;

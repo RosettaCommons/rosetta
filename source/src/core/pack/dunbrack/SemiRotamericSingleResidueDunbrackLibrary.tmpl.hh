@@ -29,6 +29,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+#include <core/pack/task/PackerTask.hh>
 
 #include <core/id/TorsionID.hh>
 
@@ -174,11 +175,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::SemiRotamericSingleResidueDun
 	bool const backbone_independent_rotamer_sampling, // true uses less memory
 	bool use_shapovalov,
 	bool use_bicubic,
-	bool dun_entropy_correction,
-	core::Real prob_buried,
-	core::Real prob_nonburied
+	bool dun_entropy_correction
 ) :
-	parent( rt, false /*dun02*/, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied ), // dun02 false, since the semi rotameric library is new in 2008
+	parent( rt, false /*dun02*/, use_bicubic, dun_entropy_correction ), // dun02 false, since the semi rotameric library is new in 2008
 	bbind_nrchi_scoring_( backbone_independent_scoring ),
 	bbind_nrchi_sampling_( backbone_independent_rotamer_sampling ),
 	use_shapovalov_( use_shapovalov ),
@@ -623,7 +622,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 
 	// SemiRotamericSingleResidueDunbrackLibrary has its own set of probabilities. This is old stuff -- bcov
-	Real const requisit_probability = this->probability_to_accumulate_while_building_rotamers( buried ); // buried ? 0.95 : 0.87;
+	Real const requisit_probability = this->probability_to_accumulate_while_building_rotamers( task, buried ); // buried ? 0.95 : 0.87;
 	//grandparent::probability_to_accumulate_while_building_rotamers( buried ); -- 98/95 split generates too many samples
 	Real accumulated_probability( 0.0 );
 
@@ -1504,6 +1503,16 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_from_chi(
 		std::cerr << std::endl;
 		utility_exit();
 	}
+}
+
+template < Size T, Size N >
+Real
+SemiRotamericSingleResidueDunbrackLibrary< T, N >::probability_to_accumulate_while_building_rotamers(
+	core::pack::task::PackerTask const & task,
+	bool buried
+) const
+{
+	return ( buried ? task.rotamer_prob_buried_semi() : task.rotamer_prob_nonburied_semi() );
 }
 
 /// @brief For the non rotameric chi, how many asymmetric degrees are there?  (e.g. 360 for asn, 180 for asp)

@@ -109,11 +109,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLib
 	bool dun02,
 	bool use_bicubic,
 	bool dun_entropy_correction,
-	core::Real prob_buried, // 0.98
-	core::Real prob_nonburied, // 0.95
 	bool const reduced_resolution_library
 ) :
-	parent( rt, T, dun02, use_bicubic, dun_entropy_correction, prob_buried, prob_nonburied ),
+	parent( rt, T, dun02, use_bicubic, dun_entropy_correction ),
 	peptoid_( rt.is_peptoid() ),
 	peptoid_is_achiral_( basic::options::option[ basic::options::OptionKeys::corrections::score::fa_dun_correct_achiral_peptoid_libraries ]() && rt.is_peptoid() && rt.is_achiral_sidechain() ),
 	canonical_aa_( rt.is_canonical_aa() && core::chemical::is_canonical_L_aa_or_gly( rt.aa() ) ),
@@ -1108,7 +1106,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector(
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 
-	Real const requisit_probability = probability_to_accumulate_while_building_rotamers( buried ); // ( buried  ? 0.98 : 0.95 )
+	Real const requisit_probability = probability_to_accumulate_while_building_rotamers( task, buried );
 	Real accumulated_probability( 0.0 );
 
 	Size const max_rots_that_can_be_built = n_packed_rots();

@@ -158,6 +158,11 @@ PackerTask_::update_commutative(
 
 	rotamer_links_ = o.rotamer_links_; /// <--- apparently rotamer links assignment is not commutative
 
+	rotamer_prob_buried_ = o.rotamer_prob_buried_;
+	rotamer_prob_nonburied_ = o.rotamer_prob_nonburied_;
+	rotamer_prob_buried_semi_ = o.rotamer_prob_buried_semi_;
+	rotamer_prob_nonburied_semi_ = o.rotamer_prob_nonburied_semi_;
+
 	low_temp_ = o.low_temp_;
 	high_temp_ = o.high_temp_;
 	disallow_quench_ = o.disallow_quench_;
@@ -235,6 +240,8 @@ PackerTask_::PackerTask_( core::Size const ig_threads_to_request /*=0*/ ):
 	packer_palette_(/*NULL*/),
 	ig_threads_to_request_( ig_threads_to_request )
 {
+	init();
+
 	check_threads();
 	IG_edge_reweights_ = nullptr; //default stays empty, no reweighting
 }
@@ -252,6 +259,8 @@ PackerTask_::PackerTask_(
 	packer_palette_(), //Initialized below
 	ig_threads_to_request_( ig_threads_to_request )
 {
+	init();
+
 	check_threads();
 	//Create PackerPalette:
 	packer_palette_ = core::pack::palette::PackerPaletteFactory::get_instance()->create_packer_palette_from_global_defaults();
@@ -281,6 +290,8 @@ PackerTask_::PackerTask_(
 	packer_palette_( packer_palette == nullptr ? nullptr : packer_palette->clone() ),
 	ig_threads_to_request_( ig_threads_to_request )
 {
+	init();
+
 	check_threads();
 	//create residue-level tasks
 	residue_tasks_.reserve( nres_ );
@@ -730,6 +741,20 @@ PackerTask_::is_initialized() const
 	return is_initialized_;
 }
 
+void
+PackerTask_::init()
+{
+	using namespace basic::options::OptionKeys;
+
+	/// ICK. But this is needed to preserve current behavior.
+	/// (Putting these behind initialize_from_command_line task messes up how we're currently controlled.)
+	/// Don't take this as permisson to extend the number of options consulted here.
+	rotamer_prob_buried( basic::options::option[ packing::dunbrack_prob_buried ]()  );
+	rotamer_prob_nonburied( basic::options::option[ packing::dunbrack_prob_nonburied ]() );
+	rotamer_prob_buried_semi( basic::options::option[ packing::dunbrack_prob_buried_semi ]() );
+	rotamer_prob_nonburied_semi( basic::options::option[ packing::dunbrack_prob_nonburied_semi ]() );
+}
+
 PackerTask &
 PackerTask_::initialize_from_command_line()
 {
@@ -824,6 +849,11 @@ PackerTask_::initialize_from_options( utility::options::OptionCollection const &
 
 	and_max_rotbump_energy( options[ packing::max_rotbump_energy ] );
 
+	rotamer_prob_buried( options[ packing::dunbrack_prob_buried ]()  );
+	rotamer_prob_nonburied( options[ packing::dunbrack_prob_nonburied ]() );
+	rotamer_prob_buried_semi( options[ packing::dunbrack_prob_buried_semi ]() );
+	rotamer_prob_nonburied_semi( options[ packing::dunbrack_prob_nonburied_semi ]() );
+
 	update_n_to_be_packed();
 	return *this;
 }
@@ -847,7 +877,12 @@ PackerTask::list_options_read( utility::options::OptionKeyList & read_options )
 		+ packing::smart_annealer_pick_again
 		+ packing::fix_his_tautomer
 		+ packing::repack_only
-		+ packing::max_rotbump_energy;
+		+ packing::max_rotbump_energy
+		+ packing::dunbrack_prob_buried
+		+ packing::dunbrack_prob_nonburied
+		+ packing::dunbrack_prob_buried_semi
+		+ packing::dunbrack_prob_nonburied_semi;
+
 
 	ResidueLevelTask::list_options_read( read_options );
 }
@@ -1026,6 +1061,47 @@ PackerTask_::update_n_to_be_packed() const
 	}
 	n_to_be_packed_up_to_date_ = true;
 }
+
+core::Real
+PackerTask_::rotamer_prob_buried() const {
+	return rotamer_prob_buried_;
+}
+
+core::Real
+PackerTask_::rotamer_prob_nonburied() const {
+	return rotamer_prob_nonburied_;
+}
+
+core::Real
+PackerTask_::rotamer_prob_buried_semi() const {
+	return rotamer_prob_buried_semi_;
+}
+
+core::Real
+PackerTask_::rotamer_prob_nonburied_semi() const {
+	return rotamer_prob_nonburied_semi_;
+}
+
+void
+PackerTask_::rotamer_prob_buried( core::Real s ) {
+	rotamer_prob_buried_ = s;
+}
+
+void
+PackerTask_::rotamer_prob_nonburied( core::Real s ) {
+	rotamer_prob_nonburied_ = s;
+}
+
+void
+PackerTask_::rotamer_prob_buried_semi( core::Real s ) {
+	rotamer_prob_buried_semi_ = s;
+}
+
+void
+PackerTask_::rotamer_prob_nonburied_semi( core::Real s ) {
+	rotamer_prob_nonburied_semi_ = s;
+}
+
 
 //some get-set functions for annealer options
 void
@@ -1235,6 +1311,10 @@ core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( max_rotbump_energy_ ) ); // Real
 	arc( CEREAL_NVP( rotamer_couplings_ ) ); // RotamerCouplingsCOP
 	arc( CEREAL_NVP( rotamer_links_ ) ); // RotamerLinksCOP
+	arc( CEREAL_NVP( rotamer_prob_buried_ ) ); // Real
+	arc( CEREAL_NVP( rotamer_prob_nonburied_ ) ); // Real
+	arc( CEREAL_NVP( rotamer_prob_buried_semi_ ) ); // Real
+	arc( CEREAL_NVP( rotamer_prob_nonburied_semi_ ) ); // Real
 	arc( CEREAL_NVP( low_temp_ ) ); // Real
 	arc( CEREAL_NVP( high_temp_ ) ); // Real
 	arc( CEREAL_NVP( disallow_quench_ ) ); // _Bool
@@ -1281,6 +1361,10 @@ core::pack::task::PackerTask_::load( Archive & arc ) {
 	std::shared_ptr< core::pack::rotamer_set::RotamerLinks > local_rotamer_links;
 	arc( local_rotamer_links ); // RotamerLinksCOP
 	rotamer_links_ = local_rotamer_links; // copy the non-const pointer(s) into the const pointer(s)
+	arc( rotamer_prob_buried_ ); // Real
+	arc( rotamer_prob_nonburied_ ); // Real
+	arc( rotamer_prob_buried_semi_ ); // Real
+	arc( rotamer_prob_nonburied_semi_ ); // Real
 	arc( low_temp_ ); // Real
 	arc( high_temp_ ); // Real
 	arc( disallow_quench_ ); // _Bool

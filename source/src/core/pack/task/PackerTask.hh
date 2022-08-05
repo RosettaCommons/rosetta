@@ -296,6 +296,38 @@ public:
 		rotamer_set::RotamerSetsOperationOP rotsetsop
 	) = 0;
 
+	virtual
+	core::Real
+	rotamer_prob_buried() const = 0;
+
+	virtual
+	core::Real
+	rotamer_prob_nonburied() const = 0;
+
+	virtual
+	core::Real
+	rotamer_prob_buried_semi() const = 0;
+
+	virtual
+	core::Real
+	rotamer_prob_nonburied_semi() const = 0;
+
+	virtual
+	void
+	rotamer_prob_buried( core::Real ) = 0;
+
+	virtual
+	void
+	rotamer_prob_nonburied( core::Real ) = 0;
+
+	virtual
+	void
+	rotamer_prob_buried_semi( core::Real ) = 0;
+
+	virtual
+	void
+	rotamer_prob_nonburied_semi( core::Real ) = 0;
+
 
 	//some get-set functions for annealer options
 	virtual

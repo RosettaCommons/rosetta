@@ -74,9 +74,7 @@ SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 	Size const n_rotameric_chi,
 	bool dun02,
 	bool use_bicubic,
-	bool dun_entropy_correction,
-	core::Real prob_buried,
-	core::Real prob_nonburied
+	bool dun_entropy_correction
 ) :
 	dun02_( dun02 ),
 	use_bicubic_( use_bicubic ),
@@ -87,8 +85,6 @@ SingleResidueDunbrackLibrary::SingleResidueDunbrackLibrary(
 	n_chi_products_( n_rotameric_chi, 1),
 	n_packed_rots_( 0 ),
 	n_possible_rots_( 0 ),
-	prob_to_accumulate_buried_( prob_buried ),
-	prob_to_accumulate_nonburied_( prob_nonburied ),
 	packed_rotno_conversion_data_current_( false )
 {
 	// this builds on the hard coded hack bellow
@@ -551,14 +547,6 @@ SingleResidueDunbrackLibrary::operator ==( SingleResidueRotamerLibrary const & r
 		TR.Debug << "Comparison failure: packed_rotno_conversion_data_current: " << packed_rotno_conversion_data_current_ << " vs. " << other.packed_rotno_conversion_data_current_ << std::endl;
 		equal = false;
 	}
-	if ( ! numeric::equal_by_epsilon( prob_to_accumulate_buried_, other.prob_to_accumulate_buried_, PROB_DELTA) ) {
-		TR.Debug << "Comparison failure: prob_to_accumulate_buried: " << prob_to_accumulate_buried_ << " vs. " << other.prob_to_accumulate_buried_ << std::endl;
-		equal = false;
-	}
-	if ( ! numeric::equal_by_epsilon( prob_to_accumulate_nonburied_, other.prob_to_accumulate_nonburied_, PROB_DELTA) ) {
-		TR.Debug << "Comparison failure: prob_to_accumulate_nonburied: " << prob_to_accumulate_nonburied_ << " vs. " << other.prob_to_accumulate_nonburied_ << std::endl;
-		equal = false;
-	}
 
 	if ( n_chi_bins_.size() != other.n_chi_bins_.size() ) {
 		TR.Debug << "Comparison failure: n_chi_bins vector length: " << n_chi_bins_.size() << " vs. " << other.n_chi_bins_.size() << std::endl;
@@ -672,30 +660,11 @@ SingleResidueDunbrackLibrary::rotno_2_rotwell(
 
 Real
 SingleResidueDunbrackLibrary::probability_to_accumulate_while_building_rotamers(
+	core::pack::task::PackerTask const & task,
 	bool buried
 ) const
 {
-	return ( buried ? prob_to_accumulate_buried_ : prob_to_accumulate_nonburied_ );
-}
-
-/// @brief setters for accumulation probability cutoff (to support externally-controlled option dependence)
-void
-SingleResidueDunbrackLibrary::prob_to_accumulate( Real buried, Real nonburied )
-{
-	prob_to_accumulate_buried( buried );
-	prob_to_accumulate_nonburied( nonburied );
-}
-void
-SingleResidueDunbrackLibrary::prob_to_accumulate_buried( Real buried )
-{
-	if ( buried <= 0. || buried > 1.0 ) utility_exit_with_message("illegal probability");
-	prob_to_accumulate_buried_ = buried;
-}
-void
-SingleResidueDunbrackLibrary::prob_to_accumulate_nonburied( Real nonburied )
-{
-	if ( nonburied <= 0. || nonburied > 1.0 ) utility_exit_with_message("illegal probability");
-	prob_to_accumulate_nonburied_ = nonburied;
+	return ( buried ? task.rotamer_prob_buried() : task.rotamer_prob_nonburied() );
 }
 
 Size SingleResidueDunbrackLibrary::memory_usage_in_bytes() const
@@ -731,10 +700,10 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	// Don't look at this #define--read the comment below it.
 
 	#define INIT( CHI, BB ) \
-RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( rsd.type(), false, true, true, 1.0, 1.0 ); \
+RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( rsd.type(), false, true, true ); \
 RotamericSingleResidueDunbrackLibraryParser parser_ ## CHI ## _ ## BB( BB, DUNBRACK_MAX_SCTOR, rsrdl_ ## CHI ## _ ## BB.n_possible_rots(), false, false ); \
 parser_ ## CHI ## _ ## BB.configure_rotameric_single_residue_dunbrack_library< CHI, BB >( rsrdl_ ## CHI ## _ ## BB , utility::fixedsizearray1< core::Size, BB >( 0 ) ); \
-SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( rsd.type(), true, true, false, true, true, 1.0, 1.0 ); \
+SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( rsd.type(), true, true, false, true, true ); \
 PackedDunbrackRotamer< CHI, BB, Real > prot_ ## CHI ## _ ## BB; \
 utility::fixedsizearray1< core::Real, BB > dummyarrayreal_ ## CHI ## _ ## BB(0); \
 utility::fixedsizearray1< core::Size, BB > dummyarraysize_ ## CHI ## _ ## BB(0); \

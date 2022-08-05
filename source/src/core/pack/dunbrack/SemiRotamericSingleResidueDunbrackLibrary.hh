@@ -220,9 +220,7 @@ public:
 		bool const backbone_independent_rotamer_sampling, // true uses less memory
 		bool use_shapovalov,
 		bool use_bicubic,
-		bool dun_entropy_correction,
-		core::Real prob_buried,
-		core::Real prob_nonburied
+		bool dun_entropy_correction
 	);
 
 	~SemiRotamericSingleResidueDunbrackLibrary() throw() override;
@@ -355,6 +353,9 @@ public:
 		ChiVector const & chi,
 		RotVector & rot
 	) const override;
+
+	Real
+	probability_to_accumulate_while_building_rotamers( core::pack::task::PackerTask const & task, bool buried ) const override;
 
 public:
 	/// Initialization functions that must be called before reading the input libraries.

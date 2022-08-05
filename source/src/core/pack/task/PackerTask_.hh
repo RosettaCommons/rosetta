@@ -250,6 +250,10 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool is_initialized() const override;
 
+	/// @brief Do some common initialization routines.
+	void
+	init();
+
 	/// @brief read command line options (but not resfile) to set the state of the PackerTask, NOT IN CONSTRUCTOR
 	PackerTask &
 	initialize_from_command_line() override;
@@ -365,6 +369,30 @@ public:
 	//@brief return a resfile string that can recreate the packer task
 	std::string
 	task_string( pose::Pose const & pose ) const override;
+
+	core::Real
+	rotamer_prob_buried() const override;
+
+	core::Real
+	rotamer_prob_nonburied() const override;
+
+	core::Real
+	rotamer_prob_buried_semi() const override;
+
+	core::Real
+	rotamer_prob_nonburied_semi() const override;
+
+	void
+	rotamer_prob_buried( core::Real ) override;
+
+	void
+	rotamer_prob_nonburied( core::Real ) override;
+
+	void
+	rotamer_prob_buried_semi( core::Real ) override;
+
+	void
+	rotamer_prob_nonburied_semi( core::Real ) override;
 
 
 	//some get-set functions for annealer options
@@ -534,6 +562,12 @@ private:
 
 	// psh hack, just like the pbhack above
 	RotamerLinksCOP rotamer_links_;
+
+	// Rotamer probability cutoffs. (Defaults set from the option system.)
+	core::Real rotamer_prob_buried_;
+	core::Real rotamer_prob_nonburied_;
+	core::Real rotamer_prob_buried_semi_;
+	core::Real rotamer_prob_nonburied_semi_;
 
 	// rhiju -- some options that need to be sent to the annealer
 	Real low_temp_ = -1.0;
