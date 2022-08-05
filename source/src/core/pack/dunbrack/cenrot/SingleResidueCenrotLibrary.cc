@@ -22,6 +22,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/id/TorsionID.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -192,20 +193,26 @@ void SingleResidueCenrotLibrary::setup_entropy_correction()
 	}
 }
 
-Real SingleResidueCenrotLibrary::rotamer_energy_deriv(
-	conformation::Residue const & rsd,
-	pose::Pose const & ,// pose,
-	RotamerLibraryScratchSpace & scratch
+void SingleResidueCenrotLibrary::rotamer_energy_deriv(
+	conformation::Residue const & /*rsd*/,
+	pose::Pose const & /*pose*/,
+	id::TorsionID const & /*tor_id*/,
+	core::pack::rotamers::TorsionEnergy & /*tderiv*/
 ) const {
-	return eval_rotameric_energy_deriv(rsd, scratch, true);
+	// // RM: Re-written, this actually doesn't seem to do anything actually with the (proper) derivatives.
+	//Real4 dis_ang_dih(0.0);
+	//eval_rotameric_energy_deriv(rsd, dis_ang_dih, true);
 }
 
 Real SingleResidueCenrotLibrary::rotamer_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & ,// pose,
-	RotamerLibraryScratchSpace & scratch
+	core::pack::rotamers::TorsionEnergy & tenergy
 ) const {
-	return eval_rotameric_energy_deriv(rsd, scratch, false);
+	Real4 dis_ang_dih(0.0);
+	core::Real tot = eval_rotameric_energy_deriv(rsd, dis_ang_dih, false);
+	tenergy.tot += tot;
+	return tot;
 }
 
 std::set< id::PartialAtomID >
@@ -227,7 +234,7 @@ SingleResidueCenrotLibrary::atoms_w_dof_derivatives(
 
 Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch,
+	Real4 & dis_ang_dih,
 	bool eval_deriv
 ) const {
 	Real p(0.0);
@@ -331,19 +338,20 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 		dE_ddih += factori[nr] * delta_dih * sin_ang * sin_ang / sample.sd_dih();
 	}
 
-	//hack save derivs (dis, ang, dih) in scratch.dE_dchi
-	Real4 & dE_dchi(scratch.dE_dchi());
-	dE_dchi[1] = dE_ddis / p;
-	dE_dchi[2] = dE_dang / p;
-	dE_dchi[3] = dE_ddih / p;
+	dis_ang_dih[1] = dE_ddis / p;
+	dis_ang_dih[2] = dE_dang / p;
+	dis_ang_dih[3] = dE_ddih / p;
 
 	return e ;
 }
 
 Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch
+	id::TorsionID const & tor_id
 ) const {
+	if ( tor_id.type() != id::BB ) return 0.0;
+	if ( tor_id.torsion() == 0 || tor_id.torsion() > DUNBRACK_MAX_BBTOR ) return 0.0;
+
 	Real p(0.0);
 	Real factori[10]; //for each rot (max=9)
 	const utility::vector1< CentroidRotamerSampleData > rotamer_sample_data( get_rotamer_samples( rsd ) );
@@ -395,7 +403,7 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 		p +=  rotamer_sample_data[nr].prob() * factori[nr];
 	}
 
-	if ( p<MIN_ROT_PROB ) return MAX_ROT_ENERGY; //too far away
+	if ( p<MIN_ROT_PROB ) return 0.0; //too far away
 
 	Real e = -log(p);
 
@@ -405,7 +413,7 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 		utility_exit();
 	}
 
-	utility::fixedsizearray1<Real, FIVE> & dE_dbb(scratch.dE_dbb());
+	Real5 dE_dbb( 0.0 );
 
 	for ( Size nr=1; nr<=max_rot_num; nr++ ) {
 		CentroidRotamerSampleData const &sample(rotamer_sample_data[nr]);
@@ -442,14 +450,12 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 	dE_dbb[RSD_PSI_INDEX] /= p;
 
 	if ( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
-		e += entropy;
 		dE_dbb[RSD_PHI_INDEX] += dS_dphi;
 		dE_dbb[RSD_PSI_INDEX] += dS_dpsi;
-	} else {
-		e -= ref_energy_;
 	}
 
-	return e ;
+	// Bounds checked at top of function
+	return dE_dbb[ tor_id.torsion() ];
 }
 
 CentroidRotamerSampleData const & SingleResidueCenrotLibrary::get_closest_rotamer(
@@ -489,8 +495,7 @@ CentroidRotamerSampleData const & SingleResidueCenrotLibrary::get_closest_rotame
 Real SingleResidueCenrotLibrary::best_rotamer_energy(
 	conformation::Residue const &, //rsd,
 	pose::Pose const &, //pose,
-	bool , //curr_rotamer_only,
-	RotamerLibraryScratchSpace & //scratch
+	bool //curr_rotamer_only,
 ) const {
 	return 0.0;
 }
@@ -501,7 +506,6 @@ Real SingleResidueCenrotLibrary::best_rotamer_energy(
 void SingleResidueCenrotLibrary::assign_random_rotamer_with_bias(
 	conformation::Residue const &, //rsd,
 	pose::Pose const &, //pose,
-	RotamerLibraryScratchSpace &, //scratch,
 	numeric::random::RandomGenerator &, //RG,
 	ChiVector &, //new_chi_angles,
 	bool //perturb_from_rotamer_center

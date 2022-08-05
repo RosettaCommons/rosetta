@@ -18,6 +18,9 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
 // Package headers
+#include <core/id/TorsionID.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh> // For TorsionEnergy
 
 // Utility headers
 #include <utility/VirtualBase.hh>
@@ -29,8 +32,53 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
+/// @brief A scratch-space class to store the information needed for Dunbrack Rotamer interpolation
+class RotamerLibraryInterpolationScratch : public utility::VirtualBase
+{
+public:
 
-class RotamerLibraryScratchSpace : public utility::VirtualBase
+	Real rotprob() const { return rotprob_; }
+	Real negln_rotprob() const { return negln_rotprob_; }
+	Real4 const & chimean() const { return chimean_; }
+	Real4 const & chisd() const { return chisd_; }
+	Real5 const & drotprob_dbb() const { return drotprob_dbb_; } // Only preserved temporarily for use in the semirotameric libraries ('08, '10)
+	Real5 const & dneglnrotprob_dbb() const { return dneglnrotprob_dbb_; }
+	FiveReal4 const & dchimean_dbb() const { return dchimean_dbb_; }
+	FiveReal4 const & dchisd_dbb() const { return dchisd_dbb_; }
+
+	Real   & rotprob()  { return rotprob_; }
+	Real   & negln_rotprob() { return negln_rotprob_; }
+	Real4  & chimean()  { return chimean_; }
+	Real4  & chisd()    { return chisd_; }
+	Real5  & drotprob_dbb()  { return drotprob_dbb_; } // TEMP
+	Real5  & dneglnrotprob_dbb()  { return dneglnrotprob_dbb_; }
+	FiveReal4  & dchimean_dbb() { return dchimean_dbb_; }
+	FiveReal4  & dchisd_dbb()   { return dchisd_dbb_; }
+
+	// Entropy correction
+	Real    entropy() const { return entropy_; }
+	Real5   dentropy_dbb() const { return dentropy_dbb_; }
+	Real  & entropy() { return entropy_; }
+	Real5 & dentropy_dbb() { return dentropy_dbb_; }
+
+private:
+
+	Real rotprob_ = 0.0;
+	Real negln_rotprob_ = 0.0;
+	Real4 chimean_{ 0.0 };
+	Real4 chisd_{ 0.0 };
+	Real5 drotprob_dbb_{ 0.0 };
+	Real5 dneglnrotprob_dbb_{ 0.0 };
+	FiveReal4 dchimean_dbb_{ {0.0} };
+	FiveReal4 dchisd_dbb_{ {0.0} };
+
+	// Entropic correction
+	Real entropy_;
+	Real5 dentropy_dbb_;
+
+};
+
+class RotamerLibraryScratchSpace : public RotamerLibraryInterpolationScratch
 {
 public:
 	static Size const AA_OMG_INDEX = 3;
@@ -45,17 +93,8 @@ public:
 
 	~RotamerLibraryScratchSpace() override;
 
-	Real rotprob() const { return rotprob_; }
-	Real negln_rotprob() const { return negln_rotprob_; }
-	Size4 const & rotwell() const { return rotwell_; }
-	Real4 const & chimean() const { return chimean_; }
-	Real4 const & chisd() const { return chisd_; }
 	Real4 const & chidev() const { return chidev_; }
 	Real4 const & chidevpen() const { return chidevpen_; }
-	Real5 const & drotprob_dbb() const { return drotprob_dbb_; } // Only preserved temporarily for use in the semirotameric libraries ('08, '10)
-	Real5 const & dneglnrotprob_dbb() const { return dneglnrotprob_dbb_; }
-	FiveReal4 const & dchimean_dbb() const { return dchimean_dbb_; }
-	FiveReal4 const & dchisd_dbb() const { return dchisd_dbb_; }
 	Real5 const & dchidevpen_dbb() const { return dchidevpen_dbb_; }
 	Real4 const & dchidevpen_dchi() const { return dchidevpen_dchi_; }
 	Real5 const & dE_dbb() const { return dE_dbb_; }
@@ -73,17 +112,8 @@ public:
 	Real fa_dun_dev() const { return fa_dun_dev_; }
 
 
-	Real   & rotprob()  { return rotprob_; }
-	Real   & negln_rotprob() { return negln_rotprob_; }
-	Size4  & rotwell()  { return rotwell_; }
-	Real4  & chimean()  { return chimean_; }
-	Real4  & chisd()    { return chisd_; }
 	Real4  & chidev()   { return chidev_; }
 	Real4  & chidevpen()     { return chidevpen_; }
-	Real5  & drotprob_dbb()  { return drotprob_dbb_; } // TEMP
-	Real5  & dneglnrotprob_dbb()  { return dneglnrotprob_dbb_; }
-	FiveReal4  & dchimean_dbb() { return dchimean_dbb_; }
-	FiveReal4  & dchisd_dbb()   { return dchisd_dbb_; }
 	Real5  & dchidevpen_dbb()   { return dchidevpen_dbb_; }
 	Real4  & dchidevpen_dchi()  { return dchidevpen_dchi_; }
 	Real5  & dE_dbb()  { return dE_dbb_; }
@@ -101,11 +131,24 @@ public:
 	Real & fa_dun_semi() { return fa_dun_semi_; }
 	Real & fa_dun_dev() { return fa_dun_dev_; }
 
-	// Entropy correction
-	Real    entropy() const { return entropy_; }
-	Real5   dentropy_dbb() const { return dentropy_dbb_; }
-	Real  & entropy() { return entropy_; }
-	Real5 & dentropy_dbb() { return dentropy_dbb_; }
+	void extract_torsion_deriv(
+		id::TorsionID const & tor_id,
+		core::conformation::Residue const &rsd,
+		core::pose::Pose const &pose,
+		rotamers::TorsionEnergy & tderiv
+	) const;
+
+protected:
+
+	/// @brief Given a mainchain torsion index and a ResidueType, get the index of the corresponding torsion in the
+	/// data stored in the Dunbrack scratch space.
+	/// @details For most residue types, this just returns torsion_index.  The index is only different in cases in which
+	/// a residue type has rotamers that depend on a subset of mainchain torsions.  For example, if a residue's rotamers
+	/// depended on mainchain torsions 2, 3, and 4, then the scratch indices 1, 2, and 3 would correspond to mainchain
+	/// torsions 2, 3, and 4, respectively.  This function returns 0 if torsion_index is a torsion on which rotamers do
+	/// not depend.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	core::Size get_scratch_index( core::id::TorsionID const &torid, core::conformation::Residue const &rsd, core::pose::Pose const &pose ) const;
 
 private:
 
@@ -116,21 +159,12 @@ private:
 	// handed to a Dunbrack rotamer library before use.)
 	//////////////////////////////////////////////////////
 
-	Real rotprob_;
-	Real negln_rotprob_;
-	Size4 rotwell_;
-	Real4 chimean_;
-	Real4 chisd_;
 	Real4 chidev_;
 	Real4 chidevpen_;
-	Real5 drotprob_dbb_;
-	Real5 dneglnrotprob_dbb_;
 	/*Real4 dchimean_dphi_;
 	Real4 dchimean_dpsi_;
 	Real4 dchisd_dphi_;
 	Real4 dchisd_dpsi_;*/
-	FiveReal4 dchimean_dbb_;
-	FiveReal4 dchisd_dbb_;
 	Real5 dchidevpen_dbb_;
 	Real4 dchidevpen_dchi_;
 	Real5 dE_dbb_;
@@ -152,10 +186,6 @@ private:
 	Real fa_dun_rot_;
 	Real fa_dun_semi_;
 	Real fa_dun_dev_;
-
-	// Entropic correction
-	Real entropy_;
-	Real5 dentropy_dbb_;
 
 	// DOUG DOUG DOUG May need to make a sub class, for peptoid rotlibs
 public:

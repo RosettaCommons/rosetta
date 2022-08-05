@@ -118,8 +118,8 @@ void CenRotDunEnergy::residue_energy(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >( residue_rotamer_library )
 	);
 
-	RotamerLibraryScratchSpace scratch;
-	dun_score = residue_cenrot_library->rotamer_energy( rsd, pose, scratch );
+	TorsionEnergy tenergy;
+	dun_score = residue_cenrot_library->rotamer_energy( rsd, pose, tenergy );
 
 	emap[ cen_rot_dun ] += dun_score;
 } // residue_energy
@@ -187,13 +187,7 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library) );
 
 	if ( residue_cenrot_library != nullptr && rsd.is_protein() && tor_id.type() == id::BB ) {
-		RotamerLibraryScratchSpace scratch;
-		residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv( rsd, scratch );
-
-		if ( tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
-			//for backbone torsion angles: phi, psi, omega?
-			deriv = scratch.dE_dbb()[tor_id.torsion()];
-		}
+		deriv = residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv( rsd, tor_id );
 	}
 
 	return numeric::conversions::degrees( weights[ cen_rot_dun ] * deriv );
@@ -227,14 +221,7 @@ Real CenRotDunEnergy::eval_dof_derivative(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library) );
 
 	if ( residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB ) {
-
-		RotamerLibraryScratchSpace scratch;
-		residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(pose.residue( tor_id.rsd() ), scratch);
-
-		if ( tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
-			//for backbone torsion angles: phi, psi, omega?
-			deriv = scratch.dE_dbb()[tor_id.torsion()];
-		}
+		deriv = residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(pose.residue( tor_id.rsd() ), tor_id);
 	}
 
 	return numeric::conversions::degrees( weights[ cen_rot_dun ] * deriv );
@@ -243,7 +230,7 @@ Real CenRotDunEnergy::eval_dof_derivative(
 void CenRotDunEnergy::eval_residue_derivatives(
 	conformation::Residue const & rsd,
 	ResSingleMinimizationData const &,
-	pose::Pose const & pose,
+	pose::Pose const & ,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
@@ -263,6 +250,8 @@ void CenRotDunEnergy::eval_residue_derivatives(
 		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 	);
 
+	if ( residue_cenrot_library == nullptr ) return;
+
 	//get xyz of all the 4 atoms
 	//   D -- C -- B -- A
 	//   N -- CA - CB - CEN
@@ -275,12 +264,11 @@ void CenRotDunEnergy::eval_residue_derivatives(
 	Vector const rC (rsd.atom(nC).xyz());
 	Vector const rD (rsd.atom(nD).xyz());
 
-	RotamerLibraryScratchSpace scratch;
-	residue_cenrot_library->rotamer_energy_deriv(rsd, pose, scratch);
-	Real4 const & dE_dchi(scratch.dE_dchi());
-	Real dE_ddis(dE_dchi[1]);
-	Real dE_dang(dE_dchi[2]);
-	Real dE_ddih(dE_dchi[3]);
+	Real4 dis_ang_dih(0.0);
+	residue_cenrot_library->eval_rotameric_energy_deriv(rsd, dis_ang_dih, true);
+	Real dE_ddis(dis_ang_dih[1]);
+	Real dE_dang(dis_ang_dih[2]);
+	Real dE_ddih(dis_ang_dih[3]);
 
 	Vector f1_A, f1_B, f1_C, f1_D;
 	Vector f2_A, f2_B, f2_C, f2_D;

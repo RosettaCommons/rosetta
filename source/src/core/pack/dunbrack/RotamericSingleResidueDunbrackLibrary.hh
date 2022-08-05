@@ -80,14 +80,15 @@ public:
 	rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch
+		rotamers::TorsionEnergy & tenergy
 	) const override;
 
-	Real
+	void
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch
+		id::TorsionID const & tor_id,
+		rotamers::TorsionEnergy & tderiv
 	) const override;
 
 	std::set< id::PartialAtomID >
@@ -104,15 +105,13 @@ public:
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		bool curr_rotamer_only,
-		RotamerLibraryScratchSpace & scratch
+		bool curr_rotamer_only
 	) const override;
 
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center
@@ -287,18 +286,46 @@ protected:
 	Size memory_usage_static() const override;
 	Size memory_usage_dynamic() const override;
 
-	/// @brief  Evaluates the score and chi-deviation penalty for the rotameric
-	/// chi (in this class, that means all the chi) and stores the answers in
-	/// the scratch object.  If eval_deriv is true, then at the end of this
-	/// function, scratch contains up-to-date dchidevpen_dbb, dchidevpen_dchi,
-	/// chimean, chisd, chidev, chidevpen, dchimean_d(phi/psi), dchisd_d(phi/psi)
-	/// rotwell and rotprob data.
-	Real
-	eval_rotameric_energy_deriv(
+	/// @brief Get the corresponding packed_rotno
+	core::Size
+	get_packed_rotno(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose
+	) const;
+
+	/// @brief Get the corresponding packed_rotno and the "corrected" ChiVector
+	core::Size
+	get_packed_rotno(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
-		bool eval_deriv
+		ChiVector & chi
+	) const;
+
+	/// @brief Evaluate scoring for the residue.
+	/// Returns the energy total for this residue
+	/// chidev & chidevpen will be overwritten.
+	/// The energy components will be summed to the entries in tenergy.
+	Real eval_rotameric_energy(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		RotamerLibraryInterpolationScratch & scratch,
+		Real4 & chidev,
+		Real4 & chidevpen,
+		core::Size & packed_rotno,
+		rotamers::TorsionEnergy & tenergy
+	) const;
+
+	/// @brief  Evaluates the score and chi-deviation penalty for the rotameric
+	/// chi (in this class, that means all the chi) and stores the answers in
+	/// the scratch object.  It then updates the derivative information.
+	/// Scratch contains up-to-date dchidevpen_dbb, dchidevpen_dchi,
+	/// chimean, chisd, chidev, chidevpen, dchimean_d(phi/psi), dchisd_d(phi/psi)
+	/// rotwell and rotprob data.
+	void
+	eval_rotameric_deriv(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		RotamerLibraryScratchSpace & scratch
 	) const;
 
 public:
@@ -314,7 +341,7 @@ public:
 	interpolate_rotamers(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
+		RotamerLibraryInterpolationScratch & scratch,
 		Size packed_rotno,
 		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 	) const;
@@ -323,7 +350,7 @@ protected:
 
 	void
 	interpolate_rotamers(
-		RotamerLibraryScratchSpace & scratch,
+		RotamerLibraryInterpolationScratch & scratch,
 		Size packed_rotno,
 		utility::fixedsizearray1< Size, N > const & bb_bin,
 		utility::fixedsizearray1< Size, N > const & bb_bin_next,
@@ -350,7 +377,6 @@ protected:
 	assign_random_rotamer(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center,

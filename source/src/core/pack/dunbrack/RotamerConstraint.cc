@@ -19,7 +19,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
@@ -248,9 +247,8 @@ RotamerConstraint::score(
 	for ( Size i = 1, i_end = favored_rotamer_numbers_.size(); i <= i_end; ++i ) {
 		if ( rot != favored_rotamer_numbers_[i] )  continue;
 
-		pack::dunbrack::RotamerLibraryScratchSpace scratch;
-		Real const best_rotE = rotlib->best_rotamer_energy(rsd, pose, false /* => global min */, scratch);
-		Real const this_rotE = rotlib->best_rotamer_energy(rsd, pose, true /* => local min */, scratch);
+		Real const best_rotE = rotlib->best_rotamer_energy(rsd, pose, false /* => global min */);
+		Real const this_rotE = rotlib->best_rotamer_energy(rsd, pose, true /* => local min */);
 		debug_assert( best_rotE <= this_rotE );
 		TR << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
 		emap[ this->score_type() ] +=  ( best_rotE - this_rotE );

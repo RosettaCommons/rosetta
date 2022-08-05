@@ -25,6 +25,7 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Project headers
+#include <core/id/TorsionID.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -159,23 +160,23 @@ public:
 	rotamer_energy(
 		Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch
+		rotamers::TorsionEnergy & tenergy
 	) const;
 
 	Real
 	best_rotamer_energy(
 		Residue const & rsd,
 		pose::Pose const & pose,
-		bool curr_rotamer_only,
-		RotamerLibraryScratchSpace & scratch
+		bool curr_rotamer_only
 	) const;
 
 	/// to do:
-	Real
+	void
 	rotamer_energy_deriv(
 		Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch
+		id::TorsionID const & tor_id,
+		rotamers::TorsionEnergy & tderiv
 	) const;
 
 	// // get_rsd_library() is no longer valid! Use core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( restype ); instead.

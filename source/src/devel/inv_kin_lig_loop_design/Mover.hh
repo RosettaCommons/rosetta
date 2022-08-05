@@ -120,7 +120,6 @@ private:
 
 
 	core::pose::Pose* pose; // unacceptable
-	core::pack::dunbrack::RotamerLibraryScratchSpaceOP scratch_;
 
 }; // class Mover
 

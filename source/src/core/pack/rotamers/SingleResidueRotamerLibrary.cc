@@ -15,8 +15,6 @@
 // Unit Headers
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/BumpSelector.hh>
 #include <core/conformation/Residue.hh>
@@ -276,11 +274,11 @@ SingleResidueRotamerLibrary::virtual_sidechain(
 		if ( existing_residue.nchi() > 0 &&
 				existing_residue.aa() != chemical::aa_pro &&
 				existing_residue.n_non_polymeric_residue_connections() == 0 ) {
-			dunbrack::RotamerLibraryScratchSpace scratch;
+			TorsionEnergy tenergy;
 			Size n_min( 0 );
 			Real fa_dun_min( 0.0 );
 			for ( Size n = 1; n <= rotamers.size(); n++ ) {
-				Real const fa_dun = this->rotamer_energy( *rotamers[ n ], pose, scratch );
+				Real const fa_dun = this->rotamer_energy( *rotamers[ n ], pose, tenergy );
 				if ( n_min == 0 || fa_dun < fa_dun_min ) {
 					n_min = n; fa_dun_min = fa_dun;
 				}

@@ -99,15 +99,6 @@ public:
 private:
 	// methods
 
-	/// @brief Given a mainchain torsion index and a ResidueType, get the index of the corresponding torsion in the
-	/// data stored in the Dunbrack scratch space.
-	/// @details For most residue types, this just returns torsion_index.  The index is only different in cases in which
-	/// a residue type has rotamers that depend on a subset of mainchain torsions.  For example, if a residue's rotamers
-	/// depended on mainchain torsions 2, 3, and 4, then the scratch indices 1, 2, and 3 would correspond to mainchain
-	/// torsions 2, 3, and 4, respectively.  This function returns 0 if torsion_index is a torsion on which rotamers do
-	/// not depend.
-	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	core::Size get_scratch_index( core::id::TorsionID const &torid, core::conformation::Residue const &rsd, core::pose::Pose const &pose ) const;
 
 	core::Size version() const override;
 

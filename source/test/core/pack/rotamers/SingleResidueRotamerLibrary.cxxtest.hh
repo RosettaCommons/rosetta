@@ -39,11 +39,12 @@ class DummySRRL: public core::pack::rotamers::SingleResidueRotamerLibrary {
 
 public:
 
-	core::Real
+	void
 	rotamer_energy_deriv(
 		conformation::Residue const &,
 		pose::Pose const &,
-		dunbrack::RotamerLibraryScratchSpace &
+		core::id::TorsionID const &,
+		rotamers::TorsionEnergy &
 	) const override {
 		utility_exit_with_message("UNIMPLEMENTED");
 	}
@@ -52,7 +53,7 @@ public:
 	rotamer_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		dunbrack::RotamerLibraryScratchSpace &
+		rotamers::TorsionEnergy &
 	) const override { utility_exit_with_message("UNIMPLEMENTED"); }
 
 	std::set< id::PartialAtomID >
@@ -68,15 +69,13 @@ public:
 	best_rotamer_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		bool,
-		dunbrack::RotamerLibraryScratchSpace &
+		bool
 	) const override { utility_exit_with_message("UNIMPLEMENTED"); }
 
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & ,
 		pose::Pose const &,
-		dunbrack::RotamerLibraryScratchSpace &,
 		numeric::random::RandomGenerator &,
 		dunbrack::ChiVector &,
 		bool

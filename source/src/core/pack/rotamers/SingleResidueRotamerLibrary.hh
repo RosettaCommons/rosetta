@@ -19,7 +19,6 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Package Headers
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh> // ChiVector
 
 //Project Headers
@@ -31,6 +30,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
@@ -45,6 +45,14 @@
 namespace core {
 namespace pack {
 namespace rotamers {
+
+// For efficiency, this should be kept to POD.
+struct TorsionEnergy {
+	core::Real tot = 0.0; /// @brief The total energy for the torsion
+	core::Real rot = 0.0; /// @brief The rotamer-bin component of the energy
+	core::Real dev = 0.0; /// @brief The off-peak deviation component of the energy
+	core::Real semi = 0.0; /// @brief The energy associated with the "semirotameric" portion of the energy
+};
 
 /// @brief  SingleResidueRotamerLibrary pure virtual base class
 class SingleResidueRotamerLibrary : public utility::VirtualBase
@@ -61,11 +69,12 @@ public:
 	~SingleResidueRotamerLibrary() override;
 
 	virtual
-	Real
+	void
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		dunbrack::RotamerLibraryScratchSpace & scratch
+		core::id::TorsionID const & tor_id,
+		TorsionEnergy & tderiv
 	) const = 0;
 
 	virtual
@@ -73,7 +82,7 @@ public:
 	rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		dunbrack::RotamerLibraryScratchSpace & scratch
+		TorsionEnergy & energy
 	) const = 0;
 
 	/// @brief Return the set of atoms ids (or, if they come from another residue, PartialAtomIDs)
@@ -96,8 +105,7 @@ public:
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		bool curr_rotamer_only,
-		dunbrack::RotamerLibraryScratchSpace & scratch
+		bool curr_rotamer_only
 	) const = 0;
 
 	/// @brief Pick a rotamer for the input residue according to the rotamer probability
@@ -111,7 +119,6 @@ public:
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose, // DOUG MAY CAUSE PROBLEMS BUILDONG
-		dunbrack::RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		dunbrack::ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center

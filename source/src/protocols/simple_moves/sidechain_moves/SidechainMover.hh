@@ -326,7 +326,6 @@ private:
 	bool last_pertrot_;
 	core::Real last_proposal_density_ratio_;
 	bool task_initialized_;
-	core::pack::dunbrack::RotamerLibraryScratchSpaceOP scratch_;
 
 protected:
 	core::Real temperature0_;

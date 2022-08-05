@@ -180,13 +180,14 @@ public:
 	Real rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch
+		core::pack::rotamers::TorsionEnergy & tenergy
 	) const override;
 
-	Real rotamer_energy_deriv(
+	void rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch
+		id::TorsionID const & tor_id,
+		core::pack::rotamers::TorsionEnergy & tderiv
 	) const override;
 
 	std::set< id::PartialAtomID >
@@ -198,14 +199,15 @@ public:
 	//eval cart version
 	Real eval_rotameric_energy_deriv(
 		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch,
+		Real4 & dis_ang_dih,
 		bool eval_deriv
 	) const;
 
 	//eval internal version (bb only)
+	// Returns the derivative value.
 	Real eval_rotameric_energy_bb_dof_deriv(
 		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch
+		id::TorsionID const & tor_id
 	) const;
 
 	/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
@@ -215,15 +217,13 @@ public:
 	Real best_rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		bool curr_rotamer_only,
-		RotamerLibraryScratchSpace & scratch
+		bool curr_rotamer_only
 	) const override;
 
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center

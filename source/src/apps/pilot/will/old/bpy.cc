@@ -244,7 +244,6 @@ core::fragment::FragSetOP make_frag_set(Size start, std::string ss, std::map<std
 class ChiMover : public protocols::moves::Mover {
 	Size residue_;
 	core::pack::rotamers::SingleResidueRotamerLibraryCAP lib_;
-	core::pack::dunbrack::RotamerLibraryScratchSpace scratch_;
 public:
 	ChiMover(core::pose::Pose const & pose, Size residue) : residue_(residue) {
 		using namespace core::pack::dunbrack;
@@ -259,8 +258,8 @@ public:
 	void apply( core::pose::Pose & pose ) {
 		using namespace core::pack::dunbrack;
 		ChiVector chis;
-		lib_->assign_random_rotamer_with_bias(pose.residue(residue_),scratch_,numeric::random::rg(),chis,true);
-		for ( size_t i = 1; i <= chis.size(); ++i ) {
+		lib_->assign_random_rotamer_with_bias(pose.residue(residue_),numeric::random::rg(),chis,true);
+		for ( size_t i = 1; i <= chis.size(); ++i )	{
 			pose.set_chi(i,residue_,chis[i]);
 		}
 		// Real a =  5.0*numeric::random::gaussian();

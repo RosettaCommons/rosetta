@@ -86,6 +86,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
@@ -312,10 +313,9 @@ test_dunbrack_io()
 	pose::Pose pose;
 	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
-	RotamerLibraryScratchSpace scratch;
-
+	core::pack::rotamers::TorsionEnergy tenergy;
 	for ( Size i=1; i<= pose.size(); ++i ) {
-		rot_lib.rotamer_energy( pose.residue(i), pose, scratch );
+		rot_lib.rotamer_energy( pose.residue(i), pose, tenergy );
 	}
 }
 

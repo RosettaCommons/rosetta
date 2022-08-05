@@ -48,8 +48,7 @@ namespace inv_kin_lig_loop_design {
 
 
 Mover::Mover(core::pose::Pose* pose) :
-	pose(pose),
-	scratch_( utility::pointer::make_shared< core::pack::dunbrack::RotamerLibraryScratchSpace >() )
+	pose(pose)
 {} // Mover::Mover
 
 /// @details DANGER DANGER DANGER Pose is not deallocated
@@ -175,7 +174,7 @@ void Mover::randomRotamer(const int seqpos) const {
 	if ( ! dun_rotlib ) return; // Is this right? maybe we would want random rotamers for ligands?
 
 	dun_rotlib->assign_random_rotamer_with_bias(
-		pose->residue( seqpos ), *pose, *scratch_, numeric::random::rg(),
+		pose->residue( seqpos ), *pose, numeric::random::rg(),
 		chivector, true );
 
 	for ( size_t k = 1; k <= res_type.nchi(); ++k ) {

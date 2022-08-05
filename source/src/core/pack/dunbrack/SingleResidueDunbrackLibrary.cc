@@ -742,12 +742,12 @@ rsrdl_ ## CHI ## _ ## BB.nchi(); \
 srsrdl_ ## CHI ## _ ## BB.nchi(); \
 rsrdl_ ## CHI ## _ ## BB.n_rotamer_bins(); \
 srsrdl_ ## CHI ## _ ## BB.n_rotamer_bins(); \
-rsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, pose, scratch ); \
-srsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, pose, scratch ); \
-rsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, pose, scratch ); \
-srsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, pose, scratch ); \
-rsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, pose, true, scratch ); \
-srsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, pose, true, scratch ); \
+rsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, pose, tenergy ); \
+srsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, pose, tenergy ); \
+rsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, pose, tor_id, tenergy ); \
+srsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, pose, tor_id, tenergy ); \
+rsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, pose, true ); \
+srsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, pose, true ); \
 rsrdl_ ## CHI ## _ ## BB.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv ); \
 srsrdl_ ## CHI ## _ ## BB.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv ); \
 rsrdl_ ## CHI ## _ ## BB.write_to_file( ozs ); \
@@ -768,16 +768,16 @@ rsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi( chi, rot ); \
 srsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi( chi, rot ); \
 rsrdl_ ## CHI ## _ ## BB.find_another_representative_for_unlikely_rotamer( rsd, pose, rotwell ); \
 srsrdl_ ## CHI ## _ ## BB.find_another_representative_for_unlikely_rotamer( rsd, pose, rotwell ); \
-rsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, pose, scratch, i, prot_ ## CHI ## _ ## BB ); \
-srsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, pose, scratch, i, prot_ ## CHI ## _ ## BB ); \
+rsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, pose, interp_scratch, i, prot_ ## CHI ## _ ## BB ); \
+srsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, pose, interp_scratch, i, prot_ ## CHI ## _ ## BB ); \
 rsrdl_ ## CHI ## _ ## BB.memory_usage_dynamic(); \
 srsrdl_ ## CHI ## _ ## BB.memory_usage_dynamic(); \
 rsrdl_ ## CHI ## _ ## BB.memory_usage_static(); \
 srsrdl_ ## CHI ## _ ## BB.memory_usage_static(); \
 rsrdl_ ## CHI ## _ ## BB.get_all_rotamer_samples( bb_FIVE ); \
 srsrdl_ ## CHI ## _ ## BB.get_all_rotamer_samples( bb_FIVE ); \
-rsrdl_ ## CHI ## _ ## BB.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );  \
-srsrdl_ ## CHI ## _ ## BB.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true ); \
+rsrdl_ ## CHI ## _ ## BB.assign_random_rotamer_with_bias( rsd, pose, numeric::random::rg(), chiv, true );  \
+srsrdl_ ## CHI ## _ ## BB.assign_random_rotamer_with_bias( rsd, pose, numeric::random::rg(), chiv, true ); \
 rsrdl_ ## CHI ## _ ## BB.get_probability_for_rotamer( bb_ ## BB, 1 ); \
 srsrdl_ ## CHI ## _ ## BB.get_probability_for_rotamer( bb_ ## BB, 1 ); \
 rsrdl_ ## CHI ## _ ## BB.get_rotamer( bb_ ## BB, 1 ); \
@@ -843,7 +843,10 @@ INIT(  FIVE,  FIVE )
 	core::chemical::ResidueType const & rt( *rtop );
 
 	conformation::Residue rsd( rt, true );
-	RotamerLibraryScratchSpace scratch;
+	RotamerLibraryInterpolationScratch interp_scratch;
+	rotamers::TorsionEnergy tenergy;
+	id::TorsionID tor_id;
+
 	Size4 rotwell;
 	Size rotindex;
 	Size i(0);

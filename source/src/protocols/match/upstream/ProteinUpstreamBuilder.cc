@@ -724,7 +724,8 @@ ProteinUpstreamBuilder::build(
 		core::conformation::Residue rescoords( build_sets_[ ii ].restype(), false );
 		//TR << "Building residue type: " << rescoords.type().name() << std::endl;
 
-		RotamerLibraryScratchSpace dunscratch; //in case we're checking fa_dun for rotamer
+		TorsionEnergy tenergy; //in case we're checking fa_dun for rotamer
+
 		SingleResidueRotamerLibraryCOP rotlib( SingleResidueRotamerLibraryFactory::get_instance()->get( rescoords.type() ) );
 
 		bool check_fa_dun( build_sets_[ii].check_fa_dun() );
@@ -831,7 +832,7 @@ ProteinUpstreamBuilder::build(
 							// where there is a REAL nonlocal DOF (i.e. omega-pre) to be computed. That will
 							// fail dramatically
 							core::pose::Pose pose;
-							if ( rotlib->rotamer_energy( rescoords, pose, dunscratch ) >= fa_dun_cutoff ) {
+							if ( rotlib->rotamer_energy( rescoords, pose, tenergy ) >= fa_dun_cutoff ) {
 								rotamer_acceptable = false;
 							}
 						}

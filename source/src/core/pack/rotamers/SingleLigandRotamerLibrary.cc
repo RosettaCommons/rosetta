@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 
 // Project headers
 #include <core/id/PartialAtomID.hh>
@@ -127,18 +126,14 @@ SingleLigandRotamerLibrary::init_from_vector(
 }
 
 /// @details Not currently implemented -- returns 0.
-Real
+void
 SingleLigandRotamerLibrary::rotamer_energy_deriv(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
-	dunbrack::RotamerLibraryScratchSpace & scratch
+	conformation::Residue const & /*rsd*/,
+	pose::Pose const & /*pose*/,
+	core::id::TorsionID const & /*tor_id*/,
+	TorsionEnergy & /*tderiv*/
 ) const
 {
-	dunbrack::Real5 & dE_dbb( scratch.dE_dbb() );
-	dunbrack::Real4 & dE_dchi( scratch.dE_dchi() );
-	std::fill( dE_dbb.begin(), dE_dbb.end(), 0 );
-	std::fill( dE_dchi.begin(), dE_dchi.end(), 0 );
-	return rotamer_energy(rsd, pose, scratch);
 }
 
 
@@ -149,9 +144,10 @@ Real
 SingleLigandRotamerLibrary::rotamer_energy(
 	conformation::Residue const & /*rsd*/,
 	pose::Pose const & ,//pose,
-	dunbrack::RotamerLibraryScratchSpace & /*scratch*/
+	TorsionEnergy & tenergy
 ) const
 {
+	tenergy.tot += ref_energy_;
 	return ref_energy_; //0.0;
 }
 
@@ -174,8 +170,7 @@ Real
 SingleLigandRotamerLibrary::best_rotamer_energy(
 	conformation::Residue const & /*rsd*/,
 	pose::Pose const &,// pose,
-	bool /*curr_rotamer_only*/,
-	dunbrack::RotamerLibraryScratchSpace & /*scratch*/
+	bool /*curr_rotamer_only*/
 ) const
 {
 	return ref_energy_; //0.0;

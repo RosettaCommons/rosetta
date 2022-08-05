@@ -24,6 +24,9 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
+// A utility struct to contain Torsional Energy breakdowns.
+struct TorsionEnergy;
+
 class SingleResidueRotamerLibrary;
 
 typedef utility::pointer::shared_ptr< SingleResidueRotamerLibrary > SingleResidueRotamerLibraryOP;

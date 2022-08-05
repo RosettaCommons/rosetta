@@ -89,7 +89,6 @@ SidechainMover::SidechainMover():
 	next_resnum_(0),
 	last_proposal_density_ratio_(1),
 	task_initialized_(false),
-	scratch_( utility::pointer::make_shared< core::pack::dunbrack::RotamerLibraryScratchSpace >() ),
 	temperature0_(0.56),
 	sampling_temperature_(0.56)
 {}
@@ -109,7 +108,6 @@ SidechainMover::SidechainMover(
 	next_resnum_(0),
 	last_proposal_density_ratio_(1),
 	task_initialized_(false),
-	scratch_( utility::pointer::make_shared< core::pack::dunbrack::RotamerLibraryScratchSpace >() ),
 	temperature0_(0.56),
 	sampling_temperature_(0.56)
 {}
@@ -144,7 +142,6 @@ SidechainMover::SidechainMover(
 	if ( mover.task_factory_ ) task_factory_ = utility::pointer::make_shared< core::pack::task::TaskFactory >(*mover.task_factory_);
 	if ( mover.task_ ) task_ = mover.task_->clone();
 	if ( mover.pose_ ) pose_ = utility::pointer::make_shared< core::pose::Pose >(*mover.pose_);
-	if ( mover.scratch_ ) scratch_ = utility::pointer::make_shared< core::pack::dunbrack::RotamerLibraryScratchSpace >(*mover.scratch_);
 }
 
 SidechainMover::~SidechainMover() = default;
@@ -259,10 +256,11 @@ SidechainMover::dunbrack_accept(
 	core::Real rand = Rand.uniform();
 	//conformation::Residue copy(res); // APL: EXPENSIVE!
 	res.set_all_chi( previous_chi_angles );
-	core::Real prev_chi_angle_score = rotamer_library_.rotamer_energy( res, pose, *scratch_);
+	core::pack::rotamers::TorsionEnergy tenergy;
+	core::Real prev_chi_angle_score = rotamer_library_.rotamer_energy( res, pose, tenergy);
 	res.set_all_chi( new_chi_angles );
 
-	core::Real new_chi_angle_score = rotamer_library_.rotamer_energy( res, pose, *scratch_);
+	core::Real new_chi_angle_score = rotamer_library_.rotamer_energy( res, pose, tenergy);
 	if ( new_chi_angle_score > prev_chi_angle_score ) {
 		//Real const boltz_factor = (prev_chi_angle_score - new_chi_angle_score)/1.0;
 		Real const boltz_factor = (prev_chi_angle_score - new_chi_angle_score)/sampling_temperature_*temperature0_;
@@ -577,7 +575,7 @@ SidechainMover::perturb_rot_within_well(
 		last_chi_angles_[ii] = basic::periodic_range(last_chi_angles_[ii],360.0);
 	}
 	//residue_rotamer_library->assign_random_rotamer_with_bias(
-	// pose.residue( resnum ), *scratch_, numeric::random::rg(),
+	// pose.residue( resnum ), numeric::random::rg(),
 	// last_chi_angles_, true );
 
 }

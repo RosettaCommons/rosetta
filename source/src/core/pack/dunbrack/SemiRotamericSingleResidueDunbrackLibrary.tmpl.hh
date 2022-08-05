@@ -30,6 +30,8 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 
+#include <core/id/TorsionID.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
@@ -197,45 +199,39 @@ Real
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch
+	rotamers::TorsionEnergy & tenergy
 ) const
 {
-	return rotamer_energy_deriv_bbdep( rsd, pose, scratch, false );
+	return rotamer_energy_bbdep( rsd, pose, tenergy );
 }
 
 template < Size T, Size N >
-Real
+void
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch
+	id::TorsionID const & tor_id,
+	rotamers::TorsionEnergy & tderiv
 ) const
 {
-	return rotamer_energy_deriv_bbdep( rsd, pose, scratch, true );
+	// Given the knowledge of the TorsionID,
+	// there's probably to do the calculation just for that torsion.
+	RotamerLibraryScratchSpace scratch;
+	rotamer_deriv_bbdep( rsd, pose, scratch );
+	scratch.extract_torsion_deriv( tor_id, rsd, pose, tderiv );
 }
 
 template < Size T, Size N >
 Real
-SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
+SemiRotamericSingleResidueDunbrackLibrary< T, N >::eval_nrchi_score(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch,
-	bool eval_deriv
-) const
-{
-	debug_assert( ! bbind_nrchi_scoring_ );
-
-	//Multiplier for D-amino acids:
-	const core::Real d_multiplier = rsd.type().is_mirrored_type() ? -1.0 : 1.0;
-
-	parent::eval_rotameric_energy_deriv( rsd, pose, scratch, eval_deriv ); //This has been updated to allow scoring of D-amino acids.
-
-	Real chidevpen_score( 0.0 );
-	for ( Size ii = 1; ii <= T; ++ii ) chidevpen_score += scratch.chidevpen()[ ii ];
-
-	Real nrchi_score, dnrchiscore_dchi;
-	utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
-	nrchi_score = bbdep_nrchi_score( rsd, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb ); //Handles D-amino acids; derivatives WRT phi, psi, and chi are inverted iff D-amino acid.
+	RotamerLibraryInterpolationScratch const & scratch,
+	core::Size packed_rotno,
+	Real & dnrchiscore_dchi, // Return by reference
+	utility::fixedsizearray1< Real, N > & dnrchiscore_dbb // Return by reference
+) const {
+	Real nrchi_score = bbdep_nrchi_score( rsd, pose, packed_rotno, dnrchiscore_dchi, dnrchiscore_dbb ); //Handles D-amino acids; derivatives WRT phi, psi, and chi are inverted iff D-amino acid.
 
 	if ( utility::isnan( nrchi_score ) ) {
 		nrchi_score = 0;
@@ -247,15 +243,61 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
 		nrchi_score += scratch.entropy();
 	}
 
-	scratch.fa_dun_tot() = chidevpen_score + nrchi_score;
+	return nrchi_score;
+}
+
+
+template < Size T, Size N >
+Real
+SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_bbdep(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	rotamers::TorsionEnergy & tenergy
+) const {
+	debug_assert( ! bbind_nrchi_scoring_ );
+
+	Real4 chidev, chidevpen;
+	RotamerLibraryInterpolationScratch scratch;
+	rotamers::TorsionEnergy parent_energy; // Just the parent energy.
+	core::Size packed_rotno;
+	parent::eval_rotameric_energy( rsd, pose, scratch, chidev, chidevpen, packed_rotno, parent_energy );
+
+	Real dnrchiscore_dchi;
+	utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
+	Real const nrchi_score = eval_nrchi_score( rsd, pose, scratch, packed_rotno, dnrchiscore_dchi, dnrchiscore_dbb );
+
+	tenergy.tot += parent_energy.dev + nrchi_score;
+	// We have zero rot energy
+	tenergy.dev += parent_energy.dev;
+	tenergy.semi += nrchi_score;
+
+	return parent_energy.dev + nrchi_score;
+}
+
+template < Size T, Size N >
+void
+SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_deriv_bbdep(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	RotamerLibraryScratchSpace & scratch
+) const
+{
+	debug_assert( ! bbind_nrchi_scoring_ );
+
+	//Multiplier for D-amino acids:
+	const core::Real d_multiplier = rsd.type().is_mirrored_type() ? -1.0 : 1.0;
+
+	parent::eval_rotameric_deriv( rsd, pose, scratch ); //This has been updated to allow scoring of D-amino acids.
+
+	Real dnrchiscore_dchi;
+	utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
+	Size const packed_rotno = this->get_packed_rotno(rsd, pose);
+
+	Real const nrchi_score = eval_nrchi_score( rsd, pose, scratch, packed_rotno, dnrchiscore_dchi, dnrchiscore_dbb );
+
+	scratch.fa_dun_tot() = scratch.fa_dun_dev() + nrchi_score;
 	scratch.fa_dun_rot() = 0;
 	scratch.fa_dun_semi() = nrchi_score;
-
-	//scratch.fa_dun_dev() = chidevpensum; // keep original chidev score...
-
-	//std::cout << "SRSRDL bbdep score: " << rsd.name() << " " << rsd.mainchain_torsion( 1 ) << " " << rsd.mainchain_torsion( 2)  << " " << rsd.chi()[ T + 1 ] << ": " << nrchi_score << " " << chidevpen_score << " " << std::endl;
-
-	if ( ! eval_deriv ) return chidevpen_score + nrchi_score;
 
 	/// sum derivatives.
 	Real5 & dE_dbb(  scratch.dE_dbb() );
@@ -299,8 +341,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
 	dE_dchi_semi[ T + 1 ] = d_multiplier * dnrchiscore_dchi;
 
 	parent::correct_termini_derivatives( rsd, scratch );
-
-	return chidevpen_score + nrchi_score;
 }
 
 /// @brief Trilinear interpolation.  Derivatives discontinuous at edge planes.
@@ -311,14 +351,12 @@ Real
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::bbdep_nrchi_score(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch,
+	core::Size packed_rotno,
 	Real & dnrchi_score_dnrchi,
 	utility::fixedsizearray1< Real, N > & dnrchi_score_dbb
 ) const
 {
 	debug_assert( ! bbind_nrchi_scoring_ );
-
-	Size const packed_rotno( parent::rotwell_2_packed_rotno( scratch.rotwell() ));
 
 	Real nrchi = rsd.chi( T + 1 );
 	core::Real d_multiplier = 1.0; //A multiplier for D-amino acid angles.  -1.0 if D-amino acid, 1.0 otherwise.
@@ -390,8 +428,7 @@ Real
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	bool curr_rotamer_only,
-	RotamerLibraryScratchSpace & scratch
+	bool curr_rotamer_only
 ) const
 {
 	debug_assert( rsd.nchi() == T+1 );
@@ -399,17 +436,17 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 	if ( curr_rotamer_only ) {
 		Real dnrchiscore_dchi;
 		utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
-		parent::eval_rotameric_energy_deriv( rsd, pose, scratch, false);
 
-		nrchi_score = bbdep_nrchi_score( rsd, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
+		Size const packed_rotno = this->get_packed_rotno( rsd, pose );
+		nrchi_score = bbdep_nrchi_score( rsd, pose, packed_rotno, dnrchiscore_dchi, dnrchiscore_dbb );
 		core::conformation::Residue rsd_copy ( rsd );
 		utility::vector1< Real > rsd_chi = rsd.chi();
 
 		for ( Size jj = 0; jj <= bbdep_nrchi_nbins_; ++jj ) {
 			rsd_chi[ rsd_copy.nchi() ] = nrchi_lower_angle_ + bbdep_nrchi_binsize_ * jj;
 			rsd_copy.chi( rsd_chi );
-			parent::eval_rotameric_energy_deriv( rsd_copy, pose, scratch, false);
-			Real tmp_nrchi_score = bbdep_nrchi_score( rsd_copy, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
+			Size const packed_rotno_copy = this->get_packed_rotno( rsd_copy, pose );
+			Real tmp_nrchi_score = bbdep_nrchi_score( rsd_copy, pose, packed_rotno_copy, dnrchiscore_dchi, dnrchiscore_dbb );
 			if ( tmp_nrchi_score < nrchi_score ) nrchi_score = tmp_nrchi_score;
 		}
 	} else {
@@ -424,8 +461,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 
 		Real dnrchiscore_dchi;
 		utility::fixedsizearray1< Real, N > dnrchiscore_dbb;
-		parent::eval_rotameric_energy_deriv( rsd, pose, scratch, false);
-		nrchi_score = bbdep_nrchi_score( rsd, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
+		Size const packed_rotno = this->get_packed_rotno( rsd, pose );
+		nrchi_score = bbdep_nrchi_score( rsd, pose, packed_rotno, dnrchiscore_dchi, dnrchiscore_dbb );
 		Real tmp_nrchi_score;
 		//search the space of terminal chiT
 		core::conformation::Residue rsd_copy ( rsd );
@@ -437,8 +474,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 			for ( Size kk = 0; kk <= bbdep_nrchi_nbins_; ++kk ) {
 				rsd_chi[ rsd_copy.nchi() ] = nrchi_lower_angle_ + bbdep_nrchi_binsize_ * kk;
 				rsd_copy.chi( rsd_chi );
-				parent::eval_rotameric_energy_deriv( rsd_copy, pose, scratch, false);
-				tmp_nrchi_score = bbdep_nrchi_score( rsd_copy, pose, scratch, dnrchiscore_dchi, dnrchiscore_dbb );
+				Size const packed_rotno_copy = this->get_packed_rotno( rsd_copy, pose );
+				tmp_nrchi_score = bbdep_nrchi_score( rsd_copy, pose, packed_rotno_copy, dnrchiscore_dchi, dnrchiscore_dbb );
 				if ( tmp_nrchi_score < nrchi_score ) nrchi_score = tmp_nrchi_score;
 			}
 		}
@@ -452,13 +489,12 @@ void
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bias(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch,
 	numeric::random::RandomGenerator & RG,
 	ChiVector & new_chi_angles,
 	bool perturb_from_rotamer_center
 ) const
 {
-	assign_random_rotamer_with_bias_bbdep( rsd, pose, scratch, RG, new_chi_angles, perturb_from_rotamer_center );
+	assign_random_rotamer_with_bias_bbdep( rsd, pose, RG, new_chi_angles, perturb_from_rotamer_center );
 }
 
 template < Size T, Size N >
@@ -466,7 +502,6 @@ void
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bias_bbdep(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch,
 	numeric::random::RandomGenerator & RG,
 	ChiVector & new_chi_angles,
 	bool perturb_from_rotamer_center
@@ -498,6 +533,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bi
 	/// Get chimean and chisdves for rotameric chi
 	Size packed_rotno = interpolated_nrchi_sample.packed_rotno_;
 	PackedDunbrackRotamer< T, N, Real > interpolated_rotamer;
+	RotamerLibraryInterpolationScratch scratch;
 	parent::interpolate_rotamers( scratch, packed_rotno, bb_bin, bb_bin_next, bb_alpha, interpolated_rotamer );
 
 	this->assign_chi_for_interpolated_rotamer( interpolated_rotamer, rsd, RG, new_chi_angles, perturb_from_rotamer_center );
@@ -573,7 +609,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 	rotamers::RotamerVector & rotamers
 ) const
 {
-	RotamerLibraryScratchSpace scratch;
 	utility::vector1< Size > rotamer_has_been_interpolated( grandparent::n_packed_rots(), 0 );
 	utility::vector1< PackedDunbrackRotamer< T, N, Real > > interpolated_rotamers( grandparent::n_packed_rots() );
 
@@ -594,6 +629,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 
 	Size const max_rots_that_can_be_built = grandparent::n_packed_rots() * n_nrchi_sample_bins_;
 	Size count_rotamers_built = 0;
+	RotamerLibraryInterpolationScratch scratch;
 	while ( accumulated_probability < requisit_probability ) {
 		++count_rotamers_built;
 		Size index00 = make_index< N >( parent::N_BB_BINS, bb_bin );
@@ -687,7 +723,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples_bbdep
 	Real5 bbs2
 ) const
 {
-	RotamerLibraryScratchSpace scratch;
 	utility::vector1< Size > rotamer_has_been_interpolated( grandparent::n_packed_rots(), 0 );
 	utility::vector1< PackedDunbrackRotamer< T, N, Real > > interpolated_rotamers( grandparent::n_packed_rots() );
 
@@ -702,6 +737,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples_bbdep
 	utility::vector1< DunbrackRotamerSampleData > all_rots;
 	all_rots.reserve( n_rots );
 
+	RotamerLibraryInterpolationScratch scratch;
 	for ( Size ii = 1; ii <= n_rots; ++ii ) {
 
 		Size index00 = make_index< N >( parent::N_BB_BINS, bb_bin );
@@ -795,7 +831,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_bbdep(
 	Size rot_ind
 ) const
 {
-	RotamerLibraryScratchSpace scratch;
 	Size const n_packed_rots = 1 << N;
 
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
@@ -818,6 +853,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer_bbdep(
 	BBDepNRChiSample< Real > const interpolated_nrchi_sample = interpolate_bbdep_nrchi_sample( nrchi_sample, bb_alpha );
 
 	PackedDunbrackRotamer< T, N, Real > rot;
+	RotamerLibraryInterpolationScratch scratch;
 	parent::interpolate_rotamers( scratch, packed_rotno00, bb_bin, bb_bin_next, bb_alpha, rot );
 
 	DunbrackRotamerSampleData sample( true );

@@ -38,6 +38,7 @@ typedef utility::fixedsizearray1< Size, DUNBRACK_MAX_SCTOR > Size4;
 typedef utility::fixedsizearray1< Real, DUNBRACK_MAX_BBTOR > Real5;
 typedef utility::fixedsizearray1< Size, DUNBRACK_MAX_BBTOR > Size5;
 
+class RotamerLibraryInterpolationScratch;
 
 class RotamerLibraryScratchSpace;
 

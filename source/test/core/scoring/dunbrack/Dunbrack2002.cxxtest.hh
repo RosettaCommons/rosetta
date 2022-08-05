@@ -180,11 +180,11 @@ public:
 						TS_ASSERT_DELTA( chi_gold[ ct ][ n ],  (*it)->chi()[ n ] , 0.001);
 					}
 				}
-				RotamerLibraryScratchSpace scratch;
-				if ( bOut ) TR << rotlib->rotamer_energy( (**it), pose, scratch ) << " " << rotlib->rotamer_energy( residue, pose, scratch);
+				core::pack::rotamers::TorsionEnergy tenergy;
+				if ( bOut ) TR << rotlib->rotamer_energy( (**it), pose, tenergy ) << " " << rotlib->rotamer_energy( residue, pose, tenergy );
 				else {
-					TS_ASSERT_DELTA( rot_ener_gold[ ct ], rotlib->rotamer_energy( **it, pose, scratch ), 0.001);
-					TS_ASSERT_DELTA( pose_ener_gold[ pos ], rotlib->rotamer_energy( residue, pose, scratch ), 0.001);
+					TS_ASSERT_DELTA( rot_ener_gold[ ct ], rotlib->rotamer_energy( **it, pose, tenergy ), 0.001);
+					TS_ASSERT_DELTA( pose_ener_gold[ pos ], rotlib->rotamer_energy( residue, pose, tenergy ), 0.001);
 				}
 				if ( residue.nchi() ) {
 					ct++;
@@ -211,9 +211,8 @@ public:
 			SingleResidueRotamerLibraryCOP rotlib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
 			if ( ! rotlib ) continue;
 
-			RotamerLibraryScratchSpace scratch;
-			Real const this_rotamerE = rotlib->best_rotamer_energy(residue, pose, true /*current well only*/, scratch);
-			Real const best_rotamerE = rotlib->best_rotamer_energy(residue, pose, false /*global best*/, scratch);
+			Real const this_rotamerE = rotlib->best_rotamer_energy(residue, pose, true /*current well only*/);
+			Real const best_rotamerE = rotlib->best_rotamer_energy(residue, pose, false /*global best*/);
 			UTRACE << "this (ideal) = " << this_rotamerE << "; best (this phi,psi) = " << best_rotamerE << std::endl;
 			TS_ASSERT( best_rotamerE <= this_rotamerE );
 		}

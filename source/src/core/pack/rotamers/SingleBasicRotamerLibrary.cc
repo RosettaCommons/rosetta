@@ -60,14 +60,15 @@ SingleBasicRotamerLibrary::~SingleBasicRotamerLibrary() = default;
 using namespace core::pack::dunbrack;
 
 /// @details Single rotamer - no derivative
-Real
+void
 SingleBasicRotamerLibrary::rotamer_energy_deriv(
 	conformation::Residue const & /*rsd*/,
 	pose::Pose const & ,//pose,
-	RotamerLibraryScratchSpace & /*scratch*/
+	core::id::TorsionID const & /*tor_id*/,
+	TorsionEnergy & /*tderiv*/
 ) const
 {
-	return 0;
+	// no derivative
 }
 
 
@@ -76,7 +77,7 @@ Real
 SingleBasicRotamerLibrary::rotamer_energy(
 	conformation::Residue const & /*rsd*/,
 	pose::Pose const & ,//pose,
-	RotamerLibraryScratchSpace & /*scratch*/
+	TorsionEnergy & /*energy*/
 ) const
 {
 	return 0;
@@ -97,8 +98,7 @@ Real
 SingleBasicRotamerLibrary::best_rotamer_energy(
 	conformation::Residue const & /*rsd*/,
 	pose::Pose const & ,//pose,
-	bool /*curr_rotamer_only*/,
-	RotamerLibraryScratchSpace & /*scratch*/
+	bool /*curr_rotamer_only*/
 ) const
 {
 	return 0;
@@ -109,7 +109,6 @@ void
 SingleBasicRotamerLibrary::assign_random_rotamer_with_bias(
 	conformation::Residue const &,// rsd,
 	pose::Pose const & /*pose*/,
-	RotamerLibraryScratchSpace &,// scratch,
 	numeric::random::RandomGenerator &,// RG,
 	ChiVector &,// new_chi_angles,
 	bool //perturb_from_rotamer_center

@@ -235,14 +235,15 @@ public:
 	rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch
+		rotamers::TorsionEnergy & tenergy
 	) const override;
 
-	Real
+	void
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch
+		id::TorsionID const & tor_id,
+		rotamers::TorsionEnergy & tderiv
 	) const override;
 
 
@@ -254,15 +255,13 @@ public:
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		bool curr_rotamer_only,
-		RotamerLibraryScratchSpace & scratch
+		bool curr_rotamer_only
 	) const override;
 
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center
@@ -382,18 +381,33 @@ protected:
 	Size memory_usage_dynamic() const override;
 
 	Real
-	rotamer_energy_deriv_bbdep(
+	eval_nrchi_score(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
-		bool eval_deriv
+		RotamerLibraryInterpolationScratch const & scratch,
+		core::Size packed_rotno,
+		Real & dnrchiscore_dchi, // Return by reference
+		utility::fixedsizearray1< Real, N > & dnrchiscore_dbb // Return by reference
+	) const;
+
+	Real
+	rotamer_energy_bbdep(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		rotamers::TorsionEnergy & tenergy
+	) const;
+
+	void
+	rotamer_deriv_bbdep(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		RotamerLibraryScratchSpace & scratch
 	) const;
 
 	void
 	assign_random_rotamer_with_bias_bbdep(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
 		ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center
@@ -403,7 +417,7 @@ protected:
 	bbdep_nrchi_score(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
+		core::Size packed_rotno,
 		Real & dnrchi_score_dnrchi,
 		utility::fixedsizearray1< Real, N > & dnrchi_score_dbb
 	) const;

@@ -15,7 +15,6 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 
 // Package headers
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
@@ -27,6 +26,7 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 // Project headers
+#include <core/id/TorsionID.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -404,13 +404,13 @@ Real
 RotamerLibrary::rotamer_energy(
 	Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch
+	rotamers::TorsionEnergy & tenergy
 ) const
 {
 	SingleResidueRotamerLibraryCOP const library( rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() ) );
 
 	if ( library ) {
-		return library->rotamer_energy(rsd, pose, scratch);
+		return library->rotamer_energy(rsd, pose, tenergy);
 	}
 	return 0.0;
 }
@@ -419,44 +419,31 @@ Real
 RotamerLibrary::best_rotamer_energy(
 	Residue const & rsd,
 	pose::Pose const & pose,
-	bool curr_rotamer_only,
-	RotamerLibraryScratchSpace & scratch
+	bool curr_rotamer_only
 ) const
 {
 	SingleResidueRotamerLibraryCOP const library( rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() ) );
 
 	if ( library ) {
-		if ( curr_rotamer_only ) {
-			return library->best_rotamer_energy( rsd, pose, true,scratch );
-		} else {
-			return library->best_rotamer_energy( rsd, pose, false,scratch );
-		}
+		return library->best_rotamer_energy( rsd, pose, curr_rotamer_only );
 	} else {
 		return 0.0;
 	}
 }
 
-Real
+void
 RotamerLibrary::rotamer_energy_deriv(
 	Residue const & rsd,
 	pose::Pose const & pose,
-	RotamerLibraryScratchSpace & scratch
+	id::TorsionID const & tor_id,
+	rotamers::TorsionEnergy & tderiv
 ) const
 {
 	SingleResidueRotamerLibraryCOP const library( rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() ) );
 
 	if ( library ) {
-		return library->rotamer_energy_deriv(rsd, pose, scratch);
+		library->rotamer_energy_deriv(rsd, pose, tor_id, tderiv);
 	}
-
-	Real5 & dE_dbb( scratch.dE_dbb() );
-	Real4 & dE_dchi( scratch.dE_dchi() );
-
-	// ensure that these guys are dimensioned
-	std::fill( dE_dbb.begin(), dE_dbb.end(), 0 );
-	std::fill( dE_dchi.begin(), dE_dchi.end(), 0 );
-	return 0.0;
-
 }
 
 void

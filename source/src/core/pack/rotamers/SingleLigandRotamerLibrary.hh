@@ -65,11 +65,12 @@ public:
 	);
 
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
-	Real
+	void
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		dunbrack::RotamerLibraryScratchSpace & scratch
+		core::id::TorsionID const & tor_id,
+		TorsionEnergy & tderiv
 	) const override;
 
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
@@ -77,7 +78,7 @@ public:
 	rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		dunbrack::RotamerLibraryScratchSpace & scratch
+		TorsionEnergy & tenergy
 	) const override;
 
 	std::set< id::PartialAtomID >
@@ -90,15 +91,13 @@ public:
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		bool curr_rotamer_only,
-		dunbrack::RotamerLibraryScratchSpace & scratch
+		bool curr_rotamer_only
 	) const override;
 
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const &,// rsd,
 		pose::Pose const & /*pose*/,
-		dunbrack::RotamerLibraryScratchSpace &,// scratch,
 		numeric::random::RandomGenerator &,// RG,
 		dunbrack::ChiVector &,// new_chi_angles,
 		bool //perturb_from_rotamer_center
