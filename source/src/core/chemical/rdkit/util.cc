@@ -378,7 +378,7 @@ final_neutralize(
 	try {
 		::RDKit::MolOps::sanitizeMol(*rdmol);
 	} catch (::RDKit::MolSanitizeException &se){
-		TR.Error << "Cannot Sanitize molecule with RDKit after charge neutralization: " << se.message() << std::endl;
+		TR.Error << "Cannot Sanitize molecule with RDKit after charge neutralization: " << se.what() << std::endl;
 		TR.Error << "    molecule: " << ::RDKit::MolToSmiles( *rdmol ) << std::endl;
 		utility_exit_with_message("Encountered molecule which cannot properly be represented in RDKit.");
 	}
@@ -524,7 +524,7 @@ void load_sdf( std::string const & filename, utility::vector1< ::RDKit::ROMolOP 
 					// It's an ROMol, so we can't modify it in place -- it makes a new item which we're then responsible for deleting.
 					newmol = ::RDKit::ROMolOP( ::RDKit::MolOps::removeHs(*mol, /*implicitOnly=*/ false, /*updateExplicitCount=*/ true) );
 				} catch (::RDKit::MolSanitizeException &se){
-					TR.Warning << "Error when removing hydrogens from read-in SDF: " << se.message() << std::endl;
+					TR.Warning << "Error when removing hydrogens from read-in SDF: " << se.what() << std::endl;
 					continue;
 				}
 				mol = newmol; // Swap.

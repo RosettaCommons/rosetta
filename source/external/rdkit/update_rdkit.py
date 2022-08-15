@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """update_rdkit.py - Alter the Rosetta distribution for and updated RDKit
 
 Run this program in the main/source/external/rdkit directory
@@ -12,6 +11,8 @@ new libraries that RDKit requires. (See comments in extract_boost_incl.py for de
 
 Author: Rocco Moretti (rmorettiase@gmail.com)
 """
+
+from __future__ import print_function
 
 import sys, os
 import shutil
@@ -29,6 +30,12 @@ aren't recoginized by the simple CMakelists.txt parsing and dir scan. Finally,
 we write out a rdkit.external.settings file from the sources list, such that it
 can be compiled by the Rosetta scons compiler.
 """
+
+### These directories have issues with the automated scripts,
+### and aren't used by the rest of RDKit or (currently) parts of Rosetta
+### Feel free to re-enable them, but note you may need to debug the compilation issues.
+
+IGNORED_DIRECTORIES = [ 'GraphMol/CIPLabeler','GraphMol/RGroupDecomposition' ]
 
 def get_cmakes(directory):
     cmakelists = []
@@ -91,6 +98,10 @@ def parse_files(directory):
     # headers = []
     sources = []
     for cmakedir in cmakedirs:
+        if any( cmakedir.endswith( p ) for p in IGNORED_DIRECTORIES ): continue
+        if cmakedir.endswith("/Wrap"): continue # Python wrapping dirs, not needed for C++ library
+        if cmakedir.endswith("/Qt") or cmakedir.endswith("/Qt/Demo"): continue # Qt specific code, not needed for Rosetta library
+        print(cmakedir)
         hs, cs = parse_cmake(cmakedir)
         # headers.extend(hs)
         sources.extend(cs)
@@ -154,7 +165,7 @@ def make_scons_file(sources,basedir):
         srcdir, filename = os.path.split(src)
         name, ext = os.path.splitext(filename)
         if ext not in (".c",".cc",".cpp"):
-            print "WARNING: Non-standard extension on source", src, "-Ignoring"
+            print( "WARNING: Non-standard extension on source", src, "-Ignoring" )
         else:
             entries.setdefault(srcdir.strip("/"), []).append(filename)
 
@@ -205,7 +216,7 @@ def main():
 
 if __name__ == "__main__":
     if len(sys.argv) != 1:
-        print __doc__
+        print( __doc__ )
         exit()
     else:
         main()

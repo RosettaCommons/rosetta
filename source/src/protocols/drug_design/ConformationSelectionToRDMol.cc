@@ -265,7 +265,7 @@ ConformationSelectionToRDMol::Mol() {
 			::RDKit::MolOps::sanitizeMol(*rdmol);
 		}
 	} catch (::RDKit::MolSanitizeException &se){
-		TR.Error << "Cannot Sanitize molecule with RDKit: " << se.message() << std::endl;
+		TR.Error << "Cannot Sanitize molecule with RDKit: " << se.what() << std::endl;
 		TR.Error << "    molecule: " << ::RDKit::MolToSmiles( *rdmol ) << std::endl;
 		utility_exit_with_message("Encountered molecule which cannot properly be represented in RDKit.");
 	}

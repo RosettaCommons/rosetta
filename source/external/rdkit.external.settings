@@ -85,6 +85,7 @@ sources = {
 		"Conformer.cpp",
 		"ConjugHybrid.cpp",
 		"FindRings.cpp",
+		"FindStereo.cpp",
 		"Kekulize.cpp",
 		"Matrices.cpp",
 		"MolDiscriminators.cpp",
@@ -104,10 +105,15 @@ sources = {
 		"atomic_data.cpp",
 		"new_canon.cpp",
 	],
+	"rdkit/GraphMol/Abbreviations" :[
+		"Abbreviations.cpp",
+		"AbbreviationsUtils.cpp",
+	],
 	"rdkit/GraphMol/ChemReactions" :[
 		"DaylightParser.cpp",
 		"MDLParser.cpp",
 		"MoleculeParser.cpp",
+		"PNGParser.cpp",
 		"PreprocessRxn.cpp",
 		"Reaction.cpp",
 		"ReactionDepict.cpp",
@@ -131,6 +137,9 @@ sources = {
 		"DepictUtils.cpp",
 		"EmbeddedFrag.cpp",
 		"RDDepictor.cpp",
+	],
+	"rdkit/GraphMol/Deprotect" :[
+		"Deprotect.cpp",
 	],
 	"rdkit/GraphMol/Descriptors" :[
 		"AUTOCORR2D.cpp",
@@ -165,9 +174,13 @@ sources = {
 		"MolFileWriter.cpp",
 		"MolSGroupParsing.cpp",
 		"MolSGroupWriting.cpp",
+		"MultithreadedMolSupplier.cpp",
+		"MultithreadedSDMolSupplier.cpp",
+		"MultithreadedSmilesMolSupplier.cpp",
 		"PDBParser.cpp",
 		"PDBSupplier.cpp",
 		"PDBWriter.cpp",
+		"PNGParser.cpp",
 		"ProximityBonds.cpp",
 		"SDMolSupplier.cpp",
 		"SDWriter.cpp",
@@ -241,14 +254,21 @@ sources = {
 		"MolChemicalFeatureFactory.cpp",
 	],
 	"rdkit/GraphMol/MolDraw2D" :[
+		"DrawText.cpp",
+		"DrawTextJS.cpp",
+		"DrawTextSVG.cpp",
 		"MolDraw2D.cpp",
 		"MolDraw2DDetails.cpp",
+		"MolDraw2DJS.cpp",
 		"MolDraw2DSVG.cpp",
 		"MolDraw2DUtils.cpp",
 	],
+	"rdkit/GraphMol/MolEnumerator" :[
+		"LinkNode.cpp",
+		"MolEnumerator.cpp",
+		"PositionVariation.cpp",
+	],
 	"rdkit/GraphMol/MolHash" :[
-		"HashToString.cpp",
-		"MolHash.cpp",
 		"hashfunctions.cpp",
 		"normalize.cpp",
 	],
@@ -291,9 +311,6 @@ sources = {
 	"rdkit/GraphMol/PartialCharges" :[
 		"GasteigerCharges.cpp",
 		"GasteigerParams.cpp",
-	],
-	"rdkit/GraphMol/RGroupDecomposition" :[
-		"RGroupDecomp.cpp",
 	],
 	"rdkit/GraphMol/ReducedGraphs" :[
 		"ReducedGraphs.cpp",
@@ -340,6 +357,9 @@ sources = {
 		"PatternFactory.cpp",
 		"SubstructLibrary.cpp",
 	],
+	"rdkit/GraphMol/TautomerQuery" :[
+		"TautomerQuery.cpp",
+	],
 	"rdkit/GraphMol/Trajectory" :[
 		"Trajectory.cpp",
 	],
@@ -363,6 +383,7 @@ sources = {
 	"rdkit/RDGeneral" :[
 		"Invariant.cpp",
 		"LocaleSwitcher.cpp",
+		"RDGeneralExceptions.cpp",
 		"RDLog.cpp",
 		"types.cpp",
 		"utils.cpp",
