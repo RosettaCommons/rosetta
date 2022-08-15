@@ -352,7 +352,7 @@ void calc_B_values(utility::vector1<core::Real>  &B, const utility::vector1<util
 		}
 		//if there is a disulfide bond, use different steepness
 		if ( is_DS && !option[ steepness ].user() ) {
-			A = 0.01;
+			A = 0.015;
 			TR << "Disulfide bond detected for dimer. A = " << A << std::endl;
 		}
 	}
