@@ -738,7 +738,7 @@ void SecretionOptimizationMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"score_tolerance", xs_decimal,
-		"how much can the total score of the pose change due to a mutation? I actually found that many IMPROVE the score of poses, so it's set to 0 now. +1.0 only gave me 20% more hits, +3.0 only 40%.",
+		"how much can the total score of the pose change due to a mutation? I actually found that many IMPROVE the score of poses, so it's set to 0 now. +1.0 only gave me 20% more hits, +3.0 only 40%. This can also depend on your application. Set it to something really high to get as many outputs as possible. +45 REU seems to be tolerable for binder design purposes.",
 		"0");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
@@ -770,7 +770,7 @@ void SecretionOptimizationMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 		"output the pose with the lowest score - dsiabled by default",
 		"false");
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist );
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "We made a mover!", attlist);
+	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "This is the SecretionOptimizationMover, aka the Degreaser. It uses a model from Hessa et al. 2007 to identify regions of low transmembrane insertion potential (dG_ins,pred, or just dG in this Mover) and design them away while maintaining structural stability near the mutation site. This Mover is semi-exhaustive and allows the user to set parameters such as how much dG_ins,pred change is necessary or how much score difference is tolerable. With all default options, a maximum of three mutations is made to a pose in the region of lowest initial dG_ins,pred such that the change in dG_ins,pred is largest. Other options enable more complex usage of this Mover. See preprint with experimental results available at https://www.biorxiv.org/content/10.1101/2022.08.04.502842v1", attlist);
 }
 
 void SecretionOptimizationMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
