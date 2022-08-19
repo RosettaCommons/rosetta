@@ -347,10 +347,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		option[ out::file::fullatom ]() || refine() != "no" || relax() != "no"
 	);
 
-	if ( fullatom_input ) {
-		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
+	if ( remodel() != "no" ) {
+		if ( fullatom_input ) {
+			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID_t );
+		}
 	}
-
 
 	checkpoint::CheckPointer checkpoints_("Loopbuild");
 	// need to make sure that the bailout structure is set!
