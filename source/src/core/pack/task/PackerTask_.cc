@@ -749,10 +749,10 @@ PackerTask_::init()
 	/// ICK. But this is needed to preserve current behavior.
 	/// (Putting these behind initialize_from_command_line task messes up how we're currently controlled.)
 	/// Don't take this as permisson to extend the number of options consulted here.
-	rotamer_prob_buried( basic::options::option[ packing::dunbrack_prob_buried ]()  );
-	rotamer_prob_nonburied( basic::options::option[ packing::dunbrack_prob_nonburied ]() );
-	rotamer_prob_buried_semi( basic::options::option[ packing::dunbrack_prob_buried_semi ]() );
-	rotamer_prob_nonburied_semi( basic::options::option[ packing::dunbrack_prob_nonburied_semi ]() );
+	PackerTask_::rotamer_prob_buried( basic::options::option[ packing::dunbrack_prob_buried ]()  );
+	PackerTask_::rotamer_prob_nonburied( basic::options::option[ packing::dunbrack_prob_nonburied ]() );
+	PackerTask_::rotamer_prob_buried_semi( basic::options::option[ packing::dunbrack_prob_buried_semi ]() );
+	PackerTask_::rotamer_prob_nonburied_semi( basic::options::option[ packing::dunbrack_prob_nonburied_semi ]() );
 }
 
 PackerTask &
