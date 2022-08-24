@@ -297,30 +297,6 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, config, hpc_dri
     return results
 
 
-
-def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if not test:                             return run_integration_tests('release', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'debug':                    return run_integration_tests('debug',   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'release_debug':            return run_integration_tests('release_debug', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'mpi':                      return run_integration_tests('debug',   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix mpi')
-    elif test == 'tensorflow':               return run_integration_tests('debug',   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix tensorflow')
-    elif test == 'thread':                   return run_integration_tests('debug',   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix thread')
-    elif test == 'addsan':                   return run_integration_tests('addsan',  repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'ubsan':
-        os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan
-        return run_integration_tests('ubsan',   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'valgrind':          return run_valgrind_tests('release_symbols', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml') # 'release_symbols' for line # information
-    elif test == 'valgrind_detailed': return run_valgrind_tests('release_symbols', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml --trackorigins') # 'release_symbols' for line # information
-    elif test == 'demos':                    return run_demo_tests('release', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--demos')
-    elif test == 'tutorials':                return run_demo_tests('release', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--tutorials')
-    else: raise BenchmarkError('Integration Test script does not support run with test="{}"!'.format(test))
-
-    #if test: return run_test(test, repository_root, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    #else: return run_test_suite(repository_root, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-
-
-
 def compare(test, results, files_path, previous_results, previous_files_path):
     """
     Compare the results of two tests run (new vs. previous) for integration test
@@ -429,3 +405,26 @@ def sort_natural(text):
     (See Toothy's implementation in the comments)
     '''
     return [ atoi(c) for c in re.split('(\d+)', text) ]
+
+
+
+def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    if not test:                             return run_integration_tests('release',                  repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'debug':                    return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'release_debug':            return run_integration_tests('release_debug',            repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'release_debug_no_symbols': return run_integration_tests('release_debug_no_symbols', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'mpi':                      return run_integration_tests('release_debug',            repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix mpi')
+    elif test == 'tensorflow':               return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix tensorflow')
+    elif test == 'thread':                   return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix thread')
+    elif test == 'addsan':                   return run_integration_tests('addsan',                   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'ubsan':
+        os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan
+        return run_integration_tests('ubsan',   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'valgrind':          return run_valgrind_tests('release_symbols', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml') # 'release_symbols' for line # information
+    elif test == 'valgrind_detailed': return run_valgrind_tests('release_symbols', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--valgrind --yaml valgrind/valgrind_results.yaml --trackorigins') # 'release_symbols' for line # information
+    elif test == 'demos':                    return run_demo_tests('release', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--demos')
+    elif test == 'tutorials':                return run_demo_tests('release', repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--tutorials')
+    else: raise BenchmarkError('Integration Test script does not support run with test="{}"!'.format(test))
+
+    #if test: return run_test(test, repository_root, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    #else: return run_test_suite(repository_root, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
