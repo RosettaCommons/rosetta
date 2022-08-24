@@ -87,15 +87,6 @@ public:
 		SingleResidueDunbrackLibraryCOP rl_cleu = utility::pointer::dynamic_pointer_cast< RotamericSingleResidueDunbrackLibrary< TWO, TWO > const >( rlf->get( pose_ca.residue_type( 2 ) ) );
 		SingleResidueDunbrackLibraryCOP rl_nleu = utility::pointer::dynamic_pointer_cast< RotamericSingleResidueDunbrackLibrary< TWO, TWO > const >( rlf->get( pose_ncaa.residue_type( 2 ) ) );
 
-		for ( Real phi = -180; phi <= 180; phi += 5 ) {
-			for ( Real psi = -180; psi <= 180; psi += 5 ) {
-				for ( Size ii = 1; ii <= 9; ++ii ) {
-					TS_ASSERT_DELTA( rl_cleu->get_probability_for_rotamer( phi, psi, ii ), rl_nleu->get_probability_for_rotamer( phi, psi, ii ), TEST_DELTA );
-				}
-			}
-		}
-
-
 		// Are we getting the same rotamer samples, in the same order?
 		for ( Real phi = -180; phi <= 180; phi += 1 ) {
 			for ( Real psi = -180; psi <= 180; psi += 1 ) {

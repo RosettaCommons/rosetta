@@ -251,10 +251,7 @@ public:
 			utility::vector1< DunbrackRotamerSampleData > aa_samples = aa_dunlib->get_all_rotamer_samples( bbs );
 
 			TS_ASSERT( aa_samples.size() <= ii_nrots );
-			for ( Size jj = 1; jj <= aa_samples.size(); ++jj ) {
-				Real const jj_prob = aa_dunlib->get_probability_for_rotamer( phi_example, psi_example, jj );
-				TS_ASSERT_DELTA( aa_samples[ jj ].probability(), jj_prob, 1e-10 );
-			}
+
 		}
 	}
 

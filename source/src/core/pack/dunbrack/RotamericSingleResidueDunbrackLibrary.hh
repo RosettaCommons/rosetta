@@ -153,20 +153,6 @@ public:
 		Size rot_ind
 	) const;
 
-	Real
-	get_probability_for_rotamer(
-		Real phi,
-		Real psi,
-		Size rot_ind
-	) const override;
-
-	DunbrackRotamerSampleData
-	get_rotamer(
-		Real phi,
-		Real psi,
-		Size rot_ind
-	) const override;
-
 	Size nchi() const override;
 
 	Size nbb() const override;

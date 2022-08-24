@@ -1208,20 +1208,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer(
 }
 
 template < Size T, Size N >
-Real
-RotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer(
-	Real phi,
-	Real psi,
-	Size rot_ind
-) const
-{
-	utility::fixedsizearray1< Real, N > bbs;
-	bbs[1] = phi;
-	bbs[2] = psi;
-	return get_probability_for_rotamer( bbs, rot_ind );
-}
-
-template < Size T, Size N >
 DunbrackRotamerSampleData
 RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer(
 	utility::fixedsizearray1< Real, N > bbs,
@@ -1247,21 +1233,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer(
 	sample.set_prob( interpolated_rotamer.rotamer_probability() );
 
 	return sample;
-}
-
-
-template < Size T, Size N >
-DunbrackRotamerSampleData
-RotamericSingleResidueDunbrackLibrary< T, N >::get_rotamer(
-	Real phi,
-	Real psi,
-	Size rot_ind
-) const
-{
-	utility::fixedsizearray1< Real, N > bbs;
-	bbs[1] = phi;
-	bbs[2] = psi;
-	return get_rotamer( bbs, rot_ind );
 }
 
 template < Size T, Size N >
