@@ -27,6 +27,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/stream_util.hh>
+#include <utility/fixedsizearray0.hh>
+#include <utility/fixedsizearray1.hh>
 
 #include <type_traits>
 #include <sstream>
@@ -557,6 +559,65 @@ void list_add_on_binder(pybind11::class_<std::list<T>, std::shared_ptr< std::lis
 		);
 
 	list_add_on_binder_maybe_has_insertion_operator<T>(cl);
+}
+
+
+
+
+template <typename, typename... Args> void generic_add_on_binder_maybe_has_insertion_operator(const Args &...) { }
+
+template<typename A, typename C,
+typename = typename std::enable_if< has_insertion_operator_s< typename A::value_type >::value >::type >
+void generic_add_on_binder_maybe_has_insertion_operator(C &cl, std::string const & class_name)
+{
+	cl.def("__repr__", [=](A const &a) {
+			std::ostringstream s;
+			s << class_name << '[';
+			std::string delimeter;
+			for(auto const & v : a) {
+				s << delimeter << v;
+				delimeter =  ", ";
+			}
+			s << ']';
+			return s.str();
+		});
+}
+
+
+template < typename A, platform::Size S, int L>
+void fixedsizearray_add_on_binder(pybind11::class_<A, std::shared_ptr<A> > &cl, std::string const &class_name)
+{
+	using T = typename A::value_type;
+
+	cl.def("__len__", [](A const &) { return S; } );
+
+	cl.def("__iter__", [](A &a) {
+			using ItType = typename A::iterator;
+
+			return pybind11::make_iterator<pybind11::return_value_policy::reference_internal, ItType, ItType, T>(a.begin(), a.end());
+		},
+		pybind11::keep_alive<0, 1>() /* Essential: keep list alive while iterator exists */
+		);
+
+	cl.def("__setitem__", [](A &a, int i, T const & t) {
+			if( i >= S+L or i < L ) throw pybind11::index_error();
+			a[i] = t;
+		});
+
+	generic_add_on_binder_maybe_has_insertion_operator<A>(cl, class_name);
+}
+
+
+template < typename T, platform::Size S >
+void fixedsizearray0_add_on_binder(pybind11::class_<utility::fixedsizearray0<T, S>, std::shared_ptr< utility::fixedsizearray1<T, S> > > &cl)
+{
+	fixedsizearray_add_on_binder< utility::fixedsizearray0<T, S>, S, 0>(cl, "fixedsizearray0");
+}
+
+template < typename T, platform::Size S >
+void fixedsizearray1_add_on_binder(pybind11::class_<utility::fixedsizearray1<T, S>, std::shared_ptr< utility::fixedsizearray1<T, S> > > &cl)
+{
+	fixedsizearray_add_on_binder< utility::fixedsizearray1<T, S>, S, 1>(cl, "fixedsizearray1");
 }
 
 
