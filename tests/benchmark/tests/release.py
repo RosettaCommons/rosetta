@@ -361,7 +361,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
     # return results
     # ----------------------------------
 
-    release_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'][:3].replace('.', '') )
+    release_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'].replace('.', '') )
 
     version_file = working_dir + '/version.json'
     generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
@@ -474,7 +474,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
 
     release_root = config['release_root']
 
-    package_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'][:3].replace('.', ''))
+    package_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'].replace('.', ''))
     package_name = '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
 
     version_file = working_dir + '/version.json'
@@ -515,7 +515,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
 
             with FileLock( f'{release_root}/PyRosetta4/documentation/.release.lock' ):
 
-                release_path = '{release_root}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars())
+                release_path = '{release_root}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'].replace('.', ''), **vars())
 
                 if os.path.isdir(release_path): shutil.rmtree(release_path)
                 shutil.move(documentation_dir, release_path)
@@ -601,7 +601,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
     conda = setup_conda_virtual_environment(working_dir, platform, config, packages='setuptools')
 
     platform_name = get_platform_release_name(platform)
-    release_name = 'PyRosetta4.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'][:3].replace('.', '') )
+    release_name = 'PyRosetta4.conda.{platform}.python{python_version}.{kind}'.format(kind=kind, platform=platform_name, python_version=platform['python'].replace('.', '') )
 
     version_file = working_dir + '/version.json'
     version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
@@ -702,7 +702,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             conda_release_path = '{release_dir}/PyRosetta4/conda/{release_kind}'.format(release_dir=config['release_root'], release_kind = release_kind)
             if not os.path.isdir(conda_release_path): os.makedirs(conda_release_path)
 
-            with FileLock( '{conda_release_path}/.{os}.python{python_version}.release.lock'.format(os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars()) ):
+            with FileLock( '{conda_release_path}/.{os}.python{python_version}.release.lock'.format(os=platform['os'], python_version=platform['python'].replace('.', ''), **vars()) ):
 
                 conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir} --output-folder {conda_release_path}' # --channel conda-forge
                 conda_package_output = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True)
@@ -863,7 +863,7 @@ def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfor
 
     conda = setup_conda_virtual_environment(working_dir, platform, config, packages='gcc')  # gcc cmake ninja
 
-    release_name = 'PyRosetta4.conda.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'][:3].replace('.', '') )
+    release_name = 'PyRosetta4.conda.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'].replace('.', '') )
 
     version_file = working_dir + '/version.json'
     version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
@@ -948,7 +948,7 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
 
         apps = 'workbench parametric_design rna_denovo pose_viewer'.split()
         for a in apps:
-            release_name = 'ui.{a}.{platform}'.format(a=a, platform='.'.join([platform['os']]) ) #, python_version=platform['python'][:3].replace('.', '') )
+            release_name = 'ui.{a}.{platform}'.format(a=a, platform='.'.join([platform['os']]) ) #, python_version=platform['python'].replace('.', '') )
             package_dir = working_dir + '/' + release_name
             if not os.path.isdir(package_dir): os.makedirs(package_dir)
 
@@ -985,7 +985,7 @@ def self_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, ve
 
     platform_suffix = platform_to_pretty_string(platform)
 
-    release_name = 'self.{platform}.python-{python_version}'.format(platform='.'.join([platform['os']]), python_version=platform['python'][:3].replace('.', '') )
+    release_name = 'self.{platform}.python-{python_version}'.format(platform='.'.join([platform['os']]), python_version=platform['python'].replace('.', '') )
 
     package_dir = f'{working_dir}/self'
     release_whl  = f'{working_dir}/self.whl'
