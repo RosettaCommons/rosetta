@@ -130,21 +130,21 @@ public: // typedefs
 	typedef core::io::CrystInfo CrystInfo;
 
 
-private: // forward declarations
+public: // forward declarations
 
 
 	struct AtomRecord;
 	struct ResidueRecord;
 
 
-private: // typedefs
+public: // typedefs
 
 
 	typedef utility::vector1< AtomRecord > AtomRecords;
 	typedef utility::vector1< ResidueRecord > ResidueRecords;
 
 
-private: // structs
+public: // structs
 
 
 	/// @brief internal struct for storing PDB atom related information

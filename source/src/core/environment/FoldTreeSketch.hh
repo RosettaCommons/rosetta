@@ -51,6 +51,8 @@ public:
 
 class FoldTreeSketch : public utility::VirtualBase {
 
+
+public:
 	class Node;
 	typedef utility::pointer::shared_ptr< Node > NodeOP;
 	typedef utility::pointer::shared_ptr< Node const > NodeCOP;
@@ -126,7 +128,7 @@ private:
 	core::Size n_jumps_;
 	int n_cuts_;
 
-private:
+public:
 
 	class Node : public VirtualBase {
 	public:

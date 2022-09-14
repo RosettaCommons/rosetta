@@ -606,7 +606,7 @@ LazyEdge::store_interaction_energy_first_node(
 {
 
 	//debug_assert(first_node_alt_state != 0 && second_node_orig_state != 0);
-	AminoAcidNeighborSparseMatrix< core::PackerEnergy >::set(
+	AminoAcidNeighborSparseMatrix< core::PackerEnergy >::static_set(
 		second_node_orig_state_sparse_info,
 		first_node_state_offset_minus_1,
 		second_node_curr_num_states_per_aatype,
@@ -646,7 +646,7 @@ LazyEdge::store_interaction_energy_second_node(
 )
 {
 	//debug_assert(first_node_orig_state != 0 && second_node_alt_state != 0);
-	AminoAcidNeighborSparseMatrix< core::PackerEnergy >::set(
+	AminoAcidNeighborSparseMatrix< core::PackerEnergy >::static_set(
 		first_node_orig_state_sparse_info,
 		second_node_alternate_state_sparse_info,
 		second_node_alt_state_num_states_per_aatype,
@@ -690,7 +690,7 @@ LazyEdge::get_alternate_state_energy_second_node(
 	if ( first_node_orig_state == 0 || second_node_alt_state == 0 ) {
 		return core::PackerEnergy( 0.0 );
 	} else {
-		return AminoAcidNeighborSparseMatrix< core::PackerEnergy >::get(
+		return AminoAcidNeighborSparseMatrix< core::PackerEnergy >::static_get(
 			first_node_orig_state_sparse_info,
 			second_node_alternate_state_sparse_info,
 			second_node_alt_state_num_states_per_aatype,
@@ -893,7 +893,7 @@ LazyEdge::get_alternate_state_energy_first_node(
 	if ( first_node_alt_state == 0 || second_node_orig_state == 0 ) {
 		return core::PackerEnergy( 0.0 );
 	} else {
-		return AminoAcidNeighborSparseMatrix< core::PackerEnergy >::get(
+		return AminoAcidNeighborSparseMatrix< core::PackerEnergy >::static_get(
 			second_node_orig_state_sparse_info,
 			first_node_state_offset_minus_1,
 			second_node_curr_num_states_per_aatype,

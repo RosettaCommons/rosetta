@@ -394,4 +394,8 @@ private: // Data
 
 } // namespace numeric
 
+#ifdef PYROSETTA
+#include <numeric/VoxelGrid.impl.hh>
+#endif
+
 #endif // INCLUDED_numeric_VoxelGrid_hh

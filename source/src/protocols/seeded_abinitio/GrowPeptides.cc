@@ -26,6 +26,7 @@
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -50,7 +51,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/pose/ResidueIndexDescription.hh>
 
 //loops
 #include <protocols/loops/Loop.hh>
@@ -74,15 +74,6 @@ namespace seeded_abinitio {
 
 using namespace protocols::moves;
 using namespace core;
-
-struct GrowPeptidesSegment {
-	GrowPeptidesSegment( core::pose::ResidueIndexDescriptionCOP b, core::pose::ResidueIndexDescriptionCOP e ): start(b), stop(e) {}
-	core::pose::ResidueIndexDescriptionCOP start;
-	core::pose::ResidueIndexDescriptionCOP stop;
-};
-
-
-
 
 GrowPeptides::GrowPeptides() = default;
 
@@ -502,5 +493,3 @@ void GrowPeptidesCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 }//seeded abinitio
 } //end protocols
-
-

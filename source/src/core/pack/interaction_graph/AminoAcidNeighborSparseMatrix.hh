@@ -183,7 +183,7 @@ public:
 	static
 	inline
 	value_type
-	get
+	static_get
 	(
 		SparseMatrixIndex const & ind1,
 		SparseMatrixIndex const & ind2,
@@ -223,7 +223,7 @@ public:
 	static
 	inline
 	value_type
-	get
+	static_get
 	(
 		SparseMatrixIndex ind2,
 		int ind1_node_state_offset_minus_1,
@@ -309,7 +309,7 @@ public:
 	static
 	inline
 	void
-	set
+	static_set
 	(
 		SparseMatrixIndex const & ind1,
 		SparseMatrixIndex const & ind2,
@@ -350,7 +350,7 @@ public:
 	static
 	inline
 	void
-	set
+	static_set
 	(
 		SparseMatrixIndex ind2,
 		int ind1_node_state_offset_minus_1,

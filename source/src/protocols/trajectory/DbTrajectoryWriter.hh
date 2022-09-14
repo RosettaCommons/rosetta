@@ -57,6 +57,9 @@ private:
 	/// @brief Write any cached poses into the database, then clear the cache.
 	void write_cache_to_db() const;
 
+public:
+	struct Frame { core::Size iteration; core::pose::Pose pose; };
+
 private:
 
 	core::Size job_id_;
@@ -64,7 +67,6 @@ private:
 	core::Size frequency_;
 	core::Size cache_limit_;
 
-	struct Frame { core::Size iteration; core::pose::Pose pose; };
 	mutable utility::vector1<Frame> frame_cache_;
 
 };

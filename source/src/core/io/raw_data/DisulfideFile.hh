@@ -56,7 +56,7 @@ namespace raw_data {
 
 
 class DisulfideFile {
-private:
+public:
 	/// @brief distinguish between PDB numbering and internal Rosetta numbering
 	/// @details unknown_num should be avoided, as one of the other types can
 	/// generally be infered from the existance of a chain specifier.
@@ -68,11 +68,11 @@ private:
 	/// @brief represents a residue of either pdb or rosetta numbering.
 	/// @details pdb numbers should include a chain character; rosetta numbers
 	/// have chain==0
-	typedef struct {
+	struct ResNum {
 		core::Size n;
 		char chain;
 		NumberingSystem type;
-	} ResNum;
+	};
 
 public:
 	DisulfideFile(std::string filename) :

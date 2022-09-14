@@ -289,6 +289,8 @@ std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover
 
 
 class LoggedFragmentMover : public ClassicFragmentMover {
+
+public:
 	typedef ClassicFragmentMover Parent;
 	struct Item {
 		Item( core::Size a, core::Size b) : frame_pos( a), frag_num( b) {}

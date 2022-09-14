@@ -605,4 +605,8 @@ initialize_srsrdl(
 } // namespace scoring
 } // namespace core
 
+#ifdef PYROSETTA
+#include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
+#endif
+
 #endif // INCLUDED_core_pack_dunbrack_SemiRotamericSingleResidueDunbrackLibrary_HH

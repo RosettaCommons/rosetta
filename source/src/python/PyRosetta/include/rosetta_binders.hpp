@@ -609,7 +609,7 @@ void fixedsizearray_add_on_binder(pybind11::class_<A, std::shared_ptr<A> > &cl, 
 
 
 template < typename T, platform::Size S >
-void fixedsizearray0_add_on_binder(pybind11::class_<utility::fixedsizearray0<T, S>, std::shared_ptr< utility::fixedsizearray1<T, S> > > &cl)
+void fixedsizearray0_add_on_binder(pybind11::class_<utility::fixedsizearray0<T, S>, std::shared_ptr< utility::fixedsizearray0<T, S> > > &cl)
 {
 	fixedsizearray_add_on_binder< utility::fixedsizearray0<T, S>, S, 0>(cl, "fixedsizearray0");
 }

@@ -109,12 +109,14 @@ private:
 		protocols::canonical_sampling::MetropolisHastingsMover const * mover=nullptr
 	) override;
 
+public:
+	/// @brief Helper struct used store cached poses.
+	struct Frame { core::Size iteration; core::pose::Pose pose; };
+
 private:
 
 	core::Size job_id_;
 
-	/// @brief Helper struct used store cached poses.
-	struct Frame { core::Size iteration; core::pose::Pose pose; };
 	mutable utility::vector1<Frame> frame_cache_;
 
 }; // DbTrajectoryRecorder

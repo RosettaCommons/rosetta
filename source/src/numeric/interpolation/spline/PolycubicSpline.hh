@@ -381,4 +381,8 @@ void get_PolycubicSpline_gradient( PolycubicSplineBaseCOP splinebase, utility::v
 }//end namespace numeric
 
 
+#ifdef PYROSETTA
+#include <numeric/interpolation/spline/PolycubicSpline.tmpl.hh>
+#endif
+
 #endif /* POLYCUBIC_SPLINE_HH_ */

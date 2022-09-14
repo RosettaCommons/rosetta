@@ -341,11 +341,9 @@ typedef  basic_mpi_ostream< wchar_t >  mpi_wostream;
 } //io
 } //utility
 
-#ifdef USEMPI
-// Implementation [adding extra space before #include so PyRosetta skipp it...]
+#if defined(USEMPI) || defined(PYROSETTA)
 #include <utility/io/mpistream.ipp>
 #endif
 
 
 #endif // INCLUDED_utility_io_mpistream_HPP
-

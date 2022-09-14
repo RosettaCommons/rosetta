@@ -101,13 +101,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 
-private:
-
-	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// bool run_once_;
-
-	//std::map<std::string, core::pack::task::TaskFactoryCOP> taskop_keys_factories_;
-
+public:
 	struct Taskop_id_name_factory_ {
 		Taskop_id_name_factory_(
 			core::Size i,
@@ -118,6 +112,13 @@ private:
 		std::string name;
 		core::pack::task::TaskFactoryCOP tf;
 	};
+
+private:
+
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool run_once_;
+
+	//std::map<std::string, core::pack::task::TaskFactoryCOP> taskop_keys_factories_;
 
 	utility::vector1<Taskop_id_name_factory_> taskops_;
 

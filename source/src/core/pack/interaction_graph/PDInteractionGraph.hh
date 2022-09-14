@@ -592,7 +592,7 @@ PDEdge::get_alternate_state_energy_first_node(
 	if ( first_node_alt_state == 0 || second_node_orig_state == 0 ) {
 		return 0.0f;
 	} else {
-		return AminoAcidNeighborSparseMatrix< float >::get(
+		return AminoAcidNeighborSparseMatrix< float >::static_get(
 			second_node_orig_state_sparse_info,
 			first_node_state_offset_minus_1,
 			second_node_curr_num_states_per_aatype,
@@ -668,7 +668,7 @@ PDEdge::get_alternate_state_energy_second_node(
 	if ( first_node_orig_state == 0 || second_node_alt_state == 0 ) {
 		return 0.0f;
 	} else {
-		return AminoAcidNeighborSparseMatrix< float >::get(
+		return AminoAcidNeighborSparseMatrix< float >::static_get(
 			first_node_orig_state_sparse_info,
 			second_node_alternate_state_sparse_info,
 			second_node_alt_state_num_states_per_aatype,

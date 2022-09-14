@@ -21,12 +21,19 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
+
 #include <set>
 
 namespace protocols {
 namespace seeded_abinitio {
 
-struct GrowPeptidesSegment;
+struct GrowPeptidesSegment {
+	GrowPeptidesSegment( core::pose::ResidueIndexDescriptionCOP b, core::pose::ResidueIndexDescriptionCOP e ): start(b), stop(e) {}
+	core::pose::ResidueIndexDescriptionCOP start;
+	core::pose::ResidueIndexDescriptionCOP stop;
+};
+
 using GrowPeptidesSegmentOP = utility::pointer::shared_ptr< GrowPeptidesSegment >;
 
 class GrowPeptides : public protocols::moves::Mover
