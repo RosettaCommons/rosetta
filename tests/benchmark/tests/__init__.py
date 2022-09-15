@@ -741,10 +741,10 @@ def local_python_install(platform, config):
 
         '3.5'  : 'https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz',
         '3.6'  : 'https://www.python.org/ftp/python/3.6.15/Python-3.6.15.tgz',
-        '3.7'  : 'https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz',
-        '3.8'  : 'https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tgz',
-        '3.9'  : 'https://www.python.org/ftp/python/3.9.8/Python-3.9.8.tgz',
-        '3.10' : 'https://www.python.org/ftp/python/3.10.5/Python-3.10.5.tgz',
+        '3.7'  : 'https://www.python.org/ftp/python/3.7.14/Python-3.7.14.tgz',
+        '3.8'  : 'https://www.python.org/ftp/python/3.8.14/Python-3.8.14.tgz',
+        '3.9'  : 'https://www.python.org/ftp/python/3.9.14/Python-3.9.14.tgz',
+        '3.10' : 'https://www.python.org/ftp/python/3.10.6/Python-3.10.6.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -944,8 +944,11 @@ def _get_path_to_conda_root(platform, config):
     #platform_os = 'm1' if platform_module.machine() == 'arm64' else platform['os']
     #url = miniconda_sources[ platform_os ]
 
-    url = miniconda_sources[ platform['os'] ]
+    platform_os = platform['os']
+    for o in 'alpine centos ubuntu'.split():
+        if platform_os.startswith(o): platform_os = 'linux'
 
+    url = miniconda_sources[platform_os]
 
     version = '1'
     channels = ''  # conda-forge
