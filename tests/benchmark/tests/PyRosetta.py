@@ -121,6 +121,7 @@ def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, v
 
     packages = 'ipython pyrosettacolabsetup nbconvert'  # base packages for test
     packages += ' matplotlib biopython blosc dask distributed jupyter numpy pandas py3Dmol scipy traitlets graphviz seaborn dask-jobqueue attrs billiard GitPython fsspec' # extra packages for various notebooks
+    #packages += ' traitlets==5.3.0 ipywidgets==8.0.1 jupyterlab-widgets==3.0.2 prompt-toolkit==3.0.30 widgetsnbextension==4.0.2'
 
     P = build_and_install_pyrosetta(working_dir, rosetta_dir, platform, jobs, config, mode='MinSizeRel', packages=packages, skip_compile=skip_compile)
 
