@@ -3681,6 +3681,7 @@ TRIO_ARGS2((format, args),
   return TrioFormat(stdout, 0, TrioOutStreamFile, format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 /**
    Print to standard output stream.
 
@@ -3698,6 +3699,9 @@ TRIO_ARGS2((format, args),
 
   return TrioFormat(stdout, 0, TrioOutStreamFile, format, NULL, args);
 }
+
+#endif
+
 
 /*************************************************************************
  * fprintf
@@ -3751,6 +3755,7 @@ TRIO_ARGS3((file, format, args),
   return TrioFormat(file, 0, TrioOutStreamFile, format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 /**
    Print to file.
 
@@ -3771,6 +3776,7 @@ TRIO_ARGS3((file, format, args),
 
   return TrioFormat(file, 0, TrioOutStreamFile, format, NULL, args);
 }
+#endif
 
 /*************************************************************************
  * dprintf
@@ -3822,6 +3828,7 @@ TRIO_ARGS3((fd, format, args),
   return TrioFormat(&fd, 0, TrioOutStreamFileDescriptor, format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 /**
    Print to file descriptor.
 
@@ -3841,7 +3848,7 @@ TRIO_ARGS3((fd, format, args),
 
   return TrioFormat(&fd, 0, TrioOutStreamFileDescriptor, format, NULL, args);
 }
-
+#endif
 /*************************************************************************
  * cprintf
  */
@@ -3886,6 +3893,7 @@ TRIO_ARGS4((stream, closure, format, args),
   return TrioFormat(&data, 0, TrioOutStreamCustom, format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 TRIO_PUBLIC int
 trio_cprintfv
 TRIO_ARGS4((stream, closure, format, args),
@@ -3903,7 +3911,7 @@ TRIO_ARGS4((stream, closure, format, args),
   data.closure = closure;
   return TrioFormat(&data, 0, TrioOutStreamCustom, format, NULL, args);
 }
-
+#endif
 /*************************************************************************
  * sprintf
  */
@@ -3961,6 +3969,7 @@ TRIO_ARGS3((buffer, format, args),
   return status;
 }
 
+#ifndef __aarch64__
 /**
    Print to string.
 
@@ -3985,7 +3994,7 @@ TRIO_ARGS3((buffer, format, args),
   *buffer = NIL;
   return status;
 }
-
+#endif
 /*************************************************************************
  * snprintf
  */
@@ -4051,6 +4060,7 @@ TRIO_ARGS4((buffer, max, format, args),
   return status;
 }
 
+#ifndef __aarch64__
 /**
    Print at most @p max characters to string.
 
@@ -4079,7 +4089,7 @@ TRIO_ARGS4((buffer, max, format, args),
     *buffer = NIL;
   return status;
 }
-
+#endif
 /*************************************************************************
  * snprintfcat
  * Appends the new string to the buffer string overwriting the '\0'
@@ -4970,6 +4980,7 @@ TRIO_ARGS3((ref, format, arglist),
   return TrioFormatRef((trio_reference_t *)ref, format, TRIO_VA_LIST_ADDR(arglist), NULL);
 }
 
+#ifndef __aarch64__
 /*************************************************************************
  * trio_printv_ref [public]
  */
@@ -4984,7 +4995,7 @@ TRIO_ARGS3((ref, format, argarray),
 
   return TrioFormatRef((trio_reference_t *)ref, format, NULL, argarray);
 }
-
+#endif
 #endif /* TRIO_EXTENSION */
 
 /*************************************************************************
@@ -6630,6 +6641,7 @@ TRIO_ARGS2((format, args),
 		  format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 TRIO_PUBLIC int
 trio_scanfv
 TRIO_ARGS2((format, args),
@@ -6642,7 +6654,7 @@ TRIO_ARGS2((format, args),
 		  TrioInStreamFile,
 		  format, NULL, args);
 }
-
+#endif
 /*************************************************************************
  * fscanf
  */
@@ -6682,6 +6694,7 @@ TRIO_ARGS3((file, format, args),
 		  format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 TRIO_PUBLIC int
 trio_fscanfv
 TRIO_ARGS3((file, format, args),
@@ -6696,7 +6709,7 @@ TRIO_ARGS3((file, format, args),
 		  TrioInStreamFile,
 		  format, NULL, args);
 }
-
+#endif
 /*************************************************************************
  * dscanf
  */
@@ -6734,6 +6747,7 @@ TRIO_ARGS3((fd, format, args),
 		  format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 TRIO_PUBLIC int
 trio_dscanfv
 TRIO_ARGS3((fd, format, args),
@@ -6747,7 +6761,7 @@ TRIO_ARGS3((fd, format, args),
 		  TrioInStreamFileDescriptor,
 		  format, NULL, args);
 }
-
+#endif
 /*************************************************************************
  * cscanf
  */
@@ -6792,6 +6806,7 @@ TRIO_ARGS4((stream, closure, format, args),
   return TrioScan(&data, 0, TrioInStreamCustom, format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 TRIO_PUBLIC int
 trio_cscanfv
 TRIO_ARGS4((stream, closure, format, args),
@@ -6809,7 +6824,7 @@ TRIO_ARGS4((stream, closure, format, args),
   data.closure = closure;
   return TrioScan(&data, 0, TrioInStreamCustom, format, NULL, args);
 }
-
+#endif
 /*************************************************************************
  * sscanf
  */
@@ -6849,6 +6864,7 @@ TRIO_ARGS3((buffer, format, args),
 		  format, TRIO_VA_LIST_ADDR(args), NULL);
 }
 
+#ifndef __aarch64__
 TRIO_PUBLIC int
 trio_sscanfv
 TRIO_ARGS3((buffer, format, args),
@@ -6863,7 +6879,7 @@ TRIO_ARGS3((buffer, format, args),
 		  TrioInStreamString,
 		  format, NULL, args);
 }
-
+#endif
 /** @} End of Scanf documentation module */
 
 /*************************************************************************

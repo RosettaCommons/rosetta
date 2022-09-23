@@ -30,8 +30,9 @@ options = {
         # XXX: It's not clear if "amd" is a meaningful category
         "amd"     : [ "32", "64", "*" ],
         "ppc"     : [ "32", "64", "*" ],
-        "ppc64"     : [ "64" ],
-        "arm" : ["64", "*"],
+        "ppc64"   : [ "64" ],
+        "arm"     : ["64", "*"],
+        "aarch64" : ["64", "*"],
         "power4"  : [ "32", "64", "*" ],
         "*"       : [ "*" ],
     },

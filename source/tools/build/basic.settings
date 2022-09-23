@@ -2259,6 +2259,16 @@ settings = {
         },
     },
 
+
+    "clang, linux, aarch64" : {
+        "removes" : {
+            "flags" : {
+                "compile" : ["march=native", "march=core2", ],
+            },
+        },
+    },
+
+
     "clang, macos" : {
         "appends" : {
             "flags" : {
@@ -2294,6 +2304,7 @@ settings = {
             },
         },
     },
+
 
     # modes ###################################################################
 
