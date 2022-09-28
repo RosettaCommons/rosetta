@@ -86,6 +86,14 @@ sources = {
 		"pool_util",
 		"util",
 	],
+	"protocols/chemistries": [
+		"ChemistryCreators",
+		"ChemistryFactory",
+		"ChemistryLoader",
+		"PatchChemistry",
+		"util",
+		"WrappedChemistries",
+	],
 	"protocols/constraints_additional": [
 		"AdditionalConstraintCreators",
 		"AmbiguousMultiConstraint",

@@ -50,9 +50,11 @@ sources = {
 		"SaneDockingProtocol",
 	],
 	"protocols/drug_design": [
+		"ApplyChemistryMover",
+		"ConformationSelectionToRDMol",
 		"RDKitMetric",
 		"RDKitMetricsMover",
-		"ConformationSelectionToRDMol",
+		"util",
 	],
         "protocols/drug_design/bcl": [
                 "BCLFragmentBaseMover",

@@ -29,6 +29,8 @@ static DataLoaderRegistrator< PackerPaletteLoaderCreator > reg_PackerPaletteLoad
 static DataLoaderRegistrator< ResidueSelectorLoaderCreator > reg_ResidueSelectorLoaderCreator;
 static DataLoaderRegistrator< ConstraintGeneratorLoaderCreator > reg_ConstraintGeneratorLoaderCreator;
 static DataLoaderRegistrator< SimpleMetricLoaderCreator > reg_SimpleMetricLoaderCreator;
+
+static DataLoaderRegistrator< chemistries::ChemistryLoaderCreator > reg_ChemistryLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::InterfaceBuilderLoaderCreator > reg_InterfaceBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::MoveMapBuilderLoaderCreator > reg_MoveMapBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::LigandAreaLoaderCreator > reg_LigandAreaLoaderCreator;

@@ -93,7 +93,9 @@ sources = {
 		"MainchainScoreTable",
 		"util",
 	],
-
+	"core/chemical/modifications/": [
+		"ChemistryBase",
+	],
 	"core/chemical/rings": [
 		"ring_conformer_io",
 		"RingConformerManager",

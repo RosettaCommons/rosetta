@@ -98,7 +98,7 @@ inline void prime_Data( basic::datacache::DataMap & data ) {
 	data.add( "movers", "null", utility::pointer::make_shared< protocols::moves::NullMover >() );
 
 	data.add( "filters", "true_filter", utility::pointer::make_shared< protocols::filters::TrueFilter >() );
-	data.add( "fitlers", "false_filter", utility::pointer::make_shared< protocols::filters::FalseFilter >() );
+	data.add( "filters", "false_filter", utility::pointer::make_shared< protocols::filters::FalseFilter >() );
 }
 
 /// @brief Generate a tagptr from a string
@@ -143,7 +143,7 @@ utility::pointer::shared_ptr<FilterSubclass> parse_filter_tag(std::string tag_st
 	utility::pointer::shared_ptr<FilterSubclass> filter =
 		utility::pointer::dynamic_pointer_cast<FilterSubclass>(base_filter);
 
-	TSM_ASSERT("Instantiated the wrong type of mover", filter.get());
+	TSM_ASSERT("Instantiated the wrong type of filter", filter.get());
 
 	return filter;
 }

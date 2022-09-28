@@ -42,6 +42,9 @@
 #include <protocols/init/init.ClusterMetricCreators.ihh>
 #include <protocols/init/init.ClusterMetricRegistrators.ihh>
 
+#include <protocols/init/init.ChemistryCreators.ihh>
+#include <protocols/init/init.ChemistryRegistrators.ihh>
+
 
 namespace protocols {
 namespace init {

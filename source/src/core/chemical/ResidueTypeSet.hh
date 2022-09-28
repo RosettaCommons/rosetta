@@ -339,6 +339,12 @@ public:
 		return metapatch_map_.find( name )->second;
 	}
 
+	/// @brief Get the patches corresponding to a patch name.
+	/// Will get both regular an metapatches
+	virtual
+	utility::vector1< PatchCOP >
+	get_patches( std::string const & name ) const;
+
 	/// @brief Gets all types with the given aa type and variants
 	/// Note for derived classes: this method will obtain a read lock, and possibly
 	/// a write lock on the ResidueTypeSetCache.
@@ -519,7 +525,18 @@ protected:
 	ResidueTypeCOP
 	generate_residue_type( std::string const & rsd_name ) const;
 
-	/// @brief Static method which will apply a given patch to a given ResidueType
+	/// @brief Get the patches corresponding to a patch name.
+	/// Will get both regular an metapatches
+	/// This version takes in patch and metapach lists, to allow for subclass subsetting
+	/// @details This should not touch any mutex-protected data.
+	virtual
+	utility::vector1< PatchCOP >
+	get_patches( std::string const & name,
+		std::map< std::string, utility::vector1< PatchCOP > > const & patch_mapping,
+		std::map< std::string, MetapatchCOP > const & metapach_mapping
+	) const;
+
+	/// @brief Apply a given patch to a given ResidueType
 	/// If the patch cannot be applies, it will return nullptr
 	/// @details This should not touch any mutex-protected data.
 	MutableResidueTypeCOP

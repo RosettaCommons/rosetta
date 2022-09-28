@@ -31,6 +31,9 @@ static basic::Tracer TR2( "schema_utilities" );
 /// @brief Check if the provided tag validates against the schema for the given class
 /// (It's assumed that the templated class has a static provide_xml_schema() function which provides the schema for the class.)
 /// `name` is the XML name of the class, and `type_name` is the schema typename for that class
+/// @details This function creates a short schema with only the specified class. This means it only works if the schema definition is "self-contained".
+/// That is, if the class doesn't implicitly transclude tags defined by other classes. (e.g. allowing another object to be defined in-line within the tag body).
+/// Referencing other objects by name (string) is fine, though.
 template< class C >
 void check_if_tag_validates( std::string const & tag, utility::tag::XMLSchemaDefinition & xsd, std::string const & name, std::string const & type_name ) {
 	C::provide_xml_schema( xsd );
@@ -51,6 +54,7 @@ void check_if_tag_validates( std::string const & tag, utility::tag::XMLSchemaDef
 		TR2 << "Warning messages were:\n" << validator_output.warning_messages();
 		TR2 << "------------------------------------------------------------\n";
 		TR2 << std::endl;
+		TR2 << ">>>> This test function only works if the XSD schema is 'self-contained'. <<<<" << std::endl;
 	}
 	validator_output = validator.validate_xml_against_schema( tag );
 	TSM_ASSERT( "Issue validating " + tag, validator_output.valid() );
@@ -64,6 +68,7 @@ void check_if_tag_validates( std::string const & tag, utility::tag::XMLSchemaDef
 }
 
 /// @brief Check if the provided tag validates against the schema for the given class, specialization for Movers.
+/// @details See notes for check_if_tag_validates() above.
 template< class C >
 void check_if_mover_tag_validates( std::string const & tag ) {
 	utility::tag::XMLSchemaDefinition xsd;

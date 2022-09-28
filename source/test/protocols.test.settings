@@ -91,11 +91,15 @@ sources = {
 		"RingPlaneFlipMover",
 		"TautomerizeAnomerMover",
 	],
+   
+	"chemistries" : [
+		"PatchChemistry",
+	], 
 
-    "chromophore" : [
-        "ReadResidueCoordinatesFromPDBTests",
-        "ChromophoreDataReaderTests",
-    ],
+	"chromophore" : [
+		"ReadResidueCoordinatesFromPDBTests",
+		"ChromophoreDataReaderTests",
+	],
 
 	"cluster" : [
 		"APCluster",
@@ -174,6 +178,7 @@ sources = {
 	],
 
 	"drug_design": [
+		"ApplyChemistryMover",
 		"orphan_restypes",
 	],
 
@@ -1035,6 +1040,7 @@ testinputfiles = [
 	"docking/DockingSlideIntoContact.pdb",
 	"docking/DockingPacking.pdb",
 	"docking/DockingRigidBodyMinimize.pdb",
+	"drug_design/carboxypyrimidine.sdf",
 	"energy_based_clustering/alpha_aa.silent",
 	"energy_based_clustering/oligourea.silent",
 	"enzdes/D2N.params",
