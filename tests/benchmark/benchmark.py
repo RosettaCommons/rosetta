@@ -29,7 +29,8 @@ from hpc_drivers import *
 # Calculating value of Platform dict
 Platform = {}
 if sys.platform.startswith("linux"):
-    Platform['os'] = 'ubuntu' if os.path.isfile('/etc/lsb-release') and 'Ubuntu' in open('/etc/lsb-release').read() else 'linux'  # can be linux1, linux2, etc
+    if platform.uname().machine == 'aarch64': Platform['os'] = 'aarch64'
+    else: Platform['os'] = 'ubuntu' if os.path.isfile('/etc/lsb-release') and 'Ubuntu' in open('/etc/lsb-release').read() else 'linux'  # can be linux1, linux2, etc
 elif sys.platform == "darwin" :      Platform['os'] = 'mac'
 elif sys.platform == "cygwin" :      Platform['os'] = 'cygwin'
 elif sys.platform == "win32" :       Platform['os'] = 'windows'
@@ -70,7 +71,7 @@ def setup_from_options(options):
     #platform['options'] = json.loads( options.options ) if options.options else {}
 
     if options.memory: memory = options.memory
-    elif platform['os'] in ['linux', 'ubuntu']: memory = int( execute('Getting memory info...', 'free -m', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split('\n')[1].split()[1]) // 1024
+    elif platform['os'] in ['linux', 'ubuntu', 'aarch64']: memory = int( execute('Getting memory info...', 'free -m', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split('\n')[1].split()[1]) // 1024
     elif platform['os'] in ['mac', 'm1']:   memory = int( execute('Getting memory info...', 'sysctl -a | grep hw.memsize', terminate_on_failure=False, silent=True, silence_output_on_errors=True, return_='output').split()[1]) // 1024 // 1024 // 1024
 
     platform['compiler'] = options.compiler

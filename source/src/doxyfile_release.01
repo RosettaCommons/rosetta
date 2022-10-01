@@ -24,7 +24,7 @@ HTML_OUTPUT            = html/all_else
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = src/core src/protocols
+EXCLUDE                = src/core src/protocols src/devel
 
 #---------------------------------------------------------------------------
 # Project related configuration options

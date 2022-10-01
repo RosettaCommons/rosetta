@@ -2,5 +2,6 @@ benchmark.mac.ini
 benchmark.m1.ini
 benchmark.linux.ini
 benchmark.ubuntu.ini
+benchmark.aarch64.ini
 benchmark.ini
 results

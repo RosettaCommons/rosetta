@@ -40,7 +40,7 @@ download_template = '''\
 </html>'''
 
 def get_platform_release_name(platform):
-    addon = dict(linux='.CentOS', ubuntu='.Ubuntu', mac='', m1='')
+    addon = dict(linux='.CentOS', ubuntu='.Ubuntu', mac='', m1='', aarch64='.aarch64.Ubuntu')
     return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'] ]
 
 
@@ -383,7 +383,7 @@ def rosetta_documentaion(repository_root, working_dir, platform, config, hpc_dri
 
     #logs = '...'
     if os.path.isdir(html_path): shutil.rmtree(html_path)
-    logs = execute('Running Doxygen...', f'cd {repository_root}/source && ./BuildDocs.sh', add_message_and_command_line_to_output=True, return_='output')
+    logs = execute('Running Doxygen...', f'cd {repository_root}/source && ./BuildDocs.sh --public', add_message_and_command_line_to_output=True, return_='output')
 
     dir_util_module.copy_tree(html_path, html_working_dir, update=False)
 
@@ -451,7 +451,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
         distr_file_list = os.listdir(pyrosetta_path+'/build')
 
-        suite_timeout, test_timeout = (128, 2048) if kind == 'Debug' else (32, 512)
+        suite_timeout, test_timeout = (128, 2048) if kind == 'Debug' or platform['os'].startswith('aarch64') else (32, 512)
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
@@ -704,7 +704,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
             gui_flag, res, output = '', result.exitcode, result.output
             if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
-            else: res, output = execute('Running PyRosetta tests...', f'{python_virtual_environment.activate} && cd {pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 32 {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs}', return_='tuple')
+            else: res, output = execute('Running PyRosetta tests...', f'{python_virtual_environment.activate} && cd {pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 32 {python_virtual_environment.python} self-test.py --timeout 1024 {gui_flag} -j{jobs}', return_='tuple')
 
             json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
             with open(json_file) as f: results = json.load(f)

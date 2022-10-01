@@ -164,7 +164,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
 
     prefix = prefix_root + '/llvm-' + llvm_version
 
-    build_dir = prefix+'/llvm-' + llvm_version + '.' + platform.platform() + '.' + _machine_name_ + ('.debug' if debug else '.release')
+    build_dir = prefix+'/llvm-' + llvm_version + '.' + platform.platform() + ('.debug' if debug else '.release') # + '.' + _machine_name_
 
     res, output = execute('Getting binder HEAD commit SHA1...', 'cd {} && git rev-parse HEAD'.format(source_location), return_='tuple', silent=True)
     if res: binder_head = 'unknown'
@@ -304,7 +304,7 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False, docum
     p = os.path.join(rosetta_source_path, 'build/PyRosetta')
 
     #p =  os.path.join(p, Platform + ( '.' + Options.build_suffix if  Options.build_suffix else '') + '/' + get_compiler_family() + '-' + get_compiler_version() + '/python-' + _python_version_)
-    p =  os.path.join(p, Platform + '/' + get_compiler_family() + '-' + get_compiler_version() + '/python-' + _python_version_)
+    p =  os.path.join(p, platform.platform() + '/' + get_compiler_family() + '-' + get_compiler_version() + '/python-' + _python_version_)
 
     p = os.path.join(p, Options.type.lower() + ('.serialization' if Options.serialization else '') + ('.thread' if Options.multi_threaded else ''))
 

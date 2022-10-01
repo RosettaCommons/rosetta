@@ -75,6 +75,8 @@ def run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         compiler = platform['compiler']
         extras   = ','.join(platform['extras'])
 
+        if platform['os'].startswith('aarch64') and '--timeout' not in additional_flags: additional_flags += ' --timeout 480'
+
         command_line = 'cd {}/source && test/run.py --verbose --compiler={compiler} --mode={mode} --extras={extras} -j{jobs} --mute all {additional_flags}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras, mode=mode, additional_flags=additional_flags)
         TR( 'Running unit test script: {}'.format(command_line) )
 
