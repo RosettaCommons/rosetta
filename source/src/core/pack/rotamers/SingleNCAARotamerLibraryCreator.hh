@@ -37,6 +37,8 @@ public:
 	create( core::chemical::ResidueType const & ) const override;
 
 	std::string keyname() const override;
+
+	bool write_out_ = false;
 };
 
 

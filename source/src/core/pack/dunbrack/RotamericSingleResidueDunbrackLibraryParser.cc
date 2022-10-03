@@ -21,12 +21,14 @@
 //Basic includes
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
 
 //Numeric includes
 #include <numeric/angle.functions.hh>
 
 //C++ includes
 #include <iostream>
+#include <iomanip>
 
 #include <basic/basic.hh> // MANUAL IWYU
 
@@ -55,7 +57,8 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 	core::Size const max_possible_chis,
 	core::Size const max_possible_rotamers,
 	bool const correct_rotamer_well_order_on_read,
-	bool const symmetrize_rotamer_library
+	bool const symmetrize_rotamer_library,
+	bool const write_out
 ):
 	utility::VirtualBase(),
 	read_file_was_called_(false),
@@ -70,7 +73,8 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 	chi_std_devs_(),
 	is_canonical_dun02_library_(false),
 	correct_rotamer_well_order_on_read_(correct_rotamer_well_order_on_read),
-	symmetrize_rotamer_library_( symmetrize_rotamer_library )
+	symmetrize_rotamer_library_( symmetrize_rotamer_library ),
+	write_out_( write_out )
 {
 	debug_assert( num_mainchain_torsions_ > 0 );
 	debug_assert( max_possible_chis_ > 0);
@@ -93,7 +97,8 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 	chi_std_devs_(src.chi_std_devs_),
 	is_canonical_dun02_library_(src.is_canonical_dun02_library_),
 	correct_rotamer_well_order_on_read_(src.correct_rotamer_well_order_on_read_),
-	symmetrize_rotamer_library_(src.symmetrize_rotamer_library_)
+	symmetrize_rotamer_library_(src.symmetrize_rotamer_library_),
+	write_out_(src.write_out_)
 {
 	debug_assert( num_mainchain_torsions_ > 0 );
 	debug_assert( max_possible_chis_ > 0);
@@ -152,10 +157,12 @@ RotamericSingleResidueDunbrackLibraryParser::read_file(
 	std::string three_letter_code;
 	bool is_shapovalov_file(false);
 	core::Size read_rotamer_count(0); //Number of rotamers successfully read in.
+	bool suppress_symmetrization( false ), finished_reading_header( false );
 
 	while ( infile ) {
 
 		/// 1a. peek at the line; if it starts with #, skip to the next line.
+		/// If it starts with @, parse the header line.
 		/// Also, set up an istringstream for the line.
 		char first_char = infile.peek();
 		if ( first_char == '#' ) {
@@ -163,6 +170,16 @@ RotamericSingleResidueDunbrackLibraryParser::read_file(
 			infile.getline( line );
 			first_line_three_letter_code_already_read = false;
 			continue;
+		} else if ( first_char == '@' ) {
+			runtime_assert_string_msg( !finished_reading_header, "Error in RotamericSingleResidueDunbrackLibraryParser::read_file(): Header lines (lines starting with \"@\") must all precede body lines in a rotamer library file.  Could not read file \"" + infile.filename() + "\"." );
+			std::string line;
+			infile.getline( line );
+			if ( utility::strip( line, " \t\n" ) == "@PRE_SYMMETRIZED_LIBRARY" ) {
+				suppress_symmetrization = true;
+			}
+			continue;
+		} else {
+			finished_reading_header = true;
 		}
 
 		/// 1b. Shapovalov files have an extra column in the MIDDLE, which is a pain in the neck.
@@ -198,7 +215,12 @@ RotamericSingleResidueDunbrackLibraryParser::read_file(
 			// AMW: this is an issue. What if we are a variant lib like TRP,
 			// but our TLC is UNK? thankfully we can add in that exact condition.
 			if ( infile.eof() || ( three_letter_code != my_name && three_letter_code != "UNK" ) ) { //If this is true, then we're done reading the current amino acid, so return the name of the next.
-				do_all_checks_and_corrections( infile.filename() );
+				do_all_checks_and_corrections( infile.filename(), suppress_symmetrization );
+
+				if ( write_out_ && !suppress_symmetrization ) {
+					write_rotamer_library();
+				}
+
 				if ( infile.eof() ) return "";
 				return three_letter_code;
 			} // else, we're still reading data for the intended amino acid, so let's continue...
@@ -265,9 +287,49 @@ RotamericSingleResidueDunbrackLibraryParser::read_file(
 
 	} //Continue to next line in file.
 
-	do_all_checks_and_corrections( infile.filename() );
+	do_all_checks_and_corrections( infile.filename(), suppress_symmetrization );
+
+	if ( write_out_ && !suppress_symmetrization ) {
+		write_rotamer_library();
+	}
 
 	return ""; //If we've arrived here, then we reached an EOF, so return an empty string for the name of the next amino acid in the input stream (i.e. there is no next one).
+}
+
+void
+RotamericSingleResidueDunbrackLibraryParser::write_rotamer_library() const {
+	utility::io::ozstream out( "debug.rotlib" );
+
+	if ( symmetrize_rotamer_library_ ) {
+		// We symmetrized it, and !suppress_symmetrization, so it's safe to say
+		out << "@PRE_SYMMETRIZED_LIBRARY\n";
+	}
+
+	// In this style of file, the TLC is ignored.
+	auto three_letter_code = "UNK";
+	for ( Size ii = 1; ii <= backbone_torsions_.size(); ++ii ) {
+		out << three_letter_code;
+		for ( Size jj = 1; jj < num_mainchain_torsions_; ++jj ) { // NOT LEQ
+			out << "  " << std::setw(4) << std::setprecision(0) << std::fixed << std::right << backbone_torsions_[ ii ][ jj ];
+		}
+		// Incredible detail, but the final bb is a different field width
+		out << " " << std::setw(4) << std::setprecision(0) << std::right << backbone_torsions_[ ii ][ num_mainchain_torsions_ ] << " ";
+		out << " " << std::setw(4) << std::right << counts_[ ii ] << "   ";
+		for ( Size jj = 1; jj <= max_possible_chis_; ++jj ) {
+			out << " " << rotwells_[ ii ][ jj ];
+		}
+		out << "  " << std::setw(8) << std::setprecision(6) << std::fixed << probabilities_[ ii ] << " ";
+		for ( Size jj = 1; jj <= max_possible_chis_; ++jj ) {
+			out << " " << std::setw(6) << std::setprecision(1) << std::fixed << chimeans_[ ii ][ jj ] << " ";
+		}
+		out << "  ";
+		for ( Size jj = 1; jj <= max_possible_chis_; ++jj ) {
+			out << " " << std::setw(6) << std::setprecision(1) << std::fixed << chi_std_devs_[ ii ][ jj ] << " ";
+		}
+		out << std::endl;
+	}
+
+	out.close();
 }
 
 /////PRIVATE MEMBER FUNCTIONS/////
@@ -650,7 +712,10 @@ RotamericSingleResidueDunbrackLibraryParser::symmetrize_library( std::string con
 /// peptoids).  Additional checks and corrections may be added in the future.
 /// @param[in] filename The name of the rotamer file currently being read.  This is only used for error messages.
 void
-RotamericSingleResidueDunbrackLibraryParser::do_all_checks_and_corrections( std::string const & filename ) {
+RotamericSingleResidueDunbrackLibraryParser::do_all_checks_and_corrections(
+	std::string const & filename,
+	bool const suppress_symmetrization
+) {
 	check_correct_vector_lengths();
 
 	//Checks for rotamer well order:
@@ -690,7 +755,11 @@ RotamericSingleResidueDunbrackLibraryParser::do_all_checks_and_corrections( std:
 
 	//Symmetry correction for peptoid libraries:
 	if ( symmetrize_rotamer_library_ ) {
-		symmetrize_library( filename );
+		if ( suppress_symmetrization ) {
+			TR << "This rotamer library was marked as pre-symmetrized.  Skipping symmetrization step." << std::endl;
+		} else {
+			symmetrize_library( filename );
+		}
 	}
 }
 

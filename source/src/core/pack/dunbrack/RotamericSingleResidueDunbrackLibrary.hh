@@ -231,7 +231,8 @@ public:
 	std::string
 	read_from_file(
 		utility::io::izstream & in,
-		bool first_line_three_letter_code_already_read
+		bool first_line_three_letter_code_already_read,
+		bool write_out = false
 	);
 
 public:

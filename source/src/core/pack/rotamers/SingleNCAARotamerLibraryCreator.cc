@@ -311,35 +311,35 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			case 1 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< ONE, ONE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 2 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< ONE, TWO >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 3 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< ONE, THREE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 4 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< ONE, FOUR >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 5 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< ONE, FIVE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
@@ -355,35 +355,35 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			case 1 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< TWO, ONE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 2 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< TWO, TWO >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 3 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< TWO, THREE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 4 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< TWO, FOUR >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 5 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< TWO, FIVE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
@@ -398,35 +398,35 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			case 1 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< THREE, ONE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 2 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< THREE, TWO >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 3 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< THREE, THREE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 4 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< THREE, FOUR >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 5 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< THREE, FIVE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
@@ -441,28 +441,28 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			case 1 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< FOUR, ONE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 2 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< FOUR, TWO >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 3 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}
 			case 4 : {
 				auto * r1 = new RotamericSingleResidueDunbrackLibrary< FOUR, FOUR >( restype, dun02, use_bicubic, entropy_correction, reduced_resolution_library );
 				r1->set_n_chi_bins( ncaa_libspec->ncaa_rotlib_n_bin_per_rot() );
-				r1->read_from_file( rotlib_in, false );
+				r1->read_from_file( rotlib_in, false, write_out_ );
 				ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 				break;
 			}

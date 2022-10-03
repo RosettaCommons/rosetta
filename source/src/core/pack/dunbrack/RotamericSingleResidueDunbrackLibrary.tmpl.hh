@@ -2066,12 +2066,13 @@ template < Size T, Size N >
 std::string
 RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 	utility::io::izstream & infile,
-	bool first_line_three_letter_code_already_read
+	bool first_line_three_letter_code_already_read,
+	bool write_out
 )
 {
 	// Create the parser for the file.  The parser is a convenient place to put the parse functions, and a convenient place to store temporary
 	// data during the parse:
-	RotamericSingleResidueDunbrackLibraryParser parser( N, DUNBRACK_FILE_DEFAULT_SCTOR, n_possible_rots(), correct_rotamer_well_order_on_read_, peptoid_ && peptoid_is_achiral_ );
+	RotamericSingleResidueDunbrackLibraryParser parser( N, DUNBRACK_FILE_DEFAULT_SCTOR, n_possible_rots(), correct_rotamer_well_order_on_read_, peptoid_ && peptoid_is_achiral_, write_out );
 	// Do the parse and analysis, and return the name of the next amino acid (or an empty string if there is no next amino acid):
 	std::string const next_name( parser.read_file( infile, first_line_three_letter_code_already_read, aa() ) );
 	parser.configure_rotameric_single_residue_dunbrack_library(*this, N_BB_BINS);

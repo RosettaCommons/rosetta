@@ -46,7 +46,8 @@ public:
 	/// @param[in] max_possible_rotamers The maximum number of rotamers that this rotamer library can define.
 	/// @param[in] correct_rotamer_well_order_on_read Should rotamer wells be auto-sorted so that they're in order form least to greatest in the interval [0,360)?  Note that this should not be necessary, so this defaults to false.
 	/// @param[in] symmetrize_rotamer_library If true, the rotamer library is symmetrized by averaging.  Useful for peptoids with achiral sidechains.
-	RotamericSingleResidueDunbrackLibraryParser( core::Size const num_mainchain_torsions, core::Size const max_possible_chis, core::Size const max_possible_rotamers, bool const correct_rotamer_well_order_on_read, bool const symmetrize_rotamer_library );
+	/// @param[in] write_out If true, the rotamer library is written out to debugging.rotlib in the present working directory. Useful for debugging and to symmetrize asymmetric rotamer libraries for good.
+	RotamericSingleResidueDunbrackLibraryParser( core::Size const num_mainchain_torsions, core::Size const max_possible_chis, core::Size const max_possible_rotamers, bool const correct_rotamer_well_order_on_read, bool const symmetrize_rotamer_library, bool const write_out=false );
 
 	RotamericSingleResidueDunbrackLibraryParser(RotamericSingleResidueDunbrackLibraryParser const & src);
 
@@ -88,6 +89,7 @@ public:
 		return x;
 	}
 
+	void write_rotamer_library() const;
 
 private:
 	/////PRIVATE MEMBER FUNCTIONS/////
@@ -135,7 +137,8 @@ private:
 	/// @details Calls check_correct_vector_lengths(), determine_rotamer_well_order(), check_rotamer_well_order(), update_rotamer_well_order(), and symmetrize_library() (for
 	/// peptoids).  Additional checks and corrections may be added in the future.
 	/// @param[in] filename The name of the rotamer file currently being read.  This is only used for error messages.
-	void do_all_checks_and_corrections( std::string const & filename );
+	/// @param[in] suppress_symmetrization If true, this library has been marked as pre-symmetrized, and so we should not re-symmetrize it.
+	void do_all_checks_and_corrections( std::string const & filename, bool const suppress_symmetrization );
 
 	/// @brief Given a filename, return true if this is a talaris library for a canonical amino acid, false otherwise.
 	bool is_canonical_talaris_library( std::string const &filename) const;
@@ -203,6 +206,9 @@ private:
 
 	/// @brief Should this rotamer library be symmetrized?
 	bool symmetrize_rotamer_library_;
+
+	/// @brief should we write out the definition of this rotamer library?
+	bool write_out_;
 
 };
 
