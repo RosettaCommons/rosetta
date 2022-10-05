@@ -833,7 +833,7 @@
         Comprehensive computational design of ordered peptide macrocycles
     [END_TITLE]
     [BEGIN_JOURNAL]
-        Science 
+        Science
     [END_JOURNAL]
     [BEGIN_VOLUME_ISSUE_PAGES]
         358(6369):1461-6
@@ -1309,3 +1309,30 @@
     [END_DOI]
 [END_CITATION]
 
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "James R. B." "Eastwood" "JRB"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+	"Linhai" "Jiang" "L"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+	"Kent" "Kirshenbaum" "K"
+    	"P. Douglas" "Renfrew" "PD"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+	2022
+    [END_YEAR]
+    [BEGIN_TITLE]
+	Evaluating the Conformations and Dynamics of Peptoid Macrocycles
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+	The Journal of Physical Chemistry B
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+	126 (28), 5161-5174
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1021/acs.jpcb.2c01669
+    [END_DOI]
+[END_CITATION]

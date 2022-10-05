@@ -110,6 +110,7 @@ static MoverRegistrator< cryst::DockLatticeMoverCreator > reg_DockLatticeMoverCr
 static MoverRegistrator< cryst::MakeLatticeMoverCreator > reg_MakeLatticeMoverCreator;
 static MoverRegistrator< cryst::MakeLayerMoverCreator > reg_MakeLayerMoverCreator;
 
+static MoverRegistrator< cyclic_peptide::CrankshaftFlipMoverCreator > reg_CrankshaftMoverCreator;
 static MoverRegistrator< cyclic_peptide::CreateAngleConstraintCreator > reg_CreateAngleConstraintCreator;
 static MoverRegistrator< cyclic_peptide::CreateDistanceConstraintCreator > reg_CreateDistanceConstraintCreator;
 static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_CreateTorsionConstraintCreator;

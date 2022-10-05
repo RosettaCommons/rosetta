@@ -1,0 +1,17 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+  </SCOREFXNS>
+  <RESIDUE_SELECTORS>
+    <True name="full_pose" />
+  </RESIDUE_SELECTORS>
+  <MOVE_MAP_FACTORIES>
+  </MOVE_MAP_FACTORIES>
+  <SIMPLE_METRICS>
+  </SIMPLE_METRICS>
+  <MOVERS>
+    <CrankshaftFlipMover name="csf" allow_peptoid_flips="true" allow_peptide_flips="false" allow_pre_gly_flips="false" />
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover_name="csf"/>
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

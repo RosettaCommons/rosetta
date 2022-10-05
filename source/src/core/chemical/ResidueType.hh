@@ -1223,6 +1223,10 @@ public:
 	/// @brief is an adduct-modified residue?
 	bool is_adduct() const;
 
+	/// @brief is N-substituted? Returns true if this aa is aa_pro or aa_dpr, N-methyl amino acid, peptoid, or proline-like oligourea, false otherwise
+	bool is_N_substituted() const;
+
+
 	/// @brief Does this type have groups (not just single atoms) that are polymer-bond dependent?
 	/// @details Always returns false for non-polymeric residue types.
 	bool has_polymer_dependent_groups() const {

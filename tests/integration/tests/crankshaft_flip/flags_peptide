@@ -1,0 +1,4 @@
+-parser:protocol csf_peptide.xml
+-out:prefix csf_peptide_
+-out:path outputs
+-s inputs/ala7.pdb

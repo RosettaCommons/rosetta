@@ -1,0 +1,4 @@
+-parser:protocol csf_peptoid.xml
+-out:prefix csf_peptoid_
+-out:path outputs
+-s inputs/sar6.pdb

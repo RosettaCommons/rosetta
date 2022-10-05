@@ -11,6 +11,7 @@
 
 sources = {
 	"protocols/cyclic_peptide": [
+	        "CrankshaftFlipMover",
 		"CreateAngleConstraint",
 		"CreateDistanceConstraint",
 		"CreateTorsionConstraint",
@@ -299,4 +300,3 @@ subprojects = [
 	"utility",
 	"ObjexxFCL",
 ]
-

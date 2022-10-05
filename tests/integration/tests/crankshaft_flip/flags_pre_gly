@@ -1,0 +1,4 @@
+-parser:protocol csf_pre_gly.xml
+-out:prefix csf_pre_gly_
+-out:path outputs
+-s inputs/dala_gly5.pdb

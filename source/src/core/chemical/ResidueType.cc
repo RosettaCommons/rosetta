@@ -762,6 +762,14 @@ ResidueType::is_adduct() const
 	return properties().has_property( ADDUCT );
 }
 
+/// @brief Returns true if this aa N-substituted
+bool
+ResidueType::is_N_substituted() const {
+	core::chemical::AA const aa_type( aa() );
+	return ( aa_type == core::chemical::aa_pro || aa_type == core::chemical::aa_dpr || aa_type == core::chemical::aa_b3p || aa_type == core::chemical::ou3_pro || is_n_methylated() || is_peptoid() );
+}
+
+
 /// @brief Is this ResidueTypeBase a base type?
 /// @details Checks the base_type_cop_ pointer.  If it's null, this is assumed to be a base type.
 bool

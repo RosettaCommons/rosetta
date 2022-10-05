@@ -97,6 +97,7 @@
 #include <protocols/cryst/cryst_movers_creator.hh>
 #include <protocols/cryst/refinable_lattice_creator.hh>
 
+#include <protocols/cyclic_peptide/CrankshaftFlipMoverCreator.hh>
 #include <protocols/cyclic_peptide/CreateAngleConstraintCreator.hh>
 #include <protocols/cyclic_peptide/CreateDistanceConstraintCreator.hh>
 #include <protocols/cyclic_peptide/CreateTorsionConstraintCreator.hh>
