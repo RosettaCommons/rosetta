@@ -27,3 +27,4 @@
 #include <protocols/qsar/scoring_grid/LigandPropertyScoreCreator.hh>
 #include <protocols/qsar/scoring_grid/PCSSingleGridCreator.hh>
 #include <protocols/qsar/scoring_grid/PCSMultiGridCreator.hh>
+#include <protocols/qsar/scoring_grid/LipidMemGridCreator.hh>

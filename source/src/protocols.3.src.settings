@@ -367,6 +367,7 @@ sources = {
 		"HbaGrid",
 		"HbdGrid",
 		"LigandPropertyScore",
+		"LipidMemGrid",
 		"PCSSingleGrid",
 		"PCSMultiGrid",
 		"schema_util",

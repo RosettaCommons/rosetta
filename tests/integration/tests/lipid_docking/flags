@@ -1,0 +1,9 @@
+-in:file:s inputs/2rh1_C_413.pdb 
+-in:file:native inputs/2rh1_C_413.pdb 
+-in:file:extra_res_fa inputs/CLR.params
+-mp:setup:spanfiles inputs/2rh1_C.span 
+-out:pdb 
+-packing:pack_missing_sidechains false 
+-parser:protocol lipid_dock.xml 
+-nstruct 1 
+-overwrite

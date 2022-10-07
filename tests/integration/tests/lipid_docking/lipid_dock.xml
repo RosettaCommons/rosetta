@@ -1,0 +1,45 @@
+<ROSETTASCRIPTS>
+
+		<SCOREFXNS>
+			<ScoreFunction name="frank" weights="franklin2019"/>
+		</SCOREFXNS>
+
+		<LIGAND_AREAS>
+			<LigandArea name="inhibitor_dock_sc" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="false"/>
+			<LigandArea name="inhibitor_final_sc" chain="X" cutoff="6.0" add_nbr_radius="true" all_atom_mode="false"/>
+			<LigandArea name="inhibitor_final_bb" chain="X" cutoff="7.0" add_nbr_radius="false" all_atom_mode="true" Calpha_restraints="0.3"/>
+		</LIGAND_AREAS>
+
+		<INTERFACE_BUILDERS>
+			<InterfaceBuilder name="side_chain_for_docking" ligand_areas="inhibitor_dock_sc"/>
+			<InterfaceBuilder name="side_chain_for_final" ligand_areas="inhibitor_final_sc"/>
+			<InterfaceBuilder name="backbone" ligand_areas="inhibitor_final_bb" extension_window="3"/>
+		</INTERFACE_BUILDERS>
+
+		<MOVEMAP_BUILDERS>
+			<MoveMapBuilder name="docking" sc_interface="side_chain_for_docking" minimize_water="false"/>
+			<MoveMapBuilder name="final" sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="false"/>
+		</MOVEMAP_BUILDERS>
+		<SCORINGGRIDS ligand_chain="X" width="25" name="classic_lipid">
+			<LipidMemGrid grid_name="head" weight="0.8" mem_weight="2" lipid_atom="O1" kbpot_file="chol_o_mem_z_smooth_energies"/>
+                	<LipidMemGrid grid_name="tail" weight="1.0" mem_weight="2" lipid_atom="C25" kbpot_file="chol_c25_mem_z_smooth_energies"/>
+			<ClassicGrid grid_name="classic" weight="0.00000001"/>
+                </SCORINGGRIDS>
+
+		<MOVERS>
+			<AddMembraneMover name="add"/>
+			<Transform name="transform" chain="X" box_size="6" move_distance="0.2" angle="20" cycles="500" repeats="5" temperature="5" grid_set="classic_lipid"/>
+			<HighResDocker name="high_res_docker" cycles="6" repack_every_Nth="3" scorefxn="frank" movemap_builder="docking"/>
+			<FinalMinimizer name="final" scorefxn="frank" movemap_builder="final"/>
+			<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="frank" score_in_membrane="True" compute_grid_scores="True" grid_set="classic_lipid" /> 
+		</MOVERS>
+
+		<PROTOCOLS>
+		<Add mover_name="add"/>
+			<Add mover_name="transform"/>
+			<Add mover_name="high_res_docker"/>
+			<Add mover_name="final"/>
+			<Add mover_name="add_scores"/>
+		</PROTOCOLS>
+
+</ROSETTASCRIPTS>
