@@ -704,7 +704,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
             gui_flag, res, output = '', result.exitcode, result.output
             if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
-            else: res, output = execute('Running PyRosetta tests...', f'{python_virtual_environment.activate} && cd {pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 32 {python_virtual_environment.python} self-test.py --timeout 1024 {gui_flag} -j{jobs}', return_='tuple')
+            else: res, output = execute('Running PyRosetta tests...', f'{python_virtual_environment.activate} && cd {pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 128 {python_virtual_environment.python} self-test.py --timeout 2048 {gui_flag} -j{jobs}', return_='tuple')
 
             json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
             with open(json_file) as f: results = json.load(f)
