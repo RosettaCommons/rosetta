@@ -13,6 +13,8 @@
 
 // Unit headers
 #include <core/kinematics/inverse/jump.hh>
+#include <core/kinematics/inverse/util.hh>
+#include <core/kinematics/inverse/AlignmentAtom.hh>
 
 #include <basic/Tracer.hh>
 #include <numeric/HomogeneousTransform.hh>
@@ -30,35 +32,6 @@ namespace inverse {
 static basic::Tracer TR( "core.kinematics.inverse.jump" );
 
 using XYZ = numeric::xyzVector< core::Real >;
-
-namespace {
-
-void
-assert_atoms_are_downstream_of_jump(
-	conformation::Conformation const & conformation,
-	core::Size const jump_id,
-	AlignmentAtomArray const & atom_arr
-){
-	utility::vector1< bool > is_downstream =
-		conformation.fold_tree().partition_by_jump( jump_id );
-	core::Size const resid_that_should_be_downstream =
-		conformation.fold_tree().jump_edge( jump_id ).stop();
-
-	//Flip partition if needed
-	if ( !is_downstream[ resid_that_should_be_downstream ] ) {
-		for ( core::Size ii = 1; ii <= is_downstream.size(); ++ii ) {
-			is_downstream[ ii ] = !is_downstream[ ii ];
-		}
-	}
-
-	for ( AlignmentAtom const & aa : atom_arr.atoms ) {
-		if ( ! is_downstream[ aa.id.rsd() ] ) {
-			throw CREATE_EXCEPTION( utility::excn::BadInput, "Residue " + std::to_string(aa.id.rsd()) + " is being used to calculate jump " + std::to_string(jump_id) + " even though this residue is not downstream of this jump." );
-		}
-	}
-}
-
-} //anonymous namespace
 
 ///@brief Update a desired jump in the conformation to place the atoms in the AlignmentAtomArray to the desired position
 ///@details protocol is described as comments in the body of the code.

@@ -251,6 +251,8 @@ sources = {
 	],
 	"core/kinematics/inverse": [
 		"jump",
+		"jump_from_internal_coords",
+		"util",
 	],
 	"core/kinematics/tree": [
 		"Atom_",

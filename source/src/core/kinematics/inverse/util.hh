@@ -7,44 +7,38 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/kinematics/inverse/jump.hh
+/// @file   core/kinematics/inverse/util.hh
 /// @brief  Utility functions for calculating jumps by knowing desired atom positions
 /// @author Jack Maguire
 
 
-#ifndef INCLUDED_core_kinematics_inverse_jump_HH
-#define INCLUDED_core_kinematics_inverse_jump_HH
+#ifndef INCLUDED_core_kinematics_inverse_util_HH
+#define INCLUDED_core_kinematics_inverse_util_HH
 
 
 // Package headers
 #include <core/kinematics/inverse/AlignmentAtom.fwd.hh>
-#include <core/id/types.hh>
-
 #include <core/types.hh>
-
-#include <core/id/AtomID.hh>
-#include <core/kinematics/Stub.hh>
-#include <core/kinematics/Jump.fwd.hh>
-#include <core/conformation/Conformation.hh>
-
-#include <numeric/xyzVector.hh>
-
-#include <array>
+#include <core/conformation/Conformation.fwd.hh>
 
 namespace core {
 namespace kinematics {
 namespace inverse {
 
-///////////////////////
-// This is the big one!
-///@brief Update a desired jump in the conformation to place the atoms in the AlignmentAtomArray to the desired position
-///@details protocol is described as comments in the body of the code.
-///@author Jack Maguire
-Jump
-calculate_new_jump(
+struct AlignmentAtomArray;
+
+void
+assert_atoms_are_downstream_of_jump(
 	conformation::Conformation const & conformation,
 	core::Size const jump_id,
-	AlignmentAtomArray const & atoms
+	AlignmentAtomArray const & atom_arr
+);
+
+void
+assert_atoms_are_upstream_of_jump(
+	conformation::Conformation const & conformation,
+	core::Size const jump_id,
+	AlignmentAtomArray const & atom_arr
 );
 
 } // namespace inverse
@@ -52,4 +46,4 @@ calculate_new_jump(
 } // namespace core
 
 
-#endif // INCLUDED_core_kinematics_inverse_jump_HH
+#endif // INCLUDED_core_kinematics_inverse_util_HH

@@ -177,6 +177,7 @@ sources = {
 	],
 	"kinematics/inverse" : [
 		"jump",
+		"jump_from_internal_coords",
 	],
 	"membrane" : [
 		"hull",
@@ -1144,6 +1145,7 @@ testinputfiles = [
 	"io/mmtf/ncbb_packer_palette_cycpep_pre_stage_3.pdb",
 	"io/mmtf/oligourea_predict_native.pdb",
 	"kinematics/test.pdb",
+	"kinematics/inverse/3u3b.pdb.gz",
 	"optimization/test_in.pdb",
 	"optimization/symmetry/fibril.symm",
 	"optimization/symmetry/3dg1_INPUT.pdb",

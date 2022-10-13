@@ -17,6 +17,8 @@
 
 // Unit Headers
 #include <core/kinematics/inverse/jump.hh>
+#include <core/kinematics/inverse/util.hh>
+#include <core/kinematics/inverse/AlignmentAtom.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/id/AtomID.hh>
 
