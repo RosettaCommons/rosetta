@@ -13,7 +13,7 @@
 /// and generating CapHits in PDB form.
 ///
 /// @author Kristin Blacklock (kristin.blacklock@rutgers.edu)
-/// @note Last Modified: 9/23/2015
+/// @note Last Modified: 13 October 2022 by Vikram K. Mulligan. (Promoted to public app.)
 
 // Unit Headers
 #include <devel/init.hh>
@@ -46,7 +46,7 @@
 using Vector = numeric::xyzVector<core::Real>;
 using Matrix = numeric::xyzMatrix<core::Real>;
 
-basic::Tracer TR("PDBTransform");
+basic::Tracer TR("apps.public.loop_modeling.transform_loodo");
 
 core::kinematics::Stub
 parse_into_stub( utility::vector1<core::Real> const & in_vec )

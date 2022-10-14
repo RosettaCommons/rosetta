@@ -569,10 +569,6 @@ sources = {
  	],
 
 	# K ######################################################################
-	"pilot/kblacklock" : [
-		"loodo",
-		"transform_loodo",
-	],
 	"pilot/kdrew" : [
 		"oop_dock_design",
 		"oop_creator",

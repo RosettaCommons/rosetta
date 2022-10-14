@@ -10,10 +10,11 @@
 /// @file /src/apps/pilot/kblacklock/loodo.cc
 ///
 /// @brief Pilot Application for LooDo Algorithm.
-/// @details This algorithm, named LooDo, utilizes large libraries of peptide fragments to perform loop-directed domain placement searches of an insert domain with respect to a parent domain.
+/// @details This algorithm, named LooDo, utilizes large libraries of peptide fragments to perform
+/// loop-directed domain placement searches of an insert domain with respect to a parent domain.
 ///
 /// @author Kristin Blacklock (kristin.blacklock@rutgers.edu)
-/// @note Last Modified: 9/23/2015
+/// @note Last Modified: 13 October 2022 by Vikram K. Mulligan. (Promoted to public app.)
 
 // Unit Headers
 #include <devel/init.hh>
@@ -60,7 +61,7 @@
 #include <fstream>
 
 
-static basic::Tracer TR( "app.loodo" );
+static basic::Tracer TR( "apps.public.loop_modeling.loodo" );
 
 //protocols::forge::components::VarLengthBuild::FrameList
 //pick_fragments(
