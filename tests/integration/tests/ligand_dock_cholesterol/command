@@ -37,7 +37,7 @@ cd %(workdir)s
 
 # Some time test could output information which is might be of interest but not stable from
 # run-to-run: run times, memory consumption and so on. To preserve this information please save it in file with ‘.ignore’ extension:
-date > start-time.ignore
+#date > start-time.ignore
 
 #
 # It's nice to test that the executable exists first, to ensure the test actually runs:
@@ -65,4 +65,4 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 ##     > /dev/null 2>&1
 #
 
-date > finish-time.ignore
+#date > finish-time.ignore

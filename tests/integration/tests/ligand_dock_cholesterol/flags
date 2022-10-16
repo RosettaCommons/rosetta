@@ -4,6 +4,9 @@
 -mp:setup:spanfiles inputs/2rh1_C.span 
 -out:pdb 
 -packing:pack_missing_sidechains false 
--parser:protocol lipid_dock.xml 
+-parser:protocol ligand_dock.xml 
 -nstruct 1 
 -overwrite
+-mute core.util.prof ## dont show timing info
+-mute core.io.database
+-mute protocols.qsar.scoring_grid.GridManager
