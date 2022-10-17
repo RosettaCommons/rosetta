@@ -123,7 +123,7 @@ ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , core::scoring::ScoreF
 		conformation::Residue const &rsd ( pose.residue(r) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 
-		ccsum += core::scoring::electron_density::getDensityMap().matchRes(r, rsd, pose, symminfo, true );
+		ccsum += core::scoring::electron_density::getDensityMap().matchRes(r, rsd, pose, symminfo, false, true );
 		nressum++;
 
 		// if we're symmetric, add contributions from all copies
@@ -131,7 +131,7 @@ ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , core::scoring::ScoreF
 		utility::vector1< core::Size > bbclones = symminfo->bb_clones( r );
 		for ( int i=1; i<=(int)bbclones.size(); ++i ) {
 			ccsum += core::scoring::electron_density::getDensityMap().matchRes(
-				bbclones[i], pose.residue(bbclones[i]), pose, symminfo, true );
+				bbclones[i], pose.residue(bbclones[i]), pose, symminfo, false, true );
 		}
 		nressum++;
 	}
@@ -248,7 +248,7 @@ ElecDensEnergy::residue_pair_energy(
 		if ( ! symminfo->bb_is_independent( r ) ) return;
 	}
 
-	core::Real cc = core::scoring::electron_density::getDensityMap().matchRes(r, rsd, pose, symminfo, false );
+	core::Real cc = core::scoring::electron_density::getDensityMap().matchRes(r, rsd, pose, symminfo, false, false );
 	Real z_CC = cc / 0.1;
 	Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
 	Real edensScore = log ( p_null );
@@ -258,7 +258,7 @@ ElecDensEnergy::residue_pair_energy(
 		utility::vector1< core::Size > bbclones = symminfo->bb_clones( r );
 		for ( int i=1; i<=(int)bbclones.size(); ++i ) {
 			cc = core::scoring::electron_density::getDensityMap().matchRes(
-				bbclones[i], pose.residue(bbclones[i]), pose, symminfo, false );
+				bbclones[i], pose.residue(bbclones[i]), pose, symminfo, false, false );
 			z_CC = cc / 0.1;
 			p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
 			edensScore += log ( p_null ) / ((core::Real)nsubunits);

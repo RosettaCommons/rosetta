@@ -1887,8 +1887,8 @@ core::Real ElectronDensity::matchRes(
 	core::conformation::Residue const &rsd,
 	core::pose::Pose const &pose,
 	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
-	bool cacheCCs /* = false */
-) {
+	bool bfactors /* = false */,
+	bool cacheCCs /* = false */) {
 	// make sure map is loaded
 	if ( !isLoaded_ ) {
 		TR.Error << "ElectronDensity::matchRes called but no map is loaded!\n";
@@ -2067,7 +2067,6 @@ core::Real ElectronDensity::matchRes(
 	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
 	core::Real clc_x, obs_x;
 	int mapX,mapY,mapZ;
-
 	for ( int i=1; i<=(int)atmList.size(); ++i ) {
 		numeric::xyzVector< core::Real > & atm_i = atmList[i];
 		atm_i[0] -= bbox_min[0];
@@ -2075,22 +2074,31 @@ core::Real ElectronDensity::matchRes(
 		atm_i[2] -= bbox_min[2];
 
 		numeric::xyzVector< core::Real > atm_j, del_ij;
-
 		core::Real k,C;
-		if ( i <= nResAtms ) {
+		core::Real const B_upper_limit = 600; // stolen from calcRhoC default
+		OneGaussianScattering sig_j;
+		if ( i <= nResAtms ) { // this is just heavy atoms
 			std::string elt_i = atom_type_set[ rsd.atom_type_index( i ) ].element();
-			OneGaussianScattering sig_j = get_A( elt_i );
-			k = sig_j.k( effectiveB );
-			C = sig_j.C( k );
+			sig_j = get_A( elt_i );
+			k = sig_j.k( pose.pdb_info()->temperature(resid, i), B_upper_limit );
 		} else if ( i<= lastMaskedAtom ) {
-			OneGaussianScattering const &sig_j = contextAtomAs[i-nResAtms];
-			k = sig_j.k( effectiveB );
-			C = sig_j.C( k );
+			sig_j = contextAtomAs[i-nResAtms];
+			core::Size rid = contextAtomIds[i-nResAtms].first;
+			core::Size aid = contextAtomIds[i-nResAtms].second;
+			k = sig_j.k( pose.pdb_info()->temperature(rid, aid), B_upper_limit );
 		} else {
-			OneGaussianScattering const &sig_j = neighborAtomAs[i-lastMaskedAtom];
-			k = sig_j.k( effectiveB );
-			C = sig_j.C( k );
+			sig_j = neighborAtomAs[i-lastMaskedAtom];
+			core::Size rid = neighborAtomIds[i-lastMaskedAtom].first;
+			core::Size aid = neighborAtomIds[i-lastMaskedAtom].second;
+			k = sig_j.k( pose.pdb_info()->temperature(rid, aid), B_upper_limit );
 		}
+
+		if ( bfactors ) {
+			k = std::min( k, 4*M_PI*M_PI/minimumB );
+		} else {
+			k = sig_j.k( effectiveB );
+		}
+		C = sig_j.C( k );
 
 		for ( int z=1; z<=bbox_dims[2]; ++z ) {
 			atm_j[2] = z;

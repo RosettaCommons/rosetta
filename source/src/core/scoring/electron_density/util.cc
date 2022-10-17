@@ -304,17 +304,22 @@ calculate_density_nbr(
 			}
 		}
 
-		Real dens_rscc = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, symminfo , false);
+		Real dens_rscc = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, symminfo , false, false);
 		Size asymm_num_r = r;
 		per_rsd_dens[asymm_num_r] = dens_rscc;
 		rscc_sum    += per_rsd_dens[asymm_num_r];
 		sq_rscc_sum += per_rsd_dens[asymm_num_r]*per_rsd_dens[asymm_num_r];
-
-		TR.Trace << "res: " << asymm_num_r << " symmetric num: " << r << " dens_rscc: " << dens_rscc << std::endl;
+		if ( pose.pdb_info() ) {
+			TR.Trace << "res: " << asymm_num_r << " symmetric num: " << r << " " << pose.pdb_info()->number(r) << pose.pdb_info()->chain(r) << " dens_rscc: " << dens_rscc << std::endl;
+		} else {
+			TR.Trace << "res: " << asymm_num_r << " symmetric num: " << r << " dens_rscc: " << dens_rscc << std::endl;
+		}
 	}
 	// get mean and stdev for density rscc
 	Real per_rsd_dens_mean  = rscc_sum/nres_calculate;
 	Real per_rsd_dens_stdev = std::sqrt( sq_rscc_sum/nres_calculate - per_rsd_dens_mean*per_rsd_dens_mean );
+	TR.Trace << "HERE HERE HERE rscc_sum " << rscc_sum << " sq_rscc_sum " << sq_rscc_sum << std::endl;
+	TR.Trace << "AGIN per_rsd_dens_mean " << per_rsd_dens_mean << " per_rsd_dens_stdev " << per_rsd_dens_stdev << std::endl;
 
 
 	///////////////////////////////////////////////////////
@@ -409,6 +414,8 @@ calculate_density_nbr(
 			<< " nbrdens_mean: "    << nbrdens_mean
 			<< " nbrdens_stdev: "   << nbrdens_stdev
 			<< " i_nbr_zscore: "    << i_nbrdens_zscore
+			<< " per_rsd_dens_mean: " << per_rsd_dens_mean
+			<< " per_rsd_dens_stdev: " << per_rsd_dens_stdev
 			<< " i_per_rsd_zscore: " << i_per_rsd_dens_zscore
 			<< " nbrs: "            << n_nbrs
 			<< std::endl;

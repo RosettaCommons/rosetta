@@ -48,6 +48,7 @@
 #include <core/scoring/UnfoldedStatePotential.fwd.hh>
 #include <core/scoring/VdWTinkerPotential.fwd.hh>
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
+#include <core/scoring/DensityZscoresStatsSetup.fwd.hh>
 
 #include <core/scoring/aa_composition_energy/AACompositionEnergySetup.fwd.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.fwd.hh>
@@ -582,6 +583,10 @@ public:
 	/// @brief Get an instance of the OmegaPreferencesFunction scoring object.
 	carbohydrates::OmegaPreferencesFunction const & get_OmegaPreferencesFunction() const;
 
+	/// @brief Get a const reference to an edens stats std::map.
+	/// @author Gabriella Reggiano
+	core::scoring::DensityZscoresStatsSetup const & get_edens_stats_table() const;
+
 	/// @brief Test if there is an EnergyMethod class defined for a
 	/// given score type.
 	/// @details I THINK that this is threadsafe (VKM, 20 July 2017).
@@ -709,6 +714,8 @@ public:
 		bool const use_polycubic_interpolation,
 		bool const prepro_table
 	) const;
+
+
 
 private:
 
@@ -1183,6 +1190,11 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static core::scoring::netcharge_energy::NetChargeEnergySetupOP create_netcharge_energy_setup_instance( std::string const &filename );
 
+	/// @brief Load the density cross-correlation stats database from disk. Store AA as first key, bfactor bin desc as second key.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Gabriella Reggiano
+	static core::scoring::DensityZscoresStatsSetupOP create_edens_stats_setup_instance();
 private:
 
 #ifdef MULTI_THREADED
@@ -1262,6 +1274,7 @@ private:
 	mutable std::mutex disulf_matching_potential_mutex_;
 	mutable std::mutex carb_chienergy_mutex_;
 	mutable std::mutex carb_omegapref_mutex_;
+	mutable std::mutex edens_stats_mutex_;
 	mutable utility::thread::ReadWriteMutex memb_etable_mutex_;
 	mutable utility::thread::ReadWriteMutex etable_mutex_;
 	mutable std::mutex cp_rep_map_mutex_;
@@ -1340,6 +1353,7 @@ private:
 	mutable std::atomic_bool carb_chienergy_bool_;
 	mutable std::atomic_bool carb_omegapref_bool_;
 	mutable std::atomic_bool cp_rep_map_bool_;
+	mutable std::atomic_bool edens_stats_bool_;
 #endif //OLDER_GXX_STDLIB
 #endif //MULTI_THREADED
 	// WARNING -- if you add something here don't forget to initialize to 0 in the constructor
@@ -1416,6 +1430,7 @@ private:
 	mutable UnfoldedStatePotentialOP unf_state_;
 	mutable carbohydrates::CHIEnergyFunctionOP CHI_energy_function_;
 	mutable carbohydrates::OmegaPreferencesFunctionOP carbohydrate_omega_preferences_function_;
+	mutable DensityZscoresStatsSetupOP elec_dens_zscore_stats_;
 
 	mutable nv::NVlookupOP NV_lookup_table_;
 	mutable orbitals::OrbitalsLookupOP orbitals_lookup_table_;

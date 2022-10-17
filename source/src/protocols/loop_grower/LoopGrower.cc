@@ -3162,7 +3162,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, core::Size rangelo, core::S
 			if ( includesheets == 2 && i > rangehi && i <= total_residues_+5 ) continue;
 			core::conformation::Residue currentres = pose.residue(i);
 			core::scoring::electron_density::getDensityMap().setSCscaling( 0.2 );
-			Real residuedens = windowdensweight_ * -core::scoring::electron_density::getDensityMap().matchRes(i, currentres, pose, nullptr, false);
+			Real residuedens = windowdensweight_ * -core::scoring::electron_density::getDensityMap().matchRes(i, currentres, pose, nullptr, false, false);
 			totalresdens += residuedens;
 		}
 		//this deals with really bad cases they may get a negative score due to the way continuous density is calculated. This code just gives them a poor score rather than using those equations

@@ -65,7 +65,7 @@ public:
 		core::Real score_cut );
 
 	void automode_scores( core::pose::Pose & pose,
-		std::map< core::Size, core::Real > & scores );
+		std::map< core::Size, core::Real > & scores);
 
 	/////////////////////////////////////////////////////////////
 	void user( std::set<core::Size> user_pos,

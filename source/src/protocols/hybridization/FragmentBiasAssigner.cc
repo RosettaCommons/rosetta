@@ -274,6 +274,7 @@ automode_scores(
 
 	numeric::calc_zscore( perrsd_dens_,     zscore_dens           );
 	numeric::calc_zscore( perrsd_nbrdens_,  zscore_nbrdens        );
+
 	numeric::calc_zscore( perrsd_rama_,     zscore_rama,     true );
 	numeric::calc_zscore( perrsd_geometry_, zscore_geometry, true );
 
@@ -446,7 +447,7 @@ density(
 	// turn score_symm_complex flag on; otherwise it won't see symmetry, and will return 0
 	for ( int r=1; r<=(int)nres_; ++r ) {
 
-		perrsd_dens_[r] = core::scoring::electron_density::getDensityMap().matchRes( r, pose.residue(r), pose, symminfo_, false);
+		perrsd_dens_[r] = core::scoring::electron_density::getDensityMap().matchRes( r, pose.residue(r), pose, symminfo_, false, false);
 		//CCsum += perrsd_dens_[r];
 		//CCsum2 += perrsd_dens_[r]*perrsd_dens_[r];
 	}

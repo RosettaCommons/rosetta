@@ -25,6 +25,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/hybridization/FragmentBiasAssigner.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <protocols/electron_density/DensityZscores.hh>
 
 #include <basic/options/util.hh>
 #include <devel/init.hh>
@@ -71,7 +72,7 @@ OPT_1GRP_KEY(Boolean, denstools, perres)
 OPT_1GRP_KEY(Boolean, denstools, bin_squared)
 OPT_1GRP_KEY(Boolean, denstools, maskonly)
 OPT_1GRP_KEY(Boolean, denstools, cutonly)
-
+OPT_1GRP_KEY(Boolean, denstools, density_zscores)
 
 using core::scoring::electron_density::poseCoords;
 using core::scoring::electron_density::poseCoord;
@@ -197,7 +198,9 @@ densityTools()
 	utility::vector1< core::Real > resobins, mapI, maskedmapI, modelI, maskI;
 	utility::vector1< core::Size > resobin_counts;
 	utility::vector1< core::Real > perResCC;
+	utility::vector1< core::Real > per3ResCC;
 	std::map< core::Size, core::Real > perResStrain;
+	std::map< core::Size, core::Real > perResBfactor, nbhBfactor;
 
 	utility::vector1< core::Real > mapmapFSC, maskedMapMapFSC;
 	utility::vector1< core::Real > modelmapFSC, maskedModelMapFSC;
@@ -365,7 +368,6 @@ densityTools()
 			core::Size nres = fullpose.size();
 			perResCC.resize( nres, 0.0 );
 			for ( Size i= 1; i <=nres; ++i ) perResStrain[i] = 0.0;
-
 			protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 			dockindens->apply( fullpose );
 
@@ -458,6 +460,45 @@ densityTools()
 		}
 	}
 
+	if ( userpose && option[ denstools::density_zscores ]() ) {
+		// this is not well-done, consider another way to do this stuff
+		core::import_pose::pose_from_file( fullpose, pdbfile , core::import_pose::PDB_file);
+
+		core::Size nres = fullpose.size();
+
+		core::scoring::electron_density::getDensityMap().set_nres( nres );
+		core::scoring::electron_density::getDensityMap().setScoreWindowContext( true );
+		core::scoring::electron_density::getDensityMap().setWindow( option[ denstools::rscc_wdw ]() );
+
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+		scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
+		(*scorefxn)(fullpose);
+
+		protocols::electron_density::DensityZscores dzsc = protocols::electron_density::DensityZscores();
+		dzsc.apply(fullpose);
+		utility::vector1< core:: Real > res_bfacs = dzsc.get_res_bfacs();
+		utility::vector1< core::Real > nbh_bfacs = dzsc.get_nbrhood_bfacs();
+		perResCC = dzsc.get_win1_denscc();
+		per3ResCC = dzsc.get_win3_denscc();
+		utility::vector1< core::Real > win1_dens_zsc = dzsc.get_win1_dens_zscore();
+		utility::vector1< core::Real > win3_dens_zsc = dzsc.get_win3_dens_zscore();
+
+		TR << "PERRESCC residue resn chID resi bfactor local_bfactor"
+			<< " perResCC per3ResCC perResZDensWin1 perResZDensWin3 " << std::endl;
+		for ( core::uint r = 1; r <= perResCC.size(); ++r ) {
+			if ( fullpose.pdb_info() ) {
+				core::pose::PDBInfoOP pdbinfo = fullpose.pdb_info();
+				TR << "PERRESCC residue " << fullpose.residue(r).name3() << " " << pdbinfo->chain(r) << " " << pdbinfo->number(r) << pdbinfo->icode(r)
+					<< " " << res_bfacs[r] << " " << nbh_bfacs[r]
+					<< " " << perResCC[r] << " " << per3ResCC[r]
+					<< " " << win1_dens_zsc[r] << " " << win3_dens_zsc[r] << std::endl;
+			} else {
+				TR << "PERRESCC residue " << r << " " << perResCC[r] << " " << per3ResCC[r]
+					<< " " << win1_dens_zsc[r] << " " << win3_dens_zsc[r] << std::endl;
+			}
+		}
+	}
+
 	// compact
 	if ( userpose ) {
 		TR << pdbfile << " RSCC/FSC/FSCmask: " << RSCC << " " << modelMapFSCsum << " " << maskedModelMapFSCsum;
@@ -491,6 +532,7 @@ main( int argc, char * argv [] )
 		NEW_OPT(denstools::rscc_wdw, "sliding window to calculate rscc", 3);
 		NEW_OPT(denstools::maskonly, "mask", false);
 		NEW_OPT(denstools::cutonly, "cut", false);
+		NEW_OPT(denstools::density_zscores, "calculate density z-scores for protein", false);
 
 		devel::init( argc, argv );
 		densityTools();

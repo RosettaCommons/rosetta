@@ -263,7 +263,7 @@ PerResidueDensityFitMetric::calculate(const pose::Pose & input_pose) const {
 
 		for ( Size i = 1; i <= rsd_mask.size(); ++i ) {
 			if ( ! rsd_mask[i] ) continue;
-			Real dens_rscc = core::scoring::electron_density::getDensityMap().matchRes( i , pose.residue(i), pose, symminfo , false);
+			Real dens_rscc = core::scoring::electron_density::getDensityMap().matchRes( i , pose.residue(i), pose, symminfo , false, false);
 
 			TR.Debug << pose.pdb_info()->pose2pdb(i) << " " << dens_rscc << std::endl;
 			result[i] = dens_rscc;

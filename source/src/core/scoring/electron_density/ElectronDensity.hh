@@ -218,6 +218,7 @@ public:
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
 		core::conformation::symmetry::SymmetryInfoCOP symmInfo=nullptr,
+		bool bfactors=false,
 		bool cacheCCs=false
 	);
 
@@ -364,6 +365,7 @@ public:
 	inline utility::vector1< core::kinematics::RT > getsymmOps() const { return symmOps; }
 
 	inline core::Real getAtomMask( ) const { return ATOM_MASK; }
+	inline void setAtomMask( core::Real newVal ) { ATOM_MASK = newVal; }
 
 	///@brief set scoring to use only a subset of residues
 	void maskResidues( int scoring_mask ) {

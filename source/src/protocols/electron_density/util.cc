@@ -95,7 +95,7 @@ protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real
 		} else {
 			perResCC[r] =
 				std::max(
-				core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, nullptr , false),
+				core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, nullptr , false, false),
 				0.001);
 		}
 	}

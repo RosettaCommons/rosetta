@@ -255,6 +255,7 @@ sources = {
 		"ContextGraph",
 		"ContextGraphFactory",
 		"DenseEnergyContainer",
+		"DensityZscoresStatsSetup",
 		"DerivVectorPair",
 		"Energies",
 		"EnergyGraph",

@@ -168,6 +168,7 @@ static MoverRegistrator< electron_density::BfactorFittingMoverCreator > reg_Bfac
 static MoverRegistrator< electron_density::ScaleMapIntensitiesCreator > reg_ScaleMapIntensitiesCreator;
 static MoverRegistrator< electron_density::VoxelSpacingRefinementMoverCreator > reg_VoxelSpacingRefinementCreator;
 static MoverRegistrator< electron_density::ReportFSCCreator > reg_ReportFSCCreator;
+static MoverRegistrator< electron_density::DensityZscoresCreator > reg_DensityZscoresCreator;
 
 static MoverRegistrator< environment::EnvMoverCreator > reg_EnvMoverCreator;
 static MoverRegistrator< environment::CoMTrackerCMCreator > reg_CoMTrackerCMCreator;

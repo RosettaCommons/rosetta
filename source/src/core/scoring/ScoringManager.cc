@@ -49,6 +49,7 @@
 #include <core/scoring/facts/FACTSPotential.hh>
 #include <core/scoring/GenericBondedPotential.hh>
 #include <core/scoring/AtomVDW.hh>
+#include <core/scoring/DensityZscoresStatsSetup.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>
 #include <core/scoring/carbohydrates/CHIEnergyFunction.hh>
@@ -282,6 +283,7 @@ ScoringManager::ScoringManager() :
 	carb_chienergy_bool_(false),
 	carb_omegapref_bool_(false),
 	cp_rep_map_bool_(false),
+	edens_stats_bool_(false),
 #endif //OLDER_GXX_STDLIB
 #endif //MULTI_THREADED
 	vdw_tinker_potential_( /* 0 */ ),
@@ -332,6 +334,7 @@ ScoringManager::ScoringManager() :
 	sutbp_( /* 0 */),
 	unf_state_( /* 0 */ ),
 	CHI_energy_function_( /* 0 */ ),
+	elec_dens_zscore_stats_(),
 	NV_lookup_table_(/* 0 */),
 	orbitals_lookup_table_( /* 0 */ ),
 	DDP_lookup_table_(/* 0 */),
@@ -1166,6 +1169,17 @@ ScoringManager::get_OmegaPreferencesFunction( ) const
 
 
 	return *carbohydrate_omega_preferences_function_;
+}
+
+/// @brief get const reference to elec dens stats std::map.
+/// @author Gabriella Reggiano
+DensityZscoresStatsSetup const &
+ScoringManager::get_edens_stats_table( ) const
+{
+	std::function< DensityZscoresStatsSetupOP () > creator( std::bind( &ScoringManager::create_edens_stats_setup_instance ) );
+	utility::thread::safely_create_load_once_object_by_OP( creator, elec_dens_zscore_stats_, SAFELY_PASS_MUTEX( edens_stats_mutex_ ), SAFELY_PASS_THREADSAFETY_BOOL( edens_stats_bool_ ) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
+
+	return *elec_dens_zscore_stats_;
 }
 
 /// @brief make etable for extra partially softies
@@ -2666,6 +2680,16 @@ ScoringManager::create_netcharge_energy_setup_instance(
 	NetChargeEnergySetupOP op_to_return( new NetChargeEnergySetup );
 	op_to_return->initialize_from_file( filename );
 	return op_to_return;
+}
+
+/// @brief Create an instance of ElecDens by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Gabriella Reggiano
+DensityZscoresStatsSetupOP
+ScoringManager::create_edens_stats_setup_instance( )
+{
+	return utility::pointer::make_shared< DensityZscoresStatsSetup >();
 }
 
 /// @brief When a ScoreFunction the weight for a particular ScoreType set from 0

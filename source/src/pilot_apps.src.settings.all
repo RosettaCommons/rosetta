@@ -25,6 +25,10 @@
 # PLEASE KEEP NAMES IN ALPHABETICAL ORDER!
 
 sources = {
+    # GABI GET RID OF THIS
+	"pilot/reggiano" : [
+		"density_res_zscores",
+	],
 	# A ######################################################################
 	"pilot/amelie" : [
 		"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */

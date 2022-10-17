@@ -154,6 +154,7 @@
 #include <protocols/electron_density/VoxelSpacingRefinementMoverCreator.hh>
 #include <protocols/electron_density/ScaleMapIntensitiesCreator.hh>
 #include <protocols/electron_density/ReportFSCCreator.hh>
+#include <protocols/electron_density/DensityZscoresCreator.hh>
 
 #include <protocols/environment/EnvMoverCreator.hh>
 #include <protocols/environment/CoMTrackerCMCreator.hh>

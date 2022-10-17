@@ -104,6 +104,26 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void set_scorescale( core::Real scorescale ){ scorescale_ = scorescale; };
+	void set_wt_adp( core::Real wt_adp ){ wt_adp_ = wt_adp; };
+	void set_wt_dens( core::Real wt_dens ){ wt_dens_ = wt_dens; };
+	void set_rmax( core::Real rmax ){ rmax_ = rmax; };
+	void set_radius_exp( core::Size radius_exp ){ radius_exp_ = radius_exp; };
+	void set_max_iter( core::Size max_iter ){ max_iter_ = max_iter; };
+	void set_minimizer( std::string minimizer ){ minimizer_ = minimizer; };
+	void set_init( bool init ){ init_ = init; };
+	void set_exact( bool exact ){ exact_ = exact; };
+
+	core::Real get_scorescale(){ return scorescale_; };
+	core::Real get_wt_adp(){ return wt_adp_; };
+	core::Real get_wt_dens(){ return wt_dens_; };
+	core::Real get_rmax(){ return rmax_; };
+	core::Size get_radius_exp(){ return radius_exp_; };
+	core::Size get_max_iter(){ return max_iter_; };
+	std::string get_minimizer(){ return minimizer_; };
+	bool get_init(){ return init_; };
+	bool get_exact(){ return exact_; };
+
 
 private:
 	core::Real scorescale_;  // overall weighing on score
