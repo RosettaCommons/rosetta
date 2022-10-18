@@ -149,7 +149,7 @@ def get_cmake_compiler_options():
 
     return ''
 
-def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
+def install_llvm_tool(name, source_location, prefix_root, debug, compiler, jobs, gcc_install_prefix, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
         Return absolute path to executable on success and terminate with error on failure
     '''
@@ -170,7 +170,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     if res: binder_head = 'unknown'
     else: binder_head = output.split('\n')[0]
 
-    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.5.1, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.5.1, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=compiler, gcc_install_prefix=gcc_install_prefix)
     signature_file_name = build_dir + '/.signature.json'
 
     disk_signature = dict(config = 'unknown', binder = 'unknown')
@@ -242,8 +242,8 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
             'Building tool: {}...'.format(name), # -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=1
             'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja binder {headers} {jobs}'.format( # was 'binder clang', we need to build Clang so lib/clang/<version>/include is also built
                 build_dir=build_dir, config=config,
-                jobs="-j{}".format(Options.jobs) if Options.jobs else "",
-                gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else '',
+                jobs=f'-j{jobs}' if jobs else '',
+                gcc_install_prefix='-DGCC_INSTALL_PREFIX='+gcc_install_prefix if gcc_install_prefix else '',
                 headers=headers,
             ),
             silence_output=True)
@@ -901,7 +901,7 @@ def main(args):
                     if 'source/src/python/PyRosetta/binder' not in output: print('ERROR: Binder submodule is not found... terminating...'); sys.exit(1)
 
         if not Options.pybind11: Options.pybind11 = os.path.abspath(rosetta_source_path + '/external/pybind11/include')  # install_pybind11(rosetta_source_path + '/build/prefix')
-        if not Options.binder: Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', Options.binder_debug)
+        if not Options.binder: Options.binder = install_llvm_tool('binder', rosetta_source_path+'/src/python/PyRosetta/binder/source', rosetta_source_path + '/build/prefix', debug=Options.binder_debug, compiler=Options.compiler, jobs=Options.jobs, gcc_install_prefix=Options.gcc_install_prefix)
 
         generate_bindings(rosetta_source_path)
 
