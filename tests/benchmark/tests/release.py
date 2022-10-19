@@ -366,14 +366,14 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     return results
 
 
-def rosetta_documentaion(repository_root, working_dir, platform, config, hpc_driver, verbose, debug):
+def rosetta_documentation(repository_root, working_dir, platform, config, hpc_driver, verbose, debug):
     memory = config['memory'];  jobs = config['cpu_count']
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
 
-    print(f'Running Rosetta documentaion release: at working_dir={working_dir!r} with rosetta_dir={repository_root}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...')
+    print(f'Running Rosetta documentation release: at working_dir={working_dir!r} with rosetta_dir={repository_root}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...')
 
-    release_name = f'rosetta.documentaion.{config["branch"]}-{config["revision"]}'
+    release_name = f'rosetta.documentation.{config["branch"]}-{config["revision"]}'
     archive = working_dir + '/' + release_name + '.tar.bz2'
 
     html_path = f'{repository_root}/source/html'
@@ -388,7 +388,7 @@ def rosetta_documentaion(repository_root, working_dir, platform, config, hpc_dri
     dir_util_module.copy_tree(html_path, html_working_dir, update=False)
 
     with tarfile.open(archive, "w:bz2") as t: t.add(html_working_dir, arcname=release_name)
-    release_path = f'{config["release_root"]}/rosetta/archive/{config["branch"]}/documentaion'
+    release_path = f'{config["release_root"]}/rosetta/archive/{config["branch"]}/documentation'
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     shutil.move(archive, release_path + '/' + release_name+'.tar.bz2')
@@ -530,13 +530,13 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
 
 
-def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+def py_rosetta4_documentation(kind, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
     #if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
     TR = Tracer(True)
 
-    TR('Running PyRosetta4-documentaion release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+    TR('Running PyRosetta4-documentation release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
     release_root = config['release_root']
 
@@ -1090,7 +1090,7 @@ def run(test, repository_root, working_dir, platform, config, hpc_driver=None, v
     if   test =='source': return rosetta_source_release(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='binary': return rosetta_source_and_binary_release(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, release_as_git_repository=False)
 
-    elif test =='rosetta.documentation':  return rosetta_documentaion(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='rosetta.documentation':  return rosetta_documentation(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     elif test =='PyRosetta.Debug':          return py_rosetta4_release('Debug',          repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta.Release':        return py_rosetta4_release('Release',        repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
@@ -1102,7 +1102,7 @@ def run(test, repository_root, working_dir, platform, config, hpc_driver=None, v
     elif test =='PyRosetta.conda.MinSizeRel':     return py_rosetta4_conda_release('MinSizeRel',     repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta.conda.RelWithDebInfo': return py_rosetta4_conda_release('RelWithDebInfo', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta.documentation':  return py_rosetta4_documentaion('MinSizeRel', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.documentation':  return py_rosetta4_documentation('MinSizeRel', repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     elif test =='ui': return ui_release(repository_root, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
