@@ -343,7 +343,7 @@ std::string LipidMemGrid::hash_fingerprint() const {
 	const char sep('\t');
 	ss << grid_name();
 	ss << sep << get_type();
-	ss << sep << kbpot_file_; 
+	ss << sep << kbpot_file_;
 	ss << sep << kbpot_spline_;
 	ss << sep << lip_atom_;
 	ss << sep << mem_weight_;
