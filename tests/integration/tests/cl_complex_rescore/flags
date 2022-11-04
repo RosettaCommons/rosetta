@@ -1,0 +1,3 @@
+-in:file:s ./1yag_AG.pdb
+-cl_file ./actin_gs1_cl_data.txt
+-interface A_G

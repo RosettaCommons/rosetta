@@ -68,6 +68,7 @@ sources = {
 	"public/analysis": [
 		"atom_energy_breakdown",
 		"batch_distances",
+		"cl_complex_rescore",
 		"contactMap",
 		"cst_info",
                 "ensemble_analysis",
