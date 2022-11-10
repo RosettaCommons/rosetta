@@ -55,10 +55,11 @@ LigandConformer::LigandConformer(
 	core::pose::PoseCOP pose,
 	utility::vector1< core::Size > const &ligids,
 	utility::vector1< core::Size > movingscs,
-	bool freeze_ligand_backbone
+	bool freeze_ligand_backbone,
+	bool freeze_ligand
 ) {
 	init_params();
-	initialize( pose, ligids, movingscs, freeze_ligand_backbone );
+	initialize( pose, ligids, movingscs, freeze_ligand_backbone, freeze_ligand );
 }
 
 void
@@ -74,6 +75,7 @@ LigandConformer::init_params() {
 	jumpid_ = 0;
 	negTdS_ = 0;
 	freeze_ligand_backbone_ = false;
+	freeze_ligand_ = false;
 }
 
 void
@@ -81,12 +83,14 @@ LigandConformer::initialize(
 	core::pose::PoseCOP pose,
 	utility::vector1< core::Size > const &ligids,
 	utility::vector1< core::Size > movingscs,
-	bool freeze_ligand_backbone
+	bool freeze_ligand_backbone,
+	bool freeze_ligand
 ) {
 	ligids_ = ligids;
 	ref_pose_ = pose;
 	movingscs_ = movingscs;
-	freeze_ligand_backbone_ = freeze_ligand_backbone;
+	freeze_ligand_backbone_ = ( freeze_ligand_backbone || freeze_ligand );
+	freeze_ligand_ = freeze_ligand;
 
 
 	// 1) get jumpid
@@ -178,6 +182,7 @@ LigandConformer::update_conf( core::pose::PoseCOP pose ) {
 	TorsionType torsion_type;
 	AtomID atid1, atid2, atid3, atid4;
 	for ( core::Size i : ligids_ ) {
+		if ( freeze_ligand_ ) continue;
 		core::conformation::Residue const & ligres = pose->residue(i);
 		ligid_restype_map_[i] = ligres.type_ptr();
 		for ( core::Size r=1; r<=2; ++r ) {
@@ -208,7 +213,7 @@ LigandConformer::update_conf( core::pose::PoseCOP pose ) {
 	}
 
 	// internal ring torsions
-	if ( sample_ring_conformers_ && ligids_.size() == 1 ) {
+	if ( !freeze_ligand_ && sample_ring_conformers_ && ligids_.size() == 1 ) {
 		// *** for now assume this only used in single-ligand case
 		//   it might affect some non-canonicals
 		core::chemical::ResidueType const &ligrt = pose->residue(ligids_[1]).type();
@@ -238,28 +243,130 @@ LigandConformer::update_conf( core::pose::PoseCOP pose ) {
 	}
 
 	// copy ligandxyz
-	ligandxyz_.clear();
-	core::Vector com( 0.0 );
-	for ( core::Size i : ligids_ ) {
-		core::conformation::Residue const &lig( pose->residue(i) );
-		for ( core::Size iatm = 1; iatm <= lig.nheavyatoms(); ++iatm ) {
-			ligandxyz_.push_back(lig.xyz( iatm ));
-			com += lig.xyz( iatm );
+	if ( !freeze_ligand_ || rg_ == 0.0 ) {
+		ligandxyz_.clear();
+		core::Vector com( 0.0 );
+		for ( core::Size i : ligids_ ) {
+			core::conformation::Residue const &lig( pose->residue(i) );
+			for ( core::Size iatm = 1; iatm <= lig.nheavyatoms(); ++iatm ) {
+				ligandxyz_.push_back(lig.xyz( iatm ));
+				com += lig.xyz( iatm );
+			}
 		}
-	}
-	com /= ligandxyz_.size();
+		com /= ligandxyz_.size();
 
-	// compute radius of gyration
-	rg_ = 0.0;
-	for ( auto atm : ligandxyz_ ) {
-		rg_ += com.distance_squared( atm );
+		// compute radius of gyration
+		rg_ = 0.0;
+		for ( auto atm : ligandxyz_ ) {
+			rg_ += com.distance_squared( atm );
+		}
+		rg_ /= ligandxyz_.size();
+		rg_ = std::sqrt(rg_);
 	}
-	rg_ /= ligandxyz_.size();
-	rg_ = std::sqrt(rg_);
 
 	ligandxyz_synced_ = true;
 }
 
+void
+LigandConformer::update_ligand_conf( core::pose::PoseCOP pose ) {
+	using namespace core::id;
+
+	if ( pose->size() != ligids_.size() ) {
+		utility_exit_with_message("The size of pose used in update_ligand_conf is different than the ligand size.");
+	}
+
+	// internal torsions
+	ligandchis_.clear();
+	ligandchi_types_.clear();
+	ligandtorsionids_.clear();
+	TorsionType torsion_type;
+	AtomID atid1, atid2, atid3, atid4;
+	for ( core::Size i=1;  i<= ligids_.size(); ++i ) {
+		if ( freeze_ligand_ ) continue;
+		core::conformation::Residue const & ligres = pose->residue(i);
+		ligid_restype_map_[ ligids_[i] ] = ligres.type_ptr();
+		for ( core::Size r=1; r<=2; ++r ) {
+			if ( freeze_ligand_backbone_ && r == 1 ) continue;
+			core::Size const n_torsions( r==1 ?ligres.mainchain_atoms().size() : ligres.nchi() );
+			for  ( core::Size j=1; j <= n_torsions; ++j ) {
+				core::id::TorsionType const id_tor_type( r == 1 ? core::id::BB : core::id::CHI );
+				TorsionID const tor_id_curr(i, id_tor_type, j);
+				TorsionID const tor_id_ref(ligids_[i], id_tor_type, j);
+				bool const fail( pose->conformation().get_torsion_angle_atom_ids(tor_id_curr, atid1, atid2, atid3, atid4) );
+				if ( fail ) {
+					if ( ( r == 1 ) &&
+							( ( j == 1 && pose->fold_tree().is_cutpoint( i-1 ) ) ||
+							( j >= n_torsions-1 && pose->fold_tree().is_cutpoint( i ) ) ) ) continue;
+					if ( TR.Debug.visible() ) TR.Debug << " missed torsion: " << tor_id_curr << std::endl;
+					continue;
+				}
+				torsion_type.at1 = ligres.atom_type_index( atid1.atomno() );
+				torsion_type.at2 = ligres.atom_type_index( atid2.atomno() );
+				torsion_type.at3 = ligres.atom_type_index( atid3.atomno() );
+				torsion_type.at4 = ligres.atom_type_index( atid4.atomno() );
+				torsion_type.bn = ligres.type().bond_type( atid2.atomno(), atid3.atomno() );
+				torsion_type.br = ligres.type().bond_ringness( atid2.atomno(), atid3.atomno() );
+				ligandchi_types_.push_back( torsion_type );
+				ligandchis_.push_back( r == 1 ? ligres.mainchain_torsion(j): ligres.chi(j) );
+				ligandtorsionids_.push_back(tor_id_ref);
+			}
+		}
+	}
+
+	// internal ring torsions
+	if ( !freeze_ligand_ && sample_ring_conformers_ && ligids_.size() == 1 ) {
+		// *** for now assume this only used in single-ligand case
+		//   it might affect some non-canonicals
+		core::chemical::ResidueType const &ligrt = pose->residue(1).type();
+		core::Size nnu = 0;
+		core::Size nligring( ligrt.n_rings() );
+		for ( core::Size j=1; j<=nligring; ++j ) {
+			nnu += ligrt.ring_atoms( j ).size() - 1;
+		}
+		ligandnus_.resize(nnu);
+		ligandtaus_.resize(nnu+nligring);
+		core::Size offset = 0;
+		for ( core::Size j=1; j<=nligring; ++j ) {
+			nnu = ligrt.ring_atoms( j ).size() - 1;
+			for ( core::Size k=1; k<=nnu; ++k ) {
+				ligandnus_[offset+k] = pose->torsion( core::id::TorsionID( 1, core::id::NU, offset + k ) );
+				core::id::AtomID a1( ligrt.nu_atoms( offset + k )[ 1 ], 1 );
+				core::id::AtomID a2( ligrt.nu_atoms( offset + k )[ 2 ], 1 );
+				core::id::AtomID a3( ligrt.nu_atoms( offset + k )[ 3 ], 1 );
+				ligandtaus_[offset+(j-1)+k] = numeric::conversions::degrees( pose->conformation().bond_angle( a1, a2, a3 ) );
+			}
+			core::id::AtomID a1( ligrt.nu_atoms( offset + nnu )[ 2 ], 1 );
+			core::id::AtomID a2( ligrt.nu_atoms( offset + nnu )[ 3 ], 1 );
+			core::id::AtomID a3( ligrt.nu_atoms( offset + nnu )[ 4 ], 1 );
+			ligandtaus_[offset+j+nnu] = numeric::conversions::degrees( pose->conformation().bond_angle( a1, a2, a3 ) );
+			offset += nnu;
+		}
+	}
+
+	// copy ligandxyz
+	if ( !freeze_ligand_ || rg_ == 0.0 ) {
+		ligandxyz_.clear();
+		core::Vector com( 0.0 );
+		for ( core::Size i=1;  i<= ligids_.size(); ++i ) {
+			core::conformation::Residue const &lig( pose->residue(i) );
+			for ( core::Size iatm = 1; iatm <= lig.nheavyatoms(); ++iatm ) {
+				ligandxyz_.push_back(lig.xyz( iatm ));
+				com += lig.xyz( iatm );
+			}
+		}
+		com /= ligandxyz_.size();
+
+		// compute radius of gyration
+		rg_ = 0.0;
+		for ( auto atm : ligandxyz_ ) {
+			rg_ += com.distance_squared( atm );
+		}
+		rg_ /= ligandxyz_.size();
+		rg_ = std::sqrt(rg_);
+	}
+
+	ligandxyz_synced_ = true;
+}
 
 // gene -> pose
 // generate a pose based on this conformation
@@ -493,32 +600,35 @@ LigandConformer::randomize( core::Real transmax ) {
 	// ligand chis
 	core::scoring::RamaPrePro const& rama_prepro( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() );
 	core::Size nligchi = ligandchis_.size();
-	for ( core::Size j=1; j<=nligchi; ++j ) {
-		core::id::TorsionID const& torid=ligandtorsionids_[j];
-		core::Real angle_j = 360.0 * numeric::random::rg().uniform();
-		core::Size ligid = torid.rsd();
-		core::chemical::ResidueTypeCOP restype( ligid_restype_map_[ligid] );
-		if ( torid.type() == core::id::BB && torid.torsion() == core::id::phi_torsion && ligid_restype_map_.count(ligid+1) > 0 ) {
-			utility::vector1 < core::Real > torsions;
-			rama_prepro.random_mainchain_torsions(ref_pose_->conformation(), restype, ligid_restype_map_[ligid+1], torsions);
-			ligandchis_[j] = torsions[1];
-			j++;
-			ligandchis_[j] = torsions[2];
-			continue;
+
+	if ( !freeze_ligand_ ) {
+		for ( core::Size j=1; j<=nligchi; ++j ) {
+			core::id::TorsionID const& torid=ligandtorsionids_[j];
+			core::Real angle_j = 360.0 * numeric::random::rg().uniform();
+			core::Size ligid = torid.rsd();
+			core::chemical::ResidueTypeCOP restype( ligid_restype_map_[ligid] );
+			if ( torid.type() == core::id::BB && torid.torsion() == core::id::phi_torsion && ligid_restype_map_.count(ligid+1) > 0 ) {
+				utility::vector1 < core::Real > torsions;
+				rama_prepro.random_mainchain_torsions(ref_pose_->conformation(), restype, ligid_restype_map_[ligid+1], torsions);
+				ligandchis_[j] = torsions[1];
+				j++;
+				ligandchis_[j] = torsions[2];
+				continue;
+			}
+			// a quick fix for omega torsion, set them to trans
+			if ( torid.type() == core::id::BB && torid.torsion() == core::id::omega_torsion ) {
+				ligandchis_[j] = 180.0;
+				continue;
+			}
+			ligandchis_[j] = angle_j;
 		}
-		// a quick fix for omega torsion, set them to trans
-		if ( torid.type() == core::id::BB && torid.torsion() == core::id::omega_torsion ) {
-			ligandchis_[j] = 180.0;
-			continue;
-		}
-		ligandchis_[j] = angle_j;
 	}
 
 	ligandxyz_synced_ = false;
 
 	// ligand nus
 	// load ring confs
-	if ( sample_ring_conformers_ && ligids_.size() == 1 ) {
+	if ( !freeze_ligand_ && sample_ring_conformers_ && ligids_.size() == 1 ) {
 		core::chemical::ResidueType const &ligrt = ref_pose_->residue(ligids_[1]).type();
 		core::Size const n_rings( ligrt.n_rings() );
 		core::Size offset = 0;

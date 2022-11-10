@@ -482,6 +482,8 @@ RotamerSet_::build_optimize_H_rotamers(
 			example_rotamer->mainchain_torsions() = pose.residue( resid() ).mainchain_torsions();
 			example_rotamer->copy_residue_connections( pose.residue( resid() ) );
 			idealize_hydrogens( *example_rotamer, pose.conformation() );
+			conformation::set_chi_according_to_coordinates(*example_rotamer);
+
 			push_back_rotamer( example_rotamer );
 
 			ResidueOP flipped_rotamer = example_rotamer->clone();
@@ -512,6 +514,7 @@ RotamerSet_::build_optimize_H_rotamers(
 			Real flipped_chi2 = flipped_rotamer->chi( chi_to_flip ) + 180;
 			flipped_rotamer->set_chi( chi_to_flip, flipped_chi2 );
 			push_back_rotamer( flipped_rotamer );
+
 		}
 
 	} else if ( concrete_residue->is_NA() ) {

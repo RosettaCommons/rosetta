@@ -215,7 +215,9 @@ private:
 	LigandAligner
 	setup_ligand_aligner( core::pose::Pose const & pose,
 		utility::vector1< core::Size > const &lig_resnos,
-		utility::vector1< core::Size > movable_scs_in_ref // call by value
+		utility::vector1< core::Size > movable_scs_in_ref, // call by value
+		utility::vector1< core::conformation::Residue > const &rsds_to_build_grids,
+		utility::vector1< bool > const &use_sc_only_in_grid
 	) const;
 
 	/// @brief generate an initial set of perturbed structures
@@ -352,7 +354,8 @@ private:
 	core::Real torsion_sampler_percentage_;
 	TorsionSamplerCOP torsion_sampler_;
 	core::Real contact_distance_;
-	bool freeze_ligand_backbone_ = false;
+	bool freeze_ligand_backbone_;
+	bool freeze_ligand_;
 	bool macrocycle_ligand_;
 
 	std::string final_exact_minimize_; // do the last iteration exactly?
@@ -365,6 +368,7 @@ private:
 	std::vector< std::string > fast_relax_lines_; // in explicit texts
 	core::Real favor_native_; // give a bonus to input rotamer
 	bool optimize_input_H_; // optimize_h_mode_ at the beginning; goes to grid construction
+	bool pre_optH_relax_;
 	bool full_repack_before_finalmin_;
 	core::Size nrelax_;
 	core::Size nreport_;

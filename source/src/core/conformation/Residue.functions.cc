@@ -139,6 +139,7 @@ insert_partial_atom_ids_for_mainchain_torsion(
 	for ( int ii = mc_tor_int - 1; ii <= mc_tor_int + 2; ++ii ) {
 		if ( ii < 1 ) {
 			Size const lower_connect_ind = rsd.lower_connect().index();
+			if ( rsd.connection_incomplete( lower_connect_ind ) ) continue;
 			Size const conn_id_on_lower_residue = rsd.residue_connection_conn_id( lower_connect_ind );
 			Size const lower_connect_rsd = rsd.residue_connection_partner( lower_connect_ind );
 			atoms.insert( id::PartialAtomID(
@@ -149,6 +150,7 @@ insert_partial_atom_ids_for_mainchain_torsion(
 			atoms.insert( id::PartialAtomID( ii, rsd.seqpos() ));
 		} else {
 			Size const upper_connect_ind = rsd.upper_connect().index();
+			if ( rsd.connection_incomplete( upper_connect_ind ) ) continue;
 			Size const conn_id_on_upper_residue = rsd.residue_connection_conn_id( upper_connect_ind );
 			Size const upper_connect_rsd = rsd.residue_connection_partner( upper_connect_ind );
 			atoms.insert( id::PartialAtomID(

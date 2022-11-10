@@ -78,7 +78,9 @@ public:
 		core::pose::PoseCOP pose,
 		utility::vector1 <core::Size > const &ligids,
 		utility::vector1< core::Size > movingscs,
-		bool freeze_ligand_backbone=false
+		bool freeze_ligand_backbone=false,
+		bool freeze_ligand=false
+
 	);
 
 	// common pathway for parameter initialization
@@ -91,7 +93,8 @@ public:
 		core::pose::PoseCOP pose,
 		utility::vector1 <core::Size > const &ligids,
 		utility::vector1< core::Size > movingscs,
-		bool freeze_ligand_backbone
+		bool freeze_ligand_backbone,
+		bool freeze_ligand
 	);
 
 	bool
@@ -100,6 +103,10 @@ public:
 	// update internal representation based on this conformation
 	void
 	update_conf( core::pose::PoseCOP pose );
+
+	// update internal representation of the ligand based on this ligand conformation
+	void
+	update_ligand_conf( core::pose::PoseCOP pose );
 
 	// generate a pose based on this conformation
 	void
@@ -284,6 +291,12 @@ public:
 	void
 	superimpose_to_ref_pose( utility::vector1< core::id::AtomID > const & ids  );
 
+	bool
+	is_ligand_frozen() const { return freeze_ligand_; }
+
+	bool
+	is_ligand_bb_frozen() const { return ( freeze_ligand_ || freeze_ligand_backbone_ ); }
+
 private:
 	// reference pose
 	core::pose::PoseCOP ref_pose_;
@@ -298,8 +311,10 @@ private:
 	utility::vector1< core::Size > movingscs_;
 	utility::vector1< core::chemical::ResidueTypeCOP > proteinrestypes_;
 	utility::vector1< utility::vector1< core::Real > > proteinchis_;
-	bool sample_ring_conformers_ = true;
-	bool freeze_ligand_backbone_ = false;
+	//initialized in init function
+	bool sample_ring_conformers_;
+	bool freeze_ligand_backbone_;
+	bool freeze_ligand_;
 
 	// the score
 	core::Real score_;

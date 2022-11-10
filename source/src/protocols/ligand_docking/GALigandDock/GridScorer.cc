@@ -2339,8 +2339,14 @@ GridScorer::minimizer_loop(
 		core::Size resid = (i<=nLigs ? minilig.ligand_ids()[i] : minilig.moving_scs()[i-nLigs]);
 		mm->set_chi( resid, true );
 		if ( i<=nLigs ) {
-			mm->set_bb( resid, true );
-			mm->set_nu( resid, true );
+			if ( lig.is_ligand_frozen() ) {
+				mm->set_chi( resid, false );
+			} else if ( lig.is_ligand_bb_frozen() ) {
+				mm->set_nu( resid, true );
+			} else {
+				mm->set_bb( resid, true );
+				mm->set_nu( resid, true );
+			}
 		}
 	}
 
