@@ -34,6 +34,9 @@ sources = {
 		"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */
 		"design_tight_clusters", # /* Amelie Stein, documentation see comments in file */
 	],
+	"pilot/ameya" : [
+		"mixedMC", # /* Ameya Harmalkar, documentation see comments in file */
+	],
 	"pilot/andre" : [
 		#"SymmDataTest",
 		#"SymDock",	 # /* Ingemar Andre,Documentation Location,Demo Location */

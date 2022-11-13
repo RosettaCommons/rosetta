@@ -218,6 +218,13 @@ Options = Option_Group( '',
 			legal=["true", "false"],
 			default="false"),
 
+		## Mixed MC option
+		## Author: Ameya Harmalkar
+		Option("tuning_param", "Real", 
+			desc="Specify the tuning parameter to modulate lowres and highres score functions.",
+			default= "1.0"),
+
+
 		# PDB data-preservation options ---------------------------------------
 		Option( 'remember_unrecognized_res'  , 'Boolean',
 				desc="Ignore unrecognized residues, but remember them in PDBInfo.",
@@ -1399,6 +1406,7 @@ Options = Option_Group( '',
 	Option_Group( 'score',
 		Option( 'score_pose_cutpoint_variants', 'Boolean', desc='Include cutpoint variants in the pose during linear chainbreak', default='false'),
 		Option( 'score', 'Boolean', desc="scorefunction option group", legal='true', default='true' ),
+		Option( 'lowres_weights', 'String', desc="Name of lowres weights file (without extension .wts)" , default="interchain_cen" ),
 		Option( 'weights', 'String', desc="Name of weights file (without extension .wts)" , default="ref2015" ),
 		Option( 'set_weights', 'StringVector', desc="Modification to weights via the command line. Applied in ScoreFunctionFactory::create_score_function inside the function apply_user_defined_reweighting_. Format is a list of paired strings: -score::set_weights <score_type1> <setting1> <score_type2> <setting2> ..." ),
 		Option( 'pack_weights', 'String', desc="Name of packing weights file (without extension .wts)" , default="ref2015" ),
