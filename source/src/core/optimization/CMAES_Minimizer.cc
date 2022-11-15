@@ -77,7 +77,7 @@ Real CMAES_Minimizer::run( Multivec & v )
 	//kdrew: cmaes_init expects a double* but xstart and rgsigma are std::vectors, get pointer to first element
 	//kdrew: cmaes_init looks for cmaes_initials.par by default and if it doesn't find anything, it adds an error line to errcmaes.err, ignoring for now
 	//kdrew: lambda default is 0 but will be converted to 4+(int)(3*log((double)N)), where N is size of dims in the c-cmaes library code
-	arFunvals = cmaes_init(&evo, v.size(), &xstart[0], &rgsigma[0], numeric::random::rg().get_seed(), lambda_, input_parameter_filename);
+	arFunvals = cmaes_init(&evo, v.size(), &xstart[0], &rgsigma[0], numeric::random::rg().random_range(0,9999999), lambda_, input_parameter_filename);
 
 	TR << "CMAES_HELLO: " << cmaes_SayHello(&evo) << std::endl;
 	//cmaes_ReadSignals(&evo, "cmaes_signals.par");  /* write header and initial values */
