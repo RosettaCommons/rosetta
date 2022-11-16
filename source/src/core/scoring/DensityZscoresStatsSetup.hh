@@ -43,7 +43,7 @@ public:
 	DensityZscoresStatsSetup();
 
 	/// @brief default destructor
-	~DensityZscoresStatsSetup();
+	~DensityZscoresStatsSetup() override;
 
 	core::Real
 	eval_zscore_by_resn_bfactor(core::Real const  input_val,

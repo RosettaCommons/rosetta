@@ -1,2 +1,2 @@
--in:file:s complex.pdb
+-in:file:s input/complex.pdb
 -in:file:silent_energy_cut 0.5

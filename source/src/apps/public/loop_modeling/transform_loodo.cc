@@ -51,6 +51,9 @@ basic::Tracer TR("apps.public.loop_modeling.transform_loodo");
 core::kinematics::Stub
 parse_into_stub( utility::vector1<core::Real> const & in_vec )
 {
+	if ( in_vec.size() < 12 ) {
+		utility_exit_with_message("Need 12 values to parse into stub.");
+	}
 	core::kinematics::Stub to_apply_stub;
 	Matrix M;
 	Vector v;
@@ -116,8 +119,15 @@ int main( int argc, char * argv [] ) {
 		while ( getline(stream,line) ) {
 			//std::cout << line << std::endl;
 
-			int name_index = line.find_first_of(" || ", 0);
-			int stub_index = line.rfind("STUB ");
+			core::Size name_index = line.find_first_of(" || ", 0);
+			core::Size stub_index = line.rfind("STUB ");
+
+			if ( stub_index == std::string::npos ) {
+				utility_exit_with_message("While parsing " + stubfile + " STUB designation not found in line.");
+			}
+			if ( name_index == std::string::npos ) {
+				utility_exit_with_message("While parsing " + stubfile + " name designation not found.");
+			}
 
 			std::string name = line.substr(0, name_index);
 			//TR << "Name: " << name << std::endl;
@@ -132,6 +142,10 @@ int main( int argc, char * argv [] ) {
 			for ( auto & i : stubvec ) {
 				auto f = boost::lexical_cast<float>(i);
 				SV.push_back(f);
+			}
+
+			if ( SV.size() < 12 ) {
+				utility_exit_with_message("While parsing " + stubfile + " STUB line does not contain sufficient entries.");
 			}
 
 			// Parse file information into stub and apply to the centered native pose.

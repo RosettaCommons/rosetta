@@ -50,10 +50,11 @@ MixedMonteCarlo::MixedMonteCarlo(
 	core::scoring::ScoreFunction const & high_scorefxn,
 	core::Real const tuning_param,
 	core::Real const temperature
-) : MC_( high_pose, high_scorefxn, temperature )
+) :
+	last_accepted_pose_( utility::pointer::make_shared< core::pose::Pose >() ),
+	lowest_score_pose_( utility::pointer::make_shared< core::pose::Pose >() ),
+	MC_( high_pose, high_scorefxn, temperature )
 {
-	last_accepted_pose_ = utility::pointer::make_shared< core::pose::Pose >();
-	lowest_score_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	highres_scorefxn_ = high_scorefxn.clone();
 	lowres_scorefxn_ = low_scorefxn.clone();
 	tuning_param_ = tuning_param ;
