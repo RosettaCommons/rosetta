@@ -81,7 +81,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
         python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
-        additional_flags = ' --timeout 2048' if platform['os'].startswith('aarch64') else ''
+        additional_flags = ' --timeout 4096' if platform['os'].startswith('aarch64') else ''
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
