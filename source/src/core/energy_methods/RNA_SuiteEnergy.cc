@@ -23,6 +23,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/ScoringManager.hh>
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
@@ -89,8 +90,8 @@ RNA_SuiteEnergyCreator::score_types_for_method() const {
 RNA_SuiteEnergy::RNA_SuiteEnergy( core::scoring::rna::RNA_EnergyMethodOptions const & options ) :
 	parent( utility::pointer::make_shared< RNA_SuiteEnergyCreator >() ),
 	options_( options ),
-	rna_suite_potential_( utility::pointer::make_shared< core::scoring::rna::RNA_SuitePotential >( false ) ),
-	rna_suite_potential_for_suiteness_bonus_(  utility::pointer::make_shared< core::scoring::rna::RNA_SuitePotential >( true, options.suiteness_bonus() ) )
+	rna_suite_potential_( core::scoring::ScoringManager::get_instance()->get_rna_suite_potential( false, "" ) ), // utility::pointer::make_shared< core::scoring::rna::RNA_SuitePotential >( false ) ),
+	rna_suite_potential_for_suiteness_bonus_(  core::scoring::ScoringManager::get_instance()->get_rna_suite_potential(true, options.suiteness_bonus() ) ) //utility::pointer::make_shared< core::scoring::rna::RNA_SuitePotential >( true, options.suiteness_bonus() ) )
 {}
 ///////////////////////////////////////////////////////////////////////////////
 

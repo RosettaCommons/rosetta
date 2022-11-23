@@ -125,8 +125,8 @@ private:
 private:
 
 	core::scoring::rna::RNA_EnergyMethodOptions const & options_;
-	core::scoring::rna::RNA_SuitePotentialOP rna_suite_potential_;
-	core::scoring::rna::RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
+	core::scoring::rna::RNA_SuitePotentialCOP rna_suite_potential_;
+	core::scoring::rna::RNA_SuitePotentialCOP rna_suite_potential_for_suiteness_bonus_;
 
 };
 
