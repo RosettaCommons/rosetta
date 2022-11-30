@@ -81,6 +81,15 @@ public:
 		std::string const & motif_filename
 	);
 
+	//Constructor for loading motifs from a file with coordinates for ligand; file stream will not terminate if motif orthogonality test fails
+	MotifLibrary(
+		std::istream & motif_info, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names
+	);
+
+	// Add ligand motif from a PDB file; file stream will not terminate if motif orthogonality test fails
+	void
+	add_ligand_from_file( std::string const & motif_filename, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names );
+
 	// Number of motifs
 	core::Size
 	nmotifs();
@@ -103,6 +112,11 @@ public:
 
 private:
 	MotifCOPs library_;
+
+	// @brief function to help with constructor with identifier that is more leanient on failed orthogonality checks
+	void
+	check_ctor_helper(std::istream & motif_info, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names);
+
 
 };
 

@@ -30,6 +30,11 @@ sources = {
 		"density_res_zscores",
 	],
 	# A ######################################################################
+	"pilot/aginsparg" : [
+		#"holes_identifier",
+		"space_fill_analysis",
+		#"ligand_discovery_search_protocol",
+	],
 	"pilot/amelie" : [
 		"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */
 		"design_tight_clusters", # /* Amelie Stein, documentation see comments in file */
@@ -661,7 +666,7 @@ sources = {
 		"score_test",
 	],
 	"pilot/mdsmith" : [
-		#"ligand_motifs",
+		"ligand_motifs",
 		#"motif_ligand_packer_design",
 	],
 	"pilot/membrane" : [

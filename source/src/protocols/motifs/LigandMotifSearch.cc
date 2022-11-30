@@ -22,6 +22,7 @@
 #include <protocols/motifs/motif_utils.hh>
 
 // Project Headers (protocols)
+#include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/minimization_packing/MinMover.hh>
@@ -49,6 +50,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/pack/task/ResidueLevelTask.hh>
 
 #include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.hh>
 #include <core/pose/variant_util.hh>
@@ -57,17 +59,20 @@
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
 
+#include <numeric/xyzVector.hh>
 
 // C++ Headers
 #include <iostream>
+
+// Time profiling header
+#include <time.h>
+#include <chrono>
 
 // Option Key Includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
-#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #undef interface
@@ -92,7 +97,9 @@ LigandMotifSearch::LigandMotifSearch()
 	rmsd_cutoff_2_( basic::options::option[ basic::options::OptionKeys::motifs::r2 ]() ),
 	dtest_cutoff_( basic::options::option[ basic::options::OptionKeys::motifs::dtest ]() ),
 	rot_level_( basic::options::option[ basic::options::OptionKeys::motifs::rotlevel ]() ),
-	minimize_( basic::options::option[ basic::options::OptionKeys::motifs::minimize ]() )
+	minimize_( basic::options::option[ basic::options::OptionKeys::motifs::minimize ]() ),
+	output_build_positions_only_( basic::options::option[ basic::options::OptionKeys::motifs::output_build_positions_only ]() ),
+	specific_build_position_( basic::options::option[ basic::options::OptionKeys::motifs::specific_build_position ]() )
 {
 	init_options();
 }
@@ -128,6 +135,8 @@ LigandMotifSearch::operator = ( LigandMotifSearch const & src )
 		dump_motifs_ = src.dump_motifs_;
 		clear_bprots_ = src.clear_bprots_;
 		rots2add_ = src.rots2add_;
+		output_build_positions_only_ = src.output_build_positions_only_;
+		specific_build_position_ = src.specific_build_position_;
 	}
 	return *this;
 }
@@ -140,7 +149,7 @@ LigandMotifSearch::run(
 {
 	for (  utility::vector1< core::Size  >::const_iterator position( input_BPs.begin() );
 			position != input_BPs.end(); ++position ) {
-		ms_tr << "In run, Design position: " << *position << std::endl;
+		//ms_tr << "In run, Design position: " << *position << std::endl;
 	}
 	initialize( pose, input_BPs );
 	incorporate_motifs( pose );
@@ -160,6 +169,16 @@ LigandMotifSearch::run(
 	target_positions_sphere = get_sphere_aa( pose, ligand_motif_sphere ) ;
 	initialize( pose, target_positions_sphere );
 
+	//only output build positions if output_build_positions_only_ flag is true, then terminate via returning
+	/*if ( output_build_positions_only_ )
+	{
+	for (  utility::vector1< core::Size  >::const_iterator position( input_BPs.begin() );
+	position != input_BPs.end(); ++position ) {
+	ms_tr << "Design position: " << *position << std::endl;
+	}
+	return;
+	}
+	*/
 	//Move functions back down to after open_append if we have problems
 
 	if ( output_ ) {
@@ -216,6 +235,15 @@ LigandMotifSearch::run(
 		}
 	}
 
+	//only output build positions if output_build_positions_only_ flag is true, then terminate via returning
+	if ( output_build_positions_only_ ) {
+		for (  utility::vector1< core::Size  >::const_iterator position( target_positions.begin() );
+				position != target_positions.end(); ++position ) {
+			ms_tr << "Design position: " << *position << std::endl;
+		}
+		return;
+	}
+
 	initialize( pose, target_positions );
 
 	if ( output_ ) {
@@ -240,8 +268,22 @@ LigandMotifSearch::run(
 			ms_tr << "Starting motif search" << std::endl;
 			motif_output_file.open_append( output_filename_ );
 
+			//phasing out overloaded function
+			/*
+			//determine whether to collect motifs for a specific build position
+			if (specific_build_position_ == 0)
+			{
+			incorporate_motifs( pose );
+			}
+			else
+			{
+			int specific_build_position = specific_build_position_;
+			incorporate_motifs(pose, specific_build_position);
+			}
+			*/
 
 			incorporate_motifs( pose );
+
 		}
 		//OK, we have either loaded motifs from file or we have found them.  Now we will add rotamers to task.
 
@@ -285,38 +327,119 @@ LigandMotifSearch::run(
 	}
 }
 
+//keeping in case it is necessary, this version of initialize doesn't appear to be used; only ever called by run using initialize(pose, vector)
+/*
 void
 LigandMotifSearch::initialize(
-	Pose const & pose
+Pose const & pose
 )
 {
-	//This is initialize for solo app (not from Enzdes)
-	// Obtain all necessary user input
-	if ( motif_library_.empty() ) {
-		MotifLibrary motifs( get_LigandMotifLibrary_user() );
-		MotifCOPs motifcops = motifs.library();
-		motif_library_ = motifcops;
-	} // if it's not empty that means that the app must have filled the motif_library_
-	core::conformation::ResidueOPs conformers( get_targetconformers_user() );
-	target_conformers_map_ = setup_conformer_map( conformers );
+using namespace core;
+using namespace ObjexxFCL;
+using namespace pose;
+using namespace chemical;
+using namespace scoring;
+using namespace optimization;
 
-	DnaDesignDefOPs build_position_defs;
-	position_vector_setup( pose );
+//This is initialize for solo app (not from Enzdes)
+// Obtain all necessary user input
+position_vector_setup( pose );
+
+if ( motif_library_.empty() ) {
+core::Size ligand_marker = 1;
+//create a vector that only stores the identity of the atoms  in the ligand (not their index  value)
+utility::vector1< std::string > ligand_atom_names;
+
+int nres( pose.size() );
+for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
+ResidueType const & lig_type( pose.residue_type( lig_pos ) );
+
+if (  !lig_type.is_ligand() ) continue;
+
+// This is to make a ligres object once we find our ligand
+//core::conformation::ResidueOP ligres( new core::conformation::Residue (pose.residue( lig_pos ) ) );
+core::conformation::ResidueOP ligres( pose.residue( lig_pos ).clone() );
+
+// This is to make an atomtypeset to get atomtype integers
+//removing since I am pretty sure this goes unused within this context
+//core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+
+for ( core::Size atom_i = 1; atom_i <= ligres->natoms(); ++atom_i ) {
+
+//ms_tr << "in atom iterate block, atom num is" << atom_i <<   std::endl;
+//std::string const atom_name = ligres->atom_name(atom_i);
+if ( ligres->atom_is_hydrogen(atom_i) ) { continue; }
+//ms_tr << "atom name is " << atom_name <<  std::endl;
+
+ligand_atom_names.push_back(ligres->atom_type(atom_i).atom_type_name());
 }
+}
+
+MotifLibrary motifs( get_LigandMotifLibrary_user(ligand_marker, ligand_atom_names) );
+MotifCOPs motifcops = motifs.library();
+motif_library_ = motifcops;
+} // if it's not empty that means that the app must have filled the motif_library_
+core::conformation::ResidueOPs conformers( get_targetconformers_user() );
+target_conformers_map_ = setup_conformer_map( conformers );
+
+DnaDesignDefOPs build_position_defs;
+//position_vector_setup( pose );
+}
+*/
+
 void
 LigandMotifSearch::initialize(
 	Pose const & pose,
 	utility::vector1< core::Size > & input_BPs
 )
 {
+	using namespace core;
+	using namespace ObjexxFCL;
+	using namespace pose;
+	using namespace chemical;
+	using namespace scoring;
+	using namespace optimization;
+
 	//This is initialize for solo app (not from Enzdes)
 	// Obtain all necessary user input
+	position_vector_setup( pose );
+
 	for (  utility::vector1< core::Size  >::const_iterator position( input_BPs.begin() );
 			position != input_BPs.end(); ++position ) {
-		ms_tr << "In init, Design position: " << *position << std::endl;
+		//ms_tr << "In init, Design position: " << *position << std::endl;
 	}
 	if ( motif_library_.empty() ) {
-		MotifLibrary motifs( get_LigandMotifLibrary_user() );
+
+		//create a vector that only stores the identity of the atoms  in the ligand (not their index  value)
+		utility::vector1< std::string > ligand_atom_names;
+
+		int nres( pose.size() );
+		for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
+			ResidueType const & lig_type( pose.residue_type( lig_pos ) );
+
+			if (  !lig_type.is_ligand() ) continue;
+
+			// This is to make a ligres object once we find our ligand
+			//core::conformation::ResidueOP ligres( new core::conformation::Residue (pose.residue( lig_pos ) ) );
+			core::conformation::ResidueOP ligres( pose.residue( lig_pos ).clone() );
+
+			// This is to make an atomtypeset to get atomtype integers
+			//removing since I am pretty sure this goes unused within this context
+			//core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+
+			for ( core::Size atom_i = 1; atom_i <= ligres->natoms(); ++atom_i ) {
+
+				//ms_tr << "in atom iterate block, atom num is" << atom_i <<   std::endl;
+				//std::string const atom_name = ligres->atom_name(atom_i);
+				if ( ligres->atom_is_hydrogen(atom_i) ) { continue; }
+				//ms_tr << "atom name is " << atom_name <<  std::endl;
+
+				ligand_atom_names.push_back(ligres->atom_type(atom_i).atom_type_name());
+			}
+		}
+
+		core::Size ligand_marker = 1;
+		MotifLibrary motifs( get_LigandMotifLibrary_user(ligand_marker, ligand_atom_names) );
 		MotifCOPs motifcops = motifs.library();
 		motif_library_ = motifcops;
 	} // if it's not empty that means that the app must have filled the motif_library_
@@ -324,7 +447,7 @@ LigandMotifSearch::initialize(
 	target_conformers_map_ = setup_conformer_map( conformers );
 
 	DnaDesignDefOPs build_position_defs;
-	position_vector_setup( pose );
+	//position_vector_setup( pose );
 
 	if ( ! input_BPs.empty() ) {
 		for ( core::Size i(1); i <= input_BPs.size(); ++i ) {
@@ -376,7 +499,13 @@ LigandMotifSearch::incorporate_motifs(
 	//motif_indices_list[all triplets][atom i/j/k][1 is atom number, 2 is AtomType integer]
 	utility::vector1< utility::vector1< utility::vector1< core::Size > > > all_motif_indices;
 
+	//create a vector that only stores the identity of the atoms  in the ligand (not their index  value)
+	utility::vector1< std::string > ligand_atom_names;
+
 	int nres( pose.size() );
+
+	//ms_tr << "size of nres: " << nres << std::endl;
+
 	for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
 		ResidueType const & lig_type( pose.residue_type( lig_pos ) );
 
@@ -384,39 +513,59 @@ LigandMotifSearch::incorporate_motifs(
 		ms_tr << "in ligand splitter block, found my ligand, lig_pos is " << lig_pos << std::endl;
 		ligand_resi_number = lig_pos;
 		// This is to make a ligres object once we find our ligand
-		core::conformation::ResidueOP ligres( new core::conformation::Residue (pose.residue( lig_pos ) ) );
+		//core::conformation::ResidueOP ligres( new core::conformation::Residue (pose.residue( lig_pos ) ) );
+		core::conformation::ResidueOP ligres( pose.residue( lig_pos ).clone() );
+
+		//we want to rule out collecting motifs from "small" ligands and ions
+		//going to define "small" as fewer than 3 non-hydrogen and non-virtual atoms (hydrogen and virtual will not count at all)
+		//if we do not have 3 heavy atoms, we can't make a proper motif
+		core::Size num_virt_atoms = ligres->n_virtual_atoms();
+
+		core::Size num_non_virt_heavy_atoms = ligres->nheavyatoms() - num_virt_atoms;
+
+		//continue if we have 2 or fewer non-virtual atoms
+		if ( num_non_virt_heavy_atoms < 3 ) {
+			ms_tr << "Ignoring ligand " << ligres->name() << " that has " << num_non_virt_heavy_atoms << " heavy and non-virtual atoms. It has " << num_virt_atoms << " virtual atoms and " << ligres->nheavyatoms() << "heavy atoms." << std::endl;
+			continue;
+		}
+
 
 		// This is to make an atomtypeset to get atomtype integers
-		core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+		// this may be wrongly assuming that restype is from FA_STANDARD, pull atset from the residue type
+		//core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+		core::chemical::AtomTypeSetCOP atset(lig_type.atom_type_set_ptr());
+
 
 		for ( core::Size atom_i = 1; atom_i <= ligres->natoms(); ++atom_i ) {
 
-			//std::cout << "in atom iterate block, atom num is" << atom_i <<   std::endl;
-			//std::string const atom_name = ligres->atom_name(atom_i);
+			//ms_tr << "in atom iterate block, atom num is" << atom_i <<   std::endl;
+			std::string const atom_name = ligres->atom_name(atom_i);
 			if ( ligres->atom_is_hydrogen(atom_i) ) { continue; }
-			//std::cout << "atom name is " << atom_name <<  std::endl;
+			//ms_tr << "atom " << atom_i <<  " name is " << atom_name <<  std::endl;
+
+			ligand_atom_names.push_back(ligres->atom_type(atom_i).atom_type_name());
 
 			// This is a for loop to iterate over each atom's connected atoms:
 			core::conformation::Residue::AtomIndices atom_i_connects(  ligres->bonded_neighbor( atom_i ) );
 			for ( core::Size atom_j = 1; atom_j <= atom_i_connects.size(); ++ atom_j ) {
 				if ( ligres->atom_is_hydrogen(atom_i_connects[atom_j]) ) { continue; }
-				// std::cout << "ATOM j: " << atom_i_connects[atom_j] << " Name: " << ligres.atom_name(atom_i_connects[atom_j]) << std::endl;
+				// ms_tr << "ATOM j: " << atom_i_connects[atom_j] << " Name: " << ligres.atom_name(atom_i_connects[atom_j]) << std::endl;
 
 				// This is the next for loop to find connects for the second atom, giving us the final atom number (atom k)
 				core::conformation::Residue::AtomIndices atom_j_connects(  ligres->bonded_neighbor( atom_i_connects[atom_j] ) );
 				for ( core::Size atom_k = 1; atom_k <= atom_j_connects.size(); ++ atom_k ) {
 					if ( ligres->atom_is_hydrogen(atom_j_connects[atom_k]) ) { continue; }
-					//std::cout << "ATOM k: " << atom_j_connects[atom_k] << " Name: " << ligres.atom_name(atom_j_connects[atom_k]) << std::endl;
+					//ms_tr << "ATOM k: " << atom_j_connects[atom_k] << " Name: " << ligres.atom_name(atom_j_connects[atom_k]) << std::endl;
 
 					chemical::AtomType atom_i_type(ligres->atom_type(atom_i));
 					//std::string atom_i_name = atom_i_type.atom_type_name();
 					//core::Size atom_i_int = atset->atom_type_index(atom_i_name);
-					// std::cout << "ATOM j: " << atom_i << " Name: " << atom_i_name << " Int: " << atom_i_int << std::endl;
+					// ms_tr << "ATOM j: " << atom_i << " Name: " << atom_i_name << " Int: " << atom_i_int << std::endl;
 
 
-					//std::cout << "Connected triplet is: " << atom_i << ", type is " << atom_i_name  << ", ";
-					//std::cout << atom_i_connects[atom_j] << ", type is " << ligres.atom_type(atom_i_connects[atom_j]).atom_type_name() << ", " ;
-					//std::cout << atom_j_connects[atom_k] << ", type is " << ligres.atom_type(atom_j_connects[atom_k]).atom_type_name() << " " << std::endl;
+					//ms_tr << "Connected triplet is: " << atom_i << ", type is " << atom_i_name  << ", ";
+					//ms_tr << atom_i_connects[atom_j] << ", type is " << ligres.atom_type(atom_i_connects[atom_j]).atom_type_name() << ", " ;
+					//ms_tr << atom_j_connects[atom_k] << ", type is " << ligres.atom_type(atom_j_connects[atom_k]).atom_type_name() << " " << std::endl;
 					if ( atom_i != atom_j_connects[atom_k] ) {
 
 						//make the 3 atom vector
@@ -473,7 +622,7 @@ LigandMotifSearch::incorporate_motifs(
 				}
 			}
 		}
-		std::cout << "Total 3 atoms in unpruned indices list is: " << all_motif_indices.size()  << std::endl;
+		ms_tr << "Total 3 atoms in unpruned indices list is: " << all_motif_indices.size()  << std::endl;
 		for ( int prot_pos = 1 ; prot_pos <= nres ; ++prot_pos ) {
 			ResidueType const & prot_type( pose.residue_type( prot_pos ) );
 			if (  !prot_type.is_protein() ) continue;
@@ -551,25 +700,47 @@ LigandMotifSearch::incorporate_motifs(
 	/////////////////// done with pruning, ready to search! ///////////////////
 	///////////////////////////////////////////////////////////////////////////
 
+	//ms_tr << "Before iteration  through filled build positions" << std::endl;
+
+
+	if ( specific_build_position_ != 0 ) {
+		//design for specific build position only
+		ms_tr << "Designing for specific build position: " << specific_build_position_ << std::endl;
+	}
+
 	// for every protein backbone position (motif build position)
 	for ( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
 			ir != end_ir; ++ir ) {
+
+		//if looking for a specific build position (value != default 0), only work with specified build position
+		if ( specific_build_position_ != 0 && ((*ir)->seqpos() != specific_build_position_) ) {
+			continue;
+		}
+
 		core::Size motif_counter=0;
 		core::Size motif_percent=0;
 		core::Size next_motif_percent = motif_percent_chunk;
 
-		// These variables were generating compiler warnings about being used uninitialized so I am seting them to zero here.
-		// The variable names get reused in a different scope in this same function further down.
-		// I am not exactally sure waht's going on. -Doug Renfrew 2021-05-12
-		core::Size  trip_atom_1(0);
-		core::Size  trip_atom_2(0);
-		core::Size  trip_atom_3(0);
-
+		core::Size  trip_atom_1 = 0;
+		core::Size  trip_atom_2 = 0;
+		core::Size  trip_atom_3 = 0;
 		// Map of all of the very best residues for each amino acid type, to make sure I don't add 2,000 Args and only 2 Tyrs
 		std::map< std::string, std::map< Real, MotifHitOP > > best_mhits_all;
 
+		// Iterate through all rotamers if there are some
+		//ms_tr << "Before check for if best_rotamer list is empty" << std::endl;
 		// If we have rotamers coming in from files and they weren't cleared in initialization, then the search won't happen on this BuildPosition
-		if ( ! ((*ir)->best_rotamers()).empty() ) continue;
+		if ( ! ((*ir)->best_rotamers()).empty() ) {
+			// Iterate through all rotamers if there are some
+			core::pack::rotamer_set::Rotamers bp_best_rotamers1( (*ir)->best_rotamers() );
+			core::Size bp_rots1( bp_best_rotamers1.size() );
+			for ( core::Size r(1); r <= bp_rots1; ++r ) {
+				ms_tr << "Rotamer " << r << ": " << bp_best_rotamers1[r]->name3() << std::endl;
+			}
+
+
+			continue;
+		}
 		ms_tr << "WORKING ON PROTEIN POSITION " << (*ir)->seqpos() << std::endl;
 		ms_tr << "NATIVE AA IS " <<  pose.residue( (*ir)->seqpos()  ).name3()  << std::endl;
 
@@ -765,8 +936,8 @@ LigandMotifSearch::incorporate_motifs(
 				if (
 						motif_atom1_int  == ligand_atom1_int && motif_atom2_int == ligand_atom2_int  && motif_atom3_int == ligand_atom3_int ) {
 					//not OK if it's reversed--we'll find it because we don't prune ligand triplets
-					//std::cout << "Motif atom 1 type: " << motif_atom1_name << ";  Motif atom 2 type: " << motif_atom2_name <<  ";  Motif atom 3 type: " << motif_atom3_name <<  std::endl;
-					//std::cout << "Lig atom 1 type: " << ligand_atom1_name << ";  Lig atom 2 type: " << ligand_atom2_name <<  ";  Lig atom 3 type: " << ligand_atom3_name <<  std::endl;
+					//ms_tr << "Motif atom 1 type: " << motif_atom1_name << ";  Motif atom 2 type: " << motif_atom2_name <<  ";  Motif atom 3 type: " << motif_atom3_name <<  std::endl;
+					//ms_tr << "Lig atom 1 type: " << ligand_atom1_name << ";  Lig atom 2 type: " << ligand_atom2_name <<  ";  Lig atom 3 type: " << ligand_atom3_name <<  std::endl;
 					// ms_tr << "It's a match! (INSIDE LOOPS NOW)"  <<  std::endl;
 				} else {
 					continue;
@@ -784,18 +955,14 @@ LigandMotifSearch::incorporate_motifs(
 				//For each atom in motif triplet
 				// Vector const res2_C  = res2.xyz(  "C" );
 				//   Vector const motif_atom1_xyz( motifcop->forward_jump() );
-
 				//For each atom in ligand triplet
 				// Vector const ligand_atom1_xyz( check_ligand.atom_type(deref_trip[1]).atom_type_name() );
-
 				ligand_vector += check_ligand.xyz( deref_trip[1]) ;
 				ligand_vector += check_ligand.xyz( deref_trip[2]) ;
 				ligand_vector += check_ligand.xyz( deref_trip[3]) ;
-
 				Real ligand_distance_AB( check_ligand.xyz( deref_trip[1]  ).distance(  check_ligand.xyz( deref_trip[2]  )  ) );
 				Real ligand_distance_BC( check_ligand.xyz( deref_trip[2]  ).distance(  check_ligand.xyz( deref_trip[3]  )  ) );
 				//      src/numeric/xyzTriple.hh:       angle_of( xyzTriple const & a, xyzTriple const & b )
-
 				*/
 
 				//We are looping over the rotamer set here.  Matt put the rotamer loop here so that we wouldn't be checking motif/triplet matching for every rotamer--that would take forever!
@@ -805,9 +972,9 @@ LigandMotifSearch::incorporate_motifs(
 					core::conformation::Atom atm( check_ligand->atom( deref_trip[2][1] ) );
 					core::conformation::Atom auto_atm( check_ligand->atom( deref_trip[2][1] ) );
 
-					core::Size  trip_atom_1(deref_trip[1][1]);
-					core::Size  trip_atom_2(deref_trip[2][1]);
-					core::Size  trip_atom_3(deref_trip[3][1]);
+					trip_atom_1=deref_trip[1][1];
+					trip_atom_2=deref_trip[2][1];
+					trip_atom_3=deref_trip[3][1];
 					//utility::vector1< core::Size > atoms = new utility::vector1< core::Size >( {trip_atom_1, trip_atom_2, trip_atom_3} );
 					//core::Size myatoms[] = {trip_atom_1, trip_atom_2, trip_atom_3};
 					utility::vector1< core::Size > atoms;
@@ -851,7 +1018,8 @@ LigandMotifSearch::incorporate_motifs(
 
 					//     ms_tr << "Passed first round tests on 712: RMSD between ligand resi (rosetta #) " <<  ligand_resi_number << " and motif ligand = " << dtest1 << " dtestauto is " << dtest1_auto << " for residue type " << motifcop->restype_name1() << ", rotamer # " << ir2 << ", motif named " << motifcop->remark() << std::endl;
 
-					core::conformation::ResidueOP posebase( new core::conformation::Residue( posecopy.residue( ligand_resi_number ) ) );
+					//core::conformation::ResidueOP posebase( new core::conformation::Residue( posecopy.residue( ligand_resi_number ) ) );
+					core::conformation::ResidueOP posebase( posecopy.residue( ligand_resi_number ).clone() );
 					if ( passed_automorphism ) {
 						//  rmsd_list[dtest1_auto] = motifcop->restype_name1() ; //(ADD TO THE MAP)
 						motifcop->place_atoms( *(rotset->nonconst_rotamer(ir2)), *posebase, atoms, trip_atom_1, trip_atom_2, trip_atom_3, false );
@@ -887,7 +1055,8 @@ LigandMotifSearch::incorporate_motifs(
 
 					// If there are no conformers will use the base from the pose, so rmsd can be 0 theoretically
 					if ( noconformers ) {
-						core::conformation::ResidueOP posebase2( new core::conformation::Residue( posecopy2.residue( ligand_resi_number ) ) );
+						//core::conformation::ResidueOP posebase2( new core::conformation::Residue( posecopy2.residue( ligand_resi_number ) ) );
+						core::conformation::ResidueOP posebase2( posecopy2.residue( ligand_resi_number ).clone() );
 						if ( passed_automorphism ) {
 							motifcop->place_residue(*(rotset->nonconst_rotamer(ir2)), *posebase2,trip_atom_1, trip_atom_2, trip_atom_3 , false );
 						} else {
@@ -896,8 +1065,8 @@ LigandMotifSearch::incorporate_motifs(
 						Real rmsdtest2 = rmsdtest;
 						//Real rmsdtest2 = core::scoring::automorphic_rmsd( *posebase2, posecopy2.residue(ligand_resi_number), false );
 						Real finaltest = ( ( rmsdtest2)  );
-						//std::cout << "FINAL: " << finaltest << std::endl;
-						//std::cout << "cutoff: " << rmsd_cutoff_2 << " ir2 " << rmsdtest_ir2 << std::endl;
+						//ms_tr << "FINAL: " << finaltest << std::endl;
+						//ms_tr << "cutoff: " << rmsd_cutoff_2 << " ir2 " << rmsdtest_ir2 << std::endl;
 						//NOTE: Do I want to keep any statistics about percentages of passing certain cutoffs??
 						//ms_tr << "Passed 755! " << std::endl;
 						if ( (rmsdtest_ir2 < rmsd_cutoff_2)  ) {
@@ -988,7 +1157,8 @@ LigandMotifSearch::incorporate_motifs(
 						// No, because the minimize itself needs the residues to be a part of the pose?
 						// Or maybe instead of copying the pose you could save the residue you are replacing and replace it back?
 						//core::pose::Pose pose_dump( pose );
-						core::conformation::ResidueOP build_rotamer( new core::conformation::Residue( *(motifhitop->build_rotamer()) ) );
+						//core::conformation::ResidueOP build_rotamer( new core::conformation::Residue( *(motifhitop->build_rotamer()) ) );
+						core::conformation::ResidueOP build_rotamer( (motifhitop->build_rotamer()) );
 						pose_dump.replace_residue( (*ir)->seqpos(), *build_rotamer, false );
 						// The residue is probably already placed . . .
 						// if( passed_automorphism ) {
@@ -1002,7 +1172,7 @@ LigandMotifSearch::incorporate_motifs(
 						if ( motifhitop->passed_automorphism() ) {
 							(motifhitop->motifcop())->place_residue( pose_dump.residue( motifhitop->vbpos() ), *build_rotamer, trip_atom_1, trip_atom_2, trip_atom_3 , false );
 						} else {
-							(motifhitop->motifcop())->place_residue( pose_dump.residue( motifhitop->vbpos() ), *build_rotamer, trip_atom_1, trip_atom_2, trip_atom_3  );
+							(motifhitop->motifcop())->place_residue( pose_dump.residue( motifhitop->vbpos() ), *build_rotamer, trip_atom_1, trip_atom_2, trip_atom_3 , true );
 							//Place_residue wants (fixed, mobile, ...)
 						}
 						/*core::pose::Pose pose_dump2( pose );
@@ -1090,6 +1260,8 @@ LigandMotifSearch::incorporate_motifs(
 	}
 }
 
+//phasing out overloaded incorporate_motifs function and working in specific_build_position option into incorporate_motifs(pose) as single function
+
 core::pack::rotamer_set::Rotamers
 LigandMotifSearch::get_rotamers()
 {
@@ -1111,11 +1283,36 @@ LigandMotifSearch::bp_rotamers(
 	for ( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
 			ir != end_ir; ++ir ) {
 		if ( (*ir)->seqpos() != seqpos ) continue;
+
+		//read through contents of best motifs for each build position and spit out the motifs for it
+		/*
+		MotifCOPs bp_best_motifs( (*ir)->best_motifs() );
+		ms_tr << "Position: " << (*ir)->seqpos() << std::endl;
+
+		int motif_count = 0;
+
+		for ( auto motifcop : bp_best_motifs ) {
+		++motif_count;
+		ms_tr << "Motif #" << motif_count << ": " << motifcop->restype_name1() << " " << motifcop->res1_atom1_name() << " " << motifcop->res1_atom2_name() << " " << motifcop->res1_atom3_name() << " " << motifcop->restype_name2() << " " << motifcop->res2_atom1_name() << " " << motifcop->res2_atom2_name() << " " << motifcop->res2_atom3_name() << std::endl;
+		}
+		*/
+
 		if ( ! ((*ir)->best_rotamers()).empty() ) {
 			best_rotamers = (*ir)->best_rotamers();
 		} else {
 			ms_tr << "There were no rotamers to be included for position " << seqpos << std::endl;
 		}
+		/*
+		core::pack::rotamer_set::Rotamers bp_best_rotamers1( (*ir)->best_rotamers() );
+		core::Size bp_rots1( bp_best_rotamers1.size() );
+		for ( core::Size r(1); r <= bp_rots1; ++r ) {
+		ms_tr << "Rotamer " << r << ": " << bp_best_rotamers1[r]->name3() << std::endl;
+		}
+
+		*/
+
+
+
 	}
 	return best_rotamers;
 }
@@ -1188,11 +1385,11 @@ LigandMotifSearch::get_sphere_aa(
 	using namespace scoring;
 	using namespace optimization;
 	int nres( pose.size() );
-	// std::cout << "In get_sphere_aa, about to find ligand " << std::endl;
+	// ms_tr << "In get_sphere_aa, about to find ligand " << std::endl;
 	std::set< core::Size > interface_target_res;
 	for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
 		ResidueType const & lig_type( pose.residue_type( lig_pos ) );
-		// std::cout << "In get_sphere_aa, made res type, aa number is " << lig_pos << std::endl;
+		// ms_tr << "In get_sphere_aa, made res type, aa number is " << lig_pos << std::endl;
 
 		if (  lig_type.is_ligand() ) {
 			ms_tr << "in get_sphere_aa, found my ligand, lig_pos is " << lig_pos << std::endl;
@@ -1283,9 +1480,9 @@ for( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
 allowed_iter = task->residue_task( seqpos ).allowed_residue_types_begin(),
 allowed_end = task->residue_task( seqpos ).allowed_residue_types_end();
 allowed_iter != allowed_end; ++allowed_iter ) {
-std::cout << ' ' << (*allowed_iter)->name3();
+ms_tr << ' ' << (*allowed_iter)->name3();
 }
-std::cout << std::endl;
+ms_tr << std::endl;
 }
 */
 
@@ -1524,6 +1721,11 @@ LigandMotifSearch::init_options()
 	} else {
 		rots2add_ = 100;
 	}
+
+
+	output_build_positions_only_ = basic::options::option[ basic::options::OptionKeys::motifs::output_build_positions_only ]();
+
+	specific_build_position_ = basic::options::option[ basic::options::OptionKeys::motifs::specific_build_position ]();
 }
 
 } // motifs

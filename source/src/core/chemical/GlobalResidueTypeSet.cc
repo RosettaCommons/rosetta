@@ -521,7 +521,7 @@ void GlobalResidueTypeSet::init_patches_from_database() {
 	}
 
 	// Also obtain metapatch filenames
-	std::string const meta_filename( database_directory_+"/metapatches.txt" );
+	std::string const meta_filename( database_directory_+"metapatches.txt" );
 	utility::io::izstream data2( meta_filename.c_str() );
 
 	if ( data2.good() ) { // Not all typeset directories have metapatches

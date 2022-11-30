@@ -58,18 +58,6 @@ sources = {
 	"protocols/neighbor": [
    		"Neighborhood",
     ],
-	"protocols/motifs": [
-		"BuildPosition",
-		"IRCollection",
-		"LigandMotifSearch",
-		"Motif",
-		"motif_utils",
-		"MotifDnaPacker",
-		"MotifHit",
-		"MotifLibrary",
-		"MotifSearch",
-		"SingleMotif",
-	],
 	"protocols/multistate_design": [
 		"MetricCalculatorFitnessFunction",
 		"MultiStateAggregateFunction",

@@ -1,0 +1,7 @@
+-s 4s0v_receptor_only.pdb
+-params_directory_path test_params/
+-motif_filename motif_list.motifs
+-protein_discovery_locus 423
+-fa_atr_cutoff = 500
+-fa_rep_cutoff = 500
+-constrain_relax_to_start_coords

@@ -32,9 +32,10 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <utility/graph/Graph.fwd.hh>
+#include <utility/graph/Graph.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/kinematics/RT.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -44,6 +45,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -54,6 +56,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+#include <core/pack/task/ResidueLevelTask.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -64,6 +67,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+#include <utility/vector0.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -76,8 +80,6 @@
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-
-#include <core/pack/task/ResidueLevelTask.hh> // AUTO IWYU For ResidueLevelTask
 
 namespace protocols {
 namespace motifs {
@@ -115,9 +117,15 @@ single_motif_from_stream(
 	std::string r2atom1, r2atom2, r2atom3;
 	core::kinematics::Jump motif_jump;
 
+	/*
+	//char array, old (keeping as backup)
 	core::Size const max_line_len(1024);
 	char first_line[max_line_len];
 	motif_info.getline( first_line, sizeof(first_line) );
+	*/
+
+	std::string first_line;
+	motif_info.getline(first_line);
 	std::istringstream line_in( first_line );
 
 	line_in >> res1;
@@ -129,8 +137,15 @@ single_motif_from_stream(
 	line_in >> r2atom2;
 	line_in >> r2atom3;
 
+	//char array, old (keeping as backup)
+	/*
 	char rest_of_line[max_line_len];
 	line_in.getline( rest_of_line, sizeof(rest_of_line) );
+	*/
+
+	std::string rest_of_line;
+	std::getline(line_in, rest_of_line);
+
 	std::string rest( rest_of_line );
 	std::string::size_type index( rest.find("REMARK ") );
 	std::string this_remark;
@@ -138,7 +153,7 @@ single_motif_from_stream(
 	if ( index != std::string::npos ) {
 		this_remark = rest.substr( index + 7 );
 		has_remark = true;
-	} else { }
+	}
 
 	// Scan to end of line to skip comments
 	// motif_info.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -165,9 +180,15 @@ single_motif_from_stream(
 	std::string r2atom1, r2atom2, r2atom3;
 	core::kinematics::Jump motif_jump;
 
+	/*
+	//char array, old (keeping as backup)
 	core::Size const max_line_len(1024);
 	char first_line[max_line_len];
 	motif_info.getline( first_line, sizeof(first_line) );
+	*/
+
+	std::string first_line;
+	std::getline(motif_info, first_line);
 	std::istringstream line_in( first_line );
 
 	line_in >> res1;
@@ -179,9 +200,15 @@ single_motif_from_stream(
 	line_in >> r2atom2;
 	line_in >> r2atom3;
 
+	//char array, old (keeping as backup)
+	/*
 	char rest_of_line[max_line_len];
 	line_in.getline( rest_of_line, sizeof(rest_of_line) );
-	//std::cout << "Rest of line:" << rest_of_line << std::endl;
+	*/
+
+	std::string rest_of_line;
+	std::getline(line_in, rest_of_line);
+	//mu_tr << "Rest of line:" << rest_of_line << std::endl;
 	std::string rest( rest_of_line );
 	std::string::size_type index( rest.find("REMARK ") );
 	std::string this_remark;
@@ -189,9 +216,9 @@ single_motif_from_stream(
 	if ( index != std::string::npos ) {
 		this_remark = rest.substr( index + 7 );
 		has_remark = true;
-		// std::cout << "Remark is " << this_remark << std::endl;
+		// mu_tr << "Remark is " << this_remark << std::endl;
 	} else {
-		// std::cout << "No remark in motif" << std::endl;
+		// mu_tr << "No remark in motif" << std::endl;
 	}
 
 	// Scan to end of line to skip comments
@@ -219,9 +246,15 @@ single_ligand_motif_from_stream(
 	std::string r2atom1, r2atom2, r2atom3;
 	core::kinematics::Jump motif_jump;
 
+	/*
+	//char array, old (keeping as backup)
 	core::Size const max_line_len(1024);
 	char first_line[max_line_len];
 	motif_info.getline( first_line, sizeof(first_line) );
+	*/
+
+	std::string first_line;
+	std::getline(motif_info, first_line);
 	std::istringstream line_in( first_line );
 
 	line_in >> res1;
@@ -233,8 +266,14 @@ single_ligand_motif_from_stream(
 	line_in >> r2atom2;
 	line_in >> r2atom3;
 
+	//char array, old (keeping as backup)
+	/*
 	char rest_of_line[max_line_len];
 	line_in.getline( rest_of_line, sizeof(rest_of_line) );
+	*/
+
+	std::string rest_of_line;
+	std::getline(line_in, rest_of_line);
 	std::string rest( rest_of_line );
 	std::string::size_type index( rest.find("REMARK ") );
 	std::string this_remark;
@@ -242,11 +281,112 @@ single_ligand_motif_from_stream(
 	if ( index != std::string::npos ) {
 		this_remark = rest.substr( index + 7 );
 		has_remark = true;
-	} else { }
+	}
 	motif_info >> motif_jump;
 	SingleMotifOP retval( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, r2atom1, r2atom2, r2atom3, motif_jump ) );
 	if ( has_remark ) {
 		retval->store_remark( this_remark );
+	}
+
+	return retval;
+}
+
+SingleMotifOP
+single_ligand_motif_from_stream(
+	std::istream & motif_info, bool check_for_bad_motifs
+)
+{
+
+	/*
+	//test for >> overload
+	mu_tr << "Calling >> overload" << std::endl;
+	SingleMotifOP retval;
+	motif_info >> retval;
+	return retval;
+	*/
+	std::string res1;
+	std::string r1atom1, r1atom2, r1atom3;
+	std::string res2;
+	std::string r2atom1, r2atom2, r2atom3;
+	core::kinematics::Jump motif_jump;
+
+	/*
+	//char array, old (keeping as backup)
+	core::Size const max_line_len(1024);
+	char first_line[max_line_len];
+	motif_info.getline( first_line, sizeof(first_line) );
+	*/
+
+	std::string first_line;
+	std::getline(motif_info, first_line);
+	std::istringstream line_in( first_line );
+
+	line_in >> res1;
+	line_in >> r1atom1;
+	line_in >> r1atom2;
+	line_in >> r1atom3;
+	line_in >> res2;
+	line_in >> r2atom1;
+	line_in >> r2atom2;
+	line_in >> r2atom3;
+
+	//char array, old (keeping as backup)
+	/*
+	char rest_of_line[max_line_len];
+	line_in.getline( rest_of_line, sizeof(rest_of_line) );
+	*/
+
+	std::string rest_of_line;
+	std::getline(line_in, rest_of_line);
+
+	std::string rest( rest_of_line );
+	std::string::size_type index( rest.find("REMARK ") );
+	std::string this_remark;
+	bool has_remark( false );
+	if ( index != std::string::npos ) {
+		this_remark = rest.substr( index + 7 );
+		has_remark = true;
+	}
+
+
+	motif_info >> motif_jump;
+	SingleMotifOP retval( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, r2atom1, r2atom2, r2atom3, motif_jump ) );
+
+	//bool indicate whether to recursively call this function if a motif is encountered that fails the orthogonality check
+	bool call_next_motif = false;
+
+	//mu_tr << "Stream state: " << motif_info.rdstate() << std::endl;
+	//indicate to user that the motif failed the orthogonality test and what the motif is
+	if ( motif_info.rdstate() != 0 ) {
+		if ( basic::options::option[ basic::options::OptionKeys::motifs::verbosity ]() ) {
+			mu_tr << "RT failed orthogonality check!" << std::endl;
+			mu_tr << "Failed motif is:" << std::endl;
+			mu_tr << res1 << "   " << r1atom1 << "   " << r1atom2 << "   " << r1atom3 << "   " << res2 << "   " << r2atom1 << "   " << r2atom2 << "   " << r2atom3 << "   " << rest << std::endl;
+			mu_tr << motif_jump << std::endl;
+		}
+		call_next_motif = true;
+	}
+
+	motif_info.clear();
+	//set the state of stream to good
+	motif_info.setstate( std::ios_base::goodbit );
+
+	if ( has_remark ) {
+		retval->store_remark( this_remark );
+	}
+
+	//override call_next_motif behavior, using check_for_bad_motifs variable; if false then return anyway
+	if ( check_for_bad_motifs == false ) {
+		return retval;
+	}
+
+	//recursively call this function if a failed motif was encountered. This will skip the failed motif and return the next one in the file
+	if ( call_next_motif ) {
+		//read in the next "SINGLE"
+		std::string key_in;
+		motif_info >> key_in;
+
+		retval = single_ligand_motif_from_stream(motif_info, check_for_bad_motifs);
 	}
 
 	return retval;
@@ -529,6 +669,40 @@ get_LigandMotifLibrary_user()
 	}
 }
 
+
+
+MotifLibrary const
+get_LigandMotifLibrary_user(bool check_for_bad_motifs,  utility::vector1< std::string > const & ligand_atom_names)
+{
+	using namespace basic::options;
+	// Make MotifLibrary from list of motif pdbs
+	if ( option[ OptionKeys::motifs::list_motifs ].user() ) {
+		utility::vector1< utility::file::FileName > listnames( option[ OptionKeys::motifs::list_motifs ]().vector() );
+		mu_tr << "In get_LigandMotifLibrary, it's working" << std::endl;
+		utility::vector1< utility::file::FileName > motifnames( get_filenames( listnames ) );
+		mu_tr << "" << std::endl;
+		MotifLibrary motifs( motifnames );
+		mu_tr << "" << std::endl;
+		return motifs;
+		// Make MotifLibrary from a file containing motifs
+	} else if ( option[ OptionKeys::motifs::motif_filename ].user() ) {
+		std::string motif_filename( option[ OptionKeys::motifs::motif_filename ]() );
+		mu_tr << "Got filename" << std::endl;
+		MotifLibrary motifs;
+		mu_tr << "Made motiflibrary" << std::endl;
+		motifs.add_ligand_from_file( motif_filename, check_for_bad_motifs, ligand_atom_names ); //This is main change to continue on ligand path
+		mu_tr << "added motifs from file" << std::endl;
+		return motifs;
+		//mu_tr << "returned motifs" << std::endl;  // This code will never be reached. ~Labonte
+	} else {
+		// (not anymore) Program terminates if no MotifLibrary is given by the command line options
+		// utility_exit_with_message( "ERROR! User must provide input motifs as either a list of PDBs or as a motif file" );
+		mu_tr << "User did not provide input motifs via cmd line, but could be coming in as BuildPosition specific data" << std::endl;
+		MotifLibrary motifs;
+		return motifs;
+	}
+}
+
 utility::vector1< core::conformation::ResidueOP > const
 get_targetconformers_user()
 {
@@ -555,7 +729,7 @@ get_targetconformers_user()
 				conformerOPs.push_back( pose->residue(i).clone() );
 			}
 		}
-	} else { }
+	}
 	return conformerOPs;
 }
 
@@ -913,6 +1087,9 @@ load_build_position_data(
 	core::Size const ligand_marker
 )
 {
+	//mu_tr << "In 4 parameter load_build_position_data" << std::endl;
+	//mu_tr << "Ligand_marker is" << ligand_marker << std::endl;
+
 	std::map< std::string, SingleMotifOP > single_motifs;
 	utility::io::izstream data_file( filename.c_str() );
 	std::string key_in;
@@ -948,7 +1125,17 @@ load_build_position_data(
 						rsd->mainchain_torsions( mainchains );
 						set_chi_according_to_coordinates( *rsd );
 						rsd->copy_residue_connections( pose.residue(bp.seqpos()) );
+						//mu_tr << "Keeping rotamer" << std::endl;
 						bp.keep_rotamer( *rsd );
+
+						/*
+						core::pack::rotamer_set::Rotamers bp_best_rotamers1( bp.best_rotamers() );
+						core::Size bp_rots1( bp_best_rotamers1.size() );
+						for ( core::Size r(1); r <= bp_rots1; ++r ) {
+						mu_tr << "Rotamer " << r << ": " << bp_best_rotamers1[r]->name3() << std::endl;
+						}
+						*/
+
 					}
 				}
 				break;
@@ -990,39 +1177,88 @@ single_residue_from_stream(
 )
 {
 	std::string resname;
-	residue_info >> resname;
-	//std::cout << "READING IN: " << resname << std::endl;
+
+	//Keep reading in from stream until a residue 3 letter code is read in
+	bool is_residue = false;
+
+	while ( is_residue == false )
+			{
+		residue_info >> resname;
+		//mu_tr << "READING IN: " << resname << std::endl;
+
+		//substring handling for D amino acids
+		//entire process breaks if you don't feed in a canonical residue
+		if ( resname.substr(0,3) == "ALA" || resname.substr(0,3) == "ARG" || resname.substr(0,3) == "ASN" || resname.substr(0,3) == "ASP" || resname.substr(0,3) == "CYS" ||
+				resname.substr(0,3) == "GLN" || resname.substr(0,3) == "GLU" || resname.substr(0,3) == "GLY" || resname.substr(0,3) == "HIS" || resname.substr(0,3) == "ILE" ||
+				resname.substr(0,3) == "LEU" || resname.substr(0,3) == "LYS" || resname.substr(0,3) == "MET" || resname.substr(0,3) == "PHE" || resname.substr(0,3) == "PRO" ||
+				resname.substr(0,3) == "SER" || resname.substr(0,3) == "THR" || resname.substr(0,3) == "TRP" || resname.substr(0,3) == "TYR" || resname.substr(0,3) == "VAL" ) {
+			is_residue  = true;
+		}
+
+	}
+
+
 	std::string firstline;
 	getline( residue_info, firstline );
+	//mu_tr << "firstline: " << firstline << std::endl;
 	core::conformation::ResidueOP rsd = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( resname ) );
 	core::Size nlines( rsd->natoms() );
+
+	//iterate through non-rotamer text until the string "Coordinates:" is encountered
+	bool before_coordinates = false;
+	std::string next_word;
+	while ( before_coordinates == false )
+			{
+		residue_info >> next_word;
+		//mu_tr << "next_word: " << next_word << std::endl;
+		if ( next_word == "Coordinates:" ) {
+			before_coordinates = true;
+		}
+	}
+
 	for ( core::Size i(1); i <= nlines; ++i ) {
 		//std::string atomline;
+		//mu_tr << "At new line" << std::endl;
 		std::string atomname;
 		residue_info >> atomname;
+
+		//get next word if atomname is "(virtual)"
+		if ( atomname == "(virtual)" ) {
+			residue_info >> atomname;
+		}
+
 		//getline( residue_info, atomline );
 		utility::vector1< std::string > atomwords( utility::string_split( atomname, ':' ) );
 		std::string atomname2( atomwords.front() );
-		// std::cout << "atomname: " << atomname << std::endl;
-		// std::cout << "atomname2: " << atomname2 << std::endl;
+		// mu_tr << "atomname: " << atomname << std::endl;
+		// mu_tr << "atomname2: " << atomname2 << std::endl;
 		std::string skip, x, y, z;
 		if ( atomname == atomname2 ) {
 			residue_info >> skip;
 			residue_info >> x;
 			residue_info >> y;
 			residue_info >> z;
-			// std::cout << skip << x << y << z << std::endl;
+			// mu_tr << skip << x << y << z << std::endl;
 		} else {
 			residue_info >> x;
 			residue_info >> y;
 			residue_info >> z;
 		}
+		//mu_tr << "At new line" << std::endl;
+		//mu_tr << "atomname: " << atomname << std::endl;
+		//mu_tr << "atomname2: " << atomname2 << std::endl;
+		//mu_tr << "x: " << x << std::endl;
+		//mu_tr << "y: " << y << std::endl;
+		//mu_tr << "z: " << z << std::endl;
+
 		core::Vector atomxyz( utility::string2float(x), utility::string2float(y), utility::string2float(z) );
 		//numeric::xyzVector atomxyz;
 		// residueinfo >> atomxyz;
+		//mu_tr << "Before set_xyz call" << std::endl;
 		rsd->set_xyz( atomname2, atomxyz );
+		//mu_tr << "After set_xyz call" << std::endl;
 	}
-	// std::cout << "TESTING\n" << *rsd << std::endl;
+	// mu_tr << "TESTING\n" << *rsd << std::endl;
 	return rsd;
 }
 
@@ -1184,6 +1420,88 @@ build_rotamers_lite(
 	return rotset;
 }
 
+std::istream & operator >> (
+	std::istream & motif_info, SingleMotifOP & retval
+)
+{
+
+	std::string res1;
+	std::string r1atom1, r1atom2, r1atom3;
+	std::string res2;
+	std::string r2atom1, r2atom2, r2atom3;
+	core::kinematics::Jump motif_jump;
+
+	/*
+	//char array, old (keeping as backup)
+	core::Size const max_line_len(1024);
+	char first_line[max_line_len];
+	motif_info.getline( first_line, sizeof(first_line) );
+	*/
+
+	std::string first_line;
+	std::getline(motif_info, first_line);
+	std::istringstream line_in( first_line );
+
+	line_in >> res1;
+	line_in >> r1atom1;
+	line_in >> r1atom2;
+	line_in >> r1atom3;
+	line_in >> res2;
+	line_in >> r2atom1;
+	line_in >> r2atom2;
+	line_in >> r2atom3;
+
+	//char array, old (keeping as backup)
+	/*
+	char rest_of_line[max_line_len];
+	line_in.getline( rest_of_line, sizeof(rest_of_line) );
+	*/
+
+	std::string rest_of_line;
+	std::getline(line_in, rest_of_line);
+
+	std::string rest( rest_of_line );
+	std::string::size_type index( rest.find("REMARK ") );
+	std::string this_remark;
+	bool has_remark( false );
+	if ( index != std::string::npos ) {
+		this_remark = rest.substr( index + 7 );
+		has_remark = true;
+	}
+
+	motif_info >> motif_jump;
+
+	SingleMotifOP helper( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, r2atom1, r2atom2, r2atom3, motif_jump ) );
+
+	retval = helper;
+
+
+	//bool indicate whether to recursively call this function if a motif is encountered that fails the orthogonality check
+	//bool call_next_motif = false;
+
+	//mu_tr << "Stream state: " << motif_info.rdstate() << std::endl;
+	//indicate to user that the motif failed the orthogonality test and what the motif is
+	if ( motif_info.rdstate() != 0 ) {
+		//if ( basic::options::option[ basic::options::OptionKeys::motifs::verbosity ]() ) {
+		if ( true ) {
+			mu_tr << "RT failed orthogonality check!" << std::endl;
+			mu_tr << "Failed motif is:" << std::endl;
+			mu_tr << res1 << "   " << r1atom1 << "   " << r1atom2 << "   " << r1atom3 << "   " << res2 << "   " << r2atom1 << "   " << r2atom2 << "   " << r2atom3 << "   " << rest << std::endl;
+			mu_tr << motif_jump << std::endl;
+		}
+		//call_next_motif = true;
+	}
+
+	motif_info.clear();
+	//set the state of stream to good
+	motif_info.setstate( std::ios_base::goodbit );
+
+	if ( has_remark ) {
+		retval->store_remark( this_remark );
+	}
+
+	return motif_info;
+}
 
 } // namespace motifs
 } // namespace protocols

@@ -29,6 +29,7 @@
 #include <fstream>
 #include <iostream>
 
+#include <utility/vector1.hh>
 
 
 namespace protocols {
@@ -82,6 +83,80 @@ MotifLibrary::MotifLibrary(
 			//std::cout << "ERROR - BAD MOTIF KEY " << key_in << "\n";
 		}
 	}
+}
+
+void
+MotifLibrary::check_ctor_helper(std::istream & motif_info, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names)
+{
+	//std::cout << "In MotifLibrary.cc, in LigandMotifLibrary istream function" << std::endl;
+	std::string key_in;
+	while ( motif_info >> key_in ) {
+		if ( key_in == "SINGLE" ) {
+			//std::cout << "In MotifLibrary.cc, about to make single motif OP" << std::endl;
+
+			//test to confirm that >> overload works
+			//std::cout << "Trying >> overload" << std::endl;
+			//SingleMotifOP new_motif;
+			//motif_info >> new_motif;
+
+			//original line for backup
+			SingleMotifOP new_motif = single_ligand_motif_from_stream( motif_info, check_for_bad_motifs );
+
+			//handling for if using an empty vector of ligand_atom_names
+			if ( ligand_atom_names.size() == 0 ) {
+				add_to_library( *new_motif );
+
+				//continue, no reason to look down the rest of the function
+				continue;
+			}
+
+			//run through the motif, and determine if it is relevant to the ligand
+			//preliminary filter that will omit a motif if at least one atom in the motif ligand is not present in the ligand
+			bool keep_motif = false;
+			bool atom1_good = false;
+			bool atom2_good = false;
+			bool atom3_good = false;
+			std::string motif_atom_1(new_motif->res2_atom1_name());
+			std::string motif_atom_2(new_motif->res2_atom2_name());
+			std::string motif_atom_3(new_motif->res2_atom3_name());
+
+			//std::cout << "Motif atoms: " << motif_atom_1 << " " << motif_atom_2 << " " << motif_atom_3 << std::endl;
+
+			for ( core::Size this_atom = 1; this_atom <= ligand_atom_names.size(); ++this_atom ) {
+				//std::cout << "Comparing test: " << ligand_atom_names[this_atom] << " to " << motif_atom_1 << std::endl;
+				if ( motif_atom_1 == ligand_atom_names[this_atom] ) {
+					//std::cout << "Match!" << std::endl;
+					atom1_good = true;
+				}
+				//std::cout << "Comparing test: " << ligand_atom_names[this_atom] << " to " << motif_atom_2 << std::endl;
+				if ( motif_atom_2 == ligand_atom_names[this_atom] ) {
+					//std::cout << "Match!" << std::endl;
+					atom2_good = true;
+				}
+				//std::cout << "Comparing test: " << ligand_atom_names[this_atom] << " to " << motif_atom_3 << std::endl;
+				if ( motif_atom_3 == ligand_atom_names[this_atom] ) {
+					//std::cout << "Match!" << std::endl;
+					atom3_good = true;
+				}
+			}
+
+			if ( atom1_good && atom2_good && atom3_good ) {
+				keep_motif = true;
+			}
+
+			if ( keep_motif ) {
+				add_to_library( *new_motif );
+			}
+		}
+	}
+}
+
+// @brief
+MotifLibrary::MotifLibrary(
+	std::istream & motif_info, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names
+)
+{
+	check_ctor_helper(motif_info, check_for_bad_motifs, ligand_atom_names);
 }
 
 void
@@ -139,6 +214,25 @@ MotifLibrary::add_ligand_from_file( std::string const & motif_filename )
 	// Attempt to read in motifs until exhausted
 	core::Size ligand_marker = 1;
 	MotifLibrary new_library( motif_file, ligand_marker );
+
+	// Add to this library
+	for ( auto const & pmot : new_library ) {
+		add_to_library( *pmot );
+	}
+}
+
+void
+MotifLibrary::add_ligand_from_file( std::string const & motif_filename, bool check_for_bad_motifs, utility::vector1< std::string > const & ligand_atom_names )
+{
+	std::ifstream motif_file;
+	motif_file.open( motif_filename.c_str() );
+	if ( !motif_file ) {
+		std::cout << "ERROR:  No motif file " << motif_filename << " - FAILING!\n";
+		return;
+	}
+
+	// Attempt to read in motifs until exhausted
+	MotifLibrary new_library( motif_file, check_for_bad_motifs, ligand_atom_names );
 
 	// Add to this library
 	for ( auto const & pmot : new_library ) {

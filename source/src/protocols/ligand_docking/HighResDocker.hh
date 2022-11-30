@@ -26,6 +26,11 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -86,6 +91,10 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void set_allow_repacking(bool input);
+
+	void set_all_residues(bool input);
+
 public: //For CitationManager:
 
 	/// @brief Provide the citation.
@@ -125,6 +134,8 @@ protected:
 		utility::vector1<protocols::moves::MoverOP> & rigid_body_movers
 	);
 
+	void initialize_from_options();
+
 private:
 	core::Size num_cycles_;
 	core::Size repack_every_Nth_;
@@ -132,6 +143,15 @@ private:
 	core::scoring::ScoreFunctionOP score_fxn_;
 	MoveMapBuilderOP movemap_builder_;
 	std::string resfile_;
+	//moving option system initialization to initialize_from_options() and just going to declare here
+	//keeping old code for readability of how these variables derive their value
+	//bool allow_minimization_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_minimization ];
+	//bool allow_repacking_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_repacking ];
+	//bool all_residues_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_use_all_residues ];
+
+	bool allow_minimization_;
+	bool allow_repacking_;
+	bool all_residues_;
 
 };
 

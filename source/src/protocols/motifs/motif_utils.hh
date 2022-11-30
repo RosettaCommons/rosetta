@@ -36,6 +36,7 @@
 
 // Utility Headers
 #include <utility/file/FileName.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <map>
@@ -245,6 +246,21 @@ build_rotamers_lite(
 	utility::vector1< bool > aa_info,
 	core::Size const ex_,
 	bool bump_check = true
+);
+
+// @brief modified version of single_ligand_motif_from_stream that ensures that the file input stream is not terminated by motif orthogonality check failure
+SingleMotifOP
+single_ligand_motif_from_stream(
+	std::istream & motif_info, bool check_for_bad_motifs
+);
+
+// @ brief modified version of single_ligand_motif_from_stream that ensures that the file input stream is not terminated by motif orthogonality check failure
+MotifLibrary const
+get_LigandMotifLibrary_user(bool check_for_bad_motifs, utility::vector1< std::string > const &  ligand_atom_names);
+
+// @brief operator overload of >> to read in, functionally same as single_ligand_motif_from_stream
+std::istream & operator >> (
+	std::istream & motif_info, SingleMotifOP & retval
 );
 
 } // namespace motifs

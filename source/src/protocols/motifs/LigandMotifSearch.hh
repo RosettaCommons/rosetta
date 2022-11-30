@@ -89,9 +89,9 @@ public:
 		core::Real & ligand_motif_sphere
 	);
 
-	void initialize(
-		Pose const & pose
-	);
+	//void initialize(
+	// Pose const & pose
+	//);
 
 	void initialize(
 		Pose const & pose,
@@ -102,6 +102,14 @@ public:
 	incorporate_motifs(
 		Pose const & pose
 	);
+
+	/*
+	void
+	incorporate_motifs(
+	Pose const & pose,
+	core::Size const & specific_build_position
+	);
+	*/
 
 	core::pack::rotamer_set::Rotamers
 	bp_rotamers(
@@ -219,6 +227,8 @@ public:
 	Real const & dtest_cutoff() const { return dtest_cutoff_;}
 	core::Size const & rot_level() const { return rot_level_;}
 	bool const & minimize() const { return minimize_;}
+	bool const & output_build_positions_only() const { return output_build_positions_only_;}
+	core::Size const & specific_build_position() const { return specific_build_position_;}
 
 private:
 	void init_options();
@@ -254,6 +264,8 @@ private:
 	bool dump_motifs_;
 	bool clear_bprots_;
 	core::Size rots2add_;
+	bool output_build_positions_only_;
+	core::Size specific_build_position_;
 
 };
 

@@ -22,6 +22,7 @@
 #include <protocols/ligand_docking/MinimizeLigand.hh>
 #include <protocols/ligand_docking/MoveMapBuilder.hh>
 #include <protocols/ligand_docking/TetherLigand.hh>
+#include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
@@ -32,12 +33,13 @@
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/palette/PackerPalette.hh>
 #include <core/pack/palette/CustomBaseTypePackerPalette.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
@@ -50,12 +52,16 @@
 // Project Headers
 #include <core/chemical/ResidueType.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/ResidueLevelTask.hh>
 
 // Scripter Headers
 #include <utility>
@@ -65,15 +71,18 @@
 //STL headers
 #include <string>
 
+#include <set>
 
 //Auto Headers
 #include <protocols/ligand_docking/LigandArea.hh>
+#include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/CitationManager.hh>
 
@@ -83,9 +92,6 @@ namespace protocols {
 namespace ligand_docking {
 
 static basic::Tracer TR( "protocols.ligand_docking.ligand_options.Protocol" );
-
-
-
 
 /// @brief
 HighResDocker::HighResDocker():
@@ -101,6 +107,7 @@ HighResDocker::HighResDocker():
 	//meiler2006: 50, 8;
 	//abbreviated: 5, 4;
 	//abbrev2: 6, 3;
+	initialize_from_options();
 }
 
 //With chains though chains do not appear to be used anywhere
@@ -110,7 +117,9 @@ HighResDocker::HighResDocker(
 	core::scoring::ScoreFunctionOP score_fxn,
 	MoveMapBuilderOP movemap_builder,
 	std::string const & resfile
-): num_cycles_(num_cycles), repack_every_Nth_(repack_every_Nth), score_fxn_(std::move(score_fxn)), movemap_builder_(std::move(movemap_builder)), resfile_( resfile ){}
+): num_cycles_(num_cycles), repack_every_Nth_(repack_every_Nth), score_fxn_(std::move(score_fxn)), movemap_builder_(std::move(movemap_builder)), resfile_( resfile ){
+	initialize_from_options();
+}
 
 HighResDocker::HighResDocker(HighResDocker const & that):
 	//utility::VirtualBase(),
@@ -119,7 +128,9 @@ HighResDocker::HighResDocker(HighResDocker const & that):
 	repack_every_Nth_(that.repack_every_Nth_),
 	score_fxn_(that.score_fxn_),
 	movemap_builder_(that.movemap_builder_)
-{}
+{
+	initialize_from_options();
+}
 
 HighResDocker::~HighResDocker() = default;
 
@@ -131,6 +142,17 @@ protocols::moves::MoverOP HighResDocker::fresh_instance() const {
 	return utility::pointer::make_shared< HighResDocker >();
 }
 
+/// @brief function to be called by constructors to assign values to allow_minimization_, allow_repacking, and all_residues
+void
+HighResDocker::initialize_from_options(){
+	bool allow_minimization_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_minimization ];
+	bool allow_repacking_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_repacking ];
+	bool all_residues_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_use_all_residues ];
+	TR << "Initializing options: " << std::endl;
+	TR << "allow_minimization_: " << allow_minimization_ << std::endl;
+	TR << "allow_repacking_: " << allow_repacking_ << std::endl;
+	TR << "all_residues_: " << all_residues_ << std::endl;
+}
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -244,6 +266,7 @@ HighResDocker::remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs liga
 		ligand_tether->release(pose);
 	}
 }
+
 void
 HighResDocker::apply(core::pose::Pose & pose) {
 	debug_assert(num_cycles_ > 0);
@@ -263,18 +286,25 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 
 	for ( core::Size cycle = 1; cycle <= num_cycles_; ++cycle ) {
-		core::pack::task::PackerTaskOP packer_task = make_packer_task(pose);// has to be in the loop to be updated after each design cycle (w/resfiles)
+
+		core::pack::task::PackerTaskOP packer_task;
+
+		if ( all_residues_ == false ) {
+			//all_residues = false;
+			packer_task = make_packer_task(pose, false);
+		} else {
+			packer_task = make_packer_task(pose);
+		}
 
 		protocols::moves::MoverOP pack_mover;
-
-		if ( cycle % repack_every_Nth_ == 1 ) {
+		//for no repacking, make sure to go to else
+		if ( repack_every_Nth_ != 0 && cycle % repack_every_Nth_ == 1 ) {
 			TR.Debug << "making PackRotamersMover" << std::endl;
 			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 		} else {
 			TR.Debug << "making RotamerTrialsMover" << std::endl;
 			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::RotamerTrialsMover >(score_fxn_, *packer_task);
 		}
-
 		// Wrap it in something to disable the torsion constraints before packing!
 		pack_mover = utility::pointer::make_shared< protocols::ligand_docking::UnconstrainedTorsionsMover >( pack_mover, minimized_ligands );
 
@@ -283,7 +313,12 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 		core::Real const score1 = (*score_fxn_)( pose );
 		apply_rigid_body_moves(pose, rigid_body_movers);
-		pack_mover->apply(pose);
+
+		//do not pack if not allowed
+		if ( allow_repacking_ ) {
+			pack_mover->apply(pose);
+		}
+
 
 		core::Real const score2 = (*score_fxn_)( pose );
 		if ( score2 - score1 < 15.0 ) {
@@ -304,6 +339,7 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 void
 HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector1<core::Real> & current_scores, utility::vector1<char> qsar_chars, core::Size cycle) {
+
 	debug_assert(num_cycles_ > 0);
 
 	core::Size pose_counter = 1;
@@ -323,11 +359,18 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 		// Rigid body exploration
 		utility::vector1<protocols::moves::MoverOP> rigid_body_movers= create_rigid_body_movers(pose);
 
-		core::pack::task::PackerTaskOP packer_task( make_packer_task(pose) );// has to be in the loop to be updated after each design cycle (w/resfiles)
+		core::pack::task::PackerTaskOP packer_task;
+
+		if ( all_residues_ == false ) {
+			//all_residues = false;
+			packer_task = make_packer_task(pose, false);
+		} else {
+			packer_task = make_packer_task(pose);
+		}
 
 		protocols::moves::MoverOP pack_mover;
 
-		if ( cycle % repack_every_Nth_ == 1 ) {
+		if ( repack_every_Nth_ != 0 && cycle % repack_every_Nth_ == 1 ) {
 			TR.Debug << "making PackRotamersMover" << std::endl;
 			pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 		} else {
@@ -342,11 +385,18 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 		apply_rigid_body_moves(pose, rigid_body_movers);
-		pack_mover->apply(pose);
-		min_mover->apply(pose);  //okay to always apply MinMover?
+		// not repack if not allowed
+		if ( allow_repacking_ ) {
+			pack_mover->apply(pose);
+		}
+
+		if ( allow_minimization_ ) {
+			min_mover->apply(pose);  //okay to always apply MinMover?
+		}
+
 
 		current_scores[pose_counter] = (*score_fxn_)( pose );
-		std::cout << "HighResDocker Pose Score For " << pose_counter << " is " << current_scores[pose_counter] << "\n";
+		TR << "HighResDocker Pose Score For " << pose_counter << " is " << current_scores[pose_counter] << "\n";
 		++pose_counter;
 
 	}
@@ -369,11 +419,18 @@ HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char q
 	// Rigid body exploration
 	utility::vector1<protocols::moves::MoverOP> rigid_body_movers= create_rigid_body_movers(pose);
 
-	core::pack::task::PackerTaskOP packer_task( make_packer_task(pose) );// has to be in the loop to be updated after each design cycle (w/resfiles)
+	core::pack::task::PackerTaskOP packer_task;
+
+	if ( all_residues_ == false ) {
+		//all_residues = false;
+		packer_task = make_packer_task(pose, false);
+	} else {
+		packer_task = make_packer_task(pose);
+	}
 
 	protocols::moves::MoverOP pack_mover;
 
-	if ( cycle % repack_every_Nth_ == 1 ) {
+	if ( repack_every_Nth_ != 0 && cycle % repack_every_Nth_ == 1 ) {
 		TR.Debug << "making PackRotamersMover" << std::endl;
 		pack_mover = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >(score_fxn_, packer_task);
 	} else {
@@ -389,15 +446,23 @@ HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char q
 
 	core::Real const score1 = (*score_fxn_)( pose );
 	apply_rigid_body_moves(pose, rigid_body_movers);
-	pack_mover->apply(pose);
 
-	core::Real const score2 = (*score_fxn_)( pose );
-	if ( score2 - score1 < 15.0 ) {
-		min_mover->apply(pose);
+	if ( allow_repacking_ ) {
+		pack_mover->apply(pose);
 	}
 
+
+	//skip this if you do not want to minimize
+	if ( allow_minimization_ ) {
+		core::Real const score2 = (*score_fxn_)( pose );
+		if ( score2 - score1 < 15.0 ) {
+			min_mover->apply(pose);
+		}
+	}
+
+
 	current_score = (*score_fxn_)( pose );
-	std::cout << "HighResDocker Pose Score For " << qsar_char << " is " << current_score << "\n";
+
 
 }
 
@@ -606,6 +671,16 @@ HighResDockerCreator::create_mover() const {
 void HighResDockerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	HighResDocker::provide_xml_schema( xsd );
+}
+
+void HighResDocker::set_allow_repacking(bool input)
+{
+	allow_repacking_ = input;
+}
+
+void HighResDocker::set_all_residues(bool input)
+{
+	all_residues_ = input;
 }
 
 } //namespace ligand_docking
