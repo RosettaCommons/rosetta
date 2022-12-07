@@ -149,9 +149,9 @@ private:
 	//bool allow_repacking_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_allow_repacking ];
 	//bool all_residues_ = basic::options::option[ basic::options::OptionKeys::motifs::highresdocker_use_all_residues ];
 
-	bool allow_minimization_;
-	bool allow_repacking_;
-	bool all_residues_;
+	bool allow_minimization_ = true;
+	bool allow_repacking_ = true;
+	bool all_residues_ = false;
 
 };
 

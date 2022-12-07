@@ -289,12 +289,7 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 		core::pack::task::PackerTaskOP packer_task;
 
-		if ( all_residues_ == false ) {
-			//all_residues = false;
-			packer_task = make_packer_task(pose, false);
-		} else {
-			packer_task = make_packer_task(pose);
-		}
+		packer_task = make_packer_task(pose, all_residues_);
 
 		protocols::moves::MoverOP pack_mover;
 		//for no repacking, make sure to go to else
@@ -361,12 +356,7 @@ HighResDocker::apply(utility::vector1<core::pose::Pose> & poses, utility::vector
 
 		core::pack::task::PackerTaskOP packer_task;
 
-		if ( all_residues_ == false ) {
-			//all_residues = false;
-			packer_task = make_packer_task(pose, false);
-		} else {
-			packer_task = make_packer_task(pose);
-		}
+		packer_task = make_packer_task(pose, all_residues_);
 
 		protocols::moves::MoverOP pack_mover;
 
@@ -421,12 +411,7 @@ HighResDocker::apply(core::pose::Pose & pose, core::Real & current_score, char q
 
 	core::pack::task::PackerTaskOP packer_task;
 
-	if ( all_residues_ == false ) {
-		//all_residues = false;
-		packer_task = make_packer_task(pose, false);
-	} else {
-		packer_task = make_packer_task(pose);
-	}
+	packer_task = make_packer_task(pose, all_residues_);
 
 	protocols::moves::MoverOP pack_mover;
 
@@ -550,6 +535,8 @@ HighResDocker::make_packer_task(
 	core::pose::Pose const & pose,
 	bool all_residues
 ) const{
+
+	//original value of all_residues was intended to be false
 	if ( all_residues ) {
 		ligand_options::Interface interface(pose.size(), ligand_options::InterfaceInfo(ligand_options::InterfaceInfo::is_interface)); // 0 is false, #
 		return make_packer_task_from_vector(pose, interface);

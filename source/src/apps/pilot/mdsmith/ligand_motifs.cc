@@ -795,7 +795,7 @@ process_file_list()
 		Pose pose;
 		try{
 			core::import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
-		} catch (utility::excn::BadInput excn ) {
+		} catch (utility::excn::BadInput & excn ) {
 			ms_tr << "Got stuck in missing heavyatom loop, continuing" <<  std::endl;
 			continue; }
 

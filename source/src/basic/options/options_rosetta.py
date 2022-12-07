@@ -7151,7 +7151,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'z_max_holes', 'Real', desc = 'If going to investigate a sub_region of a pdb, this defines the max z value of the region'),
 		Option( 'highresdocker_allow_minimization', 'Boolean', default = 'true', desc = 'Bool to indicate whether to allow (true) minimization or not (false) in the apply function of HighResDocker'),
 		Option( 'highresdocker_allow_repacking', 'Boolean', default = 'true', desc='Boolean in ligand_docking/HighResDocker to prevent apply function from repacking. Often want value to be true, but this allows option to make it false.'),
-		Option( 'highresdocker_use_all_residues', 'Boolean', default = 'true', desc='Boolean in ligand_docking/HighResDocker to determine whether to use all residues in generation of packer_task.'),	     
+		Option( 'highresdocker_use_all_residues', 'Boolean', default = 'false', desc='Boolean in ligand_docking/HighResDocker to determine whether to use all residues in generation of packer_task.'),	     
 	), # -motifs
 
 	Option_Group( 'ms' , # multistate_design
