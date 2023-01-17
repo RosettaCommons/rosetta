@@ -17,4 +17,3 @@ We avoid forking, using a branching-only method, to ensure that all the Rosetta 
 
 ### Interacting with Pull Requests
 All changes to master must go through Pull Requests (PR), also described in [our workflow documentation](https://www.rosettacommons.org/docs/wiki/internal_documentation/GithubWorkflow).  Those PRs also get reviewed by the community before merge, [here](https://www.rosettacommons.org/docs/wiki/internal_documentation/GithubWorkflow#workflow-for-using-github_pull-request-pr_pull-request-review-what-to-do-before-review) are tips on structuring your code for easy review.
-
