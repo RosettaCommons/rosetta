@@ -68,6 +68,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
+#include <utility/io/ozstream.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -1501,6 +1502,29 @@ std::istream & operator >> (
 	}
 
 	return motif_info;
+}
+
+// @brief writes a MotifLibrary to a .motifs file; converts the MotifLibrary to motifCOPs and then calls the overload that uses motifCOPs for simplicity
+void
+write_motifs_to_disk(MotifLibrary ml, std::string filename)
+{
+	write_motifs_to_disk(ml.library() , filename);
+}
+
+// @brief motifCOPS to a .motifs file
+void
+write_motifs_to_disk(MotifCOPs motifcops, std::string filename)
+{
+	//if there is not period in the file name, append ".motifs" to the end
+	if ( filename.find('.') == std::string::npos ) {
+		filename = filename + ".motifs";
+	}
+
+	utility::io::ozstream motif_output_file( filename );
+
+	for ( protocols::motifs::MotifCOP & motifcop: motifcops ) {
+		motif_output_file << *motifcop;
+	}
 }
 
 } // namespace motifs

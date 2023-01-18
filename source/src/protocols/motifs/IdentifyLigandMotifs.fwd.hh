@@ -7,19 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file LigandDiscoverySearch.fwd.hh
+/// @file IdentifyLigandMotifs.fwd.hh
+/// @brief .fwd.hh fils for IdentifyLigandMotifs protocol. Protocol object reads in a pdb file(s) and outputs motifs for protein-ligand interactions in .pdb and .motifs format. App originally written by mdsmith, optimized and converted to protocol by Ari Ginsparg.
 
-#ifndef INCLUDED_protocols_motifs_LigandDiscoverySearch_fwd_hh
-#define INCLUDED_protocols_motifs_LigandDiscoverySearch_fwd_hh
+#ifndef INCLUDED_protocols_motifs_IdentifyLigandMotifs_fwd_hh
+#define INCLUDED_protocols_motifs_IdentifyLigandMotifs_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace motifs {
 
-class LigandDiscoverySearch;
-typedef utility::pointer::shared_ptr< LigandDiscoverySearch > LigandDiscoverySearchOP;
-typedef utility::pointer::shared_ptr< LigandDiscoverySearch const > LigandDiscoverySearchCOP;
+class IdentifyLigandMotifs;
+typedef utility::pointer::shared_ptr< IdentifyLigandMotifs > IdentifyLigandMotifsOP;
+typedef utility::pointer::shared_ptr< IdentifyLigandMotifs const > IdentifyLigandMotifsCOP;
 
 
 } // namespace motifs

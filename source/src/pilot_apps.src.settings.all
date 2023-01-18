@@ -666,7 +666,7 @@ sources = {
 		"score_test",
 	],
 	"pilot/mdsmith" : [
-		"ligand_motifs",
+		#"ligand_motifs",
 		#"motif_ligand_packer_design",
 	],
 	"pilot/membrane" : [

@@ -119,6 +119,7 @@ sources = {
 		"MotifLibrary",
 		"MotifSearch",
 		"SingleMotif",
+		"IdentifyLigandMotifs",
 	],
 	"protocols/noesy_assign": [
                 "CovalentCompliance",

@@ -7151,7 +7151,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'z_max_holes', 'Real', desc = 'If going to investigate a sub_region of a pdb, this defines the max z value of the region'),
 		Option( 'highresdocker_allow_minimization', 'Boolean', default = 'true', desc = 'Bool to indicate whether to allow (true) minimization or not (false) in the apply function of HighResDocker'),
 		Option( 'highresdocker_allow_repacking', 'Boolean', default = 'true', desc='Boolean in ligand_docking/HighResDocker to prevent apply function from repacking. Often want value to be true, but this allows option to make it false.'),
-		Option( 'highresdocker_use_all_residues', 'Boolean', default = 'false', desc='Boolean in ligand_docking/HighResDocker to determine whether to use all residues in generation of packer_task.'),	     
+		Option( 'highresdocker_use_all_residues', 'Boolean', default = 'false', desc='Boolean in ligand_docking/HighResDocker to determine whether to use all residues in generation of packer_task.'),
+		Option( 'ligand_motif_output_directory_name', 'String', default = '', desc = 'Name the directory to which motif pdbs will be outputted to, default of location where script is called. Follow a directory name with a /.'),
+		Option( 'ligand_motif_output_file_name', 'String', default = 'AllMattMotifs.motifs', desc = 'Name the file to which motifs will be outputted to, default of a local directory named AllMattMotifs.motifs. If file type extension not specified (identified as the last period encountered), will output to a file type ending in .motifs'),
+		Option( 'output_motifs_as_pdb', 'Boolean', default = 'true', desc = 'Output generated motifs as pdb files'),
+		Option( 'output_motifs', 'Boolean', default = 'true', desc = 'Output generated motifs as .motifs file and to a MotifLibrary'),	     
 	), # -motifs
 
 	Option_Group( 'ms' , # multistate_design

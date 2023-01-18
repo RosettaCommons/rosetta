@@ -263,6 +263,14 @@ std::istream & operator >> (
 	std::istream & motif_info, SingleMotifOP & retval
 );
 
+// @brief writes a MotifLibrary to a .motifs file; converts the MotifLibrary to motifCOPs and then calls the overload that uses motifCOPs for simplicity
+void
+write_motifs_to_disk(MotifLibrary ml, std::string filename);
+
+// @brief motifCOPS to a .motifs file
+void
+write_motifs_to_disk(MotifCOPs motifcops, std::string filename);
+
 } // namespace motifs
 } // namespace protocols
 

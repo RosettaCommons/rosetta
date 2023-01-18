@@ -183,7 +183,8 @@ sources = {
 		"enzyme_design",
 	],
 	"public/motif_ligand_discovery": [
-		"ligand_discovery_search_protocol"
+		"identify_ligand_motifs",
+		"ligand_discovery_search_protocol",
 	],
 	"public/pose_sewing": [
 		"MakeSegmentFile"
