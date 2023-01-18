@@ -9,7 +9,7 @@
 
 /// @file src/core/sequence/Blosum62Map.hh
 /// @brief Creates a std::unordered_map that maps a char pair of name1s to their BLOSUM62 score
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_sequence_Blosum62Map_hh
 #define INCLUDED_core_sequence_Blosum62Map_hh

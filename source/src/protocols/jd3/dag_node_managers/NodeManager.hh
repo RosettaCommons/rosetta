@@ -35,7 +35,7 @@ To get the most out of this class, call:
 
 5) get_nth_job_result_id() during JobQueen::determine_job_list() for downstream job dag nodes
 */
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_NodeManager_HH

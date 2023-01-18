@@ -9,7 +9,7 @@
 
 /// @file   core/select/jump_selector/JumpForResidue.cc
 /// @brief  JumpForResidue selects the jump that builds the residues passed in
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Unit headers
 #include <core/select/jump_selector/JumpForResidue.hh>

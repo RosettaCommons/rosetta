@@ -13,7 +13,7 @@
 /// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org): Added support for stripping
 /// N-acetylation and C-methylamidation when appending residues, preserving phi and the previous
 /// omega in the first case and psi and the following omega in the second.
-/// @modified Jack Maguire, jackmaguire1444@gmail.com: breaking apply() into smaller methods
+/// @modified Jack Maguire: breaking apply() into smaller methods
 
 #ifndef INCLUDED_protocols_cyclic_peptide_PeptideStubMover_hh
 #define INCLUDED_protocols_cyclic_peptide_PeptideStubMover_hh
@@ -126,7 +126,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	/// @brief add label to residues that are created with this mover
-	/// @author Jack Maguire, jackmaguire1444@gmail.com
+	/// @author Jack Maguire
 	void
 	set_residue_label( std::string const & label ){
 		residue_label_ = label;

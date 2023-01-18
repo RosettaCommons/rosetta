@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd2/SerializedPoseJobInputter.fwd.hh
 /// @brief  forward header file for SerializedPoseJobInputter class
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_jd2_SerializedPoseJobInputter_fwd_hh
 #define INCLUDED_protocols_jd2_SerializedPoseJobInputter_fwd_hh

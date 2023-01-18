@@ -9,7 +9,7 @@
 
 /// @file   core/pack/rotamer_set/PyRotamerEliminator.fwd.hh
 /// @brief  Wrappers that allow the user to eliminate rotamers from pyrosetta
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_core_pack_rotamer_set_PyRotamerEliminator_fwd_hh

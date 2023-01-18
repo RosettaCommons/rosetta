@@ -9,7 +9,7 @@
 
 /// @file core/select/residue_selector/NativeSelector.cxxtest.hh
 /// @brief test suite for core::select::residue_selector::NativeSelector
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Test headers
 #include <cxxtest/TestSuite.h>

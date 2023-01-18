@@ -9,7 +9,7 @@
 
 /// @file core/pack/task/operation/EnableSmartAnnealer.hh
 /// @brief The smart annealer uses tensorflow to decrease the sample space of a typical packing run
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_core_pack_task_operation_EnableSmartAnnealer_hh

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   utility/strong_aliasing.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_utility_strong_aliasing_hh
 #define INCLUDED_utility_strong_aliasing_hh

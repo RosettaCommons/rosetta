@@ -9,7 +9,7 @@
 
 /// @file protocols/rosetta_scripts/ParsedProtocol.cxxtest.hh
 /// @brief test suite for protocols::rosetta_scripts::ParsedProtocol
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Test headers
 #include <cxxtest/TestSuite.h>

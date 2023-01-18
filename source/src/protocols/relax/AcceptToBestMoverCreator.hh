@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   protocols/relax/AcceptToBestMoverCreator.fwd.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_relax_AcceptToBestMoverCreator_hh
 #define INCLUDED_protocols_relax_AcceptToBestMoverCreator_hh

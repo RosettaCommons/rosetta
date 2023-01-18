@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   AtomToAxisConstraint.fwd.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_scoring_constraints_AtomToAxisConstraint_hh
 #define INCLUDED_core_scoring_constraints_AtomToAxisConstraint_hh

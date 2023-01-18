@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/pack/annealer/AnnealerObserver.cc
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 /// Unit headers
 #include <core/pack/annealer/AnnealerObserver.hh>

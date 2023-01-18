@@ -9,7 +9,7 @@
 
 /// @file   protocols/residue_selectors/NativeSelector.hh
 /// @brief  A ResidueSelector that applies a given residue selector to the native pose.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_residue_selectors_NativeSelector_HH
 #define INCLUDED_protocols_residue_selectors_NativeSelector_HH

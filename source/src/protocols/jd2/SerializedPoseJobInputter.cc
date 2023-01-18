@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd2/SerializedPoseJobInputter.cc
 /// @brief  parses inputs as serialized poses
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 ///Unit headers
 #include <protocols/jd2/SerializedPoseJobInputter.hh>

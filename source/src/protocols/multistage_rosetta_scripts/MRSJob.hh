@@ -10,7 +10,7 @@
 /// @file protocols/multistage_rosetta_scripts/MRSJob.hh
 /// @brief JD3 job class to be used by Multistage Rosetta Scripts (MRS)
 /// @detailed
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJob_HH

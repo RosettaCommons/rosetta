@@ -10,7 +10,7 @@
 
 /// @file   core/pack/task/residue_selector/NativeSelector.fwd.hh
 /// @brief  A ResidueSelector that applies a given residue selector to the native pose.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_residue_selectors_NativeSelector_fwd_hh
 #define INCLUDED_protocols_residue_selectors_NativeSelector_fwd_hh

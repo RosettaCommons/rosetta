@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_filters/AtomicDistanceFilter.cxxtest.hh
 /// @brief test suite for protocols::simple_filters::AtomicDistanceFilter
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 // Test headers

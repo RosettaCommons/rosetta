@@ -11,7 +11,7 @@
 /// @brief  The definition for class protocols::multistage_rosetta_scripts::MRSJobSummary
 /// @details This summary build off of the StandardPoseJobSummary.
 /// So far, it just includes an optional ClusterMetricOP.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJobSummary_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_MRSJobSummary_HH

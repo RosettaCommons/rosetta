@@ -14,7 +14,7 @@
 /// all of the possible distances between the points in an attempt to save time.
 /// In practice, this does not save any time at all (tested with SequenceMetrics of length 250)
 /// so I recommend looking at protocols/multistage_rosetta_scripts/cluster/KMedoidsOnTheFly.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_cluster_KMedoids_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_KMedoids_HH

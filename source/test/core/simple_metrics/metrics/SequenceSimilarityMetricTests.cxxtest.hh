@@ -9,7 +9,7 @@
 
 /// @file  test/core/simple_metrics/metrics/SequenceSimilarityMetricTests.cxxtest.hh
 /// @brief  Unit tests for the SequenceSimilarityMetric.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Test headers
 #include <cxxtest/TestSuite.h>

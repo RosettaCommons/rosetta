@@ -13,7 +13,7 @@
 /// finding good clusters quickly. The methods in this file do not precalculate any distances.
 /// Instead, all distances are measured "on the fly". In practice, this does not appear to
 /// be a measurable slowdown.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_cluster_KMedoidsOnTheFly_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_KMedoidsOnTheFly_HH

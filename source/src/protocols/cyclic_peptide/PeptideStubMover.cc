@@ -13,7 +13,7 @@
 /// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org): Added support for stripping
 /// N-acetylation and C-methylamidation when appending residues, preserving phi and the previous
 /// omega in the first case and psi and the following omega in the second.
-/// @modified Jack Maguire, jackmaguire1444@gmail.com: breaking apply() into smaller methods
+/// @modified Jack Maguire: breaking apply() into smaller methods
 
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/cyclic_peptide/PeptideStubMoverCreator.hh>
@@ -74,7 +74,7 @@ void PeptideStubMover::init() {
 
 ///@brief if TR.Debug is visible, dump residue information to the console
 ///@author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-///@modified Jack Maguire, jackmaguire1444@gmail.com : moved to its own function
+///@modified Jack Maguire : moved to its own function
 void dump_debug_output( core::pose::Pose const & pose ){
 	//pose.dump_pdb("test.pdb");
 	if ( TR.Debug.visible() ) {

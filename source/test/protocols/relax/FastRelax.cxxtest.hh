@@ -9,7 +9,7 @@
 
 /// @file   protocols/relax/FastRelax.cxxtest.hh
 /// @brief  test for FastRelax
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // I created this file but am testing only my contribution to the mover. There is still a lot to be tested. -Jack
 

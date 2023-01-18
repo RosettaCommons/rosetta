@@ -9,7 +9,7 @@
 
 /// @file   test/protocols/jd3/NodeManagers.cxxtest.hh
 /// @brief
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Test headers
 #include <cxxtest/TestSuite.h>

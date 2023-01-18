@@ -9,7 +9,7 @@
 
 /// @file   core/select/iterators.hh
 /// @brief  Pose iterator utilities
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_select_iterators_hh
 #define INCLUDED_core_select_iterators_hh

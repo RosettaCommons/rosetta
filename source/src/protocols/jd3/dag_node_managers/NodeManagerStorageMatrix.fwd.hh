@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.fwd.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_NodeManagerStorageMatrix_FWD_HH
 #define INCLUDED_protocols_jd3_dag_node_managers_NodeManagerStorageMatrix_FWD_HH

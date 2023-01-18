@@ -9,7 +9,7 @@
 
 /// @file   utility/cluster/MRSClustering.cxxtest.hh
 /// @brief
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Package headers
 

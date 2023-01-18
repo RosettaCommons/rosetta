@@ -9,7 +9,7 @@
 
 /// @file protocols/testing/BenchmarkBuildRotamersMover.hh
 /// @brief For benchmarking purposes only. Builds data required to run pack rotamers but does not do any sampling. Input pose is untouched.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_testing_BenchmarkBuildRotamersMover_hh
 #define INCLUDED_protocols_testing_BenchmarkBuildRotamersMover_hh

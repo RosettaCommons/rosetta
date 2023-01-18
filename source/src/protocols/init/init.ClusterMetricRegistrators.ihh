@@ -12,7 +12,7 @@
 ///         so that at load time, they will be initialized, and the Creator classes
 ///         they register will be handed to the appropriate WidgetFactory.
 ///         This is for ClusterMetricRegistrators ONLY.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 namespace protocols {
 using multistage_rosetta_scripts::cluster::ClusterMetricRegistrator;

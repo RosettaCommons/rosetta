@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/symmetry/SetupForSequenceSymmetryMoverCreator.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_simple_moves_symmetry_SetupForSequenceSymmetryMoverCreator_hh

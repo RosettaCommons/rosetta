@@ -42,7 +42,7 @@ namespace tensorflow_manager {
 /// and destruction in a way that prevents memory leaks.
 /// @note Cannot be subclassed.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-/// @author Jack Maguire, jackmaguire1444@gmail.com - added static utilities
+/// @author Jack Maguire - added static utilities
 template < typename T >
 class RosettaTensorflowTensorContainer final : public utility::VirtualBase {
 

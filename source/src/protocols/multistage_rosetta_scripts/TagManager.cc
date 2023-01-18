@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/multistage_rosetta_scripts/TagManager.cc
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #include <protocols/multistage_rosetta_scripts/TagManager.hh>

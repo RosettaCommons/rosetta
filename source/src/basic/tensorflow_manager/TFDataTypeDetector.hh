@@ -9,7 +9,7 @@
 
 /// @file basic/tensorflow_manager/TFDataTypeDetector.hh
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_basic_tensorflow_manager_TFDataTypeDetector_hh

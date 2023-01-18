@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 /*
 One of the options for this class involves the order in which results are returned

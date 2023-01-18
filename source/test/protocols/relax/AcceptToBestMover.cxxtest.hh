@@ -9,7 +9,7 @@
 
 /// @file   protocols/relax/AcceptToBestMover.cxxtest.hh
 /// @brief  test for AcceptToBestMover
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Test headers
 #include <cxxtest/TestSuite.h>

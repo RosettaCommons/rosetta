@@ -9,7 +9,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/cluster/metrics/JumpMetric.hh
 /// @brief  Stores the 6-dimensions of a given jump
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_cluster_metric_JumpMetric_hh
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_metric_JumpMetric_hh

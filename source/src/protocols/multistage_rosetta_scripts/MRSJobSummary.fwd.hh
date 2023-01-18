@@ -9,7 +9,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/MRSJobSummary.fwd.hh
 /// @brief  The declaration for class protocols::multistage_rosetta_scripts::MRSJobSummary
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJobSummary_FWD_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_MRSJobSummary_FWD_HH

@@ -9,7 +9,7 @@
 
 /// @file   protocols/residue_selectors/NativeSelectorCreator.hh
 /// @brief  Creator for NativeSelector class
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_residue_selectors_NativeSelectorCreator_HH
 #define INCLUDED_protocols_residue_selectors_NativeSelectorCreator_HH

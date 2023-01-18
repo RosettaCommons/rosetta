@@ -9,7 +9,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/cluster/metrics/SequenceMetric.hh
 /// @brief  Stores the amino acid sequence of the pose or subset of the pose. Distance is the number of mutations.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_cluster_metric_SequenceMetric_hh
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_metric_SequenceMetric_hh

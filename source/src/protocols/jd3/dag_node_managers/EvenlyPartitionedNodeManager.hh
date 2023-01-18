@@ -10,7 +10,7 @@
 /// @file protocols/jd3/dag_node_managers/EvenlyPartitionedNodeManager.hh
 /// @brief Node Manager that separates job results into different pools of equal size. Assignment of job results into pools is determined by you, the user, in the form of the "partition" argument in register_result(). If you are implementing a result threshold, this will also be evenly divided among all of the partitions
 /// @detailed See here for more info: https://www.rosettacommons.org/docs/latest/development_documentation/tutorials/jd3_derived_jq/classes/node_manager
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_EvenlyPartitionedNodeManager_HH

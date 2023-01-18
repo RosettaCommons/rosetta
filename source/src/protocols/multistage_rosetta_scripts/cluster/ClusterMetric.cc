@@ -10,7 +10,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/cluster/ClusterMetric.cc
 /// @brief  Auto-generated serialization template functions
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.hh>
 

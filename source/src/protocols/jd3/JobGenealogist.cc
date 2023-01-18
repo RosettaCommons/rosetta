@@ -10,7 +10,7 @@
 /// @file   protocols/jd3/JobGenealogist.cc
 /// @brief  class method definitions for JobGenealogist
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Unit headers
 #include <protocols/jd3/JobGenealogist.hh>

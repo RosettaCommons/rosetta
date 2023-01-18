@@ -9,7 +9,7 @@
 
 /// @file apps/pilot/jackmaguire/test_rosetta_thread_manager_preallocation.cc
 /// @brief An application to test the RosettaThreadManager's preallocation API
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // devel headers
 #include <devel/init.hh>

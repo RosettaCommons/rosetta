@@ -9,7 +9,7 @@
 
 /// @file   protocols/simple_filters/ReadPoseExtraScoreFilterCreator.hh
 /// @brief  FilterCreators for the ReadPoseExtraScoreFilter
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_simple_filters_ReadPoseExtraScoreFilterCreator_hh

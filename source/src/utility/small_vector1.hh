@@ -9,7 +9,7 @@
 
 /// @file   utility/small_vector1.hh
 /// @brief  boost::container::small_vector with 1-based indexing
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_utility_small_vector1_HH

@@ -9,7 +9,7 @@
 
 /// @file utility/cxx_versioning_macros.hh
 /// @brief macros for using function attributes in a portable way
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 /* __has_cpp_attribute
 __has_cpp_attribute is a standard C++ macro for testing if a given attribute is available or not.

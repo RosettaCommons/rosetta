@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/testing/BenchmarkBuildRotamersMover.fwd.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_testing_BenchmarkBuildRotamersMover_fwd_hh
 #define INCLUDED_protocols_testing_BenchmarkBuildRotamersMover_fwd_hh

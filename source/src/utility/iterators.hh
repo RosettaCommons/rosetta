@@ -10,7 +10,7 @@
 /// @file   utility/iterators.hh
 /// @brief  iterator utilities
 /// @details unit tests for these utilities are grouped with core/select/iterators.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_utility_iterators_hh
 #define INCLUDED_utility_iterators_hh

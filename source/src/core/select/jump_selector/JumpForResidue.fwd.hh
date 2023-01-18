@@ -9,7 +9,7 @@
 
 /// @file   core/select/jump_selector/JumpForResidue.fwd.hh
 /// @brief  JumpForResidue selects the jump that builds the residues passed in
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_select_jump_selector_JumpForResidue_FWD_HH
 #define INCLUDED_core_select_jump_selector_JumpForResidue_FWD_HH

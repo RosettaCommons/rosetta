@@ -10,7 +10,7 @@
 /// @file protocols/multistage_rosetta_scripts/TagManager.fwd.hh
 /// @brief
 /// @detailed
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_TagManager_FWD_HH

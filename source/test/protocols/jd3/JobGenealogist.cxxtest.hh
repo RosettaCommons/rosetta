@@ -10,7 +10,7 @@
 /// @file   test/protocols/jd3/JobGenealogist.cxxtest.hh
 /// @brief  test suite for the JobGenealogist
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Test headers
 #include <cxxtest/TestSuite.h>

@@ -9,7 +9,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/MRSJobSummary.cc
 /// @brief  The implementation for class protocols::multistage_rosetta_scripts::MRSJobSummary's methods
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Unit headers
 #include <protocols/multistage_rosetta_scripts/MRSJobSummary.hh>

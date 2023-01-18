@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/pack/annealer/SequenceSymmetricAnnealer.fwd.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_pack_annealer_SequenceSymmetricAnnealer_fwd_hh
 #define INCLUDED_core_pack_annealer_SequenceSymmetricAnnealer_fwd_hh

@@ -9,7 +9,7 @@
 
 /// @file core/pack/task/operation/KeepSequenceSymmetry.cc
 /// @brief Use this when you give Rosetta a multimer to design and you want the sequences of the chains to be the same but you don't need strict physical symmetry.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 /// @author Updated by Tim Neary, timdot10@gmail.com
 
 

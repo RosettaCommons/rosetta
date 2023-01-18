@@ -9,7 +9,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.cc
 /// @brief  Class for instantiating arbitrary Cluster Metrics from a string
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Unit headers
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetricFactory.hh>

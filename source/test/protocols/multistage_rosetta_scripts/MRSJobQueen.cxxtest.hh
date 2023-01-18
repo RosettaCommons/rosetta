@@ -9,7 +9,7 @@
 
 /// @file   test/protocols/multistage_rosetta_scripts/MRSJobQueen.cxxtest.hh
 /// @brief  test suite for the MRSJobQueen and MRSJob classes
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Test headers
 #include <cxxtest/TestSuite.h>

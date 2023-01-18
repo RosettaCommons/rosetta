@@ -9,7 +9,7 @@
 
 /// @file core/simple_metrics/metrics/SequenceSimilarityMetric.cc
 /// @brief compares the sequences of the native structure (using native flag) to the sequence of a given pose.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <core/simple_metrics/metrics/SequenceSimilarityMetric.hh>
 #include <core/simple_metrics/simple_metric_creators.hh>
@@ -201,7 +201,7 @@ SequenceSimilarityMetric::provide_citation_info(basic::citation_manager::Citatio
 		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
 		"Jack Maguire",
 		"University of North Carolina at Chapel Hill",
-		"jackmaguire1444@gmail.com"
+		""
 		)
 	);
 	citations.add( authors );

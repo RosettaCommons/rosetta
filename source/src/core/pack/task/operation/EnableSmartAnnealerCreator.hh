@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   core/pack/task/operation/EnableSmartAnnealerCreator.cc
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_pack_task_operation_EnableSmartAnnealerCreator_HH
 #define INCLUDED_core_pack_task_operation_EnableSmartAnnealerCreator_HH

@@ -9,7 +9,7 @@
 
 /// @file   core/pack/annealer/FixbbSimAnnealer.fwd.hh
 /// @brief  This annealer (which is not being maintained or compiled) was used to generate the original training data for the smart annealer
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_core_pack_annealer_FixbbSimAnnealer_jackmaguire_fwd_hh

@@ -10,7 +10,7 @@
 /// @file protocols/jd3/dag_node_managers/SimpleNodeManager.hh
 /// @brief Node Manager that does not discriminate between job results. All results are added to the same pool.
 /// @detailed See here for more info: https://www.rosettacommons.org/docs/latest/development_documentation/tutorials/jd3_derived_jq/classes/node_manager
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_SimpleNodeManager_HH

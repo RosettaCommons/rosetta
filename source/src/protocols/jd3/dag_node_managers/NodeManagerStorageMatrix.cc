@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.cc
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh>
 #include <algorithm>

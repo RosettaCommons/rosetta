@@ -10,7 +10,7 @@
 /// @file  protocols/cyclic_peptide/PeptideStubMoverTests.cxxtest.hh
 /// @brief  Unit tests for the PeptideStubMover, used to build peptide geometry.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 // Test headers

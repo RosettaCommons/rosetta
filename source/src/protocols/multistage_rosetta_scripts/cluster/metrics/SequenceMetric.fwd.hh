@@ -9,7 +9,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/cluster/metrics/SequenceMetric.fwd.hh
 /// @brief
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_cluster_metric_SequenceMetric_fwd_hh
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_metric_SequenceMetric_fwd_hh

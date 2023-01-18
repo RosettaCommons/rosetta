@@ -15,7 +15,7 @@
 /// - Keeping track of jobs that have been susbmitted and the global job offset
 /// - Finishing early (if result_threshold argument in the constructor is != 0) if enough results come in
 /// - Determining which jobs results should be discarded and which should be kept
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>

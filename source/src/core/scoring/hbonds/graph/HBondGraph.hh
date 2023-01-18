@@ -16,7 +16,7 @@
 /// (3) Use HBondGraphInitializerIG and RotamerSets::compute_energies() to populate edges into this graph
 /// (4) If you are using an HBondGraph, call core::pack::hbonds::determine_atom_level_edge_info_for_all_edges() and core::pack::hbonds::determine_atom_level_node_info_for_all_nodes()
 /// (5) Optional: If you are using an HBondGraph and you only care to analyze unsatisfied atoms, call find_satisfying_interactions_with_background()
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_scoring_hbonds_graph_HBondGraph_HH
 #define INCLUDED_core_scoring_hbonds_graph_HBondGraph_HH

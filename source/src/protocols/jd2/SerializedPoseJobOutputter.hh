@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd2/SerializedPoseJobOutputter.hh
 /// @brief  outputs serialized Poses that should only be read in by applications from the same git checkout on the same computer
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_jd2_SerializedPoseJobOutputter_hh
 #define INCLUDED_protocols_jd2_SerializedPoseJobOutputter_hh

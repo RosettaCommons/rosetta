@@ -9,7 +9,7 @@
 
 /// @file core/select/jump_selector/JumpForResidue.cxxtest.hh
 /// @brief  test suite for core::select::jump_selector::JumpForResidue
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 // Test headers

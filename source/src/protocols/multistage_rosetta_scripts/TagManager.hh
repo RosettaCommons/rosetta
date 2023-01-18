@@ -9,7 +9,7 @@
 
 /// @file protocols/multistage_rosetta_scripts/TagManager.hh
 /// @brief This class was designed to help the MRSJobQueen handle tags for many input jobs
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_TagManager_HH

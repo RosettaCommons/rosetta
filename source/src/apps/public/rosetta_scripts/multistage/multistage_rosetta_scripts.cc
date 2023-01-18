@@ -9,7 +9,7 @@
 
 /// @file   apps/public/rosetta_scripts/multistage/multistge_rosetta_scripts.cc
 /// @brief
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>

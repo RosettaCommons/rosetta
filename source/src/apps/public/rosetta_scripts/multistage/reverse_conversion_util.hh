@@ -9,7 +9,7 @@
 
 /// @file   apps/public/rosetta_scripts/multistage/reverse_conversion_util.hh
 /// @brief
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <utility/tag/Tag.hh>
 #include <sstream>

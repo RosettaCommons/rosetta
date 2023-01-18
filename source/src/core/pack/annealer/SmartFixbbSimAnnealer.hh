@@ -9,7 +9,7 @@
 
 /// @file   core/pack/annealer/SmartFixbbSimAnnealer.hh
 /// @brief  Derivation of the FixbbSimAnnealer with some fancy Tensorflow logic to adaptively decrease sample space during the run
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_pack_annealer_SmartFixbbSimAnnealer_hh
 #define INCLUDED_core_pack_annealer_SmartFixbbSimAnnealer_hh

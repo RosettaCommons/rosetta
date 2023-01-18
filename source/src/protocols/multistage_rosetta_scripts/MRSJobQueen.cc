@@ -9,7 +9,7 @@
 
 /// @file protocols/multistage_rosetta_scripts/MRSJobQueen.cc
 /// @brief Queen for JD3 multistep protocol
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Unit headers
 #include <protocols/multistage_rosetta_scripts/MRSJobQueen.hh>

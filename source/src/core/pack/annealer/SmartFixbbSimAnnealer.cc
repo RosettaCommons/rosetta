@@ -9,7 +9,7 @@
 
 /// @file   core/pack/annealer/SmartFixbbSimAnnealer.cc
 /// @brief  Derivation of the FixbbSimAnnealer with some fancy Tensorflow logic to adaptively decrease sample space during the run
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 // Unit Headers
 #include <core/pack/annealer/SmartFixbbSimAnnealer.hh>
@@ -120,7 +120,7 @@ register_unpublished_author_info() {
 		CitedModuleType::Mover,
 		"Jack Magure",
 		"University of North Carloina",
-		"jackmaguire1444@gmail.com",
+		"",
 		"Created the SmartFixbbSimAnnealer."
 		) );
 }

@@ -10,7 +10,7 @@
 /// @file protocols/jd3/dag_node_managers/EvenlyPartitionedNodeManager.fwd.hh
 /// @brief
 /// @detailed
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_EvenlyPartitionedNodeManager_FWD_HH

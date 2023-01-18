@@ -10,7 +10,7 @@
 /// @file   apps/pilot/jackmaguire/tensorflow_manager_multi_input_test.cc
 /// @brief  See main/tests/integration/tests/tensorflow_manager/multi_input_test/README.md
 /// @details This code is scrapped together from google searches, so it does not meet our coding convention and I have no plans to correct it.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>

@@ -9,7 +9,7 @@
 
 /// @file core/scoring/hbonds/graph/HBondGraph.fwd.hh
 /// @brief HBondGraph forward declarations
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_scoring_hbonds_graph_HBondGraph_FWD_HH
 #define INCLUDED_core_scoring_hbonds_graph_HBondGraph_FWD_HH

@@ -1250,7 +1250,7 @@ FastRelax::get_possible_relax_script_names( std::string const & prefix ) const {
 	return possible_names;
 }
 
-///@author Jack Maguire, jackmaguire1444@gmail.com
+///@author Jack Maguire
 std::string
 FastRelax::determine_default_relax_script(){
 	if ( enable_design_ ) {

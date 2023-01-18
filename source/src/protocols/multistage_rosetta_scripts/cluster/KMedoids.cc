@@ -9,7 +9,7 @@
 
 /// @file   protocols/multistage_rosetta_scripts/cluster/KMedoids.cc
 /// @brief
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <protocols/multistage_rosetta_scripts/cluster/KMedoids.hh>
 #include <algorithm>

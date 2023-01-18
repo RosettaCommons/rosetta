@@ -9,7 +9,7 @@
 
 /// @file core/simple_metrics/metrics/SequenceSimilarityMetric.fwd.hh
 /// @brief compares the sequences of the native structure (using native flag) to the sequence of a given pose.
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_core_simple_metrics_metrics_SequenceSimilarityMetric_fwd_hh
 #define INCLUDED_core_simple_metrics_metrics_SequenceSimilarityMetric_fwd_hh

@@ -9,7 +9,7 @@
 
 /// @file   apps/pilot/jackmaguire/benchmark_k_medoids.cc
 /// @brief
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>

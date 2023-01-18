@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file basic/thread_manager/RosettaThreadAllocation.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_basic_thread_manager_RosettaThreadAllocation_hh
 #define INCLUDED_basic_thread_manager_RosettaThreadAllocation_hh

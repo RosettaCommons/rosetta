@@ -10,7 +10,7 @@
 /// @file utility/io/GeneralFileManager.cc
 /// @brief A singleton class for managing arbitrary files to ensure that they are loaded once and only once from disk.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <utility/io/GeneralFileManager.hh>
 

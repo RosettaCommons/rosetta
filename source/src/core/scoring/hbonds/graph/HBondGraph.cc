@@ -9,7 +9,7 @@
 
 /// @file core/scoring/hbonds/graph/HBondGraph.cc
 /// @brief HBondGraph, HBondNode, and HBondEdge classes
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
 

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   protocols/jd2/SerializedPoseJobOutputterCreator.hh
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_jd2_SerializedPoseJobOutputterCreator_hh
 #define INCLUDED_protocols_jd2_SerializedPoseJobOutputterCreator_hh

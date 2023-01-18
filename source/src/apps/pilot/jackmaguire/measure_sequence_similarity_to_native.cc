@@ -9,7 +9,7 @@
 
 /// @file   apps/pilot/jackmaguire/measure_sequence_similarity_to_native.cc
 /// @brief
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #include <devel/init.hh>
 #include <basic/Tracer.hh>

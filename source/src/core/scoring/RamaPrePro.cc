@@ -109,7 +109,7 @@ RamaPrePro::eval_rpp_rama_score(
 /// @details This version works for noncanonical or canonical residues with any number of mainchain
 /// torsions.  If the next residue's identity is pro or d-pro, a different score table is used.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
-/// @author some maintenece by Jack Maguire, jackmaguire1444@gmail.com.
+/// @author some maintenece by Jack Maguire.
 void
 RamaPrePro::eval_rpp_rama_derivatives(
 	core::conformation::Conformation const & conf,

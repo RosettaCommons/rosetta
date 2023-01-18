@@ -9,7 +9,7 @@
 
 /// @file src/protocols/relax/AcceptToBestMover.hh
 /// @brief Mover equivalent of the accept_to_best command
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 #ifndef INCLUDED_protocols_relax_AcceptToBestMover_hh
 #define INCLUDED_protocols_relax_AcceptToBestMover_hh

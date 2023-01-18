@@ -9,7 +9,7 @@
 
 /// @file   utility/small_vector1.cxxtest.hh
 /// @brief  boost::container::small_vector with 1-based indexing
-/// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Jack Maguire
 
 
 // Testing headers
