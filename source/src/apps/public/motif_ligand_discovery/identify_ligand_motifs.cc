@@ -44,8 +44,6 @@ using namespace pose;
 using namespace scoring;
 //using namespace optimization;
 
-using utility::vector1;
-
 
 
 int

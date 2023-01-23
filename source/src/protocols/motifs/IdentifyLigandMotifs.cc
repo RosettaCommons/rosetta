@@ -174,9 +174,9 @@ IdentifyLigandMotifs::IdentifyLigandMotifs()
 	motif_pdb_output_path_ = option[ OptionKeys::motifs::ligand_motif_output_directory_name ];
 	motif_file_output_ = option[ OptionKeys::motifs::ligand_motif_output_file_name ];
 	//default true
-	bool output_motifs_ = option[ OptionKeys::motifs::output_motifs ];
+	output_motifs_ = option[ OptionKeys::motifs::output_motifs ];
 	//default true
-	bool output_motifs_as_pdb_ = option[ OptionKeys::motifs::output_motifs_as_pdb ];
+	output_motifs_as_pdb_ = option[ OptionKeys::motifs::output_motifs_as_pdb ];
 
 	TR << "motif_pdb_output_path_: " << motif_pdb_output_path_ << std::endl;
 	TR << "motif_file_output_: " << motif_file_output_ << std::endl;
