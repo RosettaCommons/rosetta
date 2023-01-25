@@ -661,7 +661,8 @@ slice( pose::Pose & sliced_out_pose,
 		// Explicitly exclude chemical edges from this kind of cutpoint consideration
 		// AMW: don't do that!
 		//
-		bool const after_cutpoint = ( j == 1 || ( pose.fold_tree().is_cutpoint( j - 1 ) && pose.fold_tree().get_residue_edge( j ).label() != core::kinematics::Edge::CHEMICAL ) );
+		bool const after_cutpoint = ( j == 1 || ( pose.fold_tree().is_cutpoint( j - 1 ) &&
+			(pose.fold_tree().is_root( j ) || pose.fold_tree().get_residue_edge( j ).label() != core::kinematics::Edge::CHEMICAL ) ) );
 		if ( after_cutpoint && rsd->has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) rsd = remove_variant_type_from_residue( *rsd, chemical::LOWER_TERMINUS_VARIANT, pose );
 		if ( !after_cutpoint && !slice_res.has_value( j - 1 ) ) num_five_prime_connections++;
 
