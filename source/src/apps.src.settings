@@ -73,6 +73,7 @@ sources = {
 		"cst_info",
                 "ensemble_analysis",
                 "fast_clustering",
+                "HDXEnergy",
 		"InterfaceAnalyzer",
 		"interface_energy",
 		"parcs_ccs_calc",

@@ -1,0 +1,5 @@
+-in:file:s 1a2p_A.pdb
+-in::file::HDX 1a2p_pf.txt
+-ResPF
+-out::file::o 1a2p_test.out
+
