@@ -320,6 +320,10 @@ reroot_based_on_full_model_info( pose::Pose & pose,
 	utility::vector1< core::Size > const & working_res = full_model_info.working_res();
 	core::pose::reroot( pose, root_partition_res, res_list, preferred_root_res, fixed_domain_map,
 		cutpoint_open_in_full_model, working_res );
+	if ( pose.residue_type( pose.fold_tree().root() ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+		TR << "WARNING! WARNING! WARNING! pose was re-rooted onto a residue that has CUTPOINT UPPER. If loop closure is applied, the pose will go haywire. In the future, Rosetta should allow rooting at atoms that are not in backbone!" << std::endl;
+	}
+
 }
 
 
@@ -1335,6 +1339,20 @@ figure_out_root_and_moving_partition_res( pose::Pose const & pose, core::Size co
 	}
 }
 
+
+///////////////////////////////////////////////////////////////////
+Size
+get_possible_root( pose::Pose const & pose,
+	utility::vector1< Size > const & partition_res /* should not be empty */,
+	bool const disallow_cutpoint_closed_upper ){
+	for ( Size const i : partition_res ) {
+		if ( !pose.fold_tree().possible_root( i ) ) continue;
+		if ( disallow_cutpoint_closed_upper && pose.residue_type( i ).has_variant_type( chemical::CUTPOINT_UPPER ) ) continue;
+		return i;
+	}
+	return 0;
+}
+
 ///////////////////////////////////////////////////////////////////
 bool
 revise_root_and_moving_res( pose::Pose & pose, core::Size & moving_res /* note that this can change too*/ ){
@@ -1351,14 +1369,20 @@ revise_root_and_moving_res( pose::Pose & pose, core::Size & moving_res /* note t
 		switch_moving_and_root_partitions = false;
 	} else if ( primary_domain_moving > 0 && primary_domain_root == 0 ) {
 		switch_moving_and_root_partitions = true;
-	} else if ( !get_definite_terminal_root( pose, moving_partition_res ) &&
-			get_definite_terminal_root( pose, root_partition_res ) )  {
+	} else if ( !get_definite_terminal_root( pose, moving_partition_res, true /*disallow_cutpoint_closed_upper*/ ) &&
+			get_definite_terminal_root( pose, root_partition_res, true /*disallow_cutpoint_closed_upper*/  ) )  {
 		switch_moving_and_root_partitions = false;
-	} else if ( !get_definite_terminal_root( pose, root_partition_res ) &&
-			get_definite_terminal_root( pose, moving_partition_res ) )  {
+	} else if ( !get_possible_root( pose, root_partition_res, true /*disallow_cutpoint_closed_upper*/  ) &&
+			get_possible_root( pose, moving_partition_res, true /*disallow_cutpoint_closed_upper*/  ) )  {
+		switch_moving_and_root_partitions = true;
+	} else if ( !get_possible_root( pose, moving_partition_res, true /*disallow_cutpoint_closed_upper*/ ) &&
+			get_possible_root( pose, root_partition_res, true /*disallow_cutpoint_closed_upper*/  ) )  {
+		switch_moving_and_root_partitions = false;
+	} else if ( !get_definite_terminal_root( pose, root_partition_res, true /*disallow_cutpoint_closed_upper*/  ) &&
+			get_definite_terminal_root( pose, moving_partition_res, true /*disallow_cutpoint_closed_upper*/  ) )  {
 		switch_moving_and_root_partitions = true;
 	} else {
-		// either both are fixed or both are free.
+		// either both partitions are fixed or both are free; and both have reasonable roots.
 		if ( root_partition_res.size() == moving_partition_res.size() ) {
 			switch_moving_and_root_partitions = ( primary_domain_moving < primary_domain_root );
 		} else {

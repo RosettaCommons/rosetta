@@ -2176,9 +2176,11 @@ get_definite_terminal_root( pose::Pose const & pose,
 	utility::vector1< Size > const & res_list,
 	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
 	utility::vector1< Size > const & cutpoint_open_in_full_model,
-	utility::vector1< Size > const & working_res ){
+	utility::vector1< Size > const & working_res,
+	bool const disallow_cutpoint_closed_upper ){
 	for ( Size const i : partition_res ) {
 		if ( !pose.fold_tree().possible_root( i ) ) continue;
+		if ( disallow_cutpoint_closed_upper && pose.residue_type( i ).has_variant_type( chemical::CUTPOINT_UPPER ) ) continue;
 		if ( definite_terminal_root( cutpoint_open_in_full_model, working_res, res_list, fixed_domain_map.size(), i ) ) {
 			return i;
 		}
@@ -2189,14 +2191,16 @@ get_definite_terminal_root( pose::Pose const & pose,
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 get_definite_terminal_root( pose::Pose const & pose,
-	utility::vector1< Size > const & partition_res /* should not be empty */ ) {
+	utility::vector1< Size > const & partition_res /* should not be empty */,
+	bool const disallow_cutpoint_closed_upper /* = false */ ) {
 	core::pose::full_model_info::FullModelInfo const & full_model_info = core::pose::full_model_info::const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 	utility::vector1< Size > const & working_res = full_model_info.working_res();
 	return get_definite_terminal_root( pose, partition_res,
-		res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
+		res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res,
+		disallow_cutpoint_closed_upper );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2274,13 +2278,31 @@ reroot( pose::Pose & pose,
 		}
 	}
 
+	// next preference: roots that are definitely terminal and not cutpoint_closed_upper
+	//(potential sites that will be perturbed by CCD chain closure).
+	if ( new_root == 0 ) {
+		new_root = get_definite_terminal_root( pose, root_partition_res_ordered,
+			res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res, true /*disallow_cutpoint_closed_upper*/ );
+	}
+
 	// next preference: roots that are definitely terminal -- nothing will be built past them.
 	if ( new_root == 0 ) {
 		new_root = get_definite_terminal_root( pose, root_partition_res_ordered,
-			res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
+			res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res, false /*disallow_cutpoint_closed_upper*/ );
 	}
 
-	// if all else fails...
+	// if that all fails, just find a root -- though prioritize residues that are not cutpoint_closed_upper
+	//(potential sites that will be perturbed by CCD chain closure).
+	if ( new_root == 0 ) {
+		for ( Size n = 1; n <= root_partition_res_ordered.size(); n++ ) {
+			Size const i = root_partition_res_ordered[ n ];
+			if ( !pose.fold_tree().possible_root( i ) ) continue;
+			if ( pose.residue_type( i ).has_variant_type( chemical::CUTPOINT_UPPER ) ) continue;
+			new_root = i; break;
+		}
+	}
+
+	// if all else fails, just find a root
 	if ( new_root == 0 ) {
 		for ( Size n = 1; n <= root_partition_res_ordered.size(); n++ ) {
 			Size const i = root_partition_res_ordered[ n ];

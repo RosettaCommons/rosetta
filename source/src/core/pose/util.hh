@@ -484,11 +484,13 @@ get_definite_terminal_root( pose::Pose const & pose,
 	utility::vector1< Size > const & res_list,
 	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
 	utility::vector1< Size > const & cutpoint_open_in_full_model,
-	utility::vector1< Size > const & working_res );
+	utility::vector1< Size > const & working_res,
+	bool const disallow_cutpoint_closed_upper = false );
 
 Size
 get_definite_terminal_root( pose::Pose const & pose,
-	utility::vector1< Size > const & partition_res /* should not be empty */ );
+	utility::vector1< Size > const & partition_res /* should not be empty */,
+	bool const disallow_cutpoint_closed_upper = false );
 
 utility::vector1< Size >
 reorder_root_partition_res(
