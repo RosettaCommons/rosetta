@@ -106,14 +106,14 @@ void BundleGridSamplerHelper::initialize_samples() {
 	if ( TR.visible() ) {
 		TR << "The following parameter values will be sampled:" << std::endl;
 		char outstring[1024];
-		sprintf(outstring, "Helix\tDoF\tParameter values" );
+		snprintf(outstring, sizeof(outstring), "Helix\tDoF\tParameter values" );
 		TR << outstring << std::endl;
 
 		for ( core::Size i=1, imax=nDoFs(); i<=imax; ++i ) {
-			sprintf(outstring, "%lu\t%s\t", (unsigned long) allowed_dof_helix_indices_[i], DoF_name(allowed_dof_types_[i]).c_str() );
+			snprintf(outstring, sizeof(outstring), "%lu\t%s\t", (unsigned long) allowed_dof_helix_indices_[i], DoF_name(allowed_dof_types_[i]).c_str() );
 			TR << outstring;
 			for ( core::Size j=1, jmax=dof_sample_vals_[i].size(); j<=jmax; ++j ) {
-				sprintf(outstring, "%.4f\t", dof_sample_vals_[i][j]);
+				snprintf(outstring, sizeof(outstring), "%.4f\t", dof_sample_vals_[i][j]);
 				TR << outstring;
 			}
 			TR << std::endl;

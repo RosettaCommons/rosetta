@@ -252,7 +252,7 @@ main( int argc, char * argv [] )
 			makebundle.apply(pose);
 
 			char charbuffer[256];
-			sprintf(charbuffer, "output_%04lu.pdb", iframe);
+			snprintf(charbuffer, sizeof(charbuffer), "output_%04lu.pdb", iframe);
 
 			pose.dump_pdb(std::string(charbuffer));
 			TR << "Wrote " << charbuffer << "." << std::endl;

@@ -93,9 +93,9 @@ public:
 			TS_ASSERT_DELTA( pose1.energies().total_energy(), pose2.energies().total_energy(), 1e-5 );
 			//DELETE THE FOLLOWING -- FOR DEBUGGING ONLY
 			/*char outfile [256];
-			sprintf( outfile, "RAMACTRL_N%04lu.pdb", i );
+			snprintf( outfile, sizeof( outfile), "RAMACTRL_N%04lu.pdb", i );
 			pose1.dump_pdb( std::string(outfile) );
-			sprintf( outfile, "RAMATEST_N%04lu.pdb", i );
+			snprintf( outfile, sizeof( outfile), "RAMATEST_N%04lu.pdb", i );
 			pose2.dump_pdb( std::string(outfile) );*/
 		}
 		TR << std::endl;
@@ -140,9 +140,9 @@ public:
 			TS_ASSERT_DELTA( pose1.energies().total_energy(), pose2.energies().total_energy(), 1e-5 );
 			//DELETE THE FOLLOWING -- FOR DEBUGGING ONLY
 			/*char outfile [256];
-			sprintf( outfile, "RAMACTRL_C%04lu.pdb", i );
+			snprintf( outfile, sizeof( outfile), "RAMACTRL_C%04lu.pdb", i );
 			pose1.dump_pdb( std::string(outfile) );
-			sprintf( outfile, "RAMATEST_C%04lu.pdb", i );
+			snprintf( outfile, sizeof( outfile), "RAMATEST_C%04lu.pdb", i );
 			pose2.dump_pdb( std::string(outfile) );*/
 		}
 		TR << std::endl;

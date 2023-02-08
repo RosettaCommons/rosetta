@@ -35,7 +35,7 @@ StringList split( const std::string &sep, const std::string &str );
 //splits the std::string str into std::strings wherever a separator 'sep' occurs, and returns the list of those std::strings.
 StringList split_WhiteSpace(const std::string &str);
 
-char * section( const std::string &str, const char &seq, char *buff, int start, int end= 0xffffffff );
+char * section( const std::string &str, const char &seq, char *buff, platform::Size n, int start, int end= 0xffffffff );
 //returns a section of the std::string, each section is defined by char 'sep', numbers of start and end are the index number (begin with 0)
 
 std::string simplifyWhiteSpace( const std::string &str );

@@ -308,7 +308,7 @@ EnergyBasedClusteringProtocol::go() {
 			std::stringstream outfile1, outfile2;
 			char curstructtag[128];
 			std::string const prepended( options_.output_prefix_.empty() ? "" : options_.output_prefix_ + "_" );
-			sprintf(curstructtag, "%sc.%lu.%lu", prepended.c_str(), i, j);
+			snprintf(curstructtag, sizeof(curstructtag), "%sc.%lu.%lu", prepended.c_str(), i, j);
 			if ( options_.silent_output_ ) {
 				core::io::silent::SilentFileOptions opts;
 				opts.read_from_global_options();
@@ -348,7 +348,7 @@ EnergyBasedClusteringProtocol::go() {
 	core::pose::Pose cenpose;
 	pose_from_posedata(firstpose, cenpose, clustermode, clustcenter_list[i]);
 	char outfile[64];
-	sprintf(outfile, "center_%lu.pdb", i);
+	snprintf(outfile, sizeof(outfile), "center_%lu.pdb", i);
 	cenpose.dump_pdb(outfile);
 	}*/
 
@@ -1945,7 +1945,7 @@ const core::Size &clustnumber
 ) {
 FILE* outputfile;
 char filename [128];
-sprintf(filename, "PCA_%lu.txt", clustnumber);
+snprintf(filename, sizeof(filename), "PCA_%lu.txt", clustnumber);
 outputfile = fopen(filename, "w");
 //printf("\tOpened %s for write.\n", filename); fflush(stdout); //DELETE ME
 

@@ -112,9 +112,9 @@ public:
 				char fname1[256];
 				char fname2[256];
 				char fname3[256];
-				sprintf(fname1, "vsymmglytest_pose1_%04i.pdb", count);
-				sprintf(fname2, "vsymmglytest_pose2_%04i.pdb", count);
-				sprintf(fname3, "vsymmglytest_pose3_%04i.pdb", count);*/
+				snprintf(fname1, sizeof(fname1), "vsymmglytest_pose1_%04i.pdb", count);
+				snprintf(fname2, sizeof(fname2), "vsymmglytest_pose2_%04i.pdb", count);
+				snprintf(fname3, sizeof(fname3), "vsymmglytest_pose3_%04i.pdb", count);*/
 
 				for ( core::Size ir=1; ir<=8; ++ir ) {
 					pose->set_omega(ir, 180.0);
@@ -232,9 +232,9 @@ public:
 						if ( std::abs( pose5a->energies().total_energy() - pose5b->energies().total_energy() ) > std::max( std::abs( std::max(pose5a->energies().total_energy(), pose5b->energies().total_energy())/1000.0 ), 1e-12 ) ) {
 							TR << "Failure on phi=" << iphi << " psi=" << ipsi << " omega=" << iphi << ".  Dumping..." << std::endl;
 							char outstr[256];
-							sprintf( outstr, "pre_failure_A_%03i_%03i.pdb", iphi, ipsi );
+							snprintf( outstr, sizeof( outstr), "pre_failure_A_%03i_%03i.pdb", iphi, ipsi );
 							pose5a->dump_pdb(std::string(outstr));
-							sprintf( outstr, "pre_failure_B_%03i_%03i.pdb", iphi, ipsi );
+							snprintf( outstr, sizeof( outstr), "pre_failure_B_%03i_%03i.pdb", iphi, ipsi );
 							pose5b->dump_pdb(std::string(outstr));
 						}
 					}
@@ -250,9 +250,9 @@ public:
 						if ( std::abs( pose5a->energies().total_energy() - pose5b->energies().total_energy() ) > std::max( std::abs( std::max(pose5a->energies().total_energy(), pose5b->energies().total_energy())/1000.0 ), 1e-12 ) ) {
 							TR << "Failure on phi=" << iphi << " psi=" << ipsi << " omega=" << iphi << ".  Dumping..." << std::endl;
 							char outstr[256];
-							sprintf( outstr, "post_failure_A_%03i_%03i.pdb", iphi, ipsi );
+							snprintf( outstr, sizeof( outstr), "post_failure_A_%03i_%03i.pdb", iphi, ipsi );
 							pose5a->dump_pdb(std::string(outstr));
-							sprintf( outstr, "post_failure_B_%03i_%03i.pdb", iphi, ipsi );
+							snprintf( outstr, sizeof( outstr), "post_failure_B_%03i_%03i.pdb", iphi, ipsi );
 							core::pose::Pose pose5bprime( *(pose5b->clone()) );
 							for ( core::Size ir(1), irmax(pose5bprime.total_residue()); ir<=irmax; ++ir ) {
 								for ( core::Size ia(1), iamax( pose5bprime.residue_type(ir).natoms()); ia<=iamax; ++ia ) {

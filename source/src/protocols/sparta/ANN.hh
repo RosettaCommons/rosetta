@@ -105,8 +105,8 @@ public:
 	//check the number of atom without CS for a given residue
 	int getNumberMissCS( ANN_Vector &v);
 
-	char * ftoa( float n, char *buff, char f='g', int prec=6 );
-	char * itoa( int n, char *buff, int base=10 );
+	char * ftoa( float n, char *buff, platform::Size s, char f='g', int prec=6 );
+	char * itoa( int n, char *buff, platform::Size s, int base=10 );
 
 };
 

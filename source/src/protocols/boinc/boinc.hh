@@ -214,7 +214,7 @@ public:
 #endif
 
 	// name based on the boinc client slot run directory
-	static void get_sema_name( char * name);
+	static void get_sema_name( char * name, platform::Size n );
 
 	static int create_semaphore( void );
 	static int get_semaphore( void );

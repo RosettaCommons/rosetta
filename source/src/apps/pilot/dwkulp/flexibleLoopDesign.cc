@@ -381,7 +381,7 @@ int main( int argc, char * argv[] ) {
 
 					cout << "RMSD["<<loopIndex<<"]: "<<rmsd<<endl;
 					char tmpRMSD[80];
-					sprintf(tmpRMSD, "%8.3f ",rmsd);
+					snprintf(tmpRMSD, sizeof(tmpRMSD), "%8.3f ",rmsd);
 					RMSDs << tmpRMSD;
 
 					averageRMSD += rmsd;
@@ -394,7 +394,7 @@ int main( int argc, char * argv[] ) {
 				double percentSequenceChange  = 100 - ( ((double) (numTotalDesignablePositions - numDifferentAA) / (double) numTotalDesignablePositions) * 100 );
 				cout << "Number of positions designed is "<<numDifferentAA<<" out of "<<numTotalDesignablePositions<<" percentSequenceChange: "<<percentSequenceChange<<endl;
 				char tmp[80];
-				sprintf(tmp, "DATA: accepted.%06d.pdb %06d %8.3f %8.3f %5.0f %8.3f %8.3f %s",
+				snprintf(tmp, sizeof(tmp), "DATA: accepted.%06d.pdb %06d %8.3f %8.3f %5.0f %8.3f %8.3f %s",
 					i, i,
 					score,
 					score - wtScorePostMin,
@@ -408,7 +408,7 @@ int main( int argc, char * argv[] ) {
 				fout << tmp <<endl;
 
 				char tmp2[80];
-				sprintf(tmp2,"accepted.%06d.pdb",i);
+				snprintf(tmp2, sizeof(tmp2),"accepted.%06d.pdb",i);
 
 				pose.dump_pdb(tmp2);
 

@@ -601,12 +601,12 @@ HelicalBundlePredictApplication::run() {
 
 		if ( silent_output_ ) {
 			char outfile[1024];
-			sprintf(outfile, "%s%s.%s", outfile_prefix_.c_str(), outfile_suffix_.c_str(), outfile_extension_.c_str() );
+			snprintf(outfile, sizeof(outfile), "%s%s.%s", outfile_prefix_.c_str(), outfile_suffix_.c_str(), outfile_extension_.c_str() );
 
 			core::io::silent::SilentFileOptions opts;
 			core::io::silent::SilentStructOP ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts ) );
 			char tag[1024];
-			sprintf(tag, "%s%06lu%s", outfile_prefix_.c_str(), static_cast<unsigned long>(irepeat), outfile_suffix_.c_str() );
+			snprintf(tag, sizeof(tag), "%s%06lu%s", outfile_prefix_.c_str(), static_cast<unsigned long>(irepeat), outfile_suffix_.c_str() );
 			ss->fill_struct( *pose_, std::string(tag) );
 			if ( native_pose_ != nullptr ) ss->add_energy( "RMSD", rmsd ); //Add the RMSD to the energy to be written out in the silent file.
 			core::io::silent::SilentFileDataOP silent_file ( utility::pointer::make_shared< core::io::silent::SilentFileData >( opts ) );
@@ -614,7 +614,7 @@ HelicalBundlePredictApplication::run() {
 			silent_file->write_silent_struct( *ss, std::string( outfile ) );
 		} else {
 			char outfile[1024];
-			sprintf(outfile, "%s%06lu%s.%s", outfile_prefix_.c_str(), irepeat, outfile_suffix_.c_str(), outfile_extension_.c_str() );
+			snprintf(outfile, sizeof(outfile), "%s%06lu%s.%s", outfile_prefix_.c_str(), irepeat, outfile_suffix_.c_str(), outfile_extension_.c_str() );
 			pose_->dump_file( std::string(outfile) );
 		}
 
@@ -780,9 +780,9 @@ HelicalBundlePredictApplication::output_to_silent_list(
 	char tag[512];
 
 	if ( my_rank_ > 0 ) {
-		sprintf(tag, "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>( repeat_index + already_completed_job_count_ ) );
+		snprintf(tag, sizeof(tag), "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>( repeat_index + already_completed_job_count_ ) );
 	} else {
-		sprintf(tag, "result_%04lu", static_cast<unsigned long>(repeat_index) );
+		snprintf(tag, sizeof(tag), "result_%04lu", static_cast<unsigned long>(repeat_index) );
 	}
 	ss->fill_struct( pose, std::string(tag) );
 	if ( include_rmsd ) ss->add_energy( "RMSD", rmsd ); //Add the RMSD to the energy to be written out in the silent file.

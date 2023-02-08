@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
 		scKIC->apply(mypose2);
 
 		char filename[256];
-		sprintf(filename, "out_%04lu.pdb", counter);
+		snprintf(filename, sizeof(filename), "out_%04lu.pdb", counter);
 
 		mypose2.dump_pdb(filename); printf("Wrote %s.\n", filename); fflush(stdout);
 

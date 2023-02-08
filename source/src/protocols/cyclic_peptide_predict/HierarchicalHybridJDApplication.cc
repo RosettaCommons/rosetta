@@ -601,7 +601,11 @@ HierarchicalHybridJDApplication::get_sequence() {
 	MPI_Bcast( &stringlen, 1, MPI_INT, 0, MPI_COMM_WORLD); //Broadcast the length of the sequence string.
 
 	utility::vector0< char > charseq( stringlen );
-	if( i_am_director() ) sprintf( charseq.data(), "%s", sequence_.c_str() );
+	if( i_am_director() ) {
+		std::unique_ptr<char[]> data( new char[stringlen + 1]); // +1 for null termination
+		snprintf( data.get(), stringlen + 1, "%s", sequence_.c_str() );
+		charseq.assign(data.get(), data.get() + stringlen);
+	}
 
 	MPI_Bcast( charseq.data(), stringlen, MPI_CHAR, 0, MPI_COMM_WORLD );
 	if( i_am_director() ) {
@@ -840,7 +844,9 @@ HierarchicalHybridJDApplication::send_silent_structs(
 
 	int strlen( outstring.length() + 1 ); //The plus one is for the /0 terminal character
 	utility::vector0< char > outchar( strlen );
-	sprintf( outchar.data(), "%s", outstring.c_str() );
+	std::unique_ptr<char[]> data( new char[strlen + 1]); // +1 for null termination
+	snprintf( data.get(), strlen + 1, "%s", outstring.c_str() );
+	outchar.assign(data.get(), data.get() + strlen);
 
 	MPI_Send( &strlen, 1, MPI_INT, target_node, static_cast<int>(SILENT_STRUCT_TRANSMISSION), MPI_COMM_WORLD); //Send the length of the string.
 	MPI_Send( outchar.data(), strlen, MPI_CHAR, target_node, static_cast<int>(SILENT_STRUCT_TRANSMISSION), MPI_COMM_WORLD); //Send the string.
@@ -1619,7 +1625,9 @@ HierarchicalHybridJDApplication::broadcast_silent_struct_from_this_node(
 
 	int strlen( outstring.length() + 1 ); //The plus one is for the /0 terminal character
 	utility::vector0< char > outchar( strlen );
-	sprintf( outchar.data(), "%s", outstring.c_str() );
+	std::unique_ptr<char[]> data( new char[strlen]); // +1 for null termination taken care of
+	snprintf( data.get(), strlen, "%s", outstring.c_str() );
+	outchar.assign(data.get(), data.get() + strlen - 1);
 
 	MPI_Bcast( &strlen, 1, MPI_INT, MPI_rank_, MPI_COMM_WORLD); //Broadcast the length of the string.
 	MPI_Bcast( outchar.data(), strlen, MPI_CHAR, MPI_rank_, MPI_COMM_WORLD); //Broadcast the string.

@@ -107,12 +107,12 @@ symmetrize_map(
 		if ( phi_bin < 180 ) continue; //Positive phi region should be ignored.
 
 		char outtemp[2048];
-		sprintf( outtemp, "%s\t%li\t%li\t%li\t%0.8f\t%0.8f", aa_name.c_str(), phi_bin, theta_bin, psi_bin, pval, eval );
+		snprintf( outtemp, sizeof( outtemp), "%s\t%li\t%li\t%li\t%0.8f\t%0.8f", aa_name.c_str(), phi_bin, theta_bin, psi_bin, pval, eval );
 		outstream << outtemp << std::endl;
 		core::Size const phiprime( static_cast< core::Size >( numeric::nonnegative_principal_angle_degrees( 360 - static_cast<signed long>(phi_bin) - 10 ) ) );
 		core::Size const thetaprime( static_cast< core::Size >( numeric::nonnegative_principal_angle_degrees( 360 - static_cast<signed long>(theta_bin) - 10 ) ) );
 		core::Size const psiprime( static_cast< core::Size >( numeric::nonnegative_principal_angle_degrees( 360 - static_cast<signed long>(psi_bin) - 10 ) ) );
-		sprintf( outtemp, "%s\t%lu\t%lu\t%lu\t%0.8f\t%0.8f", aa_name.c_str(), phiprime, thetaprime, psiprime, pval, eval );
+		snprintf( outtemp, sizeof( outtemp), "%s\t%lu\t%lu\t%lu\t%0.8f\t%0.8f", aa_name.c_str(), phiprime, thetaprime, psiprime, pval, eval );
 		outstream << outtemp << std::endl;
 
 	} while( true );

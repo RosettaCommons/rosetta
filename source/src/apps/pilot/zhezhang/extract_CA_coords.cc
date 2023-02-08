@@ -93,7 +93,7 @@ void write_for_resnum(int resnum, char /*chainID*/){
 		z = coords( 3, resnum );
 		char outbuf[200];
 
-		sprintf(outbuf, "ATOM  %5d %4s %s %s%4d    %8.3f%8.3f%8.3f  1.00  1.00\n", ct, "CA", "TRJ","Z",ct, x, y, z);
+		snprintf(outbuf, sizeof(outbuf), "ATOM  %5d %4s %s %s%4d    %8.3f%8.3f%8.3f  1.00  1.00\n", ct, "CA", "TRJ","Z",ct, x, y, z);
 
 		out << outbuf ;
 	}
@@ -133,9 +133,9 @@ void run(){
 				y = coords( 2, res );
 				z = coords( 3, res );
 				chainID = chainID - i + 1;
-				//    sprintf(outbuf, "ATOM  %5d %4s %s %s%4d    %8.3f%8.3f%8.3f  1.00  1.00\n", ct, "CA", "TRJ","Z",ct, x, y, z);
-				//     sprintf(outbuf, "ATOM  %5d %4s %s %c%4d    %8.3f%8.3f%8.3f  1.00  1.00\n", 1, "CA", "TRJ",chainID,1, x, y, z);
-				sprintf(outbuf, "ATOM  %5d %4s %s %c%4d    %8.3f%8.3f%8.3f  1.00  %3.2f\n", 1, "CA", "TRJ",chainID,1, x, y, z,energy);
+				//    snprintf(outbuf, sizeof(outbuf), "ATOM  %5d %4s %s %s%4d    %8.3f%8.3f%8.3f  1.00  1.00\n", ct, "CA", "TRJ","Z",ct, x, y, z);
+				//     snprintf(outbuf, sizeof(outbuf), "ATOM  %5d %4s %s %c%4d    %8.3f%8.3f%8.3f  1.00  1.00\n", 1, "CA", "TRJ",chainID,1, x, y, z);
+				snprintf(outbuf, sizeof(outbuf), "ATOM  %5d %4s %s %c%4d    %8.3f%8.3f%8.3f  1.00  %3.2f\n", 1, "CA", "TRJ",chainID,1, x, y, z,energy);
 				out << outbuf;
 			}
 		}

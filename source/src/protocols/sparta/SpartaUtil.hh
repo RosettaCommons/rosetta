@@ -64,8 +64,8 @@ float getRMS( utility::vector0< float > &v1, utility::vector0< float > &v2 );
 int MKDIR(const char *dirName);
 bool isDirExists(const std::string &Dir) ;
 
-char * ftoa( float n, char *buff, char f='g', int prec=6 );
-char * itoa( int n, char *buff, int base=10 );
+char * ftoa( float n, char *buff, platform::Size s, char f='g', int prec=6 );
+char * itoa( int n, char *buff, platform::Size s, int base=10 );
 
 } // sparta
 } // protocols

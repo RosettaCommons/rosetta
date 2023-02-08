@@ -345,7 +345,7 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 		//Dump a PDB file, if the user has specified that this mover should do so:
 		if ( pdb_output() ) {
 			char outfile[1024];
-			sprintf( outfile, "%s_%05lu.pdb", pdb_prefix().c_str(), static_cast<unsigned long>(i) );
+			snprintf( outfile, sizeof( outfile), "%s_%05lu.pdb", pdb_prefix().c_str(), static_cast<unsigned long>(i) );
 			if ( TR.visible() ) TR << "Writing " << outfile << std::endl;
 			temppose->dump_scored_pdb( outfile, *sfxn_ );
 		}

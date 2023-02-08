@@ -146,9 +146,9 @@ public:
 				//The following is for debugging only, and can be deleted:
 				/*
 				char fname[256]; //DELETE ME
-				sprintf(fname, "mirr_%04lu.pdb", i - 1); //DELETE ME
+				snprintf(fname, sizeof(fname), "mirr_%04lu.pdb", i - 1); //DELETE ME
 				mirr_cutpoint_i->dump_scored_pdb( std::string( fname ), (*sfxn) ); //DELETE ME
-				sprintf(fname, "ref_%04lu.pdb", i - 1); //DELETE ME
+				snprintf(fname, sizeof(fname), "ref_%04lu.pdb", i - 1); //DELETE ME
 				mirror_poses[i]->dump_scored_pdb( std::string(fname), (*sfxn) ); //DELETE ME
 				core::Size const nres(mirr_cutpoint_i->total_residue());
 				TR_u << "PHI1=" << mirr_cutpoint_i->phi(1) << "\tPHI1ref=" << mirror_poses[i]->phi(1) << std::endl; //DELETE ME

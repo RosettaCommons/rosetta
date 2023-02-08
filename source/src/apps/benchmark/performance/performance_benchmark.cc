@@ -324,7 +324,7 @@ std::string PerformanceBenchmark::getReport()
 	for ( Size i = 0; i < all.size(); i++ ) {
 		if ( i != 0 ) res += ",\n"; // special first case
 		PerformanceBenchmark * B = all[i];
-		sprintf(buf, "{\"run_time\":%f, \"cycles\":%i}", B->time_, B->result_ );
+		snprintf(buf, sizeof(buf), "{\"run_time\":%f, \"cycles\":%i}", B->time_, B->result_ );
 		res += "    \"" + B->name_ + "\":" + std::string(buf);
 	}
 	res += "\n}\n";
@@ -344,7 +344,7 @@ std::string PerformanceBenchmark::getOneReport(std::string const & name)
 
 	for ( auto B : all ) {
 		if ( B->name() == name ) {
-			sprintf(buf, "[%i, %f]", B->result_, B->time_ );
+			snprintf(buf, sizeof(buf), "[%i, %f]", B->result_, B->time_ );
 			res += "    \"" + B->name_ + "\":" + std::string(buf);
 		}
 	}

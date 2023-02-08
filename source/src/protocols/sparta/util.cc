@@ -188,7 +188,7 @@ StringList split_WhiteSpace(const string &str)
 
 
 //returns a section of the string, each section is defined by char 'sep', numbers of start and end are the index number (begin with 0)
-char *section( const string &str, const char &sep, char *buff, int start, int end ) {
+char *section( const string &str, const char &sep, char *buff, platform::Size n, int start, int end ) {
 	StringList fields = split(sep, str);
 
 	string temp = "";
@@ -200,7 +200,7 @@ char *section( const string &str, const char &sep, char *buff, int start, int en
 		}
 	}
 
-	sprintf( buff, "%s", temp.c_str() );
+	snprintf( buff, n, "%s", temp.c_str() );
 	return buff;
 }
 

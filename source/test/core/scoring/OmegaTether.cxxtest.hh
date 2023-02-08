@@ -87,7 +87,7 @@ public:
 
 			//Delete the following: for debugging only
 			//char outfile[256];
-			//sprintf( outfile, "alpha_aa_omega_test_%03lu.pdb", j);
+			//snprintf( outfile, sizeof( outfile), "alpha_aa_omega_test_%03lu.pdb", j);
 			//pose.dump_pdb(std::string(outfile));
 		}
 
@@ -126,7 +126,7 @@ public:
 
 				//Delete the following: for debugging only
 				//char outfile[256];
-				//sprintf( outfile, "oligourea_omega_test_%03lu_%03lu.pdb", i, j);
+				//snprintf( outfile, sizeof( outfile), "oligourea_omega_test_%03lu_%03lu.pdb", i, j);
 				//pose.dump_pdb(std::string(outfile));
 			}
 		}

@@ -400,10 +400,10 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 
 		U_NAME[index][3] = residList[i+1];
 
-		inTab.Entries[index]["PHI_R3"] = ftoa(U_ANGLES[index][7], buf);
-		inTab.Entries[index]["PSI_R3"] = ftoa(U_ANGLES[index][8], buf);
-		inTab.Entries[index]["CHI1_R3"] = ftoa(U_ANGLES[index][9], buf);
-		inTab.Entries[index]["RESID_R3"] = itoa(i+1, buf);
+		inTab.Entries[index]["PHI_R3"] = ftoa(U_ANGLES[index][7], buf, sizeof(buf));
+		inTab.Entries[index]["PSI_R3"] = ftoa(U_ANGLES[index][8], buf, sizeof(buf));
+		inTab.Entries[index]["CHI1_R3"] = ftoa(U_ANGLES[index][9], buf, sizeof(buf));
+		inTab.Entries[index]["RESID_R3"] = itoa(i+1, buf, sizeof(buf));
 		inTab.Entries[index]["RESNAME_R3"] = residList[i+1];
 		inTab.Entries[index]["SOURCE"] = inName.substr(pos0,pos1-pos0);
 
@@ -419,20 +419,20 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 			} else if ( name == "CB" && residList[i] == "G" ) continue;
 
 			U_RING_SHIFTS[index][itN_unordered.first-1] = inPDB.getOrbitalShift(1,i,name) ;
-			inTab.Entries[index][itN_unordered.second+"_HM"] = ftoa(U_RING_SHIFTS[index][itN_unordered.first-1], buf);
+			inTab.Entries[index][itN_unordered.second+"_HM"] = ftoa(U_RING_SHIFTS[index][itN_unordered.first-1], buf, sizeof(buf));
 		}
 
 		//H-Honds
 		dist = inPDB.HBDistList[i]["HN"];
-		inTab.Entries[index]["H_HB"] = ftoa(dist, buf);
+		inTab.Entries[index]["H_HB"] = ftoa(dist, buf, sizeof(buf));
 		U_HN_HB[index] = dist;
 
 		dist = inPDB.HBDistList[i]["HA"];
-		inTab.Entries[index]["HA_HB"] = ftoa(dist, buf);
+		inTab.Entries[index]["HA_HB"] = ftoa(dist, buf, sizeof(buf));
 		U_HA_HB[index] = dist;
 
 		dist = inPDB.HBDistList[i]["O"];
-		inTab.Entries[index]["CO_HB"] = ftoa(dist, buf);
+		inTab.Entries[index]["CO_HB"] = ftoa(dist, buf, sizeof(buf));
 		U_CO_HB[index] = dist;
 
 		if ( inTab.Entries.find(index-1) != inTab.Entries.end() ) {
@@ -468,10 +468,10 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 			U_ANGLES[index][3] = shift;
 			U_NAME[index][1] = residList[i-1];
 
-			inTab.setEntry(index, "PHI_R1", ftoa(U_ANGLES[index][1], buf) );
-			inTab.setEntry(index, "PSI_R1", ftoa(U_ANGLES[index][2], buf) );
-			inTab.setEntry(index, "CHI1_R1", ftoa(U_ANGLES[index][3], buf) );
-			inTab.setEntry(index, "RESID_R1", itoa(i-1, buf) );
+			inTab.setEntry(index, "PHI_R1", ftoa(U_ANGLES[index][1], buf, sizeof(buf)) );
+			inTab.setEntry(index, "PSI_R1", ftoa(U_ANGLES[index][2], buf, sizeof(buf)) );
+			inTab.setEntry(index, "CHI1_R1", ftoa(U_ANGLES[index][3], buf, sizeof(buf)) );
+			inTab.setEntry(index, "RESID_R1", itoa(i-1, buf, sizeof(buf)) );
 			inTab.setEntry(index, "RESNAME_R1", residList[i-1] );
 
 			shift = inPDB.getPhi(1,i);
@@ -482,10 +482,10 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 			U_ANGLES[index][6] = shift;
 			U_NAME[index][2] = residList[i];
 
-			inTab.Entries[index]["PHI_R2"] = ftoa(U_ANGLES[index][4], buf);
-			inTab.Entries[index]["PSI_R2"] = ftoa(U_ANGLES[index][5], buf);
-			inTab.Entries[index]["CHI1_R2"] = ftoa(U_ANGLES[index][6], buf);
-			inTab.Entries[index]["RESID_R2"] = itoa(i, buf);
+			inTab.Entries[index]["PHI_R2"] = ftoa(U_ANGLES[index][4], buf, sizeof(buf));
+			inTab.Entries[index]["PSI_R2"] = ftoa(U_ANGLES[index][5], buf, sizeof(buf));
+			inTab.Entries[index]["CHI1_R2"] = ftoa(U_ANGLES[index][6], buf, sizeof(buf));
+			inTab.Entries[index]["RESID_R2"] = itoa(i, buf, sizeof(buf));
 			inTab.Entries[index]["RESNAME_R2"] = residList[i];
 
 			if ( tr.Trace.visible() ) {
@@ -721,7 +721,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 	//GDB PRED_SUM;
 	PRED_SUM.VARS_str_parser("  RESID RESNAME ATOMNAME SS_SHIFT SHIFT RC_SHIFT HM_SHIFT EF_SHIFT SIGMA SOURCE");
 	PRED_SUM.FORMAT_str_parser(" %4d %4s %4s %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %s");
-	string str = itoa(r1, buf);
+	string str = itoa(r1, buf, sizeof(buf));
 	PRED_SUM.setData("FIRST_RESID", str+"\n");
 	PRED_SUM.setData("SEQUENCE", sequence);
 
@@ -738,7 +738,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 			if ( i==r1 && (atomName == "HN"|| atomName == "N") ) continue; //added from email Yang Shen/ Aug 6th.
 			if ( i==rN && atomName == "C" ) continue; //added from email Yang Shen/ Aug 6th
 
-			PRED_SUM.setEntry(index, "RESID",  itoa(i,buf));
+			PRED_SUM.setEntry(index, "RESID",  itoa(i,buf, sizeof(buf)));
 			PRED_SUM.setEntry(index, "RESNAME",  residList[i]);
 			if ( atomName=="HA" && residList[i] == "G" ) PRED_SUM.setEntry(index, "ATOMNAME",  "HA2"); //added from email YangShen Aug 6th.
 			else PRED_SUM.setEntry(index, "ATOMNAME",  atomName);
@@ -773,33 +773,33 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 			if ( pred_shift > 999.0 ) pred_shift = SPARTA_MAX_NUM;
 
 
-			PRED_SUM.setEntry(index, "SS_SHIFT",  ftoa(pred_2nd_shift,buf));
+			PRED_SUM.setEntry(index, "SS_SHIFT",  ftoa(pred_2nd_shift,buf, sizeof(buf)));
 
 			pred_shift += 0.6*atof(inTab.Entries[i-r1][atomName+"_HM"].c_str());
 			if ( atomName == "HN" || atomName == "HA" ) pred_shift-= inPDB.ElectricField[i][atomName]; //marked off to exclude shifts from "global" contacts and to test MFR
-			PRED_SUM.setEntry(index, "SHIFT",  ftoa(pred_shift,buf));
+			PRED_SUM.setEntry(index, "SHIFT",  ftoa(pred_shift,buf, sizeof(buf)));
 
-			PRED_SUM.setEntry(index, "RC_SHIFT", ftoa(RC+RCadj ,buf) );
+			PRED_SUM.setEntry(index, "RC_SHIFT", ftoa(RC+RCadj ,buf, sizeof(buf)) );
 			PRED_SUM.setEntry(index, "SOURCE", sourceName );
-			PRED_SUM.setEntry(index, "SIGMA", ftoa(getANN_PredError(U_ANGLES[i-r1][4],U_ANGLES[i-r1][5],residList[i],atomName),buf) );
+			PRED_SUM.setEntry(index, "SIGMA", ftoa(getANN_PredError(U_ANGLES[i-r1][4],U_ANGLES[i-r1][5],residList[i],atomName),buf, sizeof(buf)) );
 			//tr.Info << U_ANGLES[i-r1][4] << "\t" << U_ANGLES[i-r1][5] << "\t" << getANN_PredError(U_ANGLES[i-r1][4],U_ANGLES[i-r1][5],residList[i],atomName) << endl;
 			PRED_SUM.setEntry(index, "HM_SHIFT", inTab.Entries[i-r1][atomName+"_HM"] );
-			PRED_SUM.setEntry(index, "EF_SHIFT", ftoa(inPDB.ElectricField[i][atomName],buf) );
+			PRED_SUM.setEntry(index, "EF_SHIFT", ftoa(inPDB.ElectricField[i][atomName],buf, sizeof(buf)) );
 
 			if ( atomName=="HA" && residList[i] == "G" ) { // for GLY HA3
 				index++;
-				PRED_SUM.setEntry(index, "RESID",  itoa(i,buf));
+				PRED_SUM.setEntry(index, "RESID",  itoa(i,buf, sizeof(buf)));
 				PRED_SUM.setEntry(index, "RESNAME",  residList[i]);
 				PRED_SUM.setEntry(index, "ATOMNAME",  "HA3");
-				PRED_SUM.setEntry(index, "SS_SHIFT",  ftoa(pred_2nd_shift,buf));
+				PRED_SUM.setEntry(index, "SS_SHIFT",  ftoa(pred_2nd_shift,buf, sizeof(buf)));
 				pred_shift = pred_2nd_shift + RC + RCadj + 0.6*U_RING_SHIFTS[i-r1][0]; // atof(inTab.Entries[i-r1][atomName+"_HM"].c_str());
 				pred_shift-= inPDB.ElectricField[i]["HA"];
-				PRED_SUM.setEntry(index, "SHIFT",  ftoa(pred_shift,buf));
-				PRED_SUM.setEntry(index, "RC_SHIFT", ftoa(RC+RCadj ,buf) );
+				PRED_SUM.setEntry(index, "SHIFT",  ftoa(pred_shift,buf, sizeof(buf)));
+				PRED_SUM.setEntry(index, "RC_SHIFT", ftoa(RC+RCadj ,buf, sizeof(buf)) );
 				PRED_SUM.setEntry(index, "SOURCE", sourceName );
-				PRED_SUM.setEntry(index, "SIGMA", ftoa(getANN_PredError(U_ANGLES[i-r1][4],U_ANGLES[i-r1][5],residList[i],atomName),buf) );
-				PRED_SUM.setEntry(index, "HM_SHIFT", ftoa(U_RING_SHIFTS[i-r1][0],buf) );
-				PRED_SUM.setEntry(index, "EF_SHIFT", ftoa(inPDB.ElectricField[i]["HA"],buf) );
+				PRED_SUM.setEntry(index, "SIGMA", ftoa(getANN_PredError(U_ANGLES[i-r1][4],U_ANGLES[i-r1][5],residList[i],atomName),buf, sizeof(buf)) );
+				PRED_SUM.setEntry(index, "HM_SHIFT", ftoa(U_RING_SHIFTS[i-r1][0],buf, sizeof(buf)) );
+				PRED_SUM.setEntry(index, "EF_SHIFT", ftoa(inPDB.ElectricField[i]["HA"],buf, sizeof(buf)) );
 			}
 		}
 	}
@@ -920,7 +920,7 @@ void Sparta::SpartaLib::init_PredErrorSurface()
 			for ( auto & Entrie : surf.Entries ) {
 				int phi = atoi( Entrie.second["PHI"].c_str() );
 				for ( int y=-180; y<180; y+=step ) {
-					string psi=itoa(y,buf);
+					string psi=itoa(y,buf, sizeof(buf));
 					SPARTA_ERR_SURF[AA][atomName][phi][y] = atof( Entrie.second[psi].c_str() );
 				}
 			}

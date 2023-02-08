@@ -241,11 +241,11 @@ void statistics( std::string filename ) {
 	} else {
 
 		char idT[100], idH[100], idPU[100],idN[100], idP[100];
-		sprintf(idT,"%.1f%%",idTotal*100);
-		sprintf(idH,"%.1f%%",idHydroNonPolar*100);
-		sprintf(idPU,"%.1f%%",idpolarUncharge*100);
-		sprintf(idN,"%.1f%%",idNegative*100);
-		sprintf(idP,"%.1f%%",idPositive*100);
+		snprintf(idT, sizeof(idT),"%.1f%%",idTotal*100);
+		snprintf(idH, sizeof(idH),"%.1f%%",idHydroNonPolar*100);
+		snprintf(idPU, sizeof(idPU),"%.1f%%",idpolarUncharge*100);
+		snprintf(idN, sizeof(idN),"%.1f%%",idNegative*100);
+		snprintf(idP, sizeof(idP),"%.1f%%",idPositive*100);
 		staResult
 			<< "the identity for all positions is: " << idT << "    [should be more than 0.32]" << " \n"
 			<< "hydrophobic non-polar amino acids (VAL,ILE,LEU,MET,PHE,GLY,ALA,PRO,TRP,TYR): " << idH << " \n"

@@ -611,7 +611,7 @@ writeStrokeString( const std::string & text_string, GLfloat *col, const float & 
 	// USE NICE FONTS
 	// Requires .txf file in run directory
 	char buf[256];
-	sprintf(buf, "%s", text_string.c_str());
+	snprintf(buf, sizeof(buf), "%s", text_string.c_str());
 	// FROM BOINC API fscale bigger is smaller
 	//txf_render_string(.1, xpos, ypos, 0, scalefactor, col, 0, buf);
 	TTFont::ttf_render_string(0.03, xpos+0.03, ypos, static_cast<float>(scalefactor), col, buf, 0);

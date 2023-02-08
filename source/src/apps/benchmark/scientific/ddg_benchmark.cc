@@ -241,7 +241,7 @@ void correlation(std::string ddg_out){
 		TR.Error << "Can not open file " << results_fname;
 	} else {
 		char correlation_out[100];
-		sprintf(correlation_out,"%0.2f",correlation_result);
+		snprintf(correlation_out, sizeof(correlation_out),"%0.2f",correlation_result);
 		staResult << "The correlation coefficient for monomer ddG protocol on the t4-lysozyme test set: " << correlation_out << std::endl;
 	}
 

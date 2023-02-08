@@ -1435,14 +1435,14 @@ int main( int argc, char * argv [] ) {
 
 			//Dump out a PDB for each move accepted
 			char outfile [256];
-			sprintf(outfile, "accepted_%04lu.pdb", iter);
+			snprintf(outfile, sizeof(outfile), "accepted_%04lu.pdb", iter);
 			trialpose.dump_scored_pdb(outfile, *sfxn);
 			printf("Wrote %s\n", outfile); fflush(stdout);
 
 			if ( !option[enumerate_only_mode]() && trialpose.energies().total_energy()<verybestpose.energies().total_energy() ) { //If this is the lowest-energy structure found so far
 				printf("New lowest-energy sequence found at move %lu.\n", iter); fflush(stdout);
 				verybestpose=trialpose;
-				sprintf(outfile, "lowestE_%04lu.pdb", iter);
+				snprintf(outfile, sizeof(outfile), "lowestE_%04lu.pdb", iter);
 				trialpose.dump_scored_pdb(outfile, *sfxn);
 				printf("Wrote %s\n", outfile); fflush(stdout);
 			}

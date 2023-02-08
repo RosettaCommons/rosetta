@@ -724,12 +724,12 @@ void Boinc::update_status_shmem() {
 
 #ifndef USE_SYSV_SEMAPHORE
 
-void Boinc::get_sema_name( char * name ) {
+void Boinc::get_sema_name( char * name , platform::Size n ) {
 	// make it slot specific since multiple tasks may run simultaneously
 	APP_INIT_DATA aid;
 	int retval = boinc_get_init_data(aid);
 	if (retval) aid.slot = 0;
-	sprintf(name, "boinc_rosetta_sema_%d", aid.slot);
+	snprintf(name, n, "boinc_rosetta_sema_%d", aid.slot);
 }
 
 #else
@@ -761,7 +761,7 @@ int Boinc::create_semaphore() {
   // Windows semaphore
 
 	char name[256];
-	get_sema_name(name);
+	get_sema_name(name, sizeof(name));
 
 	CloseHandle(sem_des_);
 	// to do: use a specific security attribute instead of null (default attribute)?
@@ -867,7 +867,7 @@ int Boinc::create_semaphore() {
 			//
 			bool try_global = true;
 			if (try_global) {
-				sprintf(global_sema_name, "Global\\%s", name);
+				snprintf(global_sema_name, sizeof(global_sema_name), "Global\\%s", name);
 				sem_des_ = CreateSemaphore(&sa, 1, 1, global_sema_name);
 				dwError = GetLastError();
 				if (!sem_des_ && (ERROR_ACCESS_DENIED == dwError)) {
@@ -917,7 +917,7 @@ int Boinc::create_semaphore() {
 // POSIX semaphore
 
 	char name[256];
-	get_sema_name(name);
+	get_sema_name(name, sizeof(name) );
 
 	sem_close(sem_des_);
 	sem_unlink(name);
@@ -970,7 +970,7 @@ int Boinc::get_semaphore() {
 	if (sem_des_) return 1;
 
 	char name[256];
-	get_sema_name(name);
+	get_sema_name(name, sizeof(name));
 
 	char global_sema_name[256];
 
@@ -978,7 +978,7 @@ int Boinc::get_semaphore() {
 	// name if the shared memory segment is going to cross
 	// terminal server session boundries.
 	//
-	sprintf(global_sema_name, "Global\\%s", name);
+	snprintf(global_sema_name, sizeof(global_sema_name), "Global\\%s", name);
 	sem_des_ = OpenSemaphore(SEMAPHORE_ALL_ACCESS, NULL, global_sema_name);
 	if (!sem_des_) {
 		// Couldn't use the 'Global' tag, so just attempt to use the original
@@ -999,7 +999,7 @@ int Boinc::get_semaphore() {
 	if (sem_des_) return 1;
 
 	char name[256];
-	get_sema_name(name);
+	get_sema_name(name, sizeof(name));
 	sem_des_ = sem_open(name, 0, 0777, 0);
 	if(sem_des_ == (void*) -1){
 		std::cerr << "sem_open failure" << std::endl;

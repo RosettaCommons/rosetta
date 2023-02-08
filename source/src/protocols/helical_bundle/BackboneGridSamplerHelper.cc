@@ -128,16 +128,16 @@ void BackboneGridSamplerHelper::initialize_samples() {
 	if ( TR.visible() ) {
 		TR << "The following torsion values will be sampled:" << std::endl;
 		char outstring[1024];
-		sprintf(outstring, "Res_index\tBB_Tors_index\tTorsion_values" );
+		snprintf(outstring, sizeof(outstring), "Res_index\tBB_Tors_index\tTorsion_values" );
 		TR << outstring << std::endl;
 
 		for ( core::Size i=1; i<=dimensions; ++i ) {
-			sprintf(outstring, "%lu\t", static_cast<unsigned long>(residue_indices_[i]) );
+			snprintf(outstring, sizeof(outstring), "%lu\t", static_cast<unsigned long>(residue_indices_[i]) );
 			TR << outstring;
-			sprintf(outstring, "%lu\t", static_cast<unsigned long>(allowed_torsion_indices_[i]) );
+			snprintf(outstring, sizeof(outstring), "%lu\t", static_cast<unsigned long>(allowed_torsion_indices_[i]) );
 			TR << outstring;
 			for ( core::Size j=1, jmax=torsion_sample_vals_[i].size(); j<=jmax; ++j ) {
-				sprintf(outstring, "%.4f\t", static_cast<core::Real>(torsion_sample_vals_[i][j]));
+				snprintf(outstring, sizeof(outstring), "%.4f\t", static_cast<core::Real>(torsion_sample_vals_[i][j]));
 				TR << outstring;
 			}
 			TR << std::endl;

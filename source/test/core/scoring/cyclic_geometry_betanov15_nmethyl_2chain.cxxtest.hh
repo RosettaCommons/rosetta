@@ -130,10 +130,10 @@ public:
 		tempsfxn.set_weight( core::scoring::fa_dun, 1.0 );
 		for(core::Size i(1); i<=poses_2chain_.size(); ++i) {
 		char outfile[256];
-		sprintf( outfile, "V_2CHAIN_TEMP_%04lu.pdb", i );
+		snprintf( outfile, sizeof( outfile), "V_2CHAIN_TEMP_%04lu.pdb", i );
 		tempsfxn( *poses_2chain_[i] );
 		poses_2chain_[i]->dump_pdb(std::string(outfile));
-		sprintf( outfile, "V_2CHAIN_TEMP_MIRROR_%04lu.pdb", i );
+		snprintf( outfile, sizeof( outfile), "V_2CHAIN_TEMP_MIRROR_%04lu.pdb", i );
 		tempsfxn( *mirror_poses_2chain_[i] );
 		mirror_poses_2chain_[i]->dump_pdb(std::string(outfile));
 		}

@@ -154,7 +154,10 @@ std::string ResidueInformation::resid() const {
 	std::string buf;
 	buf.resize(7);
 	// This is horribly hacky. Is this necessary?
-	sprintf(&buf[0], "%4d%c%c", resSeq_, iCode_, chainID_ );
+	// char * data = new char[buf.size() + 1];
+	std::unique_ptr<char[]> data( new char[buf.size() + 1]); // +1 for null termination
+	snprintf(data.get(), buf.size() + 1, "%4d%c%c", resSeq_, iCode_, chainID_ );
+	buf.assign(data.get(), data.get() + buf.size());
 	buf.resize(6);
 	return buf;
 }

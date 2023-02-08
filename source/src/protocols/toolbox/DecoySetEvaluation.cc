@@ -601,7 +601,7 @@ void DecoySetEvaluation::create_xyz_constraints_median(
 			}
 		}
 		char buf[300];
-		sprintf( buf, "%8.3f%8.3f%8.3f",xyz_av.x(),xyz_av.y(),xyz_av.z() );
+		snprintf( buf, sizeof(buf), "%8.3f%8.3f%8.3f",xyz_av.x(),xyz_av.y(),xyz_av.z() );
 		std::cout << "ATOM  " << ObjexxFCL::format::RJ( 5, pos) << "  CA " << " ALA A " << ObjexxFCL::format::RJ( 3, pos) << "    " << std::setw( 3) <<
 			buf << std::endl;
 

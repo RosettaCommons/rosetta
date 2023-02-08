@@ -172,13 +172,13 @@ void GDB::showGDB( std::ostream & out ) {
 
 		for ( int i = 0; i < (int) VARS.size(); i++ ) {
 			if ( contains(FORMAT[i],'s') == 1 ) {
-				sprintf(buf, FORMAT[i].c_str(), ent[ VARS[i] ].c_str() ) ;
+				snprintf(buf, sizeof(buf), FORMAT[i].c_str(), ent[ VARS[i] ].c_str() ) ;
 				out << buf;
 			} else if ( contains(FORMAT[i],'d') == 1 ) {
-				sprintf(buf, FORMAT[i].c_str(), atoi(ent[ VARS[i] ].c_str() )) ;
+				snprintf(buf, sizeof(buf), FORMAT[i].c_str(), atoi(ent[ VARS[i] ].c_str() )) ;
 				out << buf;
 			} else if ( contains(FORMAT[i],'f') == 1 ) {
-				sprintf(buf, FORMAT[i].c_str(), atof(ent[ VARS[i] ].c_str() )) ;
+				snprintf(buf, sizeof(buf), FORMAT[i].c_str(), atof(ent[ VARS[i] ].c_str() )) ;
 				out << buf ;
 			}
 		}
@@ -436,7 +436,7 @@ void GDB::FORMAT_str_parser(const string &str)
 
 	if ( contains(temp,'%') == VarsNumber ) {
 		for ( int i = 0; i < VarsNumber; i++ ) {
-			string f_str = "%" + (string) section(temp,'%',buf,i+1, i+1);
+			string f_str = "%" + (string) section(temp,'%',buf, sizeof(buf), i+1, i+1);
 
 			if ( checkFormat(f_str) ) {
 				FORMAT[i] = f_str;

@@ -467,7 +467,7 @@ int main( int argc, char * argv [] ) {
 			if ( option[do_minimize]() ) minmove.apply(perturbedpose);
 
 			char outfile [256];
-			sprintf(outfile, "PCA_%04lu_%04lu.pdb", istruct, ioutput+1);
+			snprintf(outfile, sizeof(outfile), "PCA_%04lu_%04lu.pdb", istruct, ioutput+1);
 			perturbedpose.dump_pdb(outfile);
 			printf("Wrote %s\n", outfile); fflush(stdout);
 		}

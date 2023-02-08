@@ -380,7 +380,7 @@ void dump_as_pdb( std::string filename, core::Size n, FArray2_double& x,  FArray
 	utility::io::ozstream out( filename );
 	for ( core::Size i = 1; i <= n; ++i ) {
 		char buf[400];
-		sprintf(buf, "ATOM  %5d  %-4s%-3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f", (int) i, "CA", "ALA", (int) i,
+		snprintf(buf, sizeof(buf), "ATOM  %5d  %-4s%-3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f", (int) i, "CA", "ALA", (int) i,
 			x( 1, i ) + transvec( 1 ),
 			x( 2, i ) + transvec( 2 ),
 			x( 3, i ) + transvec( 3 ), 1.0, 1.0 );

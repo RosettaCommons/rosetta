@@ -550,7 +550,7 @@ int Single_tree_RRT::add_nodes_with_local_planner(RRT_node* from,RRT_node* to,
 
 	//ANGELA DEBUG
 	//Pose* pp_new_pose = to->produce_pose();
-	//std::sprintf(resultFileName, "./output/local_planner_rand_conf.pdb");
+	//std::snprintf(resultFileName, sizeof(resultFileName), "./output/local_planner_rand_conf.pdb");
 	//pp_new_pose->dump_pdb(resultFileName);
 	//delete pp_new_pose;
 
@@ -905,7 +905,7 @@ double Single_tree_RRT::energy_function_between_flex_units(pose_ns::Pose* pose){
 
 	if (local_debug){
 		char resultFileName[100];
-		std::sprintf(resultFileName, "./output/after_translation_conf.pdb");
+		std::snprintf(resultFileName, sizeof(resultFileName), "./output/after_translation_conf.pdb");
 		pose->dump_pdb(resultFileName);
 
 		exit(0);

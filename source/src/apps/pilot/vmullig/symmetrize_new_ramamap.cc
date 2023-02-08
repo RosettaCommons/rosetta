@@ -110,7 +110,7 @@ symmetrize_map(
 		if ( phi_bin >= 0.0 ) continue; //Positive phi region should be ignored.
 
 		char outtemp[2048];
-		sprintf( outtemp, "%s\t%.0f\t%.0f\t%0.12g\t%0.12g", aa_identifier.c_str(), phi_bin, psi_bin, pval, eval );
+		snprintf( outtemp, sizeof( outtemp), "%s\t%.0f\t%.0f\t%0.12g\t%0.12g", aa_identifier.c_str(), phi_bin, psi_bin, pval, eval );
 		outstream << outtemp << std::endl;
 
 		utility::vector1< core::Real > posvals(4);
@@ -125,7 +125,7 @@ symmetrize_map(
 
 	for ( core::Size i=1, imax=negvals_list.size(); i<=imax; ++i ) {
 		char outtemp[2048];
-		sprintf( outtemp, "%s\t%.0f\t%.0f\t%0.12g\t%0.12g", aa_identifiers[i].c_str(), negvals_list[i][1], negvals_list[i][2], negvals_list[i][3], negvals_list[i][4] );
+		snprintf( outtemp, sizeof( outtemp), "%s\t%.0f\t%.0f\t%0.12g\t%0.12g", aa_identifiers[i].c_str(), negvals_list[i][1], negvals_list[i][2], negvals_list[i][3], negvals_list[i][4] );
 		outstream << outtemp << std::endl;
 	}
 

@@ -1733,7 +1733,7 @@ SimpleCycpepPredictApplication::run() const {
 		//Not sure how to reconcile this with the checkpointing system, which is very much not this.
 		if ( ! silent_out_ && ! silentlist_out_ && ! basic::options::option[basic::options::OptionKeys::out::overwrite]() ) {
 			char outstring[512];
-			sprintf(outstring, "%s%s%s%04lu%s.pdb", out_path_.c_str(), out_prefix_.c_str(), out_filename_.c_str(), static_cast<unsigned long>(irepeat), out_suffix_.c_str() );
+			snprintf(outstring, sizeof(outstring), "%s%s%s%04lu%s.pdb", out_path_.c_str(), out_prefix_.c_str(), out_filename_.c_str(), static_cast<unsigned long>(irepeat), out_suffix_.c_str() );
 
 			if ( utility::file::file_exists(std::string(outstring)) ) {
 				TR << "nstruct " <<irepeat << " exists.  Continueing." << std::endl;
@@ -1922,9 +1922,9 @@ SimpleCycpepPredictApplication::run() const {
 			core::io::silent::SilentStructOP ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts ) );
 			char tag[512];
 			if ( my_rank_ > 0 ) {
-				sprintf(tag, "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>(irepeat+already_completed_job_count_) );
+				snprintf(tag, sizeof(tag), "result_proc%04lu_%04lu", static_cast<unsigned long>(my_rank_), static_cast<unsigned long>(irepeat+already_completed_job_count_) );
 			} else {
-				sprintf(tag, "result_%04lu", static_cast<unsigned long>(irepeat) );
+				snprintf(tag, sizeof(tag), "result_%04lu", static_cast<unsigned long>(irepeat) );
 			}
 			ss->fill_struct( *pose, std::string(tag) );
 			if ( native_pose ) ss->add_energy( "RMSD", native_rmsd ); //Add the RMSD to the energy to be written out in the silent file.
@@ -1949,7 +1949,7 @@ SimpleCycpepPredictApplication::run() const {
 		} else { //if pdb output
 
 			char outstring[512];
-			sprintf(outstring, "%s%s%s%04lu%s.pdb", out_path_.c_str(), out_prefix_.c_str(), out_filename_.c_str(), static_cast<unsigned long>(irepeat), out_suffix_.c_str() );
+			snprintf(outstring, sizeof(outstring), "%s%s%s%04lu%s.pdb", out_path_.c_str(), out_prefix_.c_str(), out_filename_.c_str(), static_cast<unsigned long>(irepeat), out_suffix_.c_str() );
 
 			pose->dump_scored_pdb( std::string(outstring), *sfxn_default );
 		}

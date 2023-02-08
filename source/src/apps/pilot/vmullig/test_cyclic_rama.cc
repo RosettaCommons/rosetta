@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
 	for(core::Size itors=0; itors<36; itors++) {
 		mypose2.conformation().set_torsion( core::id::TorsionID(1, core::id::BB, 2), (Real)itors*10.0);
 		mypose2.update_residue_neighbors();
-		sprintf(outfile, "out%02lu.pdb", itors);
+		snprintf(outfile, sizeof(outfile), "out%02lu.pdb", itors);
 		mypose2.dump_pdb(outfile);
 	}*/
 

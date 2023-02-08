@@ -1699,7 +1699,7 @@ void MPI_generic_job_distributor::initialize() {
 
 	// redirect output to a separate file for each process
 	char outFile[100];
-	sprintf(outFile, "rosetta.mpi.out%i",cpu_num);
+	snprintf(outFile, sizeof(outFile), "rosetta.mpi.out%i",cpu_num);
 	// AMW: cppcheck flags this because it doesn't use the return value
 	freopen(outFile, "w",stdout);
 

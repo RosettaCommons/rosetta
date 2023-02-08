@@ -110,9 +110,9 @@ public:
 				char fname1[256];
 				char fname2[256];
 				char fname3[256];
-				sprintf(fname1, "vsymmglytest_pose1_%04i.pdb", count);
-				sprintf(fname2, "vsymmglytest_pose2_%04i.pdb", count);
-				sprintf(fname3, "vsymmglytest_pose3_%04i.pdb", count);
+				snprintf(fname1, sizeof(fname1), "vsymmglytest_pose1_%04i.pdb", count);
+				snprintf(fname2, sizeof(fname2), "vsymmglytest_pose2_%04i.pdb", count);
+				snprintf(fname3, sizeof(fname3), "vsymmglytest_pose3_%04i.pdb", count);
 				*/
 
 				for ( core::Size ir=1; ir<=8; ++ir ) {

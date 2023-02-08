@@ -311,11 +311,11 @@ int main( int argc, char * argv [] ) {
 		//temppose.update_residue_neighbors();
 
 		char outfilename [256];
-		sprintf(outfilename, "out_%04lu.pdb", i);
+		snprintf(outfilename, sizeof(outfilename), "out_%04lu.pdb", i);
 		temppose.dump_scored_pdb(outfilename, *sfxn);
 
 		frlx.apply(temppose);
-		sprintf(outfilename, "relaxed_%04lu.pdb", i);
+		snprintf(outfilename, sizeof(outfilename), "relaxed_%04lu.pdb", i);
 		temppose.dump_scored_pdb(outfilename, *sfxn);
 
 	}

@@ -146,7 +146,7 @@ void CSTalosIO::write(std::ostream& out) {
 	c1[1] = 0;
 	for ( core::Size i = 1; i <= entries_.size(); i++ ) {
 		c1[0] = entries_[i].get<1> ();
-		sprintf(buffer, data_format_.c_str(), entries_[i].get<0> (), c1,
+		snprintf(buffer, sizeof(buffer), data_format_.c_str(), entries_[i].get<0> (), c1,
 			entries_[i].get<2> ().c_str(), entries_[i].get<3> ());
 		out << buffer << std::endl;
 	}

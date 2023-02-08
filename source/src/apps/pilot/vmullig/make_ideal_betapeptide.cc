@@ -292,7 +292,7 @@ int main( int argc, char * argv [] ) {
 		//jitter_and_minimize(temppose, RG, frlx, sfxn, option[v_MCrounds](), option[v_MCsteps_per_round](), option[v_MCanglepert](), option[v_MCtemperature]());
 		(*sfxn)(temppose);
 		char curnum[8];
-		sprintf(curnum, "%02i", iconf+1);
+		snprintf(curnum, sizeof(curnum), "%02i", iconf+1);
 		temppose.dump_scored_pdb( outprefix + "B" + curnum + ".pdb", *sfxn );
 		printf("%s:\t%.1f\t%.1f\t%.1f\t%.6f\n", (outprefix + "B" + curnum + ".pdb").c_str(), philist[iconf], thetalist[iconf], psilist[iconf], temppose.energies().total_energy());
 		fflush(stdout);

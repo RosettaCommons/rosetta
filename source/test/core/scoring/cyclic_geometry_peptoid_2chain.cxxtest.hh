@@ -129,9 +129,9 @@ public:
 		// DELETE THE FOLLOWING -- FOR TESTING ONLY:
 		/*for( core::Size i(1), imax(poses_2chain_.size()); i<=imax; ++i) {
 		char outchar[256];
-		sprintf( outchar, "VPEPTOID2CHAIN_%02lu.pdb", i );
+		snprintf( outchar, sizeof( outchar), "VPEPTOID2CHAIN_%02lu.pdb", i );
 		poses_2chain_[i]->dump_pdb( std::string(outchar) );
-		sprintf( outchar, "VPEPTOID2CHAIN_MIRROR_%02lu.pdb", i );
+		snprintf( outchar, sizeof( outchar), "VPEPTOID2CHAIN_MIRROR_%02lu.pdb", i );
 		mirror_poses_2chain_[i]->dump_pdb( std::string(outchar) );
 		}*/
 

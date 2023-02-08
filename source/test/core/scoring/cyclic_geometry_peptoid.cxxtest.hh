@@ -95,10 +95,10 @@ public:
 		sfxn.set_weight( core::scoring::fa_dun, 1.0 );
 		for( core::Size i(1), imax(poses_.size()); i<=imax; ++i) {
 		char outfile[256];
-		sprintf( outfile, "VPEPTOID_%04lu.pdb", i );
+		snprintf( outfile, sizeof( outfile), "VPEPTOID_%04lu.pdb", i );
 		sfxn(*(poses_[i]));
 		poses_[i]->dump_pdb(std::string(outfile));
-		sprintf( outfile, "VPEPTOID_MIRROR_%04lu.pdb", i );
+		snprintf( outfile, sizeof( outfile), "VPEPTOID_MIRROR_%04lu.pdb", i );
 		sfxn(*(mirror_poses_[i]));
 		mirror_poses_[i]->dump_pdb(std::string(outfile));
 		}*/

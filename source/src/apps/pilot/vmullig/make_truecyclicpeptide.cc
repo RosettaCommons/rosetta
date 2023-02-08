@@ -555,7 +555,7 @@ int main(int argc, char *argv[]) {
 
 		//printf("Writing output.\n"); fflush(stdout); //DELETE ME
 		char outfile[64];
-		sprintf(outfile, "%s%04i.pdb", outprefix.c_str(), rep);
+		snprintf(outfile, sizeof(outfile), "%s%04i.pdb", outprefix.c_str(), rep);
 		temppose.dump_scored_pdb(outfile, *sfxn_constrained); //Write out the final scored pdb file.
 		printf("Wrote %s\n", outfile); fflush(stdout);
 	}

@@ -175,7 +175,7 @@ void ANN::loadWeightBias3( string const& fName,
 	for ( auto & Entrie : W_Tab.Entries ) {//iterate rows
 		int check = index/row; //cout << check << endl;
 		for ( int  i = 0; i < col; i++ ) {
-			str = itoa(i+1,buf);
+			str = itoa(i+1,buf, sizeof(buf));
 			float w = atof((Entrie.second[str]).c_str());
 			if ( check == 0 ) W1[ index ].push_back( w ); // assign to weight matrix 1
 			else if ( check == 1 ) W2[ index-row ].push_back( w ); // assign to weight matrix 2
@@ -348,15 +348,15 @@ int ANN::getNumberMissCS(ANN_Vector &v)
 
 
 // return a character string for an int type number
-char * ANN::itoa( int n, char *buff, int /*base*/ )
+char * ANN::itoa( int n, char *buff, platform::Size s, int /*base*/ )
 {
-	sprintf(buff, "%d", n);
+	snprintf(buff, s, "%d", n);
 	return buff;
 }
 
 
 // retrun a character string for a float type number
-char * ANN::ftoa( float n, char *buff, char f, int prec )
+char * ANN::ftoa( float n, char *buff, platform::Size s, char f, int prec )
 {
 	if ( !(f=='f' || f=='F' || f=='e' || f=='E' || f=='g' || f=='G') ) {
 		f = 'f';
@@ -379,7 +379,7 @@ char * ANN::ftoa( float n, char *buff, char f, int prec )
 	*fs++ = 'l';
 	*fs++ = f;
 	*fs = '\0';
-	sprintf( buff, format, n );
+	snprintf( buff, s, format, n );
 
 	return buff;
 }

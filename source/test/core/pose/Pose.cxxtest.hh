@@ -551,7 +551,7 @@ public: // tests
 		for ( core::Size i(1); i<=36; ++i ) {
 			pose.set_omega( 5, static_cast<core::Real>(i)*10 - 5 );
 			/*char outfile [256];
-			sprintf( outfile, "out1_%04lu.pdb", i );
+			snprintf( outfile, sizeof( outfile), "out1_%04lu.pdb", i );
 			pose.dump_pdb( std::string(outfile) );*/
 			core::Real const measured_angle( numeric::dihedral_degrees(
 				pose.residue(5).xyz("CA"),
@@ -567,7 +567,7 @@ public: // tests
 		for ( core::Size i(1); i<=36; ++i ) {
 			pose.set_phi( 6, static_cast<core::Real>(i)*10 - 5 );
 			/*char outfile [256];
-			sprintf( outfile, "out2_%04lu.pdb", i );
+			snprintf( outfile, sizeof( outfile), "out2_%04lu.pdb", i );
 			pose.dump_pdb( std::string(outfile) );*/
 			core::Real const measured_angle( numeric::dihedral_degrees(
 				pose.residue(6).xyz("OVU1"),

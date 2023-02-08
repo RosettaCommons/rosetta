@@ -4759,11 +4759,11 @@ void ElectrostaticpotentialGrid::print_to_oegrid( std::string const & output_OEg
 
 	outFile << "Title: " <<std::endl;
 	char buffer[80];
-	sprintf(buffer, "Mid: %12.6f %12.6f %12.6f", espGrid_mid_.x(), espGrid_mid_.y(), espGrid_mid_.z());
+	snprintf(buffer, sizeof(buffer), "Mid: %12.6f %12.6f %12.6f", espGrid_mid_.x(), espGrid_mid_.y(), espGrid_mid_.z());
 	outFile << buffer << std::endl;
-	sprintf(buffer, "Dim: %6lu %6lu %6lu", (unsigned long) espGrid_dim_.x(), (unsigned long) espGrid_dim_.y(), (unsigned long) espGrid_dim_.z());
+	snprintf(buffer, sizeof(buffer), "Dim: %6lu %6lu %6lu", (unsigned long) espGrid_dim_.x(), (unsigned long) espGrid_dim_.y(), (unsigned long) espGrid_dim_.z());
 	outFile << buffer << std::endl;
-	sprintf(buffer, "Spacing: %12.6f", espGrid_spacing_);
+	snprintf(buffer, sizeof(buffer), "Spacing: %12.6f", espGrid_spacing_);
 	outFile << buffer << std::endl;
 	outFile << "Values:" << std::endl;
 

@@ -421,9 +421,9 @@ int main( int argc, char * argv [] ) {
 			align_poses(mypose2, mypose);
 
 			char outfile[25];
-			sprintf(outfile, "cart%02lu.pdb", i);
+			snprintf(outfile, sizeof(outfile), "cart%02lu.pdb", i);
 			mypose.dump_pdb(outfile);
-			sprintf(outfile, "tors%02lu.pdb", i);
+			snprintf(outfile, sizeof(outfile), "tors%02lu.pdb", i);
 			mypose2.dump_pdb(outfile);
 		}
 		printf("JOB COMPLETED.\n"); fflush(stdout);

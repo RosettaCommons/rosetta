@@ -1340,7 +1340,7 @@ void transmit_silent_struct (
 	//printf("transmit_silent_struct from proc %i will send %s\n", thisproc, outstring.c_str()); fflush(stdout); //DELETE ME
 	unsigned long strlength = outstring.length()+1;
 	char *outchar( new char [strlength] );
-	sprintf(outchar, "%s", outstring.c_str());
+	snprintf(outchar, strlength, "%s", outstring.c_str());
 
 	if ( broadcast ) {
 		MPI_Bcast(&strlength, 1, MPI_UNSIGNED_LONG, fromproc, MPI_COMM_WORLD); //Send the length of the string that I'm about to send.
@@ -1608,7 +1608,7 @@ void scoreall (
 			//Debug output -- DELETE ME!:
 			//{
 			// char tempfilename[128];
-			// sprintf(tempfilename, "PROC_%02i_struct_%03lu.pdb", procnum, thisstate);
+			// snprintf(tempfilename, sizeof(tempfilename), "PROC_%02i_struct_%03lu.pdb", procnum, thisstate);
 			// temppose.dump_scored_pdb( tempfilename, *sfxn );
 			//}
 
@@ -1711,7 +1711,7 @@ void read_covalent_connections_file (
 	while ( std::getline(lfile, line) ) //Read each line
 			{
 		utility::vector1 < core::Size > curline;
-		char tempchar [512]; sprintf(tempchar, "%s", line.c_str()); //Convert string->char
+		char tempchar [512]; snprintf(tempchar, sizeof(tempchar), "%s", line.c_str()); //Convert string->char
 		char * curcharpointer = &tempchar[0];
 
 		char * token1 = strtok( curcharpointer, " " );
@@ -1768,7 +1768,7 @@ void read_equivalent_position_file (
 	while ( std::getline(lfile, line) ) //Read each line
 			{
 		utility::vector1 < core::Size > curline;
-		char tempchar [512]; sprintf(tempchar, "%s", line.c_str()); //Convert string->char
+		char tempchar [512]; snprintf(tempchar, sizeof(tempchar), "%s", line.c_str()); //Convert string->char
 		char * curcharpointer = &tempchar[0];
 
 		//Pull integers out of the string:
@@ -2115,7 +2115,7 @@ int main(int argc, char *argv[]) {
 	if ( procnum == 0 ) {
 		if ( posfile!="" ) {
 			printf("Importing POSITIVE backbone configuration from %s.\n", posfile.c_str()); fflush(stdout);
-			sprintf(curstructtag_positive, "POSITIVE_%s", posfile.c_str());
+			snprintf(curstructtag_positive, sizeof(curstructtag_positive), "POSITIVE_%s", posfile.c_str());
 			//Only the master proc imports the positive state, then transmits it to all others.
 			core::import_pose::pose_from_file(positive_master, posfile, core::import_pose::PDB_file);
 			//Store the file name:
@@ -2123,7 +2123,7 @@ int main(int argc, char *argv[]) {
 		} else if ( posstruct_tag!="" ) { //If the index of the positive state in the silent files has been specified.
 			//core::Size curstruct_index = 1;
 			bool foundit = false;
-			sprintf(curstructtag_positive, "POSITIVE_%s", posstruct_tag.c_str());
+			snprintf(curstructtag_positive, sizeof(curstructtag_positive), "POSITIVE_%s", posstruct_tag.c_str());
 			core::import_pose::pose_stream::MetaPoseInputStream input_stream = core::import_pose::pose_stream::streams_from_cmd_line( false ); //Get all inputs, NOT renumbering decoys.
 			utility::vector1 < core::import_pose::pose_stream::PoseInputStreamOP > posestreams = input_stream.get_input_streams(); //Split the list of input streams.
 			for ( core::Size i=1, imax=posestreams.size(); i<=imax; ++i ) {
@@ -2168,7 +2168,7 @@ int main(int argc, char *argv[]) {
 
 	//Temporary debugging output: dump pdbs for all procs
 	//char outfilename_temp[256];                                   //DELETE ME
-	//sprintf(outfilename_temp, "POSITIVE_%04i.pdb", procnum);      //DELETE ME
+	//snprintf(outfilename_temp, sizeof(outfilename_temp), "POSITIVE_%04i.pdb", procnum);      //DELETE ME
 	//positive_master.dump_pdb(outfilename_temp);                   //DELETE ME
 
 	//Barrier for positive state load, just to be on the safe side:
@@ -2395,7 +2395,7 @@ int main(int argc, char *argv[]) {
 					negstate_name=negstate_names[posecount];
 				} else {
 					char negstatechar [256];
-					sprintf(negstatechar, "NEG_%lu", ifile);
+					snprintf(negstatechar, sizeof(negstatechar), "NEG_%lu", ifile);
 					negstate_name = negstatechar;
 				}
 
@@ -2411,7 +2411,7 @@ int main(int argc, char *argv[]) {
 				if ( silentstream ) {
 					std::string tagstring = silentstream->silent_file_data()->structure_list()[posecount]->decoy_tag();
 					char negstatechar[256];
-					sprintf(negstatechar, "%s_%s", negstate_name.c_str(), tagstring.c_str());
+					snprintf(negstatechar, sizeof(negstatechar), "%s_%s", negstate_name.c_str(), tagstring.c_str());
 					negstate_name=negstatechar;
 					printf( "\tRead tag %s.  State name is now %s.\n", tagstring.c_str(), negstate_name.c_str() ); fflush(stdout);
 				}
@@ -2497,7 +2497,7 @@ int main(int argc, char *argv[]) {
 		for(core::Size state=1; state<=basestatecount; state++) {
 		for(core::Size offset=1; offset<startingsequence.length(); offset+=option[v_cyclic_permutation_offset]()) {
 		//Store additional file names:
-		sprintf(filename, "%s_%lu", allfiles[state].c_str(), offset);
+		snprintf(filename, sizeof(filename), "%s_%lu", allfiles[state].c_str(), offset);
 		fname = filename;
 		allfiles.push_back(fname);
 
@@ -2610,7 +2610,7 @@ int main(int argc, char *argv[]) {
 		printf("\n\n"); fflush(stdout);
 
 		char outfile[1024];
-		sprintf(outfile, "%s_0000.pdb", outprefix.c_str());
+		snprintf(outfile, sizeof(outfile), "%s_0000.pdb", outprefix.c_str());
 		positive_current.dump_pdb(outfile);
 		//(*sfxn)(positive_current); //DELETE ME
 		//positive_current.dump_scored_pdb(outfile, (*sfxn)); //Ordinarily, don't want to do this, since it necessitates setting up the scorefunction for the master proc, which is a waste of memory.
@@ -2745,7 +2745,7 @@ int main(int argc, char *argv[]) {
 						//Dump out a PDF:
 						acceptcount++;
 						char outfile [1024];
-						sprintf(outfile, "%s_%04lu.pdb", outprefix.c_str(), acceptcount);
+						snprintf(outfile, sizeof(outfile), "%s_%04lu.pdb", outprefix.c_str(), acceptcount);
 						positive_lowestE.dump_pdb(outfile);
 					} //if score_lastaccept<score_lowest
 					printf("Sequence is now %s.\n", currentsequence.c_str());

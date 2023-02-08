@@ -1281,7 +1281,7 @@ void output_PCA (
 ) {
 	FILE* outputfile;
 	char filename [128];
-	sprintf(filename, "PCA_%lu.txt", clustnumber);
+	snprintf(filename, sizeof(filename), "PCA_%lu.txt", clustnumber);
 	outputfile = fopen(filename, "w");
 	//printf("\tOpened %s for write.\n", filename); fflush(stdout); //DELETE ME
 
@@ -1889,24 +1889,24 @@ int main( int argc, char * argv [] ) {
 				char outfile[128];
 				if ( option[v_silentoutput]() ) {
 					char curstructtag[128];
-					sprintf(curstructtag, "c.%lu.%lu", i, j);
+					snprintf(curstructtag, sizeof(curstructtag), "c.%lu.%lu", i, j);
 					core::io::silent::SilentFileOptions opts;
 					opts.read_from_global_options();
 					io::silent::SilentFileData outsilentfiledata(opts);
 					io::silent::SilentStructOP outsilentstruct ( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts) );
 					outsilentstruct->fill_struct(temppose, curstructtag);
 					if ( j==1 ) {
-						sprintf(outfile, "clusters_firstmember.out");
+						snprintf(outfile, sizeof(outfile), "clusters_firstmember.out");
 						outsilentfiledata.write_silent_struct((*outsilentstruct), outfile);
 					}
 					if ( option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]()) ) {
-						if ( option[v_limit_structures_per_cluster]()==0 ) sprintf(outfile, "clusters_allmembers.out");
-						else sprintf(outfile, "clusters_first_%lu_members.out", static_cast<core::Size>(option[v_limit_structures_per_cluster]()) );
+						if ( option[v_limit_structures_per_cluster]()==0 ) snprintf(outfile, sizeof(outfile), "clusters_allmembers.out");
+						else snprintf(outfile, sizeof(outfile), "clusters_first_%lu_members.out", static_cast<core::Size>(option[v_limit_structures_per_cluster]()) );
 						outsilentfiledata.write_silent_struct((*outsilentstruct), outfile);
 					}
-					sprintf(outfile, "c.%lu.%lu", i, j);
+					snprintf(outfile, sizeof(outfile), "c.%lu.%lu", i, j);
 				} else {
-					sprintf(outfile, "c.%lu.%lu.pdb", i, j);
+					snprintf(outfile, sizeof(outfile), "c.%lu.%lu.pdb", i, j);
 					if ( option[v_limit_structures_per_cluster]()==0 || j<=static_cast<core::Size>(option[v_limit_structures_per_cluster]()) ) temppose.dump_pdb(outfile);
 				}
 				printf("%lu\t%lu\t%s\n", i, clusterlist_sortedbyenergy[i][j], outfile);
@@ -1918,7 +1918,7 @@ int main( int argc, char * argv [] ) {
 		core::pose::Pose cenpose;
 		pose_from_posedata(firstpose, cenpose, clustermode, clustcenter_list[i]);
 		char outfile[64];
-		sprintf(outfile, "center_%lu.pdb", i);
+		snprintf(outfile, sizeof(outfile), "center_%lu.pdb", i);
 		cenpose.dump_pdb(outfile);
 		}*/
 

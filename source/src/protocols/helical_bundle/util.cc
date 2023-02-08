@@ -108,23 +108,23 @@ void write_crick_params_file_data (
 	std::string line_out;
 
 	for ( core::Size i=1, imax=r1.size(); i<=imax; ++i ) {
-		sprintf(linebuffer, "r1\t%.12f\n", r1[i]);
+		snprintf(linebuffer, sizeof(linebuffer), "r1\t%.12f\n", r1[i]);
 		line_out=linebuffer;
 		outfile.write( line_out, line_out.length() );
 	}
 
-	sprintf(linebuffer, "omega1\t%.12f\nz1\t%.12f\n", omega1, z1);
+	snprintf(linebuffer, sizeof(linebuffer), "omega1\t%.12f\nz1\t%.12f\n", omega1, z1);
 	line_out=linebuffer;
 	outfile.write(line_out, line_out.length() );
 
 	for ( core::Size i=1, imax=delta_omega1.size(); i<=imax; ++i ) {
-		sprintf(linebuffer, "delta_omega1\t%.12f\n", delta_omega1[i]);
+		snprintf(linebuffer, sizeof(linebuffer), "delta_omega1\t%.12f\n", delta_omega1[i]);
 		line_out=linebuffer;
 		outfile.write( line_out, line_out.length() );
 	}
 
 	for ( core::Size i=1, imax=delta_z1.size(); i<=imax; ++i ) {
-		sprintf(linebuffer, "delta_z1\t%.12f\n", delta_z1[i]);
+		snprintf(linebuffer, sizeof(linebuffer), "delta_z1\t%.12f\n", delta_z1[i]);
 		line_out=linebuffer;
 		outfile.write( line_out, line_out.length() );
 	}
@@ -177,12 +177,12 @@ void write_minor_helix_params (
 	std::string line_out;
 
 	if ( residues_per_repeat > 1 ) {
-		sprintf(linebuffer, "residues_per_repeat\t%lu\n", static_cast<unsigned long>( residues_per_repeat ) );
+		snprintf(linebuffer, sizeof(linebuffer), "residues_per_repeat\t%lu\n", static_cast<unsigned long>( residues_per_repeat ) );
 		line_out=linebuffer;
 		outfile.write( line_out, line_out.length() );
 		runtime_assert_string_msg( atoms_per_residue.size() > 0, "In protocols::helical_bundle::write_minor_helix_params: got an empty vector of residue mainchain atom counts.  This should not happen.  Consult a developer -- it's a programming error, not a user error." );
 		for ( core::Size i=1, imax=atoms_per_residue.size(); i<=imax; ++i ) {
-			sprintf( linebuffer, "atoms_per_residue\t%lu\t%lu\n", static_cast<unsigned long>( i ), static_cast<unsigned long>( atoms_per_residue[i] ) );
+			snprintf( linebuffer, sizeof( linebuffer), "atoms_per_residue\t%lu\t%lu\n", static_cast<unsigned long>( i ), static_cast<unsigned long>( atoms_per_residue[i] ) );
 			line_out=linebuffer;
 			outfile.write( line_out, line_out.length() );
 		}

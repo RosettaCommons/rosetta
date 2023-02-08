@@ -348,7 +348,7 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 				char outstring[1024];
 				std::string lowest_highest( "lowest" );
 				if ( !selection_low() ) lowest_highest = "highest";
-				sprintf( outstring, "Energy is %.4f.  This is the %s encountered so far.", temppose.energies().total_energy(), lowest_highest.c_str());
+				snprintf( outstring, sizeof( outstring), "Energy is %.4f.  This is the %s encountered so far.", temppose.energies().total_energy(), lowest_highest.c_str());
 				TR << outstring << std::endl;
 
 				{
@@ -385,7 +385,7 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 		} else {
 			if ( TR.visible() ) {
 				char outstring[1024];
-				sprintf( outstring, "Energy is %.4f.", temppose.energies().total_energy());
+				snprintf( outstring, sizeof( outstring), "Energy is %.4f.", temppose.energies().total_energy());
 				TR << outstring << std::endl;
 			}
 		}
@@ -393,7 +393,7 @@ void BundleGridSampler::apply (core::pose::Pose & pose)
 		//Dump a PDB file, if the user has specified that this mover should do so:
 		if ( pdb_output() ) {
 			char outfile[1024];
-			sprintf( outfile, "%s_%05lu.pdb", pdb_prefix().c_str(), static_cast<unsigned long>(i) );
+			snprintf( outfile, sizeof( outfile), "%s_%05lu.pdb", pdb_prefix().c_str(), static_cast<unsigned long>(i) );
 			if ( TR.visible() ) TR << "Writing " << outfile << std::endl;
 			temppose.dump_scored_pdb( outfile, *sfxn_ );
 		}

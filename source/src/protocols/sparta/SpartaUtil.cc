@@ -261,14 +261,14 @@ float getRMS(utility::vector0<float> &v1, utility::vector0<float> &v2) {
 }
 
 
-char * itoa( int n, char *buff, int /*base*/ )
+char * itoa( int n, char *buff, platform::Size s, int /*base*/ )
 {
-	sprintf(buff, "%d", n);
+	snprintf(buff, s, "%d", n);
 	return buff;
 }
 
 
-char * ftoa( float n, char *buff, char f, int prec )
+char * ftoa( float n, char *buff, platform::Size s, char f, int prec )
 {
 	if ( !(f=='f' || f=='F' || f=='e' || f=='E' || f=='g' || f=='G') ) {
 		f = 'f';
@@ -291,7 +291,7 @@ char * ftoa( float n, char *buff, char f, int prec )
 	*fs++ = 'l';
 	*fs++ = f;
 	*fs = '\0';
-	sprintf( buff, format, n );
+	snprintf( buff, s, format, n );
 
 	return buff;
 }

@@ -82,7 +82,7 @@ std::string
 ExtendedPoseInputStream::get_last_pose_descriptor_string() const {
 	runtime_assert_string_msg( current_n_ > 1, "Error in ExtendedPoseInputStream::get_last_pose_descriptor_string(): The fill_pose() function must be called at least once before calling this function." );
 	char curindex_str[64];
-	sprintf( curindex_str, "%04lu", current_n_ - 1 );
+	snprintf( curindex_str, sizeof(curindex_str), "%04lu", current_n_ - 1 );
 	std::string const outstr( "extended_pose_" + std::string(curindex_str) );
 	return outstr;
 }

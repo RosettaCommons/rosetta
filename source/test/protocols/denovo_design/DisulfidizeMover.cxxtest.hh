@@ -95,7 +95,7 @@ public:
 #ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs
 			++temp;
 			char name[256];
-			sprintf(name, "temp_%04lu.pdb", temp);
+			snprintf(name, sizeof(name), "temp_%04lu.pdb", temp);
 			std::string namestr(name);
 			additional->dump_pdb(namestr);
 #endif

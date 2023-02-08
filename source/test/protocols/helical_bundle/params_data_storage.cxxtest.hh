@@ -94,7 +94,7 @@ public:
 
 		char outbuffer [1024];
 		TR << "Reading Crick parameters from the output pose." << std::endl;
-		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", testpose_->conformation().parameters_set(1)->n_parameters());
+		snprintf(outbuffer, sizeof(outbuffer), "Number of Parameters objects in the output pose ParametersSet: %lu", testpose_->conformation().parameters_set(1)->n_parameters());
 		TR << outbuffer << std::endl;
 		for ( core::Size i=1; i<=4; ++i ) {
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( testpose_->conformation().parameters_set(1)->parameters(i) ) );
@@ -103,7 +103,7 @@ public:
 			core::Real omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_omega0 ) )->value() );
 			core::Real delta_omega0_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_delta_omega0 ) )->value() );
 			bool invert_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::BooleanValuedParameter const>( h1params->parameter_cop( BPC_invert_helix ) )->value() );
-			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
+			snprintf(outbuffer, sizeof(outbuffer), "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
 			TR << outbuffer << std::endl;
 
 			if ( i==1 || i==3 ) {
@@ -172,7 +172,7 @@ public:
 
 		char outbuffer [1024];
 		TR << "Reading residue numbers from the output pose Parameters objects." << std::endl;
-		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", testpose_->conformation().parameters_set(1)->n_parameters());
+		snprintf(outbuffer, sizeof(outbuffer), "Number of Parameters objects in the output pose ParametersSet: %lu", testpose_->conformation().parameters_set(1)->n_parameters());
 		TR << outbuffer << std::endl;
 
 		core::Size resind(1);
@@ -181,14 +181,14 @@ public:
 			BundleParametersOP h1params( utility::pointer::dynamic_pointer_cast<BundleParameters>( testpose_->conformation().parameters_set(1)->parameters(i) ) );
 			TS_ASSERT(h1params);
 
-			sprintf(outbuffer, "Helix %lu residues:", i);
+			snprintf(outbuffer, sizeof(outbuffer), "Helix %lu residues:", i);
 
 			utility::vector1 < core::Size > residue_indices;
 
 			for ( core::Size ir=1, irmax=h1params->n_residue(); ir<=irmax; ++ir ) {
 				residue_indices.push_back( h1params->residue(ir)->seqpos() );
 				std::string outbuffer2( outbuffer );
-				sprintf(outbuffer, "%s %lu", outbuffer2.c_str(), residue_indices[residue_indices.size()]);
+				snprintf(outbuffer, sizeof(outbuffer), "%s %lu", outbuffer2.c_str(), residue_indices[residue_indices.size()]);
 			}
 
 			TR <<outbuffer << std::endl;
@@ -256,7 +256,7 @@ public:
 
 		char outbuffer [1024];
 		TR << "Reading Crick parameters from the cloned pose." << std::endl;
-		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", poseclone->conformation().parameters_set(1)->n_parameters());
+		snprintf(outbuffer, sizeof(outbuffer), "Number of Parameters objects in the output pose ParametersSet: %lu", poseclone->conformation().parameters_set(1)->n_parameters());
 		TR << outbuffer << std::endl;
 
 		for ( core::Size i=1; i<=4; ++i ) {
@@ -268,7 +268,7 @@ public:
 			core::Real z1_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z1_offset ) )->value() );
 			core::Real z0_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z0_offset ) )->value() );
 			bool invert_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::BooleanValuedParameter const>( h1params->parameter_cop( BPC_invert_helix ) )->value() );
-			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
+			snprintf(outbuffer, sizeof(outbuffer), "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TR << outbuffer << std::endl;
 
 			if ( i==1 || i==3 ) {
@@ -296,7 +296,7 @@ public:
 
 		TR << "Reading Crick parameters from the copied pose." << std::endl;
 
-		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy.conformation().parameters_set(1)->n_parameters());
+		snprintf(outbuffer, sizeof(outbuffer), "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy.conformation().parameters_set(1)->n_parameters());
 		TR << outbuffer << std::endl;
 
 		for ( core::Size i=1; i<=4; ++i ) {
@@ -308,7 +308,7 @@ public:
 			core::Real z1_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z1_offset ) )->value() );
 			core::Real z0_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z0_offset ) )->value() );
 			bool invert_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::BooleanValuedParameter const>( h1params->parameter_cop( BPC_invert_helix ) )->value() );
-			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
+			snprintf(outbuffer, sizeof(outbuffer), "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TR << outbuffer << std::endl;
 
 
@@ -338,7 +338,7 @@ public:
 
 		TR << "Reading Crick parameters from the assignment-copied pose." << std::endl;
 
-		sprintf(outbuffer, "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy2.conformation().parameters_set(1)->n_parameters());
+		snprintf(outbuffer, sizeof(outbuffer), "Number of Parameters objects in the output pose ParametersSet: %lu", posecopy2.conformation().parameters_set(1)->n_parameters());
 		TR << outbuffer << std::endl;
 
 		for ( core::Size i=1; i<=4; ++i ) {
@@ -350,7 +350,7 @@ public:
 			core::Real z1_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z1_offset ) )->value() );
 			core::Real z0_off( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::RealValuedParameter const>( h1params->parameter_cop( BPC_z0_offset ) )->value() );
 			bool invert_1( utility::pointer::dynamic_pointer_cast< core::conformation::parametric::BooleanValuedParameter const>( h1params->parameter_cop( BPC_invert_helix ) )->value() );
-			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
+			snprintf(outbuffer, sizeof(outbuffer), "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TR << outbuffer << std::endl;
 
 			if ( i==1 || i==3 ) {

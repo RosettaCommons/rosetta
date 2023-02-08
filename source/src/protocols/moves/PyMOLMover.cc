@@ -445,7 +445,7 @@ void PyMOLMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 			char buf[256];
 			//TR << "Energy is for the residue " << i << " is " << e[i] << std::endl;
 			e[i] = (e[i]-min)*255. / (max-min+1e-100);
-			sprintf(buf, "%c%4d%c%02x", chain, res, icode, int(e[i]));
+			snprintf(buf, sizeof(buf), "%c%4d%c%02x", chain, res, icode, int(e[i]));
 			for ( int k=0; k<8; ++k ) msg[(i-1)*8+k] = buf[k];
 		}
 
@@ -503,7 +503,7 @@ void PyMOLMover::send_RAW_Energies(Pose const &pose, std::string energyType, uti
 			res = info->number(i);
 		}
 		char buf[256];
-		sprintf(buf, "%c%4d%c%02x", chain, res, icode, energies[i]);
+		snprintf(buf, sizeof(buf), "%c%4d%c%02x", chain, res, icode, energies[i]);
 		for ( int k=0; k<8; ++k ) msg[(i-1)*8+k] = buf[k];
 	}
 	//TR << msg << std::endl;
@@ -753,7 +753,7 @@ PyMOLMover::send_hbonds( core::pose::Pose const & pose){
 
 				// Compressing energy value. Format specifier %02x would print at least 2 digit and prepend 0 if there's less than 2, x means number is int.
 				char buf[256];
-				sprintf(buf, "%02x", int((energy_list[i] - min_e)*255./(max_e - min_e)));
+				snprintf(buf, sizeof(buf), "%02x", int((energy_list[i] - min_e)*255./(max_e - min_e)));
 				to_send  << ss1.str() << accatm << ss2.str() << donatm << buf;
 			} else {
 

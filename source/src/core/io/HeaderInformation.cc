@@ -822,7 +822,9 @@ HeaderInformation::set_line_continuation(
 		utility_exit();
 	} else {
 		con_field.resize(2);
-		sprintf(&con_field[0], "%2d", static_cast<int>(line_no));
+		std::unique_ptr<char[]> data( new char[con_field.size() + 1]); // +1 for null termination taken care of
+		snprintf(data.get(), con_field.size() + 1, "%2d", static_cast<int>(line_no));
+		con_field.assign(data.get(), data.get() + con_field.size());
 	}
 }
 

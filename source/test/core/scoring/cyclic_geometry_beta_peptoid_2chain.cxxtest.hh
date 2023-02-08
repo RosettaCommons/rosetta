@@ -135,9 +135,9 @@ public:
 		sfxn.set_weight( core::scoring::fa_dun, 1.0 );
 		for( core::Size i(1); i<=24; ++i ) {
 		char curname[256];
-		sprintf( curname, "VPEPTOIDTEMP_%04lu.pdb", i );
+		snprintf( curname, sizeof( curname), "VPEPTOIDTEMP_%04lu.pdb", i );
 		poses_2chain_[i]->dump_scored_pdb( std::string( curname ), sfxn );
-		sprintf( curname, "VPEPTOIDTEMP_MIRROR_%04lu.pdb", i );
+		snprintf( curname, sizeof( curname), "VPEPTOIDTEMP_MIRROR_%04lu.pdb", i );
 		mirror_poses_2chain_[i]->dump_scored_pdb( std::string( curname ), sfxn );
 		}*/
 
