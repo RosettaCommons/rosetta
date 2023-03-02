@@ -453,6 +453,7 @@
 #include <protocols/protein_interface_design/movers/DockWithHotspotMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/TopologyBrokerMoverCreator.hh>
 
+#include <protocols/protein_mpnn/ProteinMPNNMoverCreator.hh>
 
 // Q //////////////////////////////////////////////////////////////////////////
 #include <protocols/qsar/RenderGridsToKinemageCreator.hh>

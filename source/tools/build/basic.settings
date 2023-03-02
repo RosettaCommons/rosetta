@@ -1306,6 +1306,42 @@ settings = {
         },
     },
 
+    "gcc, pytorch" : {
+        "appends" : {
+            "defines" : [
+                "USE_PYTORCH",
+                "CXX14",
+                "CXX14_OR_LATER",
+                # Uncomment if using torchlib with pre-cxx11 ABI
+                # "_GLIBCXX_USE_CXX11_ABI=0",
+            ],
+            "libraries" : [
+                "c10",
+                "torch",
+                "torch_cpu",
+                "torch_global_deps",
+            ],
+            "library_path" : [ "#external/libtorch/lib/" ],
+            "include_path" : [ "#external/libtorch/include/" ],
+            "flags" : {
+                "cxx" : [ "std=c++1y" ],
+                "link" : [
+                    # These two lines avoid the need to set LD_LIBRARY_PATH ...
+                    # ... at linking
+                    "Wl,-rpath=external/libtorch/lib/",
+                    # ... at runtime
+                    "Wl,-rpath=\\$$ORIGIN/../../../../../../../../../../external/libtorch/lib/",
+                ],
+            },
+        },
+        "removes" : {
+            "flags" : {
+                "cxx" : [ "std=c++0x" ],
+                "warn" : [ "Werror" ],
+            },
+        },
+    },
+
 
     "gcc, zeromq" : {
         "appends" : {
@@ -2862,6 +2898,42 @@ settings = {
             "flags" : {
                 "compile" : [ "pthread" ],
                 "link"   : [ "stdlib=libc++", ],
+            },
+        },
+    },
+
+    "clang, macos, pytorch" : {
+        "appends" : {
+            "defines" : [
+                "USE_PYTORCH",
+                "CXX14",
+                "CXX14_OR_LATER",
+                # Uncomment if using torchlib with pre-cxx11 ABI
+                # "_GLIBCXX_USE_CXX11_ABI=0",
+            ],
+            "libraries" : [
+                "c10",
+                "torch",
+                "torch_cpu",
+                "torch_global_deps",
+            ],
+            "library_path" : [ "#external/libtorch/lib/" ],
+            "include_path" : [ "#external/libtorch/include/" ],
+            "flags" : {
+                "cxx" : [ "std=c++1y" ],
+                "link" : [
+                    # These two lines avoid the need to set LD_LIBRARY_PATH ...
+                    # ... at linking
+                    "Wl,-rpath,external/libtorch/lib/",
+                    # ... at runtime
+                    "Wl,-rpath,@loader_path/../../../../../../../../../../external/libtorch/lib/",
+                ],
+            },
+        },
+        "removes" : {
+            "flags" : {
+                "cxx" : [ "std=c++11" ],
+                "warn" : [ "Werror" ],
             },
         },
     },

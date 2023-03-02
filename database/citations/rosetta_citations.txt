@@ -1336,3 +1336,49 @@
         10.1021/acs.jpcb.2c01669
     [END_DOI]
 [END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Justas" "Dauparas" "J"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Ivan" "Anishchenko" "I"
+        "Nathaniel" "Bennett" "N"
+        "Hua" "Bai" "H"
+        "Robert J." "Ragotte" "RJ"
+        "Lukas F." "Milles" "LF"
+        "Basile I. M." "Wicky" "BIM"
+        "Alexis" "Courbet" "A"
+        "Robbert J." "de Haas" "RJ"
+        "Neville" "Bethel" "N"
+        "Philip J. Y." "Leung" "PJY"
+        "Timothy F." "Huddy" "TF"
+        "Sam" "Pellock" "S"
+        "Doug" "Tischer" "D"
+        "Frederick" "Chan" "F"
+        "Brian" "Koepnick" "B"
+        "Hannah" "Nguyen" "H"
+        "Alex" "Kang" "A"
+        "Banumathi" "Sankaran" "B"
+        "Asim K." "Bera" "AK"
+        "Neil P." "King" "NP"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2022
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Robust deep learning-based protein sequence design using ProteinMPNN
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Science
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        378(6615):49-56
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1126/science.add2187
+    [END_DOI]
+[END_CITATION]

@@ -470,7 +470,7 @@ static MoverRegistrator< protein_interface_design::movers::VLBCreator > reg_VLBC
 static MoverRegistrator< protein_interface_design::movers::DockWithHotspotMoverCreator > reg_DockWithHotspotMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::TopologyBrokerMoverCreator> reg_TopologyBrokerMoverCreator;
 
-
+static MoverRegistrator< protein_mpnn::ProteinMPNNMoverCreator > reg_ProteinMPNNMoverCreator;
 
 // Q //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator > reg_RenderGridsToKinemageCreator;

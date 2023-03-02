@@ -631,6 +631,10 @@ sources = {
 		"AddChainBreak",
 	],
 
+	"protein_mpnn" : [
+		"ProteinMPNN",
+	],
+
 	"qsar/scoring_grid" : [
 		"ClassicGrid",
 		"ScoreNormalization",
@@ -1293,6 +1297,8 @@ testinputfiles = [
 	"pmut_scan/shortloop.02.pdb.gz",
 	"pose_creation/PFSM_01.fasta",
 	"pose_creation/PFSM_02.fasta",
+	"protein_mpnn/6MRR.pdb",
+	"protein_mpnn/5L33.pdb",
 	"recon_design/design.resfile",
 	"recon_design/design2.resfile",
 	"qsar/scoring_grid/2JJC.pdb",

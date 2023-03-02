@@ -228,6 +228,11 @@ sources = {
 	"protocols/trRosetta_protocols/movers" : [
 		"trRosettaProtocolMover",
 	],
+	"protocols/protein_mpnn" : [
+		"ProteinMPNN",
+		"util",
+		"ProteinMPNNMover",
+	],
 	"protocols/fold_from_loops/filters": [
 		"RmsdFromResidueSelectorFilter",
 		"ScorePoseSegmentFromResidueSelectorFilter",
