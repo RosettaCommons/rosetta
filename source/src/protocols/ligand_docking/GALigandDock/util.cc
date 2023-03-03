@@ -18,6 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/subpose_manipulation_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -238,6 +239,43 @@ constraint_relax( core::pose::Pose &pose,
 	if ( TR.Debug.visible() ) {
 		TR << "After minimization, sidechain rms: " << rms_scs << ", " << "ligand rms: " << rms_lig << std::endl;
 	}
+
+}
+
+void
+make_ligand_only_pose(
+	core::pose::PoseOP pose_new,
+	core::pose::PoseCOP pose,
+	utility::vector1< core::Size > const& lig_resnos
+) {
+
+	TR << "pose.fold_tree() " << pose->fold_tree() << std::endl;
+	core::kinematics::FoldTree f(lig_resnos.size());
+	core::pose::create_subpose(*pose, lig_resnos, f, *pose_new);
+	//core::pose::pdbslice(*pose_new, *pose, lig_resnos);
+
+	core::Real dH, TdS, dG;
+	std::string ligandname;
+	core::Real rms, complexscore, ligscore, recscore, ranking_prerelax;
+	core::pose::getPoseExtraScore( *pose, "dH", dH);
+	core::pose::getPoseExtraScore( *pose, "-TdS", TdS);
+	core::pose::getPoseExtraScore( *pose, "dG", dG);
+	core::pose::getPoseExtraScore( *pose, "lig_rms", rms);
+	core::pose::getPoseExtraScore( *pose, "ligscore", ligscore);
+	core::pose::getPoseExtraScore( *pose, "recscore", recscore);
+	core::pose::getPoseExtraScore( *pose, "complexscore", complexscore );
+	core::pose::getPoseExtraScore( *pose, "ranking_prerelax", ranking_prerelax);
+	core::pose::getPoseExtraScore( *pose, "ligandname", ligandname);
+
+	core::pose::setPoseExtraScore( *pose_new, "-TdS", TdS );
+	core::pose::setPoseExtraScore( *pose_new, "dG", dG );
+	core::pose::setPoseExtraScore( *pose_new, "dH", dH );
+	core::pose::setPoseExtraScore( *pose_new, "lig_rms", rms);
+	core::pose::setPoseExtraScore( *pose_new, "ligscore", ligscore );
+	core::pose::setPoseExtraScore( *pose_new, "recscore", recscore );
+	core::pose::setPoseExtraScore( *pose_new, "complexscore", complexscore );
+	core::pose::setPoseExtraScore( *pose_new, "ranking_prerelax", ranking_prerelax );
+	core::pose::setPoseExtraScore( *pose_new, "ligandname", ligandname);
 
 }
 

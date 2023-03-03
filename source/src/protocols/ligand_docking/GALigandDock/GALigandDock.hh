@@ -44,7 +44,7 @@ namespace ga_ligand_dock {
 struct StructInfo {
 	core::io::silent::SilentStructOP str;
 	core::scoring::constraints::ConstraintSetOP cst;
-	core::Real rms, E, ligandscore, recscore;
+	core::Real rms, E, ligandscore, recscore, complexscore;
 	core::Size ranking_prerelax;
 	std::string ligandname;
 };
@@ -62,6 +62,7 @@ public:
 	void
 	push( core::pose::Pose const &pose, core::Real E,
 		core::Real rms=0.0,
+		core::Real complexscore=0.0,
 		core::Real ligandscore=0.0,
 		core::Real recscore=0.0,
 		core::Size ranking_prerelax=0,
@@ -77,6 +78,7 @@ public:
 		newstruct.cst = pose.constraint_set()->clone();
 		newstruct.E = E;
 		newstruct.recscore = recscore;
+		newstruct.complexscore = complexscore;
 		newstruct.ranking_prerelax = ranking_prerelax;
 		newstruct.ligandname = ligandname;
 
@@ -85,7 +87,9 @@ public:
 
 	void
 	pop( core::pose::Pose &pose, core::Real &E,
-		core::Real &rms, core::Real &ligandscore,
+		core::Real &rms,
+		core::Real &complexscore,
+		core::Real &ligandscore,
 		core::Real &recscore,
 		core::Size &ranking_prerelax,
 		std::string &ligandname
@@ -95,6 +99,7 @@ public:
 		pose.constraint_set( struct_store_.top().cst );
 		rms = struct_store_.top().rms;
 		E = struct_store_.top().E;
+		complexscore = struct_store_.top().complexscore;
 		ligandscore = struct_store_.top().ligandscore;
 		recscore = struct_store_.top().recscore;
 		ranking_prerelax = struct_store_.top().ranking_prerelax;
@@ -109,17 +114,18 @@ public:
 		if ( !has_data() ) return nullptr;
 		core::pose::PoseOP retval (new core::pose::Pose);
 
-		core::Real rms, E, ligscore, recscore;
+		core::Real rms, E, ligscore, recscore, complexscore;
 		core::Size ranking_prerelax;
 		std::string ligandname;
-		pop(*retval, E, rms, ligscore, recscore, ranking_prerelax, ligandname );
+		pop(*retval, E, rms, complexscore, ligscore, recscore, ranking_prerelax, ligandname );
 
 		core::pose::setPoseExtraScore( *retval, "ligandname", ligandname);
 		core::pose::setPoseExtraScore( *retval, "lig_rms", rms);
 		core::pose::setPoseExtraScore( *retval, "ligscore", ligscore );
 		core::pose::setPoseExtraScore( *retval, "recscore", recscore );
+		core::pose::setPoseExtraScore( *retval, "complexscore", complexscore );
 		core::pose::setPoseExtraScore( *retval, "ranking_prerelax", ranking_prerelax );
-		core::pose::setPoseExtraScore( *retval, "dH", E-recscore-ligscore );
+		core::pose::setPoseExtraScore( *retval, "dH", complexscore-recscore-ligscore );
 
 		return retval;
 	}
@@ -337,7 +343,7 @@ private:
 	core::pose::PoseOP pose_native_; // native pose (for reporting purposes only)
 
 	// grid-building parameters
-	core::Real grid_, padding_, hashsize_;
+	core::Real grid_, padding_, hashsize_, grid_radius_;
 	core::Size subhash_;
 	bool exact_, debug_;   // debugging options
 	core::Real fa_rep_grid_;
@@ -375,6 +381,7 @@ private:
 	core::Real favor_native_; // give a bonus to input rotamer
 	bool optimize_input_H_; // optimize_h_mode_ at the beginning; goes to grid construction
 	bool pre_optH_relax_;
+	core::Size final_optH_mode_;
 	bool full_repack_before_finalmin_;
 	core::Size nrelax_;
 	core::Size nreport_;
@@ -406,6 +413,7 @@ private:
 
 	// handle multiple outputs
 	OutputStructureStore remaining_outputs_;
+	bool output_ligand_only_;
 };
 
 }

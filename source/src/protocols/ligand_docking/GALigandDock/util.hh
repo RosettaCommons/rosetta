@@ -45,6 +45,12 @@ constraint_relax( core::pose::Pose &pose,
 	utility::vector1< core::Size > const &movable_scs
 );
 
+void
+make_ligand_only_pose( core::pose::PoseOP pose_new,
+	core::pose::PoseCOP pose, //pass by value
+	utility::vector1< core::Size > const& lig_resnos
+);
+
 }
 }
 }
