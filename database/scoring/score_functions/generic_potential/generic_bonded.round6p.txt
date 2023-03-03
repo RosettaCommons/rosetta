@@ -149,8 +149,8 @@ NG2 CS ~ CS  HC  588  0.000  0.000  0.116 0.000 offset -0.000  3     #OPLS, amid
 NG2 CS ~ CS   X   wc  0.000  0.000  0.100 0.000 offset -0.000  3     #GUESS
 NG3 CS ~ CS  HC  364 -0.254  0.177  0.118 0.000 offset -0.462  1 2 3 #OPLS, amine #fit
 NG3 CS ~ CS   X   wc  0.000  0.000  0.100 0.000 offset -0.000  3     #GUESS
-NG3 CS ~ CS  HC 1132  0.000  0.000  0.117 0.000 offset -0.000  3     #OPLS, alcohol #fit
-NG3 CS ~ CS   X   wc  0.000  0.000  0.100 0.000 offset -0.000  3     #GUESS
+OG3 CS ~ CS  HC 1132  0.000  0.000  0.117 0.000 offset -0.000  3     #OPLS, alcohol #fit
+OG3 CS ~ CS   X   wc  0.000  0.000  0.100 0.000 offset -0.000  3     #GUESS
  X  CS ~ CS   X   wc  0.000  0.000  0.100 0.000 offset -0.000  3     #GUESS
 C*  CS ~ CD  CD   wc  0.000  0.000  0.500 0.000 offset -0.308  1 2 3 #GUESS #fit
 C*  CS ~ CD  CR   wc  0.000  0.000  0.000 0.000 offset -0.000  3     #GUESS #fit
@@ -190,7 +190,7 @@ HC  CS ~ CR  CR 1165  0.000  0.000 -0.150 0.000 offset -0.000  3     #OPLS, ethy
 HC  CS ~ CR   X   wc  0.000  0.000 -0.100 0.000 offset -0.000  3     #GUESS 
 NG2 CS ~ CR  CR  128  0.000  0.000 -0.100 0.000 offset -0.000  1 2 3 #GUESS 
 NG3 CS ~ CR  CR   75  0.000  0.000  0.100 0.000 offset -0.000  1 2 3 #GUESS 
-NG3 CS ~ CR  CR  129  0.428  0.125  0.166 0.000 offset -0.572  1 2 3 #OPLS, alcohol
+OG3 CS ~ CR  CR  129  0.428  0.125  0.166 0.000 offset -0.572  1 2 3 #OPLS, alcohol
  X  CS ~ CR  CR   wc  0.200  0.050  0.100 0.000 offset -0.310  1 2 3 #GUESS 
  X  CS ~ CR   X   wc  0.000  0.000  0.100 0.000 offset -0.000  3     #GUESS 
 CS NG3 ~ CS  CS  137  0.000  0.000  0.100 0.000 offset -0.000  3     #GUESS
@@ -240,11 +240,11 @@ NG2 CD ~ CD NG2  120 -0.400 -5.500  0.000 0.000 offset -0.000  1 2   #CHARMM
 CD  CD ~ CR  CR  448  0.000 -5.296  0.000 0.000 offset -0.000  2     #CHARMM #fit
 CR  CD ~ CR   X   wc  0.000 -3.000  0.000 0.000 offset -0.000  2     #GUESS
 CS  CD ~ CR  CR  112  0.000 -6.200  0.000 0.000 offset -0.000  2     #CHARMM
-HC  CD ~ CR   X   wc  0.000 -0.500  0.000 0.000 offset -0.000  2     #CHARMM   
+HC  CD ~ CR   X   wc  0.000 -0.500  0.000 0.000 offset -0.000  2     #CHARMM
 NG2 CD ~ CR  CR  337  0.000 -6.200  0.000 0.000 offset -0.000  2     #CHARMM
-Nad CD ~ CR  CR   65  0.000 -6.200  0.000 0.000 offset -0.000  2     #CHARMM
-NG2 CD ~ CR  CR  330  0.000 -6.200  0.000 0.000 offset -0.000  2     #CHARMM 
-NG3 CD ~ CR  CR   73  0.000 -3.000  0.000 0.000 offset -0.000  2     #CHARMM 
+Oad CD ~ CR  CR   65  0.000 -6.200  0.000 0.000 offset -0.000  2     #CHARMM
+OG2 CD ~ CR  CR  330  0.000 -6.200  0.000 0.000 offset -0.000  2     #CHARMM 
+OG3 CD ~ CR  CR   73  0.000 -3.000  0.000 0.000 offset -0.000  2     #CHARMM 
 Oat CD ~ CR  CR   wc  0.000 -0.500  0.000 0.000 offset -0.000  2     #ADHOC
  X  CD ~ CR   X   wc  0.000 -3.000  0.000 0.000 offset -0.000  2     #CHARMM 
 CD NG2 ~ CD  CD  128  0.700 -6.088  0.000 0.000 offset -0.435  1 2   #OPLS, amide #fit
@@ -299,14 +299,14 @@ HR  CR ~ CR   X   wc  0.000 -3.000  0.000 0.000 offset -0.000  2     #CHARMM
 NG2 CR ~ CR  HR  527  0.182 -4.298  0.000 0.000 offset -0.000  1 2   #CHARMM #fit
 NG2 CR ~ CR NG2   84  0.000 -3.000  0.000 0.000 offset -0.000  1 2   #CHARMM
 O*  CR ~ CR  O*   wc  0.000 -3.000  0.000 0.000 offset -0.000  2     #CHARMM
-NG3 CR ~ CR  HR  311  0.000 -3.000  0.000 0.000 offset -0.000  1 2   #CHARMM
+OG3 CR ~ CR  HR  311  0.000 -3.000  0.000 0.000 offset -0.000  1 2   #CHARMM
  X  CR ~ CR   X   wc  0.000 -3.000  0.000 0.000 offset -0.000  2     #CHARMM
  X  CR ~ NG3  X   wc  0.000  0.000  0.150 0.000 offset -0.000  1 2 3 #GUESS #fit
 CD NG2 ~ CR  CR  316  0.000 -0.150  0.000 0.000 offset -0.000  1 2   #GUESS
 CR NG2 ~ CR  CR  102  0.000 -2.000  0.000 0.000 offset -0.000  1 2   #OPLS, guanidinium
 CS NG2 ~ CR  CR  139  0.000 -2.000  0.000 0.000 offset -0.000  1 2   #OPLS, guanidinium
 HN NG2 ~ CR  CR   90  0.000 -2.000  0.000 0.000 offset -0.000  1 2   #GUESS, histidine
-NG2 NG2 ~ CR CR  254  0.000 -2.000  0.000 0.000 offset -0.000  1 2   #GUESS
+OG2 NG2 ~ CR CR  254  0.000 -2.000  0.000 0.000 offset -0.000  1 2   #GUESS
  X NG2 ~ CR  HR   wc  0.000 -4.000  0.000 0.000 offset -0.000  1 2   #GUESS #fit
  X NG2 ~ CR   X   wc  0.000 -2.000  0.000 0.000 offset -0.000  1 2   #GUESS #fit
 CR  CR ~ OG3 HO   wc  0.000 -1.000  0.000 0.000 offset -0.000  2     #GUESS 
@@ -344,7 +344,7 @@ C*  C* ~ S*  H*   wc -0.190  0.070  0.150 0.000 offset -0.357  1 2 3 #OPLS  #thi
 CD NG2 ~ NG2 CD   wc  0.732 -0.804  0.000 0.000 offset -0.512  1 2   #GUESS # C=N\N=C #preference to trans #fit
 C* NG2 ~ NG2 C*   wc  0.706 -0.855  0.000 0.000 offset -0.516  1 2   #GUESS # C=N\N=C #preference to trans #fit
  X NG2 ~ NG2  X   wc  0.000 -0.500  0.000 0.000 offset -0.308  1 2   #GUESS
-NG2 NG2 ~ OG3 X   wc  0.000  0.000  0.150 0.000 offset -0.000  3     #GUESS #ext-nitro
+OG2 NG2 ~ OG3 X   wc  0.000  0.000  0.150 0.000 offset -0.000  3     #GUESS #ext-nitro
 C* NG2 ~ O*   X   wc  0.000 -0.500  0.077 0.000 offset -0.380  1 2 3 #GUESS #fit
  X  N* ~ SG5 O*   wc  0.000 -4.000  0.000 0.000 offset -0.000  2     #GUESS # ring-sulfate, O=S(O,R)-N-R, 0~60/120~180
  X  N* ~ SG5  X   wc  0.000  2.000  0.000 0.000 offset -0.000  2     #GUESS # ring-sulfate, R-S(O,O)-N-R, 9
