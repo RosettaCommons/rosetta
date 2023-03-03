@@ -295,6 +295,12 @@ private:
 		core::pose::Pose &pose
 	);
 
+	void
+	final_exact_ligmin(
+		LigandConformer const &gene,
+		core::pose::Pose &pose
+	);
+
 	/// @brief  alternate final optimization cycle
 	void
 	final_cartligmin(

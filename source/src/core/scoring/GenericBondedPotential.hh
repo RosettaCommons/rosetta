@@ -403,6 +403,8 @@ private:
 	static const SpringParams null_sp_param;
 	static const GenTorsionParams null_tors_param;
 
+	bool quick_lookup_;
+
 };
 
 class ResidueExclParams : public utility::VirtualBase {

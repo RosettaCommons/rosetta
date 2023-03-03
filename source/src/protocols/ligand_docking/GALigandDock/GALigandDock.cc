@@ -670,6 +670,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 	// FD this is starting to get ugly...
 	bool finalbbscmin = (final_exact_minimize_.substr(0,4) == "bbsc");
 	bool finalscmin = (final_exact_minimize_.substr(0,2) == "sc");
+	bool finalLigandOnlyMin = (final_exact_minimize_.substr(0,10) == "ligandonly");
 	//bool dualrelax = (finalbbscmin && final_exact_minimize_.length() > 8 && final_exact_minimize_.substr(5,9) == "dual");
 	for ( core::Size i=1; i<=genes.size(); ++i ) {
 		core::pose::PoseOP pose_tmp( new core::pose::Pose );
@@ -722,7 +723,10 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 			if ( cartmin_lig_ ) {
 				final_cartligmin(genes[i], *pose_tmp );
 			}
+		} else if ( finalLigandOnlyMin ) {
+			final_exact_ligmin( genes[i], *pose_tmp );
 		}
+
 		if ( TR.Debug.visible() ) {
 			pose_tmp->dump_pdb("finalmin1."+std::to_string(i)+".pdb");
 		}
@@ -1643,6 +1647,48 @@ GALigandDock::final_exact_scmin(
 
 // final optimziation cycle with ligand flexibility only
 void
+GALigandDock::final_exact_ligmin(
+	LigandConformer const & gene,
+	core::pose::Pose &pose
+) {
+	if ( redefine_flexscs_at_relax_ ) {
+		utility_exit_with_message("Redefining flexible sidechain doesn't work with final_exact_ligmin");
+	}
+
+	core::kinematics::MoveMapOP mmlig( new core::kinematics::MoveMap );
+	mmlig->set_bb( false ); mmlig->set_chi( false ); mmlig->set_jump( false );
+	core::Size lig_jump = gene.get_jumpid();
+	mmlig->set_jump( lig_jump, true );
+	if ( pose.size() == 1 ) {
+		mmlig->set_chi( true ); // ligand-only; virtual root
+	} else {
+		for ( auto resid : gene.ligand_ids() ) {
+			mmlig->set_chi( resid, true );
+			mmlig->set_bb( resid, true );
+		}
+	}
+
+	core::optimization::CartesianMinimizer minimizer;
+	core::optimization::MinimizerOptions options( "lbfgs_armijo", 0.0001, true , false );
+	options.max_iter(50);
+
+	core::scoring::ScoreFunctionOP scfxn_cartmin = scfxn_relax_->clone();
+
+	if ( macrocycle_ligand_ ) {
+		scfxn_cartmin->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		scfxn_cartmin->set_weight( core::scoring::angle_constraint, 1.0 );
+		scfxn_cartmin->set_weight( core::scoring::dihedral_constraint, 1.0 );
+		add_macrocycle_constraints( pose, gene.ligand_ids() );
+	}
+
+	minimizer.run( pose, *mmlig, *scfxn_cartmin, options );
+	// This is a final cart ligand minimization, so I remove the constraints in the end.
+	// But should we keep all the constraints in the pose?
+	pose.remove_constraints();
+}
+
+// final optimziation cycle with ligand flexibility only
+void
 GALigandDock::final_cartligmin(
 	LigandConformer const & gene,
 	core::pose::Pose &pose
@@ -2258,8 +2304,8 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("final_exact_minimize") ) {
 		final_exact_minimize_ = tag->getOption<std::string>("final_exact_minimize");
 		if ( final_exact_minimize_.substr(0,2) != "sc" && final_exact_minimize_.substr(0,4) != "bbsc"
-				&& final_exact_minimize_ != "none" ) {
-			TR.Error << "The tag 'final_exact_minimize' must be one of: sc, bbscX, rtmin, none" << std::endl;
+				&& final_exact_minimize_ != "none" && final_exact_minimize_.substr(0,10) != "ligandonly" ) {
+			TR.Error << "The tag 'final_exact_minimize' must be one of: sc, bbscX, ligandonly, none" << std::endl;
 			utility_exit();
 		}
 	}

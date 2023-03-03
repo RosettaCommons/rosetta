@@ -370,6 +370,16 @@ GenTorsionParams::energy ( core::Real value ) const {
 	return arg + offset_;
 }
 
+Real
+GenTorsionParams::deriv ( core::Real value ) const {
+	Real arg = -k1_ * (sin( 1*value - f1_ ));
+	arg +=  -2*k2_ * (sin( 2*value - f2_ ));
+	arg +=  -3*k3_ * (sin( 3*value - f3_ ));
+	arg +=  -4*k4_ * (sin( 4*value - f4_ ));
+	arg +=  -6*k6_ * (sin( 6*value ));
+	return arg;
+}
+
 void
 GenTorsionParams::calculate_offset() {
 	core::Size nk_nonzero( 0 );
@@ -393,16 +403,6 @@ GenTorsionParams::calculate_offset() {
 	//std::cout << "nk_nonzero " << nk_nonzero << " " << k1_ << " " << k2_ << " " << k3_ << " " << offset_ << std::endl;
 
 	return;
-}
-
-Real
-GenTorsionParams::deriv ( core::Real value ) const {
-	Real arg = -k1_ * (sin( 1*value - f1_ ));
-	arg +=  -2*k2_ * (sin( 2*value - f2_ ));
-	arg +=  -3*k3_ * (sin( 3*value - f3_ ));
-	arg +=  -4*k4_ * (sin( 4*value - f4_ ));
-	arg +=  -6*k6_ * (sin( 6*value ));
-	return arg;
 }
 
 Real
@@ -478,6 +478,8 @@ GenericBondedPotential::lookup_tors_params(
 	//fd look up tgt with best multiplicity
 	auto it = tors_lookup_.find( get_parameter_hash(btidx, type1, type2, type3, type4) );
 
+	if ( quick_lookup_ && it != tors_lookup_.end() ) return tors_pot_[it->second];
+
 	auto it2 = tors_lookup_.find( get_parameter_hash(btidx, 0, type2, type3, type4) );
 	if ( it2 != tors_lookup_.end() &&
 			(it == tors_lookup_.end() || tors_pot_[it2->second].multiplicity() < tors_pot_[it->second].multiplicity()) ) it = it2;
@@ -490,6 +492,9 @@ GenericBondedPotential::lookup_tors_params(
 	it2 = tors_lookup_.find( get_parameter_hash(btidx, type1, type2, type3, 0) );
 	if ( it2 != tors_lookup_.end() &&
 			(it == tors_lookup_.end() || tors_pot_[it2->second].multiplicity() < tors_pot_[it->second].multiplicity()) ) it = it2;
+
+	if ( quick_lookup_ && it != tors_lookup_.end() ) return tors_pot_[it->second];
+
 	it2 = tors_lookup_.find( get_parameter_hash(btidx, 0, 0, type3, type4) );
 	if ( it2 != tors_lookup_.end() &&
 			(it == tors_lookup_.end() || tors_pot_[it2->second].multiplicity() < tors_pot_[it->second].multiplicity()) ) it = it2;
@@ -508,6 +513,9 @@ GenericBondedPotential::lookup_tors_params(
 	it2 = tors_lookup_.find( get_parameter_hash(btidx, type1, type2, 0, 0) );
 	if ( it2 != tors_lookup_.end() &&
 			(it == tors_lookup_.end() || tors_pot_[it2->second].multiplicity() < tors_pot_[it->second].multiplicity()) ) it = it2;
+
+	if ( quick_lookup_ && it != tors_lookup_.end() ) return tors_pot_[it->second];
+
 	it2 = tors_lookup_.find( get_parameter_hash(btidx, type1, 0, 0, 0) );
 	if ( it2 != tors_lookup_.end() &&
 			(it == tors_lookup_.end() || tors_pot_[it2->second].multiplicity() < tors_pot_[it->second].multiplicity()) ) it = it2;
@@ -520,9 +528,14 @@ GenericBondedPotential::lookup_tors_params(
 	it2 = tors_lookup_.find( get_parameter_hash(btidx, 0, 0, 0, type4) );
 	if ( it2 != tors_lookup_.end() &&
 			(it == tors_lookup_.end() || tors_pot_[it2->second].multiplicity() < tors_pot_[it->second].multiplicity()) ) it = it2;
+
+	if ( quick_lookup_ && it != tors_lookup_.end() ) return tors_pot_[it->second];
+
 	it2 = tors_lookup_.find( get_parameter_hash(btidx, 0, 0, 0, 0) );
 	if ( it2 != tors_lookup_.end() &&
 			(it == tors_lookup_.end() || tors_pot_[it2->second].multiplicity() < tors_pot_[it->second].multiplicity()) ) it = it2;
+
+	if ( quick_lookup_ && it != tors_lookup_.end() ) return tors_pot_[it->second];
 
 	// Final sanity check... (this should never get triggered)
 	if ( it == tors_lookup_.end() ) {
@@ -588,6 +601,10 @@ GenericBondedPotential::GenericBondedPotential()
 
 	std::string db_file = option[ score::gen_bonded_params_file ]();
 	read_database( db_file );
+	quick_lookup_ = false;
+	if ( option[ corrections::genpotential::quick_lookup ].user() ) {
+		quick_lookup_ = true;
+	}
 	if ( option[ corrections::genpotential::set_torsion_params ].user() ) {
 		modify_torsion_params_from_cmd_line();
 	}
