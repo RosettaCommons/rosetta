@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#ifndef INCLUDED_protocols_kinematic_closure_BalancedKicMover_FWD_HH
-#define INCLUDED_protocols_kinematic_closure_BalancedKicMover_FWD_HH
+#ifndef INCLUDED_protocols_kinematic_closure_BalancedKicMover_fwd_hh
+#define INCLUDED_protocols_kinematic_closure_BalancedKicMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

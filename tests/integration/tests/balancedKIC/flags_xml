@@ -1,0 +1,7 @@
+-in:file:s P.pdb
+-parser:protocol selector_KIC.xml
+-loops:loop_file mobile.loops
+
+-score:weights ref2015
+
+-out:nooutput

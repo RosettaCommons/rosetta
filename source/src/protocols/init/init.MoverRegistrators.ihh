@@ -272,6 +272,7 @@ static MoverRegistrator< indexed_structure_store::movers::SegmentSequenceProfile
 
 // K //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< kinematic_closure::KicMoverCreator > reg_KicMoverCreator;
+static MoverRegistrator< kinematic_closure::BalancedKicMoverCreator > reg_BalancedKicMoverCreator;
 
 // L //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< legacy_sewing::LegacyAppendAssemblyMoverCreator > reg_LegacyAppendAssemblyMoverCreator;

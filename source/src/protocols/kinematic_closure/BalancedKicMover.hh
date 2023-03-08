@@ -18,17 +18,22 @@
 #include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh>
 #include <protocols/kinematic_closure/perturbers/PerturberSet.fwd.hh>
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.fwd.hh>
+#include <protocols/moves/MoverCreator.hh>
 
 // Core headers
 #include <core/id/TorsionID_Range.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Protocol headers
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loop_modeling/LoopMover.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <boost/noncopyable.hpp>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {
 namespace kinematic_closure {
@@ -54,14 +59,16 @@ namespace kinematic_closure {
 /// variants of the perturber algorithms which obey detailed balance.  The
 /// set_pivot_picker() method is no different from the KicMover version.
 
-class BalancedKicMover
-	: public protocols::canonical_sampling::ThermodynamicMover,
-	private boost::noncopyable {
+class BalancedKicMover : public protocols::canonical_sampling::ThermodynamicMover {
 
 public:
 
 	/// @brief Default constructor.
 	BalancedKicMover();
+
+	protocols::moves::MoverOP clone() const override;
+
+	protocols::moves::MoverOP fresh_instance() const override;
 
 	/// @brief Default destructor.
 	~BalancedKicMover() override;
@@ -72,18 +79,36 @@ public:
 	void apply(Pose & pose) override;
 
 	/// @copydoc KicMover::get_name
-	std::string get_name() const override { return "BalancedKicMover"; }
+	std::string get_name() const override;
+
+	static std::string mover_name();
+
+	void parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data ) override;
+
+	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_balancedKIC_mover( utility::tag::XMLSchemaDefinition & xsd );
 
 public:
 
 	/// @copydoc KicMover::set_loop
 	void set_loop(Loop const & loop);
 
+	/// @copydoc KicMover::set_loops
+	void set_loops(protocols::loops::LoopsOP const loops);
+
 	/// @copydoc KicMover::add_perturber
 	void add_perturber(perturbers::PerturberOP perturber);
 
 	/// @copydoc KicMover::set_pivot_picker
 	void set_pivot_picker(pivot_pickers::PivotPickerOP picker);
+
+	/// @brief Set the residue_selector to use
+	void set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+
+	/// @brief Get the residue selector that this mover uses
+	inline core::select::residue_selector::ResidueSelectorCOP residue_selector() const{ return residue_selector_; }
 
 public:
 
@@ -118,10 +143,18 @@ public:
 		SolutionList const & perturbed_solutions);
 
 private:
+	/// Methods
+	void init_from_options();
+
+private:
 	bool is_fold_tree_stale_;
+	bool selector_on_;
+	std::string loops_file_;
 	protocols::loops::Loop loop_;
+	protocols::loops::LoopsOP loops_;
 	perturbers::PerturberSetOP perturbers_;
 	pivot_pickers::PivotPickerOP pivot_picker_;
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 
 };
 

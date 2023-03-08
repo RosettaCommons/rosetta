@@ -1,0 +1,18 @@
+<ROSETTASCRIPTS>
+<SCOREFXNS>
+    <ScoreFunction name="score_function" weights="ref2015"/>
+</SCOREFXNS>
+<FILTERS>
+</FILTERS>
+<RESIDUE_SELECTORS>
+    <Index name="mobileRes" resnums="10A-19A,21B-36B,40B-52B"/>
+</RESIDUE_SELECTORS>
+<SIMPLE_METRICS>
+</SIMPLE_METRICS>
+<MOVERS>
+    <BalancedKicMover name="kicmover" residue_selector="mobileRes"/>
+ </MOVERS>
+ <PROTOCOLS>
+     <Add mover_name="kicmover"/>
+</PROTOCOLS>
+</ROSETTASCRIPTS>
