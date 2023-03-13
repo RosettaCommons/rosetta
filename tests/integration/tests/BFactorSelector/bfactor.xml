@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+<SCOREFXNS>
+    <ScoreFunction name="score_function" weights="ref2015"/>
+</SCOREFXNS>
+<FILTERS>
+</FILTERS>
+<RESIDUE_SELECTORS>
+    <BFactorSelector name="bfactor_default" lower_bfactor="0.0" upper_bfactor="80.0" lower="0" upper="0" min_contiguous_res="0"/>
+    <BFactorSelector name="bfactor_contig" lower_bfactor="0.0" upper_bfactor="80.0" lower="0" upper="0" min_contiguous_res="3"/>
+    <BFactorSelector name="bfactor_low_upp" lower_bfactor="0.0" upper_bfactor="80.0" lower="2" upper="2" min_contiguous_res="0"/>
+    <BFactorSelector name="bfactor_low_upp_contig" lower_bfactor="0.0" upper_bfactor="80.0" lower="2" upper="2" min_contiguous_res="3"/>
+</RESIDUE_SELECTORS>
+<SIMPLE_METRICS>
+  <PerResidueEnergyMetric name="metric_default" residue_selector="bfactor_default" scorefxn="score_function" />
+  <PerResidueEnergyMetric name="metric_contig" residue_selector="bfactor_contig" scorefxn="score_function" />
+  <PerResidueEnergyMetric name="metric_low_upp" residue_selector="bfactor_low_upp" scorefxn="score_function" />
+  <PerResidueEnergyMetric name="metric_low_upp_contig" residue_selector="bfactor_low_upp_contig" scorefxn="score_function" />
+</SIMPLE_METRICS>
+<MOVERS>
+</MOVERS>
+<PROTOCOLS>
+    <Add metrics="metric_default,metric_contig,metric_low_upp,metric_low_upp_contig"/>
+</PROTOCOLS>
+</ROSETTASCRIPTS>

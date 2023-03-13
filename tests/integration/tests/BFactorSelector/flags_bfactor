@@ -1,0 +1,6 @@
+-in:file:s model.pdb
+-parser:protocol bfactor.xml
+
+-score:weights ref2015
+
+-out:nooutput

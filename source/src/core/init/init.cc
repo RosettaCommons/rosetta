@@ -319,6 +319,7 @@
 
 // ResidueSelectors
 #include <core/select/residue_selector/AsymmetricUnitSelectorCreator.hh>
+#include <core/select/residue_selector/BFactorSelectorCreator.hh>
 #include <core/select/residue_selector/GlycanLayerSelectorCreator.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 #include <core/select/residue_selector/ResiduePropertySelectorCreator.hh>
@@ -801,6 +802,7 @@ static ResFilterRegistrator< ResidueTypeFilterCreator > ResidueTypeResFilterCrea
 // register ResidueSelectorCreators
 using namespace core::select::residue_selector;
 static ResidueSelectorRegistrator< AndResidueSelectorCreator > reg_AndResidueSelectorCreator;
+static ResidueSelectorRegistrator< BFactorSelectorCreator > reg_BfactorSelectorCreator;
 static ResidueSelectorRegistrator< BinSelectorCreator > reg_BinSelectorCreator;
 static ResidueSelectorRegistrator< BondedResidueSelectorCreator > reg_BondedResidueSelectorCreator;
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
