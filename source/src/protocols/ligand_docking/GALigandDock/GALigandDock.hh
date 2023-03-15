@@ -34,11 +34,15 @@
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
+#include <core/kinematics/FoldTree.hh>
+
 #include <queue>
 
 namespace protocols {
 namespace ligand_docking {
 namespace ga_ligand_dock {
+
+typedef std::map< std::pair < core::Size, core::Size >, std::vector < core::Size > > HbondMap;
 
 // helper class to manage multiple outputs
 struct StructInfo {
@@ -49,15 +53,60 @@ struct StructInfo {
 	std::string ligandname;
 };
 
+struct DensStructInfo {
+	core::io::silent::SilentStructOP str;
+	core::scoring::constraints::ConstraintSetOP cst;
+	core::Real rms, E, ligandscore, recscore, lig_dens, native_hbond_ratio, hbond_count, pocket_cc;
+	core::Size ranking_prerelax;
+	std::string ligandname;
+};
+
 class StructInfoComp {
 public:
 	bool operator() ( StructInfo &a, StructInfo &b ) {  return (a.E > b.E); }
+};
+
+class DensStructInfoComp {
+public:
+	bool operator() ( DensStructInfo &a, DensStructInfo &b ) {  return (a.E > b.E); }
 };
 
 /// @brief helper class to manage multiple outputs
 class OutputStructureStore {
 public:
 	OutputStructureStore() {}
+
+	void
+	dens_push( core::pose::Pose const &pose, core::Real E,
+		core::Real rms=0.0,
+		core::Real ligandscore=0.0,
+		core::Real recscore=0.0,
+		core::Size ranking_prerelax=0,
+		std::string ligandname="",
+		core::Real lig_dens = 0.0,
+		core::Real native_hbond_ratio = 0.0,
+		core::Real hbond_count = 0.0,
+		core::Real pocket_cc = 0.0
+	) {
+		DensStructInfo newstruct;
+
+		core::io::silent::SilentFileOptions opts;
+		newstruct.str = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
+		newstruct.str->fill_struct( pose );
+		newstruct.rms = rms;
+		newstruct.ligandscore = ligandscore;
+		newstruct.cst = pose.constraint_set()->clone();
+		newstruct.E = E;
+		newstruct.recscore = recscore;
+		newstruct.ranking_prerelax = ranking_prerelax;
+		newstruct.ligandname = ligandname;
+		newstruct.lig_dens = lig_dens;
+		newstruct.native_hbond_ratio = native_hbond_ratio;
+		newstruct.hbond_count = hbond_count;
+		newstruct.pocket_cc = pocket_cc;
+
+		dens_struct_store_.push( newstruct );
+	}
 
 	void
 	push( core::pose::Pose const &pose, core::Real E,
@@ -86,6 +135,34 @@ public:
 	}
 
 	void
+	dens_pop( core::pose::Pose &pose, core::Real &E,
+		core::Real &rms, core::Real &ligandscore,
+		core::Real &recscore,
+		core::Size &ranking_prerelax,
+		std::string &ligandname,
+		core::Real &lig_dens,
+		core::Real &native_hbond_ratio,
+		core::Real &hbond_count,
+		core::Real &pocket_cc
+	)
+	{
+		dens_struct_store_.top().str->fill_pose( pose );
+		pose.constraint_set( dens_struct_store_.top().cst );
+		rms = dens_struct_store_.top().rms;
+		E = dens_struct_store_.top().E;
+		ligandscore = dens_struct_store_.top().ligandscore;
+		recscore = dens_struct_store_.top().recscore;
+		ranking_prerelax = dens_struct_store_.top().ranking_prerelax;
+		ligandname = dens_struct_store_.top().ligandname;
+		lig_dens = dens_struct_store_.top().lig_dens;
+		native_hbond_ratio = dens_struct_store_.top().native_hbond_ratio;
+		hbond_count = dens_struct_store_.top().hbond_count;
+		pocket_cc = dens_struct_store_.top().pocket_cc;
+
+		dens_struct_store_.pop();
+	}
+
+	void
 	pop( core::pose::Pose &pose, core::Real &E,
 		core::Real &rms,
 		core::Real &complexscore,
@@ -106,6 +183,31 @@ public:
 		ligandname = struct_store_.top().ligandname;
 
 		struct_store_.pop();
+	}
+
+	core::pose::PoseOP
+	dens_pop()
+	{
+		if ( !dens_has_data() ) return nullptr;
+		core::pose::PoseOP retval (new core::pose::Pose);
+
+		core::Real rms, E, ligscore, recscore, lig_dens, native_hbond_ratio, hbond_count, pocket_cc;
+		core::Size ranking_prerelax;
+		std::string ligandname;
+		dens_pop(*retval, E, rms, ligscore, recscore, ranking_prerelax, ligandname, lig_dens, native_hbond_ratio, hbond_count, pocket_cc );
+
+		core::pose::setPoseExtraScore( *retval, "ligandname", ligandname);
+		core::pose::setPoseExtraScore( *retval, "lig_rms", rms);
+		core::pose::setPoseExtraScore( *retval, "ligscore", ligscore );
+		core::pose::setPoseExtraScore( *retval, "recscore", recscore );
+		core::pose::setPoseExtraScore( *retval, "ranking_prerelax", ranking_prerelax );
+		core::pose::setPoseExtraScore( *retval, "dH", E-recscore-ligscore );
+		core::pose::setPoseExtraScore( *retval, "lig_density", lig_dens );
+		core::pose::setPoseExtraScore( *retval, "native_hbond_ratio", native_hbond_ratio );
+		core::pose::setPoseExtraScore( *retval, "hbond_count", hbond_count );
+		core::pose::setPoseExtraScore( *retval, "pocket_cc", pocket_cc );
+
+		return retval;
 	}
 
 	core::pose::PoseOP
@@ -135,16 +237,30 @@ public:
 		struct_store_ = std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoComp >();
 	}
 
+	void
+	dens_clear(){
+		dens_struct_store_ = std::priority_queue< DensStructInfo, std::vector<DensStructInfo> , DensStructInfoComp > ();
+	}
+
 	bool
 	has_data( ) {
 		return ( struct_store_.size() > 0 );
 	}
 
+	bool
+	dens_has_data( ) {
+		return ( dens_struct_store_.size() > 0 );
+	}
+
 	core::Size
 	size( ){ return struct_store_.size(); }
 
+	core::Size
+	dens_size( ){ return dens_struct_store_.size(); }
+
 private:
 	std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoComp > struct_store_;
+	std::priority_queue< DensStructInfo, std::vector<DensStructInfo> , DensStructInfoComp > dens_struct_store_;
 };
 
 
@@ -270,6 +386,12 @@ private:
 		bool simple=true
 	) const;
 
+
+	std::pair < core::Real, core::Real >
+	compare_hbonds_to_native( HbondMap const& native_hbond_map,
+		HbondMap const& lig_hbond_map
+	) const;
+
 	core::Real
 	calculate_free_ligand_score( core::pose::Pose pose, // call by value
 		utility::vector1< core::Size > const &lig_resnos ) const;
@@ -358,7 +480,7 @@ private:
 	// protocol options
 	bool use_pharmacophore_;
 	core::Real max_rot_cumulative_prob_, rot_energy_cutoff_;
-	core::Real random_oversample_, reference_oversample_, reference_frac_;
+	core::Real random_oversample_, reference_oversample_, reference_frac_, init_dens_weight_;
 	bool reference_frac_auto_;
 	std::string initial_pool_, reference_pool_; // pdbs to include in initial pool
 	bool premin_ligand_;
@@ -369,6 +491,15 @@ private:
 	bool freeze_ligand_backbone_;
 	bool freeze_ligand_;
 	bool macrocycle_ligand_;
+
+	core::Real skeleton_threshold_const_; //constant used for determining skeleton threshold
+	core::Size neighborhood_size_; //size of neighborhood to search during erosion
+	bool print_initial_pool_;
+	core::Real rtmutationRate_;
+	core::Real rotmutWidth_;
+	core::Real transmutWidth_;
+
+	bool calculate_native_density_;
 
 	std::string final_exact_minimize_; // do the last iteration exactly?
 	bool cartmin_lig_, min_neighbor_;  // more final relax properties
@@ -413,8 +544,15 @@ private:
 
 	// handle multiple outputs
 	OutputStructureStore remaining_outputs_;
+
+	//used for rooting initial_pool_ pdbs to same as input
+	bool is_virtual_root_;
+	core::kinematics::FoldTree input_fold_tree_;
+
+	bool has_density_map_;
 	bool output_ligand_only_;
 };
+
 
 }
 }

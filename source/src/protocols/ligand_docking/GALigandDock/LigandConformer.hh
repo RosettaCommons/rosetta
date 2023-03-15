@@ -28,8 +28,8 @@
 #include <utility/vector1.hh>
 #include <protocols/ligand_docking/GALigandDock/TorsionSampler.fwd.hh>
 #include <core/id/AtomID.hh>
-
-
+#include <map>
+#include <ObjexxFCL/FArray3D.hh>
 
 namespace protocols {
 namespace ligand_docking {
@@ -46,6 +46,14 @@ struct TorsionType{
 	core::chemical::BondName bn;
 	core::chemical::BondRingness br;
 	core::Size at1, at2, at3, at4;
+};
+
+class PointScoreComparator{
+public:
+	bool operator()(std::pair< numeric::xyzVector<core::Real>, core::Real > Pair1, std::pair< numeric::xyzVector<core::Real>, core::Real > Pair2){
+		return (Pair1.second < Pair2.second);
+	}
+
 };
 
 class LigandConformer : public utility::VirtualBase {
@@ -220,8 +228,13 @@ public:
 	void
 	assign_ligand_trans( core::Vector transv );
 
+	//utility::vector1< numeric::xyzVector< core::Real > > points_to_search() const { return points_to_search_; }
+
 	void score( core::Real scorein ) { score_ = scorein; }
 	core::Real score() const { return score_; }
+
+	void density_score( core::Real scorein ) { density_score_ = scorein; }
+	core::Real density_score() const { return density_score_; }
 
 	void rms( core::Real rmsin ) { rms_ = rmsin; }
 	core::Real rms() const { return rms_; }
@@ -291,13 +304,21 @@ public:
 	void
 	superimpose_to_ref_pose( utility::vector1< core::id::AtomID > const & ids  );
 
+	void
+	set_has_density_map( bool setting ) { has_density_map_ = setting; }
+
+	bool
+	has_density_map() const { return has_density_map_; }
+
 	bool
 	is_ligand_frozen() const { return freeze_ligand_; }
 
 	bool
 	is_ligand_bb_frozen() const { return ( freeze_ligand_ || freeze_ligand_backbone_ ); }
 
+
 private:
+
 	// reference pose
 	core::pose::PoseCOP ref_pose_;
 
@@ -318,6 +339,7 @@ private:
 
 	// the score
 	core::Real score_;
+	core::Real density_score_;
 
 	// the rms to native (if given)
 	core::Real rms_;
@@ -353,6 +375,8 @@ private:
 
 	// -Tds
 	core::Real negTdS_;
+
+	bool has_density_map_ = false;
 };
 
 typedef utility::vector1< LigandConformer > LigandConformers;

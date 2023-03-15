@@ -506,7 +506,7 @@ def is_planar(mol, atm1, atm2):
     if abs(dihe) >= CUTOFF_PLANAR and abs(dihe) <= (180-CUTOFF_PLANAR) :
         return False
     return True
-    
+
 def validate_order(nodes, parents):
     new_nodes = []
     cur_parent=-999

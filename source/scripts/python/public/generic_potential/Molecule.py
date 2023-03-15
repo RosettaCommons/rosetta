@@ -252,6 +252,7 @@ class MoleculeClass:
         
         if self.option.opt.rename_atoms:
             atms = rename_atoms(atms, bonds)
+
         # Re-ordering scheme for Rosetta
         # add up here with new index based on heavy or H
         newindex.sort()
@@ -548,7 +549,7 @@ class MoleculeClass:
                 out.write('BOND_TYPE %-4s %-4s %1d%s #ORGBND%1d\n'%(atm1.name,atm2.name,border,extra,bond.order))
             else:
                 out.write('BOND_TYPE %-4s %-4s %1d%s\n'%(atm1.name,atm2.name,border,extra))
-
+        
         #VIRTUAL BONDS
         if self.option.opt.report_puckering_chi:
             for rnum,ring in enumerate(self.rings):

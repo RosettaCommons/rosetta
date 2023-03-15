@@ -41,14 +41,15 @@ private:
 	bool is_H;
 	bool is_polarH;
 	bool is_halogen;
+	bool is_generic; //for density aligner; doesn't care about atom chemistry 
 	core::Real ambiguity_;
 	core::Real score_;
 	std::string tag_;
 
 public:
-	AtomProperties() : is_donor(false),is_acceptor(false),is_H(false),is_polarH(false),is_halogen(false), ambiguity_( 0.0 ), score_( 0.0 ), tag_( "" ) {}
-	AtomProperties( bool donor, bool acceptor, bool H, bool polarH, bool halogen, core::Real ambiguity, core::Real score, std::string tag) :
-		is_donor(donor),is_acceptor(acceptor),is_H(H),is_polarH(polarH),is_halogen(halogen),ambiguity_(ambiguity),score_(score), tag_( tag ) {}
+	AtomProperties() : is_donor(false),is_acceptor(false),is_H(false),is_polarH(false),is_halogen(false),is_generic(false), ambiguity_( 0.0 ), score_( 0.0 ), tag_( "" ) {}
+	AtomProperties( bool donor, bool acceptor, bool H, bool polarH, bool halogen, bool generic, core::Real ambiguity, core::Real score, std::string tag) :
+		is_donor(donor),is_acceptor(acceptor),is_H(H),is_polarH(polarH),is_halogen(halogen),is_generic(generic),ambiguity_(ambiguity),score_(score), tag_( tag ) {}
 
 	// property resolution: does a pair of atoms match?  What is the scale?
 	// halogen_specific treats halogens separately, only matching to other halogens
@@ -57,6 +58,7 @@ public:
 	bool donor() const { return is_donor; }
 	bool polarH() const { return is_polarH; }
 	bool acceptor() const { return is_acceptor; }
+	bool generic() const { return is_generic; }
 	core::Real score() const { return score_; }
 	void score( core::Real value ) { score_ = value; }
 
@@ -174,6 +176,10 @@ public:
 		}
 	}
 
+	ConstraintInfo( utility::vector1< numeric::xyzVector< core::Real > > density_points ) {
+		init_from_map( density_points );
+	}
+
 	ConstraintInfo(
 		core::pose::Pose const &pose,
 		GridScorerOP gridscore,
@@ -187,6 +193,9 @@ public:
 	init_from_ligand(
 		core::pose::Pose const &pose,
 		utility::vector1< core::Size > const &ligids );
+
+	void
+	init_from_map( utility::vector1< numeric::xyzVector< core::Real > > density_points );
 
 	/// @brief defines pharmacophore partners in ligand (for pharmacophore matching)
 	void
@@ -355,6 +364,11 @@ public:
 	void set_sample_ring_conformers( bool const setting ) { sample_ring_conformers_ = setting; }
 	bool sample_ring_conformers() const { return sample_ring_conformers_; }
 
+	void
+	select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real skeleton_threshold_const = 2.5, core::Size neighborhood_size = 27 );
+
+	utility::vector1< numeric::xyzVector< core::Real > > points_to_search() const { return points_to_search_; }
+
 private:
 	/// @brief set constraints to target
 	void set_constraints(
@@ -385,6 +399,20 @@ private:
 		core::pose::Pose & pose,
 		utility::vector1< core::Size > ligid);
 
+
+	bool check_voxel_distance_to_receptor( numeric::xyzVector< core::Real > voxel, core::pose::Pose const & pose, core::Size const ligid );
+
+	utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > erode_points( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > selected_points, core::Size neighborhood_size = 27 );
+	std::map< core::Size, numeric::xyzVector< core::Real > > assign_neighbors( numeric::xyzVector < core::Real > point, core::Size neighborhood_size = 27 );
+
+	bool is_point_in_search_group( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > selected_points, numeric::xyzVector< core::Real > point_to_compare );
+
+	utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > find_biggest_skeleton( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points );
+
+	bool is_point_in_network ( numeric::xyzVector< core::Real > point, utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > networks );
+
+	utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > find_network ( numeric::xyzVector< core::Real > start_point, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points );
+
 private:
 	ConstraintInfo target_; // target pose to which we are aligning
 	GridScorerOP sf_;      // target scorefunction
@@ -411,6 +439,8 @@ private:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	bool sample_ring_conformers_ = true;
 
+	utility::vector1< numeric::xyzVector< core::Real > > points_to_search_;
+	core::Size gridStep_ = 1;
 };
 
 typedef utility::pointer::shared_ptr< LigandAligner > LigandAlignerOP;

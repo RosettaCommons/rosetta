@@ -82,7 +82,27 @@ public:
 
 	/// @brief  calculate energies on the grid
 	core::Real
-	score( LigandConformer const &lig, bool soft=false );
+	score( LigandConformer const &lig, bool soft=false);
+
+	/// @brief calculate energies on the grid for initial pool generation
+	core::Real
+	score_init( LigandConformer const &lig, bool soft=false, core::Real init_dens_weight=100 );
+
+	core::Real
+	score_init( core::pose::Pose &pose, LigandConformer const &lig, bool soft, core::Real init_dens_weight=100 );
+
+	/// @brief calculate electron density on the grid
+	core::Real
+	density_score( LigandConformer const &lig );
+
+	core::Real
+	calculate_ligand_density_correlation( int resid, core::conformation::Residue const &rsd, core::pose::Pose const &pose);//, core::Size gene_number);
+
+	core::Real
+	calculate_pose_density_correlation( core::pose::Pose const &pose );
+
+	core::Real
+	calculate_pocket_density_correlation( core::pose::Pose const &pose );
 
 	/// @brief  gets the clash energy of a point
 	core::Real
@@ -106,7 +126,8 @@ public:
 		core::conformation::Residue const &res_i,
 		core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo,
 		bool include_bb,
-		bool soft=false
+		bool soft=false,
+		bool has_density_map=false
 	);
 
 	/// @brief  get a residue:residue energy
@@ -121,6 +142,11 @@ public:
 		bool incl_bb_j,
 		bool soft=false
 	);
+
+	//core::Size
+	//get_hbond_map( core::conformation::Residue const &res_i, core::conformation::Residue const &res_j );
+	std::map< std::pair < core::Size, core::Size >, std::vector < core::Size > >
+	get_hbond_map( core::pose::Pose pose, core::Size const lig_resno );
 
 	/// @brief  calculate energies on the grid
 	core::Real
@@ -201,6 +227,7 @@ public:
 	) const;
 
 	core::Real get_padding() { return bbox_padding_; }
+	core::Real get_voxel_spacing() { return voxel_spacing_; }
 
 	void set_voxel_spacing( core::Real voxel_spacing_in ) { voxel_spacing_ = voxel_spacing_in; }
 	void set_bbox_padding( core::Real bbox_padding_in ) { bbox_padding_ = bbox_padding_in; }

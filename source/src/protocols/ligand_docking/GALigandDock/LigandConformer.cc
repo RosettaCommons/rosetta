@@ -39,6 +39,13 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
+#include <ObjexxFCL/FArray3D.hh>
+#include <core/scoring/electron_density/ElectronDensity.hh>
+#include <numeric/fourier/SHT.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.io.hh>
+#include <utility/vector1.hh>
+
 namespace protocols {
 namespace ligand_docking {
 namespace ga_ligand_dock {
@@ -91,7 +98,6 @@ LigandConformer::initialize(
 	movingscs_ = movingscs;
 	freeze_ligand_backbone_ = ( freeze_ligand_backbone || freeze_ligand );
 	freeze_ligand_ = freeze_ligand;
-
 
 	// 1) get jumpid
 	utility::vector1< core::kinematics::Edge > jumps = pose->fold_tree().get_jump_edges();

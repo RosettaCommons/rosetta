@@ -129,6 +129,15 @@ public:
 		bool cacheCCs=false
 	);
 
+	core::Real
+	matchPoseInPocket(
+		core::pose::Pose const &pose,
+		numeric::xyzVector< core::Real > center,
+		core::Real radius,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=nullptr,
+		bool cacheCCs=false
+	);
+
 	/// @brief Match a pose into a medium-resolution density map
 	///   by placing a single Gaussian at each atom
 	core::Real
@@ -515,6 +524,10 @@ public:
 		numeric::xyzVector<core::Real> const & grid,
 		numeric::xyzVector<core::Real> const & origin
 	) const;
+
+	double get_voxel_volume( ) {
+		return V / (grid_[0]*grid_[1]*grid_[2]);
+	}
 
 private:
 	/// @brief The function is called everytime the density changes

@@ -64,6 +64,7 @@
 #include <core/scoring/etable/coulomb/Coulomb.hh> // AUTO IWYU For Coulomb
 #include <core/scoring/hbonds/hbonds_geom.hh> // AUTO IWYU For get_hb_acc_chem_type, get_hb_do...
 #include <core/scoring/lkball/LK_BallEnergy.hh> // AUTO IWYU For LK_BallEnergy
+#include <core/scoring/electron_density/ElectronDensity.hh>
 
 //////////////////////////////
 namespace protocols {
@@ -1098,10 +1099,68 @@ GridScorer::score( LigandConformer const &lig, bool soft ) {
 	return score( *ref_pose_, lig, soft );
 }
 
+core::Real
+GridScorer::score_init( LigandConformer const &lig, bool soft, core::Real init_dens_weight ) {
+	sfxn_1b_->set_weight( core::scoring::elec_dens_fast, init_dens_weight );
+	sfxn_1b_soft_->set_weight( core::scoring::elec_dens_fast, init_dens_weight );
+
+	lig.to_pose( ref_pose_ );
+	core::Real gridscore = score( *ref_pose_, lig, soft );
+
+	sfxn_1b_->set_weight( core::scoring::elec_dens_fast, sfxn_->get_weight( core::scoring::elec_dens_fast ) );
+	sfxn_1b_soft_->set_weight( core::scoring::elec_dens_fast, sfxn_->get_weight( core::scoring::elec_dens_fast ) );
+
+	return gridscore;
+}
+
+core::Real
+GridScorer::score_init( core::pose::Pose &pose, LigandConformer const &lig, bool soft, core::Real init_dens_weight ) {
+	sfxn_1b_->set_weight( core::scoring::elec_dens_fast, init_dens_weight );
+	sfxn_1b_soft_->set_weight( core::scoring::elec_dens_fast, init_dens_weight );
+
+	core::Real gridscore = score( pose, lig, soft );
+
+	sfxn_1b_->set_weight( core::scoring::elec_dens_fast, sfxn_->get_weight( core::scoring::elec_dens_fast ) );
+	sfxn_1b_soft_->set_weight( core::scoring::elec_dens_fast, sfxn_->get_weight( core::scoring::elec_dens_fast ) );
+
+	return gridscore;
+}
+
+
+core::Real
+GridScorer::density_score( LigandConformer const &lig ) {
+	lig.to_pose( ref_pose_ );
+	core::pose::Pose &pose = *ref_pose_;
+	core::Size resid = lig.ligand_ids()[1];
+	core::conformation::Residue const &res_i = pose.residue( resid );
+	core::Real cc = core::scoring::electron_density::getDensityMap().matchResFast( res_i.seqpos(), res_i, pose, nullptr, 1.0 );
+	core::Real edensScore = -cc;
+	core::Real edensWeight = sfxn_1b_soft_->get_weight( core::scoring::elec_dens_fast );
+	return edensScore * edensWeight;
+}
+
+core::Real
+GridScorer::calculate_ligand_density_correlation( int resid,
+	core::conformation::Residue const &rsd,
+	core::pose::Pose const &pose
+) {
+	return core::scoring::electron_density::getDensityMap().matchRes( resid, rsd, pose, nullptr, false);
+}
+
+core::Real
+GridScorer::calculate_pose_density_correlation( core::pose::Pose const &pose ) {
+	return core::scoring::electron_density::getDensityMap().matchPose( pose );
+}
+core::Real
+GridScorer::calculate_pocket_density_correlation( core::pose::Pose const &pose ) {
+	return core::scoring::electron_density::getDensityMap().matchPoseInPocket( pose, lig_com_, maxRad_ );
+}
+
 // score
 core::Real
 GridScorer::score( core::pose::Pose &pose, LigandConformer const &lig, bool soft ) {
 	core::Real score_grid = 0.0;
+	bool has_density_map = lig.has_density_map();
 
 	// exact
 	if ( exact_ ) {
@@ -1128,7 +1187,7 @@ GridScorer::score( core::pose::Pose &pose, LigandConformer const &lig, bool soft
 		if ( useLKB ) {
 			alllkbrinfo[i] = utility::pointer::make_shared< core::scoring::lkball::LKB_ResidueInfo > (res_i);
 		}
-		ReweightableRepEnergy score_i = get_1b_energy( res_i, alllkbrinfo[i], (i<=nLigs), soft );
+		ReweightableRepEnergy score_i = get_1b_energy( res_i, alllkbrinfo[i], (i<=nLigs), soft, has_density_map );
 		score_grid += score_i.score( w_rep_ );
 	}
 
@@ -1302,7 +1361,8 @@ GridScorer::get_1b_energy(
 	core::conformation::Residue const &res_i,
 	core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo,
 	bool include_bb,
-	bool soft
+	bool soft,
+	bool has_density_map
 ) {
 	core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
 	core::scoring::ScoreFunctionOP sf1b = soft? sfxn_1b_soft_ : sfxn_1b_;
@@ -1332,7 +1392,6 @@ GridScorer::get_1b_energy(
 
 		core::Real penalty = move_to_boundary(idxX);
 		core::Real atr( 0.0 ), rep( 0.0 ), sol( 0.0 ), elec( 0.0 ), lkb( 0.0 );
-
 		atr = core::scoring::electron_density::interp_spline(coeffs_faatr_[ atmtype_ij ], idxX, true) ;
 		rep = core::scoring::electron_density::interp_spline(coeffs_farep_[ atmtype_ij ], idxX, true) ;
 		sol = core::scoring::electron_density::interp_spline(coeffs_fasol_[ atmtype_ij ], idxX, true);
@@ -1447,6 +1506,13 @@ GridScorer::get_1b_energy(
 	sf1b->eval_ci_intrares_energy( res_i, pose, emap );
 	sf1b->eval_cd_intrares_energy( res_i, pose, emap );
 	core::Real intraE = emap.dot( sf1b->weights() );
+
+	if ( has_density_map ) {
+		core::Real cc = core::scoring::electron_density::getDensityMap().matchResFast( res_i.seqpos(), res_i, pose, nullptr, 1.0 );
+		core::Real edensScore = -cc;
+		core::Real edensWeight = sf1b->get_weight( core::scoring::elec_dens_fast );
+		score_grid.elec_dens_wtd_ += edensScore * edensWeight;
+	}
 
 	// special case for cart_bonded
 	//   everything is torsion space, so it is not needed for protein
@@ -1614,6 +1680,71 @@ GridScorer::get_2b_energy(
 	}
 
 	return score_grid;
+}
+
+std::map< std::pair < core::Size, core::Size >, std::vector < core::Size > >
+GridScorer::get_hbond_map( core::pose::Pose pose, core::Size const lig_resno ) {
+
+	std::map< std::pair < core::Size, core::Size >, std::vector < core::Size > > hbond_map;
+
+	for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
+		if ( j == lig_resno ) continue;
+		core::conformation::Residue res_i = pose.residue( lig_resno );
+		core::conformation::Residue res_j = pose.residue( j );
+
+		numeric::xyzVector<core::Real> D,H,A,B,B_0;
+
+		// hbond
+		// donor j->acceptor i
+		for ( auto anum=res_i.accpt_pos().begin(),anume=res_i.accpt_pos().end(); anum!=anume; ++anum ) {
+			// keep as is : bb hbonds are in the background grid still
+			if ( !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
+			core::Size bnum = res_i.atom_base( *anum );
+			core::Size b0num = res_i.abase2( *anum );
+			A = res_i.xyz( *anum );
+			B = res_i.xyz( bnum );
+			B_0 = res_i.xyz( b0num );
+
+			core::scoring::hbonds::HBEvalTuple hbt;
+			hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_i ));
+
+			for ( auto hnum=res_j.Hpos_polar().begin(),hnume=res_j.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
+				core::Size dnum = res_j.atom_base( *hnum );
+				H = res_j.xyz( *hnum );
+				D = res_j.xyz( dnum );
+				hbt.don_type( core::scoring::hbonds::get_hb_don_chem_type( dnum, res_j ) );
+				if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
+				TR.Debug << "Residue " << res_j.name() << res_j.seqpos() << "donating to " << res_i.atom_name(*anum) << std::endl;
+				hbond_map[std::make_pair(res_j.seqpos(),dnum)].push_back(*anum);
+			}
+		}
+
+		// donor i->acceptor j
+		for ( auto anum=res_j.accpt_pos().begin(),anume=res_j.accpt_pos().end(); anum!=anume; ++anum ) {
+			// keep as is : bb hbonds are in the background grid still
+			if ( !(*anum<=res_j.nheavyatoms()) ) continue;
+			core::Size bnum = res_j.atom_base( *anum );
+			core::Size b0num = res_j.abase2( *anum );
+			A = res_j.xyz( *anum );
+			B = res_j.xyz( bnum );
+			B_0 = res_j.xyz( b0num );
+
+			core::scoring::hbonds::HBEvalTuple hbt;
+			hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_j ));
+
+			for ( auto hnum=res_i.Hpos_polar().begin(),hnume=res_i.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
+				if ( !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
+				core::Size dnum = res_i.atom_base( *hnum );
+				H = res_i.xyz( *hnum );
+				D = res_i.xyz( dnum );
+				hbt.don_type( core::scoring::hbonds::get_hb_don_chem_type( dnum, res_i ) );
+				if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
+				TR.Debug << "Residue " << res_j.name() << res_j.seqpos() << "accepting " << res_i.atom_name(dnum) << std::endl;
+				hbond_map[std::make_pair(res_j.seqpos(),*anum)].push_back(dnum);
+			}
+		}
+	}
+	return hbond_map;
 }
 
 void
@@ -2001,6 +2132,7 @@ GridScorer::derivatives(
 						d_farep *= w_rep_;
 
 						core::Real dis2 = x_ij.length_squared();
+
 						d_faelec = coulomb_->eval_dfa_elecE_dr_over_r( dis2, res_i.atomic_charge(ii), res_j.atomic_charge(jj) );
 
 						core::Real dE_dR_over_r = ( weightatr*d_faatr + weightrep*d_farep + weightsol*d_fasol) * invD + weightelec*d_faelec; //?

@@ -22,6 +22,8 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
 
@@ -100,8 +102,12 @@ void
 ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
 {
 	if ( name_map_.find( residue_type->name() ) != name_map_.end() ) {
-		TR.Error << "Residue type " << residue_type->name() << " is already in the ResidueTypeSetCache!" << std::endl;
-		utility_exit_with_message( "Error in core::chemical::ResidueTypeSetCache::add_residue_type(): Attempting to add a new residue type, but residue type '" + residue_type->name() + "' already exists in the cache.  (Did you load a .params file with the -extra_res_fa commandline option that was already listed in residue_types.txt, perhaps?)" );
+		if ( ! ( basic::options::option[ basic::options::OptionKeys::in::file::override_database_params ]() ) ) {
+			TR.Error << "Residue type " << residue_type->name() << " is already in the ResidueTypeSetCache!" << std::endl;
+			utility_exit_with_message( "Error in core::chemical::ResidueTypeSetCache::add_residue_type(): Attempting to add a new residue type, but residue type '" + residue_type->name() + "' already exists in the cache.  (Did you load a .params file with the -extra_res_fa commandline option that was already listed in residue_types.txt, perhaps?)" );
+		} else {
+			TR.Warning << "Residue type " << residue_type->name() << " is already in the ResidueTypeSetCache! Using user provided residue." << std::endl;
+		}
 	}
 	name_map_[ residue_type->name() ] = residue_type;
 	//  clear_cached_maps(); // no can't do this

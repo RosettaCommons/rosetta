@@ -41,7 +41,7 @@ public:
 	void reset();
 
 	float fa_rep_;
-	float fa_atr_wtd_, fa_sol_wtd_, fa_elec_wtd_, lk_ball_wtd_, hbond_wtd_, oneb_wtd_, cst_wtd_, penalty_wtd_;
+	float fa_atr_wtd_, fa_sol_wtd_, fa_elec_wtd_, lk_ball_wtd_, hbond_wtd_, oneb_wtd_, cst_wtd_, penalty_wtd_, elec_dens_wtd_;
 	float bonus_wtd_;
 };
 

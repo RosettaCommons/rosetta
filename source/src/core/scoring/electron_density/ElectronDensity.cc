@@ -670,6 +670,257 @@ core::Real ElectronDensity::matchCentroidPose(
 	return CC_i;
 }
 
+/////////////////////////////////////
+/// Match a residue and surrounding residues to the density map, returning correlation coefficient between
+///    map and pose
+core::Real ElectronDensity::matchPoseInPocket(
+	core::pose::Pose const &pose,
+	numeric::xyzVector< core::Real > center,
+	core::Real radius,
+	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
+	bool cacheCCs/*=false*/ )
+{
+	using namespace numeric::statistics;
+
+	// make sure map is loaded
+	if ( !isLoaded_ ) {
+		TR.Error << "ElectronDensity::matchPose called but no map is loaded!\n";
+		return 0.0;
+	}
+
+	numeric::xyzVector< core::Real > center_plus_radius(center[0]+radius, center[1]+radius, center[2]+radius);
+	numeric::xyzVector< core::Real > center_idx(0,0,0);
+	numeric::xyzVector< core::Real > center_plus_radius_idx(0,0,0);
+	core::scoring::electron_density::getDensityMap().cart2idx( center, center_idx );
+	core::scoring::electron_density::getDensityMap().cart2idx( center_plus_radius, center_plus_radius_idx);
+	core::Size idx_radius = center_plus_radius_idx[0] - center_idx[0];
+
+	ObjexxFCL::FArray3D< core::Real >  rho_calc, inv_rho_mask;
+	rho_calc.dimension(density.u1() , density.u2() , density.u3());
+	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
+	for ( int i=0; i<density.u1()*density.u2()*density.u3(); ++i ) {
+		rho_calc[i]=0.0;
+		inv_rho_mask[i]=1.0;
+	}
+
+	int nres = pose.size(); //reses.size();
+	numeric::xyzVector< core::Real > cartX, fracX;
+	numeric::xyzVector< core::Real > atm_j, del_ij;
+
+	core::Real SC_scaling = basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]();
+
+	// per-atom derivs
+	utility::vector1< utility::vector1< numeric::xyzVector<core::Real> > >                     atm_idx(nres);
+	utility::vector1< utility::vector1< utility::vector1< int > > >                            rho_dx_pt(nres);
+	utility::vector1< utility::vector1< utility::vector1< numeric::xyzVector<core::Real> > > > rho_dx_mask(nres), rho_dx_atm(nres);
+
+	// symmetry
+	bool isSymm = (symmInfo.get() != nullptr);
+	bool remapSymm = remap_symm_;
+
+	///////////////////////////
+	/// 1 COMPUTE RHO_C, MASK
+	for ( int i=1 ; i<=nres; ++i ) {
+		conformation::Residue const &rsd_i (pose.residue(i)); //( *reses[i] );
+
+		// skip vrts & masked reses
+		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+		if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
+
+		// symm
+		if ( isSymm && !symmInfo->bb_is_independent(i) && !remapSymm ) {
+			continue; // only score the independent monomer
+		}
+
+		int nheavyatoms = rsd_i.nheavyatoms();
+		atm_idx[i].resize(nheavyatoms);
+		rho_dx_pt[i].resize(nheavyatoms);
+		rho_dx_mask[i].resize(nheavyatoms);
+		rho_dx_atm[i].resize(nheavyatoms);
+
+		for ( int j=1 ; j<=nheavyatoms; ++j ) {
+			conformation::Atom const &atm_i( rsd_i.atom(j) );
+
+			chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+			std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+			OneGaussianScattering sig_j = get_A( elt_i );
+			core::Real k = sig_j.k( effectiveB );
+			core::Real C = sig_j.C( k );
+
+			// sidechain weight
+			if ( (Size) j > rsd_i.last_backbone_atom() ) {
+				C *= SC_scaling;
+			}
+
+			// if this atom's weight is 0 continue
+			if ( C < 1e-6 ) continue;
+
+			cartX = atm_i.xyz(); // - getTransform();
+			fracX = c2f*cartX;
+			atm_idx[i][j][0] = pos_mod (fracX[0]*grid_[0] - origin_[0] + 1 , (core::Real)grid_[0]);
+			atm_idx[i][j][1] = pos_mod (fracX[1]*grid_[1] - origin_[1] + 1 , (core::Real)grid_[1]);
+			atm_idx[i][j][2] = pos_mod (fracX[2]*grid_[2] - origin_[2] + 1 , (core::Real)grid_[2]);
+
+
+			for ( int z=1; z<=density.u3(); ++z ) {
+				atm_j[2] = z;
+				del_ij[2] = (atm_idx[i][j][2] - atm_j[2]) / grid_[2];
+				// wrap-around??
+				if ( del_ij[2] > 0.5 ) del_ij[2]-=1.0;
+				if ( del_ij[2] < -0.5 ) del_ij[2]+=1.0;
+
+				del_ij[0] = del_ij[1] = 0.0;
+				if ( (f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING) ) continue;
+
+				for ( int y=1; y<=density.u2(); ++y ) {
+					atm_j[1] = y;
+
+					// early exit?
+					del_ij[1] = (atm_idx[i][j][1] - atm_j[1]) / grid_[1] ;
+					// wrap-around??
+					if ( del_ij[1] > 0.5 ) del_ij[1]-=1.0;
+					if ( del_ij[1] < -0.5 ) del_ij[1]+=1.0;
+					del_ij[0] = 0.0;
+					if ( (f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING) ) continue;
+
+					for ( int x=1; x<=density.u1(); ++x ) {
+						atm_j[0] = x;
+
+						// early exit?
+						del_ij[0] = (atm_idx[i][j][0] - atm_j[0]) / grid_[0];
+						// wrap-around??
+						if ( del_ij[0] > 0.5 ) del_ij[0]-=1.0;
+						if ( del_ij[0] < -0.5 ) del_ij[0]+=1.0;
+
+						numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
+						core::Real d2 = (cart_del_ij).length_squared();
+
+						if ( d2 > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING) )  continue;
+
+						core::Real atm = C*exp(-k*d2);
+						core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
+						core::Real inv_msk = 1/(1+sigmoid_msk);
+
+						rho_calc(x,y,z) += atm;
+						if ( z <= center_idx[2] + idx_radius && z >= center_idx[2] - idx_radius ) {
+							if ( y <= center_idx[1] + idx_radius && y >= center_idx[1] - idx_radius ) {
+								if ( x <= center_idx[0] + idx_radius && x >= center_idx[0] - idx_radius ) {
+									inv_rho_mask(x,y,z) *= (1 - inv_msk);
+								}
+							}
+						}
+
+
+						if ( ! cacheCCs )  continue;
+
+						int idx = (z-1)*density.u2()*density.u1() + (y-1)*density.u1() + x-1;
+
+						core::Real eps_i = (1-inv_msk), inv_eps_i;
+						if ( eps_i == 0 ) { // divide-by-zero
+							inv_eps_i = sigmoid_msk;
+						} else {
+							inv_eps_i = 1/eps_i;
+						}
+
+						rho_dx_pt[i][j].push_back  ( idx );
+						rho_dx_atm[i][j].push_back ( (-2*k*atm)*cart_del_ij );
+						rho_dx_mask[i][j].push_back( (-2*sigmoid_msk*inv_msk*inv_msk*inv_eps_i)*cart_del_ij );
+					}
+				}
+			}
+		}
+	}
+
+	//////////////////////////
+	/// 2 COMPUTE SUMMARY STATISTICS
+	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, CC_i=0;
+	core::Real sumO2_i=0.0, sumC2_i=0.0, varC_i=0, varO_i=0;
+	core::Real clc_x, obs_x, eps_x;
+
+	for ( int x=0; x<density.u1()*density.u2()*density.u3(); ++x ) {
+		// fetch this point
+		clc_x = rho_calc[x];
+		obs_x = density[x];
+		eps_x = 1-inv_rho_mask[x]; //1/(1+exp( (0.01-rho_calc(x,y,z)) * 1000 ));  // sigmoidal
+
+		// SMOOTHED
+		sumCO_i += eps_x*clc_x*obs_x;
+		sumO_i  += eps_x*obs_x;
+		sumO2_i += eps_x*obs_x*obs_x;
+		sumC_i  += eps_x*clc_x;
+		sumC2_i += eps_x*clc_x*clc_x;
+		vol_i   += eps_x;
+	}
+	varC_i = (sumC2_i - sumC_i*sumC_i / vol_i );
+	varO_i = (sumO2_i - sumO_i*sumO_i / vol_i ) ;
+	if ( varC_i == 0 || varO_i == 0 ) {
+		CC_i = 0;
+	} else {
+		CC_i = (sumCO_i - sumC_i*sumO_i/ vol_i) / sqrt( varC_i * varO_i );
+	}
+
+	if ( cacheCCs ) {
+		CC_aacen = CC_i;
+	}
+
+
+	///////////////////////////
+	/// 4  CALCULATE PER-ATOM DERIVATIVES
+	if ( ! cacheCCs )  return CC_i;
+
+	//std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
+	for ( int i=1 ; i<=nres; ++i ) {
+		if ( isSymm && !symmInfo->bb_is_independent(i) && !remapSymm ) {  // should this be fa_...??
+			continue; // only score the monomer
+		}
+
+		conformation::Residue const &rsd_i (pose.residue(i)); //( *reses[i] );
+
+		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+		if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
+
+		int nheavyatoms = atm_idx[i].size();
+		dCCdxs_aacen[i].resize( nheavyatoms, numeric::xyzVector< core::Real >(0,0,0) );
+
+		for ( int j=1 ; j<=nheavyatoms; ++j ) {
+			numeric::xyzVector< core::Real > dVdx_ij(0,0,0), dOdx_ij(0,0,0), dO2dx_ij(0,0,0), dCOdx_ij(0,0,0), dC2dx_ij(0,0,0);
+
+			utility::vector1< int > const &rho_dx_pt_ij   = rho_dx_pt[i][j];
+			utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_mask_ij = rho_dx_mask[i][j];
+			utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_atm_ij  = rho_dx_atm[i][j];
+
+			int npoints = rho_dx_pt_ij.size();
+			for ( int n=1; n<=npoints; ++n ) {
+				const int x(rho_dx_pt_ij[n]);
+				clc_x = rho_calc[x];
+				obs_x = density[x];
+				core::Real inv_eps_x = inv_rho_mask[x];
+
+				numeric::xyzVector<core::Real> del_mask = inv_eps_x*rho_dx_mask_ij[n];
+				numeric::xyzVector<core::Real> del_rhoc = rho_dx_atm_ij[n];
+
+				dVdx_ij  += del_mask;
+				dOdx_ij  += del_mask*obs_x;
+				dO2dx_ij += del_mask*obs_x*obs_x;
+				dCOdx_ij += del_rhoc*obs_x;
+				dC2dx_ij += 2.0*del_rhoc*clc_x;
+			}
+
+			// finally compute dCC/dx_ij
+			core::Real f = ( sumCO_i - sumC_i*sumO_i / vol_i );
+			core::Real g = sqrt ( varO_i * varC_i );
+
+			numeric::xyzVector<core::Real> fprime = dCOdx_ij - 1/(vol_i*vol_i) * ( dOdx_ij*sumC_i*vol_i - sumO_i*sumC_i*dVdx_ij);
+			numeric::xyzVector<core::Real> gprime = 0.5 * (
+				sqrt(varO_i)/sqrt(varC_i) * ( dC2dx_ij + ( sumC_i*sumC_i*dVdx_ij/(vol_i*vol_i) ) )  +
+				sqrt(varC_i)/sqrt(varO_i) * ( dO2dx_ij - ( 1/(vol_i*vol_i) * ( 2*vol_i*sumO_i*dOdx_ij - sumO_i*sumO_i*dVdx_ij ) ) ) );
+
+			dCCdxs_aacen[i][j] = (g*fprime - f*gprime) / (g*g);
+		}
+	}
+
+	return CC_i;
+}
 
 /////////////////////////////////////
 /// Match a residue to the density map, returning correlation coefficient between
@@ -1931,17 +2182,22 @@ core::Real ElectronDensity::matchRes(
 
 		// calc neighbor residues
 		if ( score_window_context_ ) {
-			for ( utility::graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node(i)->const_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_edge_list_end();
-					iru != irue; ++iru ) {
-				auto const * edge( static_cast< EnergyEdge const *> (*iru) );
-				Size const e1( edge->get_first_node_ind() );
-				Size const e2( edge->get_second_node_ind() );
-				Size const j = (e1==i) ? e2 : e1;
-				if ( j<win_start || j>win_stop ) {
-					neighborResids.insert( j );
+
+			if ( energy_graph.num_edges() != 0 ) {
+				for ( utility::graph::Graph::EdgeListConstIter
+						iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+						irue = energy_graph.get_node(i)->const_edge_list_end();
+						iru != irue; ++iru ) {
+					auto const * edge( static_cast< EnergyEdge const *> (*iru) );
+					Size const e1( edge->get_first_node_ind() );
+					Size const e2( edge->get_second_node_ind() );
+					Size const j = (e1==i) ? e2 : e1;
+					if ( j<win_start || j>win_stop ) {
+						neighborResids.insert( j );
+					}
 				}
+			} else {
+				TR << "No energy table. Cannot use window context" << std::endl;
 			}
 		}
 
@@ -2178,7 +2434,7 @@ core::Real ElectronDensity::matchRes(
 	}
 
 
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() && resid == 1 ) {
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
 		ElectronDensity(rho_obs,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_obs.mrc");
 		ElectronDensity(inv_rho_mask,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_mask.mrc");
 		ElectronDensity(rho_calc_bg,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_calc_bg.mrc");

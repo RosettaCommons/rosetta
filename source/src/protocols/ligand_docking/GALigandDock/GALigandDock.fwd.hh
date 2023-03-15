@@ -27,7 +27,6 @@ class GALigandDock;
 typedef utility::pointer::shared_ptr< GALigandDock > GALigandDockOP;
 typedef utility::pointer::shared_ptr< GALigandDock const > GALigandDockCOP;
 
-
 }
 }
 }
