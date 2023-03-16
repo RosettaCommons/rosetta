@@ -954,9 +954,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		return;
 	}
 
-	// Deal with disulphides - i have no idea what this does, ask Rob Vernon, he put this here.
-	apply_disulfides(pose);
-
 	int total_count=0;
 	int dump_counter=0;
 	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ) {
