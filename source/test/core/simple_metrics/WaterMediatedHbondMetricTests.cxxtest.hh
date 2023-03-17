@@ -246,7 +246,8 @@ public:
 
 		//305 Makes a bridge to itself through a water
 		// Make sure it is there as we add the option to include self.
-		TS_ASSERT(per_res.at(305) == 1);
+		//fd  -> with "fixed" ligand (glycan SE3) there is no self water bridge
+		TS_ASSERT(per_res.at(305) == 0);
 	}
 
 	void test_sele1_to_sele2() {
