@@ -41,6 +41,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/init_id_map.hh>
 #include <core/pose/subpose_manipulation_util.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -87,6 +88,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 	report_heavy_acceptors_and_hpols_( false ),
 	atomic_depth_deeper_than_( true ),
 	atomic_depth_poly_leu_( true ),
+	is_ligand_residue_(false),
 	max_hbond_energy_( basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ),
 	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ),
 	burial_cutoff_( basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff] ),
@@ -145,6 +147,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	report_heavy_acceptors_and_hpols_( false ),
 	atomic_depth_deeper_than_( true ),
 	atomic_depth_poly_leu_( true ),
+	is_ligand_residue_(false),
 	max_hbond_energy_( basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ),
 	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ),
 	burial_cutoff_( basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff] ),
@@ -195,6 +198,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & r
 	report_heavy_acceptors_and_hpols_( rval.report_heavy_acceptors_and_hpols_ ),
 	atomic_depth_deeper_than_( rval.atomic_depth_deeper_than_ ),
 	atomic_depth_poly_leu_( rval.atomic_depth_poly_leu_ ),
+	is_ligand_residue_( rval.is_ligand_residue_ ),
 	max_hbond_energy_( rval.max_hbond_energy_ ),
 	probe_radius_( rval.probe_radius_ ),
 	burial_cutoff_( rval.burial_cutoff_ ),
@@ -230,6 +234,8 @@ BuriedUnsatHbondFilter::parse_my_tag(
 	only_interface_ = tag->getOption<bool>( "only_interface", false );
 	atomic_depth_deeper_than_ = tag->getOption<bool>( "atomic_depth_deeper_than", true );
 	atomic_depth_poly_leu_ = tag->getOption<bool>( "atomic_depth_poly_leu", true );
+	is_ligand_residue_ = tag->getOption<bool>( "is_ligand_residue", false);
+	if ( is_ligand_residue_ ) use_ddG_style_ = true; // We want to compute ddG for the ligand
 
 	if ( tag->hasOption( "probe_radius" ) ) name_of_sasa_calc_="nondefault"; // ensure that probe radius gets updated in Unsat Calc and SASA Calc
 	if ( tag->getOption<bool>( "dalphaball_sasa", false ) ) {
@@ -249,6 +255,7 @@ BuriedUnsatHbondFilter::parse_my_tag(
 	atomic_depth_apo_surface_ = tag->getOption<core::Real>( "atomic_depth_apo_surface", -1.0 );
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
+
 
 
 	// if user does not specificy and vsasa=true, set vsasa default for burial cutoff
@@ -398,6 +405,33 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		for ( core::Size const sr : selected_residues ) {
 			region_to_calculate.insert(sr);
 		}
+	} else if ( is_ligand_residue_ ) {
+		buried_unsat_hbond_filter_tracer << " Computing Unsats for Ligand residues. Doesn't support multires ligand at this version." << std::endl;
+		core::Size ligid;
+		if ( residue_selector_ ) {
+			core::select::residue_selector::ResidueSubset selection = residue_selector_->apply( pose );
+			runtime_assert_msg( selection.size() != 1, "ERROR: only support single residue ligand. Nres of ligand is " + std::to_string(selection.size()) );
+			ligid = selection[1];
+		} else {
+			core::Size lastres = pose.total_residue();
+			while ( pose.residue(lastres).is_virtual_residue() && lastres>1 ) lastres--;
+			ligid = lastres;
+		}
+		jump_num_ = pose.fold_tree().get_jump_that_builds_residue( ligid );
+		buried_unsat_hbond_filter_tracer << "Ligand jump id is " << jump_num_ << std::endl;
+		protocols::scoring::InterfaceOP interf = utility::pointer::make_shared< protocols::scoring::Interface >( jump_num_ );
+		interf->distance( 8.0 );
+		interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
+
+		buried_unsat_hbond_filter_tracer << "Interface residues: ";
+		for ( core::Size resnum = 1; resnum <= total_res; resnum++ ) {
+			if ( interf->is_interface( resnum ) ) {
+				region_to_calculate.insert( resnum );
+				buried_unsat_hbond_filter_tracer << resnum << ", ";
+			}
+		}
+		buried_unsat_hbond_filter_tracer << std::endl;
+
 	} else if ( residue_selector_ ) {
 		buried_unsat_hbond_filter_tracer << " LOOKING FOR UNSATS ONLY AT RESIDUES DEFINED BY YOUR residue_selector: " << std::endl;
 		core::select::residue_selector::ResidueSubset selection = residue_selector_->apply( pose );
@@ -436,6 +470,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 				}
 			}
 		}
+
 	} else { // DEFAULT, total_res (ASU for symmetric case)
 		for ( core::Size resnum=1; resnum <= total_res; resnum++ ) {
 			region_to_calculate.insert( resnum );
@@ -739,6 +774,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "report_heavy_acceptors_and_hpols",xsct_rosetta_bool,"report heavy atom acceptors and hpols","false")
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_deeper_than",xsct_rosetta_bool, "If true, only atoms deeper than atomic_depth_selection are included. If false, only atoms less deep than atomic_depth_selection are included.", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_poly_leu",xsct_rosetta_bool, "Convert pose to poly-leu before calculating depth? Gives stable, sequence independent values that align with approximate_buried_unsat_penalty.", "true" )
+		+ XMLSchemaAttribute::attribute_w_default( "is_ligand_residue",xsct_rosetta_bool, "If the selected residue is a ligand. Default: false.", "false" )
 		+ XMLSchemaAttribute( "sym_dof_names" , xs_string , "For multicomponent symmetry: what jump(s) used for ddG-like separation. (From Dr. Bale: For multicomponent systems, one can simply pass the names of the sym_dofs that control the master jumps. For one component systems, jump can still be used.)  IF YOU DEFIN THIS OPTION, Will use ddG-style separation for the calulation; if you do not want this, pass a residue selector instead of defining symdofs." );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );

@@ -185,6 +185,7 @@ private:
 	bool report_heavy_acceptors_and_hpols_;
 	bool atomic_depth_deeper_than_;
 	bool atomic_depth_poly_leu_;
+	bool is_ligand_residue_;
 	core::Real max_hbond_energy_;
 	core::Real probe_radius_;
 	core::Real burial_cutoff_;
@@ -196,7 +197,7 @@ private:
 	core::Real atomic_depth_resolution_;
 	core::Real atomic_depth_apo_surface_;
 	core::Size upper_threshold_;
-	core::Size jump_num_;
+	mutable core::Size jump_num_;
 	core::select::residue_selector::ResidueSelectorOP residue_selector_;
 	mutable core::scoring::ScoreFunctionCOP sfxn_;
 	core::pack::task::TaskFactoryOP task_factory_; // dflt nullptr; only residues defined as packable by the taskoperations will be tested for burial

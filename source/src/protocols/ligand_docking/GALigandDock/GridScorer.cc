@@ -996,8 +996,8 @@ GridScorer::set_elec_scale( core::Real scale )
 	core::Real w_hbond_bb_sc_curr = (*sfxn_)[ core::scoring::hbond_bb_sc ];
 
 	core::Real w_fa_elec_scaled( w_fa_elec_*scale );
-	core::Real w_hbond_sc_scaled( w_fa_elec_*scale );
-	core::Real w_hbond_bb_sc_scaled( w_fa_elec_*scale );
+	core::Real w_hbond_sc_scaled( w_hbond_sc_*scale );
+	core::Real w_hbond_bb_sc_scaled( w_hbond_bb_sc_*scale );
 
 	bool changed( false );
 	if ( std::abs(w_fa_elec_curr     - w_fa_elec_scaled    ) > 1.0e-6 ||

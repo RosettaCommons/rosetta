@@ -26,6 +26,8 @@
 
 #include <protocols/moves/Mover.hh>
 
+#include <core/pack/task/PackerTask.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -424,9 +426,22 @@ private:
 	);
 
 	void
+	final_exact_ligmin_helper(
+		LigandConformer const & gene,
+		core::pose::Pose &pose,
+		core::kinematics::MoveMapOP movemap,
+		core::scoring::ScoreFunctionOP scfxn_local,
+		core::Real const& fa_rep_weight,
+		core::Real const& coordinate_cst_weight,
+		core::Real const& torlerance,
+		core::Size const& maxiter
+	);
+
+	void
 	final_exact_ligmin(
 		LigandConformer const &gene,
-		core::pose::Pose &pose
+		core::pose::Pose &pose,
+		core::pack::task::PackerTaskOP task
 	);
 
 	/// @brief  alternate final optimization cycle
@@ -478,7 +493,7 @@ private:
 	bool move_water_;
 
 	// protocol options
-	bool use_pharmacophore_;
+	bool use_pharmacophore_, aligner_fastmode_;
 	core::Real max_rot_cumulative_prob_, rot_energy_cutoff_;
 	core::Real random_oversample_, reference_oversample_, reference_frac_, init_dens_weight_;
 	bool reference_frac_auto_;

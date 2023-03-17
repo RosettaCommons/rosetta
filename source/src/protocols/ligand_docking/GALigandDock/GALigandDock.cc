@@ -131,6 +131,7 @@ GALigandDock::GALigandDock() {
 	optimize_input_H_ = true;
 	pre_optH_relax_ = true;
 	final_optH_mode_ = 1;
+	aligner_fastmode_ = false;
 
 
 	// final relaxation
@@ -697,6 +698,7 @@ GALigandDock::apply( pose::Pose & pose )
 	}
 
 	if ( multiple_ligands_.size()==0 && ligand_file_list_.size()==0 ) {
+		auto start = std::chrono::steady_clock::now();
 		core::pose::PoseOP pose_working( new core::pose::Pose( pose ) );
 		pose_working->energies().clear();
 		pose_working->data().clear();
@@ -709,6 +711,9 @@ GALigandDock::apply( pose::Pose & pose )
 		gene_initial.set_sample_ring_conformers( sample_ring_conformers_ );
 		gene_initial.set_has_density_map( has_density_map_);
 		pose = run_docking( gene_initial, gridscore, aligner, remaining_outputs_ );
+		auto end = std::chrono::steady_clock::now();
+		std::chrono::duration<double> diff = end-start;
+		TR << "GALigand Dock took " << (diff).count() << " seconds." << std::endl;
 	}
 
 }
@@ -743,6 +748,10 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 	bool finalscmin = (final_exact_minimize_.substr(0,2) == "sc");
 	bool finalLigandOnlyMin = (final_exact_minimize_.substr(0,10) == "ligandonly");
 	//bool dualrelax = (finalbbscmin && final_exact_minimize_.length() > 8 && final_exact_minimize_.substr(5,9) == "dual");
+	core::pose::PoseOP pose_tmp( new core::pose::Pose );
+	genes[1].to_pose( pose_tmp );
+	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( *pose_tmp );
+
 	for ( core::Size i=1; i<=genes.size(); ++i ) {
 		core::pose::PoseOP pose_tmp( new core::pose::Pose );
 		genes[i].to_pose( pose_tmp );
@@ -840,7 +849,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 				final_cartligmin(genes[i], *pose_tmp );
 			}
 		} else if ( finalLigandOnlyMin ) {
-			final_exact_ligmin( genes[i], *pose_tmp );
+			final_exact_ligmin( genes[i], *pose_tmp, task );
 		}
 
 		if ( TR.Debug.visible() ) {
@@ -931,7 +940,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		core::pose::setPoseExtraScore( *pose, "dG", dG );
 		//core::pose::setPoseExtraScore( *pose, "ligandname", pose->residue(lig_resno).name() );
 	}
-  
+
 	if ( output_ligand_only_ && runmode_ == "VSX" && final_optH_mode_ != 3 ) { // make sure no sidechain changes
 		core::pose::PoseOP pose_ligand(new core::pose::Pose);
 		make_ligand_only_pose(pose_ligand, pose, gene_initial.ligand_ids());
@@ -1848,14 +1857,71 @@ GALigandDock::final_exact_scmin(
 
 }
 
+void
+GALigandDock::final_exact_ligmin_helper(
+	LigandConformer const & gene,
+	core::pose::Pose &pose,
+	core::kinematics::MoveMapOP movemap,
+	core::scoring::ScoreFunctionOP scfxn_local,
+	core::Real const& fa_rep_weight,
+	core::Real const& coordinate_cst_weight,
+	core::Real const& torlerance,
+	core::Size const& maxiter
+){
+	scfxn_local->set_weight( core::scoring::fa_rep, fa_rep_weight );
+	scfxn_local->set_weight( core::scoring::coordinate_constraint, coordinate_cst_weight );
+
+	if ( coordinate_cst_weight!=0 ) {
+		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.3 ) );
+		core::id::AtomID anchorid( 1, pose.fold_tree().root() );
+		for ( auto resid : gene.ligand_ids() ) {
+			for ( core::Size iatm = 1; iatm <= pose.residue(resid).natoms(); ++iatm ) {
+				core::id::AtomID atomid( iatm, resid );
+				core::Vector const &xyz = pose.xyz( atomid );
+				pose.add_constraint( core::scoring::constraints::ConstraintCOP
+					( core::scoring::constraints::ConstraintOP
+					( new core::scoring::constraints::CoordinateConstraint( atomid, anchorid, xyz, fx ) )));
+			}
+		}
+	}
+
+	if ( macrocycle_ligand_ ) {
+		scfxn_local->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		scfxn_local->set_weight( core::scoring::angle_constraint, 1.0 );
+		scfxn_local->set_weight( core::scoring::dihedral_constraint, 1.0 );
+		add_macrocycle_constraints( pose, gene.ligand_ids() );
+	}
+
+	protocols::minimization_packing::MinMoverOP min_mover;
+	min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( movemap, scfxn_local, "lbfgs_armijo_nonmonotone", torlerance, true );
+	min_mover->cartesian( false );
+	min_mover->max_iter( maxiter );
+	min_mover->apply( pose );
+
+	pose.remove_constraints();
+
+}
+
 // final optimziation cycle with ligand flexibility only
 void
 GALigandDock::final_exact_ligmin(
 	LigandConformer const & gene,
-	core::pose::Pose &pose
+	core::pose::Pose &pose,
+	core::pack::task::PackerTaskOP task
 ) {
 	if ( redefine_flexscs_at_relax_ ) {
 		utility_exit_with_message("Redefining flexible sidechain doesn't work with final_exact_ligmin");
+	}
+
+	utility::vector1< core::Size > contact_scs;
+	if ( turnon_flexscs_at_relax_ ) {
+		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), contact_distance_ );
+		TR << "Redefined flexible sidechains: ";
+		for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
+		if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
+		TR << std::endl;
+	} else {
+		contact_scs = gene.moving_scs();
 	}
 
 	core::kinematics::MoveMapOP mmlig( new core::kinematics::MoveMap );
@@ -1871,23 +1937,52 @@ GALigandDock::final_exact_ligmin(
 		}
 	}
 
-	core::optimization::CartesianMinimizer minimizer;
-	core::optimization::MinimizerOptions options( "lbfgs_armijo", 0.0001, true , false );
-	options.max_iter(50);
+	core::scoring::ScoreFunctionOP scfxn_local = scfxn_relax_->clone();
 
-	core::scoring::ScoreFunctionOP scfxn_cartmin = scfxn_relax_->clone();
+	core::Real ramp_w1(0.02), ramp_w2(1.0);
+	core::Real relative_cst_w1(1.0), relative_cst_w2(0.0);
+	core::Real torlerance1(0.01), torlerance2(0.00001);
+	core::Size maxiter1(50), maxiter2(50);
+	core::Real fa_rep_w = scfxn_local->get_weight(core::scoring::fa_rep);
+	core::Real coordinate_cst_w = scfxn_local->get_weight(core::scoring::coordinate_constraint);
 
-	if ( macrocycle_ligand_ ) {
-		scfxn_cartmin->set_weight( core::scoring::atom_pair_constraint, 1.0 );
-		scfxn_cartmin->set_weight( core::scoring::angle_constraint, 1.0 );
-		scfxn_cartmin->set_weight( core::scoring::dihedral_constraint, 1.0 );
-		add_macrocycle_constraints( pose, gene.ligand_ids() );
+	if ( final_optH_mode_ != 0 ) {
+		if ( pre_optH_relax_ ) {
+			final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w1, coordinate_cst_w*relative_cst_w1, torlerance1, maxiter1 );
+			final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w2, coordinate_cst_w*relative_cst_w2, torlerance2, maxiter2 );
+		}
+		TR << "Re-optimizing hydrogens in whole structure." << std::endl;
+		utility::vector1< bool > res_to_be_packed(pose.size(), false);
+		if ( final_optH_mode_ == 1 ) {
+			//fully optH
+		} else if ( final_optH_mode_ == 2 ) {
+			//restrict the optH to current sidechains
+			for ( core::Size ires:contact_scs ) res_to_be_packed[ires] = true;
+			task->restrict_to_residues(res_to_be_packed);
+		} else if ( final_optH_mode_ == 3 ) {
+			//restrict the optH to the redefined contact scs
+			TR << "Redefined the sidechains for final optH, sidechains within " << contact_distance_ << " A ";
+			contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), contact_distance_ );
+			for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
+			if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
+			TR << std::endl;
+			for ( core::Size ires:contact_scs ) res_to_be_packed[ires] = true;
+			task->restrict_to_residues(res_to_be_packed);
+		} else {
+			TR.Warning << "final_optH_mode " << final_optH_mode_ <<
+				" is invalid, only support 0, 1, 2, 3. Will do full optH." << std::endl;
+		}
+		task->initialize_from_command_line();
+		task->or_optimize_h_mode( true );
+		task->or_include_current( true );
+		task->or_flip_HNQ( true );
+		task->or_multi_cool_annealer( true );
+		core::pack::pack_rotamers( pose, *scfxn_relax_, task );
 	}
 
-	minimizer.run( pose, *mmlig, *scfxn_cartmin, options );
-	// This is a final cart ligand minimization, so I remove the constraints in the end.
-	// But should we keep all the constraints in the pose?
-	pose.remove_constraints();
+	final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w1, coordinate_cst_w*relative_cst_w1, torlerance1, maxiter1 );
+	final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w2, coordinate_cst_w*relative_cst_w2, torlerance2, maxiter2 );
+
 }
 
 // final optimziation cycle with ligand flexibility only
@@ -2199,8 +2294,7 @@ GALigandDock::setup_ligand_aligner( core::pose::Pose const & pose,
 	gridscore_ref->get_grid_atomtypes( rsds_to_build_grids, use_sc_only_in_grid );
 	gridscore_ref->calculate_grid( pose, lig_resnos, movable_scs_in_ref );
 
-	bool fastmode = (runmode_ == "VSX");
-	LigandAligner aligner( use_pharmacophore_, movable_scs_in_ref, fastmode);
+	LigandAligner aligner( use_pharmacophore_, movable_scs_in_ref, aligner_fastmode_);
 	aligner.set_sf( gridscore_ref );
 	aligner.refine_input( (runmode_ == "refine") );
 	aligner.set_sample_ring_conformers( sample_ring_conformers_ );
@@ -2510,6 +2604,7 @@ GALigandDock::parse_my_tag(
 		use_pharmacophore_ = tag->getOption<bool>("use_pharmacophore");
 		if ( !use_pharmacophore_ ) reference_pool_ = "none";
 	}
+	if ( tag->hasOption("aligner_fastmode") ) { aligner_fastmode_ = tag->getOption<bool>("aligner_fastmode"); }
 	if ( tag->hasOption("initial_pool") ) { initial_pool_ = tag->getOption<std::string>("initial_pool"); }
 	if ( tag->hasOption("reference_oversample") ) { reference_oversample_ = tag->getOption<core::Real>("reference_oversample"); }
 	if ( tag->hasOption("reference_pool") ) {
@@ -2828,6 +2923,7 @@ GALigandDock::setup_params_for_runmode( std::string runmode )
 
 		} else if ( runmode.substr(2) == "X" ) { // VS-eXpress
 			sidechains_ = "none";
+			aligner_fastmode_ = true;
 			nrelax_ = 5;
 			nreport_ = 1;
 
@@ -2930,6 +3026,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "exact", xsct_rosetta_bool, "Use exact scoring.");
 	attlist + XMLSchemaAttribute( "debug", xsct_rosetta_bool, "Debug grid scoring: report both exact and grid scores.");
 	attlist + XMLSchemaAttribute( "use_pharmacophore", xsct_rosetta_bool, "Use pharmacophore info at initial pool generation.");
+	attlist + XMLSchemaAttribute( "aligner_fastmode", xsct_rosetta_bool, "Use fast mode in aligner.");
 	attlist + XMLSchemaAttribute( "initial_pool", xs_string, "Include these structures in the initial pool.");
 	attlist + XMLSchemaAttribute( "multiple_ligands", xs_string, "Scan ligands with these residue types.");
 	attlist + XMLSchemaAttribute( "multiple_ligands_file", xs_string, "Scan ligands with these residue types in a text file.");

@@ -237,7 +237,7 @@ constraint_relax( core::pose::Pose &pose,
 	core::pose::setPoseExtraScore( pose, "cst_rms_scs", rms_scs );
 	core::pose::setPoseExtraScore( pose, "cst_rms_lig", rms_lig );
 	if ( TR.Debug.visible() ) {
-		TR << "After minimization, sidechain rms: " << rms_scs << ", " << "ligand rms: " << rms_lig << std::endl;
+		TR.Debug << "After minimization, sidechain rms: " << rms_scs << ", " << "ligand rms: " << rms_lig << std::endl;
 	}
 
 }
@@ -249,7 +249,6 @@ make_ligand_only_pose(
 	utility::vector1< core::Size > const& lig_resnos
 ) {
 
-	TR << "pose.fold_tree() " << pose->fold_tree() << std::endl;
 	core::kinematics::FoldTree f(lig_resnos.size());
 	core::pose::create_subpose(*pose, lig_resnos, f, *pose_new);
 	//core::pose::pdbslice(*pose_new, *pose, lig_resnos);
