@@ -103,6 +103,7 @@ public:
 				core::Size const &ib (cst.b);
 
 				if ( !(moved_[ia] || moved_[ib] ) ) continue;
+				if ( mass[ia] <= 1e-3 || mass[ib] <= 1e-3 ) continue;
 
 				dxyz1[1] = xyz[3*ib-2]-xyz[3*ia-2];
 				dxyz1[2] = xyz[3*ib-1]-xyz[3*ia-1];
