@@ -41,7 +41,7 @@ private:
 	bool is_H;
 	bool is_polarH;
 	bool is_halogen;
-	bool is_generic; //for density aligner; doesn't care about atom chemistry 
+	bool is_generic; //for density aligner; doesn't care about atom chemistry
 	core::Real ambiguity_;
 	core::Real score_;
 	std::string tag_;
