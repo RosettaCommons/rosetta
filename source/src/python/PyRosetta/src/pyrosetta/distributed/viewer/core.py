@@ -28,14 +28,14 @@ _logger = logging.getLogger("pyrosetta.distributed.viewer")
 try:
     from IPython.core.display import display, HTML
     from IPython.display import clear_output
-except ImportError:
+except (ImportError, AttributeError) as e:
     _logger.error("IPython.core.display or IPython.display module cannot be imported.")
 
 try:
     import numpy
     import py3Dmol
     from ipywidgets import interact, IntSlider
-except ImportError:
+except (ImportError, AttributeError) as e:
     print(
         "Importing 'pyrosetta.distributed.viewer' requires the third-party packages "
         + "'numpy', 'py3Dmol', and 'ipywidgets' as dependencies!\n"
