@@ -221,13 +221,13 @@ calc_new_atom_location(
 
 	atoms[ 0 ]->append_atom( atoms[ 1 ] );
 	atoms[ 1 ]->append_atom( atoms[ 2 ] );
-	atoms[ 2 ]->append_atom( atoms[ 3 ] );
 
 	atoms[ 0 ]->xyz( greatgrandparent );
 	atoms[ 1 ]->xyz( grandparent );
 	atoms[ 2 ]->xyz( parent );
 
 	atoms[ 0 ]->update_internal_coords( true );
+	atoms[ 2 ]->append_atom( atoms[ 3 ] );
 
 	atoms[ 3 ]->set_dof( id::PHI, torsion_angle );
 	atoms[ 3 ]->set_dof( id::THETA, bond_angle );
