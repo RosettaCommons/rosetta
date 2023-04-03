@@ -1,6 +1,6 @@
 -in:file:s	1dwr_A.pdb	
 -in:file:centroid
 -centroid_version
--cone_method
+-neighbor_method cone
 -dist_midpoint	9.0
 -dist_steepness	1.0

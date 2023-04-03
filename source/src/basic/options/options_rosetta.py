@@ -9066,4 +9066,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'HCF', 'Boolean', desc="Cause Rosetta to exit immediately with an error.", default="false" ),
 		Option( 'INTEGRATION_TEST', 'Boolean', desc="Meta flag for best-practices flags in integration tests. Don't use on actual runs.", default="false" ),
 	), #-testing
+	
+	## for per_residue_solvent_exposure
+	Option_Group( 'solvent_exposure',
+		Option( 'method', 'String', desc="Method to calculate neighbor count, sphere or cone.", default="sphere", legal=["cone", "sphere"]),
+	), 
 ) # end options
