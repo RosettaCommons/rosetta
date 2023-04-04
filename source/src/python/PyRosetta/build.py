@@ -306,7 +306,12 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False, docum
     #p =  os.path.join(p, Platform + ( '.' + Options.build_suffix if  Options.build_suffix else '') + '/' + get_compiler_family() + '-' + get_compiler_version() + '/python-' + _python_version_)
     p =  os.path.join(p, platform.platform() + '/' + get_compiler_family() + '-' + get_compiler_version() + '/python-' + _python_version_)
 
-    p = os.path.join(p, Options.type.lower() + ('.serialization' if Options.serialization else '') + ('.thread' if Options.multi_threaded else ''))
+    p = os.path.join(p, Options.type.lower()
+                     + ('.serialization' if Options.serialization else '')
+                     + ('.thread' if Options.multi_threaded else '')
+                     + ('.annotate' if Options.annotate_includes else '')
+                     + ('.trace' if Options.trace else '')
+                     )
 
     source_p = p + '/source'
     build_p  = p + '/build'

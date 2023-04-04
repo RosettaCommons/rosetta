@@ -391,6 +391,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
 
     elif python_version == (3, 9): packages = 'numpy>=1.20.2'
     elif python_version == (3, 10): packages = 'numpy>=1.22.3'
+    elif python_version == (3, 11): packages = 'numpy>=1.23.5'
     else: packages = 'numpy>=1.23'
 
     if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
@@ -744,7 +745,8 @@ def local_python_install(platform, config):
         '3.7'  : 'https://www.python.org/ftp/python/3.7.14/Python-3.7.14.tgz',
         '3.8'  : 'https://www.python.org/ftp/python/3.8.14/Python-3.8.14.tgz',
         '3.9'  : 'https://www.python.org/ftp/python/3.9.14/Python-3.9.14.tgz',
-        '3.10' : 'https://www.python.org/ftp/python/3.10.6/Python-3.10.6.tgz',
+        '3.10' : 'https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz',
+        '3.11' : 'https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -804,7 +806,7 @@ def local_python_install(platform, config):
 
         #if False and platform['os'] == 'mac' and platform_module.machine() == 'arm64' and tuple( map(int, python_version.split('.') ) ) >= (3, 9):
         if ( platform['os'] == 'mac' and python_version == '3.6' ) \
-           or ( platform_is_linux and python_version == '3.10' ):
+           or ( platform_is_linux and python_version in ['3.10', '3.11'] ):
             open_ssl_url = local_open_ssl_install(root, build_prefix, jobs)
             options += f' --with-openssl={root} --with-openssl-rpath=auto'
             #signature += 'OpenSSL install: ' + open_ssl_url + '\n'

@@ -392,6 +392,7 @@ def rosetta_documentation(repository_root, working_dir, platform, config, hpc_dr
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     shutil.move(archive, release_path + '/' + release_name+'.tar.bz2')
+    shutil.rmtree(html_working_dir)
 
     results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : logs }
     return results
