@@ -549,7 +549,7 @@ def py_rosetta4_documentation(kind, rosetta_dir, working_dir, platform, config, 
 
     result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
 
-    packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=') + ' sphinx'
+    packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=') + ' sphinx==5.2.3'
     python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
     res = result.exitcode
