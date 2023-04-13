@@ -10,8 +10,6 @@ If you are in the Baker lab, your git-lfs gatekeeper is Vikram Mulligan (vmullig
 If you are in the Meiler lab, your git-lfs gatekeeper is Alican Gulsevin (alican.gulsevin@vanderbilt.edu).
 If you are in the Fleischman lab, your git-lfs gatekeeper is Assaf Elazar (elazar.assaf@weizmann.ac.il).
 
-If you are in a different Rosetta lab, then congratulations, you are the first person from that lab to express interest in NCAA rotamer libraries and have been duly appointed gatekeeper. Email andy.watkins2@gmail.com for your new responsibilities.
-
-Otherwise, email andy.watkins2@gmail.com.
+If you are in a different Rosetta lab, then congratulations, you are the first person from that lab to express interest in NCAA rotamer libraries and have been duly appointed gatekeeper.
 
 You will obtain a zipped folder that looks like ncaa_rotamer_libraries.tar.gz (or some such). Unzip it so that it forms a directory within this directory (i.e. a subdirectory of ncaa_rotlibs) named ncaa_rotamer_libraries. You're done!
