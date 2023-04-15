@@ -57,7 +57,7 @@ namespace conformation {
 
 // add the following to top of file:
 /// @brief uses default boost::hash combine to hash Cubes
-struct DefaultCubeHash : std::unary_function< CubeKey, std::size_t > {
+struct DefaultCubeHash {
 	// use std::size_t instead of core::Size just to be
 	// consistent with boost::hash types
 

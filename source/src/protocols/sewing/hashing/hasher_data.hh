@@ -37,7 +37,7 @@ namespace hashing {
 //is responsible for creating a (hopefully) uniform distribution of keys in the table.
 typedef utility::fixedsizearray1<int, 3> HashKey;
 
-struct coord_hash : std::unary_function<HashKey, core::Size> {
+struct coord_hash {
 	core::Size operator()(HashKey const & key) const {
 		size_t seed = 0;
 		boost::hash_combine(seed, key[1]);
@@ -47,7 +47,7 @@ struct coord_hash : std::unary_function<HashKey, core::Size> {
 	}
 };
 
-struct coord_equal_to : std::binary_function<HashKey, HashKey, bool> {
+struct coord_equal_to {
 	typedef typename utility::fixedsizearray1<int,3>::const_iterator const_iterator;
 	bool operator()(HashKey const & key1, HashKey const & key2) const {
 		return key1[1] == key2[1] && key1[2] == key2[2] && key1[3] == key2[3];

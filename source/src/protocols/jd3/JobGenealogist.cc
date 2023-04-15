@@ -648,14 +648,14 @@ CEREAL_REGISTER_TYPE( protocols::jd3::JobGenealogist )
 template< class Archive >
 void
 protocols::jd3::compare_job_nodes::save( Archive & arc ) const {
-	arc( cereal::base_class< struct std::binary_function<const class protocols::jd3::JGJobNode *, const class protocols::jd3::JGJobNode *, bool> >( this ) );
+	arc( cereal::base_class< compare_job_nodes >( this ) );
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
 protocols::jd3::compare_job_nodes::load( Archive & arc ) {
-	arc( cereal::base_class< struct std::binary_function<const class protocols::jd3::JGJobNode *, const class protocols::jd3::JGJobNode *, bool> >( this ) );
+	arc( cereal::base_class< compare_job_nodes >( this ) );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::compare_job_nodes );

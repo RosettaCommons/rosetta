@@ -137,7 +137,7 @@ private:
 /////////////
 // used to sort RB structs by start-res
 /////////////
-class RB_lt : public std::binary_function<core::Real, core::Real, bool> {
+class RB_lt {
 public:
 	bool operator()(RBSegment x, RBSegment y) {
 		if ( x.isEmpty() ) return true;

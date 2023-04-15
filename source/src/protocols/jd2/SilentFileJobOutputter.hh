@@ -165,7 +165,7 @@ private: // members
 // This is necessary because some protocols append prefixes
 // to the tags and thus a simple string comparison will not
 // recognise that S_1234_4 and C_S_1234_4 are the same.
-class CompareTags: public std::unary_function<std::string, bool > {
+class CompareTags {
 public:
 	CompareTags( std::string const & querytag ): querytag_(querytag) {}
 

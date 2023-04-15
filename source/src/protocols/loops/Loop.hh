@@ -175,7 +175,7 @@ public:
 std::ostream & operator<<( std::ostream & os, Loop const & loop );
 
 /// @brief Orders loops by start position
-class RationalLoopComparator : public std::binary_function<core::Real, core::Real, bool> {
+class RationalLoopComparator {
 public:
 	bool operator()(Loop x, Loop y) {
 		return x.start() < y.start();
@@ -184,7 +184,7 @@ public:
 
 
 /// @brief used to sort Loops by start-res
-class Loop_lt : public std::binary_function<core::Real, core::Real, bool> {
+class Loop_lt {
 public:
 	bool operator()(Loop x, Loop y) {
 		// This operator is a massive problem because it violates the

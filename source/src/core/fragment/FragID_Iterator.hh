@@ -43,8 +43,15 @@ maybe it makes sense to pack with only "unconfident" regions of the backbone fle
 namespace core {
 namespace fragment {
 
-class FragID_Iterator : std::iterator< std::forward_iterator_tag, FragID > {
+class FragID_Iterator {
 public:
+
+	using iterator_category = std::forward_iterator_tag;
+	using value_type = FragID;
+	using difference_type = std::ptrdiff_t;
+	using pointer = FragID*;
+	using reference = FragID&;
+
 	FragID_Iterator( ConstFrameIterator it );
 	FragID_Iterator( FrameIterator it );
 	FragID_Iterator( FrameIteratorWorker_OP it );

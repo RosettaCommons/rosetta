@@ -51,7 +51,7 @@ namespace legacy_sewing  {
 //is responsible for creating a (hopefully) uniform distribution of keys in the table.
 typedef utility::fixedsizearray1<int, 3> HashKey;
 
-struct coord_hash : std::unary_function<HashKey, core::Size> {
+struct coord_hash {
 	core::Size operator()(HashKey const & key) const {
 		size_t seed = 0;
 		boost::hash_combine(seed, key[1]);
@@ -61,7 +61,7 @@ struct coord_hash : std::unary_function<HashKey, core::Size> {
 	}
 };
 
-struct coord_equal_to : std::binary_function<HashKey, HashKey, bool> {
+struct coord_equal_to {
 	typedef typename utility::fixedsizearray1<int, 3>::const_iterator const_iterator;
 	bool operator()(HashKey const & key1, HashKey const & key2) const {
 		return key1[1] == key2[1] && key1[2] == key2[2] && key1[3] == key2[3];
@@ -139,7 +139,7 @@ typedef std::pair< Basis, Basis > BasisPair;
 typedef std::pair< core::Size, core::Size> SegmentPair;
 typedef std::map< core::id::AtomID, core::id::AtomID > AtomMap;
 
-struct basis_pair_hash : std::unary_function<BasisPair, core::Size> {
+struct basis_pair_hash {
 	core::Size operator()(BasisPair const & basis_pair) const {
 		size_t seed = 0;
 		boost::hash_combine(seed, basis_pair.first.model_id);
@@ -150,7 +150,7 @@ struct basis_pair_hash : std::unary_function<BasisPair, core::Size> {
 	}
 };
 
-struct basis_pair_equal_to : std::binary_function<BasisPair, BasisPair, bool> {
+struct basis_pair_equal_to {
 	bool operator()(BasisPair const & bp1, BasisPair const & bp2) const {
 		return
 			bp1.first.model_id == bp2.first.model_id &&

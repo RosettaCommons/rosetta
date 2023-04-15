@@ -10,6 +10,7 @@
 #ifndef INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 #define INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 
+#include <iterator>
 #include <numeric/geometry/hashing/xyzStripeHash.fwd.hh>
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
@@ -64,7 +65,14 @@ public:
 
 	// iterators:
 	template<class C>
-	struct iter_base : public std::iterator<std::input_iterator_tag,float> {
+	struct iter_base {
+
+		using iterator_category = std::input_iterator_tag;
+		using value_type = float;
+		using difference_type = std::ptrdiff_t;
+		using pointer = float*;
+		using reference = float&;
+
 		iter_base(Ball const *p) : p_(p) {}
 		C & operator=(C const & r) { p_ = r.p_; return static_cast<C &>(*this); }
 		C & operator++() { ++p_; return static_cast<C &>(*this); }

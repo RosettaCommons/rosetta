@@ -36,6 +36,7 @@
 
 // c++ headers
 #include <string>
+#include <map>
 
 // REQUIRED FOR WINDOWS
 #ifndef __native_client__

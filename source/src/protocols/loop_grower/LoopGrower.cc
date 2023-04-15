@@ -79,6 +79,7 @@
 
 #include <utility/string_util.hh>
 
+#include <numeric/random/random_permutation.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
 
@@ -3634,7 +3635,9 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 			frame.shift_to(insert_pose);
 			utility::vector1< int > allfrags(frame.nr_frags());
 			for ( int i=1; i<=(int)frame.nr_frags(); ++i ) allfrags[i] = i;
-			if ( !trackfragments_ ) std::random_shuffle( allfrags.begin(), allfrags.end() );
+			if ( !trackfragments_ ) {
+				numeric::random::random_permutation(allfrags);
+			}
 			int ntrials = std::min( (int)frame.nr_frags(), (int)fragtrials_ );
 			bool finished = false;
 

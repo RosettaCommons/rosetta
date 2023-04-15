@@ -41,7 +41,7 @@ public:
 	BackboneStub(numeric::Real rmsd_match_i, numeric::Size index_match_i, numeric::Size ss_index_match_i);
 };
 
-class BackboneStubVectorRMSDComparator: public std::binary_function<BackboneStub, BackboneStub, bool> {
+class BackboneStubVectorRMSDComparator {
 public:
 	bool operator()(BackboneStub x, BackboneStub y) {
 		if ( x.rmsd_match <= y.rmsd_match ) return true;

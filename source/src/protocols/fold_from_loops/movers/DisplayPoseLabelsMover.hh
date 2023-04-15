@@ -30,6 +30,8 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 
+#include <map>
+
 namespace protocols {
 namespace fold_from_loops {
 namespace movers {

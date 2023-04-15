@@ -106,7 +106,7 @@ private:
 /////////////
 // used to sort chains so the least elements are on top of this list
 /////////////
-class chain_lt : public std::binary_function<std::string, std::string, bool> {
+class chain_lt {
 public:
 	bool operator()(std::string x, std::string y) {
 		core::Size x_chain_length = boost::count(x,'+');

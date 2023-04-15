@@ -76,7 +76,7 @@ inline std::ostream & operator<<( std::ostream & os, const SS & ss_ ) {
 
 
 /// @brief used to sort SS elements by start-res
-class SS_lt : public std::binary_function<double, double, bool> {
+class SS_lt {
 public:
 	bool operator()(SS x, SS y) {
 		return (x.start() < y.stop());

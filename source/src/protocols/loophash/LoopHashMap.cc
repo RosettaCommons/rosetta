@@ -573,10 +573,7 @@ LoopHashMap::lookup(
 		return;
 	}
 
-	BackboneIndexMap::const_local_iterator begin = backbone_index_map_.begin( index );
-	BackboneIndexMap::const_local_iterator end = backbone_index_map_.end( index );
-
-	for ( BackboneIndexMap::const_local_iterator it = begin; it != end; ++it ) {
+	for ( BackboneIndexMap::const_iterator it = backbone_index_map_.begin(); it != backbone_index_map_.end(); ++it ) {
 		result.push_back( it->second );
 	}
 }

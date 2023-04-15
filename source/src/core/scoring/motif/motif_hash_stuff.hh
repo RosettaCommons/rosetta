@@ -24,6 +24,7 @@
 #include <utility/SingletonBase.hh>
 
 #include <boost/unordered_set.hpp>
+#include <map>
 
 namespace core {
 namespace scoring {

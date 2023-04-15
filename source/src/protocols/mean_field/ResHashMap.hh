@@ -40,7 +40,7 @@ namespace protocols {
 namespace mean_field {
 
 /// @brief uses default boost::hash combine to hash rotamers based on rounded chi angles
-struct ResHasher : std::unary_function< core::conformation::ResidueCOP, std::size_t > {
+struct ResHasher {
 	// use std::size_t instead of core::Size just to be
 	// consistent with boost::hash types
 
@@ -63,7 +63,7 @@ struct ResHasher : std::unary_function< core::conformation::ResidueCOP, std::siz
 };
 
 /// @brief checks whether two rotamer hashes match - if the rounded values of their chi angles match
-struct ResPred : std::binary_function< core::conformation::ResidueCOP, core::conformation::ResidueCOP, bool > {
+struct ResPred {
 
 	/// @brief return bool depending on whether two Residues hashes match
 	bool operator()( core::conformation::ResidueCOP first_res, core::conformation::ResidueCOP second_res ) const {

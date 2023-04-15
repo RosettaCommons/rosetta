@@ -94,8 +94,7 @@ struct HBondResStruct : public utility::VirtualBase {
 };
 
 //compare function for sorting vectors of HBondResStructOP's, by Res # and AA type
-struct compare_hbond_residues : public std::binary_function< HBondResStructCOP, HBondResStructCOP, bool>
-{
+struct compare_hbond_residues {
 	bool operator()( HBondResStructCOP const & a, HBondResStructCOP const & b) const{
 		if ( a->resnum == b->resnum ) {
 			return a->aa < b->aa;
@@ -106,8 +105,7 @@ struct compare_hbond_residues : public std::binary_function< HBondResStructCOP, 
 };
 
 //compare function for sorting vectors of HBondResStructCOP's, by Res #
-struct compare_hbond_resnums : public std::binary_function< HBondResStructCOP, HBondResStructCOP, bool>
-{
+struct compare_hbond_resnums {
 	bool operator()( HBondResStructCOP const & a, HBondResStructCOP const & b) const{
 		return a->resnum < b->resnum;
 	}
@@ -277,7 +275,7 @@ struct HBondNetStruct : public utility::VirtualBase {
 // This is needed to compare vectors of OP's; if the vector was of the structrs themselves then
 //  the overloading within the struct would work without calling this compare function from std::sort()
 // make "inline bool operator()"?? this comparison happens many many times
-struct compare_net_vec : public std::binary_function< HBondNetStructOP, HBondNetStructOP, bool >{
+struct compare_net_vec {
 	bool operator()( HBondNetStructOP const & a, HBondNetStructOP const & b) const
 	{
 		// if exent_existing_networks_=true then use this logic; else is_extends will be false for all networks

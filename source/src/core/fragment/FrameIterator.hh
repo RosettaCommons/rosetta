@@ -38,6 +38,7 @@
 
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameIteratorWorker_.fwd.hh>
+#include <iterator>
 
 
 /*
@@ -57,10 +58,17 @@ namespace core {
 namespace fragment {
 
 
-class ConstFrameIterator : public std::iterator< std::forward_iterator_tag, Frame > {
+class ConstFrameIterator {
 	friend class FragID_Iterator;
 
 public:
+
+	using iterator_category = std::forward_iterator_tag;
+	using value_type = Frame;
+	using difference_type = std::ptrdiff_t;
+	using pointer = Frame*;
+	using reference = Frame&;
+
 	ConstFrameIterator( FrameIteratorWorker_OP it );
 	ConstFrameIterator();
 	~ConstFrameIterator();

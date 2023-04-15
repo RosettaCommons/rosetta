@@ -496,13 +496,13 @@ public:
 
 };
 
-struct XformHash32 : std::unary_function<xyzTransform<float>,uint64_t> {
+struct XformHash32 {
 	uint64_t operator()(xyzTransform<float> const & xform) const {
 		uint64_t const *x = (uint64_t const *)(&xform);
 		return x[0]^x[1]^x[2]^x[3]^x[4]^x[5];
 	}
 };
-struct XformHash64 : std::unary_function<xyzTransform<double>,uint64_t> {
+struct XformHash64 {
 	uint64_t operator()(xyzTransform<double> const & xform) const {
 		uint64_t const *x = (uint64_t const *)(&xform);
 		return x[0]^x[1]^x[2]^x[3]^x[4]^x[5]^x[6]^x[7]^x[8]^x[9]^x[10]^x[11];

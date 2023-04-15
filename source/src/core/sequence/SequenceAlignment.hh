@@ -203,7 +203,7 @@ private:
 
 /// @class Computes a hash value for a SequenceAlignment based on its sequences.
 /// Allows SequenceAlignment's to be used as keys in unordered_{set|map}.
-struct SequenceAlignmentHasher : std::unary_function<SequenceAlignment, size_t> {
+struct SequenceAlignmentHasher {
 	std::size_t operator()(const SequenceAlignment& alignment) const {
 		std::size_t h = 0;
 		for ( core::Size i = 1; i <= alignment.size(); ++i ) {

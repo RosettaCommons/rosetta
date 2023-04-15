@@ -182,8 +182,7 @@ public:
 
 };
 
-struct compare_job_nodes :
-	public std::binary_function< JGJobNode const *, JGJobNode const *, bool > {
+struct compare_job_nodes {
 	bool operator()( JGJobNodeCOP const & a, JGJobNodeCOP const & b) const {
 		return a->global_job_id() < b->global_job_id();
 	}
