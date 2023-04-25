@@ -213,7 +213,7 @@ public:
 		rsd->bond("C3","C4").ringness(BondInRing);
 		rsd->bond("C2","C4").ringness(BondInRing);
 
-		core::chemical::VDDistanceMatrix distances(1e9);
+		core::chemical::VDDistanceMatrix distances(*rsd, 1e9);
 
 		calculate_rigid_matrix( *rsd, distances );
 

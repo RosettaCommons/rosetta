@@ -264,25 +264,54 @@ rename_atoms( MutableResidueType & res, bool preserve/*=true*/ ) {
 	}
 }
 
+VDDistanceMatrix::VDDistanceMatrix(MutableResidueType const & res, core::Real default_val)
+{
+	index_to_vd_.reserve( res.natoms() );
+	matrix_.dimension( res.natoms(), res.natoms(), default_val );
+
+	VIter ii, ii_end;
+	for ( boost::tie(ii, ii_end) = res.atom_iterators(); ii != ii_end; ++ii ) {
+		index_to_vd_.push_back( *ii );
+		vd_to_index_[ *ii ] = index_to_vd_.size();
+	}
+
+}
+
 core::Real &
 VDDistanceMatrix::operator() ( VD a, VD b ) {
-	// Accessing matrix_[a] will force creation if it doesn't exist
-	if ( ! matrix_[a].count(b) ) {
-		matrix_[a][b] = default_;
-	}
-	return matrix_[a][b];
+	int ii = vd_to_index_[a];
+	int jj = vd_to_index_[b];
+
+	return matrix_( ii, jj );
 }
 
 core::Real
 VDDistanceMatrix::find_max_over( VD a ) {
-	InternalVector const & submap( matrix_[a] );
+	int ii = vd_to_index_[a];
 	core::Real max_element = 0; // Distances are always greater than zero.
-	for ( InternalVector::const_iterator iter( submap.begin() ), iter_end(submap.end()); iter != iter_end; ++iter ) {
-		if ( iter->second > max_element ) {
-			max_element = iter->second;
+	for ( core::Size jj(1); jj <= index_to_vd_.size(); ++jj ) {
+		if ( matrix_(ii, jj) > max_element ) {
+			max_element = matrix_(ii, jj);
 		}
 	}
 	return max_element;
+}
+
+void
+VDDistanceMatrix::floyd_warshall() {
+	// The Floyd-Warshall algorithm. We do this here instead of with boost
+	// because some of the distance weights don't correspond to edge weights.
+	// (Besides, it's easy enough.)
+	for ( core::Size kk = 1; kk <= index_to_vd_.size(); ++kk ) {
+		for ( core::Size jj = 1; jj <= index_to_vd_.size(); ++jj ) {
+			for ( core::Size ii = 1; ii <= index_to_vd_.size(); ++ii ) {
+				core::Real new_dist( matrix_(ii,kk) + matrix_(jj,kk) );
+				if ( new_dist < matrix_(ii,jj) ) {
+					matrix_(ii,jj) = new_dist;
+				}
+			}
+		}
+	}
 }
 
 
@@ -378,20 +407,7 @@ void calculate_rigid_matrix( MutableResidueType const & res, VDDistanceMatrix & 
 		RigidDistanceVisitor vis( distances, res, *iter );
 		utility::graph::breadth_first_search_prune( res.graph(), *iter, vis );
 	}
-	// The Floyd-Warshall algorithm. We do this in-line instead of with boost
-	// because some of the distance weights don't correspond to edge weights.
-	// (Besides, it's easy enough.)
-	VIter kk, kk_end, jj, jj_end, ii, ii_end;
-	for ( boost::tie(kk, kk_end) = res.atom_iterators(); kk != kk_end; ++kk ) {
-		for ( boost::tie(jj, jj_end) = res.atom_iterators(); jj != jj_end; ++jj ) {
-			for ( boost::tie(ii, ii_end) = res.atom_iterators(); ii != ii_end; ++ii ) {
-				core::Real new_dist( distances(*ii,*kk) + distances(*kk,*jj) );
-				if ( new_dist < distances(*ii,*jj) ) {
-					distances(*ii,*jj) = new_dist;
-				}
-			}
-		}
-	}
+	distances.floyd_warshall();
 
 	if ( TR.Trace.visible() ) {
 		// Print out the full distance matrix for debugging purposes.
@@ -432,7 +448,7 @@ find_nbr_dist( MutableResidueType const & res, VD & nbr_atom ) {
 		utility_exit_with_message("Cannot find neighbor atom distance for empty residue type.");
 	}
 	core::Real maxdist = 1e9; // Hopefully sufficiently large.
-	VDDistanceMatrix distances( maxdist );
+	VDDistanceMatrix distances( res, maxdist );
 	calculate_rigid_matrix( res, distances );
 
 	// TODO: Although we throw out hydrogens as potential neighbor atoms,

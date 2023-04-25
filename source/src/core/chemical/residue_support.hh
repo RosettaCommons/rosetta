@@ -23,7 +23,7 @@
 #include <core/chemical/ResidueConnection.fwd.hh>
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 namespace core {
 namespace chemical {
@@ -68,14 +68,9 @@ rename_atoms( MutableResidueType & res, bool preserve=true );
 
 /// @brief Utility class for VD-indexed matrix
 class VDDistanceMatrix {
-private:
-	typedef boost::unordered_map< VD, core::Real > InternalVector;
-	typedef boost::unordered_map< VD, InternalVector > InternalMatrix;
 public:
 
-	VDDistanceMatrix(core::Real default_val):
-		default_(default_val)
-	{}
+	VDDistanceMatrix(MutableResidueType const & res, core::Real default_val);
 
 	core::Real &
 	operator() ( VD a, VD b );
@@ -83,11 +78,15 @@ public:
 	core::Real
 	find_max_over( VD a );
 
+	void
+	floyd_warshall();
+
 private:
 
-	InternalMatrix matrix_;
-	core::Real default_;
+	boost::unordered_map< VD, int > vd_to_index_;
+	utility::vector1< VD > index_to_vd_;
 
+	ObjexxFCL::FArray2D< core::Real > matrix_;
 };
 
 /// @brief Calculate the rigid matrix - assume that distances has been initialized to some really large value, and is square
