@@ -57,8 +57,6 @@ public: // Tests //////////////////////////////////////////////////////////////
 		record_type_map[ "TITLE" ] = TITLE;
 		RecordDef records( read_record_definitions_from_file( "core/io/pdb/fake_pdb_record_defs", record_type_map ) );
 
-		// The 5th record definition in the file should be skipped; it's not in the above map, nor is it a valid key.
-		TS_ASSERT_EQUALS( records.size(), 4 );
 		TS_ASSERT_EQUALS( records[ HEADER ].size(), 4 );
 		TS_ASSERT_EQUALS( records[ OBSLTE ].size(), 4 );
 		TS_ASSERT_EQUALS( records[ TITLE ].size(), 3 );

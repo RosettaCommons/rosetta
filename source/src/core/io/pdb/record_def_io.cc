@@ -50,8 +50,10 @@ read_record_definitions_from_file(
 
 	vector1< string > const lines( utility::io::get_lines_from_file_data( filename ) );
 	RecordDef record_defs;
+	record_defs.resize(N_RECORD_TYPES); // Fill with empty/default constructed Records
 
 	Size const n_lines( lines.size() );
+	Size n_record_defs_read = 0;
 	for ( uint i( 1 ); i <= n_lines; ++i ) {
 		istringstream line_word_by_word( lines[ i ] );
 		string record_type;  // The outer map key is the 6-letter record type name.
@@ -68,12 +70,13 @@ read_record_definitions_from_file(
 
 		if ( record_type_map.count( record_type ) ) {
 			record_defs[ record_type_map.find( record_type )->second ] = record;
+			++n_record_defs_read;
 		} else {
 			TR.Error << filename << " contains an invalid record definition; ignoring." << endl;
 		}
 	}
 
-	TR.Debug << "Read " << record_defs.size() << " PDB record definitions from " << filename << '.' << endl;
+	TR.Debug << "Read " << n_record_defs_read << " PDB record definitions from " << filename << '.' << endl;
 
 	return record_defs;
 }

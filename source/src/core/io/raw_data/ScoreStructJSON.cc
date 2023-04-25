@@ -26,7 +26,7 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-ScoreStructJSON::ScoreStructJSON( core::pose::Pose, std::string tag ) {
+ScoreStructJSON::ScoreStructJSON( std::string const & tag ) {
 	decoy_tag_ = tag;
 }
 

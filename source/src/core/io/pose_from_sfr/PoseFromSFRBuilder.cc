@@ -249,11 +249,6 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 			} else if ( options_.ignore_sugars() && link_has_sugar ) {
 				TR.Debug << "Omitting LINK record that uses a saccharide residue. ";
 				TR.Debug << "Did you mean to use the -include_sugars flag?" << std::endl;
-			} else if ( ! link_has_sugar && (  // PDB sugar codes will not be recognized by the ResidueTypeFinder!
-					! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName1 ).get_representative_type() ||
-					! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName2 ).get_representative_type() ) ) {
-				// One or more residues in this LINK is not recognized.  Move on!
-				TR.Debug << "Omitting LINK record that uses an unrecognized residue." << std::endl;
 			} else if ( ( link.resSeq1 == link.resSeq2 - 1
 					&& utility::strip(link.name1) == "O3'" && utility::strip(link.name2) == "P" )
 					||  ( link.resSeq1 == link.resSeq2 + 1
@@ -270,6 +265,12 @@ PoseFromSFRBuilder::setup( StructFileRep const & sfr ) {
 			} else if ( link.resName1 == "CYS" && link.resName2 == "CYS" && utility::strip(link.name1) == "SG" && utility::strip(link.name2) == "SG" ) {
 				// We have an SSBOND redundantly specified as a LINK.
 				TR.Debug << "Omitting LINK record that gives a SECOND specification of a disulfide bond." << std::endl;
+			} else if ( ! link_has_sugar && (  // PDB sugar codes will not be recognized by the ResidueTypeFinder!
+					! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName1 ).get_representative_type() ||
+					! ResidueTypeFinder( *residue_type_set_ ).name3( link.resName2 ).get_representative_type() ) ) {
+				// ResidueTypeFinder is a bit slow, so save this for the last check
+				// One or more residues in this LINK is not recognized.  Move on!
+				TR.Debug << "Omitting LINK record that uses an unrecognized residue." << std::endl;
 			} else {
 				if ( pruned_links.count( resID1 ) ) {
 					pruned_links[ resID1 ].push_back( link );
@@ -296,10 +297,10 @@ PoseFromSFRBuilder::pass_1_split_and_merge_residues_as_necessary()
 	{
 		core::uint i( 1 );
 		while ( i <= rinfos_.size() ) {
-			ResidueInformation const rinfo( rinfos_[ i ] );
 			SplitBehaviors const & residues_renamings_pair =
-				residue_type_set_->merge_split_behavior_manager().split_behavior_for_name3( rinfo.resName() );
+				residue_type_set_->merge_split_behavior_manager().split_behavior_for_name3( rinfos_[ i ].resName() );
 			if ( ! residues_renamings_pair.first.empty() ) {
+				ResidueInformation const rinfo( rinfos_[ i ] ); // make a copy before replacing.
 				Size const n_res_into_which_to_split( residues_renamings_pair.first.size() );
 				TR << "Splitting residue " << rinfo.resName() << " into " << n_res_into_which_to_split << " residues: ";
 				rinfos_[ i ] = ResidueInformation();  // Clear the original residue.
@@ -1048,7 +1049,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	}
 
 	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Residue const & ii_rsd( pose.residue( ii ) );
+		ResidueType const & ii_rsd( pose.residue_type( ii ) ); // Type to avoid refolding at this moment.
 		for ( Size jj = 1; jj <= ii_rsd.natoms(); ++jj ) {
 			id::AtomID atom_id( jj, ii );
 			id::NamedAtomID named_atom_id( ii_rsd.atom_name( jj ), ii );
@@ -1069,13 +1070,13 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	// to serve as part of the backbone for atom/fold tree purposes, but they
 	// must be made virtual so as not to affect physical calculations.
 	for ( Size ii = 1, nres = pose.size(); ii <= nres; ++ii ) {
-		Residue const & rsd = pose.residue( ii );
-		if ( ! rsd.type().is_DNA() ) continue;
+		ResidueType const & rsd_type = pose.residue_type( ii );
+		if ( ! rsd_type.is_DNA() ) continue;
 
-		for ( Size jj = 1, natoms = rsd.natoms(); jj <= natoms; ++jj ) {
+		for ( Size jj = 1, natoms = rsd_type.natoms(); jj <= natoms; ++jj ) {
 			id::AtomID const id( jj, ii );
-			if ( missing_[ id ] && rsd.atom_name( jj ) == " P  " ) {
-				runtime_assert( rsd.has_variant_type( chemical::VIRTUAL_DNA_PHOSPHATE ) );
+			if ( missing_[ id ] && rsd_type.atom_name( jj ) == " P  " ) {
+				runtime_assert( rsd_type.has_variant_type( chemical::VIRTUAL_DNA_PHOSPHATE ) );
 				break;
 			}
 		}
@@ -1086,10 +1087,12 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	//Store carbohydrate atoms with ambiguous lower connect so that we can regenerate coordinates after lower connects are resolved. This should probably be changed to apply to all non proteins.
 	utility::vector1< core::id::AtomID > lower_connect_atoms;
 	for ( Size ii=1; ii<=pose.size(); ++ii ) {
-		if ( !pose.residue_type(ii).is_carbohydrate() ) continue;
-		for ( Size jj=1; jj<=pose.residue(ii).natoms(); ++jj ) {
-			if ( ( pose.residue(ii).icoor(jj).depends_on_polymer_lower() && !pose.residue(ii).is_lower_terminus() ) ||
-					( pose.residue(ii).icoor(jj).depends_on_polymer_upper() && !pose.residue(ii).is_upper_terminus() ) ) {
+		ResidueType const & restype = pose.residue_type( ii );
+
+		if ( !restype.is_carbohydrate() ) continue;
+		for ( Size jj=1; jj<=restype.natoms(); ++jj ) {
+			if ( ( restype.icoor(jj).depends_on_polymer_lower() && !restype.is_lower_terminus() ) ||
+					( restype.icoor(jj).depends_on_polymer_upper() && !restype.is_upper_terminus() ) ) {
 				core::id::AtomID const
 					stub_atom1( pose.residue(ii).icoor( jj ).stub_atom1().atom_id( pose.residue(ii), pose.conformation() ) ),
 					stub_atom2( pose.residue(ii).icoor( jj ).stub_atom2().atom_id( pose.residue(ii), pose.conformation() ) ),
@@ -1340,8 +1343,8 @@ PoseFromSFRBuilder::build_pdb_info_2_temps( pose::Pose & pose )
 			// namemap should only include atoms which have a presence in both rinfo and pose
 			if ( namemap.left.count( res_temp.first ) ) {
 				std::string const & pose_atom_name( namemap.left.find(res_temp.first)->second );
-				if ( pose.residue( ii ).type().has( pose_atom_name ) ) { // There are issues with terminus patching which means atoms can sometimes disappear
-					core::Size jj = pose.residue( ii ).type().atom_index( pose_atom_name );
+				if ( pose.residue_type( ii ).has( pose_atom_name ) ) { // There are issues with terminus patching which means atoms can sometimes disappear
+					core::Size jj = pose.residue_type( ii ).atom_index( pose_atom_name );
 					pdb_info->temperature( ii, jj, res_temp.second );
 				}
 			} else {
@@ -1948,8 +1951,9 @@ create_working_data(
 			bool const ok = update_atom_information_based_on_occupancy( options, ai );
 			if ( !ok ) continue;
 
-			ResidueInformation new_res( ai );
-			if ( rinfos.size() == 0 || rinfos.back() != new_res ) rinfos.push_back(new_res);
+			if ( rinfos.size() == 0 || !rinfos.back().matches( ai ) ) {
+				rinfos.emplace_back(ai); // Creates a new item on back
+			}
 			rinfos.back().append_atom( ai );
 		}
 	}

@@ -404,7 +404,7 @@ PDBInfo::resize_atom_records( Pose const & pose )
 	debug_assert( residue_rec_.size() == pose.size() );
 
 	for ( Size r = 1, re = pose.size(); r <= re; ++r ) {
-		residue_rec_[ r ].atomRec.resize( pose.residue( r ).natoms() );
+		residue_rec_[ r ].atomRec.resize( pose.residue_type( r ).natoms() );
 	}
 }
 

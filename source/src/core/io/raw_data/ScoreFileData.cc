@@ -68,7 +68,7 @@ bool ScoreFileData::write_struct(
 
 /// @brief write the given pose to the supplied filename.
 bool ScoreFileData::write_pose(
-	const core::pose::Pose & pose,
+	core::pose::Pose const &,
 	std::map < std::string, core::Real > const & score_map,
 	std::string tag = "empty_tag",
 	std::map < std::string, std::string > const & string_map
@@ -82,10 +82,10 @@ bool ScoreFileData::write_pose(
 
 	if ( format == "text" ) {
 		// Old plain-text format
-		outputter = utility::pointer::make_shared< ScoreStructText >( pose, tag );
+		outputter = utility::pointer::make_shared< ScoreStructText >( tag );
 	} else if ( format == "json" || format == "JSON" ) {
 		// JSON
-		outputter = utility::pointer::make_shared< ScoreStructJSON >( pose, tag );
+		outputter = utility::pointer::make_shared< ScoreStructJSON >( tag );
 	}
 
 	if ( !outputter ) {

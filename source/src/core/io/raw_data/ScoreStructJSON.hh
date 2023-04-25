@@ -31,7 +31,7 @@ class ScoreStructJSON : public RawStruct {
 
 public:
 	// Undefined, commenting out to fix PyRosetta build  ScoreStructJSON();
-	ScoreStructJSON( core::pose::Pose, std::string tag );
+	ScoreStructJSON( std::string const & tag );
 
 	// Not implemented for this format
 	void fill_pose( core::pose::Pose & ) override {}

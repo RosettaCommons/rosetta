@@ -36,12 +36,8 @@ namespace raw_data {
 class ScoreStructText : public RawStruct {
 
 public:
-	// constructor
-	ScoreStructText();
-
 	ScoreStructText(
-		core::pose::Pose, // pose,
-		std::string tag = "empty_tag"
+		std::string const & tag = "empty"
 	);
 
 	// destructor

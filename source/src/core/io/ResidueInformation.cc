@@ -50,6 +50,16 @@ ResidueInformation::ResidueInformation( AtomInformation const & ai ) :
 }
 
 bool
+ResidueInformation::matches(AtomInformation const & ai) const {
+	return
+		resName_  == ai.resName &&
+		chainID_  == ai.chainID &&
+		resSeq_   == ai.resSeq  &&
+		iCode_    == ai.iCode   &&
+		terCount_ == ai.terCount;
+}
+
+bool
 ResidueInformation::operator==( ResidueInformation const & that) const
 {
 	return

@@ -24,17 +24,13 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-ScoreStructText::ScoreStructText() {
-	decoy_tag_   = "empty";
-}
-
 ScoreStructText::ScoreStructText(
-	core::pose::Pose, // pose,
-	std::string tag
+	std::string const & tag
 ) {
 	// tag information
 	decoy_tag_ = tag;
 }
+
 // @brief Fill a Pose with the data in this ScoreStructText.
 void ScoreStructText::fill_pose(
 	core::pose::Pose &

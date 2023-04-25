@@ -48,6 +48,9 @@ public:
 	/// but do not add the atom to the atoms_ array.
 	ResidueInformation(AtomInformation const & ai);
 
+	/// @brief Would a ResidueInformation object created by ai be equal to this one?
+	bool matches(AtomInformation const & ai) const;
+
 	bool operator==( ResidueInformation const & that ) const;
 	bool operator!=( ResidueInformation const & that ) const;
 

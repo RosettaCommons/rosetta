@@ -19,8 +19,9 @@
 #include <core/io/pdb/Record.hh>
 #include <core/io/pdb/RecordType.hh>
 
+#include <utility/vector1.hh>
+
 // C++ header
-#include <map>
 
 
 namespace core {
@@ -31,7 +32,8 @@ namespace pdb {
 class RecordCollection;
 
 /// @brief  Definitions of all possible records (line types), that can exist in a PDB file.
-typedef std::map< RecordType, Record > RecordDef;
+/// (Indexed by RecordType enum.)
+typedef utility::vector1< Record > RecordDef;
 
 }  // namespace pdb
 }  // namespace io

@@ -35,6 +35,12 @@ Field::Field( core::uint start_in, core::uint end_in  ) :
 	end( end_in )
 {}
 
+bool
+Field::operator ==(Field const & other) const {
+	return (value == other.value &&
+		start == other.start &&
+		end == other.end );
+}
 
 // Read field value from given .pdb line and set.
 // Thank you, Frank diMaio for idea to have zero indicate no upper bound! ~Labonte

@@ -43,6 +43,9 @@ struct Field {
 	/// @brief  Read field value from given .pdb line and set.
 	void set_value_from_pdb_line( std::string source );
 
+	/// @details Needed for PyRosetta
+	bool
+	operator ==(Field const & other) const;
 
 	// Member data ////////////////////////////////////////////////////////////
 	/// @brief  String value of field.
