@@ -345,6 +345,7 @@ sources = {
 		"HRFDynamicsEnergy",
 		"CCS_IMMSEnergy",
 		"IsopeptideBondTests",
+		"lddt",
 		"OmegaTether",
 		"Ramachandran",
 		"Ramachandran_power",

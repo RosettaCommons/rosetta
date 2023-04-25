@@ -295,6 +295,52 @@ public:
 		core::Size atomno) const override { return is_protein_CA_or_equiv(pose1, pose2, resno, atomno); }
 };
 
+class IsHeavyAtomPredicate: public Predicate {
+public:
+	bool operator()(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const override;
+};
+
+class IsProteinBackbonePredicate: public Predicate {
+public:
+	bool operator()(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno
+	) const override {
+		return is_protein_backbone( pose1, pose2, resno, atomno );
+	}
+};
+
+class IsProteinBackboneIncludingOPredicate: public Predicate {
+public:
+	bool operator()(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno
+	) const override {
+		return is_protein_backbone_including_O( pose1, pose2, resno, atomno );
+	}
+};
+
+class IsSpecificAtomsPredicate: public Predicate {
+public:
+	IsSpecificAtomsPredicate( utility::vector1< core::id::AtomID > const & atomids );
+	bool operator()(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno
+	) const override;
+private:
+	utility::vector1< core::id::AtomID > atomids_;
+};
+
 // (Fill in others as needed.)
 
 //////////////////////

@@ -266,6 +266,7 @@ sources = {
 		"HydroxylTorsionPotential",
 		"MultipoleElecPotential",
 		"SASAPotential",
+		"lddt",
 		"LREnergyContainer",
 		"Membrane_FAPotential",
 		"MembranePotential",

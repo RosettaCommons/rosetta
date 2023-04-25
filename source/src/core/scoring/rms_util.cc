@@ -598,6 +598,34 @@ is_any_atom(
 /////////////////////////////////////////////
 // Predicate classes for more complex control
 
+bool IsHeavyAtomPredicate::operator()(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const &,
+	core::Size resno,
+	core::Size atomno) const
+{
+	return ! pose1.residue( resno ).atom_is_hydrogen( atomno );
+}
+
+IsSpecificAtomsPredicate::IsSpecificAtomsPredicate( utility::vector1< core::id::AtomID > const & atomids ):
+	atomids_( atomids )
+{}
+
+bool
+IsSpecificAtomsPredicate::operator()(
+	core::pose::Pose const &,
+	core::pose::Pose const &,
+	core::Size resno,
+	core::Size atomno) const
+{
+	for ( auto const & id: atomids_ ) {
+		if ( id.rsd() == resno && id.atomno() == atomno ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool ResRangePredicate::operator()(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & pose2,
