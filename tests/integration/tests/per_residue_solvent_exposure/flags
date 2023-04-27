@@ -1,6 +1,6 @@
 -in:file:s	1dwr_A.pdb	
 -in:file:centroid
 -centroid_version
--neighbor_method cone
+-solvent_exposure::method cone
 -dist_midpoint	9.0
 -dist_steepness	1.0

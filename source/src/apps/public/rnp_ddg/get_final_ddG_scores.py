@@ -26,11 +26,18 @@ def main( args ):
 	print( "RESULTS:\n" )
 	print( "WT ddG: %0.2f kcal/mol" %(ddG) )
 
+
+	directories = []
 	# Loop through all wt_* dirs
 	for d in glob.glob( run_dir + '/wt_*' ):
 		#if 'wt_23' in d or 'wt_24' in d or 'wt_25' in d or 'wt_26' in d: continue
 		if not os.path.isdir( d ):
 			continue
+		directories.append( d )
+
+	directories.sort() # Attempt to get some consistency in the output, for integration test purpose
+
+	for d in directories:
 		os.chdir( d )
 		complex_score, protein_score, rna_score = get_scores( wt_protein_score )
 		dG = ROSETTA_SCAL_FACT*complex_score - ROSETTA_SCAL_FACT*protein_score - NN_SCAL_FACT*rna_score

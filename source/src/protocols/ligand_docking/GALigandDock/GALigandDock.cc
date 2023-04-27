@@ -296,14 +296,13 @@ GALigandDock::apply( pose::Pose & pose )
 		return;
 	}
 
-	core::Size lig_resno = pose.total_residue();
 	if ( core::scoring::electron_density::getDensityMap().isMapLoaded() ) {
 		has_density_map_ = true;
-		lig_resno = pose.total_residue() - 1;
+		core::Size lig_resno = pose.total_residue() - 1;
 		TR.Debug << "Ligand is " << pose.residue(lig_resno).name() << std::endl;
 	}
 	if ( ligid_.length() > 0 ) {
-		lig_resno = core::pose::parse_resnum( ligid_, pose, false );
+		core::Size lig_resno = core::pose::parse_resnum( ligid_, pose, false );
 		TR.Debug << "Ligand is " << pose.residue(lig_resno).name() << std::endl;
 	}
 

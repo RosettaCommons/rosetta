@@ -58,18 +58,17 @@ parse_into_stub( utility::vector1<core::Real> const & in_vec )
 	Matrix M;
 	Vector v;
 	int count (0), i(1), j(1), k(0);
-	utility::vector1<core::Real>::const_iterator it;
-	for ( it = in_vec.begin(); it != in_vec.end(); ++it ) {
+	for ( core::Real val: in_vec ) {
 		count++;
 		if ( count <= 9 ) {
 			if ( j==4 ) {
 				i++;
 				j=1;
 			}
-			M(i,j) = *it;
+			M(i,j) = val;
 			j++;
 		} else {
-			v[k] = *it;
+			v[k] = val;
 			k++;
 		}
 	}
