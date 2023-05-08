@@ -46,11 +46,20 @@ namespace ga_ligand_dock {
 
 typedef std::map< std::pair < core::Size, core::Size >, std::vector < core::Size > > HbondMap;
 
+// Enum for opt H mode
+enum OptHMode {
+	OPTH_NONE,
+	OPTH_FULL,
+	OPTH_NO_FLIP_HNQ,
+	OPTH_FLEXIBLE_SIDECHAINS,
+	OPTH_REDEFINE_SIDECHAINS
+};
+
 // helper class to manage multiple outputs
 struct StructInfo {
 	core::io::silent::SilentStructOP str;
 	core::scoring::constraints::ConstraintSetOP cst;
-	core::Real rms, E, ligandscore, recscore, complexscore;
+	core::Real rms, E, dH, ligandscore, recscore, complexscore;
 	core::Size ranking_prerelax;
 	std::string ligandname;
 };
@@ -66,6 +75,11 @@ struct DensStructInfo {
 class StructInfoComp {
 public:
 	bool operator() ( StructInfo &a, StructInfo &b ) {  return (a.E > b.E); }
+};
+
+class StructInfoCompdH {
+public:
+	bool operator() ( StructInfo &a, StructInfo &b ) {  return (a.dH > b.dH); }
 };
 
 class DensStructInfoComp {
@@ -128,12 +142,14 @@ public:
 		newstruct.ligandscore = ligandscore;
 		newstruct.cst = pose.constraint_set()->clone();
 		newstruct.E = E;
+		newstruct.dH = complexscore - recscore - ligandscore;
 		newstruct.recscore = recscore;
 		newstruct.complexscore = complexscore;
 		newstruct.ranking_prerelax = ranking_prerelax;
 		newstruct.ligandname = ligandname;
 
 		struct_store_.push( newstruct );
+		struct_store_dH_.push( newstruct );
 	}
 
 	void
@@ -187,6 +203,29 @@ public:
 		struct_store_.pop();
 	}
 
+	void
+	dH_pop( core::pose::Pose &pose, core::Real &E,
+		core::Real &rms,
+		core::Real &complexscore,
+		core::Real &ligandscore,
+		core::Real &recscore,
+		core::Size &ranking_prerelax,
+		std::string &ligandname
+	)
+	{
+		struct_store_dH_.top().str->fill_pose( pose );
+		pose.constraint_set( struct_store_dH_.top().cst );
+		rms = struct_store_dH_.top().rms;
+		E = struct_store_dH_.top().E;
+		complexscore = struct_store_dH_.top().complexscore;
+		ligandscore = struct_store_dH_.top().ligandscore;
+		recscore = struct_store_dH_.top().recscore;
+		ranking_prerelax = struct_store_dH_.top().ranking_prerelax;
+		ligandname = struct_store_dH_.top().ligandname;
+
+		struct_store_dH_.pop();
+	}
+
 	core::pose::PoseOP
 	dens_pop()
 	{
@@ -213,7 +252,7 @@ public:
 	}
 
 	core::pose::PoseOP
-	pop()
+	pop( std::string metric="score" )
 	{
 		if ( !has_data() ) return nullptr;
 		core::pose::PoseOP retval (new core::pose::Pose);
@@ -221,7 +260,11 @@ public:
 		core::Real rms, E, ligscore, recscore, complexscore;
 		core::Size ranking_prerelax;
 		std::string ligandname;
-		pop(*retval, E, rms, complexscore, ligscore, recscore, ranking_prerelax, ligandname );
+		if ( metric == "dH" ) {
+			dH_pop(*retval, E, rms, complexscore, ligscore, recscore, ranking_prerelax, ligandname);
+		} else {
+			pop(*retval, E, rms, complexscore, ligscore, recscore, ranking_prerelax, ligandname );
+		}
 
 		core::pose::setPoseExtraScore( *retval, "ligandname", ligandname);
 		core::pose::setPoseExtraScore( *retval, "lig_rms", rms);
@@ -262,6 +305,7 @@ public:
 
 private:
 	std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoComp > struct_store_;
+	std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoCompdH > struct_store_dH_;
 	std::priority_queue< DensStructInfo, std::vector<DensStructInfo> , DensStructInfoComp > dens_struct_store_;
 };
 
@@ -414,7 +458,8 @@ private:
 	final_exact_cartmin(
 		core::Size nneigh,
 		LigandConformer &gene,
-		core::pose::Pose &pose
+		core::pose::Pose &pose,
+		core::pack::task::PackerTaskOP task
 		//bool dualrelax = false
 	);
 
@@ -422,7 +467,8 @@ private:
 	void
 	final_exact_scmin(
 		LigandConformer const &gene,
-		core::pose::Pose &pose
+		core::pose::Pose &pose,
+		core::pack::task::PackerTaskOP task
 	);
 
 	void
@@ -458,6 +504,15 @@ private:
 		core::pose::Pose &pose
 	);
 
+	void
+	final_optH(
+		core::Size const &optH_mode,
+		LigandConformer const &gene,
+		core::pose::Pose &pose,
+		core::pack::task::PackerTaskOP task,
+		utility::vector1< core::Size > &contact_scs
+	);
+
 	/// @brief  get ligand residue ids from pose
 	void
 	get_ligand_resids(core::pose::Pose const &pose,
@@ -472,10 +527,17 @@ private:
 		utility::vector1< core::Size > const &ligids
 	) const;
 
+	core::Size
+	auto_determine_optH_mode(
+		core::pose::Pose const &pose,
+		utility::vector1< core::Size > const & movable_scs
+	) const;
+
 private:
 	core::scoring::ScoreFunctionOP scfxn_; // scorefunction to be used in docking
 	core::scoring::ScoreFunctionOP scfxn_relax_; // scorefunction to be used in relax
 	std::string runmode_; // preset modes; see setup_params_for_runmode
+	std::string top_pose_metric_;
 
 	core::pose::PoseOP pose_native_; // native pose (for reporting purposes only)
 
@@ -506,6 +568,7 @@ private:
 	bool freeze_ligand_backbone_;
 	bool freeze_ligand_;
 	bool macrocycle_ligand_;
+	core::Size shuffle_ligands_;
 
 	core::Real skeleton_threshold_const_; //constant used for determining skeleton threshold
 	core::Size neighborhood_size_; //size of neighborhood to search during erosion
@@ -527,6 +590,7 @@ private:
 	core::Real favor_native_; // give a bonus to input rotamer
 	bool optimize_input_H_; // optimize_h_mode_ at the beginning; goes to grid construction
 	bool pre_optH_relax_;
+	bool auto_final_optH_;
 	core::Size final_optH_mode_;
 	bool full_repack_before_finalmin_;
 	core::Size nrelax_;

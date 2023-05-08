@@ -42,7 +42,8 @@ get_atomic_contacting_sidechains( core::pose::Pose const &pose,
 void
 constraint_relax( core::pose::Pose &pose,
 	utility::vector1< core::Size > const &ligids,
-	utility::vector1< core::Size > const &movable_scs
+	utility::vector1< core::Size > const &movable_scs,
+	core::Real maxiter = 50.0
 );
 
 void

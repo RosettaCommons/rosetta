@@ -74,6 +74,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
@@ -130,7 +131,8 @@ GALigandDock::GALigandDock() {
 	sc_edge_buffer_ = 2.0; // in A
 	optimize_input_H_ = true;
 	pre_optH_relax_ = true;
-	final_optH_mode_ = 1;
+	auto_final_optH_ = false;
+	final_optH_mode_ = OPTH_FULL;
 	aligner_fastmode_ = false;
 
 
@@ -167,6 +169,7 @@ GALigandDock::GALigandDock() {
 	freeze_ligand_backbone_ = false;
 	freeze_ligand_ = false;
 	macrocycle_ligand_ = false;
+	shuffle_ligands_ = 0;
 	init_dens_weight_ = 1;
 
 	//ligand density selection
@@ -192,6 +195,7 @@ GALigandDock::GALigandDock() {
 	align_reference_atom_ids_ = utility::vector1< core::id::AtomID >();
 
 	runmode_ = "dockflex"; // high-resolution pharmacophore docking
+	top_pose_metric_ = "score";
 	output_ligand_only_ = false;
 }
 
@@ -323,6 +327,18 @@ GALigandDock::apply( pose::Pose & pose )
 		torsion_sampler_ = utility::pointer::make_shared<TorsionSampler>();
 	}
 
+	// gz: Random picking N ligands to dock, mostly for R@H usage.
+	if ( multiple_ligands_.size() > 1 && shuffle_ligands_ > 0 ) {
+		numeric::random::random_permutation(multiple_ligands_);
+		if ( shuffle_ligands_ < multiple_ligands_.size() ) {
+			multiple_ligands_.resize(shuffle_ligands_);
+		}
+	}
+
+	// pass all the ligand residues for grid construction
+	utility::vector1< core::conformation::Residue > rsds_to_build_grids;
+	utility::vector1< bool > sconly;
+
 	// [[1]] setup grid scoring
 	GridScorerOP gridscore( utility::pointer::make_shared< GridScorer >( scfxn_ ));
 	gridscore->set_voxel_spacing( grid_ );
@@ -336,32 +352,6 @@ GALigandDock::apply( pose::Pose & pose )
 	// prepare the grid but don't calculate scores yet
 	TR << "Preparing grid using input pose " << std::endl;
 	gridscore->prepare_grid( pose, lig_resids );
-
-	if ( has_density_map_ && pose_native_ ) {
-		if ( calculate_native_density_ ) {
-			core::Real pose_cc = gridscore->calculate_pose_density_correlation( *pose_native_ );
-			TR << "Density correlation of the pose is " << pose_cc << std::endl;
-			core::Real pocket_cc = gridscore->calculate_pocket_density_correlation( *pose_native_ );
-			TR << "Density correlation of the pose is " << pocket_cc << std::endl;
-			return;
-		}
-	}
-
-	// now figure out movable sidechains (using sidechains_ flag)
-	utility::vector1< core::Size > movable_scs = get_movable_scs( pose, gridscore, lig_resids );
-
-	// pass all the ligand residues for grid construction
-	utility::vector1< core::conformation::Residue > rsds_to_build_grids;
-	utility::vector1< bool > sconly;
-
-	for ( auto i_lig : lig_resids ) {
-		rsds_to_build_grids.push_back( pose.residue(i_lig) );
-		sconly.push_back( false );
-	}
-	for ( auto i_mov : movable_scs ) {
-		rsds_to_build_grids.push_back( pose.residue(i_mov) );
-		sconly.push_back( true );
-	}
 
 	std::vector<core::Real> maxRads;
 	use_mean_maxRad_ = use_mean_maxRad_ && ( multiple_ligands_.size()>1 or ligand_file_list_.size()>1 );
@@ -467,6 +457,33 @@ GALigandDock::apply( pose::Pose & pose )
 	}
 
 	if ( grid_radius_ != 0.0 ) gridscore->set_grid_dim_with_maxRad(grid_radius_);
+
+	if ( has_density_map_ && pose_native_ ) {
+		if ( calculate_native_density_ ) {
+			core::Real pose_cc = gridscore->calculate_pose_density_correlation( *pose_native_ );
+			TR << "Density correlation of the pose is " << pose_cc << std::endl;
+			core::Real pocket_cc = gridscore->calculate_pocket_density_correlation( *pose_native_ );
+			TR << "Density correlation of the pose is " << pocket_cc << std::endl;
+			return;
+		}
+	}
+
+	// now figure out movable sidechains (using sidechains_ flag)
+	utility::vector1< core::Size > movable_scs = get_movable_scs( pose, gridscore, lig_resids );
+
+	if ( auto_final_optH_ ) {
+		final_optH_mode_ = auto_determine_optH_mode(pose, movable_scs);
+		TR << "Automatically determine final optH mode: " << final_optH_mode_ << std::endl;
+	}
+
+	for ( auto i_lig : lig_resids ) {
+		rsds_to_build_grids.push_back( pose.residue(i_lig) );
+		sconly.push_back( false );
+	}
+	for ( auto i_mov : movable_scs ) {
+		rsds_to_build_grids.push_back( pose.residue(i_mov) );
+		sconly.push_back( true );
+	}
 
 	gridscore->get_grid_atomtypes( rsds_to_build_grids, sconly );
 	// prepare the input pose
@@ -833,7 +850,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 				N = std::atoi( final_exact_minimize_.substr(4).c_str() );
 			}
 			//add_metal_ligand_constraints(*pose_tmp, genes[i].ligand_ids()[1]);
-			final_exact_cartmin( N, genes[i], *pose_tmp );
+			final_exact_cartmin( N, genes[i], *pose_tmp, task );
 
 			// post relax
 			if ( cartmin_lig_ ) {
@@ -842,7 +859,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 			}
 		} else if ( finalscmin ) {
 			//add_metal_ligand_constraints(*pose_tmp, genes[i].ligand_ids()[1]);
-			final_exact_scmin( genes[i], *pose_tmp );
+			final_exact_scmin( genes[i], *pose_tmp, task );
 			// post relax
 			if ( cartmin_lig_ ) {
 				final_cartligmin(genes[i], *pose_tmp );
@@ -917,7 +934,27 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 	if ( has_density_map_ ) {
 		pose = outputs.dens_pop();
 	} else {
-		pose = outputs.pop();
+		if ( top_pose_metric_ == "best" ) {
+			core::pose::PoseOP pose_score = outputs.pop("score");
+			core::pose::PoseOP pose_dH = outputs.pop("dH");
+			core::Real recscore1, recscore2;
+			core::Real ligscore1, ligscore2;
+			core::pose::getPoseExtraScore( *pose_score, "recscore", recscore1);
+			core::pose::getPoseExtraScore( *pose_dH, "recscore", recscore2);
+			core::pose::getPoseExtraScore( *pose_score, "ligscore", ligscore1);
+			core::pose::getPoseExtraScore( *pose_dH, "ligscore", ligscore2);
+			core::Real cutoff(2.0); //make this a flag
+			if ( recscore2 + ligscore2 - recscore1 - ligscore1 > cutoff ) {
+				pose = pose_score;
+				TR << "Best pose is the best score pose." << std::endl;
+			} else {
+				pose = pose_dH;
+				TR << "Best pose is the best dH pose." << std::endl;
+			}
+
+		} else {
+			pose = outputs.pop(top_pose_metric_);
+		}
 	}
 
 	if ( estimate_dG_ ) {
@@ -940,7 +977,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		//core::pose::setPoseExtraScore( *pose, "ligandname", pose->residue(lig_resno).name() );
 	}
 
-	if ( output_ligand_only_ && runmode_ == "VSX" && final_optH_mode_ != 3 ) { // make sure no sidechain changes
+	if ( output_ligand_only_ && runmode_ == "VSX" && final_optH_mode_ != OPTH_REDEFINE_SIDECHAINS ) { // make sure no sidechain changes
 		core::pose::PoseOP pose_ligand(new core::pose::Pose);
 		make_ligand_only_pose(pose_ligand, pose, gene_initial.ligand_ids());
 		return *pose_ligand;
@@ -957,7 +994,7 @@ GALigandDock::eval_docked_pose_helper( core::pose::Pose &pose,
 {
 	if ( turnon_flexscs_at_relax_ ) {
 		if ( !pose_native_ ) movable_scs = get_atomic_contacting_sidechains( pose, lig_ids, contact_distance_ );
-		constraint_relax(pose, lig_ids, movable_scs);
+		constraint_relax(pose, lig_ids, movable_scs, maxiter_);
 	}
 	TR << "Evaluating docked pose." << std::endl;
 	auto time0 = std::chrono::steady_clock::now();
@@ -1557,12 +1594,34 @@ GALigandDock::add_macrocycle_constraints(
 
 }
 
+core::Size
+GALigandDock::auto_determine_optH_mode(
+	core::pose::Pose const &pose,
+	utility::vector1< core::Size > const & movable_scs
+) const {
+	for ( core::Size ires: movable_scs ) {
+		if ( pose.aa( ires ) == core::chemical::aa_his ||
+				pose.aa( ires ) == core::chemical::aa_asn || pose.aa( ires ) == core::chemical::aa_gln ) {
+			return OPTH_FULL; // full structure optH mode
+		}
+	}
+	for ( core::Size ires: movable_scs ) {
+		if ( pose.aa( ires ) == core::chemical::aa_ser ||
+				pose.aa( ires ) == core::chemical::aa_thr ||
+				pose.aa( ires ) == core::chemical::aa_cys || pose.aa( ires ) == core::chemical::aa_tyr ) {
+			return OPTH_FULL; // full structure optH mode, maybe a new mode in the future?
+		}
+	}
+	return OPTH_NONE; // no optH mode
+}
+
 // final optimziation cycle with sidechain flexibility
 void
 GALigandDock::final_exact_cartmin(
 	core::Size nneigh,
 	LigandConformer & gene,
-	core::pose::Pose &pose
+	core::pose::Pose &pose,
+	core::pack::task::PackerTaskOP task
 	//bool dualrelax
 ) {
 	std::set< core::Size > frozen_residues;
@@ -1574,6 +1633,17 @@ GALigandDock::final_exact_cartmin(
 	core::scoring::ScoreFunctionOP scfxn_cartmin = scfxn_relax_->clone();
 	/////
 	// (1) setup movemap
+	utility::vector1< core::Size > contact_scs;
+	if ( turnon_flexscs_at_relax_ ) {
+		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), contact_distance_ );
+		TR << "Redefined flexible sidechains: ";
+		for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
+		if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
+		TR << std::endl;
+	} else {
+		contact_scs = gene.moving_scs();
+	}
+
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( false );
 	if ( pose.size() == 1 ) {
@@ -1586,8 +1656,8 @@ GALigandDock::final_exact_cartmin(
 			mm->set_bb( res, true );
 		}
 
-		for ( core::Size j=1; j<=gene.moving_scs().size(); ++j ) {
-			int resid = (int)gene.moving_scs()[j];
+		for ( core::Size j=1; j<=contact_scs.size(); ++j ) {
+			int resid = (int)contact_scs[j];
 			for ( int k=-((int)nneigh); k<=((int)nneigh); ++k ) {
 				if ( resid+k < 1 || resid+k >= (int)pose.total_residue() ) continue;
 				if ( !pose.residue(resid+k).is_protein() ) continue;
@@ -1614,7 +1684,35 @@ GALigandDock::final_exact_cartmin(
 		}
 	}
 
-	std::vector< std::string > lines;
+	//gz: do pre_optH relax and optH before setting up the coordinate constraints.
+	//addVirtualResAsRoot in coordinate constraints will invalidate the "task"
+	if ( pre_optH_relax_ && final_optH_mode_ != OPTH_NONE ) {
+		TR << "==== quick minimization before optH. " << std::endl;
+
+		core::kinematics::MoveMapOP mmlig( new core::kinematics::MoveMap );
+		mmlig->set_bb( false ); mmlig->set_chi( false ); mmlig->set_jump( false );
+		core::Size lig_jump = gene.get_jumpid();
+		mmlig->set_jump( lig_jump, true );
+		if ( pose.size() == 1 ) {
+			mmlig->set_chi( true ); // ligand-only; virtual root
+		} else {
+			for ( auto resid : gene.ligand_ids() ) {
+				mmlig->set_chi( resid, true );
+				mmlig->set_bb( resid, true );
+			}
+		}
+
+		protocols::minimization_packing::MinMoverOP min_mover;
+		min_mover = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( mmlig, scfxn_cartmin, "lbfgs_armijo_nonmonotone", 0.001, true );
+		min_mover->cartesian( false );
+		min_mover->max_iter( 30 );
+		min_mover->apply( pose );
+	}
+
+	// opt-H: re-optimize full pose!
+	if ( final_optH_mode_ != OPTH_NONE ) {
+		final_optH(final_optH_mode_, gene, pose, task, contact_scs);
+	}
 
 	/////
 	// (2) setup constraints if cst weight is on
@@ -1689,6 +1787,8 @@ GALigandDock::final_exact_cartmin(
 	}
 
 	protocols::relax::FastRelax relax;
+	std::vector< std::string > lines;
+
 	if ( fast_relax_script_file_ != "" ) {
 		TR << "==== Use FastRelax script: " << fast_relax_script_file_ << std::endl;
 		relax=protocols::relax::FastRelax( scfxn_cartmin, fast_relax_script_file_ );
@@ -1697,6 +1797,7 @@ GALigandDock::final_exact_cartmin(
 		relax.set_script_from_lines( lines );
 		relax.set_scorefxn( scfxn_cartmin );
 	} else {
+		lines.clear();
 		TR << "==== Use FastRelax hardcoded. "<< std::endl;
 		lines.push_back( "switch:cartesian" );
 		lines.push_back( "repeat 3" );
@@ -1725,7 +1826,8 @@ GALigandDock::final_exact_cartmin(
 void
 GALigandDock::final_exact_scmin(
 	LigandConformer const & gene,
-	core::pose::Pose &pose
+	core::pose::Pose &pose,
+	core::pack::task::PackerTaskOP task
 ) {
 
 	utility::vector1< core::Size > contact_scs;
@@ -1774,7 +1876,7 @@ GALigandDock::final_exact_scmin(
 	// quick relax
 	protocols::relax::FastRelax relax;
 	std::vector< std::string > lines;
-	if ( pre_optH_relax_ ) {
+	if ( pre_optH_relax_ && final_optH_mode_ != OPTH_NONE ) {
 		TR << "==== quick relax after optH, Use FastRelax hardcoded. " << std::endl;
 		lines.push_back( "switch:torsion" );
 		lines.push_back( "repeat 1" );
@@ -1793,39 +1895,9 @@ GALigandDock::final_exact_scmin(
 	}
 
 	// opt-H: re-optimize full pose!
-	//if( optimize_input_H_ ){
-	if ( final_optH_mode_ != 0 ) {
-		TR << "Re-optimizing hydrogens in whole structure." << std::endl;
-		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-		utility::vector1< bool > res_to_be_packed(pose.size(), false);
-		if ( final_optH_mode_ == 1 ) {
-			//fully optH
-		} else if ( final_optH_mode_ == 2 ) {
-			//restrict the optH to current sidechains
-			for ( core::Size ires:contact_scs ) res_to_be_packed[ires] = true;
-			task->restrict_to_residues(res_to_be_packed);
-		} else if ( final_optH_mode_ == 3 ) {
-			//restrict the optH to the redefined contact scs
-			TR << "Redefined the sidechains for final optH, sidechains within " << contact_distance_ << " A ";
-			contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), contact_distance_ );
-			for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
-			if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
-			TR << std::endl;
-			for ( core::Size ires:contact_scs ) res_to_be_packed[ires] = true;
-			task->restrict_to_residues(res_to_be_packed);
-		} else {
-			TR.Warning << "final_optH_mode " << final_optH_mode_ <<
-				" is invalid, only support 0, 1, 2, 3. Will do full optH." << std::endl;
-		}
-		task->initialize_from_command_line();
-		task->or_optimize_h_mode( true );
-		task->or_include_current( true );
-		task->or_flip_HNQ( true );
-		task->or_multi_cool_annealer( true );
-		core::pack::pack_rotamers( pose, *scfxn_relax_, task );
+	if ( final_optH_mode_ != OPTH_NONE ) {
+		final_optH(final_optH_mode_, gene, pose, task, contact_scs);
 	}
-
-	//}
 
 	// main relax after optH
 	lines.clear();
@@ -1945,38 +2017,13 @@ GALigandDock::final_exact_ligmin(
 	core::Real fa_rep_w = scfxn_local->get_weight(core::scoring::fa_rep);
 	core::Real coordinate_cst_w = scfxn_local->get_weight(core::scoring::coordinate_constraint);
 
+	if ( pre_optH_relax_ &&  final_optH_mode_ != 0 ) {
+		final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w1, coordinate_cst_w*relative_cst_w1, torlerance1, maxiter1 );
+		final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w2, coordinate_cst_w*relative_cst_w2, torlerance2, maxiter2 );
+	}
+
 	if ( final_optH_mode_ != 0 ) {
-		if ( pre_optH_relax_ ) {
-			final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w1, coordinate_cst_w*relative_cst_w1, torlerance1, maxiter1 );
-			final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w2, coordinate_cst_w*relative_cst_w2, torlerance2, maxiter2 );
-		}
-		TR << "Re-optimizing hydrogens in whole structure." << std::endl;
-		utility::vector1< bool > res_to_be_packed(pose.size(), false);
-		if ( final_optH_mode_ == 1 ) {
-			//fully optH
-		} else if ( final_optH_mode_ == 2 ) {
-			//restrict the optH to current sidechains
-			for ( core::Size ires:contact_scs ) res_to_be_packed[ires] = true;
-			task->restrict_to_residues(res_to_be_packed);
-		} else if ( final_optH_mode_ == 3 ) {
-			//restrict the optH to the redefined contact scs
-			TR << "Redefined the sidechains for final optH, sidechains within " << contact_distance_ << " A ";
-			contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), contact_distance_ );
-			for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
-			if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
-			TR << std::endl;
-			for ( core::Size ires:contact_scs ) res_to_be_packed[ires] = true;
-			task->restrict_to_residues(res_to_be_packed);
-		} else {
-			TR.Warning << "final_optH_mode " << final_optH_mode_ <<
-				" is invalid, only support 0, 1, 2, 3. Will do full optH." << std::endl;
-		}
-		task->initialize_from_command_line();
-		task->or_optimize_h_mode( true );
-		task->or_include_current( true );
-		task->or_flip_HNQ( true );
-		task->or_multi_cool_annealer( true );
-		core::pack::pack_rotamers( pose, *scfxn_relax_, task );
+		final_optH(final_optH_mode_, gene, pose, task, contact_scs);
 	}
 
 	final_exact_ligmin_helper(gene, pose, mmlig, scfxn_local, fa_rep_w*ramp_w1, coordinate_cst_w*relative_cst_w1, torlerance1, maxiter1 );
@@ -2084,6 +2131,47 @@ GALigandDock::final_solvate(
 	wb.apply( pose );
 }
 
+void
+GALigandDock::final_optH(
+	core::Size const &optH_mode,
+	LigandConformer const &gene,
+	core::pose::Pose &pose,
+	core::pack::task::PackerTaskOP task,
+	utility::vector1< core::Size > &contact_scs
+){
+	bool flip_HNQ(true);
+	if ( optH_mode != OPTH_NONE ) {
+		TR << "Re-optimizing hydrogens in whole structure." << std::endl;
+		utility::vector1< bool > res_to_be_packed(pose.size(), false);
+		if ( optH_mode == OPTH_FULL ) {
+			//fully optH
+		} else if ( optH_mode == OPTH_NO_FLIP_HNQ ) {
+			flip_HNQ=false;
+		} else if ( optH_mode == OPTH_FLEXIBLE_SIDECHAINS ) {
+			//restrict the optH to current sidechains
+			for ( core::Size ires:contact_scs ) res_to_be_packed[ires] = true;
+			task->restrict_to_residues(res_to_be_packed);
+		} else if ( optH_mode == OPTH_REDEFINE_SIDECHAINS ) {
+			//restrict the optH to the redefined contact scs
+			TR << "Redefined the sidechains for final optH, sidechains within " << contact_distance_ << " A ";
+			contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), contact_distance_ );
+			for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
+			if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
+			TR << std::endl;
+			for ( core::Size ires:contact_scs ) res_to_be_packed[ires] = true;
+			task->restrict_to_residues(res_to_be_packed);
+		} else {
+			TR.Warning << "final_optH_mode " << optH_mode <<
+				" is invalid, only support OPTH_NONE, OPTH_FULL, OPTH_NO_FLIP_HNQ, OPTH_FLEXIBLE_SIDECHAINS, OPTH_REDEFINE_SIDECHAINS. Will do full optH." << std::endl;
+		}
+		task->initialize_from_command_line();
+		task->or_optimize_h_mode( true );
+		task->or_include_current( true );
+		task->or_flip_HNQ( flip_HNQ );
+		task->or_multi_cool_annealer( true );
+		core::pack::pack_rotamers( pose, *scfxn_relax_, task );
+	}
+}
 
 // for multi-outputting, get the next pose
 core::pose::PoseOP
@@ -2581,6 +2669,8 @@ GALigandDock::parse_my_tag(
 		setup_params_for_runmode( runmode_ );
 	}
 
+	if ( tag->hasOption("top_pose_metric") ) { top_pose_metric_ = tag->getOption<std::string>("top_pose_metric"); }
+
 	// Below are detailed controls
 	if ( tag->hasOption("ngen") ) { ngen_ = tag->getOption<int>("ngen"); }
 
@@ -2595,6 +2685,7 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("favor_native") ) { favor_native_ = tag->getOption<core::Real>("favor_native"); }
 	if ( tag->hasOption("optimize_input_H") ) { optimize_input_H_ = tag->getOption<bool>("optimize_input_H"); }
 	if ( tag->hasOption("pre_optH_relax") ) { pre_optH_relax_ = tag->getOption<bool>("pre_optH_relax"); }
+	if ( tag->hasOption("auto_final_optH") ) { auto_final_optH_ = tag->getOption<bool>("auto_final_optH"); }
 
 	if ( tag->hasOption("sample_ring_conformers") ) { sample_ring_conformers_ = tag->getOption<bool>("sample_ring_conformers"); }
 
@@ -2623,6 +2714,7 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("freeze_ligand_backbone") ) { freeze_ligand_backbone_ = tag->getOption<bool>("freeze_ligand_backbone"); }
 	if ( tag->hasOption("freeze_ligand") ) { freeze_ligand_ = tag->getOption<bool>("freeze_ligand"); }
 	if ( tag->hasOption("macrocycle_ligand") ) { macrocycle_ligand_ = tag->getOption<bool>("macrocycle_ligand"); }
+	if ( tag->hasOption("shuffle_ligands") ) { shuffle_ligands_ = tag->getOption<core::Size>("shuffle_ligands"); }
 
 	if ( tag->hasOption("frozen_scs") ) {
 		std::string frozen_scs = tag->getOption<std::string>("frozen_scs");
@@ -2996,6 +3088,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	attlist + XMLSchemaAttribute( "runmode", xs_string, "run mode [dock/dockPH/refine/optligand]");
 
+	attlist + XMLSchemaAttribute( "top_pose_metric", xs_string, "top_pose_metric [score/dH/best]");
 	attlist + XMLSchemaAttribute( "sample_ring_conformers", xsct_rosetta_bool, "Allow ring conformer sampling if defined in params.");
 	attlist + XMLSchemaAttribute( "rotprob", xsct_real, "max cumulative rotamer probability");
 	attlist + XMLSchemaAttribute( "rotEcut", xsct_real, "rotamer 1b energy");
@@ -3015,6 +3108,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "cartmin_lig", xsct_rosetta_bool, "Cartmin ligand-only before and after final relax");
 	attlist + XMLSchemaAttribute( "premin_ligand", xsct_rosetta_bool, "Cartmin ligand-only at the beginning");
 	attlist + XMLSchemaAttribute( "min_neighbor", xsct_rosetta_bool, "If cartmin is enabled, also cartmin SCs before and after final relax.");
+	attlist + XMLSchemaAttribute( "auto_final_optH", xsct_rosetta_bool, "Automatically determine if optimize hydrogen before final relax");
 	attlist + XMLSchemaAttribute( "final_optH_mode", xsct_non_negative_integer, "final optH mode, 0: on optH 1: fully 2: flex sidechains 3: redefined sidechains using contact distance. Default: 1");
 	attlist + XMLSchemaAttribute( "full_repack_before_finalmin", xsct_rosetta_bool, "Full repack before final relax.");
 	attlist + XMLSchemaAttribute( "final_solvate", xsct_rosetta_bool, "Solvate pose (via ExplicitWaterMover) in final optimize. Default: false");
@@ -3049,6 +3143,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "freeze_ligand_backbone", xsct_rosetta_bool, "Freeze peptide ligand backbone torsion, only works on peptide ligand. Default: false." );
 	attlist + XMLSchemaAttribute( "freeze_ligand", xsct_rosetta_bool, "Freeze ligand internal torsions. Default: false." );
 	attlist + XMLSchemaAttribute( "macrocycle_ligand", xsct_rosetta_bool, "If the ligand is macrocyle or cyclic peptide, if true, constraints will be added to ensure the ring closure. Default: false." );
+	attlist + XMLSchemaAttribute( "shuffle_ligands", xsct_non_negative_integer, "Non negative interger, if larger than 0, it will random choose N ligands to dock, 0 means no random pick. Default: 0" );
 	attlist + XMLSchemaAttribute( "align_reference_atom_ids", xs_string, "Atom ids to align after each cycle 'atom_num-residue_num,atom_num-residue_num,atom_num-residue_num...'");
 
 	attlist + XMLSchemaAttribute( "init_dens_weight", xsct_real, "density weight used during initial perturbation scoring");

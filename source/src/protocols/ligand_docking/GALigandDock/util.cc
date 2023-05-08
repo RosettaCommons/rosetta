@@ -182,7 +182,8 @@ get_atomic_contacting_sidechains(
 void
 constraint_relax( core::pose::Pose &pose,
 	utility::vector1< core::Size > const &ligids,
-	utility::vector1< core::Size > const &movable_scs
+	utility::vector1< core::Size > const &movable_scs,
+	core::Real maxiter
 ) {
 	core::pose::Pose pose0(pose); //copy input pose for rmsd calculation
 	core::scoring::ScoreFunctionOP scfxn = core::scoring::get_score_function();
@@ -227,7 +228,7 @@ constraint_relax( core::pose::Pose &pose,
 
 	core::optimization::CartesianMinimizer minimizer;
 	core::optimization::MinimizerOptions options("lbfgs_armijo", 0.0001, true, false);
-	options.max_iter(50);
+	options.max_iter(maxiter);
 	minimizer.run(pose, *mm, *scfxn, options);
 
 	core::Real rms_scs = core::scoring::all_atom_rmsd_nosuper( pose0, pose,
