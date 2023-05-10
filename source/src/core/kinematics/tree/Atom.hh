@@ -244,12 +244,17 @@ public: // Methods
 		AtomDOFChangeSet & set
 	) = 0;
 
-
 	/// @brief copy atom with new memory allocation
 	virtual
 	AtomOP
 	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const = 0;
 
+	/// @brief copy atom with new memory allocation
+	/// Only copies the atom, without copying or connecting atom to the parent or children atoms
+	/// Intended primarily as an internal implementation detail of clone()
+	virtual
+	AtomOP
+	shallow_clone() const = 0;
 
 	///////////////////////////////////////////////////////////////////////////
 	// for minimizing

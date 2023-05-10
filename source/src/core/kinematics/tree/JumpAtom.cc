@@ -299,27 +299,18 @@ JumpAtom::steal_inversion(AtomOP steal_from) {
 /////////////////////////////////////////////////////////////////////////////
 /// @note this will recursively clone all this atom's offspring atoms
 AtomOP
-JumpAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
+JumpAtom::shallow_clone() const
 {
 
 	JumpAtomOP new_me( new JumpAtom(*this) );
 
-	atom_pointer[ id() ] = new_me;
-
 	new_me->id( id() );
-	new_me->parent( parent_in );
 
 	// copy DOFs
 	new_me->jump_ = jump_;
 
 	// copy coords
 	new_me->position( position() );
-
-	// copy atoms
-	for ( auto it= atoms_begin(), it_end= atoms_end();
-			it != it_end; ++it ) {
-		new_me->append_atom( (*it)->clone( AtomAP(new_me), atom_pointer ) );
-	}
 
 	return new_me;
 }

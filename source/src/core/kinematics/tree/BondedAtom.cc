@@ -332,15 +332,12 @@ BondedAtom::dof(
 /// @note  Assumes that atom_pointer has already been properly dimensioned
 
 AtomOP
-BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
+BondedAtom::shallow_clone() const
 {
 
 	BondedAtomOP new_me( new BondedAtom( *this ) );
 
-	atom_pointer[ id() ] = new_me; // handles memory management
-
 	new_me->id( id() );
-	new_me->parent( parent_in );
 
 	// copy DOFs
 	new_me->set_dof(   PHI, dof(   PHI ) );
@@ -352,12 +349,6 @@ BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 
 	new_me->dof_change_propagates_to_younger_siblings_ = dof_change_propagates_to_younger_siblings_;
 	new_me->inverted_frame_ = inverted_frame_;
-
-	// copy atoms
-	for ( auto a=atoms_begin(), a_end = atoms_end();
-			a != a_end; ++a ) {
-		new_me->append_atom( (*a)->clone( AtomAP(new_me) /*the new parent*/, atom_pointer ) );
-	}
 
 	return new_me;
 }

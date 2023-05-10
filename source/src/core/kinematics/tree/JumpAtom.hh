@@ -125,9 +125,9 @@ public:
 	jump( Jump const & jump_in, AtomDOFChangeSet & changeset ) override;
 
 
-	/// @brief copy this atom
+	/// @brief copy this atom, without connections
 	AtomOP
-	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const override;
+	shallow_clone() const override;
 
 	// get inversion of the wrapped jump
 	std::pair<bool,bool>

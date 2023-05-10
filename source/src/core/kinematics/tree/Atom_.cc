@@ -58,6 +58,41 @@ namespace tree {
 static basic::Tracer TR( "core.kinematics.tree.Atom_" );
 
 /////////////////////////////////////////////////////////////////////////////
+/// @details To avoid stack exhaustion with large proteins, use a non-recursive approach
+AtomOP
+Atom_::clone(  AtomAP parent_in, AtomPointer2D & atom_pointer ) const {
+
+	AtomOP new_me = shallow_clone(); // Shallow clone myself
+	atom_pointer[ id() ] = new_me;
+	new_me->parent( parent_in );
+
+	// Use a heap-allocated stack, rather than the program stack
+	// (smaller & hopefully faster, as we don't have to keep local variable space)
+	// This stores the pre-copy parents (as post-copy don't have children attached)
+	utility::vector1< Atom const * > parent_stack; // Raw pointer for speed, also owning is dealt with elsewhere
+	parent_stack.push_back( this );
+
+	while( ! parent_stack.empty() ) {
+		Atom const * current_parent = parent_stack.back();
+		parent_stack.pop_back();
+		AtomOP & new_parent = atom_pointer[current_parent->id()];
+
+		for ( auto it=current_parent->atoms_begin(), it_end=current_parent->atoms_end(); it != it_end; ++it ) {
+
+			AtomOP new_child = (*it)->shallow_clone();
+			atom_pointer[ new_child->id() ] = new_child;
+			new_child->parent( new_parent );
+
+			new_parent->append_atom( new_child );
+
+			parent_stack.push_back( (*it).get() ); // Now annotate copying children, if needed
+		}
+	}
+
+	return new_me;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 /// @details get the input stub for building this atom first
 void
 Atom_::update_xyz_coords()

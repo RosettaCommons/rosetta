@@ -101,6 +101,10 @@ protected: // Assignment
 
 public: // Methods
 
+	/// @brief copy atom with new memory allocation
+	AtomOP
+	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const override;
+
 	// assumes coords for our input stub are good
 	/// @brief update xyz position of this atom and its offspring atoms
 	void
