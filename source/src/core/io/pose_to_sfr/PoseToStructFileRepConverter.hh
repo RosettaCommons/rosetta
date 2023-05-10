@@ -128,22 +128,20 @@ public:
 	/// @brief Get connectivity annotation information from the Pose object and create LinkInformation and
 	/// SSBondInformation data as appropriate.
 	void get_connectivity_annotation_info(
-		core::pose::Pose const & pose,
-		utility::vector1< char > const & new_chainIDs,
-		core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
+		core::pose::Pose const & pose
+	);
 
 	LinkInformation get_link_record(
 		core::pose::Pose const & pose,
 		core::Size ii,
-		core::Size conn,
-		utility::vector1< char > const & new_chainIDs,
-		core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
+		core::Size conn
+	);
 
 	SSBondInformation get_ssbond_record(
 		core::pose::Pose const & pose,
 		core::Size ii,
-		core::Size conn,
-		core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
+		core::Size conn
+	);
 
 	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
 	void get_parametric_info(
@@ -180,14 +178,14 @@ private: //PRIVATE FUNCTIONS:
 	bool add_atom_to_sfr(
 		pose::Pose const & pose,
 		conformation::Residue const & rsd,
-		core::Size atom_index,
-		bool use_pdb_info ) const;
+		core::Size atom_index
+	) const;
 
-	utility::vector1< char > get_new_chainIDs( pose::Pose const & pose );
+	void recalculate_new_chainIDs( pose::Pose const & pose );
 
 	bool use_pdb_info_for_num(
 		pose::Pose const & pose,
-		Size resnum );
+		Size resnum ) const;
 
 	/// @brief Append just residue-based info to StructFileRep
 	///  For now, it is only HETNAM Data
@@ -202,8 +200,8 @@ private: //PRIVATE FUNCTIONS:
 		core::pose::Pose const & pose,
 		ResidueInformation const & res_info,
 		core::conformation::Residue const & rsd,
-		core::Size const atom_index,
-		bool const use_pdb_info);
+		core::Size const atom_index
+	);
 
 	/// @brief Append just atom-based info to StructFileRep
 	///   Specify the new atom to start from.
@@ -213,7 +211,6 @@ private: //PRIVATE FUNCTIONS:
 		ResidueInformation const & res_info,
 		core::conformation::Residue const & rsd,
 		core::Size const atom_index,
-		bool const use_pdb_info,
 		core::Size const new_atom_num,
 		core::Size const new_tercount);
 
@@ -304,25 +301,11 @@ private: //PRIVATE FUNCTIONS:
 		core::Size const chain_num ) const;
 
 	/// @brief Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
-	/// @details Output is res_info.
-	void get_residue_information(
+	ResidueInformation get_residue_information(
 		core::pose::Pose const & pose,
 		core::uint const seqpos,
-		bool const use_PDB/*=true*/,
-		bool const renumber_chains/*=false*/,
-		utility::vector1< char > const & new_chainIDs,
-		core::Size const new_tercount,
-		ResidueInformation & res_info ) const;
-
-	void get_residue_information(
-		core::pose::Pose const & pose,
-		core::uint const seqpos,
-		bool const use_PDB/*=true*/,
-		bool const renumber_chains/*=false*/,
-		utility::vector1< char > const & new_chainIDs,
-		core::Size const new_tercount,
-		ResidueInformation & res_info,
-		core::pose::PDBInfoOP & fresh_pdb_info ) const;
+		core::Size const new_tercount = 0
+	) const;
 
 	/// @brief fills HELIXInformation and SHEETInformation for SFR
 	void generate_secondary_structure_informations( core::pose::Pose const & pose );
@@ -353,6 +336,9 @@ private: // PRIVATE DATA:
 	/// @brief The index for every atom in the Pose -- used for generating CONECT records
 	id::AtomID_Map< Size > atom_indices_;
 	bool atom_indices_initialized_;
+
+	// A cache of the new_chainIDs data, initialized for each pose.
+	utility::vector1< char > new_chainIDs_;
 
 }; // class PoseToStructFileRep
 

@@ -215,6 +215,51 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( chains[ 3 ][ 0 ].chainID, 'B' );
 	}
 
+	void test_ssbond_numbering() {
+		using namespace core;
+		using namespace io;
+
+		core::pose::PoseOP testpose( pdb1rpb_poseop() );
+		// Make sure we shift things.
+		testpose->delete_polymer_residue( 5 );
+		testpose->delete_polymer_residue( 4 );
+		testpose->delete_polymer_residue( 3 );
+
+		StructFileRepOptions opts;
+		opts.set_renumber_pdb( true );
+		core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr(opts);
+		pose_to_sfr.init_from_pose( *testpose );
+		StructFileRepOP sfr = pose_to_sfr.sfr();
+
+		// In original, CYS 1A is bound to CYS 13A & CYS 7A to CYS 19A
+		// In the delete+renumber, it should be 1A-10A && 4A-16A
+		TS_ASSERT_EQUALS( sfr->ssbond_map().size(), 2 );
+		for ( auto const & entry: sfr->ssbond_map() ) {
+			TS_ASSERT_EQUALS( entry.second.size(), 1 );
+			SSBondInformation const & ssbi = entry.second[1];
+			if ( ssbi.resSeq1 == 1 ) {
+				TS_ASSERT_EQUALS( ssbi.resSeq1, 1 );
+				TS_ASSERT_EQUALS( ssbi.chainID1, 'A' );
+				TS_ASSERT_EQUALS( ssbi.resSeq2, 10 );
+				TS_ASSERT_EQUALS( ssbi.chainID2, 'A' );
+			} else {
+				TS_ASSERT_EQUALS( ssbi.resSeq1, 4 );
+				TS_ASSERT_EQUALS( ssbi.chainID1, 'A' );
+				TS_ASSERT_EQUALS( ssbi.resSeq2, 16 );
+				TS_ASSERT_EQUALS( ssbi.chainID2, 'A' );
+			}
+		}
+
+		// Double check that the Atom information has the appropriate settings
+		for ( auto const & chain: sfr->chains() ) {
+			for ( auto const & ai: chain ) {
+				if ( ai.resSeq == 1 || ai.resSeq == 10 || ai.resSeq == 4 || ai.resSeq == 16 ) {
+					TS_ASSERT_EQUALS( ai.resName, "CYS" );
+				}
+			}
+		}
+	}
+
 	//SEE ALSO StructFileRep.cxxtest.hh; unclear if test_generate_secondary_structure_informations belongs here or there
 
 };  // class StructFileRepTests

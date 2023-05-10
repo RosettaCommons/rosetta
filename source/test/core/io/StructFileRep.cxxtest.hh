@@ -71,7 +71,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TR <<  "Testing get_connectivity_annotation_info() method of StructFileRep."  << std::endl;
 
 		core::pose::Pose pose;
-		utility::vector1< char > const new_chainIDs;
 
 		// 1BH4 is circulin A, a cyclic peptide with three disulfides.
 		//core::import_pose::pose_from_file( pose, "core/io/pdb/1BH4.pdb" , core::import_pose::PDB_file);
@@ -84,7 +83,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
 
 		TS_ASSERT_EQUALS( pose_to_sfr.sfr()->link_map().size(),   0 );
-		pose_to_sfr.get_connectivity_annotation_info( pose, new_chainIDs );
+		pose_to_sfr.get_connectivity_annotation_info( pose );
 
 		TS_ASSERT_EQUALS( pose_to_sfr.sfr()->ssbond_map().size(), 2 );
 		TS_ASSERT_EQUALS( pose_to_sfr.sfr()->link_map().size(),   1 );
@@ -108,7 +107,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr2;
 
 		TS_ASSERT_EQUALS( pose_to_sfr2.sfr()->link_map().size(),   0 );
-		pose_to_sfr2.get_connectivity_annotation_info( pose2, new_chainIDs );
+		pose_to_sfr2.get_connectivity_annotation_info( pose2 );
 
 		TS_ASSERT_EQUALS( pose_to_sfr2.sfr()->ssbond_map().size(), 0 );
 		TS_ASSERT_EQUALS( pose_to_sfr2.sfr()->link_map().size(),   1 );
