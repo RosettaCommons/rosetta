@@ -72,7 +72,7 @@ Atom_::clone(  AtomAP parent_in, AtomPointer2D & atom_pointer ) const {
 	utility::vector1< Atom const * > parent_stack; // Raw pointer for speed, also owning is dealt with elsewhere
 	parent_stack.push_back( this );
 
-	while( ! parent_stack.empty() ) {
+	while ( ! parent_stack.empty() ) {
 		Atom const * current_parent = parent_stack.back();
 		parent_stack.pop_back();
 		AtomOP & new_parent = atom_pointer[current_parent->id()];
