@@ -220,7 +220,7 @@ Options = Option_Group( '',
 
 		## Mixed MC option
 		## Author: Ameya Harmalkar
-		Option("tuning_param", "Real", 
+		Option("tuning_param", "Real",
 			desc="Specify the tuning parameter to modulate lowres and highres score functions.",
 			default= "1.0"),
 
@@ -239,6 +239,10 @@ Options = Option_Group( '',
 		# Auto-detection options ----------------------------------------------
 		Option( 'detect_oops', 'Boolean',
 				desc="Detect oligooxopiperazines (oops) and add required constraints",
+				default='false' ),
+		Option( 'obey_ssbond', 'Boolean',
+				desc="When true, defer to the SSBOND records in the PDB for disulfide specification."
+						"When false, use -detect_disulf settings to determine disulfide bonding.",
 				default='false' ),
 		Option( 'detect_disulf', 'Boolean',
 				desc="Forcably enable or disable disulfide detection. "
@@ -3428,7 +3432,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	),
 
 	#New Membrane Protein Option group (RosettaMP)
-	Option_Group( 'mp',		
+	Option_Group( 'mp',
 
 		# Option to restore previous energy function behavior (IMM1 - 2003)
 		Option( "restore_lazaridis_imm_behavior", "Boolean", desc="Restore energy function behavior to Lazaridis IMM1", default="false" ),
@@ -7157,7 +7161,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'ligand_motif_output_directory_name', 'String', default = '', desc = 'Name the directory to which motif pdbs will be outputted to, default of location where script is called. Follow a directory name with a /.'),
 		Option( 'ligand_motif_output_file_name', 'String', default = 'AllMattMotifs.motifs', desc = 'Name the file to which motifs will be outputted to, default of a local directory named AllMattMotifs.motifs. If file type extension not specified (identified as the last period encountered), will output to a file type ending in .motifs'),
 		Option( 'output_motifs_as_pdb', 'Boolean', default = 'true', desc = 'Output generated motifs as pdb files'),
-		Option( 'output_motifs', 'Boolean', default = 'true', desc = 'Output generated motifs as .motifs file and to a MotifLibrary'),	     
+		Option( 'output_motifs', 'Boolean', default = 'true', desc = 'Output generated motifs as .motifs file and to a MotifLibrary'),
 	), # -motifs
 
 	Option_Group( 'ms' , # multistate_design

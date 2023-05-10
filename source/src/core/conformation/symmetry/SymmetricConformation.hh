@@ -265,8 +265,7 @@ public:
 	//fpd eventually we should have symmetric implementations of all the insert/append/delete residue functions
 	void
 	detect_disulfides(
-		utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(),
-		utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >()
+		utility::vector1< std::pair<Size,Size> > const & disulfs
 	) override;
 
 

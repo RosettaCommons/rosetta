@@ -264,6 +264,14 @@ initialize_disulfide_bonds(
 	io::StructFileRep const & fd
 );
 
+/// @brief extract disulfide pairing from SFR
+utility::vector1< std::pair< Size, Size > >
+disulfide_pairs_from_sfr(
+	Pose const & pose,
+	io::StructFileRep const & fd
+);
+
+
 /// @brief Create a sequence map of first pose onto the second, matching the PDBInfo
 ///    If the PDBInfo of either Pose is missing or invalid, do a simple sequence alignment matching.
 core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second );

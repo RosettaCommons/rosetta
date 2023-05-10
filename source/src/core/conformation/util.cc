@@ -1976,21 +1976,21 @@ bool change_cys_state(
 	bool removing(false);
 
 	// Cache information on old residue.
-	Residue const & res( conf.residue( index ) );
-	chemical::ResidueTypeSetCOP residue_type_set = conf.residue_type_set_for_conf( res.type().mode() );
+	core::chemical::ResidueType const & old_type( conf.residue_type( index ) );
+	chemical::ResidueTypeSetCOP residue_type_set = conf.residue_type_set_for_conf( old_type.mode() );
 
 	// make sure we're working on a disulfide-forming type.
-	if ( ( ! res.type().is_sidechain_thiol() ) && ( ! res.type().is_disulfide_bonded() ) ) {
+	if ( ( ! old_type.is_sidechain_thiol() ) && ( ! old_type.is_disulfide_bonded() ) ) {
 		if ( TR.Warning.visible() ) TR.Warning << "change_cys_state() was called on non-cys-like residue " << index << ", skipping!" << std::endl;
 		return false;
 	}
 
 	// Track the variant types of the old residue type.  We want the
 	// new residue to have the same variant type as the old.
-	utility::vector1< std::string > variant_types = res.type().properties().get_list_of_variants();
+	utility::vector1< std::string > variant_types = old_type.properties().get_list_of_variants();
 
 	// check and handle disulfide state
-	if ( res.has_variant_type( chemical::DISULFIDE ) ) {
+	if ( old_type.has_variant_type( chemical::DISULFIDE ) ) {
 		// if the old residue has DISULFIDE variant type then we are removing a
 		// disulfide, so remove the variant type from the list
 		variant_types.erase( std::find( variant_types.begin(), variant_types.end(), "DISULFIDE" ) );
@@ -2008,8 +2008,9 @@ bool change_cys_state(
 	else if ( cys_type_name3=="CYD" && removing /*removing if the disulfide variant was found*/ ) return true; //Similarly, if we're asked for a cyd and we already have a cyd, do nothing.
 
 	// Get the residue type of the desired new residue type.
-	chemical::ResidueTypeCOP replacement_type( residue_type_set->get_representative_type_name3( res.type().name3(), variant_types ) );
+	chemical::ResidueTypeCOP replacement_type( residue_type_set->get_representative_type_name3( old_type.name3(), variant_types ) );
 	if ( replacement_type ) {
+		Residue const & res = conf.residue(index);
 		ResidueOP new_res = ResidueFactory::create_residue( *replacement_type, res, conf );
 		copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, conf );
 		conf.replace_residue( index, *new_res, false );
@@ -2018,7 +2019,7 @@ bool change_cys_state(
 
 
 	// If we are here then a residue type match wasn't found; issue error message.
-	if ( TR.Error.visible() ) TR.Error << "Couldn't find a " << (removing ? "disulfide-free" : "disulfide-bonded")  << " equivalent for residue " << res.name3() << index << "." <<std::endl;
+	if ( TR.Error.visible() ) TR.Error << "Couldn't find a " << (removing ? "disulfide-free" : "disulfide-bonded")  << " equivalent for residue " << old_type.name3() << index << "." <<std::endl;
 
 	return false;
 }
@@ -2117,6 +2118,16 @@ core::Size get_disulf_partner (
 		utility_exit();
 	}
 	return other_res;
+}
+
+void break_all_disulfides(
+	core::conformation::Conformation &conformation
+) {
+	utility::vector1< std::pair<core::Size,core::Size> > disulfides;
+	disulfide_bonds( conformation, disulfides);
+	for ( auto const & pair: disulfides ) {
+		break_disulfide( conformation, pair.first, pair.second );
+	}
 }
 
 /// @brief Breaks a disulfide bond.

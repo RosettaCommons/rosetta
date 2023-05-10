@@ -374,6 +374,11 @@ core::Size get_disulf_partner (
 	core::Size const res_index
 );
 
+/// @brief Break all the disulfides in the conformation
+void break_all_disulfides(
+	core::conformation::Conformation &conformation
+);
+
 /// @brief Breaks a disulfide bond.
 /// @author Vikram K. Mulligan, Baker lab (vmullig@uw.edu).
 void break_disulfide(

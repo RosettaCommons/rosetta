@@ -886,19 +886,29 @@ public:  // Bonds, Connections, Atoms, & Stubs
 		Size upper_seqpos,
 		Size ur_conn_id);
 
-	/// @brief Detect existing disulfides from the protein structure
-	/// using suggestions from the FileData (or not!)
+	/// @brief Detect existing disulfides from the protein structure,
+	/// using the provided pairs as a starting point
 	virtual
 	void
 	detect_disulfides(
-		utility::vector1< Size > const & disulf_one = utility::vector1< core::Size >(),
-		utility::vector1< Size > const & disulf_two = utility::vector1< core::Size >()
+		utility::vector1< std::pair<Size,Size> > const & disulfs
 	);
+
+	/// @brief Detect existing disulfides from the protein structure.
+	/// @details Non-virtual, simply defers to the virtual function with an empty parameter.
+	void
+	detect_disulfides();
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
 	virtual
 	void
 	fix_disulfides(utility::vector1< std::pair<Size, Size> > const & disulf_bonds);
+
+	/// @brief Attempt to add a disulfide bond between the two residues.
+	/// Returns true on success and false on failure
+	virtual
+	bool
+	add_disulfide_bond( core::Size res1, core::Size res2 );
 
 public: // Access to the ParametersSets -- Vikram K. Mulligan (vmullig@uw.edu), 17 Nov. 2014
 

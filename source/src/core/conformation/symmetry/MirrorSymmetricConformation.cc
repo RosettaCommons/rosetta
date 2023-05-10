@@ -530,9 +530,10 @@ MirrorSymmetricConformation::insert_conformation_by_jump(
 //  conformations, the less accurate CB-CB distance is used instead. In this
 //  case a CB-CB distance of 3.72 A is optimal.
 void
-MirrorSymmetricConformation::detect_disulfides( utility::vector1< Size > const & disulf_one, utility::vector1< Size > const & disulf_two )
-{
-	SymmetricConformation::detect_disulfides(disulf_one, disulf_two);
+MirrorSymmetricConformation::detect_disulfides(
+	utility::vector1< std::pair<Size,Size> > const & disulfs
+) {
+	SymmetricConformation::detect_disulfides(disulfs);
 
 	// TODO: Vikram
 	// coordinates will be correct at this point

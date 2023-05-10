@@ -1216,69 +1216,82 @@ initialize_disulfide_bonds(
 		utility::vector1< std::pair<Size,Size> > disulfides;
 		ds_file.disulfides(disulfides, pose);
 		pose.conformation().fix_disulfides( disulfides );
-	} else if ( option[ in::detect_disulf ].user() ?
-			option[ in::detect_disulf ]() : // detect_disulf true
-			pose.is_fullatom() // detect_disulf default but fa pose
-			) {
-		//utility::vector1< std::pair< Size, Size > > disulfs;
-		utility::vector1< Size > disulf_one;
-		utility::vector1< Size > disulf_two;
+	} else if ( option[ in::obey_ssbond ]() ) {
+		// If set, only use ssbond info
+		pose.conformation().fix_disulfides( disulfide_pairs_from_sfr( pose, sfr ) );
+	} else if ( option[ in::detect_disulf ].user() ) {
+		// Explicitly set
+		if ( option[ in::detect_disulf ]() ) {
+			pose.conformation().detect_disulfides();
+		} // else do no disulfide detection
+	} else {
+		if ( pose.is_fullatom() ) {
+			// If we're fullatom, do full detection
+			pose.conformation().detect_disulfides();
+		} // else no disulfide detection
+	}
+}
 
-		// Prepare a list of pose-numbered disulfides!
-		for ( auto const & ssbond : sfr.ssbond_map() ) {
-			bool valid = true;
+utility::vector1< std::pair< Size, Size > >
+disulfide_pairs_from_sfr(
+	Pose const & pose,
+	io::StructFileRep const & sfr
+) {
+	utility::vector1< std::pair< Size, Size > > disulfs;
 
-			Size best_representative = 1;
-			// For now we really hope the vector1 is just a single element!
-			if ( ssbond.second.size() != 1 ) {
-				// We can salvage if it's double-entry: just take the first.
-				// The length isn't actually used anyway, and so it doesn't
-				// affect what conformation is preferred.
+	// Prepare a list of pose-numbered disulfides!
+	for ( auto const & ssbond : sfr.ssbond_map() ) {
+		bool valid = true;
 
-				// Are they all the same?
-				std::string id1 = ssbond.second[ best_representative ].resID2;
-				bool identical = true;
-				for ( Size i = 2; i <= ssbond.second.size(); ++i ) {
-					if ( ssbond.second[ i ].resID2 != id1 ) {
-						// If this one is MUCH further from ideal (~2.05) than the other, then we can
-						// assume one reflects a poorly annotated clash in a low resolution structure
-						// and "succeed anyway," merely warning.
-						if ( std::abs( ssbond.second[ i ].length - 2.05 ) > 0.3 + std::abs( ssbond.second[ best_representative ].length - 2.05 ) ) {
-							TR.Warning << "Found a redundant SSBond, but it's much worse than another option, so we can discard it safely." << std::endl;
-						} else if ( std::abs( ssbond.second[ best_representative ].length - 2.05 ) > 0.3 + std::abs( ssbond.second[ i ].length - 2.05 ) ) {
-							// The reverse: the second ssbond is much better!
-							TR.Warning << "Found a redundant SSBond, and it's much better than another option, so switching the 'best'." << std::endl;
-							best_representative = i;
-						} else if ( ssbond.second[ best_representative ].length > 2.8 ) {
-							// Just too long, skip unconditionally
-							valid = false;
-							break;
-						} else {
-							TR << "Too close: " << ssbond.second[ best_representative ].length << " " << ssbond.second[ i ].length  << std::endl;
-							identical = false; break;
-						}
+		Size best_representative = 1;
+		// For now we really hope the vector1 is just a single element!
+		if ( ssbond.second.size() != 1 ) {
+			// We can salvage if it's double-entry: just take the first.
+			// The length isn't actually used anyway, and so it doesn't
+			// affect what conformation is preferred.
+
+			// Are they all the same?
+			std::string id1 = ssbond.second[ best_representative ].resID2;
+			bool identical = true;
+			for ( Size i = 2; i <= ssbond.second.size(); ++i ) {
+				if ( ssbond.second[ i ].resID2 != id1 ) {
+					// If this one is MUCH further from ideal (~2.05) than the other, then we can
+					// assume one reflects a poorly annotated clash in a low resolution structure
+					// and "succeed anyway," merely warning.
+					if ( std::abs( ssbond.second[ i ].length - 2.05 ) > 0.3 + std::abs( ssbond.second[ best_representative ].length - 2.05 ) ) {
+						TR.Warning << "Found a redundant SSBond, but it's much worse than another option, so we can discard it safely." << std::endl;
+					} else if ( std::abs( ssbond.second[ best_representative ].length - 2.05 ) > 0.3 + std::abs( ssbond.second[ i ].length - 2.05 ) ) {
+						// The reverse: the second ssbond is much better!
+						TR.Warning << "Found a redundant SSBond, and it's much better than another option, so switching the 'best'." << std::endl;
+						best_representative = i;
+					} else if ( ssbond.second[ best_representative ].length > 2.8 ) {
+						// Just too long, skip unconditionally
+						valid = false;
+						break;
+					} else {
+						TR << "Too close: " << ssbond.second[ best_representative ].length << " " << ssbond.second[ i ].length  << std::endl;
+						identical = false; break;
 					}
-				}
-
-				if ( !identical ) {
-					TR.Error << "SSBond records list multiple nonredundant disulfides for this residue!" << std::endl;
-					utility_exit_with_message("Error with SSBond record.");
 				}
 			}
 
-			if ( !valid ) continue;
-
-			Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond.second[ best_representative ].chainID1, ssbond.second[ best_representative ].resSeq1, ssbond.second[ best_representative ].iCode1 );
-			Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond.second[ best_representative ].chainID2, ssbond.second[ best_representative ].resSeq2, ssbond.second[ best_representative ].iCode2 );
-
-			if ( seqpos_one != 0 && seqpos_two != 0 ) {
-				disulf_one.push_back( seqpos_one );
-				disulf_two.push_back( seqpos_two );
+			if ( !identical ) {
+				TR.Error << "SSBond records list multiple nonredundant disulfides for this residue!" << std::endl;
+				utility_exit_with_message("Error with SSBond record.");
 			}
 		}
 
-		pose.conformation().detect_disulfides( disulf_one, disulf_two );
+		if ( !valid ) continue;
+
+		Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond.second[ best_representative ].chainID1, ssbond.second[ best_representative ].resSeq1, ssbond.second[ best_representative ].iCode1 );
+		Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond.second[ best_representative ].chainID2, ssbond.second[ best_representative ].resSeq2, ssbond.second[ best_representative ].iCode2 );
+
+		if ( seqpos_one != 0 && seqpos_two != 0 ) {
+			disulfs.push_back( { seqpos_one, seqpos_two } );
+		}
 	}
+
+	return disulfs;
 }
 
 core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second ) {

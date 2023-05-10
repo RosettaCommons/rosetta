@@ -26,7 +26,8 @@
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-
+#include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
+#include <core/io/pdb/pdb_reader.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 
@@ -37,7 +38,12 @@
 
 #include <core/kinematics/FoldTree.hh>
 
+#include <utility/io/izstream.hh>
+#include <utility/string_util.hh>
+
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <test/util/pose_funcs.hh>
 
@@ -700,6 +706,108 @@ public: // tests
 		TS_ASSERT(get_hash_from_pos(v) == get_hash_from_pos(w));
 		TS_ASSERT(get_hash_from_pos(v) != get_hash_from_pos(x));
 
+	}
+
+	void test_initialize_disulfide_bonds() {
+		using basic::options::option;
+		using namespace basic::options::OptionKeys;
+		using namespace core::io::pdb;
+
+		// Double check starting status (all default)
+		TS_ASSERT( option[ in::obey_ssbond ].user() == false );
+		TS_ASSERT( option[ in::obey_ssbond ]() == false );
+		TS_ASSERT( option[ in::detect_disulf ].user() == false );
+		TS_ASSERT( option[ in::detect_disulf ] == false );
+
+		// Start with explicitly disable disulfide detection
+		option[ in::detect_disulf ].value(false);
+
+		std::string pdbstring;
+		utility::io::izstream file( "core/io/pdb/1BH4.pdb" );
+		utility::slurp( file, pdbstring );
+
+		core::io::StructFileReaderOptions options;
+		options.set_obey_ENDMDL(true); // Only read the first structure
+		core::chemical::ResidueTypeSetCOP residue_set
+			( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+		core::io::StructFileRep sfr( core::io::pdb::create_sfr_from_pdb_file_contents( pdbstring, options ) );
+		core::io::pose_from_sfr::PoseFromSFRBuilder builder( residue_set, options);
+		Pose pose;
+		builder.build_pose(sfr, pose);
+
+		TS_ASSERT( pose.is_fullatom() );
+
+		///////////////////
+		// Explicitly turned-off disulfide detection
+
+		utility::vector1< std::pair<core::Size,core::Size> > disulfides;
+		core::conformation::disulfide_bonds( pose.conformation(), disulfides );
+		TS_ASSERT_EQUALS( disulfides.size(), 0 );
+
+		////////////////
+		// Obey SSBOND, with the existing entries (which should be the same as the geometric ones)
+
+		option[ in::obey_ssbond ].value( true );
+		TS_ASSERT( option[ in::obey_ssbond ].user() == true );
+		TS_ASSERT( option[ in::obey_ssbond ]() == true );
+		TS_ASSERT( option[ in::detect_disulf ].user() == true );
+		TS_ASSERT( option[ in::detect_disulf ] == false );
+
+		core::conformation::break_all_disulfides( pose.conformation() ); // Start with a clean slate
+		core::pose::initialize_disulfide_bonds( pose, sfr );
+
+		disulfides.clear();
+		core::conformation::disulfide_bonds( pose.conformation(), disulfides );
+		TS_ASSERT_EQUALS( disulfides.size(), 3 );
+		TS_ASSERT( core::conformation::is_disulfide_bond(pose.conformation(), 1, 17 ) );
+		TS_ASSERT( core::conformation::is_disulfide_bond(pose.conformation(), 5, 19 ) );
+		TS_ASSERT( core::conformation::is_disulfide_bond(pose.conformation(), 10, 24 ) );
+
+		////////////////
+		// Obey SSBOND, with cleared SSBOND records.
+
+		sfr.ssbond_map().clear();
+
+		core::conformation::break_all_disulfides( pose.conformation() ); // Start with a clean slate
+		core::pose::initialize_disulfide_bonds( pose, sfr );
+
+		disulfides.clear();
+		core::conformation::disulfide_bonds( pose.conformation(), disulfides );
+		TS_ASSERT_EQUALS( disulfides.size(), 0 );
+
+		////////////////
+		// Obey SSBOND, with new SSBOND records
+		store_ssbond_record_in_sfr( create_record_from_pdb_line("SSBOND   1 CYS A   24    CYS A   17                          1555   1555  2.02"), sfr );
+		store_ssbond_record_in_sfr( create_record_from_pdb_line("SSBOND   1 CYS A    1    CYS A    5                          1555   1555  2.02"), sfr );
+
+		core::conformation::break_all_disulfides( pose.conformation() ); // Start with a clean slate
+		core::pose::initialize_disulfide_bonds( pose, sfr );
+
+		disulfides.clear();
+		core::conformation::disulfide_bonds( pose.conformation(), disulfides );
+		TS_ASSERT_EQUALS( disulfides.size(), 2 );
+		TS_ASSERT( core::conformation::is_disulfide_bond(pose.conformation(), 1, 5 ) );
+		TS_ASSERT( core::conformation::is_disulfide_bond(pose.conformation(), 17, 24 ) );
+
+		/////////////////
+		// Default behavior, which is to detect disulfides based on geometry
+
+		option[ in::obey_ssbond ].to_default();
+		option[ in::detect_disulf ].to_default();
+		TS_ASSERT( option[ in::obey_ssbond ].user() == false );
+		TS_ASSERT( option[ in::obey_ssbond ]() == false );
+		TS_ASSERT( option[ in::detect_disulf ].user() == false );
+		TS_ASSERT( option[ in::detect_disulf ] == false );
+
+		core::conformation::break_all_disulfides( pose.conformation() ); // Start with a clean slate
+		core::pose::initialize_disulfide_bonds( pose, sfr );
+
+		disulfides.clear();
+		core::conformation::disulfide_bonds( pose.conformation(), disulfides );
+		TS_ASSERT_EQUALS( disulfides.size(), 3 );
+		TS_ASSERT( core::conformation::is_disulfide_bond(pose.conformation(), 1, 17 ) );
+		TS_ASSERT( core::conformation::is_disulfide_bond(pose.conformation(), 5, 19 ) );
+		TS_ASSERT( core::conformation::is_disulfide_bond(pose.conformation(), 10, 24 ) );
 	}
 
 }; // class PoseUtilTests

@@ -2117,69 +2117,10 @@ void
 Conformation::fix_disulfides( utility::vector1< std::pair< Size, Size > > const & disulf_bonds )
 {
 	for ( auto const & disulfide_bond : disulf_bonds ) {
-		using utility::vector1;
-
 		Size l_index = (disulfide_bond).first; //Lower residue
 		Size u_index = (disulfide_bond).second; //Upper residue, usually l<u
 
-		// Check that the residues exist
-		if ( l_index > size() ) {
-			TR.Error << "Residue " << l_index << " is out of range." << std::endl;
-			utility_exit();
-		}
-		if ( u_index > size() ) {
-			TR.Error << "Residue " << u_index << " is out of range." << std::endl;
-			utility_exit();
-		}
-
-		//Swap the CYS for CYD
-		bool replaced = conformation::change_cys_state( l_index, "CYD", *this );
-		replaced = replaced && conformation::change_cys_state( u_index, "CYD", *this );
-		if ( ! replaced ) {
-			TR.Error << "Failed to introduce CYD for disulfide ("
-				<< l_index <<", "<< u_index << ")." << std::endl;
-			continue;
-		}
-
-		//Next, form a bond between the two residues.
-		//This is a little messy since we don't know the residue types of l & u.
-		Residue const& l_res( residue( l_index ));
-		Residue const& u_res( residue( u_index ));
-
-		// Determine which atom forms the disulfide bond
-		// Prefer SG to SG (fullatom) or CEN to CEN (centroid) bonds
-		// Allow SG to CEN bonds, but give a warning
-		// If neither atom is found (neither fullatom nor centroid) throw an error.
-
-		if ( l_res.type().get_disulfide_atom_name() == "NONE" ) {
-			TR.Error << "Cannot form disulfide bond with residue " << l_index << std::endl;
-			continue;
-		}
-		if ( u_res.type().get_disulfide_atom_name() == "NONE" ) {
-			TR.Error << "Cannot form disulfide bond with residue " << u_index << std::endl;
-			continue;
-		}
-
-		Size l_bond_atom = l_res.atom_index( l_res.type().get_disulfide_atom_name() );
-		Size u_bond_atom = u_res.atom_index( u_res.type().get_disulfide_atom_name() );
-
-		// We only care about warning FA to CEN
-
-		if ( l_res.type().get_disulfide_atom_name() == "CEN" && u_res.type().get_disulfide_atom_name() != "CEN" ) {
-			TR.Warning << "Forming a disulfide bond between FA residue " << u_index
-				<< " and centroid residue "<< l_index << std::endl;
-		}
-		if ( l_res.type().get_disulfide_atom_name() != "CEN" && u_res.type().get_disulfide_atom_name() == "CEN" ) {
-			TR.Warning << "Forming a disulfide bond between FA residue " << l_index
-				<< " and centroid residue "<< u_index << std::endl;
-		}
-
-		//Now have the correct atoms, so bond them
-		Size l_connid = l_res.type().residue_connection_id_for_atom( l_bond_atom );
-		Size u_connid = u_res.type().residue_connection_id_for_atom( u_bond_atom );
-
-		residues_[ l_index ]->residue_connection_partner( l_connid, u_index, u_connid);
-		residues_[ u_index ]->residue_connection_partner( u_connid, l_index, l_connid);
+		add_disulfide_bond( l_index, u_index );
 
 		debug_assert( residue(l_index).has_variant_type( chemical::DISULFIDE ));
 		debug_assert( residue(u_index).has_variant_type( chemical::DISULFIDE ));
@@ -2239,6 +2180,11 @@ Conformation::parameters_set( core::Size const index ) const {
 	return parameters_set_[index];
 }
 
+void
+Conformation::detect_disulfides() {
+	utility::vector1< std::pair<Size,Size> > disulfs;
+	detect_disulfides( disulfs );
+}
 
 // Detect existing disulfides from the protein structure.
 /// @details For full atom confomations, looks at SG-SG distance. If the SG-SG
@@ -2247,7 +2193,7 @@ Conformation::parameters_set( core::Size const index ) const {
 /// case a CB-CB distance of 3.72 A is optimal.
 /// @note Assumes full atom
 void
-Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one, utility::vector1< Size > const & disulf_two )
+Conformation::detect_disulfides( utility::vector1< std::pair<Size,Size> > const & disulfs )
 {
 	basic::ProfileThis doit( basic::CONFORMATION_DETECT_DISULF );
 	using namespace utility::graph;
@@ -2304,82 +2250,17 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one, ut
 	std::set< Size > processed_cys; // track cys that have already been processed
 
 	// Process given pairs first if any are available
-	//for ( Size ii = 1; ii <= disulf_bonds.size(); ++ii ) {
-	for ( Size ii = 1; ii <= disulf_one.size(); ++ii ) {
+	for ( auto const & pair: disulfs ) {
+		Size ii_resid = pair.first;
+		Size best_neighbor = pair.second;
 
-		Size ii_resid = disulf_one[ ii ];
-		Size best_neighbor = disulf_two[ ii ];
-		Residue const & ii_res( residue( ii_resid ) );
-		Size ii_sg_atomno(0);
-		if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {
-			TR.Error << "Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
-			utility_exit();
-		} else {
-			ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
-		}
-
-		// Create disulfide bond using CYD residues.  Note that this will
-		// end up doing a dummy replace for already existing disulfides,
-		// but it doesn't necessarily hurt just in case something weird
-		// happened.
-		TR << "Found "<< (fullatom?"":"CEN ") << "disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
-		// amw: output whole name, not just CYS vs CYD, to be clear.
-		std::string ii_name_start = residues_[ ii_resid ]->type().name();
-		std::string bn_name_start = residues_[ best_neighbor ]->type().name();
-		// unless it's for cys/cyd itself, condense that part for integration test clarity.
-		if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-			ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-		}
-		if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-			bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-		}
-
-		TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
-		TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
-
-		bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
-			&& residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-		bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
-			&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
-
-		if ( !success_at_ii )   TR.Error << "unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
-		if ( !success_at_best_neighbor ) TR.Error << "unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
-
-		ii_name_start = residues_[ ii_resid ]->type().name();
-		bn_name_start = residues_[ best_neighbor ]->type().name();
-		if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-			ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-		}
-		if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-			bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-		}
-		TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
-		TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
-
-		// Record SG-SG connections.
-		if ( success_at_ii && success_at_best_neighbor ) {
-			Residue const & ii_new_res( residue( ii_resid ) );
-			// ASSUMPTION Disulfide forming cystein SG atoms for exactly one inter-residue chemical bond.
-			Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
-			Size jj_resid  = best_neighbor;
-			Residue const & jj_res = residue( jj_resid );
-			Size jj_sg_atomno(0);
-			if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-				TR.Error << "Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
-				utility_exit();
-			} else {
-				jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
-			}
-
-			Size jj_connid = jj_res.type().residue_connection_id_for_atom( jj_sg_atomno );
-
-			residues_[ ii_resid ]->residue_connection_partner( ii_connid, jj_resid, jj_connid );
-			residues_[ jj_resid ]->residue_connection_partner( jj_connid, ii_resid, ii_connid );
-		}
+		TR << "Adding disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
+		add_disulfide_bond( ii_resid, best_neighbor );
 
 		// mark both cys as processed
 		processed_cys.insert( ii_resid );
 		processed_cys.insert( best_neighbor );
+
 	}
 
 	// Now do everything that remains!
@@ -2392,14 +2273,11 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one, ut
 		if ( processed_cys.find( ii_resid ) != processed_cys.end() ) continue;
 
 		//Determine which atom makes the disulfide bond
-		Size ii_sg_atomno(0);
-		if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {
-			TR.Error << "Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
-			utility_exit();
-		} else {
-			ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
+		std::string const & ii_sg_atomname = ii_res.type().get_disulfide_atom_name();
+		if ( ii_sg_atomname == "NONE" ) {
+			utility_exit_with_message( "Can't find an atom to disulfide bond from at residue " + std::to_string( ii_resid ) );
 		}
-		Size ii_distance_atom_id = fullatom ? ii_sg_atomno : ii_res.atom_index( "CB" );
+		Size ii_distance_atom_id = fullatom ? ii_res.atom_index( ii_sg_atomname ) : ii_res.atom_index( "CB" );
 
 		Distance best_match( 0.0 );
 		Size best_neighbor( 0 );
@@ -2457,71 +2335,85 @@ Conformation::detect_disulfides( utility::vector1< Size > const & disulf_one, ut
 			continue;
 
 		} else { // found disulfide bond
+			TR << "Found disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
 
-			// Create disulfide bond using CYD residues.  Note that this will
-			// end up doing a dummy replace for already existing disulfides,
-			// but it doesn't necessarily hurt just in case something weird
-			// happened.
-			TR << "Found "<< (fullatom?"":"CEN ") << "disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
-			// amw: output whole name, not just CYS vs CYD, to be clear.
-			std::string ii_name_start = residues_[ ii_resid ]->type().name();
-			std::string bn_name_start = residues_[ best_neighbor ]->type().name();
-			// unless it's for cys/cyd itself, condense that part for integration test clarity.
-			if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-				ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			}
-			if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-				bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			}
-
-			TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
-			TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
-
-			bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
-				&& residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-			bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
-				&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
-
-			if ( !success_at_ii )   TR.Error << "unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
-			if ( !success_at_best_neighbor ) TR.Error << "unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
-
-			ii_name_start = residues_[ ii_resid ]->type().name();
-			bn_name_start = residues_[ best_neighbor ]->type().name();
-			if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-				ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			}
-			if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-				bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			}
-			TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
-			TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
-
-			// Record SG-SG connections.
-			if ( success_at_ii && success_at_best_neighbor ) {
-				Residue const & ii_new_res( residue( ii_resid ) );
-				// ASSUMPTION Disulfide forming cystein SG atoms for exactly one inter-residue chemical bond.
-				Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
-				Size jj_resid  = best_neighbor;
-				Residue const & jj_res = residue( jj_resid );
-				Size jj_sg_atomno(0);
-				if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-					TR.Error << "Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
-					utility_exit();
-				} else {
-					jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
-				}
-
-				Size jj_connid = jj_res.type().residue_connection_id_for_atom( jj_sg_atomno );
-
-				residues_[ ii_resid ]->residue_connection_partner( ii_connid, jj_resid, jj_connid );
-				residues_[ jj_resid ]->residue_connection_partner( jj_connid, ii_resid, ii_connid );
-			}
+			add_disulfide_bond( ii_resid, best_neighbor );
 
 			// mark both cys as processed
 			processed_cys.insert( ii_resid );
 			processed_cys.insert( best_neighbor );
 
 		}
+	}
+}
+
+bool
+Conformation::add_disulfide_bond( core::Size ii_resid, core::Size best_neighbor ) {
+
+	// Check that the residues exist
+	if ( ii_resid == 0 || ii_resid > size() ) {
+		utility_exit_with_message( "Can not form disulfide to residue " + std::to_string( ii_resid ) + " as it is out of range." );
+	}
+	if ( best_neighbor == 0 || best_neighbor > size() ) {
+		utility_exit_with_message( "Can not form disulfide to residue " + std::to_string( best_neighbor ) + " as it is out of range." );
+	}
+
+	// Create disulfide bond using CYD residues.  Note that this will
+	// end up doing a dummy replace for already existing disulfides,
+	// but it doesn't necessarily hurt just in case something weird
+	// happened.
+	// amw: output whole name, not just CYS vs CYD, to be clear.
+	std::string ii_name_start = residues_[ ii_resid ]->type().name();
+	std::string bn_name_start = residues_[ best_neighbor ]->type().name();
+	// unless it's for cys/cyd itself, condense that part for integration test clarity.
+	if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
+		ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+	}
+	if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
+		bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+	}
+
+	TR.Debug << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
+	TR.Debug << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
+
+	bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
+		&& residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+	bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
+		&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
+
+	if ( !success_at_ii )   TR.Error << "unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
+	if ( !success_at_best_neighbor ) TR.Error << "unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
+
+	ii_name_start = residues_[ ii_resid ]->type().name();
+	bn_name_start = residues_[ best_neighbor ]->type().name();
+	if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
+		ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+	}
+	if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
+		bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+	}
+	TR.Debug << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
+	TR.Debug << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
+
+	// Record SG-SG connections.
+	if ( success_at_ii && success_at_best_neighbor ) {
+		// ASSUMPTION Disulfide forming cystein SG atoms for exactly one inter-residue chemical bond.
+		Size const jj_resid  = best_neighbor;
+
+		std::string const & ii_disulf_name = residue_type(ii_resid).get_disulfide_atom_name();
+		if ( ii_disulf_name.empty() || ii_disulf_name == "NONE" ) {
+			utility_exit_with_message( "Can't find an atom to disulfide bond from at residue " + std::to_string( ii_resid ) );
+		}
+
+		std::string const & jj_disulf_name = residue_type( jj_resid ).get_disulfide_atom_name();
+		if ( jj_disulf_name.empty() || jj_disulf_name == "NONE" ) {
+			utility_exit_with_message( "Can't find an atom to disulfide bond from at residue " + std::to_string( jj_resid ) );
+		}
+
+		declare_chemical_bond( ii_resid, ii_disulf_name, jj_resid, jj_disulf_name );
+		return true;
+	} else {
+		return false;
 	}
 }
 
