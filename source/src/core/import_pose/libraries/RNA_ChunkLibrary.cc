@@ -345,15 +345,12 @@ RNA_ChunkLibrary::figure_out_chunk_coverage()
 	runtime_assert( covered_by_chunk_.size() == tot_res );
 
 	Size num_chunk_res( 0 );
-	Size num_other_res( 0 );
 
 	for ( Size n = 1; n <= tot_res; n++ ) {
 		// Allow insert keeps track of where the chunk *aren't*, and
 		// where other moves (fragments, jumps) can be carried out.
 		if ( covered_by_chunk_(n) ) {
 			num_chunk_res++;
-		} else {
-			num_other_res++;
 		}
 	}
 	chunk_coverage_ = Real( 3 * num_chunk_res ) / ( 3 * num_chunk_res +  tot_res );

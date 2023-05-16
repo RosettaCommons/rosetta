@@ -1035,7 +1035,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 	// pose.residue_type( ii ). If you think you need Residue, ask someone else.
 
 	// Step 2. Handle missing atoms.
-	Size num_heavy_missing = 0;
+	//Size num_heavy_missing = 0;
 	core::pose::initialize_atomid_map( missing_, pose ); // dimension the missing-atom mask
 
 	// Poses with zero residues must exit here after establishing a zero
@@ -1055,7 +1055,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 			id::NamedAtomID named_atom_id( ii_rsd.atom_name( jj ), ii );
 			if ( ! coordinates_assigned_[ named_atom_id ] ) {
 				missing_[ atom_id ] = true;
-				if ( !ii_rsd.atom_is_hydrogen( jj ) ) num_heavy_missing++;
+				//if ( !ii_rsd.atom_is_hydrogen( jj ) ) num_heavy_missing++;
 			}
 		}
 	}

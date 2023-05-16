@@ -1471,9 +1471,7 @@ void FastRelax::batch_apply(
 	int repeat_count=-1;
 	int total_repeat_count = 0;
 
-	int total_count=0;
 	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ) {
-		total_count++;
 
 		RelaxScriptCommand cmd = script_[ncmd];
 		TR.Debug << "Command: " << cmd.command << std::endl;

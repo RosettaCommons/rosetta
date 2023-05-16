@@ -792,7 +792,7 @@ FullModelParameters::read_disulfides( std::string const & disulfide_file ) {
 	// but, strangely, it does not seem to provide the
 	// chain/residue renumbering functionality that it should.
 	utility::io::izstream data( disulfide_file.c_str() );
-	Size count( 0 );
+	//Size count( 0 );
 	while ( data.good() ) {
 		std::string line;
 		getline( data, line );
@@ -804,7 +804,7 @@ FullModelParameters::read_disulfides( std::string const & disulfide_file ) {
 		runtime_assert( std::get< 0 >( resnum_and_chain ).size() == 2 );
 		runtime_assert( std::get< 1 >( resnum_and_chain ).size() == 2 );
 		runtime_assert( std::get< 2 >( resnum_and_chain ).size() == 2 );
-		count++;
+		//count++;
 		for ( int k = 0; k <= 1; k++ ) {
 			Size const full_model_number = conventional_to_full( std::get< 0 >( resnum_and_chain )[k], std::get< 1 >( resnum_and_chain )[k], std::get< 2 >( resnum_and_chain )[k] );
 			runtime_assert( full_sequence_[ full_model_number - 1 ] == 'C' ); // better be cysteine.

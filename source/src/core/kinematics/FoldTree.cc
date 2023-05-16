@@ -1818,16 +1818,16 @@ FoldTree::renumber_jumps()
 void
 FoldTree::renumber_jumps_ordered()
 {
-	int counter(0);
+	//int counter(0);
 	new_topology = true;
 	int highest_label(0);
-	core::Size edgecounter = 0;
+	//core::Size edgecounter = 0;
 	utility::vector1< Size > jump_labels;
 	for ( auto & it : edge_list_ ) {
-		edgecounter++;
+		//edgecounter++;
 		if ( it.is_jump() ) {
 			jump_labels.push_back(it.label());
-			++counter;
+			//++counter;
 			if ( it.label() > highest_label ) highest_label = it.label();
 		}
 	}

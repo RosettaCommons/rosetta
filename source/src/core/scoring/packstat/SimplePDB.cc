@@ -134,10 +134,8 @@ void SimplePDB::remove_surface_waters() {
 		atoms_[i].xyz.z(atoms_[i].z);
 		atoms_[i].radius = 2; // huge hack, but avoids needing AtomRadiusMap
 	}
-	int count = 0;
+
 	while ( true ) {
-		// std::cerr << "REMOVE_SURFACE_WATERS " << count << std::endl;
-		count++;
 		compute_sasa_generic<SimplePDB_Atom>( atoms_, 3.0 );
 		utility::vector1<SimplePDB_Atom> newatoms;
 		bool removed = false;

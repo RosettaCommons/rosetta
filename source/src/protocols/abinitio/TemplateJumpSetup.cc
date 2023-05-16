@@ -112,12 +112,12 @@ TemplateJumpSetup::create_jump_sample() const {
 	core::Size const rg_nrstrands( std::min( static_cast< int >( numeric::random::rg().uniform() * (target_strands.size()) ) + 2 , (int) target_strands.size() ) );
 	tr.Debug << "random choice:  aim for selection of " << rg_nrstrands << std::endl;
 	core::scoring::dssp::PairingList target_pairings;
-	core::Size nstrand_selected( 0 );
+	//core::Size nstrand_selected( 0 );
 	for ( core::Size i = 1; i<= target_strands.size(); i++ ) {
 		//decide if we pair this strand:
 		Real weight( strand_stats_->strand_weight( target_strands.strand_pairing( strand_ids[ i ] ) ) );
 		if ( total_weight > 0 && weight/total_weight < 0.005 ) continue;
-		nstrand_selected++;
+		//nstrand_selected++;
 		tr.Debug << "pre-selected " << target_strands.strand_pairing( strand_ids[ i ] ) << std::endl;
 		core::scoring::dssp::PairingList possible_pairings;
 		target_strands.strand_pairing( strand_ids[ i ] ).get_beta_pairs( possible_pairings );

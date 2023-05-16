@@ -101,7 +101,7 @@ void FlexbbSimAnnealer::run()
 	ObjexxFCL::FArray1D< PackerEnergy > loopenergy( maxouteriterations, 0.0);
 
 	//bk variables for calculating rotamer frequencies during simulation
-	core::Size nsteps = 0;
+	//core::Size nsteps = 0;
 	ObjexxFCL::FArray1D_int nsteps_for_rot( nrotamers, 0 );
 
 	ObjexxFCL::FArray1D_int state_on_node( nmoltenres, 0);
@@ -190,12 +190,15 @@ void FlexbbSimAnnealer::run()
 	PackerEnergy last_temperature = 100000;
 	for ( core::Size nn = 1; nn <= outeriterations; ++nn ) {
 
+		// UNUSED VARIABLES
+		/*
 		core::Size num_fixbb_move_accepts = 0;
 		core::Size num_fixbb_move_valid = 0;
 		core::Size num_bb_move_accepts = 0;
 		core::Size num_bb_move_valid = 0;
 		core::Size num_bb_sub_accepts = 0;
 		core::Size num_bb_sub_valid = 0;
+		*/
 
 		//set up the temperature
 		setup_temperature(loopenergy,nn);
@@ -252,7 +255,7 @@ void FlexbbSimAnnealer::run()
 
 				if ( rotamer_state_on_moltenres == prevrotamer_state ) continue;// rotamer is already assigned; skip iteration
 
-				++num_fixbb_move_valid;
+				//++num_fixbb_move_valid;
 				//std::cout << "State on node: ";
 				//for ( core::Size ii = 1; ii <= state_on_node.size(); ++ii ) { std::cout << state_on_node( ii ) << " ";}
 				//std::cout << std::endl;
@@ -262,7 +265,7 @@ void FlexbbSimAnnealer::run()
 
 				if ( (prevrotamer_state == 0)||pass_metropolis(previous_energy_for_node,delta_energy) ) {
 					//std::cerr << "pass_metropolis sc only: " << delta_energy << ", " << alternate_energy_total << ", " << bestenergy_ << std::endl;
-					++num_fixbb_move_accepts;
+					//++num_fixbb_move_accepts;
 					currentenergy = ig_->commit_considered_substitution();
 					state_on_node( moltenres_id ) = rotamer_state_on_moltenres;
 					if ( (prevrotamer_state == 0)||(currentenergy < bestenergy() ) ) {
@@ -271,7 +274,7 @@ void FlexbbSimAnnealer::run()
 					}
 
 					if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
-						++nsteps;
+						//++nsteps;
 						for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
 							core::Size iistate = state_on_node(ii);
 							if ( iistate != 0 ) {
@@ -308,10 +311,10 @@ void FlexbbSimAnnealer::run()
 				//std::cout << valid_bb_move << std::endl;
 				if ( ! valid_bb_move ) continue;
 
-				++num_bb_move_valid;
+				//++num_bb_move_valid;
 				if ( pass_metropolis_multiple_nodes_changing(
 						previous_energy_for_bbfrag,delta_energy, num_changing_nodes) ) {
-					++num_bb_move_accepts;
+					//++num_bb_move_accepts;
 					sconly_move_accessible_state_list_current = false;
 					//std::cerr << "pass_metropolis: bb(2) " << delta_energy << ", " << alternate_energy_newbbfrag << ", " << bestenergy_ << std::endl;
 
@@ -326,7 +329,7 @@ void FlexbbSimAnnealer::run()
 				}
 
 				if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
-					++nsteps;
+					//++nsteps;
 					for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
 						core::Size iistate = state_on_node(ii);
 						if ( iistate != 0 ) {
@@ -370,11 +373,11 @@ void FlexbbSimAnnealer::run()
 				//std::cout << valid_bb_move << std::endl;
 				if ( ! valid_bb_move ) continue;
 
-				++num_bb_sub_valid;
+				//++num_bb_sub_valid;
 				if ( (prevrotamer_state == 0) ||
 						pass_metropolis_multiple_nodes_changing(
 						previous_energy_for_bbfrag, delta_energy, num_changing_nodes) ) {
-					++num_bb_sub_accepts;
+					//++num_bb_sub_accepts;
 
 					/// If we accept a change in backbone conformation, then mark the state list for SCONLY moves as out-of-date.
 					if ( ! rotsets_->rotamers_on_same_bbconf( moltenres_id, rotamer_state_on_moltenres, prevrotamer_state ) ) {
@@ -390,7 +393,7 @@ void FlexbbSimAnnealer::run()
 				}              // end Metropolis criteria
 
 				if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
-					++nsteps;
+					//++nsteps;
 					for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
 						core::Size iistate = state_on_node(ii);
 						if ( iistate != 0 ) {

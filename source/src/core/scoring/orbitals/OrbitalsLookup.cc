@@ -351,7 +351,7 @@ utility::vector1< utility::vector1< core::Real > > OrbitalsLookup::parse_files(
 	basic::database::open( stream, file );
 	core::Size orbital_type(0);
 	core::Size overall_count(1);
-	for ( core::Size count=1; utility::io::getline(stream, line); ++count ) {
+	while ( utility::io::getline(stream, line) ) {
 		utility::vector1< std::string > split_string = utility::string_split(line, '\t'); //file is tab-delimenated
 		if ( split_string[1]=="Orbital" ) {
 			orbital_type = static_cast< core::Size > (core::chemical::orbitals::OrbitalTypeMapper::get_instance()->get_orbital_enum(split_string[2]));

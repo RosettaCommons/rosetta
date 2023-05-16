@@ -248,8 +248,6 @@ Hasher::transform_segments( data_storage::Basis current_basis, bool first ){
 	}
 
 	bool traverse_segments = true;
-	core::Size curr_res = 1;
-	core::Size curr_atom = 1;
 
 	data_storage::SmartSegmentOP seg;
 	if ( first ) {
@@ -264,15 +262,11 @@ Hasher::transform_segments( data_storage::Basis current_basis, bool first ){
 		numeric::xyzVector < core::Real > new_coords;
 
 		for ( data_storage::SmartSewingResidueOP sew_res : seg->get_residue_vector() ) {
-			curr_atom = 1;
 			for ( core::conformation::Atom & atom : sew_res->get_atom_vector() ) {
 				//TESTING maybe this was ok to start with
 				new_coords = ht.to_local_coordinate( atom.xyz() );
-				atom.xyz( numeric::xyzVector< core::Real > (new_coords ) );
-				//TR << "After transformation in transform_segments, atom " << curr_atom << " of Residue " << curr_res << " of segment " << current_segment->get_segment_id() << " has coordinates " << new_coords.to_string() << std::endl;
-				curr_atom++;
+				atom.xyz( new_coords );
 			}
-			curr_res++;
 		}
 		if ( seg->is_c_terminus_fixed() ) {
 			seg = seg->get_c_terminal_neighbor();

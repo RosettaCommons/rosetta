@@ -385,11 +385,10 @@ JumpSelector::select_random() const {
 	auto it = begin();
 	auto eit = end();
 
-	int ct = 1;
 	cumsum += it->weight_;
 	while ( cumsum < ran  ) {
 		runtime_assert ( it != eit );
-		++it; ct++;
+		++it;
 		cumsum += it->weight_;
 	}
 	// freq( ct ) += 1;

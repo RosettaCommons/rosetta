@@ -319,12 +319,12 @@ ModelFeatures::report_features(
 	// as they are found.
 	bron_kerbosch_all_cliques(graph, vis);
 	TR << "Found " << cliques->size() << " cliques" << std::endl;
-	core::Size clique_counter = 0;
+	//core::Size clique_counter = 0;
 	for ( auto const & clique : *cliques ) {
 		if ( clique.size() < min_ss_cluster_size_ || clique.size() > max_ss_cluster_size_ ) {
 			continue;
 		}
-		++clique_counter;
+		//++clique_counter;
 		std::set<core::Size> current_clique = clique;
 		//
 		//  core::pose::Pose clique_pose = pose;

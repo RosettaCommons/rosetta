@@ -207,7 +207,6 @@ D2H_SA_Energy::finalize_total_energy(
 	}
 
 	TR.Debug << "Look for chain: " << chain_for_rsa << " found it between " << rsa_index << " and " << rsa_index_end << std::endl;
-	Size counter2(0);
 
 	if ( fullatom ) {
 		//TR.Debug << "fullatom" << std::endl;
@@ -225,7 +224,6 @@ D2H_SA_Energy::finalize_total_energy(
 				if ( !pose.residue(i).atom_type(aa_i).is_virtual() &&
 						!pose.residue(j).atom_type(aa_j).is_virtual() &&
 						!(j>=rsa_index_start && j<=rsa_index_end && i>=j) ) {
-					counter2++;
 					Vector const v2( pose.residue(j).nbr_atom_xyz() );
 					Real dist(v1.distance_squared( v2 ));
 					if ( dist < 64 ) {

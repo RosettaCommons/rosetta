@@ -735,7 +735,7 @@ void LinearMemNode::update_internal_vectors()
 		get_num_aa_types(), get_num_incident_edges(), get_num_aa_types());
 
 	//copy sparse aa-neighbor info from edges
-	int count_neighbs_with_higher_indices = 0;
+	//int count_neighbs_with_higher_indices = 0;
 	for ( int ii = 1; ii <= get_num_incident_edges(); ++ii ) {
 		neighbors_curr_state_sparse_info_[ii].set_aa_type( 1 );
 		neighbors_state_recent_history_index_[ii] = 0;
@@ -744,7 +744,7 @@ void LinearMemNode::update_internal_vectors()
 			get_incident_linmem_edge(ii)->get_sparse_aa_neighbor_info();
 
 		if ( get_node_index() < get_index_of_adjacent_node(ii) ) {
-			++count_neighbs_with_higher_indices;
+			//++count_neighbs_with_higher_indices;
 			for ( int jj = 1; jj <= get_num_aa_types(); ++jj ) {
 				for ( int kk = 1; kk <= get_num_aa_types(); ++kk ) {
 					aa_neighbors_for_edges_(kk, ii, jj) = edge_aa_neighbs(kk, jj);

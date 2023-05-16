@@ -140,7 +140,7 @@ PQR::PQR(core::pose::Pose const & pose,
 : natoms_(natoms)
 {
 	int nres = pose.size();
-	int cntAtoms = 0;
+	//int cntAtoms = 0;
 
 	for ( int i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd = pose.residue(i);
@@ -160,7 +160,7 @@ PQR::PQR(core::pose::Pose const & pose,
 			z.push_back(atom.xyz()(3));
 			charge.push_back(charged_atoms( i, j )? pose.residue_type(i).atom_charge(j) : 0.);
 			radius.push_back(rsd.atom_type(j).lj_radius());
-			++cntAtoms;
+			//++cntAtoms;
 		}
 	}
 }

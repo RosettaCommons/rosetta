@@ -223,9 +223,7 @@ CentroidRelax::read_default_parameters(){
 	utility::io::izstream param_stream;
 	basic::database::open(param_stream, fname);
 	Real vdw_ramp; Real rama_ramp; Real min; Real cst;
-	core::Size line_count = 0;
 	while ( ! param_stream.eof() ) {
-		++line_count;
 		param_stream >> vdw_ramp >> rama_ramp >> min >> cst;
 		def_parameters.vdw_params.push_back(vdw_ramp);
 		def_parameters.rama_params.push_back(rama_ramp);

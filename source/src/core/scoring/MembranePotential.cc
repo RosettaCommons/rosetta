@@ -626,9 +626,9 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 		Size delta_alpha=membrane_normal_delta_angle_; //vmyy default 10 degrees
 		Size max_alpha=membrane_normal_max_angle_; //vmyy default 40 degrees
 		Size nres=pose.size();
-		Size counter=0;
-		Size accepted=0;
-		Size thermally_accepted=0;
+		//Size counter=0;
+		//Size accepted=0;
+		//Size thermally_accepted=0;
 
 		if ( basic::options::option[basic::options::OptionKeys::membrane::fixed_membrane] ) {
 			for ( Size i = 1; i <= nres; ++i ) {
@@ -753,17 +753,17 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 					accepted_score=score;
 					accepted_center=trial_center;
 					accepted_normal=trial_normal;
-					++accepted;
+					//++accepted;
 				} else {
-					++counter;
+					//++counter;
 					Real const boltz_factor=(accepted_score-score)/temperature;
 					Real const probability = std::exp( std::min ((core::Real)40.0, std::max((core::Real)-40.0,boltz_factor)) );
 					if ( numeric::random::rg().uniform()<probability ) {
 						accepted_score=score;
 						accepted_center=trial_center;
 						accepted_normal=trial_normal;
-						++thermally_accepted;
-						++accepted;
+						//++thermally_accepted;
+						//++accepted;
 					} else {
 						trial_center=accepted_center;
 						trial_normal=accepted_normal;

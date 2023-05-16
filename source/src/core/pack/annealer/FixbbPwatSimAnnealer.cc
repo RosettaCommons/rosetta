@@ -153,7 +153,7 @@ void FixbbPwatSimAnnealer::run() {
 		set_temperature( temp_low );
 		int inneriterations = 6*totalrot;
 
-		int accepts = 0;
+		//int accepts = 0;
 		for ( int n = 1; n <= inneriterations; ++n ) {  // normal inneriterations
 			int const ranrotamer = pick_a_rotamer( n );
 			if ( ranrotamer == -1 ) continue;
@@ -180,7 +180,7 @@ void FixbbPwatSimAnnealer::run() {
 				delta_energy, previous_energy_for_node);
 
 			if ( (prevrotamer_state == 0) || pass_metropolis(previous_energy_for_node,delta_energy) ) {
-				accepts++;
+				//accepts++;
 				currentenergy = ig_->commit_considered_substitution();
 				state_on_node(moltenres_id) = rotamer_state_on_moltenres;
 				if ( (prevrotamer_state == 0)||(currentenergy < bestenergy() ) ) {

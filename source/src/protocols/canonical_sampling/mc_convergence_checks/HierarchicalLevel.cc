@@ -81,11 +81,9 @@ PoolData::setup( core::Size nlevels ){
 
 void
 HierarchicalLevel::get_addresses_at_level( utility::vector1< Address >& addresses_at_level ) {
-	core::Size num_addresses_at_level = 0;
 	for ( auto & itr : pool_cache_ ) {
 		Address addr = itr.address_;
 		addresses_at_level.push_back( addr );
-		num_addresses_at_level++;
 	}
 }
 

@@ -3498,10 +3498,14 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 			for ( ConstFrameIterator frame_i = f->begin(); frame_i != f->end(); ++frame_i ) {
 				if ( allowedPos.find((*frame_i)->start()) != allowedPos.end() ) {
 					FrameOP tmp_frame = (*frame_i)->clone();
+#ifndef NDEBUG
 					core::Size frag_ct= 0;
+#endif
 					for ( core::Size ii = 1; ii<=(*frame_i)->nr_frags(); ++ii ) {
 						if ( (*frame_i)->fragment(ii).score()<fragScoreThreshold ) {
+#ifndef NDEBUG
 							frag_ct++;
+#endif
 							tmp_frame->add_fragment((*frame_i)->fragment_ptr(ii));
 						}
 					}

@@ -133,7 +133,7 @@ void FixbbSimAnnealer::run()
 	FArray1D_float loopenergy(maxouteriterations,0.0);
 
 	//bk variables for calculating rotamer frequencies during simulation
-	int nsteps = 0;
+	//int nsteps = 0;
 	FArray1D_int nsteps_for_rot( ig_->get_num_total_states(), 0 );
 
 	//--------------------------------------------------------------------
@@ -268,7 +268,7 @@ void FixbbSimAnnealer::run()
 			float const temperature = get_temperature();
 
 			if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
-				++nsteps;
+				//++nsteps;
 				for ( int ii = 1; ii <= nmoltenres; ++ii ) {
 					int iistate = state_on_node(ii);
 					if ( iistate != 0 ) {

@@ -599,7 +599,7 @@ StrongWolfeLineMinimization::zoom(
 	Real func_test( 0.0 );
 	Real deriv_test( 0.0 );
 
-	int static step_count( 0 );
+	//int static step_count( 0 );
 	Size iterations( 0 );
 	Size const max_iterations_to_try( 8 );
 	Real const min_interval_threshold( 1.0e-5 );
@@ -658,7 +658,7 @@ StrongWolfeLineMinimization::zoom(
 			return alpha_test;
 		}
 
-		step_count++;
+		//step_count++;
 
 		if ( ( func_test > func_zero + param_c1 * alpha_test * deriv_zero ) ||
 				( func_test >= func_low ) ) {

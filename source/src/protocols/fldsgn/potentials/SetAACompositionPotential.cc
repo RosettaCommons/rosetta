@@ -98,10 +98,7 @@ SetAACompositionPotential::set_parameters( String const & file )
 	}
 
 	String line;
-	core::Size linecount( 0 );
 	while ( getline( data, line ) ) {
-
-		linecount++;
 		utility::vector1< String > tokens ( utility::split( line ) );
 		if ( tokens[1][0] == '#' ) continue;    // skip reading line that is commented out
 		runtime_assert( tokens.size() == 3 );

@@ -196,7 +196,7 @@ void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 		}
 
 		std::ifstream listfile( match_pdb_listfilename_.c_str() );
-		core::Size linenum(0), count_matches_added(0);
+		core::Size linenum(0);
 		while ( listfile.good() ) {
 			std::string line;
 			getline( listfile, line );
@@ -215,7 +215,6 @@ void InitializeZNCoordinationConstraintMover::apply( core::pose::Pose & p )
 				utility_exit_with_message("While reading line " + utility::to_string(linenum) + " of " + match_pdb_listfilename_ + " could not read matchfilename\n" + line );
 			}
 			zn_score_->add_match_from_file( matchfilename );
-			++count_matches_added;
 		}
 		zn_score_->finalize_after_all_matches_added();
 		//TR << "Added " << count_matches_added << " Zn matches to the znscore" << std::endl;

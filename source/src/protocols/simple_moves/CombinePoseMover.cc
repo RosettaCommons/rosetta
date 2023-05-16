@@ -90,7 +90,7 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 	sampled_structures_.resize( 0 );
 
 	core::Size const nres( pose_ref().size() );
-	core::Size models_failed( 0 );
+	//core::Size models_failed( 0 );
 	core::Size models_built( 0 );
 
 	// Clear combined residue indices
@@ -113,7 +113,7 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 	pose::Pose pose_min( pose_ref() );
 
 	core::Size i_struct( 0 );
-	core::Size ntry( 0 );
+	//core::Size ntry( 0 );
 	core::Size n_seg_search( 0 );
 
 	while ( true ) {
@@ -154,7 +154,7 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 		}
 
 		i_struct++;
-		ntry++;
+		//ntry++;
 
 		// Replace residues
 		pose::Pose newpose( pose_ref() );
@@ -206,7 +206,7 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 		Real const vdwcut( n_crossover*2.0 );
 
 		if ( score > vdwcut || rmsd > maxrmsd ) {
-			models_failed++;
+			//models_failed++;
 			TR.Debug << "i/max/start/end: " << i_struct << " / " << max_struct_try() << " " << start << " " << end;
 			TR.Debug << ", failed: vdW ";
 			TR.Debug << score << " ? " << vdwcut;

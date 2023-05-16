@@ -1416,7 +1416,6 @@ bool  TMalign::get_initial_local(
 		y2x[ii]=-1;
 	}
 
-	int count=0;
 	for ( int i=ns-1; i<m1; i=i+n_frag ) { //index starts from 0, different from FORTRAN
 		for ( int j=ns-1; j<m2; j=j+n_frag ) {
 			for ( int k=0; k<n_frag; k++ ) { //fragment in y
@@ -1425,7 +1424,6 @@ bool  TMalign::get_initial_local(
 			}
 
 			Kabsch(r1_, r2_, n_frag, 1, &rmsd, t, u);
-			count++;
 
 			core::Real gap_open=0.0;
 			NWDP_TM(x, y, x_len, y_len, t, u, d02, gap_open, invmap);
@@ -1861,7 +1859,6 @@ void  TMalign::alignment2strings(
 	std::string & seqxA,
 	std::string & seqyA,
 	std::string & seqM ) {
-	core::Real seq_id;
 	int i, j, k;
 	core::Real d;
 
@@ -1872,7 +1869,6 @@ void  TMalign::alignment2strings(
 
 	do_rotation(xa_, xt_, xlen_, t_, u_);
 
-	seq_id=0;
 	int kk=0, i_old=0, j_old=0;
 
 	for ( k=0; k<n_ali8_; k++ ) {
@@ -1894,9 +1890,6 @@ void  TMalign::alignment2strings(
 
 		seqxA[kk]=seqx_[m1_[k]];
 		seqyA[kk]=seqy_[m2_[k]];
-		if ( seqxA[kk]==seqyA[kk] ) {
-			seq_id++;
-		}
 		d = sqrt(dist(xt_[m1_[k]], ya_[m2_[k]]));
 		if ( d<d0_out_ ) {
 			seqM[kk]=':';
@@ -1927,7 +1920,6 @@ void  TMalign::alignment2strings(
 	seqxA.resize(kk);
 	seqyA.resize(kk);
 	seqM.resize(kk);
-	//seq_id=seq_id/( n_ali8_+0.00000001); //what did by TMalign, but not reasonable, it should be n_ali8
 }
 
 
@@ -2156,7 +2148,6 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	//select pairs with dis<d8 for final TMscore computation and output alignment
 	n_ali8_=0;
 	int k=0;
-	int n_ali=0;
 	core::Real d;
 	m1_.resize(xlen_); //alignd index in x
 	m2_.resize(ylen_); //alignd index in y
@@ -2165,7 +2156,6 @@ int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pos
 	for ( int j=0; j<ylen_; j++ ) {
 		i=invmap0[j];
 		if ( i>=0 ) { //aligned
-			n_ali++;
 			d=sqrt(dist(xt_[i], ya_[j]));
 			if ( d <= score_d8_ ) {
 				m1_[k]=i;

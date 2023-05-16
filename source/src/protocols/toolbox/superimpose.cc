@@ -220,11 +220,9 @@ void CA_superimpose( FArray1_double const& weights, core::pose::Pose const&  ref
 	Vector toCenter( transvec( 1 ), transvec( 2 ), transvec( 3 ));
 	Vector toFitCenter( ref_transvec( 1 ), ref_transvec( 2 ), ref_transvec( 3 ));
 	{ // translate xx2 by COM and fill in the new ref_pose coordinates
-		core::Size atomno(0);
 		Vector x2;
 		for ( core::Size i=1; i<= fit_pose.size(); ++i ) {
 			for ( core::Size j=1; j<= fit_pose.residue_type(i).natoms(); ++j ) { // use residue_type to prevent internal coord update
-				++atomno;
 				fit_pose.set_xyz( id::AtomID( j,i), R * ( fit_pose.xyz( id::AtomID( j, i) ) + toCenter ) - toFitCenter );
 			}
 		}

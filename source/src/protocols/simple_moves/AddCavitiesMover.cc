@@ -148,7 +148,6 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 	core::scoring::func::FuncOP func( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 
 	// std::cerr << "add sucker atoms" << std::endl;
-	int count = 0;
 	for ( int i = 1; i <= std::min(Ncb,(int)cbs.size()); ++i ) {
 		if ( cbs[i].radius() < min_size_ ) {
 			break;
@@ -165,7 +164,6 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 			AtomID(1,virt_resno),
 			sucker->xyz(1),
 			func ) ) );
-		++count;
 	}
 	//std::cerr << "added " << count << " suckers" << std::endl;
 

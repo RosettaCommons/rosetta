@@ -122,7 +122,6 @@ LeeRichards::compute(
 		slices_.push_back( new Slice(accum,spacing,internal_allowed) );
 	}
 
-	int count = 0;
 	for ( Size i = 1; i <= spheres.size(); ++i ) {
 		Sphere & s(spheres[i]);
 		if ( s.aid.rsd() == 0 ) s.aid.rsd() = i;
@@ -147,7 +146,6 @@ LeeRichards::compute(
 			// << fmin( 1.0,-d/rad+spacing/2.0)  << " "
 			// << fmax(-1.0,-d/rad-spacing/2.0) << std::endl;
 			slices_[first]->add_circle( new Circle(x,y,r,drdz,dada,s.aid) );
-			++count;
 			++first;
 		}
 		// std::cerr << " " << std::endl;

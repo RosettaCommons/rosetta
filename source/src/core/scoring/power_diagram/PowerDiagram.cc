@@ -1851,10 +1851,10 @@ void
 print_vertices( std::list< PDvertexOP > & v )
 {
 
-	Size finite_count( 0 );
+	//Size finite_count( 0 );
 	for ( auto & itr : v ) {
 		if ( itr->finite() ) {
-			finite_count++;
+			//finite_count++;
 			TR << "ATOM  " << I(5,itr->id()) << "  FE  FIN X" <<
 				I(4,itr->id()) << "    " <<
 				F(8,3,itr->xyz()(1)) <<

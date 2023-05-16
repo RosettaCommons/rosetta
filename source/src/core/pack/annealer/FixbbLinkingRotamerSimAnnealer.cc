@@ -167,7 +167,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	FArray1D< core::PackerEnergy > loopenergy(maxouteriterations,0.0);
 
 	//bk variables for calculating rotamer frequencies during simulation
-	core::Size nsteps = 0;
+	//core::Size nsteps = 0;
 	FArray1D_int nsteps_for_rot( ig_->get_num_total_states(), 0 );
 
 	//--------------------------------------------------------------------
@@ -489,7 +489,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			core::PackerEnergy const temperature = get_temperature();
 
 			if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
-				++nsteps;
+				//++nsteps;
 				for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
 					int iistate = state_on_node(ii);
 					if ( iistate != 0 ) {

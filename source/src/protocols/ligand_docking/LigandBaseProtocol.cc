@@ -254,15 +254,11 @@ void frac_atoms_within(
 	if ( rsd1.type().name3() != rsd2.type().name3() ) utility_exit_with_message("Residue type name3 mismatch");
 	if ( rsd1.nheavyatoms()  != rsd2.nheavyatoms()  ) utility_exit_with_message("Residue number-of-heavy-atoms mismatch");
 	fractions_out.resize(cutoffs.size(), 0);
-	int counter = 0;
 	// Make atom-number translation table
 	AutomorphismIterator ai( rsd1.type() );
 	AtomIndices old2new( ai.next() );
 	// For each permutation of automorphisms...
 	while ( old2new.size() > 0 ) {
-		counter++;
-		//if( counter%10000 == 0 ) tr.Info << counter << " so far..." << std::endl;
-
 		// Print out translation table for debugging
 		//std::cout << "[";
 		//for(core::Size i = 1; i <= old2new.size(); ++i) std::cout << " " << old2new[i];

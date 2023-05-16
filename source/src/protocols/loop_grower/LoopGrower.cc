@@ -786,7 +786,6 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	Real score_best = 1e10;
 	core::pose::Pose best_pose;
 	core::kinematics::FoldTree ft_final = pose.fold_tree();
-	int fctr=0;
 	restore_sc = utility::pointer::make_shared< protocols::simple_moves::ReturnSidechainMover >( pose );
 
 	//get the cutpoint for transfer
@@ -813,7 +812,6 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	Real bestRMS=999;
 	Real bestGDT=0;
 	for ( core::Size i=1; i<=solutionset.size(); i++ ) {
-		fctr++;
 		LoopPartialSolution lps = solutionset[i];
 		if ( !is_nterm && !is_cterm ) {
 			pose.fold_tree(ft_final);
@@ -1376,11 +1374,9 @@ LoopPartialSolution::add_sheets(core::pose::Pose & pose, core::Size takeoffres, 
 	core::Size newlower = totalres/2;
 	core::Size newupper = totalres - newlower;
 
-	core::Size midres = pose.total_residue();
 	core::Size count = 0;
 	for ( core::Size i=1; i<=newlower; i++ ) {
 		pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, pose.total_residue()-count, true);
-		midres++;
 		count++;
 	}
 	for ( core::Size i=1; i<newupper; i++ ) {
@@ -1516,16 +1512,18 @@ Real LoopPartialSolution::max_calpha_distance( const LoopPartialSolution & newlp
 	utility::vector1< utility::vector1< core::Vector > > newbackbone = newlps.get_backbone();
 	runtime_assert( calphas_.size() == newcalphas.size() );
 	if ( takeoffonly ) {
+		// THIS BLOCK DOES NOTHING! - BUG???
+		/*
 		core::Size i;
 		if ( is_lower ) {
-			i = (total_lower-fragmelt-1) * 3;
+		i = (total_lower-fragmelt-1) * 3;
 		} else {
-			i = (total_lower+fragmelt) * 3 + 1;
+		i = (total_lower+fragmelt) * 3 + 1;
 		}
 		for ( core::Size j=1; j<=5; j++ ) {
-			i++;
+		i++;
 		}
-
+		*/
 	} else {
 		for ( core::Size i=1; i<=newcalphas.size(); i++ ) {
 			if ( !full_loop ) {
@@ -3005,7 +3003,6 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, core::Size rangelo, core::S
 	core::Size res_windowlength = 8; //it may be  worthwhile to make this something that can be set in the xml don't forget to also put this in the non window_dens score
 	Real worst_atom = -9999;
 	Real total_fast_dens = 0;
-	core::Size atomcounter = 0;
 
 	//this is just for a test
 	//(*sf_)(pose);
@@ -3027,7 +3024,6 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, core::Size rangelo, core::S
 				resatomcount-=1;
 				continue;
 			}
-			atomcounter++;
 			Real atomdens;// = density_weight*-core::scoring::electron_density::getDensityMap().matchAtomFast( i, j, currentres, pose, NULL );
 			if ( skeleton_file_ != "" ) {
 				atomdens = density_weight*-skeleton_.matchAtomFast( i, j, currentres, pose );

@@ -326,7 +326,6 @@ public:
 	void mark (core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & buffer, bool polar=false, int targetResi=0);
 	void mark (core::Vector const & center, core::Real const & vdWd, core::Real const & buffer, bool polar=false, int targetResi=0);
 
-	void clearSmallPockets(core::Size minsize);
 	void findClusters();
 	void findExemplars(core::pose::Pose const & inPose, core::Size const total_residues);
 	void findClustersByExemplars();

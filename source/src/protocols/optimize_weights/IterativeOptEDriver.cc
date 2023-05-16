@@ -3589,7 +3589,7 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 
 	// used to restrict design to one position at a time
 	utility::vector1< bool > task_mask( pose.size(), false );
-	core::Size num_diffs_between_native_and_input( 0 );
+	//core::Size num_diffs_between_native_and_input( 0 );
 
 	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 
@@ -3645,10 +3645,10 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 		this_pos_data->tag( pdb_name );
 		this_pos_data->set_position( resi );
 		this_pos_data->set_native_aa( native_pose.residue( resi ).aa() );
-		if ( native_pose.residue( resi ).aa() != pose.residue( resi ).aa() ) {
-			//std::cout << "native_residue # " << resi << " of " << native_pose.residue( resi ).aa() << " differs with pose residue " << pose.residue( resi ).aa() << std::endl;
-			++num_diffs_between_native_and_input;
-		}
+		//if ( native_pose.residue( resi ).aa() != pose.residue( resi ).aa() ) {
+		//std::cout << "native_residue # " << resi << " of " << native_pose.residue( resi ).aa() << " differs with pose residue " << pose.residue( resi ).aa() << std::endl;
+		//++num_diffs_between_native_and_input;
+		//}
 		this_pos_data->set_neighbor_count(
 			pose.energies().tenA_neighbor_graph().get_node( resi )->num_neighbors_counting_self() );
 
@@ -5051,7 +5051,6 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 
 		utility::io::izstream input_fixed( option[ optE::fixed ]() );
 		if ( !input_fixed ) utility_exit_with_message("Couldn't find input file for 'fixed' parameters");
-		core::Size fixed_line_number = 1;
 		while ( input_fixed ) {
 			utility::vector1< std::string > line_tokens = core::pack::task::tokenize_line( input_fixed );
 			if ( line_tokens.size() == 0 ) {
@@ -5072,7 +5071,6 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 				std::cerr << std::endl << "Expected exactly 2 tokens" << std::endl;
 				utility_exit();
 			}
-			++fixed_line_number;
 		}
 
 		///  HARD CODED DEFAULTS FOR THOSE THAT LIKE RECOMPILING

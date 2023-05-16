@@ -97,13 +97,13 @@ void CenrotLibrary::create_centroid_rotamer_libraries_from_ASCII()
 	std::string nextaa;
 	libstream >> nextaa;
 
-	Size count_libraries_read( 0 );
+	//Size count_libraries_read( 0 );
 	while ( nextaa != "" ) {
 		chemical::AA aan = chemical::aa_from_name( nextaa );
 		SingleResidueCenrotLibraryOP newlib( new SingleResidueCenrotLibrary(aan) );
 		/// read the rotlib for current aa and save the name of the next one
 		nextaa = newlib->read_from_file( libstream, true );
-		++count_libraries_read;
+		//++count_libraries_read;
 
 		// We put the test here so that we eat the remaining portion of the block.
 		if ( aan > chemical::num_canonical_aas ) {

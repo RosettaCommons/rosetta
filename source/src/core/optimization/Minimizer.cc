@@ -367,7 +367,7 @@ Minimizer::dfpmin_armijo(
 	constexpr int HOPT( 2 );
 
 	// get function and its gradient
-	int NF = 1;    // number of func evaluations
+	//int NF = 1;    // number of func evaluations
 	Real prior_func_value = func_(P);
 	func_.dfunc(P,G);
 
@@ -491,7 +491,7 @@ Minimizer::dfpmin_armijo(
 			func_.dfunc(P,G);
 		}
 
-		NF++;
+		//NF++;
 
 		line_min->_deriv_sum = 0.0;      //needed if HOPT = 2
 		Real DRVNEW = 0.0;      //needed if HOPT = 2

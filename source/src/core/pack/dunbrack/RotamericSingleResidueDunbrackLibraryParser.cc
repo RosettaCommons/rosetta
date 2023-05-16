@@ -156,7 +156,7 @@ RotamericSingleResidueDunbrackLibraryParser::read_file(
 	std::string const my_name( chemical::name_from_aa( aa ) );
 	std::string three_letter_code;
 	bool is_shapovalov_file(false);
-	core::Size read_rotamer_count(0); //Number of rotamers successfully read in.
+	//core::Size read_rotamer_count(0); //Number of rotamers successfully read in.
 	bool suppress_symmetrization( false ), finished_reading_header( false );
 
 	while ( infile ) {
@@ -283,7 +283,7 @@ RotamericSingleResidueDunbrackLibraryParser::read_file(
 			chi_std_devs_.push_back(chi_std_devs);
 		}
 
-		if ( !correct_for_duplicated_mainchain_data() ) ++read_rotamer_count;
+		//if ( !correct_for_duplicated_mainchain_data() ) ++read_rotamer_count;
 
 	} //Continue to next line in file.
 

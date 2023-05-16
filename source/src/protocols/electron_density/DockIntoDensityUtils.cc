@@ -1035,7 +1035,7 @@ cluster_RBfitResultDB_fast(
 	utility::vector1< bool > selector(results_sort.size(), false);
 
 	numeric::xyzVector< core::Real > i_posttrans_cart, j_posttrans_cart;
-	core::Real nsel=0, distance=0.0;
+	core::Real distance=0.0;
 	for ( core::Size i=results_sort.size(); i>=1; --i ) {
 		if ( max_results != 0 && max_results == results.size() ) break;
 		selector[i] = true;
@@ -1059,7 +1059,6 @@ cluster_RBfitResultDB_fast(
 
 		if ( selector[i] ) {
 			results.add_element( results_sort[i] );
-			nsel++;
 		}
 	}
 	return;

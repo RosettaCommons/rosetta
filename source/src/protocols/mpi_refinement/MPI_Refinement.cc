@@ -158,7 +158,6 @@ MPI_Refinement::load_structures_from_cmdline_into_library(
 
 	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 
-	core::Size count = 0;
 	SilentStructStore temp_lib;
 
 	// Rescore input structures for fair comparison with whatever comes back from relax calls
@@ -228,7 +227,6 @@ MPI_Refinement::load_structures_from_cmdline_into_library(
 		add_poseinfo_to_ss( *ss, pose0_, "_i" );
 
 		library.add( ss );
-		count ++;
 	}
 
 	if ( library.size() == 0 ) {
@@ -608,9 +606,7 @@ MPI_Refinement::dump_structures( const SilentStructStore &new_structs,
 	core::io::silent::SilentFileData sfd( silent_options );
 	std::string filename = jobname_ + "." + prefix + ObjexxFCL::string_of( mpi_rank() ) + ".out";
 
-	core::Size istr( 0 );
 	for ( auto const & new_struct : new_structs ) {
-		istr++;
 		sfd.write_silent_struct( *new_struct, filename, score_only );
 	}
 	core::Real write_time = start_timer( TIMING_CPU );
@@ -696,10 +692,8 @@ MPI_Refinement::send_sortedpick_library_structs( core::Size dest_rank,
 	TR << "Random number picked: ";
 	for ( core::Size ipick = 1; ipick <= nsend; ++ipick ) {
 		core::Size k( 0 );
-		core::Size iter( 0 );
 		while ( true ) {
 			core::Real rnum = numeric::random::rg().uniform();
-			iter++;
 
 			for ( core::Size j = 0; j < n; ++j ) {
 				if ( !(accprob[j] <= rnum) ) {

@@ -373,7 +373,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 			int coreCount = 0;
 			int boundaryCount = 0;
-			int surfCount = 0;
+			//int surfCount = 0;
 
 			for ( unsigned jj = 1; jj <= copies.size(); ++jj ) {
 
@@ -388,7 +388,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 					} else if ( sizemap[ copies[jj] ] > CORE_CUTOFF && sizemap[ copies[jj] ] <= BOUNDARY_CUTOFF ) {
 						boundaryCount++;
 					} else if ( sizemap[ copies[jj] ] > BOUNDARY_CUTOFF ) {
-						surfCount++;
+						//surfCount++;
 					} else {
 						TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
 					}
@@ -399,7 +399,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 					} else if ( sizemap[ copies[jj] ] < CORE_CUTOFF && sizemap[ copies[jj] ] >= BOUNDARY_CUTOFF ) {
 						boundaryCount++;
 					} else if ( sizemap[ copies[jj] ] < BOUNDARY_CUTOFF ) {
-						surfCount++;
+						//surfCount++;
 					} else {
 						TR << "RESCLASS ERROR" << sizemap[i] << std::endl;
 					}

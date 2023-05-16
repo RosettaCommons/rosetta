@@ -644,7 +644,7 @@ GenericBondedPotential::read_database(
 
 	// map atom names to ATS indices - handle wildcards
 	ReadMode read_mode = rmNONE;
-	Size linenum( 0 );
+	//Size linenum( 0 );
 	natomtypes = 0;
 	std::string fileline, tag;
 	// special treatment of "fallbacks", e.g. 'X' in the params file
@@ -653,7 +653,7 @@ GenericBondedPotential::read_database(
 	while ( instream ) {
 		getline(instream, fileline);
 		std::istringstream linestream(fileline);
-		linenum ++;
+		//linenum ++;
 
 		if ( fileline.length() < 2 ) continue;
 

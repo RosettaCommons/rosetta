@@ -1398,11 +1398,6 @@ void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const
 
 }
 
-void PocketGrid::clearSmallPockets(core::Size minsize){
-	core::Size tmp=minsize;
-	tmp++;
-}
-
 void PocketGrid::print() const{
 	for ( core::Size z=0; z<zdim_; z++ ) {
 		for ( core::Size x=0; x<xdim_; x++ ) {
@@ -1427,7 +1422,6 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_filename, std::ios::out);
-	int counter=1;
 	int counter2=9;
 
 	numeric::xyzMatrix<core::Real> inv_rot_mat;
@@ -1517,7 +1511,6 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 				tmp<<"     1    " <<  std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<std::endl;
 
 				concatenated_pdb_info += tmp.str();
-				counter++;
 				outPDB_stream<<concatenated_pdb_info;
 				counter2++;
 			}
@@ -1597,14 +1590,12 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 	int counter2=1;
 	int clustNo=1;
 	//bool smallPocket;
-	int count=0;
 
 	//This will generate a new matrix called inv_rot_mat that can be multiplied by each coordinate to get us back to the original frame
 	numeric::xyzMatrix<core::Real> inv_rot_mat;
 	inv_rot_mat = rot_mat_.inverse();
 
 	for ( auto & cluster : c_clusters_.clusters_ ) {
-		count++;
 
 		if ( !cluster.isTarget(numTargets_) ) {
 			continue;
@@ -3402,7 +3393,6 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_filename, std::ios::out);
-	int counter=1;
 	int counter2=9;
 
 	outPDB_stream<<"ATOM      1  C   C            "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<0*stepSize_+xcorn_<<std::setw(8)<<0*stepSize_+ycorn_<<std::setw(8)<<0*stepSize_+zcorn_<<std::endl;
@@ -3482,7 +3472,6 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 				tmp.str(std::string());
 				tmp<<"          "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<x*stepSize_+xcorn_<<std::setw(8)<<y*stepSize_+ycorn_<<std::setw(8)<<z*stepSize_+zcorn_<<std::endl;
 				concatenated_pdb_info += tmp.str();
-				counter++;
 				outPDB_stream<<concatenated_pdb_info;
 			}
 		}

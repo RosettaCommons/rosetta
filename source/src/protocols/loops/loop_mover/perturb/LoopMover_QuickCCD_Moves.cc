@@ -196,7 +196,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	mc_->reset( pose );
 	mc_->set_temperature( temperature );
 
-	int   frag_count   = 0;
+	//int   frag_count   = 0;
 	scorefxn()->show_line_headers( tr().Info );
 
 	float final_chain_break_weight = 5.0;
@@ -247,7 +247,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 					if ( ((*it)->fragments()->max_frag_length() == 9 ) && (uniform() < option[OptionKeys::loops::skip_9mers ]() ) ) continue;
 
 					(*it)->apply( pose );
-					frag_count++;
+					//frag_count++;
 				}
 			} else {
 				//do ccd_moves here

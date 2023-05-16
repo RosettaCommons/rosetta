@@ -350,7 +350,6 @@ EnzdesLoopInfo::read_loops_file_block(
 	ss_strings_.clear();
 	res_interactions_.clear();
 	cstres_interactions_.clear();
-	core::Size linenum(0);
 
 	utility::vector1< std::string > tokens;
 	tokens.push_back("");
@@ -367,7 +366,6 @@ EnzdesLoopInfo::read_loops_file_block(
 			tr.Error << "end of file reached before LOOP_END tag was found." << std::endl;
 			return false;
 		}
-		linenum++;
 
 		std::string line;
 		getline( data, line );

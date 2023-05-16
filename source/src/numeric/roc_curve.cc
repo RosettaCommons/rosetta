@@ -148,10 +148,10 @@ void RocCurve::generate_roc_curve()
 	roc_curve_.clear();
 
 	platform::Real true_positives = 0.0;
-	platform::Real false_negatives = 0.0;
+	//platform::Real false_negatives = 0.0;
 
 	platform::Real false_positives = 0.0;
-	platform::Real true_negatives = 0.0;
+	//platform::Real true_negatives = 0.0;
 
 
 	//push an initial 0,0 point into the array
@@ -170,10 +170,10 @@ void RocCurve::generate_roc_curve()
 					++false_positives;
 					break;
 				case true_negative :
-					++true_negatives;
+					//++true_negatives;
 					break;
 				case false_negative :
-					++false_negatives;
+					//++false_negatives;
 					break;
 				default :
 					utility_exit_with_message("invalid RocPoint status, I have no idea how this happened");

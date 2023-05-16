@@ -1377,8 +1377,6 @@ void set_extended_torsions(
 	Real const init_psi  (  150.0 );
 	Real const init_omega(  180.0 );
 
-	static int counter = 0;
-
 	tt.Debug << "Extending loop " << loop.start() << " " << loop.stop() << std::endl;
 
 	idealize_loop(pose, loop );
@@ -1391,7 +1389,6 @@ void set_extended_torsions(
 		if ( ( i != start_extended ) && ( i != end_extended ) ) pose.set_omega( i, init_omega );
 	}
 
-	counter++;
 }
 
 

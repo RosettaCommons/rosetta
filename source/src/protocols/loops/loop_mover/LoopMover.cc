@@ -211,8 +211,6 @@ void LoopMover::set_extended_torsions(
 	Real const init_psi  (  150.0 );
 	Real const init_omega(  180.0 );
 
-	static int counter = 0;
-
 	tr().Debug << "Extending loop torsions" << loop.start() << " " << loop.stop()
 		<< std::endl;
 
@@ -225,8 +223,6 @@ void LoopMover::set_extended_torsions(
 		if ( i != end_extended ) pose.set_psi( i, init_psi );
 		if ( ( i != start_extended ) && ( i != end_extended ) ) pose.set_omega( i, init_omega );
 	}
-
-	counter++;
 }
 
 std::string

@@ -193,7 +193,6 @@ void SampleRotamersFromPDB_RotamerSetOperation::fill_rotamer_matrix_from_db_file
 	db_in.open(db_file_.c_str(), std::ios::in);
 
 	if ( db_in.is_open() ) {
-		core::Size line_num = 1;
 
 		while ( (getline(db_in, line)) && (!line.empty()) ) {
 			utility::vector1<std::string> Rots;
@@ -204,7 +203,6 @@ void SampleRotamersFromPDB_RotamerSetOperation::fill_rotamer_matrix_from_db_file
 			//TR<<Rots.back()<<std::endl;
 			resi_vec.push_back(Rots);
 			//TR<<resi_vec[line_num][2]<<std::endl;
-			line_num++;
 		}
 		db_in.close();
 	} else {
@@ -283,10 +281,8 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_db(core::
 			continue;
 		}
 		//TR<<"Residue is allowed"<<std::endl;
-		core::Size count = 0;
 		irot = 0;
 		for ( Rotamers::const_iterator it = rotamer_set.begin(), ite = rotamer_set.end(); it != ite; ++it ) {
-			count++;
 			irot++;    //moving irot to the first position of the rotamers_to_delete vecotr1
 			core::conformation::ResidueOP rop(*it); //rotamer from rotamer set of pose
 			if ( rop->is_similar_rotamer(*cur_rot) ) {
@@ -356,10 +352,8 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_db(core::
 			continue;
 		}
 		//TR<<"Residue is allowed"<<std::endl;
-		core::Size count = 0;
 		irot = 0;
 		for ( Rotamers::const_iterator it = rotamer_set.begin(), ite = rotamer_set.end(); it != ite; ++it ) {
-			count++;
 			irot++;    //moving irot to the first position of the rotamers_to_delete vecotr1
 			core::conformation::ResidueOP rop(*it); //rotamer from rotamer set of pose
 			if ( rop->is_similar_rotamer(*cur_rot) ) {
@@ -441,10 +435,8 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_pdb(core:
 		TR<<is_residue_allowed(restype, rtask)<<std::endl;
 		if ( is_residue_allowed(restype, rtask) ) {
 			core::conformation::ResidueOP cur_rot;
-			core::Size count = 0;
 			irot = 0;
 			for ( Rotamers::const_iterator it = rotamer_set.begin(), ite = rotamer_set.end(); it != ite; ++it ) {
-				count++;
 				irot++; //moving irot to the first position of the rotamers_to_delete vecotr1
 				cur_rot = ubr_pose.residue(nearest_on_ubr_pose).clone();
 				core::conformation::ResidueOP rop(*it);
@@ -755,8 +747,6 @@ rot_matrix RotLibdb::fill_rotamer_matrix_from_db_file(std::string fname) {
 	db_in.open(fname.c_str(), std::ios::in);
 
 	if ( db_in.is_open() ) {
-		core::Size line_num = 1;
-
 		while ( (getline(db_in, line)) && (!line.empty()) ) {
 			utility::vector1<std::string> Rots;
 			boost::split(Rots, line, boost::is_any_of(","), boost::token_compress_on);
@@ -766,7 +756,6 @@ rot_matrix RotLibdb::fill_rotamer_matrix_from_db_file(std::string fname) {
 			//TR<<Rots.back()<<std::endl;
 			resi_vec.push_back(Rots);
 			//TR<<resi_vec[line_num][2]<<std::endl;
-			line_num++;
 		}
 		db_in.close();
 	} else {

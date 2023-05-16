@@ -432,14 +432,12 @@ void setup_pose_from_rbsegs(
 	resmap.resize( nres, nres_rb );
 
 	pose_out.clear();
-	int rb_ctr = 0;
 	for ( core::Size i=1; i <= rbsegs_with_ligands.size(); ++i ) {
 
 		for ( core::Size j=1; j<=rbsegs_with_ligands[i].nContinuousSegments(); ++j ) {
 			core::Size rb_start  = rbsegs_with_ligands[i][j].start() ,
 				rb_end    = rbsegs_with_ligands[i][j].end()   ;
 			int nsegment_reses = rb_end - rb_start + 1;
-			rb_ctr++;
 
 			char secstruct = rbsegs_with_ligands[i][j].char_type();
 

@@ -119,7 +119,6 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 
 	//core::Size total_starttime = time(NULL);
 
-	static int casecount = 0;
 	core::pose::Pose opose = pose;
 	std::vector< core::io::silent::SilentStructOP > lib_structs;
 
@@ -221,7 +220,6 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 			relax_winner = rpose;
 		}
 	}
-	casecount++;
 
 
 	std::cout << "SETTING Relax winner" << std::endl;

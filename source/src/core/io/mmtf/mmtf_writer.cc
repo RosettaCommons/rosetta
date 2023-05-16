@@ -248,7 +248,7 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 	int32_t chainIndex = 0; // unused
 	int32_t modelIndex = 0;
 	unsigned int atomIndex = 0;
-	int group_bonds(0), inter_bonds(0);
+	//int group_bonds(0), inter_bonds(0);
 	std::vector<core::Size>type_check;
 	// TODO this function sucks :(
 	for ( core::Size i=0; i<AIM.size(); ++i, ++modelIndex ) {  // for each model
@@ -286,7 +286,7 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 									break;
 								}
 							}
-							++group_bonds;
+							//++group_bonds;
 						} else {  // Not same group
 							bool const already_in_bondAtomList = is_in_bondAtomList(sd.bondAtomList, atomIndex,
 								link_buddy-1);  // based on overall atom number
@@ -298,7 +298,7 @@ add_bonds_to_sd(::mmtf::StructureData & sd,
 								sd.bondOrderList.push_back((int8_t)1);
 								sd.bondResonanceList.push_back((int8_t)-1);
 							}
-							++inter_bonds;
+							//++inter_bonds;
 						}
 						++sd.numBonds;
 					}

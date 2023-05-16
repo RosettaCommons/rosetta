@@ -145,7 +145,6 @@ PreProlineFilter::compute_spline(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & selection ) const
 {
-	core::Size pro_count = 0;
 	core::Real potential_sum = 0.0;
 	for ( core::Size i = 1; i < pose.size(); ++i ) {
 		if ( ! selection[ i + 1 ] ) {
@@ -160,7 +159,6 @@ PreProlineFilter::compute_spline(
 			continue;
 		}
 
-		++pro_count;
 		core::Real const splinescore = spline_.F( pose.phi( i ), pose.psi( i ) );
 		TR << "Phi = " << pose.phi( i ) << " Psi = " << pose.psi( i )
 			<< " spline score = " << splinescore << std::endl;
@@ -175,7 +173,7 @@ PreProlineFilter::compute_simple(
 	utility::vector1< bool > const & selection ) const
 {
 	// as a simple first trial, only "B" and "E" torsion spaces should be allowed
-	auto bad_count = core::Size( 0.0 );
+	auto bad_count = core::Size( 0 );
 	auto pro_count = core::Size( 0 );
 	std::string const & sequence = pose.sequence();
 	std::string const abegos = abego_str( core::sequence::get_abego( pose, 1 ) );

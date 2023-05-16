@@ -1235,9 +1235,9 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 
 	std::list< std::string > pdb_names;
 	core::Size count_pdbs = 0;
-	core::Size pdbvec_linenum = 0;
+	//core::Size pdbvec_linenum = 0;
 	while ( pdbvec_file ) {
-		++pdbvec_linenum;
+		//++pdbvec_linenum;
 		std::string line;
 		std::getline( (std::istream &) (pdbvec_file), line );
 		if ( line.size() == 0 ) continue;

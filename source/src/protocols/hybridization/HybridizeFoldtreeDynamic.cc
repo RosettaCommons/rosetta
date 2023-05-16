@@ -486,14 +486,20 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			get_core_chunk_index_from_position( strand_pairs_[i].first, i_index );
 			get_core_chunk_index_from_position( strand_pairs_[i].second, j_index );
 			debug_assert( i_index && j_index );
+#ifndef NDEBUG
 			core::Size paircnt = 0;
+#endif
 			if ( !rooted_chunk_indices.count(i_index) && !rooted_chunk_indices_.count(i_index) ) {
 				floating_pair_chunks.insert(i_index);
+#ifndef NDEBUG
 				paircnt++;
+#endif
 			}
 			if ( !rooted_chunk_indices.count(j_index) && !rooted_chunk_indices_.count(j_index) ) {
 				floating_pair_chunks.insert(j_index);
+#ifndef NDEBUG
 				paircnt++;
+#endif
 			}
 			debug_assert( paircnt == 0 || paircnt == 2 );
 		}

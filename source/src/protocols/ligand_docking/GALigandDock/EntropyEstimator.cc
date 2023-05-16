@@ -415,7 +415,6 @@ EntropyEstimator::estimate_Stors(
 
 	core::Real Eprv = sfxn_->score( pose );
 
-	core::Size nacc( 0 );
 	core::pose::Pose pose_min = pose;
 	core::Real Emin( 1e6 );
 	core::Real RT(0.0);
@@ -438,7 +437,6 @@ EntropyEstimator::estimate_Stors(
 		core::Real rannum( numeric::random::rg().uniform() );
 		if ( Boltz > rannum ) { // accept
 			Eprv = E;
-			nacc++;
 			currentchi.E = E;
 
 			if ( pertlig ) {

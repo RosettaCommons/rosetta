@@ -28,7 +28,7 @@ numeric::Real sq_vec_distance(
 	using numeric::Size;
 	using utility::vector1;
 
-	static Size n_comp( 0 );
+	//static Size n_comp( 0 );
 
 	numeric::Real dist( 0.0 );
 	for ( auto
@@ -41,7 +41,7 @@ numeric::Real sq_vec_distance(
 	}
 	//std::cout << "dist = " << dist << std::endl;
 
-	n_comp++;
+	//n_comp++;
 	//std::cout << "n_comp = " << n_comp << std::endl;
 
 	return dist;

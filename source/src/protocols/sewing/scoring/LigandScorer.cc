@@ -84,7 +84,7 @@ LigandScorer::score(
 
 	TR << "Beginning ligand score" << std::endl;
 	core::Real current_score = 0.0;
-	core::Size num_ignored_glycines = 0;
+	//core::Size num_ignored_glycines = 0;
 	data_storage::SmartSegmentOP active_segment = assembly->get_n_terminal_segment();
 	while ( active_segment != nullptr ) {
 		//  TR << "Checking Segment: " << active_segment->get_segment_id() << std::endl;
@@ -93,7 +93,7 @@ LigandScorer::score(
 			data_storage::SmartSewingResidueOP active_residue = active_segment->get_residue( active_resnum );
 			if ( active_residue->get_atom_vector().size() < 5 ) {
 				TR << "Resiude" << active_resnum << " in segment " << active_segment->get_segment_id() << " doesn't have a C_beta" << std::endl;
-				++num_ignored_glycines;
+				//++num_ignored_glycines;
 				continue;
 			}
 			for ( std::pair< const core::Size, data_storage::LigandResidueOP > const &active_ligand : assembly->get_local_ligands() ) {

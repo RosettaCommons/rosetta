@@ -851,7 +851,7 @@ EnzdesFlexBBProtocol::generate_alc_ensemble_for_region(
 	protocols::moves::MonteCarlo mc( local_pose, *reduced_scorefxn(), mc_temp );
 
 
-	static core::Size count_output = 1;
+	//static core::Size count_output = 1;
 	core::Real kinmover_successrate(0.0);
 	core::Size kinmover_successes(0), kintrials( loopgen_trials_ );
 
@@ -903,7 +903,7 @@ EnzdesFlexBBProtocol::generate_alc_ensemble_for_region(
 			//std::cerr << "Kinit " << kinits << " was successful.... " << std::endl;
 			if ( minimize_cats_ ) catmin_mover_->apply( local_pose );
 
-			++count_output;
+			//++count_output;
 			//std::cout << "Found one sc: " << (*reduced_scorefxn())( local_pose ) << std::endl;
 			///local_pose.dump_pdb( "test_sweep_" + utility::to_string( count_output ) + ".pdb" );
 			Real score = local_pose.energies().total_energies()[ core::scoring::total_score ];
@@ -1879,10 +1879,10 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 
 
 	//std::cerr << "gotta compare against " << compare_poses.size() << "unique poses " << std::endl;
-	core::Size count( 0 );
+	//core::Size count( 0 );
 	for ( utility::vector1< core::pose::PoseOP >::const_iterator pose_it = compare_poses.begin(); pose_it != compare_poses.end(); ++pose_it ) {
 
-		count++;
+		//count++;
 		//std::cout << "rmsd with prepose " << count << " is " << core::scoring::rmsd_no_super( **pose_it, template_pose, core::scoring::is_protein_CA ) << ", biggest CA/CB dist is " << core::scoring::biggest_residue_deviation_no_super( **pose_it, template_pose, core::scoring::is_protein_CA_or_CB ) << std::endl;
 
 		if ( core::scoring::biggest_residue_deviation_no_super( **pose_it, template_pose, core::scoring::is_protein_CA_or_CB ) < basic::options::option[basic::options::OptionKeys::enzdes::min_cacb_deviation] ) {

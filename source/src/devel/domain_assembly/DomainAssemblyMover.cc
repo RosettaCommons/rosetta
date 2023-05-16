@@ -585,14 +585,11 @@ core::Real DomainAssemblyMover::target_rmsd_no_align( core::pose::Pose const & p
 			}
 		}
 	} else {
-		//This looks like a bug. Is there only supposed to be one version of num_match?
-		core::Size num_match2 = 0;
-		//core::Real sum_sq2 = 0;
 		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			auto map_pair = target_pose_map_.find( ii );
 			if ( map_pair != target_pose_map_.end() && map_pair->second <= target_pose_.size() ) {
-				//sum_sq2 += pose.residue( ii ).xyz( "CA" ).distance_squared( target_pose_.residue( map_pair->second ).xyz( "CA" ) );
-				num_match2++;
+				sum_sq += pose.residue( ii ).xyz( "CA" ).distance_squared( target_pose_.residue( map_pair->second ).xyz( "CA" ) );
+				num_match++;
 			}
 		}
 	}

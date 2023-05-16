@@ -161,7 +161,6 @@ TorsionSampler::read_database( std::string const & filename)
 
 	// map atom names to ATS indices - handle wildcards
 	ReadMode read_mode = rmNONE;
-	core::Size linenum( 0 );
 	core::Size natomtypes = 0;
 	std::string fileline, tag;
 	// special treatment of "fallbacks", e.g. 'X' in the params file
@@ -170,7 +169,6 @@ TorsionSampler::read_database( std::string const & filename)
 	while ( instream ) {
 		getline(instream, fileline);
 		std::istringstream linestream(fileline);
-		linenum ++;
 
 		if ( fileline.length() < 2 ) continue;
 

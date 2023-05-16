@@ -1240,7 +1240,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	//variables used for debugging output
 	core::pose::PoseOP posecopy( nullptr );
 	if ( debug_ ) posecopy = utility::pointer::make_shared< core::pose::Pose >(pose);
-	int counter(1);
+	//int counter(1);
 	//std::stringstream outputfilename;
 
 	//score the protein
@@ -1395,7 +1395,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			}//if needing CCD closure
 			oneloop_random->add_mover(oneloop_subsequence, 1);
 		}//if terminal or needing CCD closure
-		++counter;
+		//++counter;
 		if ( debug_ ) *posecopy = pose;
 
 		allloops_subsequence->add_mover(oneloop_random); //keep track of all loops as a sequence

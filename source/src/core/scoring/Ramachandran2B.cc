@@ -689,7 +689,7 @@ Ramachandran2B::read_rama()
 	int tCounts( 0 );
 	Real tProb( 0.0 ), tEnergy( 0.0 );
 
-	Size line_count( 0 );
+	//Size line_count( 0 );
 
 	//utility::io::izstream  iunit;
 #ifndef WIN32
@@ -702,7 +702,7 @@ Ramachandran2B::read_rama()
 	utility::io::izstream iRamaEnergy;
 	basic::database::open( iRamaEnergy, energyFileName );
 	while ( ! iRamaEnergy.eof() ) {
-		++line_count;
+		//++line_count;
 		iRamaEnergy >> aa_num >> aa_num_left >> aa_num_right >> ss_type >> phi_bin >> psi_bin >> tCounts >> tProb >> tEnergy;
 		// std::cout << " aa_num " << aa_num << " aa_num_left " << aa_num_left << " aa_num_right " << aa_num_right << " ss_type " << ss_type <<
 		//    " phi_bin " << phi_bin << " psi_bin " << psi_bin << " tProb " << tProb << " tEnergy " << tEnergy << std::endl;

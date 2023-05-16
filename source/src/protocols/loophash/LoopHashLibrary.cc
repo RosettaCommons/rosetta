@@ -488,7 +488,6 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 
 	for ( int round = 0; round < 100; round ++ ) {
 		//core::Size count;
-		static int casecount = 0;
 		core::pose::Pose opose = pose;
 		std::vector< core::io::silent::SilentStructOP > lib_structs;
 
@@ -565,7 +564,6 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 				pose = rpose;
 			}
 		}
-		casecount++;
 		//test_loop_sample( pose, pose.size() );
 
 		core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
@@ -798,15 +796,12 @@ LoopHashLibrary::get_all(
 			if ( filter_leap_index_bucket.size() == 0 ) continue;
 
 			// Now go through the chosen loops in random order
-			core::Size explore_count = 0;
 			//std::random__shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
 			numeric::random::random_permutation( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::rg() );
 
 			for ( std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
 					it != filter_leap_index_bucket.end();
 					++it ) {
-
-				explore_count ++;
 
 				clock_t starttime = clock();
 
@@ -1094,12 +1089,9 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 				// change this to looking up with key instead of transform
 				hashmap.lookup_withkey( leap_index.key, leap_index_bucket );
 
-				core::Size sani_count = 0;
-
 				for ( std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
 						it != leap_index_bucket.end();
 						++it ) {
-					sani_count++;
 
 					auto retrieve_index = (core::Size) (*it);
 					LeapIndex cp = hashmap.get_peptide( retrieve_index );

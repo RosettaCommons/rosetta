@@ -725,7 +725,7 @@ set_fold_tree_from_symm_data(
 
 		// Read the virtual connect data and add the new connections. They are stored in virtual_connects. We also need to
 		// know the mapping between mapping between name of virtual residues and the jump number
-		Size pos( 0 );
+		//Size pos( 0 );
 		for ( auto const & elem : virtual_connect ) {
 			std::pair< std::string, std::string > connect( elem.second );
 			std::string pos_id1( connect.first );
@@ -733,7 +733,7 @@ set_fold_tree_from_symm_data(
 			// We have already added the jumps from virtual residues to their corresponding subunits
 			if ( pos_id2 == "SUBUNIT" ) continue;
 			++njumps;
-			++pos;
+			//++pos;
 			debug_assert( virtual_id_to_num.find( pos_id1 ) != virtual_id_to_num.end() && virtual_id_to_num.find( pos_id2 ) != virtual_id_to_num.end() );
 			Size pos1 ( virtual_id_to_num.find( pos_id1 )->second );
 			Size pos2 ( virtual_id_to_num.find( pos_id2 )->second );

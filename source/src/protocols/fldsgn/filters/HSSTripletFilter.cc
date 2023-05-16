@@ -201,9 +201,7 @@ HSSTripletFilter::apply( Pose const & pose ) const
 
 	// check conformation hsstriplets
 	bool filter( true );
-	core::Size current_id( 0 );
 	for ( auto const & hss3 : hss3s ) {
-		current_id ++;
 		HSSTriplet hss = *hss3;
 
 		if ( !check_elements( hss, *ss_info ) ) {

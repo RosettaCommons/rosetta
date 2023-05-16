@@ -600,12 +600,10 @@ Hasher::neighborhood_lookup_125(
 	utility::fixedsizearray1<HashMap::const_iterator, 125> & hit_its
 ) const {
 	int index = 0; // just initial value
-	int box_number = 0;
 
 	for ( int i=-2; i<=2; ++i ) {
 		for ( int j=-2; j<=2; ++j ) {
 			for ( int k=-2; k<=2; ++k ) {
-				box_number++;
 
 				HashKey modified_key = key;
 				// The HashKey is the 3 indices that describe the location the feature in discretized space, and the atomno of the point being described.

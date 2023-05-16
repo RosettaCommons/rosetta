@@ -1315,7 +1315,7 @@ RotamerSet_::filter_water_rotamers(
 	scoring::ScoreFunctionOP full_rep_scorefxn = scorefxn.clone() ;
 	full_rep_scorefxn->set_weight( scoring::fa_rep, 1.0);
 
-	Size ratio(0);
+	//Size ratio(0);
 	Size originally_accepted(0);    // filter rotamers first by bump_check
 	Size water_rotamers_cap( option[ OptionKeys::hydrate::water_rotamers_cap]() );
 	Size accept_every(1);
@@ -1350,7 +1350,7 @@ RotamerSet_::filter_water_rotamers(
 				std::cout << new_rotamers[ii]->xyz(1)[1] << "\t" << new_rotamers[ii]->xyz(1)[2] << "\n";
 			}
 			if ( accepted%accept_every == 0 ) {
-				++ratio;
+				//++ratio;
 				//filtered_rotamers.push_back( new_rotamers[ii] );  // commented by wym, move after rotamer cluster
 				if ( option[ show_pre_post_filter_water_rotamers ] ) {
 					//std::cout << "post_" << resid() << "_" << water_info[int(resid())].rotamer_bonds() << "\t";

@@ -1030,7 +1030,7 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 	std::map< core::Size, bool > const & is_prepend_map = get_act_is_prepend_map();
 
 	core::Size num_fail_triangle_inequality = 0;
-	core::Size num_cluster_center_used = 0;
+	//core::Size num_cluster_center_used = 0;
 
 	Real current_score( 0.0 );
 
@@ -1051,7 +1051,7 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 
 		// TR << "cluster_center_score= " << cluster_center_score << " current_score= " << current_score << std::endl;
 
-		num_cluster_center_used++;
+		//num_cluster_center_used++;
 
 		Real const RMSD = rmsd_over_residue_list( current_pose, cluster_center_pose, calc_rms_res, full_to_sub, is_prepend_map, false );
 		//problem is that bulge residues are excluded?? The weight of the RMSD and member.RMSD might not be the same... Aug 9, 2010

@@ -745,11 +745,15 @@ LK_hack::distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) cons
 			Vector const f1_to_divvy = divvy_proportion * base_pseudo_atom_f1_f2s_[ ii ][ jj ].first;
 			Vector const f2_to_divvy = divvy_proportion * base_pseudo_atom_f1_f2s_[ ii ][ jj ].second;
 
+#ifndef NDEBUG //These macros aren't trying to over-optimize performance. They are to keep the compiler happy about unused variables
 			Size count_neighbors_found = 0;
+#endif
 			for ( Size kk = 1; kk <= ii_res.bonded_neighbor(jj).size(); ++kk ) {
 				Size neighbor_id = ii_res.bonded_neighbor(jj)[kk];
 				if ( !  ii_res.atom_is_hydrogen(neighbor_id) ) {
+#ifndef NDEBUG
 					++count_neighbors_found;
+#endif
 					atom_f1_f2s_[ ii ][ neighbor_id ].first  += f1_to_divvy;
 					atom_f1_f2s_[ ii ][ neighbor_id ].second += f2_to_divvy;
 				}
@@ -763,7 +767,9 @@ LK_hack::distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) cons
 					if ( ! pose.residue( neighbor_res_id ).atom_is_hydrogen( nieghbor_atom_id ) ) {
 						atom_f1_f2s_[ neighbor_res_id ][ nieghbor_atom_id ].first  += f1_to_divvy;
 						atom_f1_f2s_[ neighbor_res_id ][ nieghbor_atom_id ].second += f2_to_divvy;
+#ifndef NDEBUG
 						count_neighbors_found++;
+#endif
 					}
 				}
 			}

@@ -376,7 +376,6 @@ PCSMultiGrid::initialize_pcs_data_from_input_file(std::string const & filename) 
 
 	std::ifstream infile;
 	std::string line;
-	core::Size line_number(0);
 
 	infile.open(filename.c_str(), std::ios::in);
 	if ( !infile.is_open() ) {
@@ -386,7 +385,6 @@ PCSMultiGrid::initialize_pcs_data_from_input_file(std::string const & filename) 
 	pcs_grid_vector_.clear();
 
 	while ( std::getline(infile, line) ) {
-		++line_number;
 
 		// Remove leading and trailing whitespace and skip comments and blank lines.
 		utility::trim( line, " \t\n" );

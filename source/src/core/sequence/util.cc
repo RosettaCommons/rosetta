@@ -113,7 +113,7 @@ read_alignment_file(
 	seq1.clear();
 	seq2.clear();
 	mapping.clear();
-	int pos1(0), pos2(0);
+	int pos2(0);
 	for ( Size i=0; i< align1.size(); ++i ) {
 		char const al1( align1[i] ), al2( align2[i] );
 		bool const gap1( al1 == '.' || al1 == '-' );
@@ -123,7 +123,6 @@ read_alignment_file(
 			seq2 += al2;
 		}
 		if ( !gap1 ) {
-			++pos1;
 			seq1 += al1;
 			if ( !gap2 ) {
 				mapping.push_back( pos2 );

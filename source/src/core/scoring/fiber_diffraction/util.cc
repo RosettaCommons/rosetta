@@ -80,13 +80,6 @@ void setup_cylindrical_coords(
 	}
 
 	natoms = 0;
-	Size total_atoms(0);
-	for ( Size res=1; res <= pose.size(); ++res ) {
-		conformation::Residue const &rsd_i (pose.residue(res));
-		for ( Size j=1 ; j<=rsd_i.natoms(); ++j ) {
-			total_atoms++;
-		}
-	}
 
 	for ( Size res=1; res <= pose.size(); ++res ) {
 		if ( ! symminfo->bb_is_independent( res ) ) continue;
@@ -687,12 +680,6 @@ core::Real calculate_chi2_free(
 		I_interpolated.resize(lmax+1);
 
 		sample_layer_lines_from_bins(lmax, k, layer_lines_R, selected_R_l, selected_Rinv_l);
-		for ( Size l=0; l <= lmax; ++l ) {
-			core::Size overzero(0);
-			for ( Size R=1; R<=selected_Rinv_l[l].size(); ++R ) {
-				if ( selected_Rinv_l[l][R]>0.0 ) overzero++;
-			}
-		}
 
 		calculate_I_of_E(lmax, k, selected_Rinv_l, natoms,\
 			c_, nvals, atom_type_number, phi, z, r, form_factors, I_interpolated);

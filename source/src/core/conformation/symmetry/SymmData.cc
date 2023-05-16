@@ -402,7 +402,7 @@ SymmData::read_symmetry_data_from_stream(
 )
 {
 	string line;
-	int linecount( 0 );
+	//int linecount( 0 );
 	bool read_virtual_coords (false);         // Find out when to start reading virtual coordinates
 	bool read_transforms (false);             // Find out when to read symmetry transforms
 	bool start_coordinates_found (false);     // Find out when start coordinates are found. Must be used
@@ -423,7 +423,7 @@ SymmData::read_symmetry_data_from_stream(
 
 	// Read the file
 	while ( getline(infile,line) ) {
-		linecount++;
+		//linecount++;
 		line = line.substr(0,line.find('#'));
 		vector1< string > tokens( utility::split( line ) );
 		if ( tokens.size()==0 ) continue;

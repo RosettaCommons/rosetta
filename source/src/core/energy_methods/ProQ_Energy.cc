@@ -802,7 +802,7 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 		// std::cout << i << " " << pose.residue(i).name3() << " " << res6(pose.residue(i).name1()) << " " << res6(pose.residue(i)) << ": " << std::endl;;
 		res_contact_prof=0;
 		resfrac=0;
-		Size total_res_contacts_count(0);
+		//Size total_res_contacts_count(0);
 		Real total_res_contacts(0);
 		// std::cout << "Done init... " << std::endl;
 
@@ -812,7 +812,7 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 				for ( int k=1; k<=nres; ++k ) {
 					if ( res_contact_map(j,k) ) {
 						//std::cout << " Contact between " << j << " and " << k << " dist: " << res_contact_dist(j,k) << ",restype1: (" << pose.residue(j).name1()<< ")" << res_j << ", restype2: " << " (" << pose.residue(k).name1() << ") " << res_k << std::endl;
-						total_res_contacts_count++;
+						//total_res_contacts_count++;
 						for ( int l( static_cast<int>( core::chemical::first_l_aa ) ); l <= static_cast<int>( core::chemical::num_canonical_aas ); l++ ) {
 							int res1=res6(profile_index_to_aa(l));
 

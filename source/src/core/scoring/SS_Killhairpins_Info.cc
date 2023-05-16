@@ -146,17 +146,8 @@ Hairpins::size() const
 }
 
 std::ostream &
-operator<< ( std::ostream & out, Hairpins const & s )
+operator<< ( std::ostream & out, Hairpins const & )
 {
-	using ObjexxFCL::format::I;
-
-	utility::vector1< Hairpin > temp_list( s.list() );
-	core::Size count(0);
-
-	for ( auto it= temp_list.begin(),
-			ite= temp_list.end(); it != ite; ++it ) {
-		count++;
-	}
 	return out;
 }
 

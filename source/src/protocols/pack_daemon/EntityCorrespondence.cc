@@ -101,7 +101,7 @@ void EntityCorrespondence::set_num_entities( core::Size num_entities )
 void
 EntityCorrespondence::initialize_from_correspondence_file( std::istream & instream )
 {
-	core::Size count_correspondences( 0 );
+	//core::Size count_correspondences( 0 );
 	core::Size line_count( 0 );
 	int PDBnum = 0;
 	std::string PDBnum_string;
@@ -120,7 +120,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 				"Failed to read entity id on line " + utility::to_string( line_count ) +
 				" of the EntityCorrespondence file:\n" + line );
 		}
-		++count_correspondences;
+		//++count_correspondences;
 		if ( entity_id > num_entities() ) {
 			throw CREATE_EXCEPTION(utility::excn::Exception,
 				"Entity ID read on line " + utility::to_string( line_count ) +

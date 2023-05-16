@@ -211,7 +211,6 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 
 	// [[2]]  constraint score
 	core::Real cst_score=0;
-	core::Size nedge=0;
 	if ( wt_adp_ != 0 ) {
 		core::scoring::EnergyGraph const & energy_graph( pose_copy.energies().energy_graph() );
 
@@ -234,7 +233,6 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 
 					if ( dist_kl < rmax_ ) {
 						cst_score += (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
-						nedge++;
 					}
 				}
 			}
@@ -268,7 +266,6 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 
 						if ( dist_kl < rmax_ ) {
 							cst_score += (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
-							nedge++;
 						}
 					}
 				}
@@ -310,7 +307,6 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 	}
 
 	// [[2]]  constraint deriv
-	core::Size nedge=0;
 	if ( wt_adp_ != 0 ) {
 		core::conformation::symmetry::SymmetryInfoOP symm_info;
 		if ( core::pose::symmetry::is_symmetric(pose_copy) ) {
@@ -348,7 +344,6 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 
 						dE_dvars[ atomK ] += scorescale_*wt_adp_*dcst_dbk * exp(vars[atomK]);
 						dE_dvars[ atomL ] += scorescale_*wt_adp_*dcst_dbl * exp(vars[atomL]);
-						nedge++;
 					}
 				}
 			}
@@ -391,7 +386,6 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 
 							dE_dvars[ atomK ] += scorescale_*wt_adp_*dcst_dbk * exp(vars[atomK]);
 							dE_dvars[ atomL ] += scorescale_*wt_adp_*dcst_dbl * exp(vars[atomL]);
-							nedge++;
 						}
 					}
 				}

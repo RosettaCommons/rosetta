@@ -95,20 +95,20 @@ PoseBalls::PoseBalls(
 	// std::cerr << "PoseBalls.cc:85 (" << ")" << std::endl;
 
 	// add atoms in pose
-	core::Size skippedH = 0;
+	//core::Size skippedH = 0;
 	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( core::Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 			// std::cerr << "PoseBalls.cc:91 (" << ")" << std::endl;
 			if ( pose.residue(ir).is_virtual(ia) ) continue;
 			if ( Hmode == 0 ) { // no H's
 				if ( pose.residue(ir).atom_type(ia).is_hydrogen() ) {
-					skippedH++;
+					//skippedH++;
 					continue;
 				}
 			} else if ( Hmode == 1 ) { // polar H's only
 				if ( pose.residue(ir).atom_type(ia).is_hydrogen() &&
 						!pose.residue(ir).atom_type(ia).is_polar_hydrogen() ) {
-					skippedH++;
+					//skippedH++;
 					continue;
 				}
 			} else if ( Hmode == 2 ) {
@@ -144,21 +144,21 @@ PoseBalls::PoseBalls(
 	core::scoring::packstat::AtomRadiusMap arm;
 	std::map<core::Size,core::Size> atomcount;
 	std::map<core::Size,core::Size> resnum;
-	core::Size rescount = 0, skippedlig = 0, skippedligH = 0;
+	core::Size rescount = 0;// skippedlig = 0, skippedligH = 0;
 	for ( core::Size i = 1; i <= num_unrec; ++i ) {
 		core::pose::UnrecognizedAtomRecord const & a( pose.pdb_info()->get_unrecognized_atoms()[i] );
 		core::Real radius = arm.get_radius(a.atom_name(),a.res_name());
 		if ( Hmode < 2 && radius <= 1.2 ) {
-			skippedligH++;
+			//skippedligH++;
 			continue;
 		}
 		if ( radius <= 0.1 ) {
-			skippedlig++;
+			//skippedlig++;
 			continue;
 		}
 		if ( ignore_water ) { // TODO other names for water?
 			if ( "HOH" == (a.res_name()) || "DOD" == (a.res_name()) ) {
-				skippedlig++;
+				//skippedlig++;
 				continue;
 			}
 		}
@@ -248,12 +248,12 @@ PoseBalls::PoseBalls(
 	core::scoring::packstat::AtomRadiusMap arm;
 	std::map<core::Size,core::Size> atomcount;
 	std::map<core::Size,core::Size> resnum;
-	core::Size rescount = 0, skippedlig = 0;
+	core::Size rescount = 0; //, skippedlig = 0;
 	for ( core::Size i = 1; i <= num_unrec; ++i ) {
 		core::pose::UnrecognizedAtomRecord const & a( pose.pdb_info()->get_unrecognized_atoms()[i] );
 		core::Real radius = arm.get_radius(a.atom_name(),a.res_name());
 		if ( radius <= 0.1 ) {
-			skippedlig++;
+			//skippedlig++;
 			continue;
 		}
 		if ( resnum.find(a.res_num()) == resnum.end() ) {

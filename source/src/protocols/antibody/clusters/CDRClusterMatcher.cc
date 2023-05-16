@@ -83,9 +83,7 @@ CDRClusterMatcher::load_center_data(){
 
 	utility::io::izstream clus_stream;
 	basic::database::open(clus_stream, center_cluster_db_path_);
-	core::Size line_count = 0;
 	while ( ! clus_stream.eof() ) {
-		++line_count;
 		clus_stream >> cdr_name >> length >> cluster >> type >> fullcluster_name >> cis_trans_conf >> phis >> psis >> omegas;
 		struct ClusterData single_cluster_data;
 		vector1< std::string > phiSP;

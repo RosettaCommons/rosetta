@@ -766,7 +766,7 @@ HBNetStapleInterface::prepare_output()
 			HBondNetStructOP new_network = *netit;
 			std::set< core::Size > net_ids;
 			net_ids.insert( new_network->id );
-			core::Size staple_count(1);
+			//core::Size staple_count(1);
 
 			if ( get_keep_existing_networks() ) {
 				if ( (*netit)->is_extended ) {
@@ -781,7 +781,7 @@ HBNetStapleInterface::prepare_output()
 							}
 							if ( compatible ) {
 								net_ids.insert( (*j)->id );
-								staple_count++;
+								//staple_count++;
 							}
 						}
 					}
@@ -797,7 +797,7 @@ HBNetStapleInterface::prepare_output()
 							}
 							if ( compatible ) {
 								net_ids.insert( k->id );
-								staple_count++;
+								//staple_count++;
 							}
 						}
 					}

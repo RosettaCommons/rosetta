@@ -300,12 +300,9 @@ MakeRotLibMover::init_centroids( CentroidRotNumVecVec const & centroid_data, cor
 
 /// @brief For k-medoids, seed centroids to nearest element of rotamers_
 void
-MakeRotLibMover::seed_centroids( bool semirotameric )
+MakeRotLibMover::seed_centroids( bool )
 {
 	using namespace core;
-
-	core::Size num_rotameric_chi = rotamers_[1].get_num_chi();
-	if ( semirotameric ) num_rotameric_chi--;
 
 	// Assign each centroid to the nearest rotamer or to no rotamer at all
 	// Done WITHOUT replacement

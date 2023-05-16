@@ -213,10 +213,8 @@ LegacyAppendAssemblyMover::hash_pdb_model(
 	//Breakup the models into groups of 1000 for scoring. This make the memory demand *much* less
 	//with a minor hit to scoring speed.
 	ScoreResults all_scores;
-	core::Size group = 1;
 	core::Size starttime = time(nullptr);
 	while ( true ) {
-		++group;
 		core::Size counter = 0;
 		Hasher hasher;
 		for ( ; it != models_.end(); ++it ) {

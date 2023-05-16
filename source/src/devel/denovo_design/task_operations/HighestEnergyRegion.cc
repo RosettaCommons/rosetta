@@ -198,11 +198,9 @@ HighestEnergyRegionOperation::get_residues_to_design( core::pose::Pose const & p
 			des_around.apply( posecopy, *tmp_task );
 
 			// get residue numbers that are being designed
-			core::Size residues_in_region( 0 );
 			for ( core::Size resj=1; resj<=posecopy.size(); ++resj ) {
 				if ( tmp_task->being_designed( resj ) ) {
 					outside_of_region[resj] = false;
-					++residues_in_region;
 				}
 			}
 			core::Real region_score = scorefxn_->get_sub_score( posecopy, outside_of_region );

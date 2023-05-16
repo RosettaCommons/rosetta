@@ -987,12 +987,10 @@ void LoopComparator::apply( core::pose::Pose & pose ){
 	current_solution = working_solution;
 
 
-	core::Size montecount = 0;
 	Real kt = 200;
 	for ( core::Size i=1; i<=6; i++ ) {
 		kt = kt/2;
 		for ( core::Size j=1; j<=250; j++ ) {
-			montecount++;
 			core::Size loop = numeric::random::random_range(1, solutionsets_.size());
 			//change the range of the following function to start from 0 if you want the possibility of no loop being assigned
 			core::Size start_range = 1;

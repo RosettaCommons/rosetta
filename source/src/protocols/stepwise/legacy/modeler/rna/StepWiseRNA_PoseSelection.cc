@@ -105,13 +105,13 @@ StepWiseRNA_PoseSelection::cluster_pose_list() {
 
 	utility::vector1< bool > pose_state_list( pose_list_.size(), true );
 
-	core::Size num_clustered_pose = 0;
+	//core::Size num_clustered_pose = 0;
 
 	for ( core::Size i = 1; i <= pose_list_.size(); i++ ) {
 
 		if ( ! pose_state_list[i] ) continue;
 
-		num_clustered_pose++;
+		//num_clustered_pose++;
 		for ( core::Size j = i + 1; j <= pose_list_.size(); j++ ) {
 
 			Real rmsd;

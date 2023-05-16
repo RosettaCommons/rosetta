@@ -132,14 +132,16 @@ AveragePathLengthFilter::apply(
 
 	//must also be below the path tightness.
 	//calculate number of disulfides
+	// THIS VARIABLE IS UNUSED
+	/*
 	int n_disulfides = 0;
 	for ( core::Size i=1; i != pose.size(); ++i ) {
-		for ( core::Size j=i + 2; j < pose.size() + 1; ++j ) {
-			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
-				n_disulfides++;
-			}
-		}
+	for ( core::Size j=i + 2; j < pose.size() + 1; ++j ) {
+	if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
+	n_disulfides++;
 	}
+	}
+	}*/
 
 	core::Real expected_path_length = ((0.1429 * pose.size()) + 0.8635);
 	if ( path_length > (expected_path_length + path_tightness_) ) {

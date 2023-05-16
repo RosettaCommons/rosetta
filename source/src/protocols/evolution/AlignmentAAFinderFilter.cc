@@ -190,7 +190,6 @@ AlignmentAAFinder::apply( core::pose::Pose const & p ) const {
 		std::string tested_aa_identities;
 		std::string excluded_due_to_indel_motif_diff;
 		std::string excluded_due_to_low_loop_seqid;
-		core::Size aln_num = 1;
 		for ( core::sequence::SequenceOP& aln_seq: aln ) {
 			char const aln_seq_resi_type = aln_seq->sequence()[aln_resi];
 
@@ -255,7 +254,6 @@ AlignmentAAFinder::apply( core::pose::Pose const & p ) const {
 			} else {
 				available_aa_identities += aln_seq_resi_type;
 			}
-			++aln_num;
 		} // aln_seq
 		available_aa_identities_vector.push_back( available_aa_identities );
 

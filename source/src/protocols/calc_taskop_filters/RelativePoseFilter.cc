@@ -342,7 +342,7 @@ RelativePoseFilter::get_alignment( core::pose::Pose const & p ) const {
 				for ( ; p_res <= p.size(); ++p_res ) { // find chain2 start
 					if ( pdbinfo2->chain( p_res ) == residues2_cstr ) break;
 				}
-				for ( core::Size index = 0; ; ++index ) {/// push aligned residues
+				while ( true ) {/// push aligned residues
 					alignment[ pose_res ] = p_res;
 					if ( pose_res == pose()->size() || p_res == p.size() ) { //end of chains -> stop aligning
 						break;

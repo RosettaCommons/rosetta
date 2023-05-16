@@ -351,7 +351,7 @@ safely_write_to_database(
 	statement & statement
 ) {
 
-	platform::Size cycle = 0;
+	//platform::Size cycle = 0;
 	while ( true )
 			{
 		try
@@ -406,7 +406,7 @@ safely_write_to_database(
 			utility_exit_with_message(except.what());
 		}
 
-		cycle++;
+		//cycle++;
 	}
 }
 

@@ -461,7 +461,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 
 			///  map resids to frames, keeping track of positions
-			core::Size insert_frags_pos = fragments_big_->min_pos();
+			//core::Size insert_frags_pos = fragments_big_->min_pos();
 			//std::cout << "start frags = fragments->min_pos:"<< insert_frags_pos <<
 			//"\nmax_pos " << fragments_big_->max_pos() <<
 			//"\nfragset for positions = nr_frames " << fragments_big_->nr_frames() << std::endl;
@@ -473,7 +473,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 				//library_[insert_frags_pos]= **i;
 				//adjust position counter (for debugging stuff)
 				//std::cout<< "position counter: " << insert_frags_pos << std::endl;
-				insert_frags_pos++;
+				//insert_frags_pos++;
 
 			}
 

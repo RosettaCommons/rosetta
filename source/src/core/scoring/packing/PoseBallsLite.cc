@@ -81,20 +81,20 @@ PoseBallsLite::PoseBallsLite(
 	// std::cerr << "PoseBallsLite.cc:85 (" << ")" << std::endl;
 
 	// add atoms in pose
-	core::Size skippedH = 0;
+	//core::Size skippedH = 0;
 	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 		for ( core::Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 			// std::cerr << "PoseBallsLite.cc:91 (" << ")" << std::endl;
 			if ( pose.residue(ir).is_virtual(ia) ) continue;
 			if ( Hmode == 0 ) { // no H's
 				if ( pose.residue(ir).atom_type(ia).is_hydrogen() ) {
-					skippedH++;
+					//skippedH++;
 					continue;
 				}
 			} else if ( Hmode == 1 ) { // polar H's only
 				if ( pose.residue(ir).atom_type(ia).is_hydrogen() &&
 						!pose.residue(ir).atom_type(ia).is_polar_hydrogen() ) {
-					skippedH++;
+					//skippedH++;
 					continue;
 				}
 			} else if ( Hmode == 2 ) {
