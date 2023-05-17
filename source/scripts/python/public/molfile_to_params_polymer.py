@@ -184,6 +184,7 @@ and for visualizing exactly what was done to the ligand.
 
     if args.polymer:
         polymer_assign_backbone_atom_types(m) # assign backbone atoms
+        polymer_assign_ignored_atoms_bonds(m) # ignore the dipeptide atoms
     assign_rosetta_types(m.atoms) # assign rosetta atom names
     assign_mm_types(m.atoms, args.peptoid) # assign mm atom names
     # assign the formal charge based on the footer in the input file
@@ -213,7 +214,6 @@ and for visualizing exactly what was done to the ligand.
     assign_internal_coords(m)
     if args.polymer:
         print("Preforming polymer modifications")
-        polymer_assign_ignored_atoms_bonds(m)
         polymer_assign_pdb_like_atom_names_to_sidechain( m.atoms, m.bonds, args.peptoid )
         polymer_assign_backbone_atom_names( m.atoms, m.bonds, args.peptoid )
         # if instructed to write out all pdb files

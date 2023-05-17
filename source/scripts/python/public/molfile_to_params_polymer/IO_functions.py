@@ -180,7 +180,7 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs):
     #    f.write("ATOM %-4s %-4s %-4s %.2f\n" % (atom.name, atom.ros_type, atom.mm_type, atom.partial_charge))
     # So instead we write atoms depth-first, starting from root.
     def write_atoms(atom):
-        f.write("ATOM %-4s %-4s %-4s %.2f\n" % (atom.name, atom.ros_type, atom.mm_type, atom.partial_charge))
+        f.write("ATOM %-4s %-4s %-4s %.3f\n" % (atom.name, atom.ros_type, atom.mm_type, atom.partial_charge))
         for a2 in atom.children: write_atoms(a2)
     write_atoms(root_atom)
     for bond in bonds:
@@ -266,6 +266,15 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs):
     f.write("NBR_RADIUS %f\n" % nbr_dist)
     # Convention seems to be a depth-first traversal from the root.
     # I don't know whether this matters, but it's the easy way anyhow.
+
+    # Write formal charge
+    formal_charge = int(round(sum(a.partial_charge for a in atoms if not (a.poly_upper or a.poly_lower))))
+    if formal_charge != 0:
+        if formal_charge < 0:
+            f.write("NET_FORMAL_CHARGE %d\n"%formal_charge)
+        else:
+            f.write("NET_FORMAL_CHARGE +%d\n"%formal_charge)
+
     def write_icoords(a):
         f.write("ICOOR_INTERNAL   %-4s %11.6f %11.6f %11.6f  %-4s  %-4s  %-4s\n"
             % (a.name, a.phi, a.theta, a.d, a.input_stub1.name, a.input_stub2.name, a.input_stub3.name));
@@ -332,9 +341,9 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
         if atom.poly_lower != True and atom.poly_upper != True:
             # Halogenated (Cl, Br) substituents of large sidechains may increase character count; if so, strip leading whitespace
             if len(atom.pdb_name) < int(5):
-                f.write("ATOM %-4s %-4s %-4s %.2f\n" % (atom.pdb_name, atom.ros_type, atom.mm_type, atom.partial_charge))
+                f.write("ATOM %-4s %-4s %-4s %.3f\n" % (atom.pdb_name, atom.ros_type, atom.mm_type, atom.partial_charge))
             else:
-                f.write("ATOM %-4s %-4s %-4s %.2f\n" % (atom.pdb_name.lstrip(), atom.ros_type, atom.mm_type, atom.partial_charge))
+                f.write("ATOM %-4s %-4s %-4s %.3f\n" % (atom.pdb_name.lstrip(), atom.ros_type, atom.mm_type, atom.partial_charge))
     # write bonds
     for bond in bonds:
         if bond.a1.poly_lower != True and bond.a1.poly_upper != True and bond.a2.poly_lower != True and bond.a2.poly_upper != True:
@@ -445,17 +454,25 @@ def write_poly_param_file(f, molfile, name, frag_id, peptoid, parent):
                 nbr_atom = a
                 break
     f.write("NBR_ATOM %s\n" % nbr_atom.pdb_name)
-
-    # calc theoretical max neighbor radius
-    na = len(molfile.atoms) # Number of Atoms
+    
+    #Using atoms here instead of molfile.atoms to ensure poly_ignore stays ignored
+    na = len(atoms) # Number of Atoms
     all_all_dist = [ [1e100] * na for i in range(na) ]
-    nbrs = dict([ (a,set()) for a in molfile.atoms ])
-    for a in molfile.atoms:
-        nbrs[a].update([b.a2 for b in a.bonds])
+    nbrs = dict([ (a,set()) for a in atoms ])
+    for a in atoms:
+        nbrs[a].update([b.a2 for b in a.bonds if not b.a2.poly_ignore])
     for i in range(0,na):
-        all_all_dist[i] = dijkstra( start = molfile.atoms[i], nodes = molfile.atoms, nbr = lambda a: nbrs[a], dist = r3.distance )
+        all_all_dist[i] = dijkstra( start = atoms[i], nodes = atoms, nbr = lambda a: nbrs[a], dist = r3.distance )
     nbr_dist = max(all_all_dist[nbr_atom_index])
     f.write("NBR_RADIUS %f\n" % nbr_dist)
+    
+    #Write formal charge
+    formal_charge = int(round(sum(a.partial_charge for a in atoms if not (a.poly_upper or a.poly_lower))))
+    if formal_charge != 0:
+        if formal_charge < 0:
+            f.write("NET_FORMAL_CHARGE %d\n"%formal_charge)
+        else:
+            f.write("NET_FORMAL_CHARGE +%d\n"%formal_charge)
 
     # determine first side chain atom order of atoms should be n ca c o upper lower [side chain heavys] [hydrogens]
     non_bb_heavy_atoms = [a for a in atoms if a.poly_backbone == False and a.poly_lower == False and a.poly_upper == False and a.poly_ignore == False and a.elem != 'H']

@@ -132,8 +132,15 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
     Greek Alphabet (it has been extended to lower-case letters for large non-canonical AAs like lanthanide-binding tags): Alpha, Beta, Gamma, Delta, Epsilon, Zeta, Eta, Theta, Iota, Kappa, Lambda, Mu, Nu, Xi, Omicron, Pi, Rho, Sigma, Tau, Upsilon, Phi, Chi, Psi, Omega, alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa, lambda, mu, nu, xi, omicron, pi, rho, sigma, tau, upsilon, phi, chi, psi, omega'''
     # greek alphabet eta, tao and omega are skipped because they are the same as previous letters
     greek_alphabet = ['A', 'B', 'G', 'D', 'E', 'Z', 'T', 'I', 'K', 'L', 'M', 'N', 'X', 'O', 'P', 'R', 'S', 'U', 'P', 'C', 'a', 'b', 'g', 'd', 'e', 'z', 't', 'i', 'k', 'l', 'm', 'n', 'x', 'o', 'p', 'r', 's', 'u', 'p', 'c']
-    elem_atom_num = {'B':5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'NA': 11, 'MG': 12, 'P':15, 'S':16, 'CL':17, 'K':19, 'CA':20,
-                     'FE':26, 'ZN':30, 'BR':35, 'I':53, 'SE':34, 'X':-1}
+    def get_atom_num(elem):
+        elem_atom_num = {'B':5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'NA': 11, 'MG': 12, 'P':15, 'S':16, 'CL':17, 'K':19, 'CA':20,
+                         'FE':26, 'ZN':30, 'BR':35, 'I':53, 'SE':34, 'X':-1}
+        try:
+            return elem_atom_num[elem]
+        except:
+            print("WARNING: element type %s not recognized, pdb naming may be incorrect"%elem)
+            return 99
+
     # find alpha carbon or the ""alpha nitrogen" for peptoids (still called ca_index below)
     #print "PEPTOID" , peptoid
     if peptoid:
@@ -181,19 +188,47 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
     #print debug #DEBUG
     # assign heavy atom pdb_postfix_num (stupidly inefficient)
     def compare_atom_num(x,y):
-        if elem_atom_num[atoms[x].elem] > elem_atom_num[atoms[y].elem]:
+        if get_atom_num(atoms[x].elem) > get_atom_num(atoms[y].elem):
             return -1
-        elif elem_atom_num[atoms[x].elem] == elem_atom_num[atoms[y].elem]:
-            return 0
-        elif elem_atom_num[atoms[x].elem] < elem_atom_num[atoms[y].elem]:
+        elif get_atom_num(atoms[x].elem) == get_atom_num(atoms[y].elem):
+            heavy_x = [b for b in atoms[x].bonds if not b.a2.is_H]
+            heavy_y = [b for b in atoms[y].bonds if not b.a2.is_H]
+            if len(heavy_x) > len(heavy_y):
+                return -1
+            elif len(heavy_x) == len(heavy_y):
+                return 0
+            elif len(heavy_x) < len(heavy_y):
+                return 1
+        elif get_atom_num(atoms[x].elem) < get_atom_num(atoms[y].elem):
             return 1
     for i, g in enumerate(greek_alphabet):
         temp = [j for j,a in enumerate(atoms) if a.pdb_greek_dist == greek_alphabet[i]]
-        if len(temp) > 1:
-            temp.sort( key = lambda x: -1 * elem_atom_num[atoms[x].elem] )
-            for k, t in enumerate(temp):
-                index = k+1
-                atoms[t].pdb_postfix_num = "%d" % index
+        if len(temp) > 1 or (len(temp) == 1 and len(atoms[temp[0]].bonds) == 1):
+            temp.sort(key=functools.cmp_to_key(compare_atom_num))
+            used_index = []
+            #Looping twice, once to assign easy parent-based postfixes, once to assign all others
+            for t in temp:
+                attached_num = [b.a2.pdb_postfix_num for b in atoms[t].bonds if b.a2.pdb_postfix_num != " " and greek_alphabet.index(b.a2.pdb_greek_dist) < i]
+                #If no numbers come, different numbers come in, or the number is already taken, assign a number normally later
+                if len(attached_num) == 1 and attached_num[0] not in used_index:
+                    atoms[t].pdb_postfix_num = attached_num[0]
+                    used_index.append(attached_num[0])
+            k = 1
+            for t in temp:
+                while str(k) in used_index:
+                    k += 1
+                if atoms[t].pdb_postfix_num == " ": 
+                    atoms[t].pdb_postfix_num = "%d" % k
+                    used_index.append(str(k))
+
+        #CAA's label bonded atoms with the same postfix number, even if there's only one
+        elif len(temp) == 1:
+            t = temp[0]
+            attached_num = [b.a2.pdb_postfix_num for b in atoms[t].bonds if b.a2.pdb_postfix_num != " " and greek_alphabet.index(b.a2.pdb_greek_dist) < i]
+            #If you have different numbers coming in, don't number it at all
+            if len(attached_num) == 1:
+                atoms[t].pdb_postfix_num = attached_num[0]
+
     #debug
     #for a in atoms:
         #if a.poly_ca_bb:
@@ -210,16 +245,18 @@ def polymer_assign_pdb_like_atom_names_to_sidechain(atoms, bonds, peptoid):
         for a in atoms:
             if not a.is_H and not a.poly_ignore and not a.poly_n_bb and not a.poly_c_bb and not a.poly_o_bb and not a.poly_upper and not a.poly_lower:
                 attached_h = [atoms.index(b.a2) for b in a.bonds if b.a2.is_H == True]
-                for i,ah in enumerate(attached_h):
-                    blah = i + 1
-                    atoms[ah].pdb_prefix_num = "%d" % blah
+                if len(attached_h) > 1:
+                    for i,ah in enumerate(attached_h):
+                        blah = i + 1
+                        atoms[ah].pdb_prefix_num = "%d" % blah
     else:
         for a in atoms:
             if not a.is_H and not a.poly_backbone and not a.poly_ignore:
                 attached_h = [atoms.index(b.a2) for b in a.bonds if b.a2.is_H == True]
-                for i,ah in enumerate(attached_h):
-                    blah = i + 1
-                    atoms[ah].pdb_prefix_num = "%d" % blah
+                if len(attached_h) > 1:
+                    for i,ah in enumerate(attached_h):
+                        blah = i + 1
+                        atoms[ah].pdb_prefix_num = "%d" % blah
     # assign full pdb name
     for a in atoms:
         a.pdb_name = a.pdb_prefix_num + a.pdb_elem + a.pdb_greek_dist + a.pdb_postfix_num

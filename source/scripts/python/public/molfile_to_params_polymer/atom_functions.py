@@ -118,31 +118,46 @@ def assign_rosetta_types(atoms):
         # Everything else maps to a single atom type.
         if a.is_virtual:
             a.ros_type = "VIRT"
+        elif a.poly_n_bb:   a.ros_type = "Nbb "
+        elif a.poly_ca_bb:  a.ros_type = "CAbb"
+        elif a.poly_o_bb:   a.ros_type = "OCbb"
+        elif a.poly_c_bb:   a.ros_type = "CObb"
         elif "H"  == a.elem:
             num_aro_C = count_bonded(a, lambda x: (x.elem == "C" and is_aromatic(x)) or x.ros_type == "aroC")
-            num_NOS = count_bonded(a, lambda x: x.elem == "N" or x.elem == "O" or x.elem == "S")
-            if num_NOS >= 1:    a.ros_type = "Hpol"
+            num_NO = count_bonded(a, lambda x: x.elem == "N" or x.elem == "O")
+            num_S = count_bonded(a, lambda x: x.elem == "S")
+            
+            if any(bond.a2.poly_n_bb for bond in a.bonds): a.ros_type = "HNbb"
+            elif num_S >= 1:    a.ros_type = "HS  "
+            elif num_NO >= 1:   a.ros_type = "Hpol"
             elif num_aro_C >=1: a.ros_type = "Haro"
             else:               a.ros_type = "Hapo"
         elif "C"  == a.elem:
+            num_H = count_bonded(a, lambda x: x.is_H)
             if is_saturated(a):
-                num_H = count_bonded(a, lambda x: x.is_H)
                 if num_H >= 3:      a.ros_type = "CH3 "
                 elif num_H == 2:    a.ros_type = "CH2 "
                 else:               a.ros_type = "CH1 "
             else:
-                num_dbl_nonO = 0; num_aro_nonO = 0; num_aro_N = 0;
+                num_dbl_nonO = 0; num_aro_nonO = 0; num_aro_N = 0; num_sgl_N = 0;
                 a_bonds = [b for b in a.bonds if not b.a2.is_virtual]
                 for bond in a_bonds:
-                    if bond.order == Bond.DOUBLE:
+                    if bond.order == Bond.SINGLE:
+                        if bond.a2.elem == "N": num_sgl_N += 1
+                    elif bond.order == Bond.DOUBLE:
                         if bond.a2.elem != "O": num_dbl_nonO += 1
                     elif bond.order == Bond.AROMATIC:
                         if bond.a2.elem != "O": num_aro_nonO += 1
                         if bond.a2.elem == "N": num_aro_N += 1 # really if, not elif
                 #print( i+1, a.name, num_aro_nonO, num_dbl_nonO, num_aro_N )
-                if num_aro_nonO >= 2:   a.ros_type = "aroC"
-                elif num_dbl_nonO >= 1: a.ros_type = "aroC"
+                if num_aro_nonO >= 2: 
+                    if num_H > 0:       a.ros_type = "aroC"
+                    else:               a.ros_type = "CH0 "
+                elif num_dbl_nonO >= 1: 
+                    if num_H > 0:       a.ros_type = "aroC"
+                    else:               a.ros_type = "CH0 "
                 elif num_aro_N >= 1:    a.ros_type = "CNH2"
+                elif num_sgl_N == 1:    a.ros_type = "CNH2"
                 else:                   a.ros_type = "COO "
         elif "N"  == a.elem:
             num_H = count_bonded(a, lambda x: x.is_H)
@@ -185,7 +200,10 @@ def assign_rosetta_types(atoms):
             # This is a non-standard rule introduced by IWD, agreed to by KWK:
             elif bonded_to_C_to_N:  a.ros_type = "ONH2"
             else:                   a.ros_type = "OOC "
-        elif "S"  == a.elem: a.ros_type = "S   "
+        elif "S"  == a.elem: 
+            num_H = count_bonded(a, lambda x: x.is_H)
+            if num_H == 1:   a.ros_type = "SH1 "
+            else:            a.ros_type = "S   "
         elif "P"  == a.elem: a.ros_type = "Phos"
         elif "F"  == a.elem: a.ros_type = "F   "
         elif "CL" == a.elem: a.ros_type = "Cl  "
@@ -228,6 +246,7 @@ def assign_mm_types(atoms, peptoid):
         if attached.elem == "N":
             attached_num_H = count_bonded(attached, lambda x: x.is_H)
             if attached_num_H == 3: return True
+            elif is_aromatic(attached) and attached_num_H == 2: return True
         else: return False
     def is_charmm_HA(atom, attached):
         ''' For nonpolar hydrogen: an H attached to a saturated carbon '''
@@ -409,11 +428,12 @@ def assign_mm_types(atoms, peptoid):
         return False
     def is_charmm_CC(atom):
         ''' For carboyl carbon: carbon double bonded to O and single bonded to an unprotonated O.
-        Catches esters or carboxylic acids but not aldehyde, ketone, amides '''
+        Catches esters or carboxylic acids but not aldehyde, ketone'''
         attached_double = [bond.a2 for bond in atom.bonds if bond.a2.elem == "O" and bond.order == Bond.DOUBLE]
-        attached_single = [bond.a2 for bond in atom.bonds if bond.a2.elem == "O" and bond.order == Bond.SINGLE ]
+        attached_single = [bond.a2 for bond in atom.bonds if (bond.a2.elem == "O" or bond.a2.elem == "N") and bond.order == Bond.SINGLE ]
         if len(attached_double) == 1 and len(attached_single) == 1:
-            if len(attached_single[0].bonds) == 1: return True # O is only one bond to the carbon
+            if attached_single[0].elem == "O" and len(attached_single[0].bonds) == 1: return True
+            elif attached_single[0].elem == "N" and len([True for bond in attached_single[0].bonds if bond.a2.elem == "H"]) == 2: return True
             else: return False
         else:return False
     def is_charmm_CD(atom):
@@ -604,8 +624,9 @@ def assign_mm_types(atoms, peptoid):
         elif a.elem == "H":
             assert(len(a.bonds) == 1) # hydrogen should only be attached to one atom
             at = a.bonds[0].a2
-            if   is_charmm_H(a, at):   a.mm_type = "H"
-            elif is_charmm_HC(a, at):  a.mm_type = "HC"
+            #HC comes first because of delocalized/aromatic NH2
+            if   is_charmm_HC(a, at):  a.mm_type = "HC" 
+            elif is_charmm_H(a, at):   a.mm_type = "H"
             elif is_charmm_HS(a, at):  a.mm_type = "HS"
             elif is_charmm_HB(a, at, peptoid):  a.mm_type = "HB"
             elif is_charmm_HA(a, at):  a.mm_type = "HA"
@@ -642,12 +663,13 @@ def assign_mm_types(atoms, peptoid):
             elif is_charmm_NR2(a): a.mm_type = "NR2"
             elif is_charmm_NR3(a): a.mm_type = "NR3"
             elif is_charmm_N(a):   a.mm_type = "N"
-            elif is_charmm_NH1(a): a.mm_type = "NH1"
-            elif is_charmm_NH2(a): a.mm_type = "NH2"
-            elif is_charmm_NH3(a): a.mm_type = "NH3"
             elif is_charmm_NC2(a): a.mm_type = "NC2"
             elif is_charmm_NP(a):  a.mm_type = "NP"
             elif is_charmm_NC(a):  a.mm_type = "NC"
+            #These are so generically defined they'll override more specific N types
+            elif is_charmm_NH1(a): a.mm_type = "NH1"
+            elif is_charmm_NH2(a): a.mm_type = "NH2"
+            elif is_charmm_NH3(a): a.mm_type = "NH3"
             else: a.mm_type = "X"
         elif a.elem == "O" :
             if   is_charmm_O(a):   a.mm_type = "O"
@@ -692,6 +714,7 @@ def assign_partial_charges_from_values(molfile, partial_charges, net_charge=0):
     for i in range(len(atoms)):
         assert atoms[i].elem == partial_charges[i][1].upper(),"Error: the elements %s in the sdf file and %s the partial charge file doesn't match" % (atoms[i].elem, partial_charges[i][1].upper())
         atoms[i].partial_charge = float(partial_charges[i][2])
+
 def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
     '''Assigns Rosetta standard partial charges, then
     corrects them so they sum to the desired net charge.
@@ -701,9 +724,11 @@ def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
     '''
     # If the partial charges file is not provided
     if partial_charges == None:
+        
         std_charges = { # from Rosetta++ aaproperties_pack.cc
             "CNH2" : 0.550,
             "COO " : 0.620,
+            "CH0 " : 0.075,
             "CH1 " : -0.090,
             "CH2 " : -0.180,
             "CH3 " : -0.270,
@@ -718,7 +743,8 @@ def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
             "Oaro" : -0.660, # copied from OH
             "ONH2" : -0.550,
             "OOC " : -0.760,
-            "S   " : -0.160,
+            "S   " : -0.090,
+            "SH1 " : -0.230,
             "Nbb " : -0.470,
             "CAbb" : 0.070,
             "CObb" : 0.510,
@@ -729,6 +755,7 @@ def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
             "Haro" : 0.115,
             "HNbb" : 0.310,
             "H2O " : 0.000,
+            "HS  " : 0.160,
             "F   " : -0.250,
             "Cl  " : -0.130,
             "Br  " : -0.100,
@@ -743,30 +770,29 @@ def assign_partial_charges(atoms, partial_charges, net_charge=0.0):
             "Bsp2" : 0.020,
             "VIRT" : 0.000,
         }
+
         for a in atoms:
             a.partial_charge = std_charges[ a.ros_type ]
     null_charge = [a for a in atoms if a.partial_charge is None]
-    abs_charge = sum(abs(a.partial_charge) for a in atoms if a.partial_charge is not None)
-    if len(null_charge) == 0 and abs_charge > 0:
-        net_charge = sum(a.partial_charge for a in atoms if a.partial_charge is not None)
-        print( "Partial charges already fully assigned, no changes made; net charge %.3f" % net_charge )
-        return
-    elif 0 < len(null_charge) and len(null_charge) < len(atoms):
-        raise ValueError("Only some partial charges were assigned -- must be all or none.")
+    if 0 < len(null_charge): 
+        if len(null_charge) < len(atoms):
+            raise ValueError("Only some partial charges were assigned -- must be all or none.")
+        else:
+            return
     # We only want to operate on non-virtual atoms now:
-    atoms = [a for a in atoms if not a.is_virtual]
-    curr_net_charge = 0.0
-    for a in atoms:
-        curr_net_charge += a.partial_charge
+    atoms = [a for a in atoms if not (a.poly_ignore or a.is_virtual or a.poly_lower or a.poly_upper)]
+    curr_net_charge = sum(a.partial_charge for a in atoms)
     # check if the current sum of all partial charges is the same with the net charge
     charge_correction = (net_charge - curr_net_charge) / len(atoms)
-    print("Total naive charge %.3f, desired charge %.3f, offsetting all atoms by %.3f" %
-          (curr_net_charge, net_charge, charge_correction)
-         )
-    for a in atoms:
-        a.partial_charge += charge_correction
-        curr_net_charge += a.partial_charge
-    assert abs(net_charge - curr_net_charge) < 1e-4, "charge correction failed"
+    if abs(charge_correction) > 1e-4:
+        print("Total naive charge %.3f, desired charge %.3f, offsetting all atoms by %.3f" %
+              (curr_net_charge, net_charge, charge_correction)
+          )
+        curr_net_charge = 0.0
+        for a in atoms:
+            a.partial_charge += charge_correction
+            curr_net_charge += a.partial_charge
+        assert abs(net_charge - curr_net_charge) < 1e-4, "charge correction failed"
 
 def compare_molfiles(m1, m2):
     '''

@@ -163,9 +163,20 @@ def build_fragment_trees(molfile):
         # Protein residues appear to go depth first, so that all chi angles ride on each other.
         # Depth first assignment -- leads to very deep trees
         def tree_dfs(parent):
+            def get_atom_num(elem):
+                elem_atom_num = {'H':1,'B':5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'NA': 11, 'MG': 12, 'P':15, 'S':16, 'CL':17, 'K':19, 'CA':20,
+                                 'FE':26, 'ZN':30, 'BR':35, 'I':53, 'SE':34, 'X':-1}
+                try:
+                    return elem_atom_num[elem]
+                except:
+                    print("WARNING: element type %s not recognized, atom tree construction may be incorrect."%elem)
+                    return 99
             # Want to visit non-H children first
             tmp_children = [b.a2 for b in parent.bonds]
-            tmp_children.sort(key= lambda a: a.is_H )
+            #Sort first by identity of this atom, then identity of bonded atoms, then number of non-H bonds
+            tmp_children.sort(key= lambda a: get_atom_num(a.elem) +
+                              0.01*max([get_atom_num(b.a2.elem) for b in a.bonds]) +
+                              0.001*len([b for b in a.bonds if not b.a2.is_H]), reverse=True)
             for child in tmp_children:
                 if child.fragment_id != parent.fragment_id: continue
                 if child.parent is not None or child.is_root: continue
