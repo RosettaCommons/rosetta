@@ -53,7 +53,8 @@ EnergyBasedClusteringOptions::EnergyBasedClusteringOptions( bool const initializ
 	cst_files_(),
 	extra_rms_atoms_(),
 	rebuild_all_in_dihedral_mode_(true),
-	output_prefix_("")
+	output_prefix_(""),
+	path_to_scores_file_( "" )
 {
 	if ( initialize_from_options ) initialize_from_global_options();
 }
@@ -178,6 +179,12 @@ EnergyBasedClusteringOptions::initialize_from_global_options() {
 		output_prefix_ = option[ basic::options::OptionKeys::out::prefix ]();
 	} else {
 		output_prefix_ = "";
+	}
+
+	if ( option[ basic::options::OptionKeys::cluster::energy_based_clustering::alternative_score_file ].user() ) {
+		path_to_scores_file_ = option[ basic::options::OptionKeys::cluster::energy_based_clustering::alternative_score_file ]();
+	} else {
+		path_to_scores_file_ = "";
 	}
 }
 

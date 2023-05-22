@@ -1,0 +1,3 @@
+-in:file:s inputs/pose_01.pdb inputs/pose_02.pdb inputs/pose_03.pdb inputs/pose_04.pdb inputs/pose_05.pdb
+-cluster:energy_based_clustering:cluster_radius 13.0
+-cluster:energy_based_clustering:alternative_score_file inputs/scores.txt

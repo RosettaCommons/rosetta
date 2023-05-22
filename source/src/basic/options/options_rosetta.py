@@ -4877,6 +4877,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 										Option( 'cst_file', 'FileVector', desc='An optional, user-specified list of one or more constraints files.  Default unused.' ),
 										Option( 'extra_rms_atoms', 'StringVector', desc='A list of additional atoms to use in the RMSD calculation, each in the format residue:atomname separated by whitespace.  For example, -extra_rms_atoms 7:SG 12:CG 12:CD 12:CE 12:NZ 14:OG.  Default empty list.' ),
 										Option( 'rebuild_all_in_dihedral_mode', 'Boolean', desc='If true, full poses are rebuilt for output when clustering in dihedral mode.  If false, only backbones are written out.  True by default.', default = 'true' ),
+                	Option( 'alternative_score_file', 'File', desc='A file containing one line per Structure with the pose input file name and an alternative score to sort by seperated by whitespace.' ),
                 ),
 	),
 

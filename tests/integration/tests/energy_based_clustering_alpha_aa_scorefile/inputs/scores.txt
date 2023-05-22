@@ -1,0 +1,10 @@
+pose_01.pdb:dG_cross -15.5764
+pose_01.pdb:dG_cross -15.5764
+pose_02.pdb:dG_cross -5.0619
+pose_02.pdb:dG_cross -5.0619
+pose_03.pdb:dG_cross -10.6904
+pose_03.pdb:dG_cross -10.6904
+pose_04.pdb:dG_cross -15.35304
+pose_04.pdb:dG_cross -15.35304
+pose_05.pdb:dG_cross -10.0286
+pose_05.pdb:dG_cross -10.0286

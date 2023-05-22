@@ -39,6 +39,7 @@
 
 //STL headers
 #include <set>
+#include <map>
 
 class EnergyBasedClusteringTests; // Forward declaration of test class for friendship
 
@@ -300,6 +301,7 @@ private: //Functions
 		utility::vector1 < std::string > &pose_binstrings,
 		utility::vector1 < core::Size > &cluster_assignments, utility::vector1 < core::Size > &cluster_offsets,
 		utility::vector1 < core::Size > &cluster_oligomer_permutations, core::scoring::ScoreFunctionOP sfxn,
+		std::map < std::string, core::Real > const &loaded_scores,
 		utility::vector1 < core::id::NamedAtomID > const &extra_atom_list
 	) const;
 
@@ -309,6 +311,9 @@ private: //Functions
 
 	/// @brief Function to add cyclic constraints to a pose.
 	void add_cyclic_constraints ( core::pose::Pose &mypose ) const;
+
+	/// @brief Loads alternative scores from file and writes them into scores
+	void parse_alternative_score_file( std::map< std::string, core::Real > &scores ) const;
 
 private: //Data
 

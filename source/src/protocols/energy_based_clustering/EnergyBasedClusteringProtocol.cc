@@ -53,6 +53,7 @@
 
 //Utility headers
 #include <utility/vector1.hh>
+#include <utility/io/izstream.hh>
 
 //Basic headers
 #include <basic/Tracer.hh>
@@ -143,11 +144,19 @@ EnergyBasedClusteringProtocol::register_options() {
 void
 EnergyBasedClusteringProtocol::go() {
 
-	//Set up the scorefunction to use:
-	core::scoring::ScoreFunctionOP sfxn( set_up_scorefunction() );
-
 	//Check that options were sensibly set:
 	do_option_checks();
+
+	//Set up the scorefunction to use or load alternative score file:
+	core::scoring::ScoreFunctionOP sfxn;
+	std::map< std::string, core::Real > score_memory;
+	if ( options_.path_to_scores_file_.empty() ) {
+		sfxn = set_up_scorefunction();
+	} else {
+		TR.Warning << "Loading large numbers of scores (>1Mil) will increase memory usage." << std::endl;
+		parse_alternative_score_file( score_memory );
+	}
+
 
 	//Parse the user-specified list of additional atoms to use in the RMSD calculation:
 	utility::vector1<core::id::NamedAtomID> extra_atom_list;
@@ -165,7 +174,7 @@ EnergyBasedClusteringProtocol::go() {
 	utility::vector1 < core::Size > cluster_offsets; //List of offsets for cyclic permutations when clustering (measured in number of amino acid positions we've offset by).
 	utility::vector1 < core::Size > cluster_oligomer_permutations; //List of permutations of oligomers if the user has specified the option to do that.
 
-	TR << "Scoring energies of all input structures." << std::endl;
+	TR << "Loading all input structures." << std::endl;
 
 	core::pose::Pose firstpose;
 
@@ -183,7 +192,7 @@ EnergyBasedClusteringProtocol::go() {
 	std::string curbinstring_mirror; //Temp container used only for ABOXYZ bin analysis.
 
 	//Import and score all structures:
-	do_initial_import_and_scoring( count, lowestE, lowestE_index, firstpose, symmfilter, poseenergies, pose_descriptors, posedata, alignmentdata, dihedral_reconstruction_data, pose_binstrings, cluster_assignments, cluster_offsets, cluster_oligomer_permutations, sfxn, extra_atom_list );
+	do_initial_import_and_scoring( count, lowestE, lowestE_index, firstpose, symmfilter, poseenergies, pose_descriptors, posedata, alignmentdata, dihedral_reconstruction_data, pose_binstrings, cluster_assignments, cluster_offsets, cluster_oligomer_permutations, sfxn, score_memory, extra_atom_list );
 
 	TR << "Clustering, starting with lowest-energy structure as the center of the first cluster." << std::endl;
 
@@ -1567,8 +1576,13 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 	utility::vector1 < core::Size > &cluster_offsets,
 	utility::vector1 < core::Size > &cluster_oligomer_permutations,
 	core::scoring::ScoreFunctionOP sfxn,
+	std::map < std::string, core::Real > const &loaded_scores,
 	utility::vector1 < core::id::NamedAtomID > const &extra_atom_list
 ) const {
+
+	if ( sfxn == nullptr && loaded_scores.empty() ) {
+		utility_exit_with_message( "Scorefunction and loaded scores are empty. Unable to assign score to structures." );
+	}
 
 	core::import_pose::pose_stream::MetaPoseInputStream input( core::import_pose::pose_stream::streams_from_cmd_line() );
 
@@ -1579,7 +1593,9 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 		core::pose::Pose pose; //Create the pose
 		input.fill_pose( pose ); //Import it
 
-		pose_descriptors.push_back( input.get_last_pose_descriptor_string() );
+		// collects the original input files name
+		std::string pose_tag ( input.get_last_pose_descriptor_string() );
+		pose_descriptors.push_back( pose_tag );
 
 		remove_extraneous_virtuals( pose );
 
@@ -1645,13 +1661,21 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 
 		if ( options_.mutate_to_ala_ ) mutate_to_alanine(pose); //Mutate the pose to a chain of alanines if necesssary.
 
-		(*sfxn)(pose); //Score the input pose
+		if ( sfxn != nullptr ) {
+			// if no scores should be loaded
+			(*sfxn)(pose); //Score the input pose
+			poseenergies.push_back(pose.energies().total_energy()); //Store the pose energy
+		} else {
+			// if scores are loaded
+			runtime_assert_string_msg( loaded_scores.count( pose_tag ) != 0, "Unable to assign loaded score to pose '" + pose_tag + "'. Please check your score file." );
+			poseenergies.push_back( loaded_scores.at( pose_tag ) );
+		}
+
 		if ( count==1 ) {
 			firstpose=pose; //Store the first pose.
 		} else {
 			check_backbones_match(firstpose, pose);
 		}
-		poseenergies.push_back(pose.energies().total_energy()); //Store the pose energy
 
 		//Store the pose data that will be used for clustering:
 		posedata.push_back( utility::vector1< core::Real >() );
@@ -1659,8 +1683,8 @@ EnergyBasedClusteringProtocol::do_initial_import_and_scoring(
 		if ( options_.rebuild_all_in_dihedral_mode_ || dihedral_reconstruction_data.size() == 0 ) dihedral_reconstruction_data.push_back(utility::vector1<core::Real>());
 		storeposedata(pose, posedata[posedata.size()], alignmentdata[alignmentdata.size()], dihedral_reconstruction_data[dihedral_reconstruction_data.size()], options_.cluster_by_, extra_atom_list);
 
-		if ( count==1 || pose.energies().total_energy() < lowestE ) {
-			lowestE=pose.energies().total_energy();
+		if ( count==1 || poseenergies.at( poseenergies.size() ) < lowestE ) {
+			lowestE=poseenergies.at( poseenergies.size() );
 			lowestE_index = count;
 		}
 	} //Loop over all input structures.
@@ -1750,6 +1774,38 @@ EnergyBasedClusteringProtocol::add_cyclic_constraints (
 		mypose.add_constraint (angleconst1);
 		mypose.add_constraint (angleconst2);
 	}
+}
+
+void
+EnergyBasedClusteringProtocol::parse_alternative_score_file(
+	std::map< std::string, core::Real > &scores
+) const {
+
+	TR.Debug << "Load scores from file..." << std::endl;
+
+	utility::io::izstream score_file( options_.path_to_scores_file_ );
+
+	if ( !score_file.good() ) {
+		utility_exit_with_message( "Unable to read from score file " + options_.path_to_scores_file_ );
+	}
+
+	std::string line;
+	while ( !score_file.eof() ) {
+		score_file.getline( line );
+		if ( !line.empty() ) {
+			utility::vector1< std::string > split_line ( utility::split_whitespace( line ) );
+			runtime_assert_string_msg( split_line.size() == 2, "Cannot split line '" + line + "' into tag and score through whitespace." );
+			std::string tag ( utility::string_split( split_line[ 1 ], ':' )[ 1 ] );
+			core::Real score ( utility::string2Real( split_line[ 2 ] ) );
+			runtime_assert_string_msg( !utility::is_undefined( score ), "Cannot parse '" + split_line[ 2 ] + "' to a score." );
+			scores[ tag ] = score;
+		}
+
+		if ( scores.size() % 100 == 0 ) TR << "\tLoaded " << scores.size() << "scores." << std::endl;
+	}
+
+	TR.Debug << "A total of " << scores.size() << " scores was loaded." << std::endl;
+
 }
 
 

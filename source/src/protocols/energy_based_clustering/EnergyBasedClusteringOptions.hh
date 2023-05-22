@@ -159,6 +159,10 @@ public:
 	/// @details By default, read from options system.
 	std::string output_prefix_;
 
+	/// @brief Holds the path to a file with alternative scores to sort by
+	/// @details Expects one pose per line starting with the poses file name as returned by descriptor_string, whitespace separation and the score
+	std::string path_to_scores_file_;
+
 
 };
 
