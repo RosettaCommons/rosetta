@@ -71,12 +71,19 @@ public:
 
 	void set_ensemble2( std::string const &ensemble2 );
 
+	void set_spanfile1( std::string const &spanfile1 );
+
+	void set_spanfile2( std::string const &spanfile2 );
+
 private:
 	// add @brief for members
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_away_vec_;
 	utility::vector1< rigid::RigidBodyTransMoverOP > trans_back_vec_;
 
 	core::Real trans_magnitude_;
+	/// @brief membrane for translating in the membrane plane
+	bool membrane_;
+
 	bool movers_setup_; //only append sequence mover once
 
 	protocols::minimization_packing::RotamerTrialsMinMoverOP rtmin_mover_;
@@ -88,6 +95,7 @@ private:
 	DockingEnsembleOP ensemble1_;
 	DockingEnsembleOP ensemble2_;
 	std::string ensemble1_filename_, ensemble2_filename_;
+	std::string span1_filename_, span2_filename_;
 
 	std::string copy_ensemble( std::string const & inputfile_name ){
 		std::string line;

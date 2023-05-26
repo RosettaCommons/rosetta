@@ -3501,6 +3501,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		# Setup Options
 		Option_Group( 'setup',
 			Option( 'spanfiles', 'StringVector', desc="Spanning topology file from Octopus" ),
+			Option( 'span1', 'String', desc="Spanning topology file for partner 1" ),
+			Option( 'span2', 'String', desc="Spanning topology file for partner 2" ),
 			Option( 'spans_from_structure', 'Boolean', desc="Uses spanning topology computed from the PDB; requires the protein to be transformed into the membrane coordinate frame!" ),
 			Option( 'lipsfile', 'String', desc="List of lips files by chain", default='mypdb.lips4' ),
 			Option( 'center', 'RealVector', desc="membrane center x,y,z" ),

@@ -111,7 +111,8 @@ MembraneInfo::MembraneInfo(
 	membrane_core_( 15 ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
-	spanning_topology_( topology )
+	spanning_topology_( topology ),
+	membrane_geometry_( utility::pointer::make_shared< membrane_geometry::Slab >( 15, steepness ) )
 {
 	implicit_lipids_ = ImplicitLipidInfoOP( new ImplicitLipidInfo( lipid_composition_name, lipid_composition_temp ) );
 

@@ -25,7 +25,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-
+#include <core/conformation/Conformation.hh>
 
 // Random number generator
 //
@@ -179,6 +179,13 @@ void DockingEnsemble::calculate_highres_ref_energy( core::Size conf_num )
 
 	std::string filename( pdb_filenames_[highres_reference_energies_.size() - 1] + ".ppk" );
 	TR << "filename: " << filename << std::endl;
+
+	//the ensembles with mem atom is creating problem for the docking step.
+	//in the next loop, we are removing the mem_atoms
+	if ( conformer.conformation().is_membrane() ) {
+		core::Size size_i = conformer.size();
+		conformer.delete_residue_slow(size_i);
+	}
 	conformer.dump_pdb( filename );
 	pdb_filenames_[highres_reference_energies_.size() - 1] = filename;
 	TR << "filename in array: " << pdb_filenames_[highres_reference_energies_.size() - 1] << std::endl;
@@ -204,6 +211,13 @@ void DockingEnsemble::calculate_highres_ref_energy( core::pose::Pose & pose, std
 	} else {
 		filename = partner_num + "_starting_conf.pdb.ppk";
 	}
+	//the ensembles with mem atom is creating problem for the docking step.
+	//in the next loop, we are removing the mem_atoms
+	if ( pose.conformation().is_membrane() ) {
+		core::Size size_i = pose.size();
+		pose.delete_residue_slow(size_i);
+	}
+
 	TR << "filename: " << filename << std::endl;
 	pose.dump_pdb( filename );
 }
@@ -228,6 +242,7 @@ void DockingEnsemble::update_pdblist_file( std::string partner_num )
 	core::Size conf = 1;
 	while ( conf <= pdb_filenames_.size() ) {
 		data << pdb_filenames_[conf] << '\n';
+		TR << pdb_filenames_[conf] << '\n' << std::endl;
 		++conf;
 	}
 

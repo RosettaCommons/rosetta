@@ -11,6 +11,9 @@
 /// @brief      Dock two membrane proteins
 /// @author     JKLeman (julia.koehler1982@gmail.com)
 /// @note       Last Modified (6/24/14)
+/// @note       RSamanta (rsamant2@jhu.edu) added the set_up
+///    _docking_protocol() to avoid setting up default score
+///    functions for docking on 07/24/2022.
 
 #ifndef INCLUDED_protocols_docking_membrane_MPDockingMover_cc
 #define INCLUDED_protocols_docking_membrane_MPDockingMover_cc
@@ -225,6 +228,15 @@ void MPDockingMover::set_defaults( const Pose & pose ){
 	lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
 	highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
 
+	// set native to pose, can be overwritten by flag -in:file:native
+	native_ = utility::pointer::make_shared< Pose >( pose );
+
+}// set defaults
+
+////////////////////////////////////////////////////////////////////////////////
+// set up docking protocol
+void MPDockingMover::set_docking_protocol(){
+
 	// set docking protocol
 	if ( lowres_ && highres_ ) {
 		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, false, false, false, lowres_scorefxn_, highres_scorefxn_ );
@@ -232,14 +244,16 @@ void MPDockingMover::set_defaults( const Pose & pose ){
 		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, true, false, false, lowres_scorefxn_, highres_scorefxn_ );
 	} else if ( ! lowres_ && highres_ ) {
 		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ );
+	} else if ( option[OptionKeys::docking::docking_local_refine].user() ) {
+		// if local_refine flag on, only do high-res
+		TR << "Running highres refinement only using flag -docking_local_refine" << std::endl;
+		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ );
+		//RS: removed this loop from init_from_cmd. There this option was getting overwritten.
 	} else {
 		utility_exit_with_message( "You want to run the docking protocol neither in lowres nor in highres??? Quitting..." );
 	}
 
-	// set native to pose, can be overwritten by flag -in:file:native
-	native_ = utility::pointer::make_shared< Pose >( pose );
-
-}// set defaults
+}//initialize docking protocol
 
 ////////////////////////////////////////////////////////////////////////////////
 // register options
@@ -262,12 +276,6 @@ void MPDockingMover::init_from_cmd(){
 		native_ = pose_from_file(option[OptionKeys::in::file::native].value_string() , core::import_pose::PDB_file);
 	}
 
-	// if local_refine flag on, only do high-res
-	if ( option[OptionKeys::docking::docking_local_refine].user() ) {
-		TR << "Running highres refinement only using flag -docking_local_refine" << std::endl;
-		docking_protocol_ = utility::pointer::make_shared< DockingProtocol >( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ );
-	}
-
 	// read low-res weights
 	if ( option[OptionKeys::mp::dock::weights_cen].user() ) {
 		TR << "Weights for low-resolution step from flag -mp::dock::weights_cen" << std::endl;
@@ -281,6 +289,7 @@ void MPDockingMover::init_from_cmd(){
 		highres_scorefxn_->reset();
 		highres_scorefxn_->initialize_from_file( option[OptionKeys::mp::dock::weights_fa].value_string() );
 	}
+
 
 }// init_from_cmd
 
@@ -310,11 +319,20 @@ void MPDockingMover::apply( Pose & pose ) {
 	// setup
 	set_defaults( pose );
 
+	//set the docking protocol based on default options.
+	set_docking_protocol();
+
 	// register options with JD2
 	register_options();
 
 	// overwrite defaults with stuff from cmdline
 	init_from_cmd();
+
+	//set the docking protocol based on options from cmdline
+	set_docking_protocol();
+
+	TR << "low_res score function for docking: " << lowres_scorefxn_ << std::endl;
+	TR << "high_res score function for docking: " << highres_scorefxn_ << std::endl;
 
 	// finalize setup
 	finalize_setup();

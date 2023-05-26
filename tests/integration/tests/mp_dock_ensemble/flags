@@ -1,0 +1,24 @@
+-in:file:s inputs/2k9j_AB.pdb
+-nstruct 1
+-mp:setup:spanfiles inputs/2k9j_AB.span
+-in:membrane
+-dock_pert 3 8
+-ensemble1 inputs/1ensemble.txt.ensemble
+-ensemble2 inputs/2ensemble.txt.ensemble
+-docking:partners A_B 
+
+-docking_low_res_score motif_dock_score
+-mh:score:use_ss1 false
+-mh:score:use_ss2 false
+-mh:score:use_aa1 true
+-mh:score:use_aa2 true
+
+-ignore_zero_occupancy false
+-ex1
+-ex2aro
+-score:weights franklin2019
+-score:pack_weights franklin2019
+-out:file:scorefile docking_fa19.sc
+-out::pdb_gz
+-out:suffix _fa19
+-run:multiple_processes_writing_to_one_directory

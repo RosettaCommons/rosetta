@@ -123,6 +123,9 @@ private: // methods
 	// setup
 	void set_defaults( const Pose & pose );
 
+	//set up docking protocol
+	void set_docking_protocol();
+
 	// register options with JD2
 	void register_options();
 
