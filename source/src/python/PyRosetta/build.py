@@ -766,6 +766,11 @@ def generate_documentation(rosetta_source_path, path, version):
 
     execute('Building documentation...', 'cd {documentation_prefix} && make clean && PATH={python_path}:$PATH PYTHONPATH={build_prefix}:$PYTHONPATH make html'.format(python_path=os.path.dirname(python), **vars()))
 
+    css = documentation_prefix + '/build/html/_static/basic.css'
+    if os.path.isfile(css):
+        with open(css) as f: css_data = f.read()
+        with open(css, 'w') as f: f.write( css_data.replace('white-space: nowrap;', '') )
+
     dir_util_module.copy_tree(documentation_prefix + '/build/html', path, update=False)
 
     print('Creating PyRosetta documentation at: {}... Done!'.format(path))
