@@ -319,10 +319,11 @@ void Transform::apply(core::pose::Pose & pose)
 			last_score += score_constraints(*cst_pose, ligand_residue, cst_function);
 		}
 
-
-		//Define starting ligand model (after perturb) as best model/score
-		best_score = last_score;
-		best_ligand = ligand_residue;
+		if ( last_score < best_score ) {
+			// best_ligand is accumulated across all repeats
+			best_score = last_score;
+			best_ligand = ligand_residue;
+		}
 
 		core::Size cycle = 1;
 		bool not_converged = true;
