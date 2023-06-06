@@ -58,7 +58,8 @@ def polymer_assign_backbone_atom_names(atoms, bonds, peptoid):
             atom.ros_type = "CAbb"
             atom.pdb_name = " CA "
         elif atom.poly_n_bb:
-            atom.ros_type = "Nbb"
+            if atom.ros_type == "":
+                atom.ros_type = "Nbb"
             atom.pdb_name = " N  "
             if peptoid:
                 atom.mm_type = "NXX"

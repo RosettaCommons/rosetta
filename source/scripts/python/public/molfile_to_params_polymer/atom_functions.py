@@ -118,7 +118,12 @@ def assign_rosetta_types(atoms):
         # Everything else maps to a single atom type.
         if a.is_virtual:
             a.ros_type = "VIRT"
-        elif a.poly_n_bb:   a.ros_type = "Nbb "
+        elif a.poly_n_bb:
+            heavy_nbrs = count_bonded(a, lambda x: not x.is_H)
+            if heavy_nbrs >= 3:
+                a.ros_type = "Npro"
+            else:
+                a.ros_type = "Nbb "
         elif a.poly_ca_bb:  a.ros_type = "CAbb"
         elif a.poly_o_bb:   a.ros_type = "OCbb"
         elif a.poly_c_bb:   a.ros_type = "CObb"
