@@ -161,6 +161,8 @@
 
 // Unit headers
 #include <core/chemical/Patch.hh>
+#include <core/chemical/PatchOperationFactory.hh>
+#include <core/chemical/PatchOperation.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
@@ -179,7 +181,6 @@
 
 // C++ headers
 
-#include <core/chemical/PatchOperation.hh> // AUTO IWYU For PatchOperation, patch_operation_from_patch_file_line
 
 
 #ifdef    SERIALIZATION
@@ -320,9 +321,11 @@ case_from_lines(
 {
 	PatchCaseOP pcase( new PatchCase() );
 
+	PatchOperationFactory const & pofact = *PatchOperationFactory::get_instance();
+
 	bool in_selector( false );
-	for ( uint i=1; i<= lines.size(); ++i ) {
-		std::string const tag( tag_from_line( lines[i] ) );
+	for ( std::string const & line: lines ) {
+		std::string tag( tag_from_line( line ) );
 
 		if ( tag == "BEGIN_SELECTOR" ) {
 			debug_assert( !in_selector );
@@ -330,13 +333,16 @@ case_from_lines(
 		} else if ( tag == "END_SELECTOR" ) {
 			in_selector = false;
 		} else if ( in_selector ) {
-			pcase->selector().add_line( lines[i] );
+			pcase->selector().add_line( line );
 		} else {
 			//fd : use phil's logic for flag-based changes to patch charges and atom types
 			//   : use both selector and patch name to figure out charge mapping
 			std::map< std::string, Real > atomic_charge_reassignments;
 			setup_patch_atomic_charge_reassignments_from_commandline( patch_name, res_type_set_mode, pcase->selector(), atomic_charge_reassignments );
-			PatchOperationOP operation( patch_operation_from_patch_file_line( lines[i],atomic_charge_reassignments ) );
+
+			std::istringstream l( line );
+			l >> tag; // Need to pull the tag to advance the stream to the next location.
+			PatchOperationOP operation = pofact.newPatchOperation( tag, line, l, atomic_charge_reassignments );
 			if ( operation ) pcase->add_operation( operation );
 		}
 	}

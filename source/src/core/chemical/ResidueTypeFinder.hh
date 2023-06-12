@@ -246,11 +246,11 @@ public:
 
 private:
 
-	ResidueTypeCOPs
-	apply_basic_filters( ResidueTypeCOPs rsd_types ) const;
+	void
+	apply_basic_filters( ResidueTypeCOPs & rsd_types ) const;
 
-	ResidueTypeCOPs
-	apply_filters_after_patches( ResidueTypeCOPs rsd_types,
+	void
+	apply_filters_after_patches( ResidueTypeCOPs & rsd_types,
 		bool const allow_extra_variants = false ) const;
 
 	ResidueTypeCOPs
@@ -262,63 +262,70 @@ private:
 	void
 	initialize_relevant_pdb_components() const;
 
+	/// @brief Attempt to apply patches to the residue types in rsd_types, returning the *new* types.
+	/// (Existing residue types in rsd_types are not returned)
+	/// get_first_totally_ok_residue_type is true, only the first residue type in the vector will be returned.
+	/// This function will take care of multiply-patching the results.
 	utility::vector1< ResidueTypeCOP >
-	apply_patches_recursively( utility::vector1< ResidueTypeCOP > const & rsd_types,
-		Size const patch_number,
+	get_patched_types( utility::vector1< ResidueTypeCOP > const & rsd_types,
 		bool const get_first_totally_ok_residue_type = false ) const;
 
+	/// @brief Attempt to apply metapatches to the residue types in rsd_types, returning the *new* types.
+	/// (Existing residue types in rsd_types are not returned)
+	/// get_first_totally_ok_residue_type is true, only the first residue type in the vector will be returned.
+	/// This function only gets types with a single metapatch applied. If the caller wants multiply-patched
+	/// types, it's responsible for re-calling this function itself.
 	utility::vector1< ResidueTypeCOP >
-	apply_metapatches_recursively( utility::vector1< ResidueTypeCOP > const & rsd_types,
-		Size const metapatch_number,
+	get_singly_metapatched_types( utility::vector1< ResidueTypeCOP > const & rsd_types,
 		bool const get_first_totally_ok_residue_type = false ) const;
 
-	ResidueTypeCOPs
-	filter_by_name1( ResidueTypeCOPs const & rsd_types  ) const;
+	void
+	filter_by_name1( ResidueTypeCOPs & rsd_types  ) const;
 
-	ResidueTypeCOPs
-	filter_by_name3( ResidueTypeCOPs const & rsd_types,
+	void
+	filter_by_name3( ResidueTypeCOPs & rsd_types,
 		bool const keep_if_base_type_generates_aa) const;
 
-	ResidueTypeCOPs
-	filter_by_aa( ResidueTypeCOPs const & rsd_types ) const;
+	void
+	filter_by_aa( ResidueTypeCOPs & rsd_types ) const;
 
-	ResidueTypeCOPs
-	filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd_types ) const;
+	void
+	filter_by_residue_type_base_name( ResidueTypeCOPs & rsd_types ) const;
 
-	ResidueTypeCOPs
-	filter_by_interchangeability_group( ResidueTypeCOPs const & rsd_types,
+	void
+	filter_by_interchangeability_group( ResidueTypeCOPs & rsd_types,
 		bool const keep_if_base_type_generates_interchangeability_group) const;
 
-	ResidueTypeCOPs
-	filter_by_base_property( ResidueTypeCOPs const & base_rsd_types ) const;
+	void
+	filter_by_base_property( ResidueTypeCOPs & base_rsd_types ) const;
 
-	ResidueTypeCOPs
-	check_candidate_has_all_variant_sets( ResidueTypeCOPs const & rsd_types ) const;
+	void
+	filter_for_all_variant_sets( ResidueTypeCOPs & rsd_types ) const;
 
-	ResidueTypeCOPs
-	check_variant_sets_have_all_candidate_variants( ResidueTypeCOPs const & rsd_types ) const;
+	void
+	filter_variant_sets_have_all_candidate_variants( ResidueTypeCOPs & rsd_types ) const;
 
-	ResidueTypeCOPs
-	filter_all_variants_matched( ResidueTypeCOPs const & rsd_types,
+	void
+	filter_all_variants_matched( ResidueTypeCOPs & rsd_types,
 		bool const allow_extra_variants = false ) const;
 
-	ResidueTypeCOPs
-	filter_disallow_variants( ResidueTypeCOPs const & rsd_types )  const;
+	void
+	filter_disallow_variants( ResidueTypeCOPs & rsd_types )  const;
 
-	ResidueTypeCOPs
-	filter_all_patch_names( ResidueTypeCOPs const & rsd_types )  const;
+	void
+	filter_all_patch_names( ResidueTypeCOPs & rsd_types )  const;
 
-	ResidueTypeCOPs
-	filter_all_properties( ResidueTypeCOPs const & rsd_types )  const;
+	void
+	filter_all_properties( ResidueTypeCOPs & rsd_types )  const;
 
-	ResidueTypeCOPs
-	filter_disallow_properties( ResidueTypeCOPs const & rsd_types )  const;
+	void
+	filter_disallow_properties( ResidueTypeCOPs & rsd_types )  const;
 
-	ResidueTypeCOPs
-	filter_connections( ResidueTypeCOPs const & rsd_types )  const;
+	void
+	filter_connections( ResidueTypeCOPs & rsd_types )  const;
 
-	ResidueTypeCOPs
-	filter_special_cases( ResidueTypeCOPs const & rsd_types )  const;
+	void
+	filter_special_cases( ResidueTypeCOPs & rsd_types )  const;
 
 	bool
 	has_disallowed_variant( PatchCOP patch ) const;

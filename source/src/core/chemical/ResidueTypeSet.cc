@@ -340,9 +340,9 @@ ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & b
 	std::map< std::string, std::set< std::string > > const & name3_generated_by_base_residue_name(
 		cache_object()->name3_generated_by_base_residue_name() );
 
-	if ( name3_generated_by_base_residue_name.find( base_residue_name ) ==
-			name3_generated_by_base_residue_name.end() ) return false;
-	std::set< std::string> const & name3_set = name3_generated_by_base_residue_name.find( base_residue_name )->second;
+	auto found_iterator = name3_generated_by_base_residue_name.find( base_residue_name );
+	if ( found_iterator == name3_generated_by_base_residue_name.end() ) { return false; }
+	std::set< std::string> const & name3_set = found_iterator->second;
 	return ( name3_set.count( name3 ) );
 }
 

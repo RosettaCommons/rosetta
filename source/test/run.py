@@ -566,6 +566,8 @@ class Tester:
             failedTestsList.extend( [ self.results[t].name + ": " + r  for r in self.results[t].failedTestsList] )
             #print "--> ", self.results[t].failedTestsList
 
+        failedTestsList.sort() # The results are easier to interpret if they're sorted
+
         print("-------- Unit test summary --------")
         print("Total number of tests:", total)
         print("  number tests passed:", total-failed)

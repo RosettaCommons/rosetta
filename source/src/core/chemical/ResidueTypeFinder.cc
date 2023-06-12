@@ -32,6 +32,8 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <algorithm>
+
 #include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
 using namespace basic::options;
@@ -96,28 +98,48 @@ ResidueTypeFinder::~ResidueTypeFinder() = default;
 ResidueTypeCOP
 ResidueTypeFinder::get_representative_type( bool const metapatches ) const
 {
-	ResidueTypeCOPs rsd_types;
-	rsd_types = get_possible_base_residue_types( false /* include_unpatchable */ );
+	ResidueTypeCOPs base_types = get_possible_base_residue_types( false /* include_unpatchable */ );
+	ResidueTypeCOPs filtered_types = base_types;
+	apply_filters_after_patches( filtered_types, true /* allow_extra_variants */ );
+	if ( ! filtered_types.empty() ) {
+		return filtered_types[1];
+	}
 
-	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/, true /*get_first_residue_found*/ );
+	ResidueTypeCOPs patched_types = get_patched_types( base_types, true );
+	if ( !patched_types.empty()  ) {
+		filtered_types = patched_types;
+		apply_filters_after_patches( filtered_types, true /* allow_extra_variants */ );
+		if ( ! filtered_types.empty() ) {
+			return filtered_types[1];
+		}
+	}
 
 	// If there are metapatches to apply and they are to be considered
 	// disable_metapatches() would disable consideration of metapatches (relevant for speed)
 	if ( metapatches && !no_metapatches() ) {
-		rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
-		// We need to apply metapatches again just in case there are some double variants.
-		// Only needed for packing metapatched residues.
-		// TODO: this is atrocious.
-		rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
-	}
-	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_unpatchable_residue_types();
+		base_types.append( patched_types ); // Because we want to metapatch all of them
 
-	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );
+		ResidueTypeCOPs metapatched_types = get_singly_metapatched_types( base_types, true );
+		while ( ! metapatched_types.empty() ) {
+			filtered_types = metapatched_types;
+			apply_filters_after_patches( filtered_types, true /* allow_extra_variants */ );
+			if ( ! filtered_types.empty() ) {
+				return filtered_types[1];
+			}
+
+			metapatched_types = get_singly_metapatched_types( metapatched_types, true ); // Go for N+1 metapatches
+		}
+	}
+
+	// No base or (meta)patched types fit -- try the unpatchable types.
+	filtered_types = get_possible_unpatchable_residue_types();
+	apply_filters_after_patches( filtered_types, true /* allow_extra_variants */ );
+	if ( ! filtered_types.empty() ) {
+		return filtered_types[1];
+	}
 
 	// No residue types left after patching and filtering
-	if ( rsd_types.size() == 0 ) { return nullptr; }
-
-	return rsd_types[ 1 ];
+	return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,17 +151,17 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 
 	TR.Debug << "Found " << rsd_types.size() << " base ResidueType(s) that might match." << std::endl;
 
-	// Go down the binary tree of patches.
-	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/ );
+	rsd_types.append( get_patched_types( rsd_types ) );
 
 	// If metapatches to be considered
 	// disable_metapatches() would disable consideration of metapatches (relevant for speed)
 	if ( !no_metapatches() ) {
-		rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
-		// We need to apply metapatches again just in case there are some double variants.
-		// Only needed for packing metapatched residues.
-		// TODO: this is atrocious.
-		rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
+		ResidueTypeCOPs metapatched_types = get_singly_metapatched_types( rsd_types );
+		while ( ! metapatched_types.empty() ) {
+			rsd_types.append( metapatched_types );
+
+			metapatched_types = get_singly_metapatched_types( metapatched_types ); // Go for N+1 metapatches
+		}
 	}
 
 	// add in any unpatchable residues.
@@ -148,7 +170,7 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 	TR.Debug << "Patched up to " << rsd_types.size() << " ResidueType(s)." << std::endl;
 
 	// Filter for rsd_types that strictly obey requirements
-	rsd_types = apply_filters_after_patches( rsd_types, allow_extra_variants );
+	apply_filters_after_patches( rsd_types, allow_extra_variants );
 
 	rsd_types = apply_preferences_and_discouragements( rsd_types );
 
@@ -211,9 +233,9 @@ ResidueTypeFinder::get_possible_base_residue_types(
 	if ( include_unpatchable ) {
 		rsd_types.append( get_possible_base_unpatchable_residue_types() );
 	}
-	rsd_types = apply_basic_filters( rsd_types );
+	apply_basic_filters( rsd_types );
 	if ( apply_all_filters ) {
-		rsd_types = apply_filters_after_patches( rsd_types );
+		apply_filters_after_patches( rsd_types );
 		rsd_types = apply_preferences_and_discouragements( rsd_types );
 	}
 	return rsd_types;
@@ -247,7 +269,8 @@ ResidueTypeFinder::get_possible_unpatchable_residue_types() const
 	ResidueTypeCOPs rsd_types = residue_type_set_.unpatchable_residue_types();
 	// No need to filter if there are no unpatchable residue types
 	if ( rsd_types.size() == 0 ) { return rsd_types; }
-	return apply_basic_filters( rsd_types );
+	apply_basic_filters( rsd_types );
+	return rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,42 +290,39 @@ ResidueTypeFinder::get_possible_base_unpatchable_residue_types() const
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::apply_basic_filters( ResidueTypeCOPs rsd_types ) const
+void
+ResidueTypeFinder::apply_basic_filters( ResidueTypeCOPs & rsd_types ) const
 {
 	if ( rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes were passed for applying basic filters." << std::endl;
-		return rsd_types;
+		return;
 	}
-	rsd_types = filter_by_aa( rsd_types );
-	rsd_types = filter_by_name1( rsd_types );
-	rsd_types = filter_by_name3( rsd_types, true /* keep_if_base_type_generates_name3 */ );
-	rsd_types = filter_by_residue_type_base_name( rsd_types );
-	rsd_types = filter_by_interchangeability_group( rsd_types, true /* keep_if_base_type_generates_interchangeability_group */ );
-	rsd_types = filter_by_base_property( rsd_types );
-	return rsd_types;
+	filter_by_aa( rsd_types );
+	filter_by_name1( rsd_types );
+	filter_by_name3( rsd_types, true /* keep_if_base_type_generates_name3 */ );
+	filter_by_residue_type_base_name( rsd_types );
+	filter_by_interchangeability_group( rsd_types, true /* keep_if_base_type_generates_interchangeability_group */ );
+	filter_by_base_property( rsd_types );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
+void
+ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs & rsd_types,
 	bool const allow_extra_variants  /* = false */ ) const
 {
 	if ( rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes were passed for applying filters after patching." << std::endl;
-		return rsd_types;
+		return;
 	}
-	rsd_types = filter_by_name3( rsd_types, false /* keep_if_base_type_generates_name3 */ );
-	rsd_types = filter_by_interchangeability_group( rsd_types, false /* keep_if_base_type_generates_interchangeability */ );
-	rsd_types = filter_disallow_variants( rsd_types );
-	rsd_types = filter_all_variants_matched( rsd_types, allow_extra_variants );
-	rsd_types = filter_all_properties( rsd_types );
-	rsd_types = filter_disallow_properties( rsd_types );
-	rsd_types = filter_all_patch_names( rsd_types );
-	rsd_types = filter_connections( rsd_types );
-	rsd_types = filter_special_cases( rsd_types );
-
-	return rsd_types;
+	filter_by_name3( rsd_types, false /* keep_if_base_type_generates_name3 */ );
+	filter_by_interchangeability_group( rsd_types, false /* keep_if_base_type_generates_interchangeability */ );
+	filter_disallow_variants( rsd_types );
+	filter_all_variants_matched( rsd_types, allow_extra_variants );
+	filter_all_properties( rsd_types );
+	filter_disallow_properties( rsd_types );
+	filter_all_patch_names( rsd_types );
+	filter_connections( rsd_types );
+	filter_special_cases( rsd_types );
 }
 
 ////////////////////////////////////////////////////////
@@ -420,134 +440,31 @@ ResidueTypeFinder::prioritize_rosetta_types_over_pdb_components( ResidueTypeCOPs
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Instantiates ResidueType (and gets exponentially slower), based on the number
-///  of desired features that a patch might offer:
-///
-/// (1) xyz_atom_names   Does patch introduce this atom via ADD_ATOM?
-/// (2) variants         Does patch introduce this VariantType through its TYPES?
-/// (3) properties       Does patch introduce this ResidueProperty through ADD_PROPERTY?
-/// (4) patch_names      Used for carbohydrate branching --> look explicitly for name.
-///
-/// This function will take less time and memory if the lists above are *short*.
-///
-/// So you can be smart about tuning performance -- for example, if you are looking for "->2)-branch"
-///  carbohydrates, set that through patch_names; and do not also look for BRANCH_POINT under properties (which
-///  is also a property of patches applied to amino acids).
-///
-///                 -- rhiju, 2015
-///
-/// @details This function made extensive use of string parsing, which is very inefficient,
-/// particularly in a recursive context.  Cleaned up considerably by V. Mulligan on 18 Aug 2016.
-///
-////////////////////////////////////////////////////////////////////////////////////////////////////
-vector1< ResidueTypeCOP >
-ResidueTypeFinder::apply_patches_recursively(
-	vector1< ResidueTypeCOP > const & rsd_types,
-	Size const patch_number,
-	bool const get_first_totally_ok_residue_type /*= false*/
-) const {
+/// @details This does not call the filters on the returned types -- that's for the caller to handle.
+utility::vector1< ResidueTypeCOP >
+ResidueTypeFinder::get_patched_types( utility::vector1< ResidueTypeCOP > const & rsd_types,
+	bool const get_first_totally_ok_residue_type /* false */ ) const
+{
+	utility::vector1< ResidueTypeCOP > patched_types; // The return value. Always return this for NRVO
+	if ( rsd_types.empty() ) { return patched_types; }
 
-	// Pointless to apply patches if we don't have any residue types to apply them to.
-	if ( rsd_types.empty() ) {
-		TR.Debug << "No ResidueTypes to apply patches to" << std::endl;
-		return rsd_types;
-	}
-
-	// Return rsd_types if patch_number is not applicable
-	if ( patch_number == 0 || patch_number > residue_type_set_.patches().size() ) return rsd_types;
-
-	ResidueTypeCOPs rsd_types_new = rsd_types;
-	PatchCOP patch = residue_type_set_.patches()[ patch_number ];
-
-	for ( auto const & rsd_type : rsd_types ) {
-		if ( TR.Trace.visible() ) {
-			TR.Trace << "Checking if patch " << patch->name() << " applies to residue " << rsd_type->name() << std::endl;
-		}
-
-		// absolute no-no's.
-		if ( !patch->applies_to( *rsd_type ) ) { continue; }
-		if ( has_disallowed_variant( patch ) ) { continue; }
-		if ( deletes_any_property( patch, rsd_type ) ) { continue; }
-		if ( deletes_any_variant( patch, rsd_type ) ) { continue; }
-		if ( changes_to_wrong_aa( patch, rsd_type ) ) { continue; }
-		// could also add as a no-no: if patch *deletes* an atom in atom_names_.
-
-		// note -- make sure to apply patch if it has a chance of satisfying any of
-		// the constraints on variants, branchpoints, or properties.
-		bool apply_patch = (  adds_any_variant( patch ) ||
-			adds_any_property( patch, rsd_type ) ||
-			matches_any_patch_name( patch )      ||
-			matches_any_atom_name( patch, rsd_type ) ||
-			fixes_name3( patch, rsd_type ) ||
-			fixes_interchangeability_group( patch, rsd_type ) ||
-			fixes_connects( patch, rsd_type ) );
-
-		if ( apply_patch ) {
-			// following just gets the right name of the patched residue
-			std::string const & patched_name( patch->patched_name( *rsd_type ) );
-			// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
-			ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( patched_name ) );
-			if ( rsd_type_new ) {
-				rsd_types_new.push_back( rsd_type_new );
+	for ( PatchCOP patch: residue_type_set_.patches() ) {
+		// Make a new vector to iterate over, consisting of the base types, as well as types patched in previous rounds.
+		// Make a new vector to avoid modifying the vector we're iterating over
+		utility::vector1< ResidueTypeCOP > to_patch( rsd_types );
+		to_patch.append( patched_types );
+		for ( ResidueTypeCOP const & rsd_type: to_patch ) {
+			if ( TR.Trace.visible() ) {
+				TR.Trace << "Checking if patch " << patch->name() << " applies to residue " << rsd_type->name() << std::endl;
 			}
-		}
-
-	} // end loop
-
-	// maybe we're done?
-	// TODO
-	// Only want to do the work of filtering if we actually added
-	// a new patched ResidueType to check, as rsd_types_new is likely never empty
-	if ( ( get_first_totally_ok_residue_type ) &&
-			( ! rsd_types_new.empty() ) ) {
-		// note that this repeats some work -- some rsd_types were checked in prior steps in the recursion
-		ResidueTypeCOPs rsd_types_filtered = apply_filters_after_patches( rsd_types_new, true /*allow_extra_variants*/ );
-		if ( ! rsd_types_filtered.empty() ) return rsd_types_filtered;
-	}
-
-	// end of recursion through patches?
-	if ( patch_number == residue_type_set_.patches().size() ) return rsd_types_new;
-
-	return apply_patches_recursively( rsd_types_new, patch_number + 1, get_first_totally_ok_residue_type );
-
-}
-
-vector1< ResidueTypeCOP >
-ResidueTypeFinder::apply_metapatches_recursively(
-	vector1< ResidueTypeCOP > const & rsd_types,
-	Size const metapatch_number,
-	bool const get_first_totally_ok_residue_type /*= false*/
-) const {
-
-	// If metapatches are not to be considered, return rsd_types
-	// no_metapatches() == true means do not consider metapatches
-	if ( no_metapatches() ) { return rsd_types; }
-
-	utility::vector1< MetapatchCOP > metapatch_list( residue_type_set_.metapatches() ); // Returned by value
-
-	if ( metapatch_number == 0 || metapatch_number > metapatch_list.size() ) { return rsd_types; }
-
-	ResidueTypeCOPs rsd_types_new = rsd_types;
-	MetapatchCOP metapatch = metapatch_list[ metapatch_number ];
-
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP rsd_type = rsd_types[ n ];
-
-		utility::vector1< std::string > atoms = metapatch->atoms( *rsd_type );
-		for ( Size i = 1; i <= atoms.size(); ++i ) {
-			PatchCOP patch = metapatch->get_one_patch( /**rsd_type,*/ atoms[ i ] );
-
-			//TR << "Considering " << rsd_type->name() << " for " << patch->name() << std::endl;
 
 			// absolute no-no's.
-			if ( !patch->applies_to( *rsd_type ) )             continue;
-			if ( has_disallowed_variant( patch ) )             continue;
-			if ( deletes_any_property(   patch, rsd_type ) )   continue;
-			if ( deletes_any_variant(    patch, rsd_type ) )   continue;
-			if ( changes_to_wrong_aa(    patch, rsd_type ) )   continue;
+			if ( !patch->applies_to( *rsd_type ) ) { continue; }
+			if ( has_disallowed_variant( patch ) ) { continue; }
+			if ( deletes_any_property( patch, rsd_type ) ) { continue; }
+			if ( deletes_any_variant( patch, rsd_type ) ) { continue; }
+			if ( changes_to_wrong_aa( patch, rsd_type ) ) { continue; }
 			// could also add as a no-no: if patch *deletes* an atom in atom_names_.
-			//TR << "Passed continue " << rsd_type->name() << " for " << patch->name() << std::endl;
 
 			// note -- make sure to apply patch if it has a chance of satisfying any of
 			// the constraints on variants, branchpoints, or properties.
@@ -556,169 +473,223 @@ ResidueTypeFinder::apply_metapatches_recursively(
 				matches_any_patch_name( patch )      ||
 				matches_any_atom_name( patch, rsd_type ) ||
 				fixes_name3( patch, rsd_type ) ||
-				fixes_interchangeability_group( patch, rsd_type ) // ||
-				// fixes_connects( patch, rsd_type ) // Currently an issue, as the connect metapatch plays havoc
-			);
+				fixes_interchangeability_group( patch, rsd_type ) ||
+				fixes_connects( patch, rsd_type ) );
 
 			if ( apply_patch ) {
-				//TR << "Considering " << rsd_type->name() << " for " << patch->name() << std::endl;
-
 				// following just gets the right name of the patched residue
-				MutableResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
-				if ( rsd_type_new_placeholder ) {
-					// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
-					ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( rsd_type_new_placeholder->name() ) );
-					if ( rsd_type_new ) {
-						rsd_types_new.push_back( rsd_type_new );
+				std::string const & patched_name( patch->patched_name( *rsd_type ) );
+				// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
+				ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( patched_name ) );
+				if ( rsd_type_new ) {
+					patched_types.push_back( rsd_type_new );
+
+					// If we've found a reasonable type, we can stop early.
+					if ( get_first_totally_ok_residue_type ) {
+						ResidueTypeCOPs filtered{ {rsd_type_new} }; // Just the most recent entry.
+						apply_filters_after_patches( filtered, true /*allow_extra_variants*/ );
+						if ( ! filtered.empty() ) {
+							patched_types = filtered; // This dance is to enable NRVO
+							return patched_types;
+						}
 					}
 				}
-			}
-		}
+			} // if apply_patch
+		} // for residue types
+	} // for patches
 
-	} // end loop
+	return patched_types;
+}
 
-	// maybe we're done?
-	// TODO
-	// Only want to do the work of filtering if we actually added
-	// a new patched ResidueType to check, as rsd_types_new is likely never empty
-	if ( ( get_first_totally_ok_residue_type ) &&
-			( ! rsd_types_new.empty() ) ) {
-		// note that this repeats some work -- some rsd_types were checked in prior steps in the recursion
-		ResidueTypeCOPs rsd_types_filtered = apply_filters_after_patches( rsd_types_new, true /*allow_extra_variants*/ );
-		if ( rsd_types_filtered.size() > 0 ) return rsd_types_filtered;
-	}
+/// @details This does not call the filters on the returned types -- that's for the caller to handle.
+utility::vector1< ResidueTypeCOP >
+ResidueTypeFinder::get_singly_metapatched_types( utility::vector1< ResidueTypeCOP > const & rsd_types,
+	bool const get_first_totally_ok_residue_type /* false */ ) const
+{
+	utility::vector1< ResidueTypeCOP > patched_types; // The return value. Always return this for NRVO
+	if ( rsd_types.empty() ) { return patched_types; }
+	// If metapatches are not to be considered, return an empty list
+	// no_metapatches() == true means do not consider metapatches
+	if ( no_metapatches() ) { return patched_types; }
 
-	// end of recursion through patches?
-	if ( metapatch_number == residue_type_set_.metapatches().size() ) return rsd_types_new;
+	for ( MetapatchCOP const & metapatch: residue_type_set_.metapatches() ) {
+		for ( ResidueTypeCOP const & rsd_type: rsd_types ) {
+			// Don't attempt to run through the atoms if the metapatch not applicable to the residue type.
+			if ( ! metapatch->applies_to( *rsd_type ) ) { continue; }
 
-	return apply_metapatches_recursively( rsd_types_new, metapatch_number + 1, get_first_totally_ok_residue_type );
+			for ( std::string const & atom_name: metapatch->atoms( *rsd_type ) ) {
+				PatchCOP patch = metapatch->get_one_patch( atom_name );
+
+				// absolute no-no's.
+				if ( !patch->applies_to( *rsd_type ) )             continue;
+				if ( has_disallowed_variant( patch ) )             continue;
+				if ( deletes_any_property(   patch, rsd_type ) )   continue;
+				if ( deletes_any_variant(    patch, rsd_type ) )   continue;
+				if ( changes_to_wrong_aa(    patch, rsd_type ) )   continue;
+				// could also add as a no-no: if patch *deletes* an atom in atom_names_.
+
+				// note -- make sure to apply patch if it has a chance of satisfying any of
+				// the constraints on variants, branchpoints, or properties.
+				bool apply_patch = (  adds_any_variant( patch ) ||
+					adds_any_property( patch, rsd_type ) ||
+					matches_any_patch_name( patch )      ||
+					matches_any_atom_name( patch, rsd_type ) ||
+					fixes_name3( patch, rsd_type ) ||
+					fixes_interchangeability_group( patch, rsd_type ) // ||
+					// fixes_connects( patch, rsd_type ) // Currently an issue, as the connect metapatch plays havoc
+				);
+
+				if ( apply_patch ) {
+					// following just gets the right name of the patched residue
+					std::string const & patched_name( patch->patched_name( *rsd_type ) );
+					ResidueTypeCOP rsd_type_new( residue_type_set_.name_mapOP( patched_name ) );
+					if ( rsd_type_new ) {
+						patched_types.push_back( rsd_type_new );
+
+						// If we've found a reasonable type, we can stop early.
+						if ( get_first_totally_ok_residue_type ) {
+							ResidueTypeCOPs filtered{ {rsd_type_new} }; // Just the most recent entry.
+							apply_filters_after_patches( filtered, true /*allow_extra_variants*/ );
+							if ( ! filtered.empty() ) {
+								patched_types = filtered; // This dance is to enable NRVO
+								return patched_types;
+							}
+						}
+					}
+				} // if apply_patch
+			} // for atoms
+		} // for residue types
+	} // for metapatches
+
+	return patched_types;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_by_name1( ResidueTypeCOPs const & rsd_types  ) const
+void
+ResidueTypeFinder::filter_by_name1( ResidueTypeCOPs & rsd_types  ) const
 {
-	if ( name1_ == '?' ) return rsd_types;
-	ResidueTypeCOPs rsd_types_new;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP rsd_type( rsd_types[ n ] );
-		if ( rsd_type->name1() != name1_ ) continue;
-		rsd_types_new.push_back( rsd_type );
-	}
-	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
+	if ( name1_ == '?' || rsd_types.empty() ) { return; }
+
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			return rsd_type->name1() != name1_;
+		}),
+		rsd_types.end()
+	);
+
+	if ( rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering by one-letter code: '" << name1_ << "'" << std::endl;
 	}
-	return rsd_types_new;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs const & rsd_types, bool const keep_if_base_type_generates_name3  ) const
+void
+ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs & rsd_types, bool const keep_if_base_type_generates_name3  ) const
 {
-	if ( name3_.size() == 0 ) return rsd_types;
-	ResidueTypeCOPs rsd_types_new;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP rsd_type( rsd_types[ n ] );
+	if ( name3_.empty() || rsd_types.empty() ) { return; }
+
+	std::string const & name3_stripped = utility::strip( name3_ );
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
 		// For specialty amino acids, add them to the name three maps both with their PDB strings and
 		// with their specialty string -- the first three letters of the residue name.
 		// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
-		if ( rsd_type->name3() == name3_ ||
-				utility::strip( rsd_type->name3() ) == utility::strip( name3_ ) || // name3 may be whitespace padded
-				( keep_if_base_type_generates_name3 && residue_type_set_.generates_patched_residue_type_with_name3( rsd_type->name(), name3_ ) ) ) {
-			rsd_types_new.push_back( rsd_type );
-		}
-	}
-	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
+		[&](ResidueTypeCOP const & rsd_type) {
+			std::string const & name3 = rsd_type->name3();
+			return name3 != name3_ && utility::strip( name3 ) != name3_stripped &&
+			!( keep_if_base_type_generates_name3 && residue_type_set_.generates_patched_residue_type_with_name3( name3, name3_ ) );
+		}),
+		rsd_types.end()
+	);
+
+	if ( rsd_types.empty() ) {
 		// RM: This seems to occur frequently in the integration tests.
 		// We may want to examine why we're doing so much filtering by name3 on sets that don't contain what we want.
 		TR.Debug << "No ResidueTypes remain after filtering by three-letter code: '" << name3_ << "'" << std::endl;
 	}
-	return rsd_types_new;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_by_interchangeability_group( ResidueTypeCOPs const & rsd_types, bool const keep_if_base_type_generates_interchangeability_group  ) const
+void
+ResidueTypeFinder::filter_by_interchangeability_group( ResidueTypeCOPs & rsd_types, bool const keep_if_base_type_generates_interchangeability_group  ) const
 {
-	if ( interchangeability_group_.size() == 0 ) return rsd_types;
-	ResidueTypeCOPs rsd_types_new;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP rsd_type( rsd_types[ n ] );
-		if ( rsd_type->interchangeability_group() == interchangeability_group_ ||
-				( keep_if_base_type_generates_interchangeability_group &&
-				residue_type_set_.generates_patched_residue_type_with_interchangeability_group( rsd_type->name(), interchangeability_group_ ) ) ) {
-			rsd_types_new.push_back( rsd_type );
-		}
-	}
-	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
+	if ( interchangeability_group_.empty() || rsd_types.empty() ) { return; }
+
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			return !(
+			rsd_type->interchangeability_group() == interchangeability_group_ ||
+			(keep_if_base_type_generates_interchangeability_group && residue_type_set_.generates_patched_residue_type_with_interchangeability_group( rsd_type->name(), interchangeability_group_ ) )
+			);
+		}),
+		rsd_types.end()
+	);
+
+	if ( rsd_types.empty() ) {
 		// RM: This seems to occur frequently in the integration tests.
 		// We may want to examine why we're doing so much filtering on sets that don't contain what we want.
 		TR.Debug << "No ResidueTypes remain after filtering by interchangeability group: '" <<
 			interchangeability_group_ << "'" << std::endl;
 	}
-	return rsd_types_new;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_by_aa( ResidueTypeCOPs const & rsd_types ) const
+void
+ResidueTypeFinder::filter_by_aa( ResidueTypeCOPs & rsd_types ) const
 {
-	if ( aa_ == aa_none ) return rsd_types;
+	if ( aa_ == aa_none || rsd_types.empty() ) { return; }
 
-	ResidueTypeCOPs rsd_types_new;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP rsd_type( rsd_types[ n ] );
-		if ( rsd_type->aa() == aa_ ) {
-			rsd_types_new.push_back( rsd_type );
-		}
-	}
-	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			return rsd_type->aa() != aa_;
+		}),
+		rsd_types.end()
+	);
+
+	if ( rsd_types.empty() ) {
 		// RM: This seems to occur frequently in the integration tests.
 		// We may want to examine why we're doing so much filtering by aa_type on sets that don't contain what we want.
 		TR.Debug << "No ResidueTypes remain after filtering by amino acid designation: '" << aa_ << "'" << std::endl;
 	}
-	return rsd_types_new;
 }
 
 ////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd_types ) const
+void
+ResidueTypeFinder::filter_by_residue_type_base_name( ResidueTypeCOPs & rsd_types ) const
 {
-	if ( residue_type_base_name_.size() == 0 ) return rsd_types;
+	if ( residue_type_base_name_.size() == 0 || rsd_types.empty() ) { return; }
 
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( ResidueTypeCOP const & rsd_type : rsd_types ) {
-		std::string base_name( residue_type_base_name( *rsd_type ) );
-		if ( base_name == residue_type_base_name_ || rsd_type->base_name() == residue_type_base_name_ ) {
-			filtered_rsd_types.push_back( rsd_type );
-		}
-	}
-	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			return rsd_type->base_name() != residue_type_base_name_ && residue_type_base_name( *rsd_type ) != residue_type_base_name_;
+		}),
+		rsd_types.end()
+	);
+
+	if ( rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering by ResidueType base name: '" <<
 			residue_type_base_name_ << "'" << std::endl;
 	}
-	return filtered_rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_by_base_property( ResidueTypeCOPs const & rsd_types ) const
+void
+ResidueTypeFinder::filter_by_base_property( ResidueTypeCOPs & rsd_types ) const
 {
-	if ( base_property_ == NO_PROPERTY ) return rsd_types;
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP rsd_type = rsd_types[ n ];
-		if ( rsd_type->properties().has_property( base_property_ ) ) {
-			filtered_rsd_types.push_back( rsd_type );
-		}
-	}
-	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+	if ( base_property_ == NO_PROPERTY || rsd_types.empty() ) { return; }
+
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			return !rsd_type->properties().has_property( base_property_ );
+		}),
+		rsd_types.end()
+	);
+
+	if ( rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering by ResidueType base property: '" <<
 			base_property_ << "'" << std::endl;
 	}
-	return filtered_rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -909,268 +880,276 @@ ResidueTypeFinder::matches_any_atom_name( PatchCOP patch, ResidueTypeCOP rsd_typ
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // This may not work with custom variants. Crap.
-ResidueTypeCOPs
-ResidueTypeFinder::filter_all_variants_matched( ResidueTypeCOPs const & rsd_types, bool const allow_extra_variants /* = false */ ) const
+void
+ResidueTypeFinder::filter_all_variants_matched( ResidueTypeCOPs & rsd_types, bool const allow_extra_variants /* = false */ ) const
 {
-	ResidueTypeCOPs filtered_rsd_types = rsd_types;
-	filtered_rsd_types = check_candidate_has_all_variant_sets( filtered_rsd_types );
+	if ( rsd_types.empty() ) { return; }
+
+	filter_for_all_variant_sets( rsd_types );
 	if ( !allow_extra_variants ) {
-		filtered_rsd_types = check_variant_sets_have_all_candidate_variants( filtered_rsd_types );
+		filter_variant_sets_have_all_candidate_variants( rsd_types );
 	}
-	if ( TR.Debug.visible() && filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+
+	if ( TR.Debug.visible() && rsd_types.empty() ) {
 		// RM: This seems to occur frequently in the integration tests.
 		// We may want to examine why we're doing so much filtering by matched variants on sets that don't contain what we want.
 		TR.Debug << "No ResidueTypes remain after filtering for matched variants." << std::endl;
 		//TODO: Print what those matched variants should have been.
 	}
-	return filtered_rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::check_candidate_has_all_variant_sets( ResidueTypeCOPs const & rsd_types ) const
+void
+ResidueTypeFinder::filter_for_all_variant_sets( ResidueTypeCOPs & rsd_types ) const
 {
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( auto const & rsd_type : rsd_types ) {
-		vector1< bool > variant_list_found_partner( rsd_type->variant_types().size(), false );
+	if ( rsd_types.empty() ) { return; }
 
-		bool all_variant_sets_matched( true );
-		for ( auto const & variant_set : variants_in_sets_ ) {
-			if ( variant_set.size() == 1 && variant_exceptions_.has_value( variant_set[ 1 ] ) ) continue;
-
-			bool at_least_one_variant_matched( false );
-			for ( Size m = 1; m <= variant_set.size(); m++ ) {
-				if ( rsd_type->properties().is_variant_type( variant_set[ m ] ) ) {
-					at_least_one_variant_matched = true;
-					break;
-				}
-			} // loop inside one variant set
-
-			if ( !at_least_one_variant_matched ) {
-				all_variant_sets_matched = false;
-				break;
-			}
-		}
-
-		for ( auto const & custom_variant : custom_variants_ ) {
-			if ( !rsd_type->properties().is_variant_type( custom_variant ) ) {
-				all_variant_sets_matched = false;
-				break;
-			}
-		}
-
-		if ( all_variant_sets_matched ) {
-			filtered_rsd_types.push_back( rsd_type );
-		}
-	}
-	return filtered_rsd_types;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::check_variant_sets_have_all_candidate_variants( ResidueTypeCOPs const & rsd_types ) const
-{
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( auto const & rsd_type : rsd_types ) {
-
-		utility::vector1< core::chemical::VariantType > const & variant_types( rsd_type->variant_type_enums() );
-
-		bool all_candidate_variant_types_matched( true );
-		for ( auto const & variant_type : variant_types ) {
-			if ( variant_exceptions_.has_value( variant_type ) ) continue;
-
-			bool at_least_one_variant_matched( false );
-
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
 			for ( auto const & variant_set : variants_in_sets_ ) {
-				for ( auto const & elem : variant_set ) {
-					if ( elem == variant_type ) {
+				if ( variant_set.size() == 1 && variant_exceptions_.has_value( variant_set[ 1 ] ) ) continue;
+
+				bool at_least_one_variant_matched( false );
+				for ( auto const & variant: variant_set ) {
+					if ( rsd_type->properties().is_variant_type( variant ) ) {
 						at_least_one_variant_matched = true;
 						break;
 					}
 				} // loop inside one variant set
-				if ( at_least_one_variant_matched ) break;
+
+				if ( !at_least_one_variant_matched ) {
+					return true;
+				}
 			}
 
-			if ( !at_least_one_variant_matched ) {
-				all_candidate_variant_types_matched = false;
-				break;
+			for ( auto const & custom_variant : custom_variants_ ) {
+				if ( !rsd_type->properties().is_variant_type( custom_variant ) ) {
+					return true;
+				}
 			}
 
-		}
+			return false;
+		}),
+		rsd_types.end()
+	);
+}
 
-		if ( !all_candidate_variant_types_matched ) continue; //Go on to the next if not everything matched
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+ResidueTypeFinder::filter_variant_sets_have_all_candidate_variants( ResidueTypeCOPs & rsd_types ) const
+{
+	if ( rsd_types.empty() ) { return; }
 
-		//Now, we need to check on-the-fly types.  This and only this requires string parsing:
-		utility::vector1 < std::string > const & custom_variant_types( rsd_type->custom_variant_types() );
-		for ( auto const & custom_variant : custom_variant_types ) {
-			if ( !custom_variants_.has_value( custom_variant ) ) {
-				all_candidate_variant_types_matched = false;
-				break;
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+
+			for ( auto const & variant_type : rsd_type->variant_type_enums() ) {
+				if ( variant_exceptions_.has_value( variant_type ) ) continue;
+
+				bool at_least_one_variant_matched( false );
+				for ( auto const & variant_set : variants_in_sets_ ) {
+					if ( variant_set.contains( variant_type ) ) {
+						at_least_one_variant_matched = true;
+						break;
+					}
+				}
+
+				if ( !at_least_one_variant_matched ) {
+					return true;
+				}
 			}
-		}
 
-		if ( all_candidate_variant_types_matched ) {
-			filtered_rsd_types.push_back( rsd_type );
-		}
-	}
+			//Now, we need to check on-the-fly types.  This and only this requires string parsing:
+			for ( std::string const & custom_variant : rsd_type->custom_variant_types() ) {
+				if ( !custom_variants_.has_value( custom_variant ) ) {
+					return true;
+				}
+			}
+			return false;
 
-	return filtered_rsd_types;
+		}),
+		rsd_types.end()
+	);
+
 }
 
 ////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_all_patch_names( ResidueTypeCOPs const & rsd_types )  const
+void
+ResidueTypeFinder::filter_all_patch_names( ResidueTypeCOPs & rsd_types )  const
 {
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
-		bool found_patch_name( true );
-		for ( Size m = 1; m <= patch_names_.size(); m++ )  {
-			std::string const & patch_name = patch_names_[ m ];
-			if ( residue_type_all_patches_name( *rsd_type ).find( patch_name ) == std::string::npos ) {
-				found_patch_name = false;
-				break;
+	if ( patch_names_.empty() || rsd_types.empty() ) { return; }
+
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			auto const & all_patches_names = residue_type_all_patches_name( *rsd_type );
+			for ( std::string const & patch_name: patch_names_ ) {
+				if ( all_patches_names.find( patch_name ) == std::string::npos ) {
+					return true;
+				}
 			}
-		}
-		if ( !found_patch_name ) continue;
-		filtered_rsd_types.push_back( rsd_type );
-	}
-	if ( TR.Debug.visible() && filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+			return false;
+		}),
+		rsd_types.end()
+	);
+
+	if ( TR.Debug.visible() && rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering for the presence of all patch names." << std::endl;
 		TR.Debug << "    Patches sought: ";
-		for ( Size m = 1; m <= patch_names_.size(); m++ )  { TR.Debug << patch_names_[ m ] << "   "; }
+		for ( std::string const & patch_name: patch_names_ ) {
+			TR.Debug << patch_name << "   ";
+		}
 		TR.Debug << std::endl;
 	}
-	return filtered_rsd_types;
 }
 ////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_all_properties( ResidueTypeCOPs const & rsd_types )  const
+void
+ResidueTypeFinder::filter_all_properties( ResidueTypeCOPs & rsd_types )  const
 {
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
-		bool found_property( true );
-		for ( Size m = 1; m <= properties_.size(); m++ )  {
-			if ( !rsd_type->has_property( properties_[ m ] ) ) {
-				found_property = false;
-				break;
+	if ( properties_.empty() || rsd_types.empty() ) { return; }
+
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			for ( auto const & property: properties_ ) {
+				if ( !rsd_type->has_property( property ) ) {
+					return true;
+				}
 			}
-		}
-		if ( !found_property ) continue;
-		filtered_rsd_types.push_back( rsd_type );
-	}
-	if ( TR.Debug.visible() && filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+			return false;
+		}),
+		rsd_types.end()
+	);
+
+	if ( TR.Debug.visible() && rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering for the presence of all properties." << std::endl;
 		TR.Debug << "    Properties sought: ";
-		for ( Size m = 1; m <= properties_.size(); m++ )  { TR.Debug << ResidueProperties::get_string_from_property( properties_[ m ] ) << "   "; }
+		for ( auto const & property: properties_ ) {
+			TR.Debug << ResidueProperties::get_string_from_property( property ) << "   ";
+		}
 		TR.Debug << std::endl;
 	}
-	return filtered_rsd_types;
 }
 ////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_disallow_variants( ResidueTypeCOPs const & rsd_types )  const
+void
+ResidueTypeFinder::filter_disallow_variants( ResidueTypeCOPs & rsd_types )  const
 {
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
-		bool disallowed( false );
-		for ( Size i = 1; i <= disallow_variants_.size(); ++i ) {
-			if ( rsd_type->has_variant_type( disallow_variants_[ i ] ) ) {
-				disallowed = true;
-				break;
+	if ( disallow_variants_.empty() || rsd_types.empty() ) { return; }
+
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			for ( auto const & variant: disallow_variants_ ) {
+				if ( rsd_type->has_variant_type( variant ) ) {
+					return true;
+				}
 			}
-		}
-		if ( !disallowed ) filtered_rsd_types.push_back( rsd_type );
-	}
-	if ( TR.Debug.visible() && filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+			return false;
+		}),
+		rsd_types.end()
+	);
+
+	if ( TR.Debug.visible() && rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering against the presence of variants." << std::endl;
 		TR.Debug << "    Variants prohibited: ";
-		for ( Size m = 1; m <= disallow_variants_.size(); m++ )  { TR.Debug << ResidueProperties::get_string_from_variant( disallow_variants_[ m ] ) << "   "; }
+		for ( auto const & variant: disallow_variants_ ) {
+			TR.Debug << ResidueProperties::get_string_from_variant( variant ) << "   ";
+		}
 		TR.Debug << std::endl;
 	}
-	return filtered_rsd_types;
 }
 ////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_disallow_properties( ResidueTypeCOPs const & rsd_types )  const
+void
+ResidueTypeFinder::filter_disallow_properties( ResidueTypeCOPs & rsd_types )  const
 {
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
-		bool disallowed( false );
-		for ( Size i = 1; i <= disallow_properties_.size(); ++i ) {
-			if ( rsd_type->has_property( disallow_properties_[ i ] ) ) {
-				disallowed = true;
-				break;
+	if ( disallow_properties_.empty() || rsd_types.empty() ) { return; }
+
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			for ( auto const & property: disallow_properties_ ) {
+				if ( rsd_type->has_property( property ) ) {
+					return true;
+				}
 			}
-		}
-		if ( !disallowed ) filtered_rsd_types.push_back( rsd_type );
-	}
-	if ( TR.Debug.visible() && filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+			return false;
+		}),
+		rsd_types.end()
+	);
+
+	if ( TR.Debug.visible() && rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering against the presence of properties." << std::endl;
 		TR.Debug << "    Properties prohibited: ";
-		for ( Size m = 1; m <= disallow_properties_.size(); m++ )  { TR.Debug << ResidueProperties::get_string_from_property( disallow_properties_[ m ] ) << "   "; }
+		for ( auto const & property: disallow_properties_ )  {
+			TR.Debug << ResidueProperties::get_string_from_property( property ) << "   ";
+		}
 		TR.Debug << std::endl;
 	}
-	return filtered_rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_connections( ResidueTypeCOPs const & rsd_types )  const
+void
+ResidueTypeFinder::filter_connections( ResidueTypeCOPs & rsd_types )  const
 {
-	if ( connect_atoms_.empty() || rsd_types.empty() ) { return rsd_types; }
+	if ( connect_atoms_.empty() || rsd_types.empty() ) { return; }
 
-	ResidueTypeCOPs filtered_rsd_types;
-	for ( ResidueTypeCOP rsd: rsd_types ) {
-		bool has_all_required_connections = true;
-		for ( std::string const & atom: connect_atoms_ ) {
-			if ( !rsd->has( atom ) ||
-					rsd->residue_connections_for_atom( rsd->atom_index(atom) ).empty() ) {
-				has_all_required_connections = false;
-				break;
+	rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+		[&](ResidueTypeCOP const & rsd_type) {
+			for ( std::string const & atom: connect_atoms_ ) {
+				if ( !rsd_type->has( atom ) ||
+						rsd_type->residue_connections_for_atom( rsd_type->atom_index(atom) ).empty() ) {
+					return true;
+				}
 			}
+			return false;
+		}),
+		rsd_types.end()
+	);
+
+	if ( TR.Debug.visible() && rsd_types.empty() ) {
+		TR.Debug << "No ResidueTypes remain after filtering against the presence of connections." << std::endl;
+		TR.Debug << "    Connection atoms required: ";
+		for ( std::string const & atom: connect_atoms_ )  {
+			TR.Debug << atom << "   ";
 		}
-		if ( has_all_required_connections ) {
-			filtered_rsd_types.push_back( rsd );
-		}
+		TR.Debug << std::endl;
 	}
-	return filtered_rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////////
-ResidueTypeCOPs
-ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  const
+void
+ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs & rsd_types )  const
 {
-	ResidueTypeCOPs filtered_rsd_types;
+	if ( rsd_types.empty() ) { return; }
 
 	bool const actually_check_nucleic_acid_virtual_phosphates =
 		check_nucleic_acid_virtual_phosphates_ && !atom_names_soft_.has_value( "P" );
+
+	if ( actually_check_nucleic_acid_virtual_phosphates ) {
+		rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+			[&](ResidueTypeCOP const & rsd_type) {
+				if ( rsd_type->is_DNA() && !rsd_type->has_variant_type( VIRTUAL_DNA_PHOSPHATE ) ) { return true; }
+
+				// triphosphate termination does not require virtual phosphates!
+				if ( rsd_type->is_RNA() && !rsd_type->has_variant_type( VIRTUAL_PHOSPHATE )
+						&& !rsd_type->has_variant_type( FIVE_PRIME_PACKABLE_TRIPHOSPHATE ) ) { return true; }
+
+				return false;
+			}),
+			rsd_types.end()
+		);
+	}
 
 	bool const is_water_and_user_specified = ( aa_ == AA::aa_h2o || name1_ == 'w' ) &&
 		option[ OptionKeys::in::water_type_if_unspecified ].user();
 	std::string const & user_water_name = option[ OptionKeys::in::water_type_if_unspecified ]();
 
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
-
-		if ( actually_check_nucleic_acid_virtual_phosphates ) {
-			if ( rsd_type->is_DNA() && !rsd_type->has_variant_type( VIRTUAL_DNA_PHOSPHATE ) ) continue;
-
-			// triphosphate termination does not require virtual phosphates!
-			if ( rsd_type->is_RNA() && !rsd_type->has_variant_type( VIRTUAL_PHOSPHATE )
-					&& !rsd_type->has_variant_type( FIVE_PRIME_PACKABLE_TRIPHOSPHATE ) ) continue;
-		}
-
-		if ( is_water_and_user_specified ) {
-			if ( rsd_type->name() != user_water_name ) continue;
-		}
-
-		filtered_rsd_types.push_back( rsd_type );
+	if ( is_water_and_user_specified ) {
+		rsd_types.erase( std::remove_if( rsd_types.begin(), rsd_types.end(),
+			[&](ResidueTypeCOP const & rsd_type) {
+				return rsd_type->name() != user_water_name;
+			}),
+			rsd_types.end()
+		);
 	}
-	if ( TR.Debug.visible() && filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+
+	if ( TR.Debug.visible() && rsd_types.empty() ) {
 		TR.Debug << "No ResidueTypes remain after filtering for special cases:" << std::endl;
 		if ( actually_check_nucleic_acid_virtual_phosphates ) {
 			TR.Debug << "    * Nucleic acid has virtual phosphates." << std::endl;
@@ -1179,7 +1158,6 @@ ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  co
 			TR << "    * Water residue: No match for user specified name: \"" << user_water_name << "\"" << std::endl;
 		}
 	}
-	return filtered_rsd_types;
 }
 
 ////////////////////////////////////////////////////////////////////

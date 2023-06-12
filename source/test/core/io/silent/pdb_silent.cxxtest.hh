@@ -93,8 +93,8 @@ public:
 
 		core::chemical::ResidueType const & cydn = rsd_set->name_map( "CYS:NtermProteinFull:disulfide" );
 		core::chemical::ResidueType const & cydc = rsd_set->name_map( "CYS:CtermProteinFull:disulfide" );
-		TS_ASSERT( start_pose.residue( 1 ).type().name() == cydn.name() );
-		TS_ASSERT( start_pose.residue( 2 ).type().name() == cydc.name() );
+		TS_ASSERT_EQUALS( start_pose.residue( 1 ).type().name(), cydn.name() );
+		TS_ASSERT_EQUALS( start_pose.residue( 2 ).type().name(), cydc.name() );
 
 		core::io::silent::SilentFileOptions opts;
 		core::io::silent::SilentFileData sfd( opts );
@@ -112,8 +112,8 @@ public:
 		iter->fill_pose( restored_pose, *rsd_set );
 
 		// can't test type equality, can test names?
-		TS_ASSERT( restored_pose.residue( 1 ).type().name() == cydn.name() );
-		TS_ASSERT( restored_pose.residue( 2 ).type().name() == cydc.name() );
+		TS_ASSERT_EQUALS( restored_pose.residue( 1 ).type().name(), cydn.name() );
+		TS_ASSERT_EQUALS( restored_pose.residue( 2 ).type().name(), cydc.name() );
 
 		// round trip successful
 		// now test compatibility with how Old Rosetta might render it

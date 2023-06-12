@@ -22,6 +22,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/PatchOperation.hh>
+#include <core/chemical/PatchOperationFactory.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/Tag.hh>
@@ -155,7 +156,12 @@ void
 PatchChemistry::add_patch_operation_line( std::string const & line ) {
 	std::map< std::string, core::Real > charge_reassign; // Not needed.
 
-	core::chemical::PatchOperationOP op = core::chemical::patch_operation_from_patch_file_line( line, charge_reassign );
+	core::chemical::PatchOperationFactory const & pofact = *core::chemical::PatchOperationFactory::get_instance();
+	std::istringstream l( line );
+	std::string tag;
+	l >> tag; // Need to pull the tag to advance the stream to the next location.
+
+	core::chemical::PatchOperationOP op = pofact.newPatchOperation( tag, line, l, charge_reassign );
 	if ( op ) {
 		operations_.push_back( op );
 	}

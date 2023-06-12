@@ -46,6 +46,7 @@ sources = {
 		"Orbital",
 		"Patch",
 		"PatchOperation",
+		"PatchOperationFactory",
 		"PoseResidueTypeSet",
 		"ResConnID",
 		"ResidueConnection",
