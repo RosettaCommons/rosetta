@@ -373,6 +373,11 @@ sources = {
 		"DockWithHotspotMover",
 		"TopologyBrokerMover",
 	],
+	"protocols/ptm_prediction": [
+		"PTMPredictionMetric",
+                "PTMPredictionTensorflowProtocol",
+                "PTMPredictionTensorflowProtocolBase",
+	],
 	"protocols/seeded_abinitio": [
 		"CAcstGenerator",
 		"CloseFold",

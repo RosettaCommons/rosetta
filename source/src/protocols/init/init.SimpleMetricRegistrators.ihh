@@ -124,5 +124,7 @@ static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::Blockwis
 static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::MinimumInterAlphaDistanceMetricCreator > reg_MinimumInterAlphaDistanceMetricCreator;
 static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::WindowPoseCompMotifMetricCreator > reg_WindowPoseCompMotifMetricCreator;
 
+// Added by ME, 8 December 2022:
+static SimpleMetricRegistrator< protocols::ptm_prediction::PTMPredictionMetricCreator > reg_PTMPredictionMetricCreator;
 
 } // namespace protocols
