@@ -591,6 +591,17 @@ public:  // Residues
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
 
+	/// @brief Function for building poses
+	/// Append all the residues to the Conformation.
+	/// If the corresponding jump connection is zero,
+	/// attach by polymeric connection to the previous residue
+	virtual
+	void
+	append_residues(
+		utility::vector1< conformation::ResidueOP > const & residues,
+		utility::vector1< core::Size > const & jump_connection
+	);
+
 	/// @brief Append a new residue by a jump.
 	virtual
 	void
@@ -640,6 +651,7 @@ public:  // Residues
 		bool const start_new_chain = false,
 		bool const lookup_bond_length = false
 	);
+
 
 	/// @brief glues to seqpos and perhaps also seqpos+1
 	virtual
@@ -1465,7 +1477,8 @@ private:
 		bool const attach_by_jump,
 		std::string const& root_atom,
 		id::NamedAtomID anchor_id,
-		bool const start_new_chain
+		bool const start_new_chain,
+		bool const skip_atomtree = false // If true, the calling Conformation function promises to call setup_atom_tree() and notify_length_obs() afterward
 	);
 
 

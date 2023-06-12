@@ -420,6 +420,15 @@ Pose::print_metric( std::string const & calculator_name, std::string const & key
 { return metrics_->print(calculator_name, key, *this); }
 
 void
+Pose::append_residues(
+	utility::vector1< conformation::ResidueOP > const & residues,
+	utility::vector1< core::Size > const & jump_connection
+) {
+	energies_->clear(); // TEMPORARY
+	conformation_->append_residues( residues, jump_connection );
+}
+
+void
 Pose::append_residue_by_jump(
 	conformation::Residue const & new_rsd,
 	Size const jump_anchor_residue,

@@ -794,6 +794,14 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 	// ERROR HANDLING HERE IF WE DID NOT RESOLVE ANY RESIDUE TYPES
 
 
+	// Setup the set of residues to use.
+	// Note that we're deferring adding them to the pose, so we can't use the "current" state of the pose for any logic here
+
+	utility::vector1< conformation::ResidueOP > residues;
+	utility::vector1< core::Size > jump_connections; // Which residue to jump from, 0 for polymeric connection to previous
+
+	utility::vector1< core::Size > chain_endings; // Which residues are the end of their respective chains?
+
 	for ( Size ii = 1; ii <= residue_types_.size(); ++ii ) {
 		if ( ! residue_types_[ ii ] ) { continue; }
 
@@ -819,8 +827,8 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 				double offset = 1e-250; // coordinates now double, so we can use _really_ small offset.
 				std::string const & pose_name( remapped_atom_names_[ ii ].left.find( rinfo_name )->second );
 				ii_rsd->atom( pose_name ).xyz( iter->second + offset );
-				// +1 here as we haven't added the residue to the pose yet.
-				id::NamedAtomID atom_id( pose_name, pose.size()+1 );
+				// +1 here as we haven't added the residue yet.
+				id::NamedAtomID atom_id( pose_name, residues.size()+1 );
 				coordinates_assigned_.set( atom_id, true);
 			}
 			//else runtime_assert( iter->first == " H  " && ii_rsd_type.is_terminus() ); // special casee
@@ -841,108 +849,104 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			check_and_correct_sister_atoms( ii_rsd );
 		}
 
-		Size const old_nres( pose.size() );
+		Size const old_nres( residues.size() );
 
 		TR.Trace << "...new residue is a polymer: " << ii_rsd->type().is_polymer() << std::endl;
 		if ( old_nres >= 1 ) {
-			TR.Trace << "...old residue is a polymer: " << pose.residue_type( old_nres ).is_polymer() << std::endl;
+			TR.Trace << "...old residue is a polymer: " << residues[ old_nres ]->is_polymer() << std::endl;
 		}
 
-		// Add the first new residue to the pose.
+		// Add the first new residue
 		if ( !old_nres ) {
 			TR.Trace << ii_rsd_type.name() << " " << ii << " is the start of a new pose." << std::endl;
-			pose.append_residue_by_bond( *ii_rsd );
+
+			residues.push_back( ii_rsd );
+			jump_connections.push_back( 0 );
 
 			// If this is a lower terminus, AND it's not about to get UPPER-UPPER bonded from prev
 			// Actually, building initial PDBs like this is all right: we will be
 			// doing more complicated checks later.
 		} else if (
 				( is_lower_terminus_[ ii ] && determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() ) ) ||
-				( !pose.residue_type( old_nres ).is_upper_terminus() && pose.residue_type( old_nres ).is_RNA() && !ii_rsd_type.is_upper_terminus() && ii_rsd_type.is_lower_terminus() ) ||
+				( !residues[ old_nres ]->type().is_upper_terminus() && residues[ old_nres ]->type().is_RNA() && !ii_rsd_type.is_upper_terminus() && ii_rsd_type.is_lower_terminus() ) ||
 				! same_chain_prev_[ ii ] || // explicit new-chain signal
-				pose.residue_type( old_nres ).has_variant_type( "C_METHYLAMIDATION" ) || // C_METHYLAMIDATED can't bond, so jump AMW TODO VARIANT
+				residues[ old_nres ]->type().has_variant_type( "C_METHYLAMIDATION" ) || // C_METHYLAMIDATED can't bond, so jump AMW TODO VARIANT
 				! ii_rsd->is_polymer() || // new residue isn't polymer, so jump
 				// Don't connect to previous with an UPPER/LOWER polymeric bond if previous didn't have an upper.
-				! pose.residue_type( old_nres ).is_polymer() || // Nonpolymers can't bond-to-next automatically, so jump
-				pose.residue_type( old_nres ).is_upper_terminus() || // generalized from C_METHYLAMIDATION
+				! residues[ old_nres ]->type().is_polymer() || // Nonpolymers can't bond-to-next automatically, so jump
+				residues[ old_nres ]->type().is_upper_terminus() || // generalized from C_METHYLAMIDATION
 				! last_residue_was_recognized( ii ) ) {
 			// A new chain because this is a lower terminus (see logic above for designation)
 			// and if we're not checking it then it's a different chain from the previous
 			core::Size root_index = 1;
 			// connect metal ions by a jump to the closest metal-binding residue that is lower in sequence.
 			if ( ii_rsd->is_metal() && basic::options::option[basic::options::OptionKeys::in::auto_setup_metals] ) {
-				root_index = find_atom_tree_root_for_metal_ion( pose, ii_rsd );
+				root_index = find_atom_tree_root_for_metal_ion( residues, ii_rsd );
 			}
 			if ( root_index>1 ) {
 				TR << ii_rsd_type.name() << " " << ii;
 				TR << " was added by a jump, with base residue " << root_index << std::endl;
 			}
-			pose.append_residue_by_jump( *ii_rsd, root_index /*pose.size()*/ );
+
+			residues.push_back( ii_rsd );
+			jump_connections.push_back( root_index );
 
 		} else { // Append residue to current chain dependent on bond length.
 			if ( ! options_.missing_dens_as_jump() ) {
 				TR.Trace << ii_rsd_type.name() << " " << ii;
 				TR.Trace << " (PDB residue: " << PDB_resid << ")";
 				TR.Trace << " is appended to chain " << rinfos_[ ii ].chainID() << std::endl;
-				try {
-					pose.append_residue_by_bond( *ii_rsd );
-				} catch (utility::excn::Exception & e) {
-					std::stringstream message;
-					message << "Failed to add residue " << ii << " to the structure. PDB file residue name: "
-						<< PDB_resid << std::endl;
-					message << "ERROR: Attempted to make connection: " << rinfos_[ ii-1 ].resid() <<
-						" -> " << PDB_resid << std::endl;
-					std::string error_msg = message.str() + "ERROR: " + e.msg();
-					utility_exit_with_message( error_msg );
-				}
+
+				residues.push_back( ii_rsd );
+				jump_connections.push_back( 0 );
+
 			} else {
 				//fpd look for missing density in the input PDB
 				//fpd if there is a bondlength > 3A
 				//fpd we will consider this missing density
-				// apl -- FIX THIS! Do not ask for the residue, as it forms an O(N^2) expense. Only ask for the residue type.
-				Residue const & last_rsd( pose.residue( old_nres ) );
-				core::Real bondlength = ( last_rsd.atom( last_rsd.upper_connect_atom() ).xyz() -
+				ResidueOP last_rsd = residues[old_nres];
+				core::Real bondlength = ( last_rsd->atom( last_rsd->upper_connect_atom() ).xyz() -
 					ii_rsd->atom( ii_rsd->lower_connect_atom() ).xyz() ).length();
 				if ( bondlength > 3.0 ) {
 					TR.Warning << "missing density found at residue (rosetta number) " << old_nres << std::endl;
-					pose.append_residue_by_jump( *ii_rsd, old_nres );
 
-					if ( pose.residue_type(old_nres).is_protein() ) {
-						if ( !pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) &&
-								!pose.residue_type(old_nres).has_variant_type( UPPERTERM_TRUNC_VARIANT ) ) {
-							core::pose::add_variant_type_to_pose_residue( pose, UPPERTERM_TRUNC_VARIANT, old_nres );
+					// The pose here is only used for getting the appropriate ResidueTypeSet
+					// (Missing atoms are filled in later.)
+
+					if ( last_rsd->is_protein() ) {
+						if ( !last_rsd->has_variant_type( UPPER_TERMINUS_VARIANT ) &&
+								!last_rsd->has_variant_type( UPPERTERM_TRUNC_VARIANT ) ) {
+							residues[ old_nres ] = this->add_variant_type_to_residue( last_rsd, UPPERTERM_TRUNC_VARIANT, pose );
 						}
 					} else {
-						if ( !pose.residue_type(old_nres).has_variant_type( UPPER_TERMINUS_VARIANT ) ) {
-							core::pose::add_variant_type_to_pose_residue( pose, UPPER_TERMINUS_VARIANT, old_nres );
+						if ( !last_rsd->has_variant_type( UPPER_TERMINUS_VARIANT ) ) {
+							residues[ old_nres ] = this->add_variant_type_to_residue( last_rsd, UPPER_TERMINUS_VARIANT, pose );
 						}
-						if ( !pose.residue_type(old_nres+1).has_variant_type( LOWER_TERMINUS_VARIANT) ) {
+						if ( !ii_rsd->has_variant_type( LOWER_TERMINUS_VARIANT) ) {
 							TR << " add lower variant " << old_nres+1 << std::endl;
-							core::pose::add_variant_type_to_pose_residue( pose, LOWER_TERMINUS_VARIANT, old_nres+1 );
+							ii_rsd = this->add_variant_type_to_residue( ii_rsd, LOWER_TERMINUS_VARIANT, pose );
 						}
 					}
 
-					if ( pose.residue_type(old_nres+1).is_protein() ) {
+					if ( ii_rsd->is_protein() ) {
 						// If it doesn't have a lower term variant for some other reason
-						if ( !pose.residue_type(old_nres+1).has_variant_type( LOWER_TERMINUS_VARIANT ) ) {
-							core::pose::add_variant_type_to_pose_residue( pose, LOWERTERM_TRUNC_VARIANT, old_nres+1 );
+						if ( !ii_rsd->has_variant_type( LOWER_TERMINUS_VARIANT ) ) {
+							ii_rsd = this->add_variant_type_to_residue( ii_rsd, LOWERTERM_TRUNC_VARIANT, pose );
 						}
-					} else if ( !pose.residue_type(old_nres+1).is_carbohydrate() ) {
-						core::pose::add_variant_type_to_pose_residue( pose, LOWER_TERMINUS_VARIANT, old_nres+1 );
+					} else if ( !ii_rsd->is_carbohydrate() ) {
+						ii_rsd = this->add_variant_type_to_residue( ii_rsd, LOWER_TERMINUS_VARIANT, pose );
 					}
+
+					residues.push_back( ii_rsd );
+					jump_connections.push_back( old_nres );
+
+
 				} else {
 					TR.Trace << ii_rsd_type.name() << " " << ii << " is appended to chain" << rinfos_[ ii ].chainID() << std::endl;
-					//pose.append_residue_by_bond( *ii_rsd );
-					try{
-						pose.append_residue_by_bond( *ii_rsd );
-					} catch (utility::excn::Exception & e) {
-						std::stringstream message;
-						message << "Failed to add residue " << ii << " to the structure. PDB file residue name: "
-							<< PDB_resid << std::endl;
-						message << "ERROR: Attempted to make connection: " << rinfos_[ ii-1 ].resid() << " -> " << PDB_resid << std::endl;
-						std::string error_msg = message.str() + "ERROR: " + e.msg();
-						throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg );
-					}
+
+					residues.push_back( ii_rsd );
+					jump_connections.push_back( 0 );
+
 				}
 			}
 		}
@@ -964,21 +968,50 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			}
 		}
 
-		// If newly added residue was a carbohydrate, set flag on conformation.
-		if ( ii_rsd->is_carbohydrate() ) {
-			pose.conformation().contains_carbohydrate_residues( true );
-		}
-
 		pose_to_rinfo_.push_back( ii );
 		pose_temps_.push_back( rinfos_[ ii ].temps() );
 
 		// Update the pose-internal chain label if necessary.
-		if ( ( is_lower_terminus_[ ii ] || ! determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() ) ) && pose.size() > 1 ) {
-			pose.conformation().insert_chain_ending( pose.size() - 1 );
+		if ( ( is_lower_terminus_[ ii ] || ! determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() ) ) && residues.size() > 1 ) {
+			chain_endings.push_back( residues.size() - 1 );
 		}
 	}
 
+	// Now actually append all the residues
+	try {
+		pose.append_residues( residues, jump_connections );
+	} catch (utility::excn::Exception & e) {
+		utility_exit_with_message( e.msg() );
+	}
+
+	// Make sure chain endings are up-to-date.
+	for ( core::Size end: chain_endings ) {
+		pose.conformation().insert_chain_ending( end );
+	}
+
 	TR.Trace << "Initial, pre-refined Pose built successfully." << std::endl;
+}
+
+core::conformation::ResidueOP
+PoseFromSFRBuilder::add_variant_type_to_residue( core::conformation::ResidueOP old_rsd, chemical::VariantType const variant_type, core::pose::Pose const & pose )
+{
+	if ( old_rsd->has_variant_type( variant_type ) ) { return old_rsd; }
+
+	// the type of the desired variant residue
+	chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( old_rsd->type().mode() ) );
+	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_added( old_rsd->type(), variant_type ) );
+
+	core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( new_rsd_type ) );
+
+	// Copy coordinates
+	for ( Size ii=1; ii <= new_rsd->natoms(); ++ii ) {
+		std::string const & atom_name( new_rsd->atom_name(ii) );
+		if ( old_rsd->has( atom_name ) ) {
+			new_rsd->atom( ii ).xyz( old_rsd->atom( atom_name ).xyz() );
+		} // We ignore missing atoms, as we'll fill them in later in the build process.
+	}
+
+	return new_rsd;
 }
 
 bool
@@ -1839,7 +1872,7 @@ void PoseFromSFRBuilder::fill_name_map( Size seqpos )
 
 Size
 PoseFromSFRBuilder::find_atom_tree_root_for_metal_ion(
-	pose::Pose const & pose,
+	utility::vector1< core::conformation::ResidueOP > const & context,
 	conformation::ResidueCOP metal_rsd
 )
 {
@@ -1853,11 +1886,12 @@ PoseFromSFRBuilder::find_atom_tree_root_for_metal_ion(
 	core::Size closest_residue=0;
 	core::Size closest_dist_sq = 0;
 
-	for ( core::Size ii=1, nres=pose.size(); ii<=nres; ++ii ) { //Loop through all residues already added, looking for possible residues to root the metal onto.
-		if ( !pose.residue(ii).is_protein() ) continue; //I'm not interested in tethering metals to non-protein residues.
-		if ( !pose.residue(ii).has("CA") ) continue; //I'll be basing this on metal-alpha carbon distance, so anything without an alpha carbon won't get to be the root.
+	for ( core::Size ii=1, nres=context.size(); ii<=nres; ++ii ) { //Loop through all residues already added, looking for possible residues to root the metal onto.
+		core::conformation::Residue const & context_res = *context[ii];
+		if ( !context_res.is_protein() ) continue; //I'm not interested in tethering metals to non-protein residues.
+		if ( !context_res.has("CA") ) continue; //I'll be basing this on metal-alpha carbon distance, so anything without an alpha carbon won't get to be the root.
 
-		numeric::xyzVector < core::Real > const residue_xyz = pose.residue(ii).xyz("CA");
+		numeric::xyzVector < core::Real > const residue_xyz = context_res.xyz("CA");
 
 		core::Real const current_dist_sq = residue_xyz.distance_squared(metal_xyz);
 
@@ -1865,7 +1899,7 @@ PoseFromSFRBuilder::find_atom_tree_root_for_metal_ion(
 			closest_residue = ii;
 			closest_dist_sq = (core::Size)current_dist_sq;
 		}
-		if ( pose.residue(ii).is_metalbinding() &&
+		if ( context_res.is_metalbinding() &&
 				(closest_metalbinding_residue==0 || current_dist_sq < metalbinding_dist_sq) ) {
 			closest_metalbinding_residue = ii;
 			metalbinding_dist_sq = (core::Size) current_dist_sq;

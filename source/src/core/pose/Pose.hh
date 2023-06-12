@@ -457,6 +457,16 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
 
+	/// @brief Convenience function to add a bunch of residues at once to the end of the pose
+	/// jump_connection lists the residue (in the new pose) to which to attach the residue by jump
+	/// a value of 0 for jump_connection means that the residue will be attached polymerically
+	/// to the previous residue.
+	void
+	append_residues(
+		utility::vector1< conformation::ResidueOP > const & residues,
+		utility::vector1< core::Size > const & jump_connection
+	);
+
 	/// @brief Appends  <new_rsd>  (a residue) to pose by a new jump
 	void
 	append_residue_by_jump(

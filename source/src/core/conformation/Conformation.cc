@@ -875,6 +875,84 @@ Conformation::annotated_sequence( bool show_all_variants ) const
 	return seq;
 }
 
+void
+Conformation::append_residues(
+	utility::vector1< conformation::ResidueOP > const & residues,
+	utility::vector1< core::Size > const & jump_connection
+) {
+	if ( residues.empty() ) { // nothing to do (be robust)
+		return;
+	}
+
+	pre_nresidue_change();
+	core::Size const starting_size = size();
+
+	// While we're most often going to apply this to an empty pose,
+	// we want to handle attaching additional residues to the existing pose.
+	core::Size curr_res_index = 1;
+	if ( size() < 1 ) {
+		append_residue( *residues[1], false, "", id::NamedAtomID::BOGUS_NAMED_ATOM_ID(), false, /*skip_atomtree*/ true );
+		curr_res_index = 2;
+	}
+
+	for ( core::Size ii(curr_res_index); ii <= residues.size(); ++ii ) {
+		debug_assert( residues[ii] != nullptr );
+		if ( ii <= jump_connection.size() && jump_connection[ii] ) { // If jump_connection is too short, just assume polymeric
+			// Attach by jump
+			append_residue( *residues[ii], true, "", id::NamedAtomID( "", jump_connection[ii] ), false, /*skip_atomtree*/ true );
+
+		} else {
+			// Attach by bond
+
+			Size const anchor_pos = size(); // polymer connection is to the preceding residue
+			// For convenience - don't call residue() function to avoid a refold.
+			Residue const & anchor_rsd( residue_( anchor_pos ) );
+			Residue const & new_rsd( *residues[ii] );
+
+			// Check to make sure we can bond things polymerically
+			if ( !anchor_rsd.has_upper_connect() ) {
+				std::stringstream err;
+				err << "Can't create a polymer bond after residue " << anchor_pos
+					<< " due to incompatible type: " << anchor_rsd.type().name();
+				throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
+			} else if ( !new_rsd.has_lower_connect() ) {
+				std::stringstream err;
+				err << "Can't create a polymer bond to new residue " << anchor_pos + 1
+					<< " due to incompatible type: " << new_rsd.type().name();
+				throw CREATE_EXCEPTION(utility::excn::Exception,  err.str() );
+			}
+
+			//////////////////////////////////////////////////////
+			// determine anchor and root atoms
+			Size anchor_residue_connection_index = anchor_rsd.type().upper_connect_id();
+			Size residue_connection_index = new_rsd.type().lower_connect_id();
+
+			id::AtomID anchor_id(anchor_rsd.upper_connect_atom(), anchor_pos);
+			std::string root_atom = new_rsd.atom_name( new_rsd.lower_connect_atom() );
+
+			append_residue(
+				*residues[ii],
+				false /* not by a jump */,
+				root_atom,
+				atom_id_to_named_atom_id(anchor_id, anchor_rsd),
+				false,
+				/*skip_atomtree*/ true
+			);
+
+			residues_[ anchor_pos + 1  ]->residue_connection_partner(  residue_connection_index, anchor_pos, anchor_residue_connection_index );
+			residues_[ anchor_pos ]->residue_connection_partner( anchor_residue_connection_index, anchor_pos + 1,   residue_connection_index );
+		}
+	}
+
+	// Now handle deferred atom tree processing
+	setup_atom_tree();
+
+	for ( core::Size ii(1); ii <= residues.size(); ++ii ) {
+		core::Size const seqpos = starting_size + ii;
+		notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_APPEND, seqpos - 1, 1, residues_[ seqpos ].get() ), false );
+	}
+}
+
 /// @details add a residue into residues_ container, update its seqpos, chainid as well
 /// fold tree and atoms.
 /// Fires a LengthEvent::RESIDUE_APPEND signal.
@@ -3535,7 +3613,8 @@ Conformation::append_residue(
 	bool const attach_by_jump,
 	std::string const& root_atom,
 	id::NamedAtomID anchor_id,
-	bool const start_new_chain
+	bool const start_new_chain,
+	bool const skip_atomtree /*false*/
 )
 {
 	pre_nresidue_change();
@@ -3585,11 +3664,13 @@ Conformation::append_residue(
 	// note that, inside these routines, new_rsd's sequence number is being used.
 	// good thing we set it already.
 
-	if ( first_residue ) {
-		debug_assert( atom_tree_->empty() );
-		setup_atom_tree(); // just this once
-	} else {
-		insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
+	if ( ! skip_atomtree ) {
+		if ( first_residue ) {
+			debug_assert( atom_tree_->empty() );
+			setup_atom_tree(); // just this once
+		} else {
+			insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
+		}
 	}
 
 	residue_torsions_need_updating_ = true;
@@ -3599,7 +3680,9 @@ Conformation::append_residue(
 		contains_carbohydrate_residues_ = true;
 	}
 
-	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_APPEND, seqpos - 1, 1, &new_rsd ), false );
+	if ( ! skip_atomtree ) { // Length observers may need valid AtomTree
+		notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_APPEND, seqpos - 1, 1, &new_rsd ), false );
+	}
 } // append_residue
 
 

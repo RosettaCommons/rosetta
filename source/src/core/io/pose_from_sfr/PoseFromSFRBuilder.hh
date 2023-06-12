@@ -32,6 +32,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/io/MergeAndSplitBehaviorManager.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
@@ -163,9 +164,14 @@ private:
 
 	void fill_name_map( Size seqpos );
 
-	Size find_atom_tree_root_for_metal_ion( core::pose::Pose const & pose, conformation::ResidueCOP metal_rsd );
+	Size find_atom_tree_root_for_metal_ion( utility::vector1< core::conformation::ResidueOP > const & context, conformation::ResidueCOP metal_rsd );
 	bool last_residue_was_recognized( Size seqpos ) const;
 	void output_ignore_water_warning_once();
+
+	// Helper function for disconnected residues - pose is only used for getting the ResidueTypeSet
+	// (Residue does not need to be in Pose.)
+	core::conformation::ResidueOP
+	add_variant_type_to_residue( core::conformation::ResidueOP rsd, core::chemical::VariantType const variant_type, core::pose::Pose const & pose );
 
 private:
 	chemical::ResidueTypeSetCOP residue_type_set_;
