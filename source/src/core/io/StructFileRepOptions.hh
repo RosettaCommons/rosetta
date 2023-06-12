@@ -67,6 +67,7 @@ public:
 	bool do_not_autoassign_SS() const;
 	bool exit_if_missing_heavy_atoms() const;
 	bool fold_tree_io() const;
+	bool fast_restyping() const;
 	bool ignore_unrecognized_res() const;
 	bool ignore_sugars() const;
 	bool ignore_waters() const;
@@ -127,6 +128,7 @@ public:
 	void set_do_not_autoassign_SS( bool const do_not_autoassign_SS );
 	void set_exit_if_missing_heavy_atoms( bool const exit_if_missing_heavy_atoms );
 	void set_fold_tree_io( bool const fold_tree_io );
+	void set_fast_restyping( bool const fast_restyping );
 	void set_ignore_unrecognized_res( bool const ignore_unrecognized_res );
 	void set_ignore_sugars( bool const setting );
 	void set_ignore_waters( bool const ignore_waters );
@@ -208,6 +210,7 @@ private:
 	bool do_not_autoassign_SS_;
 	bool exit_if_missing_heavy_atoms_;
 	bool fold_tree_io_;
+	bool fast_restyping_;
 	bool ignore_unrecognized_res_;
 	bool ignore_sugars_;
 	bool ignore_waters_;

@@ -237,6 +237,12 @@ Options = Option_Group( '',
 				default = 'false'),
 
 		# Auto-detection options ----------------------------------------------
+		Option( 'fast_restyping', 'Boolean',
+				desc="Use a faster version of residue typing when reading input files. "
+						"This assumes that the three letter code stands for the 'standard' residue type, "
+						"or that the proper type has been specified in the HETNAM records. "
+						"This should work with Rosetta outputs and most (unedited/uncleaned) direct-from-wwPDB structures, with caveats.",
+				default='false' ),
 		Option( 'detect_oops', 'Boolean',
 				desc="Detect oligooxopiperazines (oops) and add required constraints",
 				default='false' ),

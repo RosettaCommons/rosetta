@@ -15,6 +15,7 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
+#include <test/util/pdb1lnt.hh>
 
 // Unit headers
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
@@ -287,4 +288,115 @@ public:
 		TS_ASSERT( pose4->residue_type(res1C).is_lower_terminus() );
 		TS_ASSERT( pose4->residue_type(resNC).is_upper_terminus() );
 	}
+
+	/// @brief utility function for pose comparison
+	void compare_poses( core::pose::Pose const & plain, core::pose::Pose const & fast, std::string const & filename ) {
+		// Basic check to see if we got poses of the same size
+		TSM_ASSERT_EQUALS( filename, plain.size(), fast.size() );
+		if ( plain.size() != fast.size() ) {
+			TR.Error << filename << " PLAIN " << plain.annotated_sequence() << std::endl;
+			TR.Error << filename << " FAST " << fast.annotated_sequence() << std::endl;
+			return;
+		}
+
+		// Check residue typing
+		bool failed = false;
+		for ( core::Size ii(1); ii <= fast.size(); ++ii ) {
+			if ( plain.residue_type(ii).name() != fast.residue_type(ii).name() ) {
+				TR.Error << filename << " Residue " << ii << std::endl;
+				TSM_ASSERT_EQUALS( filename, plain.residue_type(ii).name(), fast.residue_type(ii).name() );
+				failed = true;
+			}
+		}
+		if ( failed ) { return; }
+
+		// Commented out for speed purposes
+		//   // Double check atom assignments
+		//   for( core::Size ii(1); ii <= fast.size(); ++ii ) {
+		//    core::conformation::Residue const & pres = plain.residue(ii);
+		//    core::conformation::Residue const & fres = fast.residue(ii);
+		//    for ( core::Size aa(1); aa <= fres.natoms(); ++aa ) {
+		//     if ( pres.is_virtual( aa ) ) { continue; } // Not necessarily the same
+		//     if (  pres.xyz(aa) != fres.xyz(aa) ) {
+		//      TR.Error << filename << " Residue " << ii << " " << pres.type().name() << " atom " << pres.atom_name(aa) << std::endl;
+		//      TSM_ASSERT_EQUALS( filename , pres.xyz(aa), fres.xyz(aa) );
+		//      failed = true;
+		//     }
+		//    }
+		//   }
+		//   if ( failed ) { return; }
+	}
+
+	void load_fast_and_slow( std::string const & file_contents, std::string const & filename, chemical::ResidueTypeSetCOP residue_set ) {
+		StructFileReaderOptions plain_opt;
+		plain_opt.set_fast_restyping(false);
+		StructFileReaderOptions fast_opt;
+		fast_opt.set_fast_restyping(true);
+
+		TR << "==================== Testing " << filename << " ========================" << std::endl;
+		core::pose::Pose plain;
+		core::pose::Pose fast;
+
+		core::io::StructFileRep sfr_plain = core::io::pdb::create_sfr_from_pdb_file_contents( file_contents, plain_opt );
+		sfr_plain.filename() = filename;
+		PoseFromSFRBuilder pb_plain( residue_set, plain_opt );
+		pb_plain.build_pose( sfr_plain, plain );
+
+		TR << filename << " PLAIN " << plain.annotated_sequence() << std::endl;
+		TR << "-------- Loading fast ------------- " << std::endl;
+
+		core::io::StructFileRep sfr_fast = core::io::pdb::create_sfr_from_pdb_file_contents( file_contents, fast_opt );
+		sfr_fast.filename() = filename;
+		PoseFromSFRBuilder pb_fast( residue_set, fast_opt );
+		pb_fast.build_pose( sfr_fast, fast );
+
+		compare_poses( plain, fast, filename );
+	}
+
+	void test_quick_and_dirty_restyping() {
+		using namespace core::import_pose;
+		using namespace core::io;
+
+		utility::vector1< std::string > fa_files_to_test = {
+			"core/io/1QYS.pdb", // Standard PDB loading.
+			"core/io/test_in.pdb", // Issue with HIS/HIS_D calling.
+			"protocols/sparta/2kywA.pdb", // HIS/HIS_D calling with both protons
+			"core/io/daa.pdb", // D-AA
+			"core/conformation/4gatA.pdb", // Metal ions & DNA
+			"protocols/stepwise/modeler/align/scaff_subset_stepwise_input_seq_1.pdb", // RNA
+			"core/conformation/symmetry/mtest1.pdb", // VRT and INV_VRT
+			};
+		//// Explicitly not supported for the Q&D approach
+		//   "core/io/mmtf/crosslinkermover_octahedral_s2_symm_S_0008.pdb", // VirtualMetalConjugation patch due to presence of VM1 atom.
+		//   "core/io/two_lipids.pdb", // Lipid names aren't their three letter codes.
+		//      "protocols/match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb", // Needs params, and params don't match with three letter code
+		//   "protocols/simple_moves/oop/oop_test.pdb", // OOP -- needs atom annotations
+		//   "core/chemical/carbohydrates/gp120_2glycans_man5.pdb", // Glycans w/ HETNAM without patching info
+		//   "core/chemical/carbohydrates/GlcN.pdb" // No patching info
+		//   "core/chemical/carbohydrates/alpha-L-Fucp-_1-6_-D-GlcpNAc-_1-4_-D-GlcpNAc.pdb", // No patching info
+		//   "core/io/pose_from_sfr/acetylated_and_methylated_alanine.pdb", // Terminus alterations -- need patching information
+		//"core/io/5FYL.pdb", // Glycans -- Strange issue with ignoring BMA in plain
+
+		utility::vector1< std::string > cen_files_to_test = {
+			"devel/znhash/1EER_cn4_0043.pdb",  // Centroid, VRT
+			};
+
+		chemical::ResidueTypeSetCOP fa_residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+
+		for ( std::string const & filename: fa_files_to_test ) {
+			std::string const & file_contents = utility::file_contents( filename );
+
+			load_fast_and_slow( file_contents, filename, fa_residue_set );
+		}
+
+		// load_fast_and_slow( pdb1lnt(), "pdb1lnt", fa_residue_set ); //Residue 1 -- "URA:LowerRNA" != "URA:LowerRNA:Virtual_Phosphate"
+
+		chemical::ResidueTypeSetCOP cen_residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ) );
+		for ( std::string const & filename: cen_files_to_test ) {
+			std::string const & file_contents = utility::file_contents( filename );
+
+			load_fast_and_slow( file_contents, filename, cen_residue_set );
+		}
+	}
+
 };

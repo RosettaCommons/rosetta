@@ -74,6 +74,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_do_not_autoassign_SS( tag->getOption< bool >( "do_not_autoassign_SS", false ) ); //NOTE to later person writing provide_xml_schema: this option does nothing if output_secondary_structure is not set true
 	set_exit_if_missing_heavy_atoms( tag->getOption< bool >( "exit_if_missing_heavy_atoms", false ) );
 	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", false ) );
+	set_fast_restyping( tag->getOption< bool >( "fast_restyping", false ) );
 	set_ignore_unrecognized_res( tag->getOption< bool >( "ignore_unrecognized_res", false ) );
 	set_ignore_sugars( ! tag->getOption< bool >( "include_sugars", false ) );
 	set_ignore_waters( tag->getOption< bool >( "ignore_waters", false ) );
@@ -139,6 +140,7 @@ core::Real StructFileRepOptions::connect_info_cutoff() const { return connect_in
 bool StructFileRepOptions::do_not_autoassign_SS() const { return do_not_autoassign_SS_;}
 bool StructFileRepOptions::exit_if_missing_heavy_atoms() const { return exit_if_missing_heavy_atoms_; }
 bool StructFileRepOptions::fold_tree_io() const { return fold_tree_io_; }
+bool StructFileRepOptions::fast_restyping() const { return fast_restyping_; }
 bool StructFileRepOptions::ignore_unrecognized_res() const { return ignore_unrecognized_res_; }
 bool StructFileRepOptions::ignore_sugars() const { return ignore_sugars_; }
 bool StructFileRepOptions::ignore_waters() const { return ignore_waters_; }
@@ -212,6 +214,10 @@ void StructFileRepOptions::set_exit_if_missing_heavy_atoms( bool const exit_if_m
 void StructFileRepOptions::set_fold_tree_io( bool const fold_tree_io )
 { fold_tree_io_ = fold_tree_io; }
 
+void StructFileRepOptions::set_fast_restyping( bool const fast_restyping )
+{
+	fast_restyping_ = fast_restyping;
+}
 
 void StructFileRepOptions::set_ignore_unrecognized_res( bool const ignore_unrecognized_res )
 {
@@ -373,6 +379,7 @@ StructFileRepOptions::list_options_read( utility::options::OptionKeyList & read_
 		+ run::exit_if_missing_heavy_atoms
 		+ inout::fold_tree_io
 		+ in::include_sugars
+		+ in::fast_restyping
 		+ in::ignore_unrecognized_res
 		+ in::ignore_waters
 		+ run::ignore_zero_occupancy
@@ -443,6 +450,7 @@ StructFileRepOptions::append_schema_attributes( utility::tag::AttributeList & at
 		+ Attr::attribute_w_default( "do_not_autoassign_SS", xsct_rosetta_bool, "Requires output_secondary_structure to be set to true",  "false" )
 		+ Attr::attribute_w_default( "exit_if_missing_heavy_atoms", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "fold_tree_io", xsct_rosetta_bool, "TO DO",  "0" )
+		+ Attr::attribute_w_default( "fast_restyping", xsct_rosetta_bool, "Turn on fast residue type determination method. This probably works for from-Rosetta and most (unedited/uncleaned) from-wwPDB structures.",  "0" )
 		+ Attr::attribute_w_default( "ignore_unrecognized_res", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "include_sugars", xsct_rosetta_bool, "TO DO",  "0" )
 		+ Attr::attribute_w_default( "ignore_waters", xsct_rosetta_bool, "TO DO",  "0" )
@@ -521,6 +529,7 @@ void StructFileRepOptions::init_from_options( utility::options::OptionCollection
 	set_exit_if_missing_heavy_atoms( options[ run::exit_if_missing_heavy_atoms ].value());
 	set_fold_tree_io( options[ inout::fold_tree_io ]() );
 
+	set_fast_restyping( options[ in::fast_restyping ]());
 	set_ignore_sugars( ! options[ in::include_sugars ]() );
 	set_ignore_unrecognized_res( options[ in::ignore_unrecognized_res ]());
 	set_ignore_waters( options[ in::ignore_waters ]() );
@@ -581,12 +590,13 @@ bool
 StructFileRepOptions::operator == ( StructFileRepOptions const & other ) const
 {
 	if ( check_if_residues_are_Ntermini_                        != other.check_if_residues_are_Ntermini_                       ) return false;
-	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_                      ) return false;
+	if ( check_if_residues_are_Ctermini_                        != other.check_if_residues_are_Ctermini_                       ) return false;
 	if ( skip_connect_info_                                     != other.skip_connect_info_                                    ) return false;
 	if ( connect_info_cutoff_                                   != other.connect_info_cutoff_                                  ) return false;
 	if ( do_not_autoassign_SS_                                  != other.do_not_autoassign_SS_                                 ) return false;
 	if ( exit_if_missing_heavy_atoms_                           != other.exit_if_missing_heavy_atoms_                          ) return false;
 	if ( fold_tree_io_                                          != other.fold_tree_io_                                         ) return false;
+	if ( fast_restyping_                                        != other.fast_restyping_                                       ) return false;
 	if ( ignore_unrecognized_res_                               != other.ignore_unrecognized_res_                              ) return false;
 	if ( ignore_sugars_                                         != other.ignore_sugars_                                        ) return false;
 	if ( ignore_waters_                                         != other.ignore_waters_                                        ) return false;
@@ -653,6 +663,8 @@ StructFileRepOptions::operator < ( StructFileRepOptions const & other ) const
 	if ( exit_if_missing_heavy_atoms_                           != other.exit_if_missing_heavy_atoms_                          ) return false;
 	if ( fold_tree_io_                                          <  other.fold_tree_io_                                         ) return true;
 	if ( fold_tree_io_                                          != other.fold_tree_io_                                         ) return false;
+	if ( fast_restyping_                                        <  other.fast_restyping_                                       ) return true;
+	if ( fast_restyping_                                        != other.fast_restyping_                                       ) return false;
 	if ( ignore_unrecognized_res_                               <  other.ignore_unrecognized_res_                              ) return true;
 	if ( ignore_unrecognized_res_                               != other.ignore_unrecognized_res_                              ) return false;
 	if ( ignore_sugars_                                         <  other.ignore_sugars_                                        ) return true;
@@ -762,6 +774,7 @@ core::io::StructFileRepOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( do_not_autoassign_SS_ ) ); // _Bool
 	arc( CEREAL_NVP( exit_if_missing_heavy_atoms_ ) ); // _Bool
 	arc( CEREAL_NVP( fold_tree_io_ ) ); // _Bool
+	arc( CEREAL_NVP( fast_restyping_ ) ); // _Bool
 	arc( CEREAL_NVP( ignore_unrecognized_res_ ) ); // _Bool
 	arc( CEREAL_NVP( ignore_sugars_ ) ); // _Bool
 	arc( CEREAL_NVP( ignore_waters_ ) ); // _Bool
@@ -824,6 +837,7 @@ core::io::StructFileRepOptions::load( Archive & arc ) {
 	arc( do_not_autoassign_SS_ ); // _Bool
 	arc( exit_if_missing_heavy_atoms_ ); // _Bool
 	arc( fold_tree_io_ ); // _Bool
+	arc( fast_restyping_ ); // _Bool
 	arc( ignore_unrecognized_res_ ); // _Bool
 	arc( ignore_sugars_ ); // _Bool
 	arc( ignore_waters_ ); // _Bool

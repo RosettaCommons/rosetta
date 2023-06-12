@@ -126,7 +126,11 @@ PoseFromSFRBuilder::build_pose( StructFileRep const & sfr, pose::Pose & pose )
 
 	setup( sfr );
 	pass_1_split_and_merge_residues_as_necessary();
-	pass_2_resolve_residue_types();
+	if ( options_.fast_restyping() ) {
+		pass_2_quick_and_dirty_resolve_residue_types();
+	} else {
+		pass_2_resolve_residue_types();
+	}
 	pass_3_verify_sufficient_backbone_atoms();
 	pass_4_redo_termini();
 	pass_5_note_discarded_atoms();
@@ -413,50 +417,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 
 	Size const nres_pdb( rinfos_.size() );
 
-	// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
-	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
-		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
-
-		std::pair< std::string, std::string > const & rosetta_names(
-			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( rinfo.resName() ) );
-		std::string const & name3( rosetta_names.first );
-		std::string const & base_name( rosetta_names.second );
-
-		if ( base_name != "" ) {
-			sfr_.residue_type_base_names()[ rinfo.resid() ] = std::make_pair( name3, base_name );
-			sfr_.default_mainchain_connectivity()[ rinfo.resid() ] =
-				NomenclatureManager::get_instance()->default_mainchain_connectivity_from_pdb_code( rinfo.resName() );
-		}
-		if ( carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
-			TR.Trace << "Identified glycan at position " << ii << std::endl;
-			glycan_positions_.push_back( ii );
-		}
-	}
-
-	known_links_ = core::io::explicit_links_from_sfr_linkage( sfr_.link_map(), rinfos_ );
-	if ( options_.auto_detect_glycan_connections() ) {
-		TR.Debug << "Auto-detecting glycan connections" << std::endl;
-		//This clears the links before fix_glycan_order call which makes the clear in add_glycan_links_to_map redundant but I'm leaving it for now.
-		if ( !options_.maintain_links() ) {
-			TR.Debug << "Clearing linkages read from provided LINK records" << std::endl;
-			known_links_.clear();
-		} else {
-			TR.Debug << "Keeping linkages read from provided LINK records" << std::endl;
-		}
-		utility::vector1< core::Size > chain_ends = core::io::fix_glycan_order( rinfos_, glycan_positions_, options_, known_links_ );
-		// Reset correspondences for reordered glycans
-		for ( core::Size pos : glycan_positions_ ) {
-			resid_to_index_[ rinfos_[ pos ].resid() ] = pos;
-		}
-		for ( core::Size end : chain_ends ) {
-			if ( end+1 <= same_chain_prev_.size() ) {
-				TR << "Setting chain termination for " << end << std::endl;
-				same_chain_prev_[ end + 1 ] = false;
-			}
-		}
-		core::io::add_glycan_links_to_map( known_links_, core::io::determine_glycan_links( rinfos_, options_ ), rinfos_ );
-		TR.Debug << "Finished auto-detecting glycan connections" << std::endl;
-	}
+	pre_process_residue_type_information();
 
 	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
 		if ( merge_behaviors_[ ii ] == chemical::io::mrb_merge_w_next ||
@@ -565,11 +526,342 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 		}
 
 		TR.Debug << "Initial type of " << ii << " is " << rsd_type_cop->name() << std::endl;
+		TR.Debug << " terminal? " << is_lower_terminus << " same chain prev? " << same_chain_prev << std::endl;
 		residue_types_[ ii ] = rsd_type_cop;
 		is_lower_terminus_[ ii ] = is_lower_terminus;
 		same_chain_prev_[ ii ] = same_chain_prev;
 		fill_name_map( ii );
 	}
+}
+
+
+/// Utility function to help pass_2_quick_and_dirty_resolve_residue_types()
+core::chemical::ResidueTypeCOP
+find_restype(
+	std::string const & name,
+	std::string const & name3,
+	core::chemical::ResidueTypeSet const & restypeset,
+	std::set< std::string > & warned_on_ccd_confusion
+) {
+	core::chemical::ResidueTypeCOP rsd_type_cop = restypeset.name_mapOP( name );
+
+	if ( rsd_type_cop != nullptr && restypeset.has_name( "pdb_" + name3 ) && warned_on_ccd_confusion.count( name3 ) == 0 ) { // Better check (e.g. without generating the PDB type.)
+		TR.Warning << "The Rosetta ResidueType for code " << name3 << " is a different chemical entity than the PDB's version." << std::endl;
+		TR.Warning << "    You may need to use `-fast_restyping false` to get the desired results." << std::endl;
+		warned_on_ccd_confusion.insert( name3 );
+	}
+
+	return rsd_type_cop;
+}
+
+/// @details Like the pass_2_resolve_residue_types() function above.
+/// However, we assume that if the three letter code corresponds to a (full!) name of the ResidueType,
+/// unless we have the full name of the ResidueType specified in the HETNAM records
+/// (this should be written by the PDB writer).
+/// Failing that, we assume that the residue comes from the CCD.
+void
+PoseFromSFRBuilder::pass_2_quick_and_dirty_resolve_residue_types()
+{
+	using namespace core::io::pdb;
+	using namespace core::chemical;
+
+	pre_process_residue_type_information();
+
+	Size const nres_pdb( rinfos_.size() );
+
+	std::set< std::string > warned_on_ccd_confusion;
+
+	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
+
+		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
+		std::string const & name3 = rinfo.rosetta_resName();
+		std::string const & resid = rinfo.resid();
+
+		/////////////////////////
+		// Handle residue to skip
+		if ( name3 == "UNL" ) {
+			residue_was_recognized_[ ii ] = false;
+			continue;
+		}
+
+		if ( name3 == "HOH" && options_.ignore_waters() ) {
+			output_ignore_water_warning_once();
+
+			if ( options_.remember_unrecognized_res() && options_.remember_unrecognized_water() ) {
+				remember_unrecognized_res( ii );
+			}
+
+			residue_was_recognized_[ ii ] = false;
+			continue;
+		}
+
+		/////////////////////////////////
+		// Find the residue type needed.
+
+		ResidueTypeCOP rsd_type_cop = nullptr;
+
+		std::string residue_base_name = "";
+		if ( sfr_.residue_type_base_names().count( resid ) ) {
+			// We have annotated full name information
+			residue_base_name = sfr_.residue_type_base_names()[ resid ].second;
+
+			rsd_type_cop = residue_type_set_->name_mapOP( residue_base_name );
+		}
+
+		if ( rsd_type_cop == nullptr && residue_type_set_->has_name( name3 ) ) { // Full name lookup intentional!
+			// We assume the three letter code corresponds to a Rosetta ResidueType full name
+			rsd_type_cop = find_restype( name3, name3, *residue_type_set_, warned_on_ccd_confusion );
+		}
+
+		// The three letter code may have spaces, in which case we may need to strip it first.
+		if ( rsd_type_cop == nullptr && (name3.front() == ' ' || name3.back() == ' ') ) {
+			std::string stripped = utility::strip( name3 );
+			// Special-case RNA residues
+			if ( stripped == "A" || stripped == "rA" ) {
+				stripped = "RAD";
+			} else if ( stripped == "U" || stripped == "rU" ) {
+				stripped = "URA";
+			} else if ( stripped == "G" || stripped == "rG" ) {
+				stripped = "RGU";
+			} else if ( stripped == "C" || stripped == "rC" ) {
+				stripped = "RCY";
+			}
+			rsd_type_cop = find_restype( stripped, name3, *residue_type_set_, warned_on_ccd_confusion );
+		}
+
+		// We attempt to special-case codes which have special AA designations (e.g. D-AA)
+		if ( rsd_type_cop == nullptr && ! core::chemical::is_aa_name_unknown( name3 ) ) {
+			core::chemical::AA aa = core::chemical::aa_from_name( name3 );
+			std::string full_name = core::chemical::full_name_from_aa( aa );
+
+			rsd_type_cop = find_restype( full_name, name3, *residue_type_set_, warned_on_ccd_confusion );
+		}
+
+		// Some additional Rosetta-specific Residues, which may be needed to round-trip
+		if ( rsd_type_cop == nullptr && (name3 == "XXX" || name3 == "YYY" ) ) {
+			if ( rinfo.xyz().count("ORIG") ) {
+				if ( name3 == "XXX" ) {
+					if ( residue_type_set_->mode() == FULL_ATOM_t ) {
+						rsd_type_cop = residue_type_set_->name_mapOP( "GB_AA_PLACEHOLDER:NtermProteinFull" ); // Yup, probably should be VRT, but that's what we're actually doing with the normal way
+					} else {
+						rsd_type_cop = residue_type_set_->name_mapOP( "VRT" );
+					}
+				}
+				if ( name3 == "YYY" ) {
+					rsd_type_cop = residue_type_set_->name_mapOP( "INV_VRT" );
+				}
+			}
+		}
+
+		// At this point we can go directly to the PDB components
+		if ( rsd_type_cop == nullptr && residue_type_set_->has_name( "pdb_" + name3 ) ) {
+			rsd_type_cop = residue_type_set_->name_mapOP( "pdb_" + name3 );
+		}
+
+		//////////////////////////////////////
+		// Handle residues we can't understand
+
+		if ( rsd_type_cop == nullptr ) {
+			if ( !options_.ignore_unrecognized_res() ) {
+				std::string message = "No match found for unrecognized residue at position " +
+					std::to_string(ii) + "( PDB ID: " + resid + " ) 3-letter code " + name3;
+				if ( ! residue_base_name.empty() ) {
+					message += " with base name " + residue_base_name;
+				}
+				if ( chemical::carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
+					message += "; did you intend to use the -include_sugars flag?";
+				}
+				message += "\nYou may have better success with the `-fast_restyping false` option.";
+				utility_exit_with_message( message );
+			}
+			if ( options_.remember_unrecognized_res() ) {
+				remember_unrecognized_res( ii );
+			}
+			residue_was_recognized_[ ii ] = false;
+			continue;
+		}
+
+		///////////////////////////////////////
+		// Some ugly special-casing
+		// This isn't a license to expand this -- the HETNAM method should be the prefered approach.
+
+		if ( rsd_type_cop->aa() == core::chemical::aa_his ) {
+			// If we have the one tautomer proton (but not both!) we type as HIS_D.
+			if ( rinfo.xyz().count(" HD1") && ! rinfo.xyz().count(" HE2") ) {
+				rsd_type_cop = residue_type_set_->name_mapOP( "HIS_D" );
+			}
+		}
+
+		/////////////////////////////////////
+		// Deal with polymers and connections
+
+		char chainID = rinfo.chainID();
+
+		bool const separate_chemical_entity = determine_separate_chemical_entity( chainID );
+		bool same_chain_prev = determine_same_chain_prev( ii, separate_chemical_entity );
+		bool same_chain_next = determine_same_chain_next( ii, separate_chemical_entity );
+		bool const check_Ntermini_for_this_chain = determine_check_Ntermini_for_this_chain( chainID );
+		bool const check_Ctermini_for_this_chain = determine_check_Ctermini_for_this_chain( chainID );
+
+		bool is_lower_terminus( ( ii == 1 || rinfos_.empty() || ! same_chain_prev  )
+			&& check_Ntermini_for_this_chain && ! lower_terminus_is_occupied_according_to_link_map( resid ) );
+		bool is_upper_terminus( ( ii == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain  && ! upper_terminus_is_occupied_according_to_link_map( resid ) );
+
+		bool update_patches = false;
+
+		// This is a quick & dirty typing method.
+		// Don't add any checks which greatly increase computation.
+		// (Prefer the HETNAM method for full restype specification)
+		if ( is_lower_terminus && rsd_type_cop->lower_connect_id() != 0 ) {
+			update_patches = true;
+		}
+		if ( is_upper_terminus && rsd_type_cop->upper_connect_id() != 0 ) {
+			update_patches = true;
+		}
+
+		//----- the hairy stuff happens here -----------------------
+		utility::vector1< std::string > known_connect_atoms_on_this_residue;
+		determine_residue_branching_info( ii, known_connect_atoms_on_this_residue, known_links_ );
+		//----------------------------------------------------------
+		for ( std::string const & atm: known_connect_atoms_on_this_residue ) {
+			if ( !rsd_type_cop->has(atm) || rsd_type_cop->n_residue_connections_for_atom( rsd_type_cop->atom_index(atm) ) < 1 ) {
+				update_patches = true;
+			}
+		}
+
+		TR.Debug << "Residue " << ii << "(PDB file numbering: " << resid << " ) name3 " << name3 << std::endl;
+		//TR.Debug << "...same_chain_prev: " << same_chain_prev << std::endl;
+		//TR.Debug << "...same_chain_next: " << same_chain_next << std::endl;
+		TR.Debug << "...is_lower_terminus: " << is_lower_terminus << std::endl;
+		//TR.Debug << "...check_Ntermini_for_this_chain: "<< check_Ntermini_for_this_chain << std::endl;
+		TR.Debug << "...is_upper_terminus: " << is_upper_terminus << std::endl;
+		//TR.Debug << "...check_Ctermini_for_this_chain: "<< check_Ctermini_for_this_chain << std::endl;
+		//TR.Debug << "...last_residue_was_recognized: " << last_residue_was_recognized( ii ) << std::endl;
+		TR.Debug << "...known connects this residue: " << known_connect_atoms_on_this_residue << std::endl;
+		//TR.Debug << "...is_d_aa: " << is_d_aa << std::endl;
+		//TR.Debug << "...is_l_aa: " << is_l_aa << std::endl;
+
+		if ( update_patches ) {
+			TR.Debug << "Need to update patches for " << rsd_type_cop->name() << " -- " << is_lower_terminus << " " << is_upper_terminus << " ";
+			for ( std::string const & atm: known_connect_atoms_on_this_residue ) {
+				TR.Debug << atm << " ";
+			}
+			TR.Debug << std::endl;
+
+			// We fall back to the ResidueTypeFinder, but hopefully with a method which is quick.
+			utility::vector1< ResidueProperty > properties;
+			utility::vector1< VariantType > variants;
+
+			if ( is_lower_terminus ) {
+				if ( known_connect_atoms_on_this_residue.contains( "P" ) || known_connect_atoms_on_this_residue.contains( "N" ) ) {
+					variants.push_back( CUTPOINT_UPPER );
+				} else {
+					properties.push_back( LOWER_TERMINUS );
+				}
+				// equivalent of check_nucleic_acid_virtual_phosphates:
+				if ( rsd_type_cop->is_DNA() ) {
+					variants.push_back( VIRTUAL_DNA_PHOSPHATE );
+				}
+				if ( rsd_type_cop->is_RNA() ) {
+					variants.push_back( VIRTUAL_PHOSPHATE );
+				}
+			}
+			if ( is_upper_terminus ) {
+				if ( known_connect_atoms_on_this_residue.contains( "O3'" ) || known_connect_atoms_on_this_residue.contains( "C" ) ) {
+					variants.push_back( CUTPOINT_LOWER );
+				} else {
+					properties.push_back( UPPER_TERMINUS );
+				}
+			}
+
+			// TODO: Find a quicker way of patching for variant and property
+			ResidueTypeCOP patched_rsd_type = ResidueTypeFinder( *residue_type_set_ )
+				.name3( name3 )
+				.residue_base_name( residue_base_name )
+				.variants( variants )
+				.properties( properties )
+				.connect_atoms( known_connect_atoms_on_this_residue )
+				.get_representative_type( false ); // Deliberately take the first and avoid metapatches for speed.
+
+			if ( patched_rsd_type == nullptr ) {
+				TR.Warning << "Attempted to find a ResidueType with three letter code " << name3;
+				if ( !residue_base_name.empty() ) {
+					TR.Warning << " (" << residue_base_name << ")";
+				}
+				TR.Warning << ( is_lower_terminus ? " lower-terminal" :"" );
+				TR.Warning << ( is_upper_terminus ? " upper-terminal" :"" );
+				if ( !known_connect_atoms_on_this_residue.empty() ) {
+					TR.Warning << " with connections at";
+					for ( std::string const & atm: known_connect_atoms_on_this_residue ) {
+						TR.Warning << " " << atm << ",";
+					}
+				}
+				TR.Warning << " -- Attempt was unsuccessful!" << std::endl;
+			} else {
+				TR.Debug << "Updated " << rsd_type_cop->name() << " to " << patched_rsd_type->name() << std::endl;
+				rsd_type_cop = patched_rsd_type; // Successfull -- keep the patched varaint
+			}
+		}
+
+		is_lower_terminus = is_lower_terminus || rsd_type_cop->lower_connect_id() == 0;
+
+		TR.Debug << "Initial type of " << ii << " is " << rsd_type_cop->name() << std::endl;
+		TR.Debug << " terminal? " << is_lower_terminus << " same chain prev? " << same_chain_prev << std::endl;
+		residue_types_[ ii ] = rsd_type_cop;
+		is_lower_terminus_[ ii ] = is_lower_terminus;
+		same_chain_prev_[ ii ] = same_chain_prev;
+		fill_name_map( ii );
+	}
+}
+
+/// @details Common code from the pass_2 functions which do some (not computationally intensive) ResidueType annotation.
+void PoseFromSFRBuilder::pre_process_residue_type_information() {
+
+	// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
+	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
+		core::io::ResidueInformation const & rinfo = rinfos_[ ii ];
+
+		std::pair< std::string, std::string > const & rosetta_names(
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( rinfo.resName() ) );
+		std::string const & name3( rosetta_names.first );
+		std::string const & base_name( rosetta_names.second );
+
+		if ( base_name != "" ) {
+			sfr_.residue_type_base_names()[ rinfo.resid() ] = std::make_pair( name3, base_name );
+			sfr_.default_mainchain_connectivity()[ rinfo.resid() ] =
+				NomenclatureManager::get_instance()->default_mainchain_connectivity_from_pdb_code( rinfo.resName() );
+		}
+		if ( core::chemical::carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
+			TR.Trace << "Identified glycan at position " << ii << std::endl;
+			glycan_positions_.push_back( ii );
+		}
+	}
+
+	known_links_ = core::io::explicit_links_from_sfr_linkage( sfr_.link_map(), rinfos_ );
+	if ( options_.auto_detect_glycan_connections() ) {
+		TR.Debug << "Auto-detecting glycan connections" << std::endl;
+		//This clears the links before fix_glycan_order call which makes the clear in add_glycan_links_to_map redundant but I'm leaving it for now.
+		if ( !options_.maintain_links() ) {
+			TR.Debug << "Clearing linkages read from provided LINK records" << std::endl;
+			known_links_.clear();
+		} else {
+			TR.Debug << "Keeping linkages read from provided LINK records" << std::endl;
+		}
+		utility::vector1< core::Size > chain_ends = core::io::fix_glycan_order( rinfos_, glycan_positions_, options_, known_links_ );
+		// Reset correspondences for reordered glycans
+		for ( core::Size pos : glycan_positions_ ) {
+			resid_to_index_[ rinfos_[ pos ].resid() ] = pos;
+		}
+		for ( core::Size end : chain_ends ) {
+			if ( end+1 <= same_chain_prev_.size() ) {
+				TR << "Setting chain termination for " << end << std::endl;
+				same_chain_prev_[ end + 1 ] = false;
+			}
+		}
+		core::io::add_glycan_links_to_map( known_links_, core::io::determine_glycan_links( rinfos_, options_ ), rinfos_ );
+		TR.Debug << "Finished auto-detecting glycan connections" << std::endl;
+	}
+
 }
 
 /// @details Check for missing mainchain atoms; if there is no contiguous block of 3 mainchain
@@ -1086,7 +1378,7 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 		for ( Size jj = 1; jj <= ii_rsd.natoms(); ++jj ) {
 			id::AtomID atom_id( jj, ii );
 			id::NamedAtomID named_atom_id( ii_rsd.atom_name( jj ), ii );
-			if ( ! coordinates_assigned_[ named_atom_id ] ) {
+			if ( ! coordinates_assigned_.has( named_atom_id ) || ! coordinates_assigned_[ named_atom_id ] ) {
 				missing_[ atom_id ] = true;
 				//if ( !ii_rsd.atom_is_hydrogen( jj ) ) num_heavy_missing++;
 			}
@@ -1511,9 +1803,6 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	std::string const & rosetta_residue_name3,
 	core::chemical::ResidueTypeCOPs const & rsd_type_list
 ){
-	std::map< std::string, Vector > const & xyz( rinfos_[ pdb_residue_index ].xyz() );
-	std::map< std::string, core::Real > const & rtemp( rinfos_[ pdb_residue_index ].temps() );
-
 	bool const is_HOH_to_ignore ( rosetta_residue_name3 == "HOH" && options_.ignore_waters() );
 
 	if ( !rsd_type_list.empty() && !is_HOH_to_ignore ) {
@@ -1540,22 +1829,32 @@ PoseFromSFRBuilder::is_residue_type_recognized(
 	}
 
 	if ( options_.remember_unrecognized_res() ) {
-		for ( const auto & iter : xyz ) {
-			if ( unrecognized_atoms_.size() > 5000 ) {
-				utility_exit_with_message("can't handle more than 5000 atoms worth of unknown residues\n");
-			}
-			TR << "remember unrecognized atom " << pdb_residue_index << " " << rosetta_residue_name3 << " " << stripped_whitespace(iter.first)
-				<< " temp " << rtemp.find(iter.first)->second << std::endl;
-
-			core::pose::UnrecognizedAtomRecord ua( pdb_residue_index, rosetta_residue_name3, stripped_whitespace(iter.first), iter.second, rtemp.find(iter.first)->second );
-
-			unrecognized_atoms_.push_back( ua );
-		}
+		remember_unrecognized_res( pdb_residue_index );
 	}
 
 	if ( is_HOH_to_ignore ) output_ignore_water_warning_once();
 	return false;
 }
+
+void
+PoseFromSFRBuilder::remember_unrecognized_res( core::Size rinfo_index ) {
+	core::io::ResidueInformation const & rinfo = rinfos_[ rinfo_index ];
+	std::map< std::string, Vector > const & xyz( rinfo.xyz() );
+	std::map< std::string, core::Real > const & rtemp( rinfo.temps() );
+
+	for ( const auto & iter : xyz ) {
+		if ( unrecognized_atoms_.size() > 5000 ) {
+			utility_exit_with_message("can't handle more than 5000 atoms worth of unknown residues\n");
+		}
+		TR << "remember unrecognized atom " << rinfo_index << " " << rinfo.rosetta_resName() << " " << stripped_whitespace(iter.first)
+			<< " temp " << rtemp.find(iter.first)->second << std::endl;
+
+		core::pose::UnrecognizedAtomRecord ua( rinfo_index, rinfo.rosetta_resName(), stripped_whitespace(iter.first), iter.second, rtemp.find(iter.first)->second );
+
+		unrecognized_atoms_.push_back( ua );
+	}
+}
+
 
 /// @brief Query the ResidueTypeSet using the residue-type-finder for a potential match based on the
 /// name3 that has possibly been remapped by Rosetta through the Nomenclature manager.

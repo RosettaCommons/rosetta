@@ -88,6 +88,7 @@ private:
 	void setup( StructFileRep const & sfr );
 	void pass_1_split_and_merge_residues_as_necessary();
 	void pass_2_resolve_residue_types();
+	void pass_2_quick_and_dirty_resolve_residue_types();
 	void pass_3_verify_sufficient_backbone_atoms();
 	void pass_4_redo_termini();
 	void pass_5_note_discarded_atoms();
@@ -107,6 +108,8 @@ private:
 		Size seqpos,
 		utility::vector1< std::string > & known_connect_atoms_on_this_residue,
 		std::map< std::string, std::map< std::string, std::pair< std::string, std::string > > > const & explicit_link_mapping );
+
+	void pre_process_residue_type_information();
 
 	bool is_residue_type_recognized(
 		Size const pdb_residue_index,
@@ -166,6 +169,7 @@ private:
 
 	Size find_atom_tree_root_for_metal_ion( utility::vector1< core::conformation::ResidueOP > const & context, conformation::ResidueCOP metal_rsd );
 	bool last_residue_was_recognized( Size seqpos ) const;
+	void remember_unrecognized_res( core::Size rinfo_index );
 	void output_ignore_water_warning_once();
 
 	// Helper function for disconnected residues - pose is only used for getting the ResidueTypeSet

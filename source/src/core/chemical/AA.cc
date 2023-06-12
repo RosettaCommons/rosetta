@@ -489,6 +489,28 @@ name_from_aa( AA aa ) {
 	return aa2name()[ aa ];
 }
 
+std::string
+full_name_from_aa( AA aa ) {
+	if ( core::chemical::is_canonical_D_aa( aa ) ) {
+		core::chemical::AA laa = core::chemical::get_L_equivalent(aa);
+		return "D" + aa2name()[ laa ];
+	}
+
+	switch ( aa ) {
+	// The DNA residues have two entries in the name2aa map,
+	// which could pass back the wrong one when we do aa2name, so special case them
+	case na_ade :
+		return "ADE";
+	case na_cyt :
+		return "CYT";
+	case na_gua :
+		return "GUA";
+	case na_thy :
+		return "THY";
+	default :
+		return name_from_aa(aa);
+	}
+}
 
 char
 oneletter_code_from_aa( AA aa ) {
