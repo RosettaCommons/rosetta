@@ -1,4 +1,7 @@
 -in:file:s inputs/2k9j_AB.pdb
+-in:file:native inputs/2k9j_native_AB.pdb
+
+-out::overwrite
 -nstruct 1
 -mp:setup:spanfiles inputs/2k9j_AB.span
 -in:membrane
@@ -20,5 +23,4 @@
 -score:pack_weights franklin2019
 -out:file:scorefile docking_fa19.sc
 -out::pdb_gz
--out:suffix _fa19
--run:multiple_processes_writing_to_one_directory
+-out:file:score_only 
