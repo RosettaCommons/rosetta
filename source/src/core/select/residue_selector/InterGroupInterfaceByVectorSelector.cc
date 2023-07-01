@@ -307,7 +307,8 @@ InterGroupInterfaceByVectorSelector::provide_xml_schema( utility::tag::XMLSchema
 		" essentially creating a cone of grp1 residues and seeing if the interactions are within that cone.\n"
 		"It should be noted that \n"
 		"  1) GRP1 to GRP2 is slightly different than GRP2 to GRP1\n"
-		"  2) before using the vector, we use the nearby_atom_cut to select nearby atoms as well.", 0, 2, attributes );
+		"  2) before using the vector, we use the nearby_atom_cut to select nearby atoms as well.\n"
+		"  3) this selector only functions on PROTEIN ResidueTypes (without checks). Use selectors that do not include non-PROTEIN-type residues (ligands, glycans, etc).", 0, 2, attributes );
 }
 
 
