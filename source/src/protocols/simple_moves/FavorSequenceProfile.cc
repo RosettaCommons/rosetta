@@ -183,16 +183,17 @@ FavorSequenceProfile::parse_my_tag(
 	if ( tag->getOption< bool >( "use_fasta", false ) ) ++num_struct;
 	if ( tag->getOption< bool >( "use_starting", false ) ) ++num_struct;
 	if ( tag->getOption< bool >( "use_current", false ) ) ++num_struct;
-	if ( tag->hasOption("pdbname") ) ++num_struct;
+	if ( tag->hasOption( "reference_name" ) ) ++num_struct;
+	if ( tag->hasOption( "pdbname" ) ) ++num_struct;
 
 	if ( ! num_struct &&  ! tag->hasOption("pssm") ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must set one of 'pssm', 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must set one of 'pssm', 'use_native', 'use_fasta', 'use_starting', 'use_current', 'reference_name', or 'pdbname' in FavorSequenceProfile");
 	}
 	if ( num_struct && tag->hasOption("pssm") ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot set both 'pssm' and one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot set both 'pssm' and one of 'use_native', 'use_fasta', 'use_starting', 'use_current', 'reference_name', or 'pdbname' in FavorSequenceProfile");
 	}
 	if ( num_struct > 1 ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can only set one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can only set one of 'use_native', 'use_fasta', 'use_starting', 'use_current', 'reference_name', or 'pdbname' in FavorSequenceProfile");
 	}
 	if ( tag->hasOption("matrix") && tag->hasOption("pssm")  ) {
 		TR.Warning << "In option matrix not used with pssm specification." << std::endl;
@@ -270,7 +271,7 @@ void FavorSequenceProfile::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ Attr( "use_fasta", xsct_rosetta_bool, "use a native FASTA sequence specified by the -in:file:fasta as reference" )
 		+ Attr( "use_starting", xsct_rosetta_bool, "use the starting input structure (e.g. one passed to -s) as reference" )
 		+ Attr( "use_current", xsct_rosetta_bool, "use the current structure (the one passed to apply) as the reference" )
-		+ Attr( "pdbname", xsct_rosetta_bool, "use the structure specified by the filename as the reference" )
+		+ Attr( "pdbname", xs_string, "use the structure specified by the filename as the reference" )
 		+ Attr( "pssm", xs_string, "a filename of a blast formatted pssm file containing the sequence profile to use" )
 		+ Attr( "chain", xsct_non_negative_integer, "0 is all chains, otherwise if a sequence is added, align it to the specified chain" )
 		+ Attr::attribute_w_default( "scaling", "favor_seqprof_scaling_type",

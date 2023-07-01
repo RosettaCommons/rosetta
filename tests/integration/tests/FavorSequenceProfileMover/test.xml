@@ -1,0 +1,41 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="ref2015" weights="ref2015" >
+			<Reweight scoretype="res_type_constraint" weight="1"/>
+		</ScoreFunction>
+	</SCOREFXNS>
+
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+
+	<FILTERS>
+	</FILTERS>
+
+	<MOVERS>
+		<SavePoseMover name="native" restore_pose="false" reference_name="native" pdb_file="1ubq.pdb" />
+		
+		<FavorSequenceProfile name="fsp_native"    use_native="true"       matrix="IDENTITY" />
+		<FavorSequenceProfile name="fsp_reference" reference_name="native" matrix="IDENTITY" />
+		<FavorSequenceProfile name="fsp_current"   use_current="true"      matrix="IDENTITY" />
+		<FavorSequenceProfile name="fsp_fasta"     use_fasta="true"        matrix="IDENTITY" />
+		<FavorSequenceProfile name="fsp_ignore"    use_current="true"      matrix="IDENTITY" exclude_resnums="10,20"/>
+		<FavorSequenceProfile name="fsp_BLOSUM"    use_fasta="true"        matrix="BLOSUM62" />
+	</MOVERS>
+
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+
+	<PROTOCOLS>
+		<Add mover="native" />
+		<Add mover="fsp_native"/>
+		<Add mover="fsp_reference"/>
+		<Add mover="fsp_current"/>
+		<Add mover="fsp_fasta"/>
+		<Add mover="fsp_ignore"/>
+		<Add mover="fsp_BLOSUM"/>
+	</PROTOCOLS>
+	<OUTPUT scorefxn="ref2015" />
+</ROSETTASCRIPTS>

@@ -1,0 +1,5 @@
+-parser:protocol test.xml
+-in:file:s 1ubq.pdb
+-native 1ubq.pdb
+-fasta 1ubq.fasta
+-nstruct 1
