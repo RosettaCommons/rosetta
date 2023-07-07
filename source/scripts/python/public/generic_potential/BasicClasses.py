@@ -24,11 +24,11 @@ class OptionClass:
         self.resname_counter = 0
         
         # chi angle control
-        self.opt.report_puckering_chi = False
+        #self.opt.report_puckering_chi = False
         self.opt.report_Hapol_chi = False
-        self.opt.report_nbonded_chi = False
-        self.opt.report_amide_chi = False
-        self.opt.report_ringring_chi = True
+        #self.opt.report_nbonded_chi = False
+        #self.opt.report_amide_chi = False
+        #self.opt.report_ringring_chi = True
 
         # constants / unchanged
         self.opt.reassign_biaryl_aclass = False
@@ -103,6 +103,11 @@ class OptionClass:
                           help="Do not report params or pdb",
                           action="store_true"
                           )
+        parser.add_option("--no_pdb",
+                          default=False,
+                          help="Do not report pdb",
+                          action="store_true"
+                          )
         parser.add_option("--funcgrp",
                           dest="report_funcgrp",
                           default=False,
@@ -147,7 +152,7 @@ class OptionClass:
                           )
         parser.add_option("--freeze_ringring",
                           dest="report_ringring_chi",
-                          default=False,
+                          default=True,
                           help="Define as rotatable CHI",
                           action="store_false"
                           )
@@ -167,6 +172,19 @@ class OptionClass:
                           dest="comment_bonds",
                           help="Add bonds order from MOL2 as comment"
                           )
+        parser.add_option("--multimol2",
+                          dest="multimol2",
+                          default=False,
+                          help="If the input mol2 file has multiple structures",
+                          action="store_true"
+                          )
+        parser.add_option("--infer_atomtypes",
+                          dest="infer_atomtypes",
+                          default=False,
+                          help="Infering the correct atom type for some special cases with a wrong input atom type",
+                          action="store_true"
+                          )
+
 
         if len(argv) < 2:
             parser.print_help()

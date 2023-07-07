@@ -22,6 +22,7 @@ from Molecule import MoleculeClass
 from AtomTypeClassifier import FunctionalGroupClassifier
 import tarfile
 from ReportTorsions import report_raw_torsions
+from utils import GetMol2Block, validate_restype
 #### check if libraries are installed
 import importlib
 
@@ -39,7 +40,7 @@ direc = MYFILE.replace('mol2genparams.py','')
 def run_mol2(mol2file,option):
     # local prefix for the outputs
     if option.opt.prefix == None:
-        prefix = mol2file.split('/')[-1].replace('.mol2','')
+        prefix = os.path.basename(mol2file).replace('.mol2','')
     else:
         prefix = option.opt.prefix
 
@@ -53,9 +54,10 @@ def run_mol2(mol2file,option):
 
     if not option.opt.no_output:
         params_outfn = os.path.join(outdir, '%s.params'%prefix)
-        pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
         molecule.report_paramsfile(params_outfn)
-        molecule.report_pdbfile(pdb_outfn)
+        if not option.opt.no_pdb:
+            pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
+            molecule.report_pdbfile(pdb_outfn)
 
     if option.opt.report_funcgrp:
         classifier = FunctionalGroupClassifier()
@@ -72,41 +74,89 @@ def run_mol2(mol2file,option):
         torsion_outfn = os.path.join(outdir, '%s.torsion'%prefix)
         report_raw_torsions( molecule, torsion_outfn )
 
-def run_mol2_tar_gz(mol2file,option):
+def run_mol2_block(mol2file, option):
+    with open(mol2file, 'r') as infh:
+        for mol2block in GetMol2Block(infh):
+            try:
+                molecule = MoleculeClass(mol2block, option)
+            except:
+                print("Failed:", mol2block.split('\n')[1])
+                if option.opt.debug:
+                    print(mol2block)
+                    molecule = MoleculeClass(mol2block, option)
+                    input("Press Enter to continue...")
+                continue
+            prefix = molecule.name
+            if not validate_restype(prefix):
+                print(f"{prefix} is not a valid restype name")
+                continue
+            if option.opt.outdir:
+                os.makedirs(option.opt.outdir, exist_ok=True)
+                outdir = option.opt.outdir
+            else:
+                outdir="./"
 
-    if mol2file.endswith('.gz'):
-        mode="r:gz"
-    elif mol2file.endswith('.tar'):
-        mode="r"
+            if not option.opt.no_output:
+                params_outfn = os.path.join(outdir, '%s.params'%prefix)
+                molecule.report_paramsfile(params_outfn)
+                if not option.opt.no_pdb:
+                    pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
+                    molecule.report_pdbfile(pdb_outfn)
+
+            if option.opt.report_funcgrp:
+                classifier = FunctionalGroupClassifier()
+                classifier.apply_to_molecule(molecule)
+                molecule.report_functional_grps(sys.stdout)
+                
+            if option.opt.write_elec_cp_rep:
+                molecule.report_elec_cp_rep('%s.elec_cp_rep'%prefix)
+
+            if option.opt.write_elec_grpdef:
+                molecule.report_grpdeffile('%s.grpdef'%prefix)
+                
+            if option.opt.write_raw_torsion:
+                torsion_outfn = os.path.join(outdir, '%s.torsion'%prefix)
+                report_raw_torsions( molecule, torsion_outfn )
+
+
+def run_mol2_tar_gz(mol2file,option):
+    mode="r"
         
     with tarfile.open(mol2file, mode) as intar:
-        for name, member in zip(intar.getnames(), intar.getmembers()):
-            fobj = intar.extractfile(member)
-            if fobj is None:
-                continue
+        c = 0
+        for member in intar.getmembers():
+            name = member.name
+            print(name)
+            if os.path.basename(name).startswith("._"): continue
             if not name.endswith(".mol2"):
                 print("Warning: skipping %s due to non-mol2 extension."%os.path.basename(name))
                 continue
             
+            fobj = intar.extractfile(member)
+            if fobj is None:
+                continue
+            c += 1
             if option.opt.prefix == None:
                 prefix = os.path.basename(name).split(".")[0]
             else:
                 prefix = option.opt.prefix
             molecule = MoleculeClass(name,option,fobj)
+            if not molecule.stat:
+                print(f"{name} failed reading.")
+                continue
             
+            if option.opt.outdir:
+                outdir = option.opt.outdir
+                os.makedirs(outdir, exist_ok=True)
+            else:
+                outdir = "./"
+
             if not option.opt.no_output:
-                if option.opt.outdir:
-                    outdir = option.opt.outdir
-                    if not os.path.exists(outdir):
-                        os.makedirs(outdir)
-                    params_outfn = os.path.join(outdir, '%s.params'%prefix)
-                    pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
-                else:
-                     params_outfn = '%s.params'%prefix
-                     pdb_outfn = '%s_0001.pdb'%prefix
-             
+                params_outfn = os.path.join(outdir, '%s.params'%prefix)
                 molecule.report_paramsfile(params_outfn)
-                molecule.report_pdbfile(pdb_outfn)
+                if not option.opt.no_pdb:
+                    pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
+                    molecule.report_pdbfile(pdb_outfn)
 
             if option.opt.report_funcgrp:
                 classifier = FunctionalGroupClassifier()
@@ -123,6 +173,7 @@ def run_mol2_tar_gz(mol2file,option):
                 torsion_outfn = os.path.join(outdir, 'torsions', '%s.torsion'%prefix)
                 report_raw_torsions( molecule, torsion_outfn )
 
+    print(f"Attempted {c} entries in {mol2file}")
 
 def main(option):
     mol2files = option.opt.inputs
@@ -135,7 +186,10 @@ def main(option):
             continue
         try:
             if mol2file.endswith(".mol2"):
-                run_mol2(mol2file,option)
+                if option.opt.multimol2:
+                    run_mol2_block(mol2file, option)
+                else:
+                    run_mol2(mol2file,option)
             elif mol2file.endswith(".gz") or mol2file.endswith(".tar"):
                 run_mol2_tar_gz(mol2file,option)
         except:

@@ -55,8 +55,10 @@ def angle(crd1,crd2,crd3):
     dist2=(v2[0]*v2[0]+v2[1]*v2[1]+v2[2]*v2[2])**0.5
     sinval=inprod/(dist1*dist2)
 
-    if sinval>1 or sinval<-1:
+    if sinval>1:
         angle=0
+    elif sinval<-1:
+        angle=180
     else:
         angle=-((math.asin(sinval))*180/math.pi)+90
     return angle
@@ -84,3 +86,21 @@ def dihedral(crd1,crd2,crd3,crd4):
     else:
         sign=test/abs(test)
         return sign*dihedral
+
+def GetMol2Block(fileObj, delimiter="@<TRIPOS>MOLECULE"):
+    mol2block = []
+    for l in fileObj:
+        if l.startswith("#") or l.strip() == "":
+            continue
+        if l.startswith(delimiter) and mol2block:
+            yield "".join(mol2block)
+            mol2block = []
+        mol2block.append(l)
+    if mol2block:
+        yield "".join(mol2block)
+        mol2block = []
+
+def validate_restype(typename):
+    if "|" in typename:
+        return False
+    return True

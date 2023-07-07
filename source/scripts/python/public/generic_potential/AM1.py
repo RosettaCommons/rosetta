@@ -44,29 +44,29 @@ AM1db = json.load(open("%s/am1params.json"%direc, "r"))
 
 # per-orbital data
 orbital_dtype = numpy.dtype([
-    ('atomno', numpy.int),
-    ('type', numpy.int),   # ['s','px','py','pz']
-    ('U' , numpy.float),
-    ('alpha' , numpy.float),
-    ('beta' , numpy.float),
+    ('atomno', numpy.int32),
+    ('type', numpy.int32),   # ['s','px','py','pz']
+    ('U' , numpy.float64),
+    ('alpha' , numpy.float64),
+    ('beta' , numpy.float64),
 ])
 
 # per-atom data
 atom_dtype = numpy.dtype([
-    ('name' , numpy.str, 4),
-    ('elt' , numpy.str, 2),
-    ('X' , numpy.float, 3),
-    ('B' , numpy.float, 1),
-    ('atno' , numpy.int),  # atomic number
-    ('zetaS' , numpy.float),
-    ('zetaP' , numpy.float)
+    ('name' , str, 4),
+    ('elt' , str, 2),
+    ('X' , numpy.float64, 3),
+    ('B' , numpy.float64, 1),
+    ('atno' , numpy.int32),  # atomic number
+    ('zetaS' , numpy.float64),
+    ('zetaP' , numpy.float64)
 ])
 
 # epsilon data
 epsilon_dtype = numpy.dtype([
-    ('ssss' , numpy.str, 4),
-    ('ssspx' , numpy.str, 2),
-    ('ssspy' , numpy.float, 3),
+    ('ssss' , str, 4),
+    ('ssspx' , str, 2),
+    ('ssspy' , numpy.float64, 3),
 ])
 
 

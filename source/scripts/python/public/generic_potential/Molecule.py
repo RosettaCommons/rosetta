@@ -20,6 +20,7 @@ from importlib import util
 from Types import *
 from BasicClasses import OptionClass, AtomClass, BondClass, FunctionalGroupClass
 from utils import distance,angle,dihedral
+import numpy as np
 
 NUMBA_INSTALLED = (util.find_spec('numba'))
 if NUMBA_INSTALLED: import AM1
@@ -70,10 +71,12 @@ def rename_atoms(atms, bonds):
 
 
 class MoleculeClass:
-    def __init__(self,mol2file, option=None, mol2fileobj=None):
+    def __init__(self, mol2file, option=None, mol2fileobj=None):
         self.name = ''
         #self.resname = 'LG1' # goes to option
-        if mol2fileobj is None and not os.path.exists(mol2file):
+        if option.opt.multimol2:
+            assert isinstance(mol2file, str), "multimol2 requires mol2block (str type) as input"
+        elif mol2fileobj is None and not os.path.exists(mol2file):
             raise IOError("Cannot find %s"%mol2file)
         self.mol2file = mol2file
         self.mol2fileobj = mol2fileobj
@@ -84,6 +87,7 @@ class MoleculeClass:
         self.nheavyatm = 0
         self.max_confs = 5000 #copied from default of molfile_to_params
         self.crystinfo = ''
+        self.eps = 0.15
 
         #read from SetupTopology
         self.tree = None
@@ -118,8 +122,8 @@ class MoleculeClass:
             self.option = option
 
         # self.bonds defined at read_mol2; angle,torsion at topology setup
-        stat = self.read_mol2()
-        if not stat:
+        self.stat = self.read_mol2()
+        if not self.stat:
             return
 
         SetupTopology.setup(self,option)
@@ -152,8 +156,11 @@ class MoleculeClass:
         atms = []
         xyzs = []
         bonds = []
+        n_zero_xyzs = 0
         #self.atomnames_in_inputmol2 = []
-        if self.mol2fileobj is not None:
+        if self.option.opt.multimol2:
+            mol2filelines = self.mol2file.split('\n')
+        elif self.mol2fileobj is not None:
             mol2filelines = self.mol2fileobj.readlines()
         else:
             with open(self.mol2file) as infn:
@@ -168,8 +175,8 @@ class MoleculeClass:
             if l.startswith('@<TRIPOS>MOLECULE'):
                 mode = 1
                 if len(atms) > 0:
-                    print("ERROR: More than one molecule defined in the mol2 file! Please use mol2 containing only one entry")
-                    sys.exit()
+                    print(f"Warning: Possible multiple molecules defined in the mol2 file! Please use mol2 containing only one entry. Only read entry: {self.name}")
+                    break
                 continue
             elif l.startswith('@<TRIPOS>ATOM'):
                 mode = 2
@@ -180,13 +187,18 @@ class MoleculeClass:
             elif l.startswith('@<TRIPOS>CRYSIN'):
                 mode = 4
                 continue
+            elif l.startswith('@<TRIPOS>'):
+                #skip other fields
+                mode = 9999
+                continue
 
             if mode == 1:
                 i_mode1 += 1
                 if i_mode1 == 1:
                     self.name = words[0]
             if mode == 2 and len(words) < 9:
-                raise Exception("mol2 format is invalid, probably missing partial charges!")
+                print(f"Warning: molecule {self.name} has less than 9 column, mol2 format is invalid, probably missing partial charges, skip!")
+                return None
             if mode == 2 and len(words) == 9:
                 i = int(words[0])
                 atype1 = words[5].split('.')[0].upper()
@@ -222,6 +234,10 @@ class MoleculeClass:
 
                 xyz = [float(word) for word in words[2:5]]
                 atms.append( AtomClass(name,atype,hyb,charge) )
+                if np.all( np.array(xyz) == 0 ):
+                    n_zero_xyzs += 1
+                if n_zero_xyzs > 1:
+                    raise Exception("More than one atom has all zero coordinates!")
                 xyzs.append( xyz )
                 newindex.append((atype==2,len(atms)-1))
                 #self.atomnames_in_inputmol2.append(name)
@@ -351,7 +367,6 @@ class MoleculeClass:
                     if (i > 2):
                         dih_i = dihedral(self.xyz[iatm],self.xyz[atm.root],
                                          self.xyz[atm.groot[0]],self.xyz[atm.groot[1]])
-                            
             l = form%(atm.name,dih_i,180.0-ang_i,len_i,
                       self.atms[atm.root].name,self.atms[atm.groot[0]].name,self.atms[atm.groot[1]].name)
             icoordcont.append(l)

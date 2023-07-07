@@ -64,13 +64,14 @@ ACLASS_ID = ['Null', #0: Unassigned
              'Ohx', # HydroXyl
              'Oet', # ETher
              'Oal', # ALdehyde (+ketone)
-             'Oad', # AmiDe
+             'Oad', # AmiDeyde (+ketone)
              'Oat', # AceTate
              'Ofu', # FUran
              'Ont', # NiTro
+             'OG23', # Sulfon Oxygen, O.2=S.o2
              'OG2', # Generic_sp2, 0-H
              'OG3', # Generic_sp3, 0-H
-             'OG31',# Generic_sp3, 1-H
+             'OG31',# Generic_sp3, 1-H, Oxime, O can be sp2 in mol2 
 
              #Sulfur, Phosphorus
              'Sth', #THiol
@@ -107,7 +108,7 @@ ACLASS_HAPOL = ['HC','HR','HG']
 #ACLASS_SP2DONOR_ROTABLE = ['Ohx','OG2']
 
 # atomtypes with strong polar character -- too subjective??
-POLARCLASSES = ['Oat','Oad','Ohx','Oal','OG2','OG3',
+POLARCLASSES = ['Oat','Oad','Ohx','Oal','OG23','OG2','OG3',
                 'Nam','Ngu1','Ngu2','NG22',
                 'SG5','PG3','PG5']
 
@@ -140,6 +141,7 @@ ASSERT_NHYDROGENS = {'Nam2':[1,2],
                      'NG3':[0],
                      'Ohx':[1],
                      'Oet':[0],
+                     'OG23':[0],
                      'OG2':[0],
                      'OG3':[0],
                      'OG31':[1],

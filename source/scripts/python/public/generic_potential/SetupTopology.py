@@ -47,13 +47,14 @@ def setup(mol,option): # mol: Molecule type
     assign_torsions(mol)
     detect_rings(mol,option)
 
-    assign_hybridization_if_missing(mol) # should come after ring assignment
-    setup_nbratom(mol) #should come after ring assignments
-    define_icoord(mol) #should come after nbr setup
+    assign_hybridization_if_missing(mol) # should come after ring assignment and before AtomTypeClassifier
 
     classifier = AtomTypeClassifier()
     classifier.apply_to_molecule(mol)
     classifier.assert_H(mol)
+    
+    setup_nbratom(mol) #should come after ring assignments
+    define_icoord(mol) #should come after nbr setup
 
     # should come after atom types classified
     define_conjugation(mol)
@@ -68,7 +69,17 @@ def setup_nbratom(mol):
     maxdis = math.sqrt(max(dists)) 
 
     # 1) dont let puckering ring be root
-    dists[np.in1d(np.arange(len(mol.atms)), mol.atms_puckering)] = 99999.0
+    # Added exception, GZ: 
+    # if the molecule is cyclic and no atoms not in the ring has two or more bonds,
+    # we have to use an atom in the ring as root.
+    use_ring_atom_root = True
+    for i, atm in enumerate(mol.atms):
+        if i in mol.atms_puckering: continue
+        if len(atm.bonds)>=2: 
+            use_ring_atom_root = False
+            break
+    if not use_ring_atom_root:
+        dists[np.in1d(np.arange(len(mol.atms)), mol.atms_puckering)] = 99999.0
 
     nbonds = [len(atm.bonds) for atm in mol.atms]
     for ring in mol.rings: #correct for cut_bonds
@@ -76,15 +87,35 @@ def setup_nbratom(mol):
         if i == None: continue
         nbonds[i] -=1
         nbonds[j] -=1
+        # just avoid using cut_bond atoms as root
+        if dists[i] < 99999.0: dists[i] = 99999.0
+        if dists[j] < 99999.0: dists[j] = 99999.0
+
+    # avoid using atoms one bond within triple bonds
+    for i, atm1 in enumerate(mol.atms):
+        #print("atm1", i, atm1.name, ACLASS_ID[atm1.aclass])
+        if "CT" in ACLASS_ID[atm1.aclass]:
+            dists[i] = 99999.0
+            continue
+        for bond in atm1.bonds:
+            atm2 = mol.atms[ bond[0] ]
+            #print("atm2", i, atm2.name, ACLASS_ID[atm2.aclass])
+            if "CT" in ACLASS_ID[atm2.aclass]:
+                dists[i] = 9999.0
+                break
 
     # 3) also exclude hydrogens
     # prioritize ring-atom with >2 bonds
+    # avoid overwriting the triple bond priority
     for i,atm in enumerate(mol.atms):
-        if nbonds[i] <=1: dists[i] = 99999.0
-        elif nbonds[i] ==2: dists[i] = 999.0
+        if nbonds[i] <=1 and dists[i] < 99999.0 : dists[i] = 99999.0
+        elif nbonds[i] ==2 and dists[i] < 999.0 : dists[i] = 999.0
         if atm.is_H: dists[i] = 99999.0
-
+    if mol.option.verbose:
+        print(dists)
     mol.nbratom = np.argmin(dists)
+    if mol.option.verbose:
+        print("NBR atom is:", mol.atms[mol.nbratom].name )
     mol.nbrradius = (maxdis+1.5)*2 #safe
 
 def assign_bonds(mol):
@@ -168,7 +199,8 @@ def assign_hybridization_if_missing(mol):
         #    atm.hyb = 1
         #else:
         #    print('WARNING: Unknown atype in input mol2 for %s; assigning hyb=2'%(atm.name))
-        print('Hybridization state for %d:%s assigned as %s'%(iatm,atm.name,atm.hyb))
+        if mol.option.verbose:
+            print('Hybridization state for %d:%s assigned as %s'%(iatm,atm.name,atm.hyb))
             
 def assign_angles(mol):
     '''Assigns all bond-angles (not only in AtomTree)'''
@@ -466,7 +498,10 @@ def classify_ring_type(mol,ring,option):
                 if ATYPES[atm.atype] == 'O': n_O += 1
             if n_sp3C == 4 and n_O == 1:
                 #ring.type = 5
-                print('Sugar ring %s: '%mol.mol2file+'  %3s'*5%tuple([mol.atms[iatm].name for iatm in ring.atms]))
+                if option.opt.multimol2 and mol.option.verbose:
+                    print('Sugar ring %s: '%mol.name+'  %3s'*5%tuple([mol.atms[iatm].name for iatm in ring.atms]))
+                elif mol.option.verbose:
+                    print('Sugar ring %s: '%mol.mol2file+'  %3s'*5%tuple([mol.atms[iatm].name for iatm in ring.atms]))
         mol.rings_pucker.append(ring)
         
         # puckering also addes into rings (for the biaryl assignment...)
@@ -527,7 +562,6 @@ def define_icoord(mol):
     '''AtomTree setup using scipy graph construct'''
     nodes,parents = scipy.sparse.csgraph.breadth_first_order(mol.tree, mol.nbratom, directed=False)
     nodes = validate_order(nodes, parents)
-    first_children = np.zeros_like(parents)
     mol.ATorder = nodes
     colinear_child = -9999
     colinear_parent = -9999
@@ -670,6 +704,7 @@ def define_conjugation(mol):
 
     if mol.option.verbose:
         print('Atom_Puckering: ', [mol.atms[atm].name for atm in mol.atms_puckering])
+        print('Atom_Strained', mol.atms_strained)
         print('Atom_Aro: ', [mol.atms[atm].name for atm in mol.atms_aro])
         print('Rings: ', [[mol.atms[atm].name for atm in ring.atms] for ring in mol.rings])
         if len(mol.biaryl_rings) > 0 :
@@ -832,7 +867,7 @@ def define_rotable_torsions(mol):
         if hpol_torsion_type[i] == 2: num_H_confs *= 6
         elif hpol_torsion_type[i] == 3: num_H_confs *= 9
         covered.append((atms[1],atms[2]))
-        
+    
     #print 'Total num_H_conf: ', num_H_confs
     if num_H_confs <= mol.max_confs: mol.chiextra = "1 20"
     else: mol.chiextra = "0"
@@ -845,17 +880,32 @@ def define_rotable_torsions(mol):
 
     covered = []
     for i,atms in enumerate(mol.torsions):
+        if mol.option.verbose:
+            print(atms)
         atm0 = mol.atms[atms[0]]
         atm1 = mol.atms[atms[1]]
         atm2 = mol.atms[atms[2]]
         atm3 = mol.atms[atms[3]]
-        #GZ, make torsion around CSQ @ CSQ non-rotatable, Sep 3, 2020
-        if mol.in_same_ring(atms[1],atms[2]) and ACLASS_ID[atm1.aclass] == "CSQ" and ACLASS_ID[atm2.aclass] == "CSQ":
+        torsion_names = ""
+        for atmid in atms:
+            torsion_names += f"{mol.atms[atmid].name} "
+        if mol.option.verbose:
+            print(torsion_names)
+        # Make torsion around CSQ @ CSQ non-rotatable, GZ, Sep, 2020
+        # Make any strained torsion non-rotatable. GZ, Mar, 2022
+        if mol.in_same_ring(atms[1],atms[2]) and atms[1] in mol.atms_strained and atms[2] in mol.atms_strained:
+            if mol.option.verbose:
+                print("strained torsion, skip.")
             continue
+        
         border = mol.bond_order(atms[1],atms[2])
 
-        if (atms[1],atms[2]) in covered or (atms[2],atms[1]) in covered: continue #avoid
-        if ((atm0.root != atms[1]) and (atm1.root != atms[0])) or ((atm2.root != atms[3]) and (atm3.root != atms[2])): continue
+        if (atms[1],atms[2]) in covered or (atms[2],atms[1]) in covered:
+            if mol.option.verbose:
+                print("Covered, skip.")
+            continue #avoid
+        if ((atm0.root != atms[1]) and (atm1.root != atms[0])) or ((atm2.root != atms[3]) and (atm3.root != atms[2])):
+            continue
             
         if atm1.root == atms[2]:
             atms_ordered = [atms[3],atms[2],atms[1],atms[0]] #last is tipatm
@@ -863,20 +913,27 @@ def define_rotable_torsions(mol):
             atms_ordered = [atms[0],atms[1],atms[2],atms[3]] #last is tipatm
         else:
             continue
+        if mol.option.verbose:
+            print(f"Processing {torsion_names}")
 
         # avoid if any of bonds defined as cut_bond
         if (atms[0],atms[1]) in ring_cuts or (atms[1],atms[0]) in ring_cuts or \
            (atms[1],atms[2]) in ring_cuts or (atms[2],atms[1]) in ring_cuts or \
            (atms[2],atms[3]) in ring_cuts or (atms[3],atms[2]) in ring_cuts:
+            if mol.option.verbose:
+                print("At least one of the atom in ring cut, skip.")
             continue
         
         # why did I put this logic here...?
         # check if the torsion is non-ATorder but connected to ATorder
+        # TODO: check the logic here, this will omit some true rotatable torsion!
         FT_connected = False
         for j in range(len(atms)-1):
             a1,a2 = atms[j],atms[j+1]
             if a1 in mol.ATorder and a2 in mol.ATorder: continue
             if (mol.atms[a1].root not in [a2,a1]) and (mol.atms[a2].root not in [a1,a2]):
+                if mol.option.verbose:
+                    print("FT_connected, skip.")
                 FT_connected = True
                 break
         if FT_connected: continue
@@ -888,12 +945,18 @@ def define_rotable_torsions(mol):
 
         # Bug fix with biaryl not defined as CHI: Oct17 2018 
         if ((atms[1] in mol.atms_aro) and (atms[2] in mol.atms_aro)):
-            if border>1: continue
+            if border>1:
+                if mol.option.verbose:
+                    print("biaryl bond order >1, skip.")
+                continue
             same_ring_order = mol.in_same_ring(atms[1],atms[2])
             if same_ring_order == 4:
+                if mol.option.verbose:
+                    print("In the same aromatic-like ring, skip.")
                 continue # also skip if belongs to the same "aromatic" ring
             elif same_ring_order == 0: #not in same ring
                 if not mol.option.opt.report_ringring_chi and is_biaryl_pivot:
+                    print("Not in the same ring and is biaryl pivot but not report_ringring_chi")
                     continue
 
         # below are optional
@@ -916,6 +979,7 @@ def define_rotable_torsions(mol):
             
             ## always skip a bond in a same aromatic ring
             if mol.in_same_ring(atms[1],atms[2]):
+                print("Skipped bond in same aromatic ring: torsion centered at", mol.atms[atms[1]].name, mol.atms[atms[2]].name)
                 continue
             
             if (mol.option.opt.report_amide_chi):
@@ -933,13 +997,18 @@ def define_rotable_torsions(mol):
                 if mol.atms[j].is_H: nH2+=1
 
             if nH1 == len(atm1.bonds)-1 or nH2 == len(atm2.bonds)-1:
+                print(atms_ordered, "conjugated polarH chi skipped.")
                 continue
-
+        #print( mol.option.opt.report_puckering_chi)
         if (not mol.option.opt.report_puckering_chi) and \
            (atms[1] in mol.atms_puckering) and (atms[2] in mol.atms_puckering):
+            if mol.option.verbose:
+                print(atms_ordered, "atms_puckering skipped.")
             continue
 
         mol.chiatms.append(atms_ordered)
+        if mol.option.verbose:
+            print(atms_ordered, "is added to chi.")
         
         if hpol_torsion_type[i] == 2: #sp2
             mol.chitypes.append('sp2')
@@ -951,3 +1020,9 @@ def define_rotable_torsions(mol):
         #    mol.chitypes.append('pucker') #turn this functionality for now... add separate flag for this behavior
         else:
             mol.chitypes.append('')
+
+        torsion_names = ""
+        for atmid in atms_ordered:
+            torsion_names += f"{mol.atms[atmid].name} "
+        if mol.option.verbose:
+            print(atms_ordered, torsion_names, "chi type:", mol.chitypes[-1])

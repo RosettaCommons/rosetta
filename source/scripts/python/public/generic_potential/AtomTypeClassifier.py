@@ -25,6 +25,8 @@ class AtomTypeClassifier:
     def apply_to_molecule(self,molecule):
         for iatm,atm in enumerate(molecule.atms):
             aclass = self.apply_atom(molecule,iatm) #integer
+            if aclass == 0: #Null atom
+                raise Exception("Null in atom types.")
             molecule.atms[iatm].aclass = aclass
 
         # edit polar C type for special functional groups
@@ -40,6 +42,27 @@ class AtomTypeClassifier:
             if is_amide and bond.order == 1:
                 #print('Warning: Amide bond b/w %s-%s was defined as single-bonded; correcting as amide-bond'%(aname1,aname2))
                 molecule.bonds[i].order = 4
+        
+        #Correct atomtypes in ring, e.g. Nad3->Nim
+        for ring in molecule.rings:
+            if ring.natms > 6 or ring.natms < 5: continue
+            for iatm in ring.atms:
+                atm = molecule.atms[iatm]
+                if atm.atype != 4: #N
+                    continue
+                atoms_connected = [molecule.atms[jatm].atype for jatm,order in atm.bonds]
+                nC = atoms_connected.count(1)
+                nH = atoms_connected.count(2)
+                nO = atoms_connected.count(3)
+                nN = atoms_connected.count(4)
+                ntot = len(atm.bonds)
+                if atm.hyb in [2,8,9]:
+                    # when making corrections, make sure this is not CS-Naro(CS)-Naro
+                    if ntot < 3 and nH == 0 and nN >= 1: 
+                        molecule.atms[iatm].aclass = ACLASS_ID.index("Nim")
+
+        if self.found_error:
+            raise Exception("Error found when classifing atomtypes.")
 
     def apply_atom(self,molecule,iatm): #input as MoleculeType
         atm = molecule.atms[iatm]
@@ -120,7 +143,7 @@ class AtomTypeClassifier:
             return False
 
         # Strained Carbons go to a special type
-        if iatm in molecule.atms_strained:
+        if iatm in molecule.atms_strained and prefix == 'CS':
             return 'CSQ'
         
         nH = 0
@@ -150,6 +173,19 @@ class AtomTypeClassifier:
         # first check if is connected to any carbon
         atoms_connected = [molecule.atms[jatm].atype for jatm,order in atm.bonds]
         nH = atoms_connected.count(2)
+
+        if molecule.option.opt.infer_atomtypes:
+            # Special typing logic: some mol2s has OXIME O as sp2, e.g. ZINC44877836
+            if atm.hyb == 2 and atoms_connected.count(4) == 1 and nH == 1:
+                for jatm, order in atm.bonds:
+                    if molecule.atms[jatm].atype == 4 and molecule.atms[jatm].hyb == 2:
+                        return 'OG31'
+            
+            #S.o2 sulfon oxygen
+            # if atm.hyb == 2 and atoms_connected.count(6) == 1 and nH==0:
+            #     for jatm, order in atm.bonds: 
+            #         if molecule.atms[jatm].atype == 6 and molecule.atms[jatm].hyb == 5:
+            #             return 'OG23'
 
         # return generic if not connected to C
         if atoms_connected.count(1) == 0:
@@ -284,6 +320,21 @@ class AtomTypeClassifier:
         nN = atoms_connected.count(4)
         ntot = len(atm.bonds)
 
+        # 0. Anomaly cases:
+        if molecule.option.opt.infer_atomtypes:
+            # when -NH2 (N.pl3) got protonated to -NH3+, the correct atom type
+            # should be N.4 but some mol2 files still keep N.pl3 atom typs, e.g. ZINC26506235
+            # 'Nam', #AMonium(+amine), primary 
+            # 'Nam2', #AMonium(+amine), secondary~tertiary w/H (w/o H goes to NG3) with lone pair?
+            if atm.hyb == 2 and ntot == 4 and nH == 3:
+                return 'Nam'
+            # -NC3 (N.pl3) got protonated to -NHC3+, e.g. ZINC62933622
+            if atm.hyb == 2 and ntot == 4 and nH >= 1 and nH < 3:
+                return 'Nam2'
+            # when N.am got protonated, the correct atom type should be N.4, e.g. ZINC39093310
+            if atm.hyb == 8 and nC == 3 and nH == 1:   
+                return 'Nam2'
+
         # 1. Consider case if something else (including lone pair(s)) than C/H connected 
         # exceptionally allow amide to pass here even if O=C-N-X where X = C or H
         if nC+nH < ntot:
@@ -302,7 +353,7 @@ class AtomTypeClassifier:
                     return 'NG2' # nitro (share atomtype; oxygen is more important)
 
                 #elif nS >= 1: #Sulfonate: currently NG2, but seperate it?
-                elif nH == 0 and nN >= 1: # Azo group; -N=N- 
+                elif nH == 0 and nN >= 1: # Azo group; -N=N-; 
                     return 'Nad3'
                 else:
                     if nH == 0:
@@ -428,6 +479,7 @@ class AtomTypeClassifier:
                 elif nH == 1:
                     return 'NG21'
                 elif nH == 0:
+                    #print(atm.name, "classfied as Nim under double bond condition")
                     return 'Nim'
                 
             elif nC == 3 and nCaro >= 1: # planary C=NC=C, 0H
