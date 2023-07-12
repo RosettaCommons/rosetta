@@ -20,6 +20,7 @@
 
 // package headers
 #include <basic/datacache/CacheableData.hh>
+#include <core/chemical/AA.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -29,6 +30,7 @@
 #include <core/simple_metrics/CompositeRealMetric.fwd.hh>
 #include <core/simple_metrics/CompositeStringMetric.fwd.hh>
 #include <core/simple_metrics/PerResidueRealMetric.fwd.hh>
+#include <core/simple_metrics/PerResidueProbabilitiesMetric.fwd.hh>
 #include <core/simple_metrics/PerResidueStringMetric.fwd.hh>
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.fwd.hh>
 
@@ -65,6 +67,7 @@ private:
 	friend CompositeRealMetric;
 	friend CompositeStringMetric;
 	friend PerResidueRealMetric;
+	friend PerResidueProbabilitiesMetric;
 	friend PerResidueStringMetric;
 
 	//For IO
@@ -155,6 +158,14 @@ public:
 	bool
 	get_value( std::string const & name, std::map< Size, Real > & value) const;
 
+	///@brief Get PerResidueProbabilitiesMetric data.  Return success status.
+	///
+	///@return
+	///  Returns true if data was present.
+	///
+	bool
+	get_value( std::string const & name, std::map< Size, std::map< chemical::AA, Real >> & value) const;
+
 	///@brief Get PerResidueStringMetric data.  Return success status.
 	///
 	///@return
@@ -162,7 +173,6 @@ public:
 	///
 	bool
 	get_value( std::string const & name, std::map< Size, std::string > & value) const;
-
 
 	///@brief Get PerResidueRealMetric data, optionally convert using refpose.
 	/// Any resnum not in current is removed.
@@ -172,6 +182,15 @@ public:
 	///
 	bool
 	get_value( std::string const & name, std::map< Size, Real > & value, pose::Pose const & pose, bool use_ref_pose ) const;
+
+	///@brief Get PerResidueProbabilitiesMetric data, optionally convert using refpose.
+	/// Any resnum not in current is removed.
+	///
+	///@return
+	///  Returns true if data was present.
+	///
+	bool
+	get_value( std::string const & name, std::map< Size, std::map< chemical::AA, Real >> & value, pose::Pose const & pose, bool use_ref_pose ) const;
 
 	///@brief Get PerResidueStringMetric data, optionally convert using refpose.
 	/// Any resnum not in current is removed.
@@ -213,6 +232,11 @@ public:
 	std::map< std::string, std::map< core::Size, Real >> const &
 	get_per_residue_real_metric_data() const;
 
+	///@brief Get all PerResidueProbabilitiesMetric data
+	/// Raw data - no ref-pose conversions.
+	std::map< std::string, std::map< core::Size, std::map< chemical::AA, Real >>> const &
+	get_per_residue_probabilities_metric_data() const;
+
 	///@brief Get all PerResidueStringMetric data
 	/// Raw data - no ref-pose conversions.
 	std::map< std::string, std::map< core::Size, std::string >> const &
@@ -221,6 +245,10 @@ public:
 	///@brief Get all PerResidueRealMetric output
 	std::map< std::string, std::map< std::string, Real >> const &
 	get_per_residue_real_metric_output() const;
+
+	///@brief Get all PerResidueProbabilitiesMetric output
+	std::map< std::string, std::map< std::string, std::map< std::string, Real >>> const &
+	get_per_residue_probabilities_metric_output() const;
 
 	///@brief Get all PerResidueStringMetric output
 	std::map< std::string, std::map< std::string, std::string >> const &
@@ -272,6 +300,17 @@ public:
 		pose::Pose & pose,
 		std::string const & name,
 		std::map< Size, Real > const & value,
+		bool outut_as_pdb_nums=true);
+
+	///@brief Set PerResidueProbabilitiesMetric data
+	/// Creates a ReferencePose with the given name for the pose to maintain data integrity
+	//  Creates an output map of the given data
+	void
+	set_value(
+		MetricKey mk,
+		pose::Pose & pose,
+		std::string const & name,
+		std::map< Size, std::map< chemical::AA, Real >> const & value,
 		bool outut_as_pdb_nums=true);
 
 	///@brief Set PerResidueStringMetric data

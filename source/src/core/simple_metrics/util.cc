@@ -22,6 +22,7 @@
 #include <core/simple_metrics/SimpleMetric.hh>
 #include <core/simple_metrics/SimpleMetricFactory.hh>
 #include <core/simple_metrics/PerResidueRealMetric.hh>
+#include <core/simple_metrics/PerResidueProbabilitiesMetric.hh>
 #include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/simple_metrics/SimpleMetricData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -166,6 +167,30 @@ xsd_per_residue_real_metric_type_definition_w_attributes(
 	}
 
 	PerResidueRealMetric::add_schema( ct_gen );
+	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
+		.element_name( rs_type )
+		.description( description + citation_string )
+		.add_attributes( attributes )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+}
+
+void
+xsd_per_residue_probabilities_metric_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & rs_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes
+)
+{
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
+
+	std::string citation_string;
+	if ( xsd.include_citation_info() ) {
+		citation_string = "\n\n" + SimpleMetricFactory::get_instance()->get_citation_humanreadable( rs_type );
+	}
+
+	PerResidueProbabilitiesMetric::add_schema( ct_gen );
 	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
 		.element_name( rs_type )
 		.description( description + citation_string )

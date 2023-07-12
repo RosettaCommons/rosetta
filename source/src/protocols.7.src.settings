@@ -160,6 +160,11 @@ sources = {
 		"SecondaryMatchProtocol",
 		"RemoveLigandFilter",
 	],
+        "protocols/esm_perplexity": [
+                "PseudoPerplexityMetric",
+                "EsmPerplexityTensorflowProtocol",
+                "PerResidueEsmProbabilitiesMetric",
+        ],
 	"protocols/glycan_docking": [
 		"GlycanDockProtocol",
 		"util",

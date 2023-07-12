@@ -213,6 +213,10 @@ sources = {
 		"GlycosyltransferaseMover",
 	],
 
+    "esm_perplexity" : [
+        "EsmPerplexity",
+    ],
+
 	"features" : [
 		"BetaTurnDetectionFeatures",
 		"FeaturesReporterTests",

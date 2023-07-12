@@ -124,6 +124,10 @@ static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::Blockwis
 static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::MinimumInterAlphaDistanceMetricCreator > reg_MinimumInterAlphaDistanceMetricCreator;
 static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::WindowPoseCompMotifMetricCreator > reg_WindowPoseCompMotifMetricCreator;
 
+// Added by ME, 24 December 2022:
+static SimpleMetricRegistrator< protocols::esm_perplexity::PseudoPerplexityMetricCreator > reg_EsmPerplexityMetricCreator;
+static SimpleMetricRegistrator< protocols::esm_perplexity::PerResidueEsmProbabilitiesMetricCreator > reg_PerResidueEsmProbabilitiesCreator;
+
 // Added by ME, 8 December 2022:
 static SimpleMetricRegistrator< protocols::ptm_prediction::PTMPredictionMetricCreator > reg_PTMPredictionMetricCreator;
 

@@ -42,6 +42,10 @@ class TestPerResidueRealMetric;
 typedef utility::pointer::shared_ptr< TestPerResidueRealMetric > TestPerResidueRealMetricOP;
 typedef utility::pointer::shared_ptr< TestPerResidueRealMetric const > TestPerResidueRealMetricCOP;
 
+class TestPerResidueProbabilitiesMetric;
+typedef utility::pointer::shared_ptr< TestPerResidueProbabilitiesMetric > TestPerResidueProbabilitiesMetricOP;
+typedef utility::pointer::shared_ptr< TestPerResidueProbabilitiesMetric const > TestPerResidueProbabilitiesMetricCOP;
+
 class TestPerResidueStringMetric;
 typedef utility::pointer::shared_ptr< TestPerResidueStringMetric > TestPerResidueStringMetricOP;
 typedef utility::pointer::shared_ptr< TestPerResidueStringMetric const > TestPerResidueStringMetricCOP;

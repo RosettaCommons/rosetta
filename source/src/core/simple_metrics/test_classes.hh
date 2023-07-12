@@ -20,6 +20,7 @@
 #include <core/simple_metrics/CompositeRealMetric.hh>
 #include <core/simple_metrics/CompositeStringMetric.hh>
 #include <core/simple_metrics/PerResidueRealMetric.hh>
+#include <core/simple_metrics/PerResidueProbabilitiesMetric.hh>
 #include <core/simple_metrics/PerResidueStringMetric.hh>
 #include <core/simple_metrics/test_classes.fwd.hh>
 
@@ -283,6 +284,53 @@ public:
 
 
 	TestPerResidueRealMetric(TestPerResidueRealMetric const & ) = default;
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	void
+	parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data ) override;
+
+};
+
+class TestPerResidueProbabilitiesMetric: public PerResidueProbabilitiesMetric {
+
+public:
+	TestPerResidueProbabilitiesMetric():
+		PerResidueProbabilitiesMetric(){};
+
+	std::map< core::Size, std::map< core::chemical::AA, core::Real>>
+	calculate(pose::Pose const &  ) const override{
+		std::map< core::Size, std::map< core::chemical::AA, core::Real >> data;
+		data[1][core::chemical::AA::aa_ala] = 1.0;
+		data[2][core::chemical::AA::aa_gly] = 2.0;
+		return data;
+	};
+
+	std::string
+	metric() const override {
+		return "SomePerResidueProbabilities";
+	};
+
+	std::string
+	name() const override{
+		return name_static();
+	};
+
+	static
+	std::string
+	name_static();
+
+	SimpleMetricOP
+	clone() const override;
+
+public:
+
+
+	TestPerResidueProbabilitiesMetric(TestPerResidueProbabilitiesMetric const & ) = default;
 
 	static
 	void

@@ -84,6 +84,15 @@ xsd_per_residue_real_metric_type_definition_w_attributes(
 	std::string const & description,
 	utility::tag::AttributeList const & attributes);
 
+///@brief Generate the ComplexTypeGenerator from the SimpleMetric and PerResidueProbabilitiesMetric base classes.
+///  Add any additional schema options from sub-derived classes
+void
+xsd_per_residue_probabilities_metric_type_definition_w_attributes(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & simple_metric_name,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes);
+
 ///@brief Generate the ComplexTypeGenerator from the SimpleMetric and PerResidueStringMetric base classes.
 ///  Add any additional schema options from sub-derived classes
 void

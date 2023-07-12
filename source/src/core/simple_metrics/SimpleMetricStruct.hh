@@ -16,6 +16,7 @@
 #define INCLUDED_simple_metrics_SimpleMetricStruct_hh
 
 #include <core/types.hh>
+#include <core/chemical/AA.hh>
 
 #include <map>
 #include <string>
@@ -47,18 +48,21 @@ struct SimpleMetricStruct {
 	//PerResidueMetrics
 	std::map< std::string, std::map< core::Size, std::string >> per_residue_string_data_;
 	std::map< std::string, std::map< core::Size, core::Real >> per_residue_real_data_;
+	std::map< std::string, std::map< core::Size, std::map< core::chemical::AA, core::Real >>> per_residue_probabilities_data_;
 
 	std::map< std::string, std::map< std::string, std::string >> per_residue_string_output_;
 	std::map< std::string, std::map< std::string, core::Real >> per_residue_real_output_;
+	std::map< std::string, std::map< std::string, std::map< std::string, core::Real >>> per_residue_probabilities_output_;
 
 	///@brief Does this struct contain any data?
 	bool has_data() const {
-		if ( ! string_data_.empty() )                    return true;
-		else if ( ! real_data_.empty() )                 return true;
-		else if ( ! composite_string_data_.empty() )     return true;
-		else if ( ! composite_real_data_.empty() )       return true;
-		else if ( ! per_residue_string_data_.empty() )   return true;
-		else if ( ! per_residue_real_data_.empty() )     return true;
+		if ( ! string_data_.empty() )                        return true;
+		else if ( ! real_data_.empty() )                     return true;
+		else if ( ! composite_string_data_.empty() )         return true;
+		else if ( ! composite_real_data_.empty() )           return true;
+		else if ( ! per_residue_string_data_.empty() )       return true;
+		else if ( ! per_residue_real_data_.empty() )         return true;
+		else if ( ! per_residue_probabilities_data_.empty() ) return true;
 		else return false;
 	}
 
@@ -87,6 +91,7 @@ core::simple_metrics::SimpleMetricStruct::save( Archive & arc ) const {
 	arc( CEREAL_NVP( composite_real_data_ ) );
 	arc( CEREAL_NVP( per_residue_string_data_ ) );
 	arc( CEREAL_NVP( per_residue_real_data_ ) );
+	arc( CEREAL_NVP( per_residue_probabilities_data_ ) );
 	arc( CEREAL_NVP( per_residue_string_output_ ) );
 	arc( CEREAL_NVP( per_residue_real_output_ ) );
 }
@@ -101,6 +106,7 @@ core::simple_metrics::SimpleMetricStruct::load( Archive & arc ) {
 	arc( composite_real_data_ );
 	arc( per_residue_string_data_);
 	arc( per_residue_real_data_);
+	arc( per_residue_probabilities_data_ );
 	arc( per_residue_string_output_);
 	arc( per_residue_real_output_);
 }

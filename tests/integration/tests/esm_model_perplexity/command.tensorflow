@@ -1,0 +1,63 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+[ -x %(bin)s/tensorflow_test2.%(binext)s ] || exit 1
+
+sleep 0.6
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST \
+-parser:protocol simple_test.xml -s %(minidir)s/../tests/integration/tests/zinc_heterodimer/1UBQ.pdb 2>&1 \
+    | egrep -vf ../../ignore_list \
+    | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}.[0-9]\+/[DATESTAMP]/' \
+    | sed 's/[0-9.]\+ microsecond/[TIME] microsecond/g' \
+    | sed 's/[0-9.]\+ Hz/[FREQUENCY] Hz/g' \
+    | sed 's/XLA service 0x[0-9a-ef]\+ initialized/XLA service [SERVICE_NUMBER] initialized/g' \
+    | sed 's#Computed logits using Tensorflow-\(CPU\|GPU\) in [^ ]* microseconds.#Computed logits using Tensorflow-\1 in [TIME] microseconds.#g' \
+    | sed -n '/The following Rosetta modules were used during this run of Rosetta, and should be cited:/q;p' \
+    > log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+#
+# After that, do whatever you want.
+# Files will be diffed verbatim, so if you want to log output and compare it,
+# you'll need to filter out lines that change randomly (e.g. timings).
+# Prefixing your tests with "nice" is probably good form as well.
+# Don't forget to use -testing:INTEGRATION_TEST  so results are reproducible.
+# Here's a typical test for a Mini binary, assuming there's a "flags" file
+# in this directory too:
+#
+
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags
+# Or if you don't care whether the logging output changes:
+#
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+##     > /dev/null
+#

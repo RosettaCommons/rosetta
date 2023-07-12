@@ -164,6 +164,28 @@ ScoreMap::add_arbitrary_string_data_from_pose( pose::Pose const & pose, std::map
 			}
 		}
 
+		// Per Residue Probabilities Metric
+		// we create one string for each position to not create hundreds of columns in the scorefile
+		for ( auto const & name_map_pair : sm_cache->get_per_residue_probabilities_metric_output() ) {
+			std::string const & name( name_map_pair.first );
+
+			for ( auto const & res_map : name_map_pair.second ) {
+				std::string const & res_num( res_map.first );
+
+				std::string aa_value_string;
+				for ( auto const & aa_value : res_map.second ) {
+					std::string const & aa( aa_value.first );
+					core::Real value = aa_value.second;
+					aa_value_string += aa + ":" + std::to_string( value ) + ",";
+				}
+				// remove last ;
+				if ( !aa_value_string.empty() ) {
+					aa_value_string.pop_back();
+				}
+				string_map[name + "_" + res_num] = aa_value_string;
+			}
+		}
+
 	} // End SimpleMetric extraction
 }
 

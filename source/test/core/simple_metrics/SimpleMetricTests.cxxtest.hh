@@ -259,6 +259,42 @@ public:
 
 	}
 
+	void test_per_residue_probabilities_metric() {
+		using namespace core::select::residue_selector;
+		GlycanResidueSelectorOP selector = utility::pointer::make_shared< GlycanResidueSelector >();
+
+		TestPerResidueProbabilitiesMetric tester = TestPerResidueProbabilitiesMetric();
+		tester.set_residue_selector(selector); //Test setting the residue selector.
+		std::map< core::Size, std::map< core::chemical::AA, core::Real >> values = tester.calculate( pose );
+		utility::vector1< std::string > const names = tester.get_metric_names();
+		TS_ASSERT(names.size() == 1);
+		TS_ASSERT( values.at(1).at(core::chemical::AA::aa_ala) == 1.0);
+		TS_ASSERT( values.at(2).at(core::chemical::AA::aa_gly) == 2.0);
+
+		TS_ASSERT( tester.metric() == "SomePerResidueProbabilities");
+		TS_ASSERT( tester.simple_metric_type() == "PerResidueProbabilitiesMetric");
+
+		tester.apply( pose );
+		tester.apply( pose, "prefix_", "_suffix");
+		TS_ASSERT( has_sm_data(pose));
+
+		bool present = get_sm_data(pose)->get_value( "prefix_SomePerResidueProbabilities_suffix", values);
+		TS_ASSERT(present);
+		TS_ASSERT( values.at(1).at(core::chemical::AA::aa_ala) == 1.0);
+		TS_ASSERT( values.at(2).at(core::chemical::AA::aa_gly) == 2.0);
+
+		TS_ASSERT_THROWS_NOTHING(tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail on missing cache*/, false /* use ref pose */));
+
+		values = tester.cached_calculate(pose, true /*use_cache*/, "prefix_", "_suffix", true /*fail_on_no_cache*/, false /*refpose*/);
+		TS_ASSERT( values.at(1).at(core::chemical::AA::aa_ala) == 1.0);
+		TS_ASSERT( values.at(2).at(core::chemical::AA::aa_gly) == 2.0);
+
+		clear_sm_data( pose );
+		present = get_sm_data(pose)->get_value( "prefix_SomePerResidueProbabilities_suffix", values);
+		TS_ASSERT( ! present );
+
+	}
+
 	void test_per_residue_string_metric() {
 		using namespace core::select::residue_selector;
 		GlycanResidueSelectorOP selector = utility::pointer::make_shared< GlycanResidueSelector >();

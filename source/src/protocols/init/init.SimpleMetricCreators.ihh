@@ -39,6 +39,9 @@
 
 #include <protocols/drug_design/RDKitMetricCreator.hh>
 
+#include <protocols/esm_perplexity/PseudoPerplexityMetricCreator.hh> // Added by ME 24 December 2022
+#include <protocols/esm_perplexity/PerResidueEsmProbabilitiesMetricCreator.hh> // Added by ME 25 May 23
+
 #include <protocols/filters/FilterValueMetricCreator.hh>
 
 #include <protocols/quantum_annealing/InteractionGraphSummaryMetricCreator.hh> //Added by VKM, 5 September 2018.
@@ -48,3 +51,4 @@
 #include <protocols/pose_sewing/simple_metrics/MinimumInterAlphaDistanceMetricCreator.hh>
 #include <protocols/pose_sewing/simple_metrics/WindowPoseCompMotifMetricCreator.hh>
 #include <protocols/ptm_prediction/PTMPredictionMetricCreator.hh> // Added by ME, 8 December 2022.
+

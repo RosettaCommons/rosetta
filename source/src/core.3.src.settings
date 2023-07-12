@@ -195,6 +195,7 @@ sources = {
 		"CompositeRealMetric",
 		"CompositeStringMetric",
 		"PerResidueRealMetric",
+                "PerResidueProbabilitiesMetric",
 		"PerResidueStringMetric",
 		"RealMetric",
 		"SimpleMetric",

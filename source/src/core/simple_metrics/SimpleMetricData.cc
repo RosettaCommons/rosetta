@@ -75,9 +75,11 @@ SimpleMetricData::clear(){
 	//PerResidueMetrics
 	data_.per_residue_string_data_.clear();
 	data_.per_residue_real_data_.clear();
+	data_.per_residue_probabilities_data_.clear();
 
 	data_.per_residue_string_output_.clear();
 	data_.per_residue_real_output_.clear();
+	data_.per_residue_probabilities_output_.clear();
 }
 
 /////////////////////////////////////////////
@@ -160,6 +162,16 @@ SimpleMetricData::get_value( std::string const & name, std::map< Size, std::stri
 	}
 }
 
+///@brief Get PerResidueProbabilitiesMetric data.  Return success status.
+bool
+SimpleMetricData::get_value( std::string const & name, std::map< Size, std::map< chemical::AA, Real >> & value) const {
+	if ( data_.per_residue_probabilities_data_.count(name) ) {
+		value = data_.per_residue_probabilities_data_.at(name);
+		return true;
+	} else {
+		return false;
+	}
+}
 
 bool
 SimpleMetricData::get_value( std::string const & name, std::map< Size, Real > & value, pose::Pose const & pose, bool use_ref_pose) const {
@@ -172,6 +184,28 @@ SimpleMetricData::get_value( std::string const & name, std::map< Size, Real > & 
 	if ( data_.per_residue_real_data_.count(name) ) {
 		std::map< Size, Real > ref_values;
 		for ( auto const & res_pair: data_.per_residue_real_data_.at(name) ) {
+			core::Size new_res = pose.corresponding_residue_in_current( res_pair.first, name);
+			if ( new_res != 0 ) {
+				ref_values[new_res] = res_pair.second;
+			}
+		}
+		value = ref_values;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool
+SimpleMetricData::get_value( std::string const & name, std::map< Size, std::map< chemical::AA, Real >> & value, pose::Pose const & pose, bool use_ref_pose) const {
+
+	if ( ! use_ref_pose ) {
+		return get_value(name, value);
+	}
+
+	if ( data_.per_residue_probabilities_data_.count(name) ) {
+		std::map< Size, std::map< chemical::AA, Real >> ref_values;
+		for ( auto const & res_pair: data_.per_residue_probabilities_data_.at(name) ) {
 			core::Size new_res = pose.corresponding_residue_in_current( res_pair.first, name);
 			if ( new_res != 0 ) {
 				ref_values[new_res] = res_pair.second;
@@ -247,6 +281,12 @@ SimpleMetricData::get_per_residue_real_metric_data() const {
 	return data_.per_residue_real_data_;
 }
 
+/// @brief Get all PerResidueProbabilitiesMetric data
+std::map< std::string, std::map< Size, std::map< chemical::AA, Real >>> const &
+SimpleMetricData::get_per_residue_probabilities_metric_data() const {
+	return data_.per_residue_probabilities_data_;
+}
+
 ///@brief Get all PerResidueStringMetric data
 std::map< std::string, std::map< core::Size, std::string >> const &
 SimpleMetricData::get_per_residue_string_metric_data() const {
@@ -257,6 +297,12 @@ SimpleMetricData::get_per_residue_string_metric_data() const {
 std::map< std::string, std::map< std::string, Real >> const &
 SimpleMetricData::get_per_residue_real_metric_output() const {
 	return data_.per_residue_real_output_;
+}
+
+/// @brief Get all PerResidueProbabilitiesMetric data
+std::map< std::string, std::map< std::string, std::map< std::string, Real >>> const &
+SimpleMetricData::get_per_residue_probabilities_metric_output() const {
+	return data_.per_residue_probabilities_output_;
 }
 
 ///@brief Get all PerResidueStringMetric data
@@ -332,6 +378,38 @@ SimpleMetricData::set_value(
 	TR.Debug << "Created reference pose with name: " << name << std::endl;
 }
 
+///@brief Set PerResidueProbabilitiesMetric data
+/// Creates a ReferencePose with the given name for the pose to maintain data integrity
+void
+SimpleMetricData::set_value(
+	MetricKey,
+	pose::Pose & pose,
+	std::string const & name,
+	std::map< Size, std::map< chemical::AA, Real >> const & value,
+	bool output_as_pdb_nums)
+{
+
+	std::string strip=" ";
+	std::map<std::string, std::map<std::string, Real> > output;
+	for ( auto const & outer_pair: value ) {
+		std::string out_res;
+		if ( output_as_pdb_nums ) {
+			out_res = utility::remove_from_string(pose.pdb_info()->pose2pdb(outer_pair.first), strip);
+		} else {
+			out_res = utility::to_string(outer_pair.first);
+		}
+		for ( auto const & inner_pair : outer_pair.second ) {
+			std::string aa_string = core::chemical::name_from_aa(inner_pair.first);
+			output[out_res][aa_string] = inner_pair.second;
+		}
+	}
+
+	data_.per_residue_probabilities_data_[name] = value;
+	data_.per_residue_probabilities_output_[name] = output;
+	pose.reference_pose_from_current(name, true /*override*/);
+	TR.Debug << "Created reference pose with name: " << name << std::endl;
+}
+
 ///@brief Set PerResidueStringMetric data
 /// Creates a ReferencePose with the given name for the pose to maintain data integrity
 void
@@ -396,6 +474,16 @@ SimpleMetricData::show() const {
 	TR << "PerResidueReal Data" << std::endl;
 	for ( auto const & kv : data_.per_residue_real_data_ ) {
 		TR << kv.first<< " " << utility::to_string(kv.second) << std::endl;
+	}
+
+	TR << "PerResidueProbabilities Data" << std::endl;
+	for ( auto const & outer_kv : data_.per_residue_probabilities_data_ ) {
+		for ( auto const & inner_kv : outer_kv.second ) {
+			for ( auto const & aa_kv : inner_kv.second ) {
+				std::string aa_string = core::chemical::name_from_aa(aa_kv.first);
+				TR << outer_kv.first<< " " << inner_kv.first << " " << aa_string << " " << utility::to_string(aa_kv.second) << std::endl;
+			}
+		}
 	}
 
 }

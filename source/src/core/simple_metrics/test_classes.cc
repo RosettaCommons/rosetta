@@ -262,6 +262,51 @@ TestPerResidueRealMetricCreator::create_simple_metric() const {
 
 }
 
+/////////////////////
+
+std::string
+TestPerResidueProbabilitiesMetric::name_static(){
+	return "TestPerResidueProbabilitiesMetric";
+}
+
+SimpleMetricOP
+TestPerResidueProbabilitiesMetric::clone() const {
+	return utility::pointer::make_shared< TestPerResidueProbabilitiesMetric >( *this );
+}
+
+void
+TestPerResidueProbabilitiesMetric::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & )
+{
+	SimpleMetric::parse_base_tag( tag );
+}
+
+void
+TestPerResidueProbabilitiesMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	using namespace core::select::residue_selector;
+
+	AttributeList attlist;
+	xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
+		"Test class for PerResidueProbabilitiesMetrics", attlist);
+}
+
+void
+TestPerResidueProbabilitiesMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
+	TestPerResidueProbabilitiesMetric::provide_xml_schema( xsd );
+}
+
+std::string
+TestPerResidueProbabilitiesMetricCreator::keyname() const {
+	return TestPerResidueProbabilitiesMetric::name_static();
+}
+
+SimpleMetricOP
+TestPerResidueProbabilitiesMetricCreator::create_simple_metric() const {
+	return utility::pointer::make_shared< TestPerResidueProbabilitiesMetric >();
+
+}
 
 /////////////////////
 std::string
