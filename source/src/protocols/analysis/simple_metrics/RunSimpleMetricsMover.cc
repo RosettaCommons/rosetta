@@ -19,11 +19,14 @@
 #include <core/simple_metrics/SimpleMetricFactory.hh>
 #include <core/simple_metrics/util.hh>
 
+
 // Core headers
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
+#include <core/simple_metrics/SimpleMetricData.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/conformation/Residue.hh>
 
 // Basic/Utility headers
-#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
@@ -52,13 +55,15 @@ RunSimpleMetricsMover::RunSimpleMetricsMover( utility::vector1< SimpleMetricCOP>
 }
 
 RunSimpleMetricsMover::RunSimpleMetricsMover( RunSimpleMetricsMover const & src ):
-	protocols::moves::Mover( src ),
+	protocols::moves::Mover( src ) ,
 	prefix_(src.prefix_),
 	suffix_(src.suffix_),
+	metric_to_bfactor_(src.metric_to_bfactor_),
 	override_existing_data_(src.override_existing_data_)
+
 {
 	metrics_.clear();
-	for ( auto metric: src.metrics_ ) {
+	for ( auto const & metric: src.metrics_ ) {
 		metrics_.push_back( metric ); //Don't need to be copies as we will not be modifying the metrics.
 	}
 }
@@ -99,6 +104,7 @@ RunSimpleMetricsMover::parse_my_tag(
 
 	prefix_ = tag->getOption< std::string >("prefix", prefix_);
 	suffix_ = tag->getOption< std::string >("suffix", suffix_);
+	metric_to_bfactor_ = tag->getOption< std::string >("metric_to_bfactor", metric_to_bfactor_);
 }
 
 protocols::moves::MoverOP
@@ -115,32 +121,41 @@ RunSimpleMetricsMover::fresh_instance() const
 
 
 void
-RunSimpleMetricsMover::apply( core::pose::Pose & pose, std::string const & prefix, std::string const & suffix){
+RunSimpleMetricsMover::apply( core::pose::Pose & pose, std::string const & prefix, std::string const & suffix, std::string const & metric_to_bfactor){
 	set_prefix(prefix);
 	set_suffix(suffix);
+	set_bfactor(metric_to_bfactor);
 	apply(pose);
 }
 
 void
 RunSimpleMetricsMover::apply( core::pose::Pose & pose )
 {
-
-	for ( SimpleMetricCOP metric : metrics_ ) {
+	bool is_custom_type_for_b_factor_valid = false;
+	for ( SimpleMetricCOP const & metric : metrics_ ) {
 		debug_assert( metric != nullptr );
 		TR << "Running: " << metric->name()<< " - " << "calculating " << metric->get_final_sm_type() << std::endl;
 		metric->apply(pose, prefix_, suffix_, override_existing_data_);
 
+		// set result of metric to the b factor column if specified by user
+		if ( !metric_to_bfactor_.empty() && metric->get_custom_type() == metric_to_bfactor_ ) {
+			is_custom_type_for_b_factor_valid = true;
+			set_metric_to_bfactor( pose, metric );
+		}
+	}
+	if ( !metric_to_bfactor_.empty() ) {
+		runtime_assert_msg( is_custom_type_for_b_factor_valid, "Error in RunSimpleMetrics: Value of metric_to_bfactor does not match any metric custom_type, did you misspell it?");
 	}
 }
 
 void
-RunSimpleMetricsMover::add_simple_metric( SimpleMetricCOP metric )
+RunSimpleMetricsMover::add_simple_metric( SimpleMetricCOP const & metric )
 {
 	metrics_.push_back( metric );
 }
 
 void
-RunSimpleMetricsMover::set_simple_metrics( utility::vector1< SimpleMetricCOP > metrics ){
+RunSimpleMetricsMover::set_simple_metrics( utility::vector1< SimpleMetricCOP > const & metrics ){
 	metrics_ = metrics;
 }
 
@@ -165,6 +180,38 @@ RunSimpleMetricsMover::set_suffix( std::string const & suffix ){
 	suffix_ = suffix;
 }
 
+void
+RunSimpleMetricsMover::set_bfactor( std::string const & metric_to_bfactor) {
+	metric_to_bfactor_ = metric_to_bfactor;
+}
+void
+RunSimpleMetricsMover::set_metric_to_bfactor( core::pose::Pose & pose, SimpleMetricCOP const & metric) {
+
+	core::simple_metrics::SimpleMetricDataOP metric_data = core::simple_metrics::get_sm_data(pose);
+	std::map<std::string, std::map<core::Size, core::Real >> all_metric_data_map = metric_data->get_per_residue_real_metric_data();
+
+	std::string const metric_key = prefix_ + metric_to_bfactor_ + "_" + metric->metric() + suffix_;
+	auto metric_data_iterator = all_metric_data_map.find(metric_key);
+
+	if ( metric_data_iterator != all_metric_data_map.end() ) {
+		std::map<core::Size, core::Real> &metric_data_map = metric_data_iterator->second;
+		for ( auto const &entry: metric_data_map ) {
+			core::Size const residue_position = entry.first;
+			core::Real const residue_metric_value = entry.second;
+			for ( core::Size atom_position = 1;
+					atom_position <= pose.residue(residue_position).natoms(); ++atom_position ) {
+				pose.pdb_info()->temperature(residue_position, atom_position, residue_metric_value);
+			}
+		}
+		TR << "Successfully set the values of " << metric->name() << " as temperature factor." << std::endl;
+	} else {
+		utility_exit_with_message(
+			"Error in RunSimpleMetrics: Value of the metric_to_bfactor does not match any custom_type of a PerResidueRealMetric.");
+	}
+}
+
+
+
 void RunSimpleMetricsMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
@@ -174,7 +221,8 @@ void RunSimpleMetricsMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute( "metrics", xs_string, "Comma-separated list of previously defined simple_metrics to be added." )
 		+ XMLSchemaAttribute( "prefix", xs_string, "Prefix tag for the values to be added to the output score file for these metrics. (prefix + custom_type + _ + metric_name + suffix)" )
 		+ XMLSchemaAttribute( "suffix", xs_string, "suffix tag for the values to be added to the output score file for these metrics. (prefix + custom_type + _ + metric_name + suffix)" )
-		+ XMLSchemaAttribute::attribute_w_default( "override", xsct_rosetta_bool, "Should we override any existing data?", "false");
+		+ XMLSchemaAttribute::attribute_w_default( "override", xsct_rosetta_bool, "Should we override any existing data?", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "metric_to_bfactor", xs_string, "Name of a PerResidueRealMetric which values will be written to the b factor column.", "");
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.add_group_subelement( & SimpleMetricFactory::get_instance()->simple_metric_xml_schema_group_name );

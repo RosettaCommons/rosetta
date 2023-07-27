@@ -48,16 +48,16 @@ public:
 
 	///@brief Add a simple metric to run.
 	void
-	add_simple_metric( core::simple_metrics::SimpleMetricCOP metric );
+	add_simple_metric( const core::simple_metrics::SimpleMetricCOP& metric );
 
 	void
-	set_simple_metrics( utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics );
+	set_simple_metrics( const utility::vector1< core::simple_metrics::SimpleMetricCOP >& metrics );
 
 	///@brief Run the set of SimpleMetrics.  Add the data to the pose, which will be output int the score file.
 	///  with the given prefix and suffix. (prefix+metric_name+suffix)
 	///
 	void
-	apply( core::pose::Pose & pose, std::string const & prefix, std::string const & suffix);
+	apply( core::pose::Pose & pose, std::string const & prefix, std::string const & suffix, std::string const & metric_to_bfactor );
 
 	///@brief Run the set of SimpleMetrics.  Add the data to the Pose, which will be output in the score file.
 	void
@@ -70,6 +70,9 @@ public:
 
 	void
 	set_suffix( std::string const & suffix );
+
+	void
+	set_bfactor( std::string const & metric_to_bfactor);
 
 	///@brief Should we override existing data?
 	/// Default False.
@@ -117,9 +120,13 @@ public:  // Citation Management
 
 private:
 	utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics_; //They do not accumulate state.
-	std::string prefix_="";
-	std::string suffix_="";
+	std::string prefix_;
+	std::string suffix_;
+	std::string metric_to_bfactor_;
 	bool override_existing_data_ = false;
+
+private: // methods
+	void set_metric_to_bfactor( core::pose::Pose & pose, core::simple_metrics::SimpleMetricCOP const & metric);
 
 };
 
@@ -127,4 +134,4 @@ private:
 } //analysis
 } //protocols
 
-#endif //protocols_analysis_simple_metrics_RunSimpleMetricsMover_hh
+#endif //INCLUDED_protocols_analysis_simple_metrics_RunSimpleMetricsMover_hh
