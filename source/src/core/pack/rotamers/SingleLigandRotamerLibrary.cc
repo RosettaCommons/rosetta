@@ -424,7 +424,19 @@ SingleLigandRotamerLibrary::fill_missing_atoms( utility::vector1< bool > missing
 	for ( Size i=1; i<= rsd->natoms(); ++i ) {
 		if ( missing[i] ) {
 			if ( ! rsd->atom_is_hydrogen( i ) && ! rsd->is_virtual( i ) ) {
-				utility_exit_with_message("Non-virtual heavy atom "+rsd->atom_name(i)+" is missing in rotamer library for residue "+rsd->name()+"!");
+				if ( ! missed[i] ) { // Only warn once
+					// We don't want to error out, as patch residues (e.g. terminal NCAAs) may legitimately have such issues/
+					// However, we want to be rather noisy about this, as in a general case this points to unidal constructions of rotamer libraries.
+					// (If it's truly insurmountable, then we'll exit out later.)
+					TR.Warning << "Non-virtual heavy atom "+rsd->atom_name(i)+" is missing in rotamer library for residue "+rsd->name()+"!" << std::endl;
+				}
+				// But if this atom is built from a chi, we need to hard out,
+				// as that points to a fundamental issue as an ill-defined conformer
+				core::Size built_chi = rsd->type().last_controlling_chi(i);
+				if ( built_chi != 0 && rsd->chi_atoms( built_chi )[4] == i ) {
+					utility_exit_with_message("Non-virtual heavy atom "+rsd->atom_name(i)+" rotamer library for residue "+rsd->name()+" is missing."+
+						" Unable to determine conformation of chi "+std::to_string(built_chi) );
+				}
 			}
 
 			chemical::AtomICoor const & ic( rsd->icoor(i) );
