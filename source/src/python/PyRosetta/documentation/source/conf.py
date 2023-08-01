@@ -51,7 +51,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PyRosetta'
-copyright = u'2017, Sergey Lyskov'
+copyright = u'2023, Rosetta Commons Member Institutions'
 author = u'Sergey Lyskov'
 
 # The version info for the project you're documenting, acts as replacement for
