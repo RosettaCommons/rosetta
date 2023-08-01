@@ -1,0 +1,26 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="beta_sugar" weights="beta.wts" > 
+			<Reweight scoretype="sugar_bb" weight="1.0" />
+		</ScoreFunction>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name="rtrp"/>
+	</TASKOPERATIONS>
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="ncaa_palette" additional_residue_types="ORN" />
+	</PACKER_PALETTES>
+	<MOVERS>
+		<MutateResidue name="mutate" target="25" new_res="ORN" />
+		<PackRotamersMover name="repack" task_operations="rtrp" packer_palette="ncaa_palette"/>
+		
+		<SimpleGlycosylateMover name="glycosylate" position="25" glycosylation="a-D-Manp-" atom_name="NE" />
+		<GlycanSampler name="model_glycans" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="mutate" />
+		<Add mover_name="repack" />
+		<Add mover_name="glycosylate" />
+		<Add mover_name="model_glycans" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

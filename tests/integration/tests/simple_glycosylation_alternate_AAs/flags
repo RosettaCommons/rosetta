@@ -1,0 +1,9 @@
+-s 1ubq.pdb
+-parser:protocol model_glycans_simple.xml 
+-beta
+-include_sugars
+-write_pdb_link_records
+-glycan_sampler_rounds 5
+-overwrite
+-extra_patch_fa N-linked_conjugation.txt
+-packing:packer_palette:NCAA_expanded

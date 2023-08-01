@@ -27,6 +27,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/vector1.hh> // AUTO IWYU For vector1
+#include <boost/unordered/unordered_map.hpp>
 
 
 namespace protocols {
@@ -195,6 +196,8 @@ private:
 
 	utility::vector1< std::string > parsed_positions_;
 	utility::vector1< core::Size > positions_;
+	utility::vector1< std::string > parsed_atom_names_;
+	boost::unordered_map < core::Size, std::string > atom_names_;
 
 	bool strip_existing_glycans_;
 

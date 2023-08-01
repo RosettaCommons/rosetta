@@ -2317,7 +2317,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				'The default filename is default.table',
 			short='Specify a file containing glycosidic linkage data.',
 			default='default.table',
-			legal=['default.table', 'original.table', 'core/chemical/carbohydrates/test_linkage_data_table.tsv']
+			#legal=['default.table', 'original.table', 'core/chemical/carbohydrates/test_linkage_data_table.tsv']
 			),
     Option('saccharide_sequence', 'String',
       desc='Input saccharide sequence to build.',

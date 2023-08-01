@@ -386,6 +386,14 @@ glycosylate_pose(
 	using namespace conformation;
 
 	Residue const & residue( pose.residue( sequence_position ) );
+	if ( ! pose.residue( sequence_position ).has( atom_name ) ) {
+		//TR.Warning << "No atom name "<< atom_name <<" in residue "<< sequence_position <<"!" << endl;
+		utility_exit_with_message( utility::to_string(atom_name) + " is not an atom of residue " +
+			pose.residue( sequence_position ).type().name() +" at position " + utility::to_string( sequence_position ) +
+			" in the pose. This would probably work fine if everything else is set up correctly but you should set the "
+			"correct atom name anyway." );
+	}
+
 	ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( residue.type().mode() ) );
 
 	// Get list of carbohydrate ResidueTypes from which to construct the Pose.

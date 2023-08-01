@@ -68,6 +68,8 @@ SimpleGlycosylateMover::SimpleGlycosylateMover( SimpleGlycosylateMover const & s
 	glycosylation_weights_( src.glycosylation_weights_ ),
 	parsed_positions_( src.parsed_positions_ ),
 	positions_( src.positions_ ),
+	parsed_atom_names_( src.parsed_atom_names_ ),
+	atom_names_( src.atom_names_ ),
 	strip_existing_glycans_( src.strip_existing_glycans_ ),
 	ref_pose_name_( src.ref_pose_name_ ),
 	idealize_glycosylation_( src.idealize_glycosylation_)
@@ -89,6 +91,8 @@ SimpleGlycosylateMover::parse_my_tag(
 	glycosylation_weights_.clear();
 	parsed_positions_.clear();
 	positions_.clear();
+	parsed_atom_names_.clear();
+	atom_names_.clear();
 
 	if ( tag->hasOption("glycosylation") ) {
 		glycosylations_.push_back( tag->getOption< std::string >("glycosylation"));
@@ -112,6 +116,17 @@ SimpleGlycosylateMover::parse_my_tag(
 	if ( parsed_positions_.size() > 0 && selector_ ) {
 		utility_exit_with_message(" Cannot set position(s) and residue_selector! ");
 	}
+
+	if ( tag->hasOption("atom_name") ) {
+		parsed_atom_names_.push_back( tag->getOption< std::string >("atom_name") );
+	} else if ( tag->hasOption("atom_names") ) {
+		parsed_atom_names_ =  utility::string_split_multi_delim( tag->getOption< std::string >("atom_names"), ",'`~+*&|;. ");
+	}
+
+	if ( parsed_atom_names_.size() > 0 && selector_ ) {
+		utility_exit_with_message(" Cannot set atom_name(s) and residue_selector! ");
+	}
+
 
 	if ( tag->hasOption("weights") ) {
 		utility::vector1< std::string > weights = utility::string_split_multi_delim( tag->getOption< std::string >("weights"), ",'`~+*&|;. ");
@@ -276,7 +291,7 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 	//Since we may be deleting residues, we need to add a reference pose.
 
 	//Convert parsed positions.
-	if ( parsed_positions_.size() > 0 ) {
+	if ( parsed_positions_.size() > 0 && parsed_atom_names_.size() == 0 ) {
 		positions_.clear();
 		for ( core::Size i = 1; i <= parsed_positions_.size(); ++i ) {
 			core::Size resnum = core::pose::parse_resnum( parsed_positions_[ i ], pose);
@@ -284,6 +299,19 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 				resnum = pose.corresponding_residue_in_current( resnum, ref_pose_name_);
 			}
 			positions_.push_back(resnum);
+		}
+	} else if ( parsed_positions_.size() > 0 && parsed_atom_names_.size() > 0 ) {
+		positions_.clear();
+		atom_names_.clear();
+		for ( core::Size i = 1; i <= parsed_positions_.size(); ++i ) {
+			core::Size resnum = core::pose::parse_resnum( parsed_positions_[ i ], pose);
+			if ( ref_pose_name_ != "" ) {
+				resnum = pose.corresponding_residue_in_current( resnum, ref_pose_name_);
+			}
+			positions_.push_back(resnum);
+			std::string linker_atom = parsed_atom_names_ [ i ];
+			// it would be a good idea to check that the resnum has that atom
+			atom_names_[ resnum ] = linker_atom;
 		}
 	} else if ( selector_ ) {
 		if ( ref_pose_name_ != "" ) {
@@ -305,6 +333,10 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 	}
 	if ( glycosylation_weights_.size() > 0 && glycosylation_weights_.size() != glycosylations_.size() ) {
 		utility_exit_with_message("Number of weights must equal number of glycosylations!");
+	}
+
+	if ( atom_names_.size() > 0 && positions_.size() != atom_names_.size() ) {
+		utility_exit_with_message("Number of atom_names must equal number of positions, one atom_name for each position in the list.");
 	}
 
 	std::string ref_pose_name = "simple_glycosylate_mover";
@@ -348,10 +380,21 @@ SimpleGlycosylateMover::apply( core::pose::Pose& pose ){
 			}
 		}
 
-		//Glycosylate the pose.
-		TR << "Glycosylating at " << old_resnum << " : " << resnum << " " << glycosylation << std::endl;
+		if ( atom_names_.size() == 0 ) { // the base case, where canonical amino acids are glycosylated and the link atom is defined by consensus
+			//Glycosylate the pose.
+			TR << "Glycosylating at " << old_resnum << " : " << resnum << " " << glycosylation << std::endl;
 
-		glycosylate_pose( pose, resnum, glycosylation, idealize_glycosylation_ /* idealize linkages - Seems to be a bug here!*/);
+			glycosylate_pose( pose, resnum, glycosylation, idealize_glycosylation_ /* idealize linkages - Seems to be a bug here!*/);
+		}
+
+		// If defining the atom of the residue to be chemically-linked
+		// do we check that the residue contains the atom here? or is that done later
+		if ( atom_names_.size() >= 1 ) {
+			glycosylate_pose( pose, resnum, atom_names_[ resnum ], glycosylation, idealize_glycosylation_);
+		}
+
+
+
 
 	}
 
@@ -427,6 +470,7 @@ void SimpleGlycosylateMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute( "glycosylations", xs_string, "String or file name specifying multiple possible glycosylations to add to this pose (IUPAC Glycan String) (or a file name containing the glycosylation with a .iupac name) (will be sampled randomly" )
 		+ XMLSchemaAttribute( "position", xsct_refpose_enabled_residue_number, "Position to add glycosylation" )
 		+ XMLSchemaAttribute( "positions", xsct_refpose_enabled_residue_number_cslist, "Positions to add glycosylations" )
+		+ XMLSchemaAttribute( "atom_name", xs_string, "Atom to which glycan is chemically linked" )
 		+ XMLSchemaAttribute( "weights", "delimited_real_list", "Sampling weights corresponding to the provided set of glycans" )
 		+ XMLSchemaAttribute( "strip_existing", xsct_rosetta_bool, "Strip existing glycosylations from the pose" )
 		+ XMLSchemaAttribute( "ref_pose_name", xs_string, "Name of saved reference pose" )
