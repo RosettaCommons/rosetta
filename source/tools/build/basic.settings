@@ -443,7 +443,17 @@ settings = {
         },
     },
 
-    "gcc, 11.2" : {
+    "gcc, 13.1" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Wno-error=array-bounds=", # There's a probably spurious "__builtin_memmove() forming offset is out of the bounds" warning for vector1<bool>
+                    "Wno-error=stringop-overread", # Issue with Eigen
+                    "Wno-error=dangling-reference", # Too agressive.
+                    "Wno-error=restrict", # Issue with json-spirit
+                ],
+            },
+        },
         "removes" : {
             "flags" : {
                 "cxx" : [
@@ -453,7 +463,61 @@ settings = {
         },
     },
 
+    "gcc, 12.3" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+    "gcc, 12.2" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+    "gcc, 12.1" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
 
+    "gcc, 11.4" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+    "gcc, 11.3" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+    "gcc, 11.2" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
     "gcc, 11.1" : {
         "removes" : {
             "flags" : {
@@ -465,6 +529,24 @@ settings = {
     },
 
 
+    "gcc, 10.5" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+    "gcc, 10.4" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
     "gcc, 10.3" : {
         "removes" : {
             "flags" : {
@@ -474,8 +556,6 @@ settings = {
             },
         },
     },
-
-
     "gcc, 10.2" : {
         "removes" : {
             "flags" : {
@@ -485,7 +565,6 @@ settings = {
             },
         },
     },
-
     "gcc, 10.1" : {
         "removes" : {
             "flags" : {
@@ -497,6 +576,24 @@ settings = {
     },
 
 
+    "gcc, 9.5" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+    "gcc, 9.4" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
     "gcc, 9.3" : {
         "removes" : {
             "flags" : {
@@ -506,8 +603,6 @@ settings = {
             },
         },
     },
-
-
     "gcc, 9.2" : {
         "removes" : {
             "flags" : {
@@ -517,8 +612,6 @@ settings = {
             },
         },
     },
-
-
     "gcc, 9.1" : {
         "removes" : {
             "flags" : {

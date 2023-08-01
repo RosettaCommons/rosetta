@@ -20,6 +20,7 @@
 #include <protocols/sewing/hashing/ModelFileReader.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+#include <utility/numbers.hh>
 #include <numeric/random/random.hh>
 //Temporary, functions will move later
 //#include <protocols/sewing/util/io.hh >
@@ -332,8 +333,8 @@ BasisMapGenerator::read_alignments_from_file(std::string alignment_file_name) {
 	//The rest of the file contains basis pairs
 	utility::vector1< std::string > current_line;
 	//int mod1;
-	core::Size current_outer_key;
-	core::Size current_inner_key;
+	core::Size current_outer_key = utility::get_undefined_size();
+	core::Size current_inner_key = utility::get_undefined_size();
 
 	while ( alignment_file.getline( line ) ) {
 		current_line = utility::string_split( line );
@@ -346,6 +347,8 @@ BasisMapGenerator::read_alignments_from_file(std::string alignment_file_name) {
 			//seg1 = utility::string2Size( current_line[ 3 ] );
 			current_inner_key = utility::string2Size( current_line[ 2 ] );
 		} else { //line stores the basis pair info
+			runtime_assert_msg( current_outer_key != utility::get_undefined_size(), "Need to set S1 value" );
+			runtime_assert_msg( current_inner_key != utility::get_undefined_size(), "Need to set S2 value" );
 			for ( core::Size i = 1; i <= current_line.size() - 1; ++i ) { //read in pairs & store in basis map
 				( * basis_map_ )[ current_outer_key ][ current_inner_key ].push_back( std::make_pair( utility::string2Size( current_line[ i ] ), utility::string2Size( current_line[ i+1 ] ) ) );
 			}

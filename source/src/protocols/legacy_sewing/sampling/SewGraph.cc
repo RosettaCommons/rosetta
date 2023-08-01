@@ -40,6 +40,8 @@
 
 #include <boost/pool/object_pool.hpp> // AUTO IWYU For unordered_object_pool::construct
 
+#include <cstdint>
+
 namespace protocols {
 namespace legacy_sewing  {
 

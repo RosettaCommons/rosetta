@@ -194,8 +194,8 @@ public:
 		delete [] gindex;
 	}
 	~xyzStripeHashWithMeta() override {
-		if ( grid_atoms_ )  delete grid_atoms_;
-		if ( grid_stripe_ ) delete grid_stripe_;
+		if ( grid_atoms_ )  delete [] grid_atoms_;
+		if ( grid_stripe_ ) delete [] grid_stripe_;
 	}
 
 	xyz_iterator     xyz_begin() const { return     xyz_iterator(grid_atoms_       ) ; }
