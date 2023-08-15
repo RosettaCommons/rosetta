@@ -378,6 +378,7 @@ sources = {
 
 	"pilot/guangfeng" : [
 		"cryst_hbonds", # small molecule xtal dock hbonds reporter
+		"align_substructure", # align small molecule substructure
 	],
 	# H ######################################################################
 		"pilot/habib" : [

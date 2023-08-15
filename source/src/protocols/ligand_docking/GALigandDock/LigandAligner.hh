@@ -277,6 +277,10 @@ private:
 	define_all_ligand_phores( core::Size const minsize,
 		bool report_phore_info );
 
+	/// @brief defines all ligand phores
+	void
+	define_ligand_multibody_phores( bool report_phore_info );
+
 	bool
 	phore_overlaps_with_existing( Pharmacophore const &phore_i,
 		core::Size &jphore ) const;
@@ -313,6 +317,7 @@ private:
 
 	utility::vector1< utility::vector1< core::Real > > Dmtrx_;
 	utility::vector1< Pharmacophore > phores_;
+	utility::vector1< Pharmacophore > multibody_phores_;
 	utility::vector1< std::pair< core::Size, Pharmacophore > > phore_match_;
 	std::pair< core::Size, Pharmacophore > current_phore_match_;
 
@@ -360,6 +365,9 @@ public:
 	bool use_pharmacophore() const { return use_pharmacophore_; }
 
 	void refine_input( bool setting ){ refine_input_ = setting; }
+
+	void prealigned_input( bool setting ){ prealigned_input_ = setting; }
+	bool prealigned_input() const { return prealigned_input_; }
 
 	void set_sample_ring_conformers( bool const setting ) { sample_ring_conformers_ = setting; }
 	bool sample_ring_conformers() const { return sample_ring_conformers_; }
@@ -420,6 +428,7 @@ private:
 	// perturbation parameters
 	utility::vector1< core::Size > movable_scs_;
 	bool refine_input_;
+	bool prealigned_input_;
 	core::Real trans_step_, rot_step_, chi_step_;
 	utility::vector1< utility::vector1< core::Real > > weighted_score_ij_;
 

@@ -128,6 +128,8 @@ public:
 		update_cutoffs();
 	};
 
+	void set_is_ligand_residue( bool is_ligand_residue ) {is_ligand_residue_ = is_ligand_residue;};
+
 private:
 
 	void set_legacy_options() {

@@ -28,6 +28,15 @@ namespace core {
 namespace chemical {
 namespace rdkit {
 
+struct RestypeToRDMolOptions{
+	bool neutralize = true;
+	bool keep_hydro = false;
+	bool sanitize = true;
+	bool noImplicitHs = false;
+	bool skipHs = false;
+	bool aro2double = false;
+};
+
 class RestypeToRDMol  {
 public:
 
@@ -59,11 +68,20 @@ public:
 	/// Much of RDKit (especially the metric calculations) assumes neutral protonation. (e.g.
 	/// what you'd see in an aprotic organic solvent), which is why we neutralize the residues
 	/// by default.
-	RestypeToRDMol(MutableResidueType const & res, bool neutralize = true, bool keep_hydro = false );
+	RestypeToRDMol(MutableResidueType const & res, bool neutralize = true, bool keep_hydro = false,
+		bool sanitize = true, bool noImplicitHs = false, bool skipHs = false );
+
+	RestypeToRDMol(MutableResidueType const & res, RestypeToRDMolOptions const & options );
 
 	/// @brief Return the corespondance from the input ResidueType VD to the RDKit atom index
 	VDIndexMapping const &
 	vd_to_index() const { return vd_to_index_; }
+
+	IndexVDMapping const &
+	index_to_vd() const { return index_to_vd_; }
+
+	std::map<core::Size, core::Size> const &
+	get_atomIndexMap_Rd2Res() const { return atomIndexMap_Rd2Res_; }
 
 	/// @brief Return an RDKit RWMol object which represents the residue type
 	::RDKit::RWMOL_SPTR
@@ -73,12 +91,19 @@ private:
 	RestypeToRDMol(); // unimplemented - must provide a residue type
 
 	MutableResidueType const & res_;
+	RestypeToRDMolOptions options_;
 	bool neutralize_;
 	bool keep_hydro_;
+	bool sanitize_;
+	bool noImplicitHs_;
+	bool skipHs_;
+	bool aro2double_ = false;
 
 	/// @brief Mapping of restype vertex descriptors to indices of the rdkit object
 	// Uses utility::get_undefined_size() for non-represented RDKit indices
 	VDIndexMapping vd_to_index_;
+	IndexVDMapping index_to_vd_;
+	std::map<core::Size, core::Size> atomIndexMap_Rd2Res_;
 
 };
 

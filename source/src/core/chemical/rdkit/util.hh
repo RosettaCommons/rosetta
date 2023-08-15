@@ -44,7 +44,7 @@ void initialize_rdkit_tracers();
 
 /// @brief Convert a Rosetta BondName enum to an RDKit BondType value
 ::RDKit::Bond::BondType
-convert_to_rdkit_bondtype( core::chemical::BondName bondtype);
+convert_to_rdkit_bondtype( core::chemical::BondName bondtype, bool aro2double = false);
 
 /// @brief Convert an RDKit BondType value to a Rosetta BondName enum
 core::chemical::BondName

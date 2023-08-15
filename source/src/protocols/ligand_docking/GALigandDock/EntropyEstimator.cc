@@ -41,8 +41,10 @@ using namespace ObjexxFCL::format;
 
 EntropyEstimator::EntropyEstimator( core::scoring::ScoreFunctionOP sfxn,
 	core::pose::Pose const & pose,
-	utility::vector1< core::Size > const &ligids
+	utility::vector1< core::Size > const &ligids,
+	std::string method
 ) :
+	method_(method),
 	ligids_( ligids ),
 	sfxn_( sfxn ),
 	run_apostate_( false ), // by default free-ligand simulation only
@@ -148,7 +150,7 @@ EntropyEstimator::get_chi_weight( core::pose::Pose const &pose_ref ) {
 }
 
 core::Real
-EntropyEstimator::apply( core::pose::Pose const &pose ) const {
+EntropyEstimator::MCEntropy( core::pose::Pose const &pose ) const {
 	std::string est_target( "ligand" );
 	if ( run_apostate_ ) est_target += ",apo-receptor";
 	if ( run_holostate_ ) est_target += ",complex";
@@ -214,6 +216,34 @@ EntropyEstimator::apply( core::pose::Pose const &pose ) const {
 	TR << "From ComplexTors: " << 0.5*RT*wtors_*Stors_complex << std::endl;
 
 	return Ssum; // free energy in kcal/mol
+}
+
+core::Real
+EntropyEstimator::SimpleEntropy( core::pose::Pose const &pose ) const {
+	TR << "Using simple entropy estimation method: S = wchi*nchi " << std::endl;
+	core::Real Stot(0.0);
+	core::Size nchi(0);
+	core::Real w_nchi(0.4); // eventually move to class variables
+	for ( auto ligid:ligids_ ) {
+		nchi += pose.residue(ligid).nchi();
+		for ( core::Size ichi=1; ichi<=pose.residue(ligid).nchi(); ++ichi ) {
+			if ( pose.residue(ligid).type().is_proton_chi(ichi) ) {
+				nchi -=1;
+			}
+		}
+	}
+
+	TR << "Entropy from rotors: " << w_nchi*nchi << std::endl;
+	Stot = w_nchi*nchi;
+	return Stot;
+}
+
+core::Real
+EntropyEstimator::apply( core::pose::Pose const &pose ) const {
+	TR << "Entropy method is " << method_ << std::endl;
+	if ( method_ == "MCEntropy" ) return MCEntropy(pose);
+	else if ( method_ == "Simple" ) return SimpleEntropy(pose);
+	else return 0.0;
 }
 
 core::Real

@@ -411,6 +411,15 @@ private:
 		LigandConformers &genes_sel
 	) const;
 
+	/// @brief load the initial pool
+	void
+	load_template_pool(
+		LigandConformer const &gene_initial,
+		LigandConformers &genes_sel,
+		core::Size nsel,
+		utility::vector1< ConstraintInfo > & template_cst_infos
+	) const;
+
 	// load the initial pool
 	void
 	load_reference_pool(
@@ -559,7 +568,8 @@ private:
 	core::Real max_rot_cumulative_prob_, rot_energy_cutoff_;
 	core::Real random_oversample_, reference_oversample_, reference_frac_, init_dens_weight_;
 	bool reference_frac_auto_;
-	std::string initial_pool_, reference_pool_; // pdbs to include in initial pool
+	std::string initial_pool_, reference_pool_, template_pool_; // pdbs to include in initial pool
+	core::Size n_template_;
 	bool premin_ligand_;
 	bool sample_ring_conformers_;
 	core::Real torsion_sampler_percentage_;
@@ -596,6 +606,8 @@ private:
 	core::Size nrelax_;
 	core::Size nreport_;
 	bool estimate_dG_;
+	std::string entropy_method_;
+	bool estimate_buns_;
 
 	bool use_mean_maxRad_;
 	core::Real stdev_multiplier_;

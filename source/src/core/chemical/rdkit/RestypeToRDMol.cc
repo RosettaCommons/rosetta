@@ -42,17 +42,41 @@ namespace rdkit {
 
 static basic::Tracer TR("core.chemical.rdkit.RestypeToRDMol");
 
-RestypeToRDMol::RestypeToRDMol(MutableResidueType const & res, bool neutralize /* = true*/, bool keep_hydro /*= false*/ ):
+RestypeToRDMol::RestypeToRDMol(MutableResidueType const & res, bool neutralize /* = true*/, bool keep_hydro /*= false*/,
+	bool sanitize /*= true*/, bool noImplicitHs /*= false*/, bool skipHs /*= false*/ ):
 	res_( res ),
 	neutralize_( neutralize ),
 	keep_hydro_( keep_hydro ),
-	vd_to_index_( ResidueGraph::null_vertex(), utility::get_undefined_size() )
+	sanitize_( sanitize ),
+	noImplicitHs_( noImplicitHs ),
+	skipHs_( skipHs ),
+	vd_to_index_( ResidueGraph::null_vertex(), utility::get_undefined_size() ),
+	index_to_vd_( utility::get_undefined_size(), ResidueGraph::null_vertex() )
 {
+
 	if ( neutralize_ && keep_hydro_ ) {
 		utility_exit_with_message("In RestypeToRDMol, enabling neutralization while keeping the hydrogens doesn't make sense.");
 	}
+
+	if ( !sanitize_ ) {
+		TR.Warning << "Not performing sanitize check!" << std::endl;
+	}
 }
 
+
+RestypeToRDMol::RestypeToRDMol(MutableResidueType const & res, RestypeToRDMolOptions const& options ):
+	res_( res ),
+	options_( options ),
+	vd_to_index_( ResidueGraph::null_vertex(), utility::get_undefined_size() ),
+	index_to_vd_( utility::get_undefined_size(), ResidueGraph::null_vertex() )
+{
+	neutralize_ = options_.neutralize;
+	keep_hydro_ = options_.keep_hydro;
+	sanitize_ = options_.sanitize;
+	noImplicitHs_= options_.noImplicitHs;
+	skipHs_= options_.skipHs;
+	aro2double_ = options_.aro2double;
+}
 
 ::RDKit::RWMOL_SPTR
 RestypeToRDMol::Mol() {
@@ -77,6 +101,8 @@ RestypeToRDMol::Mol() {
 
 		core::Size atomic_number = atom.element_type()->get_atomic_number();
 
+		if ( skipHs_ && atomic_number == 1 ) continue;
+
 		// We keep hydrogens on the graph for now, for Kekulization reasons
 		// -- with the explicit hydrogen settings, we can probably avoid that, but for now ...
 
@@ -95,12 +121,16 @@ RestypeToRDMol::Mol() {
 		::RDKit::AtomPDBResidueInfo *info( new ::RDKit::AtomPDBResidueInfo(atom.name(),res_.atom_index(*iter_vd) ) );
 		rd_atom->setMonomerInfo(info); // takes ownership
 
+		if ( noImplicitHs_ ) rd_atom->setNoImplicit(true);
+
 		unsigned int aid = rdmol->addAtom(rd_atom,true,true); //Will take ownership of atom
 
 		::RDGeom::Point3D pos( coords[0], coords[1], coords[2] );
 		pos_map[ aid ] = pos;
 
 		vd_to_index_[*iter_vd] = core::Size(aid);
+		index_to_vd_[core::Size(aid)] = *iter_vd;
+		atomIndexMap_Rd2Res_[core::Size(aid)] = res_.atom_index(*iter_vd);
 	}
 
 	// Raw pointer here is intentional - the RWMol will take exclusive ownership of the conformer
@@ -134,7 +164,7 @@ RestypeToRDMol::Mol() {
 			continue;
 		}
 
-		::RDKit::Bond::BondType type( convert_to_rdkit_bondtype( bond.bond_name() ) );
+		::RDKit::Bond::BondType type( convert_to_rdkit_bondtype( bond.bond_name(), aro2double_ ) );
 
 		if ( type == ::RDKit::Bond::AROMATIC ) {
 			rdmol->getAtomWithIdx(index1)->setIsAromatic(true);
@@ -143,6 +173,7 @@ RestypeToRDMol::Mol() {
 
 		rdmol->addBond( (unsigned int) index1, (unsigned int) index2, type);
 	}
+
 	// Now attempt to fill out the other parameters for this molecule
 
 	// (Nothing Here Yet)
@@ -152,7 +183,7 @@ RestypeToRDMol::Mol() {
 		if ( neutralize_ ) {
 			neutralize_rdmol( *rdmol, /*addHs*/ false ); // Attempt to clean up silly charges.
 			// Neutralization has an internal sanitization.
-		} else {
+		} else if ( sanitize_ ) {
 			::RDKit::MolOps::sanitizeMol(*rdmol);
 		}
 	} catch (::RDKit::MolSanitizeException &se){
@@ -179,6 +210,14 @@ RestypeToRDMol::Mol() {
 	// Redo protonation on charged items.
 	if ( neutralize_ ) {
 		final_neutralize( rdmol );
+	}
+	//check explicitHs
+	if ( TR.Debug.visible() ) {
+		for ( auto atom : rdmol->atoms() ) {
+			TR.Debug << "Index, Degree, ExplicitHs, ImplicitHs: " << atom->getIdx() <<", " << atom->getDegree()
+				<< ", " << atom->getNumExplicitHs() << ", " << atom->getNumImplicitHs()
+				<< std::endl;
+		}
 	}
 
 	::RDKit::MolOps::assignChiralTypesFrom3D(*rdmol);

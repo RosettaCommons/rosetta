@@ -52,6 +52,26 @@ make_ligand_only_pose( core::pose::PoseOP pose_new,
 	utility::vector1< core::Size > const& lig_resnos
 );
 
+void
+perturb_ligand_rb(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const& ligids,
+	core::Real trans_step = 2.0,
+	core::Real rot_step = 15.0
+);
+
+void
+perturb_ligand_torsions(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const& ligids,
+	utility::vector1< core::Size > const& freeze_chi,
+	core::Real chi_step = 15.0
+);
+
+core::Size
+get_ligand_jumpid( core::pose::Pose const &pose,
+	utility::vector1< core::Size > const& ligids );
+
 }
 }
 }

@@ -33,6 +33,10 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <numeric/random/random.functions.hh>
+#include <numeric/random/random.hh>
+#include <numeric/random/random_xyz.hh>
+#include <numeric/conversions.hh>
 //#include <utility/graph/Graph.hh>
 
 #include <core/types.hh>
@@ -185,8 +189,11 @@ constraint_relax( core::pose::Pose &pose,
 	utility::vector1< core::Size > const &movable_scs,
 	core::Real maxiter
 ) {
+	core::Size jumpid = get_ligand_jumpid( pose, ligids );
 	core::pose::Pose pose0(pose); //copy input pose for rmsd calculation
 	core::scoring::ScoreFunctionOP scfxn = core::scoring::get_score_function();
+	core::Real w_cst = (*scfxn)[core::scoring::coordinate_constraint];
+	if ( TR.Debug.visible() ) TR.Debug << "weight coordinate_constraint: " << w_cst << std::endl;
 	core::Real w_cart = (*scfxn)[core::scoring::cart_bonded];
 	if ( w_cart<1.0e-5 ) {
 		scfxn->set_weight(core::scoring::cart_bonded, 0.5);
@@ -194,6 +201,7 @@ constraint_relax( core::pose::Pose &pose,
 	}
 	core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
 	mm->set_bb(false); mm->set_chi(false); mm->set_jump(false);
+	mm->set_jump(jumpid, true);
 	for ( core::Size i=1; i<=movable_scs.size(); ++i ) {
 		mm->set_chi(movable_scs[i], true);
 	}
@@ -204,22 +212,21 @@ constraint_relax( core::pose::Pose &pose,
 
 	pose.remove_constraints();
 	core::id::AtomID anchorid( 1, pose.fold_tree().root() );
-	for ( core::Size ires = 1; ires <= movable_scs.size(); ++ires ) {
+	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	for ( core::Size ires : movable_scs ) {
 		for ( core::Size iatm = 1; iatm <= pose.residue(ires).natoms(); ++iatm ) {
 			core::id::AtomID atomid( iatm, ires );
 			core::Vector const &xyz = pose.xyz( atomid );
-			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 			pose.add_constraint( core::scoring::constraints::ConstraintCOP
 				( core::scoring::constraints::ConstraintOP
 				( new core::scoring::constraints::CoordinateConstraint( atomid, anchorid, xyz, fx ) )));
 		}
 	}
 
-	for ( core::Size ires = 1; ires <= ligids.size(); ++ires ) {
+	for ( core::Size ires : ligids ) {
 		for ( core::Size iatm = 1; iatm <= pose.residue(ires).natoms(); ++iatm ) {
 			core::id::AtomID atomid( iatm, ires );
 			core::Vector const &xyz = pose.xyz( atomid );
-			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 			pose.add_constraint( core::scoring::constraints::ConstraintCOP
 				( core::scoring::constraints::ConstraintOP
 				( new core::scoring::constraints::CoordinateConstraint( atomid, anchorid, xyz, fx ) )));
@@ -230,6 +237,7 @@ constraint_relax( core::pose::Pose &pose,
 	core::optimization::MinimizerOptions options("lbfgs_armijo", 0.0001, true, false);
 	options.max_iter(maxiter);
 	minimizer.run(pose, *mm, *scfxn, options);
+	pose.remove_constraints();
 
 	core::Real rms_scs = core::scoring::all_atom_rmsd_nosuper( pose0, pose,
 		movable_scs, movable_scs );
@@ -240,7 +248,6 @@ constraint_relax( core::pose::Pose &pose,
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "After minimization, sidechain rms: " << rms_scs << ", " << "ligand rms: " << rms_lig << std::endl;
 	}
-
 }
 
 void
@@ -254,12 +261,13 @@ make_ligand_only_pose(
 	core::pose::create_subpose(*pose, lig_resnos, f, *pose_new);
 	//core::pose::pdbslice(*pose_new, *pose, lig_resnos);
 
-	core::Real dH, TdS, dG;
+	core::Real dH, TdS, dG, buns;
 	std::string ligandname;
 	core::Real rms, complexscore, ligscore, recscore, ranking_prerelax;
 	core::pose::getPoseExtraScore( *pose, "dH", dH);
 	core::pose::getPoseExtraScore( *pose, "-TdS", TdS);
 	core::pose::getPoseExtraScore( *pose, "dG", dG);
+	core::pose::getPoseExtraScore( *pose, "buns", buns);
 	core::pose::getPoseExtraScore( *pose, "lig_rms", rms);
 	core::pose::getPoseExtraScore( *pose, "ligscore", ligscore);
 	core::pose::getPoseExtraScore( *pose, "recscore", recscore);
@@ -270,6 +278,7 @@ make_ligand_only_pose(
 	core::pose::setPoseExtraScore( *pose_new, "-TdS", TdS );
 	core::pose::setPoseExtraScore( *pose_new, "dG", dG );
 	core::pose::setPoseExtraScore( *pose_new, "dH", dH );
+	core::pose::setPoseExtraScore( *pose_new, "buns", buns );
 	core::pose::setPoseExtraScore( *pose_new, "lig_rms", rms);
 	core::pose::setPoseExtraScore( *pose_new, "ligscore", ligscore );
 	core::pose::setPoseExtraScore( *pose_new, "recscore", recscore );
@@ -277,6 +286,108 @@ make_ligand_only_pose(
 	core::pose::setPoseExtraScore( *pose_new, "ranking_prerelax", ranking_prerelax );
 	core::pose::setPoseExtraScore( *pose_new, "ligandname", ligandname);
 
+}
+
+// perturb ligand rigid body
+void
+perturb_ligand_rb(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const& ligids,
+	core::Real trans_step,
+	core::Real rot_step
+) {
+	core::Vector Raxis( numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
+	core::Real angle = rot_step * numeric::NumericTraits<core::Real>::deg2rad() * numeric::random::rg().gaussian();
+	numeric::xyzMatrix< core::Real > R = numeric::rotation_matrix( Raxis, angle );
+
+	core::Vector Tcom( 0.0,0.0,0.0 );
+	core::Size natm = 0;
+	for ( auto ligid : ligids ) {
+		for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
+			Tcom += pose.xyz(core::id::AtomID(iatm_src,ligid));
+		}
+		natm += pose.residue_type(ligid).natoms();
+	}
+	Tcom /= natm;
+
+	core::Real len = trans_step * numeric::random::rg().uniform();
+	core::Vector T( len*numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
+	for ( auto ligid : ligids ) {
+		for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
+			pose.set_xyz(
+				core::id::AtomID(iatm_src,ligid),
+				R*( pose.xyz(core::id::AtomID(iatm_src,ligid)) - Tcom) + T + Tcom
+			);
+		}
+	}
+
+}
+
+// perturb ligand internal torsions
+void
+perturb_ligand_torsions(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const& ligids,
+	utility::vector1< core::Size > const& freeze_chi,
+	core::Real chi_step
+) {
+	if ( ligids.size() >1 && freeze_chi.size() >0 ) {
+		utility_exit_with_message("perturb_ligand_torsions: freeze_chi not implemented for multiple ligands");
+	}
+	// internal torsions
+	for ( auto ligid : ligids ) {
+		core::Size nchi = pose.residue_type(ligid).nchi();
+		for ( core::Size ichi_src=1; ichi_src<=nchi; ++ichi_src ) {
+			if ( freeze_chi.size() > 0 && freeze_chi[ichi_src] ) continue;
+			core::chemical::AtomIndices const & chiatoms = pose.residue_type(ligid).chi_atoms( ichi_src );
+			core::chemical::BondName bondtype( pose.residue_type(ligid).bond_type( chiatoms[2], chiatoms[3] ) );
+
+			core::Real angle_i = pose.chi( ichi_src, ligid );
+			if ( bondtype == core::chemical::DoubleBond ) {
+				// keep amide bonds at 0 or 180
+				if ( numeric::random::rg().uniform() < (chi_step / 180.0) ) {
+					angle_i = std::fmod( angle_i + 180.0, 360.0);
+				}
+			} else {
+				angle_i = std::fmod( angle_i + chi_step * numeric::random::rg().gaussian(), 360.0);
+			}
+			pose.set_chi( ichi_src, ligid, angle_i );
+		}
+		if ( pose.residue_type(ligid).is_protein() ) {
+			core::Real phi_i = std::fmod( pose.phi(ligid) + chi_step * numeric::random::rg().gaussian(), 360.0);
+			core::Real psi_i = std::fmod( pose.psi(ligid) + chi_step * numeric::random::rg().gaussian(), 360.0);
+			core::Real omega_i = pose.omega(ligid);
+			if ( numeric::random::rg().uniform() < (chi_step / 180.0) ) {
+				omega_i = std::fmod( omega_i + 0.1 * chi_step * numeric::random::rg().gaussian(), 360.0);
+			}
+			pose.set_phi( ligid, phi_i );
+			pose.set_psi( ligid, psi_i );
+			pose.set_omega( ligid, omega_i );
+		}
+	}
+}
+
+core::Size
+get_ligand_jumpid(
+	core::pose::Pose const &pose,
+	utility::vector1< core::Size > const& ligids
+){
+	core::Size jumpid(0);
+	utility::vector1< core::kinematics::Edge > jumps = pose.fold_tree().get_jump_edges();
+	// skip if ligand-only case
+	if ( jumps.size() >= 1 ) {
+		for ( auto j : jumps ) {
+			core::Size up = j.start(), down = j.stop();
+			if ( std::find( ligids.begin(), ligids.end(), up) == ligids.end()
+					&& std::find( ligids.begin(), ligids.end(), down) != ligids.end()
+					) {
+				runtime_assert(jumpid==0);
+				jumpid = j.label();
+			}
+		}
+		runtime_assert(jumpid!=0);
+	}
+	return jumpid;
 }
 
 } // ga_dock

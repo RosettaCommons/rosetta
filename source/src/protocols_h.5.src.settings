@@ -115,6 +115,7 @@ sources = {
     "TorsionSampler",
 		"LigandConformer",
 		"LigandAligner",
+		"MCSAligner",
 		"GriddedAtomTreeMultifunc",
 		"GridScorer",
 		"GAOptimizer",

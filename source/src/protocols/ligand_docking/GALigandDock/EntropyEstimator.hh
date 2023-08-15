@@ -47,7 +47,8 @@ public:
 
 	EntropyEstimator( core::scoring::ScoreFunctionOP sfxn,
 		core::pose::Pose const & pose,
-		utility::vector1< core::Size > const &ligids
+		utility::vector1< core::Size > const &ligids,
+		std::string method="MCEntropy"
 	);
 
 	~EntropyEstimator(){}
@@ -125,8 +126,15 @@ private:
 	core::Size
 	chis2rotid( utility::vector1< core::Real > const &chis ) const;
 
+	core::Real
+	MCEntropy( core::pose::Pose const &pose ) const;
+
+	core::Real
+	SimpleEntropy( core::pose::Pose const &pose ) const;
+
 private:
 	// Basic
+	std::string method_;
 	utility::vector1< core::Size > ligids_;
 	core::scoring::ScoreFunctionOP sfxn_;
 	core::Real run_apostate_;

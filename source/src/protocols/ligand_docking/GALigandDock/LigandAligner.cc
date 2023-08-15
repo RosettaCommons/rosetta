@@ -63,6 +63,9 @@
 // C++ headers
 #include <fstream>
 #include <string>
+//boost header
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
 
 #include <core/optimization/MinimizerMap.hh> // AUTO IWYU For MinimizerMap
 #include <core/scoring/hbonds/hbonds.hh> // AUTO IWYU For fill_hbond_set
@@ -852,11 +855,49 @@ ConstraintInfo::build_Dmtrx()
 }
 
 void
+ConstraintInfo::define_ligand_multibody_phores(bool /*report_phore_info*/){
+	utility::vector1< Pharmacophore > multibodies;
+	utility::vector1< bool > atom_in_multibody( coords_.size(), false );
+	// find all cores
+	std::map< std::pair<core::Size, core::Size>, utility::vector1< core::Size > > core_maps;
+	typedef
+		boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS> Graph;
+	Graph g(properties_.size());
+	for ( core::Size i=1; i <= properties_.size(); ++i ) {
+		if ( !properties_[i].used_for_phore() ) continue;
+		for ( core::Size j=i+1; j <= properties_.size(); ++j ) {
+			if ( !properties_[j].used_for_phore() ) continue;
+			if ( Dmtrx_[i][j] < phore_dcut_ ) boost::add_edge(i-1,j-1,g);
+		}
+	}
+	std::vector<int> component(boost::num_vertices(g));
+	size_t num = boost::connected_components(g, &component[0]);
+	if ( TR.Debug.visible() ) TR.Debug << "Number of core components: " << num << std::endl;
+	for ( size_t icom=0; icom<num; icom++ ) {
+		utility::vector1<core::Size> atomids;
+		for ( size_t ii=0; ii<component.size(); ii++ ) {
+			if ( component[ii] != (int)icom ) continue;
+			runtime_assert( !atom_in_multibody[ii+1] ); // assert that the atom is not in use
+			atomids.push_back(ii+1);
+			atom_in_multibody[ii+1]=true;
+		}
+		if ( atomids.size() >= 3 ) multibodies.push_back( Pharmacophore( atomids, properties_, Dmtrx_, coords_ ) );
+	}
+
+	for ( core::Size i=1; i<=multibodies.size(); ++i ) {
+		multibody_phores_.push_back( multibodies[i] );
+	}
+}
+
+void
 ConstraintInfo::define_all_ligand_phores( core::Size const minsize,
 	bool report_phore_info
 ) {
 	debug_assert( is_ligand_ );
 	build_Dmtrx();
+
+	phore_dcut_ = 4.0; // Default is 3.0 A for ligands, 4.0 for receptor; Using 4.0 for both now.
+	define_ligand_multibody_phores(report_phore_info);
 
 	utility::vector1< Pharmacophore > twobodies;
 
@@ -948,6 +989,21 @@ ConstraintInfo::define_all_ligand_phores( core::Size const minsize,
 		TR << "Total " << phores_.size() << " ligand phores defined:" << std::endl;
 		for ( core::Size i = 1; i <= phores_.size(); ++i ) {
 			TR << "Ligand phore " << i << ": " << phores_[i].show() << std::endl;
+		}
+	}
+
+	// debuging
+	if ( debug_ ) {
+		std::string resname = "LIG";
+
+		for ( core::Size iphore = 1; iphore <= phores_.size(); ++iphore ) {
+			for ( core::Size imem = 1; imem<= phores_[iphore].atms().size(); ++imem ) {
+				core::Size idx( phores_[iphore].atms()[imem] );
+				numeric::xyzVector< core::Real > const &xyz = coords_[idx];
+				core::Real score = 0.0; // score of seed
+				printf ("HETATM %4d VRT  %3s  %4d     %7.3f %7.3f %7.3f      %6.2f\n",
+					int(imem), resname.c_str(), int(iphore), xyz[0], xyz[1], xyz[2], score );
+			}
 		}
 	}
 }
@@ -2040,6 +2096,9 @@ LigandAligner::apply(
 	if ( lig.has_density_map() ) {
 		cycles1 = 20, minsteps1 = 10, repeats1 = 1;
 	}
+	if ( prealigned_input_ ) {
+		cycles1 = 5, minsteps1 = 10, repeats1 = 1;
+	}
 	core::Size cycles2 = 5, minsteps2 = 50, repeats2 = 3; // adjusted for init-pool gen
 	core::Size minsteps_med = 30; // proper minimization b/w stage 1~2
 
@@ -2071,11 +2130,11 @@ LigandAligner::apply(
 
 	core::pose::Pose minipose0 = *minipose; //copy of input
 	for ( core::Size i=1; i<=cycles1; ++i ) {
-		if ( refine_input_ ) {
+		if ( refine_input_ && !prealigned_input_ ) {
 			// recover initial
 			*minipose = minipose0;
 			perturb_lig(*minipose, ligids );
-		} else {
+		} else if ( !prealigned_input_ ) {
 			randomize_lig(*minipose, ligids, comTgt);
 		}
 
@@ -2165,7 +2224,7 @@ LigandAligner::apply(
 	core::optimization::Minimizer min_long( f_i, minopt );
 
 	for ( core::Size i=1; i<=cycles2; ++i ) {
-		if ( i>1 ) { perturb_lig(*minipose, ligids); }
+		if ( i>1 && !prealigned_input_ ) { perturb_lig(*minipose, ligids); }
 
 		// multiple cstgen+min cycles
 		for ( core::Size rpt=1; rpt<=repeats2; ++rpt ) {

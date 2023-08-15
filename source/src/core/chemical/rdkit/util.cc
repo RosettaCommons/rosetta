@@ -84,7 +84,7 @@ void initialize_rdkit_tracers() {
 }
 
 ::RDKit::Bond::BondType
-convert_to_rdkit_bondtype( core::chemical::BondName bondtype) {
+convert_to_rdkit_bondtype( core::chemical::BondName bondtype, bool aro2double) {
 	switch ( bondtype ) {
 	case SingleBond :
 		return ::RDKit::Bond::SINGLE;
@@ -93,7 +93,7 @@ convert_to_rdkit_bondtype( core::chemical::BondName bondtype) {
 	case TripleBond :
 		return ::RDKit::Bond::TRIPLE;
 	case AromaticBond :
-		return ::RDKit::Bond::AROMATIC;
+		return ( aro2double )? ::RDKit::Bond::DOUBLE : ::RDKit::Bond::AROMATIC;
 	default :
 		TR.Warning << "Treating Rosetta bond type " << bondtype << " as UNSPECIFIED in RDKit. " << std::endl;
 		return ::RDKit::Bond::UNSPECIFIED;
@@ -485,6 +485,7 @@ find_mapping( ::RDKit::ROMOL_SPTR from, ::RDKit::ROMOL_SPTR to, std::string cons
 	::RDKit::MCSParameters mcsparams;
 	mcsparams.AtomCompareParameters.MatchChiralTag = true; // Match atom chirality
 	::RDKit::MCSResult mcsresult( ::RDKit::findMCS( molvector, &mcsparams ) ); // Yes, pass a raw pointer
+	TR << "MCS Smarts: " << mcsresult.SmartsString << std::endl;
 	::RDKit::RWMOL_SPTR mcs( ::RDKit::SmartsToMol( mcsresult.SmartsString ) );
 	::RDKit::MatchVectType match_vect_from, match_vect_to;
 	bool from_match( ::RDKit::SubstructMatch( *from, *mcs, match_vect_from, true, true ) );
