@@ -188,17 +188,32 @@ LayerSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		+ XMLSchemaAttribute::attribute_w_default( "select_boundary",                xsct_rosetta_bool, "Should the boundary (semi-buried) layer be selected?",  "false"  )
 		+ XMLSchemaAttribute::attribute_w_default( "select_surface",                 xsct_rosetta_bool, "Should the surface (exposed) layer be selected?",  "false"  )
 		+ XMLSchemaAttribute::attribute_w_default( "cache_selection",                xsct_rosetta_bool, "Should the selection be stored, so that it needn't be recomputed?",  "false"  )
-		+ XMLSchemaAttribute::attribute_w_default( "use_sidechain_neighbors",        xsct_rosetta_bool, "If true (the default), then the sidechain neighbour algorithm is used to determine burial.  If false, burial is based on SASA (solvent-accessible surface area) calculations.",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default( "use_sidechain_neighbors",        xsct_rosetta_bool, "If true (the default), then the sidechain neighbor algorithm is used to determine burial.  If false, burial is based on SASA (solvent-accessible surface area) calculations.",  "true"  )
 		+ XMLSchemaAttribute::attribute_w_default( "asu_only",                       xsct_rosetta_bool, "if true, returns selection of only asymmetric unit.",  "false"  )
 		+ XMLSchemaAttribute( "ball_radius",                    xsct_real , "The radius value for the rolling ball algorithm used for SASA (solvent-accessible surface area) calculations.  Only used if use_sidechain_neighbors=false." )
-		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xsct_real , "The midpoint of the distance-dependent sigmoidal falloff for the sidechain-neighbours algorithm.  Only used if use_sidechain_neighbors=true." )
-		+ XMLSchemaAttribute( "sc_neighbor_denominator",        xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "sc_neighbor_angle_exponent",     xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "sc_neighbor_dist_exponent",      xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "core_cutoff",                    xsct_real , "XRW TO DO" )
-		+ XMLSchemaAttribute( "surface_cutoff",                 xsct_real , "XRW TO DO" );
-	xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attributes );
+		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xsct_real , "The midpoint of the distance-dependent sigmoidal falloff for the sidechain-neighbors algorithm.  Only used if use_sidechain_neighbors=true." )
+		+ XMLSchemaAttribute( "sc_neighbor_denominator",        xsct_real , "A parameter affecting the selection of residues by the method of sidechain neighbors.  This almost "
+		"never needs to be changed from its default value of 1.0."
+		)
+		+ XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xsct_real , "A parameter affecting the angular falloff when selecting residues by the method of sidechain "
+		"neighbors.  This rarely needs to be changed from its default value of 0.5." )
+		+ XMLSchemaAttribute( "sc_neighbor_angle_exponent",     xsct_real , "The angle exponent when selecting residues by the method of sidechain neighbors.  This determines "
+		"how fuzzy the edges of the cones are.  The default value is 2.0.  See the code in core/select/util/SelectResiduesByLayer.hh for more details of the algorithm."
+		)
+		+ XMLSchemaAttribute( "sc_neighbor_dist_exponent",      xsct_real , "The distance exponent when selecting residues by the method of sidechain neighbors.  This determines "
+		"how fuzzy the distance cutoff is.  The default value is 1.0.  See the code in core/select/util/SelectResiduesByLayer.hh for more details of the algorithm."
+		)
+		+ XMLSchemaAttribute( "core_cutoff",                    xsct_real , "The cutoff value for considering a position to be part of the core.  If use_sidechain_neighbors is true "
+		"(the default), then positions with MORE than this number of neighbors will be counted as core, and the default value is 5.2 neighbors.  (Note that the fuzziness of "
+		"sidechain cones allows for non-integer neighbor counts.)  If use_sidechain_neighbors is false, then positions with LESS than this amount of solvent-exposed surface "
+		"area will be counted as core, and the default is 20.0 A."
+		)
+		+ XMLSchemaAttribute( "surface_cutoff",                 xsct_real , "The cutoff value for considering a position to be part of the surface.  If use_sidechain_neighbors is true "
+		"(the default), then positions with FEWER than this number of neighbors will be counted as surface, and the default value is 2.0 neighbors.  (Note that the fuzziness of "
+		"sidechain cones allows for non-integer neighbor counts.)  If use_sidechain_neighbors is false, then positions with MORE than this amount of solvent-exposed surface area "
+		"will be counted as surface, and the default is 40.0 A." );
+	xsd_type_definition_w_attributes( xsd, class_name(), "The layer selector divides residues into core, boundary, and surface regions based either on number of sidechain neighbors "
+		"(the default) or solvent-accessible surface area, and then selects residues in one or more of these regions.", attributes );
 }
 
 
@@ -277,7 +292,7 @@ void LayerSelector::set_sc_neighbor_denominator( core::Real const val )
 }
 
 /// @brief Set the cutoffs for core and surface layers.
-/// @details Boundary is defined implicitly.  This can be a SASA cutoff or a neighbour count, depending
+/// @details Boundary is defined implicitly.  This can be a SASA cutoff or a neighbor count, depending
 /// on the algorithm.
 void LayerSelector::set_cutoffs (core::Real const core, core::Real const surf)
 {

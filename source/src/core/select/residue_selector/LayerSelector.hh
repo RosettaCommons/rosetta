@@ -111,7 +111,7 @@ public:
 	void set_sc_neighbor_denominator( core::Real val );
 
 	/// @brief Set the cutoffs for core and surface layers.
-	/// @details Boundary is defined implicitly.  This can be a SASA cutoff or a neighbour count, depending
+	/// @details Boundary is defined implicitly.  This can be a SASA cutoff or a neighbor count, depending
 	/// on the algorithm.
 	void set_cutoffs (core::Real core, core::Real surf);
 
