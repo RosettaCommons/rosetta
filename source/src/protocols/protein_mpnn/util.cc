@@ -46,14 +46,13 @@ using namespace core::pose;
 torch::Tensor
 bb_coords_to_tensor( const core::conformation::Conformation & conf, core::Size batch_size ){
 
-	int nres = static_cast< int >( conf.size() );
-	int bsize = static_cast< int >( batch_size );
-	std::vector< float > bb_coords_vec(bsize * nres * 4 * 3, 0.0f);
+	core::Size nres = conf.size();
+	std::vector< float > bb_coords_vec(batch_size * nres * 4 * 3, 0.0f);
 	float * bb_coords = &(bb_coords_vec[0]);
 #define BB_IDX(i,j,k,l) (((i) * nres * 4 * 3) + ((j) * 4 * 3) + ((k) * 3) + (l))
 
 	// fill array with atom coordinates of backbone atoms
-	for( core::Size batch = 1; batch <= bsize; ++batch ){
+	for( core::Size batch = 1; batch <= batch_size; ++batch ){
 		for( core::Size resi = 1; resi <= nres; ++resi ){
 
 			// if not protein residue, just fill with origin coords
@@ -79,7 +78,7 @@ bb_coords_to_tensor( const core::conformation::Conformation & conf, core::Size b
 
 	// get a tensor from the coordinate array
 	torch::TensorOptions options = torch::TensorOptions().dtype( torch::kFloat32 );
-	torch::Tensor coords_t = torch::from_blob( bb_coords, { bsize, nres, 4, 3 }, options ).clone();
+	torch::Tensor coords_t = torch::from_blob( bb_coords, { static_cast< int >( batch_size ), static_cast< int >( nres ), 4, 3 }, options ).clone();
 	return coords_t;
 }
 
@@ -246,19 +245,19 @@ omit_AAs_pos_to_tensor( const utility::vector1< utility::vector1< char > > & omi
 
 torch::Tensor
 bias_AAs_to_tensor( utility::vector1< core::Real > bias_AAs ){
-	int alphabet_size = static_cast< int >( AA_ALPHABET.size() );
+	core::Size alphabet_size = AA_ALPHABET.size();
 	std::vector< float > bias_AAs_vec(alphabet_size, 0.0f);
 	float * bias_AAs_array = &(bias_AAs_vec[0]);
 
 	runtime_assert( bias_AAs.size() == alphabet_size );
 
 	// transpose input vector to float array
-	for( int ii = 0; ii < alphabet_size; ++ii ){
+	for( core::Size ii = 0; ii < alphabet_size; ++ii ){
 		bias_AAs_array[ ii ] = static_cast< float >( bias_AAs[ ii+1 ] );
 	}
 
 	torch::TensorOptions options = torch::TensorOptions().dtype( torch::kFloat32 );
-	return torch::from_blob( bias_AAs_array, { alphabet_size }, options ).clone();
+	return torch::from_blob( bias_AAs_array, { static_cast< int >( alphabet_size ) }, options ).clone();
 }
 
 TiedPositions
