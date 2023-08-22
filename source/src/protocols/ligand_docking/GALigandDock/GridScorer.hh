@@ -45,6 +45,10 @@
 #include <chrono>
 
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh> // AUTO IWYU For HBondDatabaseCOP
+#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/constants.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/hbonds_geom.hh>
 
 namespace protocols {
 namespace ligand_docking {
@@ -546,6 +550,41 @@ GridScorer::fast_get_lkbr_fractional_contribution(
 	}
 
 	return frac;
+}
+
+// helper function for getting hbond energies
+inline
+core::Real
+get_hbond_score_weighted (
+	core::scoring::ScoreFunctionOP sf,
+	core::scoring::hbonds::HBondDatabaseCOP database,
+	core::scoring::hbonds::HBondOptions const & hbopt,
+	core::scoring::hbonds::HBEvalTuple const &hbt,
+	numeric::xyzVector<core::Real> const &D,
+	numeric::xyzVector<core::Real> const &H,
+	numeric::xyzVector<core::Real> const &A,
+	numeric::xyzVector<core::Real> const &B,
+	numeric::xyzVector<core::Real> const &B_0
+) {
+	core::Real energy=0;
+	core::scoring::hbonds::hb_energy_deriv(
+		*database, hbopt, hbt,
+		D,H,A,B,B_0,
+		energy, false, core::scoring::hbonds::DUMMY_DERIVS
+	);
+	if ( energy<hbopt.max_hb_energy() ) {
+		switch(core::scoring::hbonds::get_hbond_weight_type(hbt.eval_type())){
+		case core::scoring::hbonds::hbw_SR_BB_SC :
+		case core::scoring::hbonds::hbw_LR_BB_SC :
+			energy *= sf->get_weight( core::scoring::hbond_bb_sc );
+			break;
+		case core::scoring::hbonds::hbw_SC :
+		default :
+			energy *= sf->get_weight( core::scoring::hbond_sc );
+		}
+		return energy;
+	}
+	return 0.0;
 }
 
 

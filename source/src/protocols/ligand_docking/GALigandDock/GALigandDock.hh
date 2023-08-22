@@ -608,6 +608,9 @@ private:
 	bool estimate_dG_;
 	std::string entropy_method_;
 	bool estimate_buns_;
+	utility::vector1< core::Size > hb_resids_;
+	bool hb_resids_include_bb_;
+	std::string hb_resids_metric_;
 
 	bool use_mean_maxRad_;
 	core::Real stdev_multiplier_;

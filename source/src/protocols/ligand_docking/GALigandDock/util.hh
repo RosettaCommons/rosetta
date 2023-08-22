@@ -11,9 +11,18 @@
 ///
 /// @brief
 /// @author Hahnbeom Park and Frank DiMaio
+/// @author Guangfeng Zhou
 
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_util_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_util_hh
+
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/constants.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+
+#include <protocols/ligand_docking/GALigandDock/GridScorer.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -71,6 +80,24 @@ perturb_ligand_torsions(
 core::Size
 get_ligand_jumpid( core::pose::Pose const &pose,
 	utility::vector1< core::Size > const& ligids );
+
+void
+get_ligand_resids( core::pose::Pose const& pose,
+	utility::vector1 < core::Size >& lig_resids );
+
+bool
+is_hb_satisfied(core::scoring::ScoreFunctionOP sf,
+	core::scoring::hbonds::HBondDatabaseCOP hb_database,
+	core::scoring::hbonds::HBondOptions const & hbopt, hbAcc const& acc,
+	hbDon const& don, core::Real const& maxHbdis2,
+	core::Real const& hb_energy_cutoff, std::string const& metric);
+
+void
+compute_nhbonds(core::pose::Pose const& pose,
+	utility::vector1<core::Size> const& ligids,
+	utility::vector1<core::Size> const& resids,
+	core::Size & nhbonds_total, core::Size & nhbonds_max1,
+	bool const& include_bb, std::string const& hb_metric);
 
 }
 }

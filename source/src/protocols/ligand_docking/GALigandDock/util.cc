@@ -13,6 +13,7 @@
 /// @author Hahnbeom Park and Frank DiMaio
 
 #include <protocols/ligand_docking/GALigandDock/util.hh>
+#include <protocols/ligand_docking/GALigandDock/GridScorer.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
@@ -26,9 +27,16 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/constants.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/optimization/CartesianMinimizer.hh>
@@ -261,13 +269,13 @@ make_ligand_only_pose(
 	core::pose::create_subpose(*pose, lig_resnos, f, *pose_new);
 	//core::pose::pdbslice(*pose_new, *pose, lig_resnos);
 
-	core::Real dH, TdS, dG, buns;
+	core::Real dH, TdS, dG, buns, n_hbonds_total, n_hbonds_max1;
 	std::string ligandname;
 	core::Real rms, complexscore, ligscore, recscore, ranking_prerelax;
+	bool retval;
 	core::pose::getPoseExtraScore( *pose, "dH", dH);
 	core::pose::getPoseExtraScore( *pose, "-TdS", TdS);
 	core::pose::getPoseExtraScore( *pose, "dG", dG);
-	core::pose::getPoseExtraScore( *pose, "buns", buns);
 	core::pose::getPoseExtraScore( *pose, "lig_rms", rms);
 	core::pose::getPoseExtraScore( *pose, "ligscore", ligscore);
 	core::pose::getPoseExtraScore( *pose, "recscore", recscore);
@@ -278,13 +286,21 @@ make_ligand_only_pose(
 	core::pose::setPoseExtraScore( *pose_new, "-TdS", TdS );
 	core::pose::setPoseExtraScore( *pose_new, "dG", dG );
 	core::pose::setPoseExtraScore( *pose_new, "dH", dH );
-	core::pose::setPoseExtraScore( *pose_new, "buns", buns );
 	core::pose::setPoseExtraScore( *pose_new, "lig_rms", rms);
 	core::pose::setPoseExtraScore( *pose_new, "ligscore", ligscore );
 	core::pose::setPoseExtraScore( *pose_new, "recscore", recscore );
 	core::pose::setPoseExtraScore( *pose_new, "complexscore", complexscore );
 	core::pose::setPoseExtraScore( *pose_new, "ranking_prerelax", ranking_prerelax );
 	core::pose::setPoseExtraScore( *pose_new, "ligandname", ligandname);
+
+	retval = core::pose::getPoseExtraScore( *pose, "buns", buns);
+	if ( retval ) core::pose::setPoseExtraScore( *pose_new, "buns", buns );
+
+	retval = core::pose::getPoseExtraScore( *pose, "n_hbonds_total", n_hbonds_total);
+	if ( retval ) core::pose::setPoseExtraScore( *pose_new, "n_hbonds_total", n_hbonds_total );
+
+	retval = core::pose::getPoseExtraScore( *pose, "n_hbonds_max1", n_hbonds_max1);
+	if ( retval ) core::pose::setPoseExtraScore( *pose_new, "n_hbonds_max1", n_hbonds_max1 );
 
 }
 
@@ -388,6 +404,156 @@ get_ligand_jumpid(
 		runtime_assert(jumpid!=0);
 	}
 	return jumpid;
+}
+
+void
+get_ligand_resids(core::pose::Pose const& pose,
+	utility::vector1 < core::Size >& lig_resids)
+{
+	lig_resids.clear();
+	core::Size lastres = pose.total_residue();
+	while ( pose.residue(lastres).is_virtual_residue() && lastres>1 ) lastres--;
+	lig_resids.push_back( lastres );
+	bool extending = true;
+	while ( extending ) {
+		if ( !pose.residue(lastres).is_polymer() ) {
+			extending = false; // ligand not a polymer, we're done
+		} else if ( pose.residue(lastres).has_lower_connect() ) {
+			core::Size nextres = pose.residue(lastres).connected_residue_at_resconn( pose.residue(lastres).type().lower_connect_id() );
+			if ( std::find (lig_resids.begin(), lig_resids.end(), nextres) == lig_resids.end() ) {
+				lastres = nextres;
+				lig_resids.push_back( lastres );
+			} else {
+				extending = false;  // finished a cyclic peptide, we're done
+			}
+		} else {
+			extending = false; // hit n-term
+		}
+	}
+}
+
+bool
+is_hb_satisfied(core::scoring::ScoreFunctionOP sf, core::scoring::hbonds::HBondDatabaseCOP hb_database,
+	core::scoring::hbonds::HBondOptions const & hbopt, hbAcc const& acc,
+	hbDon const& don, core::Real const& maxHbdis2,
+	core::Real const& hb_energy_cutoff, std::string const& metric)
+{
+	numeric::xyzVector<core::Real> const& D = don.D;
+	numeric::xyzVector<core::Real> const& H = don.H;
+	core::scoring::hbonds::HBEvalTuple hbt;
+	hbt.don_type( don.dontype );
+	numeric::xyzVector<core::Real> const& A = acc.A;
+	numeric::xyzVector<core::Real> const& B = acc.B;
+	numeric::xyzVector<core::Real> const& B_0 = acc.B_0;
+	hbt.acc_type( acc.acctype );
+
+	core::Real dist2 = (A-D).length_squared();
+	if ( metric == "simple" ) {
+		if ( dist2 > maxHbdis2 ) return false;
+		return true;
+	} else {
+		if ( dist2 > core::scoring::hbonds::MAX_R2 ) return false;
+		core::Real hb_energy = get_hbond_score_weighted(sf, hb_database, hbopt, hbt, D, H, A, B, B_0);
+		if ( hb_energy < hb_energy_cutoff ) return true;
+	}
+	return false;
+}
+
+void
+compute_nhbonds(core::pose::Pose const& pose,
+	utility::vector1<core::Size> const& ligids,
+	utility::vector1<core::Size> const& resids,
+	core::Size & nhbonds_total, core::Size & nhbonds_max1,
+	bool const& include_bb, std::string const& hb_metric)
+{
+
+	utility::vector1<hbDon> lig_hbDons, rec_hbDons;
+	utility::vector1<hbAcc> lig_hbAccs, rec_hbAccs;
+
+	for ( auto ligid : ligids ) {
+		core::conformation::Residue const& ires = pose.residue(ligid);
+		// ligand acceptors
+		for ( auto anum=ires.accpt_pos().begin(), anume=ires.accpt_pos().end(); anum!=anume; ++anum ) {
+			hbAcc acc;
+			core::Size bnum = ires.atom_base( *anum );
+			core::Size b0num = ires.abase2( *anum );
+			acc.A =  ires.xyz( *anum );
+			acc.B = ires.xyz( bnum );
+			acc.B_0 = ires.xyz( b0num );
+			acc.acctype = core::scoring::hbonds::get_hb_acc_chem_type( *anum, ires );
+			lig_hbAccs.push_back(acc);
+		}
+		// ligand donors
+		for ( auto hnum=ires.Hpos_polar().begin(), hnume=ires.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
+			hbDon don;
+			core::Size dnum = ires.atom_base( *hnum );
+			don.H =  ires.xyz( *hnum );
+			don.D = ires.xyz( dnum );
+			don.dontype = core::scoring::hbonds::get_hb_don_chem_type( dnum, ires );
+			lig_hbDons.push_back(don);
+		}
+	}
+
+	for ( auto resid : resids ) {
+		core::conformation::Residue const& ires = pose.residue(resid);
+		// receptor acceptors
+		for ( auto anum=ires.accpt_pos().begin(), anume=ires.accpt_pos().end(); anum!=anume; ++anum ) {
+			if ( !include_bb && !(*anum>ires.last_backbone_atom() && *anum<=ires.nheavyatoms()) ) continue;
+			hbAcc acc;
+			core::Size bnum = ires.atom_base( *anum );
+			core::Size b0num = ires.abase2( *anum );
+			acc.A =  ires.xyz( *anum );
+			acc.B = ires.xyz( bnum );
+			acc.B_0 = ires.xyz( b0num );
+			acc.acctype = core::scoring::hbonds::get_hb_acc_chem_type( *anum, ires );
+			rec_hbAccs.push_back(acc);
+		}
+		// receptor donors
+		for ( auto hnum=ires.Hpos_polar().begin(), hnume=ires.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
+			if ( !include_bb && !(*hnum>ires.first_sidechain_hydrogen()) ) continue;
+			hbDon don;
+			core::Size dnum = ires.atom_base( *hnum );
+			don.H =  ires.xyz( *hnum );
+			don.D = ires.xyz( dnum );
+			don.dontype = core::scoring::hbonds::get_hb_don_chem_type( dnum, ires );
+			rec_hbDons.push_back(don);
+		}
+	}
+	nhbonds_total = 0;
+	core::Real maxHbdis = 4.2;
+	core::Real maxHbdis2 = maxHbdis*maxHbdis;
+	core::Real hb_energy_cutoff = -0.3;
+	utility::vector1< bool > rec_hbAcc_satisfied( rec_hbAccs.size(), false );
+	utility::vector1< bool > rec_hbDon_satisfied( rec_hbDons.size(), false );
+
+	core::scoring::ScoreFunctionOP sf = core::scoring::get_score_function();
+	core::scoring::hbonds::HBondOptions const & hbopt = sf->energy_method_options().hbond_options();
+	core::scoring::hbonds::HBondDatabaseCOP hb_database = core::scoring::hbonds::HBondDatabase::get_database( hbopt.params_database_tag() );
+	//compute the number of unsatisfied hbonds of receptor donors
+	bool is_satisfied(false);
+	for ( core::Size i=1; i<=rec_hbDons.size(); ++i ) {
+		for ( auto lig_hbAcc : lig_hbAccs ) {
+			is_satisfied = is_hb_satisfied(sf, hb_database, hbopt, lig_hbAcc, rec_hbDons[i], maxHbdis2, hb_energy_cutoff, hb_metric );
+			if ( is_satisfied ) {
+				nhbonds_total++;
+				if ( rec_hbDon_satisfied[i] ) continue;
+				rec_hbDon_satisfied[i] = true;
+				nhbonds_max1++;
+			}
+		}
+	}
+	//compute the number of unsatisfied hbonds of receptor acceptors
+	for ( core::Size i=1; i<=rec_hbAccs.size(); ++i ) {
+		for ( auto lig_hbDon : lig_hbDons ) {
+			is_satisfied = is_hb_satisfied(sf, hb_database, hbopt, rec_hbAccs[i], lig_hbDon, maxHbdis2, hb_energy_cutoff, hb_metric );
+			if ( is_satisfied ) {
+				nhbonds_total++;
+				if ( rec_hbAcc_satisfied[i] ) continue;
+				rec_hbAcc_satisfied[i] = true;
+				nhbonds_max1++;
+			}
+		}
+	}
 }
 
 } // ga_dock

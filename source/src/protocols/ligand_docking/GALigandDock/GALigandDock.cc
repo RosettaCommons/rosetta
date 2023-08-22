@@ -154,6 +154,9 @@ GALigandDock::GALigandDock() {
 	entropy_method_ = "MCEntropy";
 	// estimate buried unsat hydrogen bonds
 	estimate_buns_ = false;
+	hb_resids_.clear();
+	hb_resids_include_bb_ = false;
+	hb_resids_metric_ = "default";
 
 	// packing behavior
 	max_rot_cumulative_prob_ = 0.9;
@@ -984,6 +987,19 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		//core::pose::setPoseExtraScore( *pose, "ligandname", pose->residue(lig_resno).name() );
 	}
 
+	//compute the number of hydrogen bonds between the ligand and the hb_resids_
+	if ( hb_resids_.size() > 0 ) {
+		auto t0 = std::chrono::steady_clock::now();
+		core::Size n_hbonds_total(0);
+		core::Size n_hbonds_max1(0);
+		compute_nhbonds( *pose, gene_initial.ligand_ids(), hb_resids_, n_hbonds_total, n_hbonds_max1, hb_resids_include_bb_, hb_resids_metric_ );
+		core::pose::setPoseExtraScore( *pose, "n_hbonds_total", n_hbonds_total);
+		core::pose::setPoseExtraScore( *pose, "n_hbonds_max1", n_hbonds_max1);
+		auto t1 = std::chrono::steady_clock::now();
+		std::chrono::duration<double> diff = t1-t0;
+		if ( TR.Debug.visible() ) TR.Debug << "estimate hydrogen bonds took " << (diff).count() << " seconds." << std::endl;
+	}
+
 	//estimate buried unsatisfied hydrogen bonds
 	if ( estimate_buns_ ) {
 		auto t0 = std::chrono::steady_clock::now();
@@ -998,8 +1014,9 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		core::pose::setPoseExtraScore( *pose, "buns", n_unsats );
 		auto t1 = std::chrono::steady_clock::now();
 		std::chrono::duration<double> diff = t1-t0;
-		TR << "estimate_buns took " << (diff).count() << " seconds." << std::endl;
+		if ( TR.Debug.visible() ) TR.Debug << "estimate_buns took " << (diff).count() << " seconds." << std::endl;
 	}
+
 
 	if ( output_ligand_only_ && gene_initial.moving_scs().size() == 0 && final_optH_mode_ != OPTH_REDEFINE_SIDECHAINS ) { // make sure no sidechain changes
 		core::pose::PoseOP pose_ligand(new core::pose::Pose);
@@ -2978,6 +2995,16 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("entropy_method") ) { entropy_method_ = tag->getOption<std::string>("entropy_method"); }
 
 	if ( tag->hasOption("estimate_buns") ) { estimate_buns_ = tag->getOption<bool>("estimate_buns"); }
+	if ( tag->hasOption("hb_resids") ) {
+		std::string hb_resids = tag->getOption<std::string>("hb_resids");
+		utility::vector1<std::string> hb_resids_string_vec = utility::string_split( hb_resids, ',' );
+		hb_resids_.clear();
+		for ( core::Size i=1; i<=hb_resids_string_vec.size(); ++i ) {
+			hb_resids_.push_back( stoi( hb_resids_string_vec[i] ) );
+		}
+	}
+	if ( tag->hasOption("hb_resids_include_bb") ) { hb_resids_include_bb_ = tag->getOption<bool>("hb_resids_include_bb"); }
+	if ( tag->hasOption("hb_resids_metric") ) { hb_resids_metric_ = tag->getOption<std::string>("hb_resids_metric"); }
 
 	if ( tag->hasOption("final_solvate") ) {
 		final_solvate_ = tag->getOption<bool>("final_solvate");
@@ -3305,6 +3332,9 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "estimate_dG", xsct_rosetta_bool, "Estimate dG of binding on lowest-energy docked pose. Default: false");
 	attlist + XMLSchemaAttribute( "entropy_method", xs_string, "Entropy method name. Default: MCEntropy");
 	attlist + XMLSchemaAttribute( "estimate_buns", xsct_rosetta_bool, "Estimate buried unstatsified hydrogen bonds of the lowest-energy docked pose. Default: false");
+	attlist + XMLSchemaAttribute( "hb_resids", xs_string, "Residue indices to calculate the number of hydrogen bonds with the ligand.");
+	attlist + XMLSchemaAttribute( "hb_resids_include_bb", xsct_rosetta_bool, "If include backbone atoms when calculating the number of hydrogen bonds with the ligand. Default: false");
+	attlist + XMLSchemaAttribute( "hb_resids_metric", xs_string, "The method used to calculate the number of hydrogen bonds with the ligand, default or simple. Default: default.");
 	attlist + XMLSchemaAttribute( "use_mean_maxRad", xsct_rosetta_bool, "Use mean maxRad for multi ligands? Default: false");
 	attlist + XMLSchemaAttribute( "stdev_multiplier", xsct_real, "Standard deviation multiplier for mean_maxRad. Default: 1.0");
 	attlist + XMLSchemaAttribute( "torsion_sampler_percentage", xsct_real, "The percentage of the initial gene sampled by torsion sampler.");
