@@ -331,8 +331,8 @@ void MPDockingMover::apply( Pose & pose ) {
 	//set the docking protocol based on options from cmdline
 	set_docking_protocol();
 
-	TR << "low_res score function for docking: " << lowres_scorefxn_ << std::endl;
-	TR << "high_res score function for docking: " << highres_scorefxn_ << std::endl;
+	TR << "low_res score function for docking: " << *lowres_scorefxn_ << std::endl;
+	TR << "high_res score function for docking: " << *highres_scorefxn_ << std::endl;
 
 	// finalize setup
 	finalize_setup();
