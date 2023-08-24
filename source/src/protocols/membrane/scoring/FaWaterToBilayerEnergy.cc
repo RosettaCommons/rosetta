@@ -24,7 +24,9 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/ImplicitLipidInfo.hh>
+#include <core/conformation/membrane/MembraneGeometry.hh>
+#include <core/conformation/Atom.hh>
+
 
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
@@ -190,25 +192,11 @@ FaWaterToBilayerEnergy::eval_atom_derivative(
 	// Set count pair weight
 	Real cp_weight = 1.0;
 
-	// Initialize f1, f2
-	Vector f1( 0.0 ), f2( 0.0 );
-
 	Real const deriv = p->dGfreeB() - p->dGfreeW();
-	Real dE_dZ_over_r = fa_wtbe_weight_ * deriv * p->hydration_deriv();
 
-	Vector const d_ij = p->memb_coord() - heavy_atom_i;
-	Real const d_ij_norm = d_ij.length();
-	if ( d_ij_norm == Real(0.0) ) return;
 
-	Real const invd = 1.0 / d_ij_norm;
-	f2 = d_ij * invd;
-	f1 = p->memb_coord().cross(heavy_atom_i);
-	f1 *= invd;
-
-	if ( dE_dZ_over_r != 0.0 ) {
-		F1 += dE_dZ_over_r * cp_weight * f1;
-		F2 += dE_dZ_over_r * cp_weight * f2;
-	}
+	F1 += fa_wtbe_weight_ * cp_weight * deriv * p->f1();
+	F2 += fa_wtbe_weight_ * cp_weight * deriv * p->f2();
 }
 
 /// @brief Fa_MbenvEnergy is context independent
@@ -245,32 +233,25 @@ FaWaterToBilayerEnergy::get_menv_params_for_residue(
 	using namespace core::pose;
 	using namespace core::conformation::membrane;
 
-	// grab implicit lipid information
-	ImplicitLipidInfoOP implicit_lipids( pose.conformation().membrane_info()->implicit_lipids() );
-
-	// Get the xyz coordinate
-	core::Vector const xyz( rsd.xyz( atomno ) );
-	core::Vector const center( pose.conformation().membrane_info()->membrane_center( pose.conformation() ) );
-	core::Vector const normal( pose.conformation().membrane_info()->membrane_normal( pose.conformation() ) );
-
-	// Calculate the spatially dependent hydration value for the current conformation
-	core::Real zcoord = pose.conformation().membrane_info()->atom_z_position( pose.conformation(), rsd.seqpos(), atomno );
-	core::Vector new_xyz( xyz.x(), xyz.y(), zcoord );
-
-	// Calculate projection coordinate
-	core::Vector proj_i = center + zcoord * normal;
-	core::Vector i_ip = proj_i - xyz;
-	core::Vector memb_coord( center - i_ip );
-
-	core::Real hydration = implicit_lipids->f_hydration( new_xyz );
-	core::Real hydration_deriv = implicit_lipids->f_hydration_gradient( new_xyz );
-
 	// Get the water-to-bilayer free energy components
 	core::Size index( get_atype_index( rsd.atom_type( atomno ).name() ) );
 	core::Real dGfreeW = water_lk_dgrefce_[ index ];
 	core::Real dGfreeB = memb_lk_dgrefce_[ index ];
 
-	MEnvAtomParamsCOP menv_parameter = MEnvAtomParamsCOP( new MEnvAtomParams( rsd.atom_type(atomno).name(), dGfreeW, dGfreeB, hydration, hydration_deriv, memb_coord ) );
+
+	core::conformation::Conformation const & conf( pose.conformation() );
+	core::conformation::membrane::MembraneGeometryCOP mp_geometry( conf.membrane_info()->membrane_geometry() );
+
+	if ( !conf.membrane_info()->use_franklin() ) {
+		TR.Warning << "Score term optimized with franklin transition function, but using IMM1 membrane transiton funtion!" << std::endl;
+		TR.Warning << "Recommended to run with -mp:restore_lazaridis_imm_behavior false if using franklin2019.wts" << std::endl;
+	}
+
+	core::Real hydration = mp_geometry->f_transition( conf, rsd.seqpos(), atomno );
+	core::Vector f1 = mp_geometry->f_transition_f1( conf, rsd.seqpos(), atomno );
+	core::Vector f2 = mp_geometry->f_transition_f2( conf, rsd.seqpos(), atomno );
+
+	MEnvAtomParamsCOP menv_parameter = MEnvAtomParamsCOP( new MEnvAtomParams( rsd.atom_type(atomno).name(), dGfreeW, dGfreeB, hydration, f1, f2 ) );
 	return menv_parameter;
 
 }

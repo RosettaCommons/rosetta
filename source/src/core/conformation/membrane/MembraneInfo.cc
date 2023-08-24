@@ -47,6 +47,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>
@@ -55,7 +56,9 @@ static basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
 
 #ifdef SERIALIZATION
 // Utility serialization headers
+#include <utility/vector1.srlz.hh>
 #include <utility/serialization/serialization.hh>
+
 
 // Cereal headers
 #include <cereal/types/base_class.hpp>
@@ -74,6 +77,7 @@ MembraneInfo::MembraneInfo() :
 	membrane_core_( 0 ),
 	membrane_rsd_num_( 0 ),
 	membrane_jump_( 0 ),
+	is_helical_( true ),
 	spanning_topology_( nullptr ),
 	implicit_lipids_( nullptr )
 {}
@@ -92,8 +96,10 @@ MembraneInfo::MembraneInfo(
 	membrane_core_( membrane_core ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
+	is_helical_( true ),
 	spanning_topology_( topology ),
 	implicit_lipids_( nullptr ),
+	per_atom_lipid_accessibility_(),
 	membrane_geometry_( utility::pointer::make_shared< membrane_geometry::Slab >( thickness, steepness ) )
 {}
 
@@ -106,17 +112,116 @@ MembraneInfo::MembraneInfo(
 	std::string lipid_composition_name,
 	core::Real lipid_composition_temp
 ) :
-	thickness_( 15 ),
 	steepness_( steepness ),
 	membrane_core_( 15 ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
+	is_helical_( true ),
 	spanning_topology_( topology ),
-	membrane_geometry_( utility::pointer::make_shared< membrane_geometry::Slab >( 15, steepness ) )
+	per_atom_lipid_accessibility_()
 {
 	implicit_lipids_ = ImplicitLipidInfoOP( new ImplicitLipidInfo( lipid_composition_name, lipid_composition_temp ) );
+	thickness_ = implicit_lipids_->water_thickness();
+	membrane_geometry_ = MembraneGeometryOP( new membrane_geometry::Slab( thickness, steepness ) );
 
 }
+
+
+/// @brief Create MembraneInfo from initialized data
+MembraneInfo::MembraneInfo(
+	core::Size membrane_pos,
+	core::SSize membrane_jump,
+	core::Real steepness,
+	SpanningTopologyOP topology,
+	std::string lipid_composition_name,
+	core::Real lipid_composition_temp,
+	MP_GEOMETRY_TRANSITION mp_geometry,
+	Conformation const & conf
+) :
+	steepness_( steepness ),
+	membrane_core_( 15 ),
+	membrane_rsd_num_( membrane_pos ),
+	membrane_jump_( membrane_jump ),
+	is_helical_( true ),
+	spanning_topology_( topology ),
+	per_atom_lipid_accessibility_()
+{
+	implicit_lipids_ = ImplicitLipidInfoOP( new ImplicitLipidInfo( lipid_composition_name, lipid_composition_temp ) );
+	thickness_ = implicit_lipids_->water_thickness();
+	switch ( mp_geometry )
+			{
+			case MP_GEOMETRY_TRANSITION::SLAB :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Slab >( steepness, thickness_ );
+				TR << "SLAB geometry" << std::endl;
+				break;
+				//MP_GEOMETRY_TRANSITION::MICELLE == BICELLE == NANODISC so you only need one case for any of these
+			case MP_GEOMETRY_TRANSITION::BICELLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Bicelle >( steepness, thickness_, conf, membrane_pos );
+				TR << "BICELLE geometry" << std::endl;
+				break;
+			case MP_GEOMETRY_TRANSITION::VESICLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Vesicle >( steepness, thickness_ );
+				TR << "VESICLE geometry" << std::endl;
+				break;
+			case MP_GEOMETRY_TRANSITION::DOUBLE_VESICLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::DoubleVesicle >( steepness, thickness_ );
+				TR << "DOUBLE_VESICLE geometry" << std::endl;
+				break;
+			default :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Slab >( steepness, thickness_ );
+				TR << "SLAB geometry" << std::endl;
+				break;
+			}
+
+}
+
+MembraneInfo::MembraneInfo(
+	core::Size membrane_pos,
+	core::SSize membrane_jump,
+	core::Size membrane_core,
+	core::Real steepness,
+	SpanningTopologyOP topology,
+	std::string lipid_composition_name,
+	core::Real lipid_composition_temp,
+	MP_GEOMETRY_TRANSITION mp_geometry,
+	Conformation const & conf
+) :
+	steepness_( steepness ),
+	membrane_core_( membrane_core ),
+	membrane_rsd_num_( membrane_pos ),
+	membrane_jump_( membrane_jump ),
+	is_helical_( true ),
+	spanning_topology_( topology ),
+	per_atom_lipid_accessibility_()
+{
+	implicit_lipids_ = ImplicitLipidInfoOP( new ImplicitLipidInfo( lipid_composition_name, lipid_composition_temp ) );
+	thickness_ = implicit_lipids_->water_thickness();
+	switch ( mp_geometry )
+			{
+			case MP_GEOMETRY_TRANSITION::SLAB :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Slab >( steepness, thickness_ );
+				TR << "SLAB geometry" << std::endl;
+				break;
+			case MP_GEOMETRY_TRANSITION::BICELLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Bicelle >( steepness, thickness_, conf, membrane_pos );
+				TR << "BICELLE geometry" << std::endl;
+				break;
+			case MP_GEOMETRY_TRANSITION::VESICLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Vesicle >( steepness, thickness_ );
+				TR << "VESICLE geometry" << std::endl;
+				break;
+			case MP_GEOMETRY_TRANSITION::DOUBLE_VESICLE :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::DoubleVesicle >( steepness, thickness_ );
+				TR << "DOUBLE_VESICLE geometry" << std::endl;
+				break;
+			default :
+				membrane_geometry_ = utility::pointer::make_shared< membrane_geometry::Slab >( steepness, thickness_ );
+				TR << "SLAB geometry" << std::endl;
+				break;
+			}
+
+}
+
 
 //Create MembraneInfo from initialized data with membrane geometry transition enum
 MembraneInfo::MembraneInfo(
@@ -134,7 +239,9 @@ MembraneInfo::MembraneInfo(
 	membrane_core_( membrane_core ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
-	spanning_topology_( topology )
+	is_helical_( true ),
+	spanning_topology_( topology ),
+	per_atom_lipid_accessibility_()
 {
 	switch ( mp_geometry )
 			{
@@ -162,7 +269,7 @@ MembraneInfo::MembraneInfo(
 			}
 }
 
-//Create MembraneInfo from initialized data with membrane geometry transition enum
+//Create MembraneInfo from initialized data with membrane geometry
 MembraneInfo::MembraneInfo(
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
@@ -178,6 +285,7 @@ MembraneInfo::MembraneInfo(
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	spanning_topology_( topology ),
+	per_atom_lipid_accessibility_(),
 	membrane_geometry_( membrane_geometry )
 {}
 
@@ -188,8 +296,10 @@ MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	steepness_( src.steepness_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
 	membrane_jump_( src.membrane_jump_ ),
+	is_helical_( src.is_helical_ ),
 	spanning_topology_( src.spanning_topology_ ),
 	implicit_lipids_( src.implicit_lipids_ ),
+	per_atom_lipid_accessibility_( src.per_atom_lipid_accessibility_ ),
 	membrane_geometry_(src.membrane_geometry_ )
 {}
 
@@ -207,9 +317,12 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	this->steepness_ = src.steepness_;
 	this->membrane_rsd_num_ = src.membrane_rsd_num_;
 	this->membrane_jump_ = src.membrane_jump_;
+	this->is_helical_ = src.is_helical_;
 	this->spanning_topology_ = src.spanning_topology_;
 	this->implicit_lipids_ = src.implicit_lipids_;
+	this->per_atom_lipid_accessibility_ = src.per_atom_lipid_accessibility_;
 	this->membrane_geometry_ = src.membrane_geometry_;
+
 
 	return *this;
 }
@@ -284,26 +397,82 @@ MembraneInfo::membrane_normal( Conformation const & conf ) const {
 }
 
 /// @brief Is residue in the membrane?
+//based on c-alpha xyz coordinate
 bool
 MembraneInfo::in_membrane( Conformation const & conf, core::Size resnum ) const {
 
 	bool in_mem( false );
 
-	core::Real thickness(0);
-	if ( implicit_lipids_ != nullptr ) {
-		thickness = implicit_lipids()->water_thickness();
+	core::Real f_thk; //transition function without the pore
+
+	//transition function value is based on c-alpha xyz coordinate
+	if ( !membrane_geometry_->has_pore() ) {
+		f_thk = membrane_geometry_->f_transition( conf, resnum, 2 );
 	} else {
-		thickness = membrane_thickness();
+		//if there is a pore, we need to calucalte the f_cavity function to solve for
+		//the transition function without the pore.
+		//f_hydration = f_thk + f_cavity - f_thk*f_cavity
+		//f_thk = ( f_hydration - f_cavity ) / ( 1 - f_cavity )
+		core::Real f_trans_w_pore = membrane_geometry_->f_transition( conf, resnum, 2 );
+		core::Vector const & xyz = membrane_geometry_->corrected_xyz( conf, resnum, 2 );
+		core::Real f_cavity = membrane_geometry_->f_cavity( xyz );
+		f_thk = ( f_trans_w_pore - f_cavity ) / (1 - f_cavity);
 	}
 
-	if ( residue_z_position( conf, resnum ) >= -thickness &&
-			residue_z_position( conf, resnum ) <= thickness ) {
+	//since this is based on the transition function without the pore
+	//residues facing an aqueous pore, inside a membrane protein will
+	//result in in_membrane returning true
+	if ( f_thk <= 0.5 ) {
+		in_mem = true;
+	}
+
+
+	return in_mem;
+} // in membrane?
+
+
+/// @brief Is atom in the membrane?
+bool
+MembraneInfo::in_membrane_atom( Conformation const & conf, core::Size resnum, core::ShortSize atomnum ) const {
+
+	bool in_mem( false );
+
+	core::Real f_thk; //transition function without the pore
+
+	if ( !membrane_geometry_->has_pore() ) {
+		f_thk = membrane_geometry_->f_transition( conf, resnum, atomnum );
+	} else {
+		//if there is a pore, we need to calucalte the f_cavity function to solve for
+		//the transition function without the pore.
+		//f_hydration = f_thk + f_cavity - f_thk*f_cavity
+		//f_thk = ( f_hydration - f_cavity ) / ( 1 - f_cavity )
+		core::Real f_trans_w_pore = membrane_geometry_->f_transition( conf, resnum, atomnum );
+		core::Vector const & xyz = membrane_geometry_->corrected_xyz( conf, resnum, atomnum );
+		core::Real f_cavity = membrane_geometry_->f_cavity( xyz );
+		f_thk = ( f_trans_w_pore - f_cavity ) / (1 - f_cavity);
+	}
+
+	//since this is based on the transition function without the pore
+	//residues facing an aqueous pore, inside a membrane protein will
+	//result in in_membrane returning true
+	if ( f_thk <= 0.5 ) {
 		in_mem = true;
 	}
 
 	return in_mem;
+}
 
-} // in membrane?
+
+bool
+MembraneInfo::use_franklin() const {
+	bool use_franklin_transition ( false );
+
+	if ( implicit_lipids_ != nullptr ) {
+		use_franklin_transition = true;
+	}
+
+	return use_franklin_transition;
+}
 
 /// @brief Compute residue position relative to membrane normal
 Real
@@ -370,6 +539,23 @@ MembraneInfo::check_membrane_fold_tree( core::kinematics::FoldTree const & ft_in
 	return true;
 }
 
+
+/// @brief Is the protein alpha helical or beta barrel
+bool
+MembraneInfo::is_helical() const {
+	return is_helical_;
+}
+
+void
+MembraneInfo::is_helical( bool const is_helical ) {
+	is_helical_ = is_helical;
+
+	if ( implicit_lipids_ != nullptr ) {
+		implicit_lipids_->is_helical( is_helical );
+	}
+}
+
+
 // topology of TM spans and lipophilicity
 
 /// @brief Transmembrane spaning topology
@@ -391,6 +577,20 @@ MembraneInfo::implicit_lipids() const {
 MembraneGeometryCOP
 MembraneInfo::membrane_geometry() const {
 	return membrane_geometry_;
+}
+
+
+/// @brief Per-atom accessibility to membrane lipids (0 = not exposed, 15 = exposed)
+core::Real
+MembraneInfo::per_atom_lipid_accessibility( core::Size rsd, core::Size atom ) const {
+	return per_atom_lipid_accessibility_[ rsd ][ atom ];
+}
+
+/// @brief Per-atom accessibility to membrane lipids
+void
+MembraneInfo::set_per_atom_lipid_accessibility(
+	utility::vector1< utility::vector1< core::Real > > const & v ) {
+	per_atom_lipid_accessibility_ = v;
 }
 
 void
@@ -424,8 +624,10 @@ core::conformation::membrane::MembraneInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( membrane_core_ ) ); // core::Real
 	arc( CEREAL_NVP( membrane_rsd_num_ ) ); // core::Size
 	arc( CEREAL_NVP( membrane_jump_ ) ); // core::SSize
+	arc( CEREAL_NVP( is_helical_ ) ); // bool
 	arc( CEREAL_NVP( spanning_topology_ ) ); // SpanningTopologyOP
 	arc( CEREAL_NVP( implicit_lipids_ ) ); // ImplicitLipidInfoOP
+	arc( CEREAL_NVP( per_atom_lipid_accessibility_ ) ); // utility::vector1< utility::vector1< core::Real >
 	arc( CEREAL_NVP( membrane_geometry_ ) ); //MembraneGeometryCOP
 }
 
@@ -438,8 +640,10 @@ core::conformation::membrane::MembraneInfo::load( Archive & arc ) {
 	arc( membrane_core_ ); // core::Real
 	arc( membrane_rsd_num_ ); // core::Size
 	arc( membrane_jump_ ); // core::SSize
+	arc( is_helical_ ); // bool
 	arc( spanning_topology_ ); // SpanningTopologyOP
 	arc( implicit_lipids_ ); // ImplicitLipidInfoOP
+	arc( per_atom_lipid_accessibility_ ); // utility::vector1< utility::vector1< core::Real >
 	arc( membrane_geometry_ ); // MembraneGeometryCOP
 
 }

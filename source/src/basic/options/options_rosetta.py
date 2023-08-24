@@ -3538,6 +3538,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option_Group( 'geo',
 			Option( 'bicelle_radius', 'Real', desc="Inner radius of bicelle. The bicelle inner_radius is the radius of the flat cylinder of the bicelle shape, the outer radius is the inner_radius+membrane_thickness. Setting the bicelle_radius as 0, would create an ellipsoid with a radius=membrane_thickness (default 15). Keep in mind that when setting the bicelle_radius, the size of the bicelle created is not dependent on the size of the protein. You will want to take the size of your protein into account when setting the bicelle_radius." ),
 			Option( 'vesicle_radius', 'Real', desc="Radius of vesicle. Distance from center of the vesicle/sphere to the center of the membrane." ),
+			Option( 'double_vesicle_inner_radius', 'Real', desc="Sets the radius of the inner vesicle. This is the distance form the center of the vesicle to the center of the inner membrane. The outer radius is determined by the double_vesicle_distance option." ),
 			Option( 'double_vesicle_distance', 'Real', desc="Distance between outer edge of inner vesicle membrane and inner edge of outer vesicle membrane. " ),
 		),
 

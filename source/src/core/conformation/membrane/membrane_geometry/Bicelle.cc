@@ -80,14 +80,13 @@ Bicelle::Bicelle(
 	core::Real thickness,
 	Conformation const & conf,
 	core::Size membrane_pos
-
 ) :
 	MembraneGeometry( steepness, thickness )
 {
-
 	core::Real protein_diameter = protein_slice_diameter_at_mem_cen( conf, membrane_pos );
 	set_protein_slice_diameter( protein_diameter);
 }
+
 
 Bicelle::Bicelle(
 	core::Real steepness,
@@ -100,11 +99,24 @@ Bicelle::Bicelle(
 	update_outer_radius();
 }
 
+
+Bicelle::Bicelle(
+	core::Real steepness,
+	core::Real thickness,
+	core::Real bicelle_inner_radius,
+	AqueousPoreParametersOP aqueous_pore
+) :
+	MembraneGeometry( steepness, thickness, aqueous_pore )
+{
+	set_inner_radius( bicelle_inner_radius );
+	update_outer_radius();
+}
+
 /// @brief Destructor
 Bicelle::~Bicelle() {}
 
 
-BicelleOP
+MembraneGeometryOP
 Bicelle::clone() const {
 	return BicelleOP( new Bicelle( *this ) );
 }
@@ -173,12 +185,15 @@ Bicelle::protein_slice_diameter_at_mem_cen( Conformation const & conf, core::Siz
 			}
 		}
 	}
+	//check that dist_array is not empty, if it is return 0 for protein_core
+	if ( dist_array.empty() ) {
+		return 0.0;
+	}
 	//find 95 percentile of distances
 	std::sort(dist_array.begin(), dist_array.end());
 	//multiply k percent by the total number of values,n
 	core::Size index = 0.95 * dist_array.size();
 	core::Real protein_core = dist_array[index];
-	std::cout << "protein_core: " << protein_core << std::endl;
 	return protein_core;
 }
 
@@ -310,62 +325,57 @@ Bicelle::h_bicelle_deriv_wrt_r( core::Vector xyz, const core::Vector mem_cen ) c
 //f is the value of the transition function, while f_z and h_r are components
 //that make up f.
 core::Real
-Bicelle::f_bicelle( core::Vector xyz, core::Real z_depth, const core::Vector mem_cen ) const {
+Bicelle::f_bicelle( core::Real f_z, core::Vector xyz, const core::Vector mem_cen ) const {
 	core::Real h_r = h_bicelle( xyz, mem_cen );
-	core::Real f_z = f_imm1( z_depth );
 	core::Real f = f_z + h_r - ( f_z*h_r );
 	return f;
 }
 
-//Same as above where f_z and h_r are components of the transition function:
-//f = f_z + h_r - f_z*h_r
-core::Real
-Bicelle::f_bicelle_deriv( core::Vector xyz, core::Real z_depth, const core::Vector mem_cen ) const {
-	core::Real h_r = h_bicelle( xyz, mem_cen );
-	core::Real f_z = f_imm1( z_depth );
-	core::Real h_deriv = h_bicelle_deriv_wrt_r( xyz, mem_cen );
-	core::Real f_z_deriv = f_imm1_deriv( z_depth );
-
-	core::Real bicelle_deriv = f_z_deriv + h_deriv - (f_z_deriv*h_r + f_z*h_deriv);
-
-	return bicelle_deriv;
-}
 
 core::Real
 Bicelle::f_transition( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
 	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
 	Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
-	core::Real z_depth = conf.membrane_info()->atom_z_position( conf, resnum, atomnum );
-	return f_bicelle( xyz, z_depth, mem_cen );
+	core::Real f_thk(f_thickness( conf, xyz.z() ));
+	core::Real f( f_bicelle( f_thk, xyz, mem_cen ) );
+
+	return f_hydration( f, xyz );
 }
 
 core::Real
 Bicelle::f_transition_deriv_m( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
-	core::Real z_depth = conf.membrane_info()->atom_z_position( conf, resnum, atomnum );
 	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
 	Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
-	core::Real df_dz = f_imm1_deriv( z_depth );
+	core::Real df_dz = f_thickness_deriv( conf, xyz.z() );
 	core::Real h = h_bicelle( xyz, mem_cen );
-	return df_dz*( 1 - h );
+	core::Real f_deriv_m( df_dz*( 1 - h ) );
+	if ( !has_pore() ) {
+		return f_deriv_m;
+	} else {
+		return f_hydration_deriv_dz( xyz, f_deriv_m );
+	}
 }
 
 core::Real
 Bicelle::f_transition_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
 	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
 	Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
-	core::Real z_depth = conf.membrane_info()->atom_z_position( conf, resnum, atomnum );
 	core::Real dh_dr = h_bicelle_deriv_wrt_r( xyz, mem_cen );
-	core::Real f = f_imm1( z_depth );
-	return dh_dr*( 1 - f );
+	core::Real f( f_thickness( conf, xyz.z() ));
+	core::Real f_deriv( dh_dr*( 1 - f ) );
+	if ( !has_pore() ) {
+		return f_deriv;
+	} else {
+		return f_hydration_deriv_dz( xyz, f_deriv );
+	}
 }
 
 core::Vector
 Bicelle::r_alpha_m( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
-	core::Real z_depth = conf.membrane_info()->atom_z_position( conf, resnum, atomnum );
 	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
 	const core::Vector normal = conf.membrane_info()->membrane_normal( conf );
-	core::Vector const & xyz( conf.residue( resnum ).atom( atomnum ).xyz() );
-	core::Vector proj_i = mem_cen + z_depth * normal;
+	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
+	core::Vector proj_i = mem_cen + xyz.z()* normal;
 	core::Vector i_ip = proj_i - xyz;
 	return ( mem_cen - i_ip );
 }
@@ -388,7 +398,20 @@ Bicelle::f_transition_f1( Conformation const & conf, core::Size resnum, core::Si
 	core::Real deriv_bic( f_transition_deriv( conf, resnum, atomnum ));
 	core::Vector r_bic(r_alpha( conf, resnum, atomnum ));
 	core::Vector f1_bicelle = f1( xyz, r_bic, deriv_bic);
-	return f1_m + f1_bicelle;
+
+	core::Vector f1( f1_m + f1_bicelle );
+
+	if ( !has_pore() ) {
+		return f1;
+	}
+
+	//calculate transition function for bicelle without pore
+	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
+	core::Real f_thk(f_thickness( conf, xyz.z() ));
+	core::Real f( f_bicelle( f_thk, xyz, mem_cen ) );
+
+	core::Vector f1_p( f1_pore( f, xyz, conf, resnum, atomnum ));
+	return f1 + f1_p;
 }
 
 core::Vector
@@ -403,7 +426,20 @@ Bicelle::f_transition_f2( Conformation const & conf, core::Size resnum, core::Si
 	core::Real deriv_bic( f_transition_deriv( conf, resnum, atomnum ));
 	core::Vector r_bic(r_alpha( conf, resnum, atomnum ));
 	core::Vector f2_bicelle = f2( xyz, r_bic, deriv_bic);
-	return f2_m + f2_bicelle;
+
+	core::Vector f2( f2_m + f2_bicelle );
+
+	if ( !has_pore() ) {
+		return f2;
+	}
+
+	//calculate transition function for bicelle without pore
+	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
+	core::Real f_thk(f_thickness( conf, xyz.z() ));
+	core::Real f( f_bicelle( f_thk, xyz, mem_cen ) );
+
+	core::Vector f2_p( f2_pore( f, xyz, conf, resnum, atomnum ));
+	return f2 + f2_p;
 }
 
 

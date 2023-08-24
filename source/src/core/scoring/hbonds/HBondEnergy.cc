@@ -684,6 +684,7 @@ HBondEnergy::hbond_derivs_1way(
 	EnergyMap const & weights,
 	HBondSet const & hbond_set,
 	HBondDatabaseCOP database,
+	pose::Pose const & pose,
 	conformation::Residue const & don_rsd,
 	conformation::Residue const & acc_rsd,
 	Size const don_nb,
@@ -755,8 +756,7 @@ HBondEnergy::hbond_derivs_1way(
 			// Readjust hydrogen bonding depth dependent weight based on z positions
 			// Relying on nonzero thickness which should really be true here!!!
 			if ( thickness_ != 0 || options_->Mbhbond() || options_->mphbond()  ) {
-				weighted_energy = get_membrane_depth_dependent_weight(normal_, center_, thickness_,
-					steepness_, don_nb, acc_nb, hatm_xyz, acc_rsd.atom(aatm ).xyz()) *
+				weighted_energy = get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, don_rsd.seqpos(), acc_rsd.seqpos(), hatm, aatm, hatm_xyz, acc_rsd.atom(aatm ).xyz()) *
 					hb_eval_type_weight( hbe_type.eval_type(), weights, is_intra_res, hbond_set.hbond_options().put_intra_into_total() );
 			}
 
@@ -800,7 +800,7 @@ HBondEnergy::eval_intrares_derivatives(
 		if ( residue_near_water( pose, rsd.seqpos() )  ) bond_near_wat = true;
 	}
 
-	hbond_derivs_1way( weights, hbond_set, database_, rsd, rsd, 1, 1, exclude_scb, exclude_scb, 1, atom_derivs, atom_derivs, bond_near_wat );
+	hbond_derivs_1way( weights, hbond_set, database_, pose, rsd, rsd, 1, 1, exclude_scb, exclude_scb, 1, atom_derivs, atom_derivs, bond_near_wat );
 }
 
 void
@@ -854,7 +854,7 @@ HBondEnergy::eval_residue_pair_derivatives(
 		/// case B: bb is acceptor, sc is donor && res2 is the acceptor residue -> look at the acceptor availability of residue 2
 		bool exclude_bsc( ! hb_pair_dat.res2_data().bb_acc_avail() );
 
-		hbond_derivs_1way( weights, hbondset, database_, rsd1, rsd2, rsd1nneighbs, rsd2nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r1_atom_derivs, r2_atom_derivs, bond_near_wat );
+		hbond_derivs_1way( weights, hbondset, database_, pose, rsd1, rsd2, rsd1nneighbs, rsd2nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r1_atom_derivs, r2_atom_derivs, bond_near_wat );
 	}
 
 	{ // scope
@@ -864,7 +864,7 @@ HBondEnergy::eval_residue_pair_derivatives(
 		/// case B: bb is acceptor, sc is donor && res1 is the acceptor residue -> look at the acceptor availability of residue 1
 		bool exclude_bsc( ! hb_pair_dat.res1_data().bb_acc_avail() );
 
-		hbond_derivs_1way( weights, hbondset, database_, rsd2, rsd1, rsd2nneighbs, rsd1nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r2_atom_derivs, r1_atom_derivs, bond_near_wat );
+		hbond_derivs_1way( weights, hbondset, database_, pose, rsd2, rsd1, rsd2nneighbs, rsd1nneighbs, exclude_bsc, exclude_scb, ssdep_weight_factor, r2_atom_derivs, r1_atom_derivs, bond_near_wat );
 	}
 }
 
@@ -1549,7 +1549,7 @@ HBondEnergy::atomistic_pair_energy(
 		core::Real environmental_weight;
 		if ( options_->Mbhbond() || options_->mphbond() ) {
 			environmental_weight =
-				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
+				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, don_rsd.seqpos(), acc_rsd.seqpos(), hatm, aatm, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz());
 
 			// hydrate/SPaDES protocol for when bond is near water
@@ -1735,9 +1735,10 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 	if ( options_->Mbhbond() && options_->mphbond() ) {
 
 		Real membrane_depth_dependent_weight( 1.0 );
+
 		membrane_depth_dependent_weight = ( flipped ? get_membrane_depth_dependent_weight(normal_, center_, thickness_,
-			steepness_, container->res2_nb(), container->res1_nb(), at2.xyz(), at1.xyz()) : get_membrane_depth_dependent_weight(normal_,
-			center_, thickness_, steepness_, container->res2_nb(), container->res1_nb(), at2.xyz(), at1.xyz()) );
+			steepness_, container->res2_nb(), container->res1_nb(), at2.xyz(), at1.xyz()) : get_membrane_depth_dependent_weight(normal_, center_, thickness_,
+			steepness_, container->res2_nb(), container->res1_nb(), at2.xyz(), at1.xyz()) );
 
 		envweight = membrane_depth_dependent_weight;
 	}

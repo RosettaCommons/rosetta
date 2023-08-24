@@ -264,6 +264,7 @@ private: // data
 	// Arrays used for computing derivatives
 	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_;
 
+
 	mutable utility::vector1 < utility::vector1 < Vector > > fa_f1_;
 	mutable utility::vector1 < utility::vector1 < Vector > > fa_f2_;
 };

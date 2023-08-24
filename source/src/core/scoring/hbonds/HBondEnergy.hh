@@ -243,6 +243,7 @@ public:
 		EnergyMap const & weights,
 		HBondSet const & hbond_set,
 		HBondDatabaseCOP database,
+		pose::Pose const & pose,
 		conformation::Residue const & don_rsd,
 		conformation::Residue const & acc_rsd,
 		Size const don_nb,

@@ -15,6 +15,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <devel/init.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
@@ -27,6 +28,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
+#include <core/scoring/EnergyMap.hh>
 
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
@@ -43,6 +45,7 @@
 
 #include <utility/io/ozstream.hh>
 
+//This application is still in progress! Results should be carefully considered. You could use the mp_transition_bfactor application to map the membrane transition function values onto the structure to see if the results are what you are expecting.
 
 //Updates the MembraneGeometry in pose to be a Vesicle with the given radius
 //called in opt_vesicle_params to update the raidus
@@ -66,11 +69,11 @@ void update_bicelle_radius( core::pose::Pose & pose, core::conformation::membran
 	pose.conformation().membrane_info()->set_membrane_geometry( mp_geo_new );
 }
 
-//Updates the MembraneGeometry in pose to be a DoubleVesicle with the given distance between the two vesicle membranes and the outer_radius
-//called in opt_double_vesicle_params to update either the distance or outer_radius parameters
-void update_double_vesicle( core::pose::Pose & pose, core::conformation::membrane::membrane_geometry::DoubleVesicleCOP dvesicle, core::Real distance, core::Real outer_r ) {
+//Updates the MembraneGeometry in pose to be a DoubleVesicle with the given distance between the two vesicle membranes and the inner_radius
+//called in opt_double_vesicle_params to update either the distance or inner_radius parameters
+void update_double_vesicle( core::pose::Pose & pose, core::conformation::membrane::membrane_geometry::DoubleVesicleCOP dvesicle, core::Real distance, core::Real inner_r ) {
 	//create new DoubelVesicle with the specified radius
-	core::conformation::membrane::membrane_geometry::DoubleVesicleCOP mp_dves_new( new core::conformation::membrane::membrane_geometry::DoubleVesicle( dvesicle->membrane_steepness(), dvesicle->membrane_thickness(), outer_r, distance ));
+	core::conformation::membrane::membrane_geometry::DoubleVesicleCOP mp_dves_new( new core::conformation::membrane::membrane_geometry::DoubleVesicle( dvesicle->membrane_steepness(), dvesicle->membrane_thickness(), inner_r, distance ));
 	//convert DoubleVesicleCOP to MembraneGeometryCOP, so it can be used to replace the MembraneGeometryCOP in MembraneInfo
 	core::conformation::membrane::MembraneGeometryCOP mp_geo_new = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::MembraneGeometry const > (mp_dves_new );
 	//replace old membrane geometry, with the new one with updated parameters
@@ -85,13 +88,19 @@ void opt_vesicle_params( core::pose::Pose & pose, core::conformation::membrane::
 	core::Real best_r(mp_vesicle->get_radius());
 	core::Real best_r_coarse( best_r );
 
-	core::Real big_step_size( 10 );
+	core::Real big_step_size( 20 );
 	core::Real small_step_size( 1 );
 
-	//starting at radius = 20, increase by big_step_size until 600 A, keep lowest scoring
-	for ( core::Real r=20; r<=600; r+=big_step_size ) {
+	//starting at radius = 20, increase by big_step_size until 1000 A, keep lowest scoring
+	//go from -1000 to 1000 on testing radius, at 1000 the membrane is essentially flat
+	//negative radius would have membrane curving up, towards the postive side fo the z-axis if in membrane coordinates
+	//positive radius would have membrane curving down
+	for ( core::Real r=-1000; r<=1000; r+=big_step_size ) {
 		update_vesicle_radius( pose, mp_vesicle, r );
 		core::Real temp_score = sfxn->score( pose);
+
+		//std::cout << "radius: " << r << "," << temp_score << std::endl;
+
 		// save best radius
 		if ( temp_score < lowest_score ) {
 			best_r_coarse = r;
@@ -106,6 +115,9 @@ void opt_vesicle_params( core::pose::Pose & pose, core::conformation::membrane::
 		update_vesicle_radius( pose, mp_vesicle, r );
 		//opt->apply( pose );
 		core::Real temp_score = sfxn->score( pose);
+
+		//std::cout << "radius: " << r << "," << temp_score << std::endl;
+
 		// save best radius
 		if ( temp_score <= lowest_score ) {
 			best_r = r;
@@ -128,21 +140,25 @@ void opt_vesicle_params( core::pose::Pose & pose, core::conformation::membrane::
 	output << "Optimized Radius: " << best_r << std::endl;
 }
 
-//called in main to find the radius of the outer vesicle and distance to the inner vesicle membrane that gives lowest energy for the current pose
+//called in main to find the radius of the inner vesicle and distance to the outer vesicle membrane that gives lowest energy for the current pose
 void opt_double_vesicle_params( core::pose::Pose & pose, core::conformation::membrane::MembraneGeometryCOP mp_geometry, core::scoring::ScoreFunctionOP sfxn ) {
 	core::conformation::membrane::membrane_geometry::DoubleVesicleCOP mp_dvesicle = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::membrane_geometry::DoubleVesicle const > ( mp_geometry );
 
 	core::Real lowest_score( sfxn->score( pose ) );
 	core::Real best_dis( mp_dvesicle->get_distance() );
-	core::Real best_outer_r( mp_dvesicle->get_outer_radius() );
-	core::Real best_outer_r_coarse( best_outer_r );
+	core::Real best_inner_r( mp_dvesicle->get_inner_radius() );
+	core::Real best_inner_r_coarse( best_inner_r );
 
 
 	//optimize distance first
 	//distance between outer edge of inner membrane and inner edge of outer membrane
-	for ( core::Real d = 10; d<100; d++ ) {
-		update_double_vesicle( pose, mp_dvesicle, d, best_outer_r); //best outer_r here is just the starting outer radius because it hasn't been updated
+	for ( core::Real d = 10; d<400; d+=10 ) {
+		update_double_vesicle( pose, mp_dvesicle, d, best_inner_r); //best_inner_r here is just the starting inner radius because it hasn't been updated
 		core::Real temp_score = sfxn->score( pose );
+
+		//std::cout << "distance: " << d << "," << temp_score << std::endl;
+
+
 		//save best distance
 		if ( temp_score < lowest_score ) {
 			best_dis = d;
@@ -150,39 +166,49 @@ void opt_double_vesicle_params( core::pose::Pose & pose, core::conformation::mem
 		}
 	}
 
-	update_double_vesicle( pose, mp_dvesicle, best_dis, best_outer_r );
-	core::Real min_outer_r = 20 + best_dis + 2*mp_dvesicle->membrane_thickness(); //if min inner_radius = 20
-	core::Real max_outer_r = 600 + best_dis + 2*mp_dvesicle->membrane_thickness(); //if max inner_radius = 600
+	update_double_vesicle( pose, mp_dvesicle, best_dis, best_inner_r );
 
-	core::Real big_step_size( 10 );
+	core::Real min_inner_r = 20;
+	core::Real max_inner_r = 1000; //stopping at 1000 since this is essentially flat
+	//note for now we are only testing postive radius values for the double vesicle geometry
+
+	core::Real big_step_size( 20 );
 	core::Real small_step_size( 1 ) ;
 
-	//optimize outer_radius coarse (inner_radius depends on outer radius and distance, so it will be updated)
-	for ( core::Real r = min_outer_r; r< max_outer_r; r+=big_step_size ) {
+	//optimize inner_radius coarse (outer_radius depends on inner radius and distance, so it will be updated)
+	for ( core::Real r = min_inner_r; r< max_inner_r; r+=big_step_size ) {
 		update_double_vesicle( pose, mp_dvesicle, best_dis, r );
 		core::Real temp_score = sfxn->score( pose );
-		//save best outer radius
+
+		//std::cout << "radius: " << r << "," << temp_score << std::endl;
+
+
+		//save best inner radius
 		if ( temp_score <= lowest_score ) {
-			best_outer_r_coarse = r;
+			best_inner_r_coarse = r;
 			lowest_score = temp_score;
 		}
 	}
 
-	//optimize outer_radius
-	for ( core::Real r=best_outer_r_coarse-big_step_size+small_step_size; r < best_outer_r_coarse; r+= small_step_size ) {
+	//optimize inner_radius
+	for ( core::Real r=best_inner_r_coarse-big_step_size+small_step_size; r < best_inner_r_coarse+big_step_size; r+= small_step_size ) {
 		update_double_vesicle( pose, mp_dvesicle, best_dis, r );
 		core::Real temp_score = sfxn->score( pose );
-		//save best outer radius
+
+		//std::cout << "radius: " << r << "," << temp_score << std::endl;
+
+
+		//save best inner radius
 		if ( temp_score < lowest_score ) {
-			best_outer_r = r;
+			best_inner_r = r;
 			lowest_score = temp_score;
 		}
 	}
 
-	update_double_vesicle( pose, mp_dvesicle, best_dis, best_outer_r );
+	update_double_vesicle( pose, mp_dvesicle, best_dis, best_inner_r );
 	core::Real new_score( sfxn->score( pose ) );
 	std::cout << "new distance: " << best_dis << std::endl;
-	std::cout << "new outer radius: " << best_outer_r << std::endl;
+	std::cout << "new inner radius: " << best_inner_r << std::endl;
 	std::cout << "new score: " << new_score << std::endl;
 
 	utility::vector1< std::string > temp( utility::string_split( pose.pdb_info()->name(), '/') );
@@ -191,7 +217,7 @@ void opt_double_vesicle_params( core::pose::Pose & pose, core::conformation::mem
 	utility::io::ozstream output( filename );
 	output << tempstr << std::endl;
 	output << "Geometry: Double Vesicle" << std::endl;
-	output << "Optimized Outer Radius: " << best_outer_r << std::endl;
+	output << "Optimized Inner Radius: " << best_inner_r << std::endl;
 	output << "Optimized distance: " << best_dis << std::endl;
 
 }
@@ -210,6 +236,10 @@ void opt_bicelle_params( core::pose::Pose & pose, core::conformation::membrane::
 	for ( core::Real r=0; r<=2*protein_slice_diameter; r+=step_size ) {
 		update_bicelle_radius( pose, mp_bicelle, r );
 		core::Real temp_score = sfxn->score( pose);
+
+		//std::cout << "radius: " << r << "," << temp_score << std::endl;
+
+
 		// save best radius
 		if ( temp_score < lowest_score ) {
 			best_r = r;
@@ -254,16 +284,21 @@ int main( int argc, char ** argv ) {
 		protocols::membrane::AddMembraneMoverOP addmem( new protocols::membrane::AddMembraneMover() );
 		addmem->apply( mypose );
 
-		protocols::membrane::OptimizeProteinEmbeddingMoverOP opt( new protocols::membrane::OptimizeProteinEmbeddingMover() );
-		//protocols::membrane::OptimizeMembranePositionMoverOP opt( new protocols::membrane::OptimizeMembranePositionMover() );
-		opt->apply( mypose );
-
 		//create conformation object from pose
 		const core::conformation::Conformation& myconf = mypose.conformation();
 		core::conformation::membrane::MembraneGeometryCOP mp_geometry( myconf.membrane_info()->membrane_geometry() );
 
 		//get score funciton
-		core::scoring::ScoreFunctionOP sfxn = core::scoring::ScoreFunctionFactory::create_score_function("mpframework_smooth_fa_2012.wts");
+		core::scoring::ScoreFunctionOP sfxn;
+
+		using namespace basic::options;
+
+		if ( option[ OptionKeys::score::weights ].user() ) {
+			sfxn = core::scoring::get_score_function();
+			std::cout << "commandline score function" << std::endl;
+		} else {
+			sfxn = core::scoring::ScoreFunctionFactory::create_score_function("mpframework_smooth_fa_2012.wts");
+		}
 
 		//Identify membrane geometry
 		//Membrane geometry is set in AddMembraneMover using command line option flags -mp:geometry bicelle, vesicle, or double_vesicle

@@ -4,4 +4,5 @@
 -in:file:fullatom
 -out:nooutput
 -restore_lazaridis_imm_behavior true
--mp:scoring:hbond true 
+-mp:scoring:hbond true
+-has_pore 0 

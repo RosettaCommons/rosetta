@@ -39,8 +39,8 @@ public:
 		core::Real const dGfreeW,
 		core::Real const dGfreeB,
 		core::Real const hyd,
-		core::Real const hyd_deriv,
-		core::Vector const & memb_coord
+		core::Vector const f1,
+		core::Vector const f2
 	);
 
 	MEnvAtomParams(MEnvAtomParams const & src);
@@ -56,8 +56,8 @@ public:
 	core::Real dGfreeW() const { return dGfreeW_; }
 	core::Real dGfreeB() const { return dGfreeB_; }
 	core::Real hydration() const { return hyd_; }
-	core::Real hydration_deriv() const { return hyd_deriv_; }
-	core::Vector memb_coord() const { return memb_coord_; }
+	core::Vector f1() const { return f1_; }
+	core::Vector f2() const { return f2_; }
 
 private:
 
@@ -65,8 +65,8 @@ private:
 	core::Real dGfreeW_;
 	core::Real dGfreeB_;
 	core::Real hyd_;
-	core::Real hyd_deriv_;
-	numeric::xyzVector< core::Real > memb_coord_;
+	numeric::xyzVector< core::Real > f1_;
+	numeric::xyzVector< core::Real > f2_;
 
 };
 

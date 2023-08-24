@@ -14,7 +14,7 @@
 ///  the function to calculate the transition from the hydrophobic
 ///  environment of the bilayer to a hydrophilic environment.
 ///  In membrane coordinates the origin is located at the center of
-///  the outer vesicle membrane.
+///  the inner vesicle membrane.
 
 /// @note This object is a member of Conformation and should only be accessed using
 ///            pose.conformation().membrane_geometry().
@@ -81,12 +81,25 @@ DoubleVesicle::DoubleVesicle(
 DoubleVesicle::DoubleVesicle(
 	core::Real steepness,
 	core::Real thickness,
-	core::Real outer_radius,
+	core::Real inner_radius,
 	core::Real distance
 ) :
 	MembraneGeometry( steepness, thickness )
 {
-	set_outer_radius( outer_radius );
+	set_inner_radius( inner_radius );
+	set_distance( distance );
+}
+
+DoubleVesicle::DoubleVesicle(
+	core::Real steepness,
+	core::Real thickness,
+	core::Real inner_radius,
+	core::Real distance,
+	AqueousPoreParametersOP aqueous_pore
+) :
+	MembraneGeometry( steepness, thickness, aqueous_pore )
+{
+	set_inner_radius( inner_radius );
 	set_distance( distance );
 }
 
@@ -94,7 +107,7 @@ DoubleVesicle::DoubleVesicle(
 /// @brief Destructor
 DoubleVesicle::~DoubleVesicle() {}
 
-DoubleVesicleOP DoubleVesicle::clone() const {
+MembraneGeometryOP DoubleVesicle::clone() const {
 	return DoubleVesicleOP( new DoubleVesicle( *this ) );
 }
 
@@ -113,12 +126,12 @@ DoubleVesicle::show( std::ostream & output ) const {
 
 void
 DoubleVesicle::update_radii( ) {
-	if ( basic::options::option[ basic::options::OptionKeys::mp::geo::vesicle_radius ].user() ) {
-		set_outer_radius( basic::options::option[ basic::options::OptionKeys::mp::geo::vesicle_radius ]() );
-		TR << "setting outer vesicle radius from command line option:  " << outer_radius_ << std::endl;
+	if ( basic::options::option[ basic::options::OptionKeys::mp::geo::double_vesicle_inner_radius ].user() ) {
+		set_inner_radius( basic::options::option[ basic::options::OptionKeys::mp::geo::double_vesicle_inner_radius ]() );
+		TR << "setting inner vesicle radius from command line option:  " << inner_radius_ << std::endl;
 	} else {
-		TR << "setting vesicle outer_radius_ as default 1000" << std::endl;
-		set_outer_radius( 1000 );
+		TR << "setting vesicle inner_radius_ as default 1000" << std::endl;
+		set_inner_radius( 1000 );
 	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::mp::geo::double_vesicle_distance ].user() ) {
@@ -127,8 +140,8 @@ DoubleVesicle::update_radii( ) {
 		set_distance(30);
 	}
 
-	set_inner_radius( outer_radius_ - ((membrane_thickness()*2)+distance_) );
-	TR << "Setting inner radius: " << inner_radius_ << std::endl;
+	set_outer_radius( inner_radius_ + ((membrane_thickness()*2)+distance_) );
+	TR << "Setting outer radius: " << outer_radius_ << std::endl;
 }
 
 void
@@ -140,26 +153,21 @@ DoubleVesicle::set_distance( core::Real distance ) {
 		TR.Warning << "May have unexpected behavior." << std::endl;
 	}
 	distance_ = distance;
-	set_inner_radius( outer_radius_ - ((membrane_thickness()*2)+distance_) );
+	set_outer_radius( inner_radius_ + ((membrane_thickness()*2)+distance_) );
 }
 
 void
 DoubleVesicle::set_outer_radius( core::Real outer_r ) {
-	if ( outer_r < 0 ) {
-		TR.Fatal << "Tried setting outer radius as a negative number." << std::endl;
-	} else {
-		outer_radius_ = outer_r;
+	if ( outer_r < inner_radius_ ) {
+		TR.Fatal << "Double Vesicle outer radius cannot be less than the inner radius." << std::endl;
 	}
+	outer_radius_ = outer_r;
 }
 
 void
 DoubleVesicle::set_inner_radius( core::Real inner_r ) {
-	if ( inner_r > outer_radius_ ) {
-		TR.Fatal << "Double Vesicle inner radius cannot be greater than he outer radius" << std::endl;
-	} else if ( inner_r < 0 ) {
-		TR.Fatal << "Tried setting inner_radius as a negative number." << std::endl;
-	} else if ( inner_r != outer_radius_ - ((membrane_thickness()*2)+distance_) ) {
-		TR.Warning << "Double Vesicle inner radius is smaller than expected." << std::endl;
+	if ( inner_r <= 0 ) {
+		TR.Fatal << "Vesicle inner radius must be greater than 0" << std::endl;
 	}
 	inner_radius_ = inner_r;
 }
@@ -184,67 +192,61 @@ DoubleVesicle::get_distance() const {
 //n is steepness of hydrophobic -> hydrophillic transition (default = 15)
 core::Real
 DoubleVesicle::center( core::Vector xyz ) const {
-	return pow( pow( xyz.x(), 2 ) + pow( xyz.y(), 2 ) + pow( xyz.z()+ outer_radius_ , 2 ), 0.5);
+	return pow( pow( xyz.x(), 2 ) + pow( xyz.y(), 2 ) + pow( xyz.z()+ inner_radius_ , 2 ), 0.5);
 }
 
 core::Real
-DoubleVesicle::f_vesicle_membrane( core::Vector xyz, core::Real radius ) const {
-	core::Real n = membrane_steepness();
+DoubleVesicle::f_vesicle_membrane( Conformation const & conf, core::Vector xyz, core::Real radius ) const {
 	core::Real c = center( xyz );
-	core::Real pot = std::abs(radius-c)/membrane_thickness();
-	core::Real j = pow( pot, n )/(1+pow( pot, n ));
+	core::Real j( f_thickness( conf, radius-c) );
 	return j;
 }
 
 core::Real
-DoubleVesicle::f_double_vesicle( core::Vector xyz ) const {
-	core::Real o = f_vesicle_membrane( xyz, outer_radius_ );
-	core::Real i = f_vesicle_membrane( xyz, inner_radius_ );
+DoubleVesicle::f_double_vesicle( Conformation const & conf, core::Vector xyz ) const {
+	core::Real o = f_vesicle_membrane( conf, xyz, outer_radius_ );
+	core::Real i = f_vesicle_membrane( conf, xyz, inner_radius_ );
 	return o*i;
 }
 
 
 core::Real
-DoubleVesicle::f_deriv( core::Vector xyz, core::Real radius ) const {
-	core::Real n = membrane_steepness();
+DoubleVesicle::f_deriv( Conformation const & conf, core::Vector xyz, core::Real radius ) const {
 	core::Real c = center( xyz );
-	core::Real pot = std::abs(radius-c)/membrane_thickness();
-	core::Real numerator = n*pow(pot, n-1);
-	core::Real denominator = membrane_thickness()*(pow(1 + pow( pot, n ), 2));
-	return (numerator/denominator);
+	return f_thickness_deriv( conf, radius - c );
 }
 
 
 
 core::Real
-DoubleVesicle::f_vesicle_deriv( core::Vector xyz ) const {
-	core::Real f_inner_deriv = f_deriv( xyz, inner_radius_ );
-	core::Real f_outer_deriv = f_deriv( xyz, outer_radius_ );
-	return f_inner_deriv*f_vesicle_membrane( xyz, outer_radius_ ) + f_outer_deriv*f_vesicle_membrane( xyz, inner_radius_ );
+DoubleVesicle::f_vesicle_deriv( Conformation const & conf, core::Vector xyz ) const {
+	core::Real f_inner_deriv = f_deriv( conf, xyz, inner_radius_ );
+	core::Real f_outer_deriv = f_deriv( conf, xyz, outer_radius_ );
+	return f_inner_deriv*f_vesicle_membrane( conf, xyz, outer_radius_ ) + f_outer_deriv*f_vesicle_membrane( conf, xyz, inner_radius_ );
 }
 //returns the value of the transition function for membrane score functions
 core::Real
 DoubleVesicle::f_transition( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
-	return f_double_vesicle( xyz );
+	core::Real f( f_double_vesicle( conf, xyz ) );
+
+	return f_hydration( f, xyz );
 }
 
 core::Real
 DoubleVesicle::f_transition_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
-	return f_vesicle_deriv( xyz );
+	return f_vesicle_deriv( conf, xyz );
 }
 
 core::Vector
 DoubleVesicle::r_alpha( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
-	//core::Real z_depth = conf.membrane_info()->atom_z_position( conf, resnum, atomnum );
 	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
 	const core::Vector normal = conf.membrane_info()->membrane_normal( conf );
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
-	//core::Vector const & xyz( conf.residue( resnum ).atom( atomnum ).xyz() );
-	core::Vector vesicle_center = mem_cen - (outer_radius_*normal);
+	core::Vector vesicle_center = mem_cen - (inner_radius_*normal);
 	core::Vector P = xyz - vesicle_center;
-	core::Vector Q = (outer_radius_/P.length())*P;
+	core::Vector Q = (inner_radius_/P.length())*P;
 	core::Vector R = Q + vesicle_center;
 	return R;
 }
@@ -254,7 +256,17 @@ DoubleVesicle::f_transition_f1( Conformation const & conf, core::Size resnum, co
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
 	core::Real deriv(f_transition_deriv( conf, resnum, atomnum ) );
 	core::Vector r(r_alpha( conf, resnum, atomnum ));
-	return f1( xyz, r, deriv);
+
+	core::Vector f1_dvesicle( f1( xyz, r, deriv));
+
+	if ( !has_pore() ) {
+		return f1_dvesicle;
+	}
+
+	core::Real f_dves( f_double_vesicle( conf, xyz ) );
+	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
+	core::Vector f1_p( f1_pore( f_dves, xyz, conf, resnum, atomnum) );
+	return f1_dvesicle + f1_p;
 }
 
 core::Vector
@@ -262,7 +274,17 @@ DoubleVesicle::f_transition_f2( Conformation const & conf, core::Size resnum, co
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
 	core::Real deriv(f_transition_deriv( conf, resnum, atomnum ) );
 	core::Vector r(r_alpha( conf, resnum, atomnum ));
-	return f2( xyz, r, deriv);
+
+	core::Vector f2_dvesicle( f2( xyz, r, deriv));
+
+	if ( !has_pore() ) {
+		return f2_dvesicle;
+	}
+
+	core::Real f_dves( f_double_vesicle( conf, xyz ) );
+	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
+	core::Vector f2_p( f2_pore( f_dves, xyz, conf, resnum, atomnum) );
+	return f2_dvesicle + f2_p;
 }
 
 //returning string of name of geometry that was created

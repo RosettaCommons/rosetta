@@ -72,11 +72,9 @@ ImplicitLipidInfo::ImplicitLipidInfo() :
 	lipid_composition_name_long_( "" ),
 	degrees_of_saturation_( 0 ),
 	temperature_( 0.0 ),
-	has_pore_( false ),
 	is_helical_( true ),
 	pore_params_(),
-	pore_transition_steepness_( 0.0 ),
-	per_atom_lipid_accessibility_()
+	pore_transition_steepness_( 0.0 )
 {}
 
 ImplicitLipidInfo::ImplicitLipidInfo(
@@ -92,11 +90,9 @@ ImplicitLipidInfo::ImplicitLipidInfo(
 	lipid_composition_name_long_( "" ),
 	degrees_of_saturation_( 0 ),
 	temperature_( temperature ),
-	has_pore_( false ),
 	is_helical_( true ),
 	pore_params_(),
-	pore_transition_steepness_( 10.0 ),
-	per_atom_lipid_accessibility_()
+	pore_transition_steepness_( 10.0 )
 {
 
 	// Initialize lipid composition specific parameters
@@ -114,10 +110,8 @@ ImplicitLipidInfo::ImplicitLipidInfo( ImplicitLipidInfo const & src ) :
 	lipid_composition_name_long_( src.lipid_composition_name_long_ ),
 	degrees_of_saturation_( src.degrees_of_saturation_ ),
 	temperature_( src.temperature_ ),
-	has_pore_( src.has_pore_ ),
 	is_helical_( src.is_helical_ ),
-	pore_transition_steepness_( src.pore_transition_steepness_ ),
-	per_atom_lipid_accessibility_( src.per_atom_lipid_accessibility_ )
+	pore_transition_steepness_( src.pore_transition_steepness_ )
 {}
 
 ImplicitLipidInfo &
@@ -137,11 +131,9 @@ ImplicitLipidInfo::operator=( ImplicitLipidInfo const & src ) {
 	this->lipid_composition_name_ = src.lipid_composition_name_;
 	this->lipid_composition_name_long_ = src.lipid_composition_name_long_;
 	this->degrees_of_saturation_ = src.degrees_of_saturation_;
-	this->has_pore_ = src.has_pore_;
 	this->is_helical_ = src.is_helical_;
 	this->temperature_ = src.temperature_;
 	this->pore_transition_steepness_ = src.pore_transition_steepness_;
-	this->per_atom_lipid_accessibility_ = src.per_atom_lipid_accessibility_;
 
 	return *this;
 }
@@ -167,13 +159,8 @@ ImplicitLipidInfo::show( std::ostream & output ) const {
 	output << "Lipid composition name (long-form): " << lipid_composition_name_long_ << std::endl;
 	output << "Degrees of saturation: " << degrees_of_saturation_ << std::endl;
 	output << "Temperature (celcius): " << temperature_ << std::endl;
-	output << "Are we accommodating the pore?: ";
-	if ( has_pore_ ) {
-		output << "yes" << std::endl;
-	} else {
-		output << "no" << std::endl;
-	}
 	output << "Is this an alpha helical protein?: ";
+
 	if ( is_helical_ ) {
 		output << "yes" << std::endl;
 	} else {
@@ -220,18 +207,6 @@ ImplicitLipidInfo::temperature() const {
 	return temperature_;
 }
 
-// Getters for information about the membrane pore
-
-/// @brief Are we accommodating the aqueous pore?
-bool
-ImplicitLipidInfo::has_pore() const {
-	return has_pore_;
-}
-
-void
-ImplicitLipidInfo::has_pore( bool const is_there_a_pore ) {
-	has_pore_ = is_there_a_pore;
-}
 
 /// @brief Is the protein alpha helical or beta barrel
 bool
@@ -298,21 +273,6 @@ ImplicitLipidInfo::set_aqueous_pore_parameters(
 	pore_params_ = aqueous_pore;
 }
 
-// Lipid Accessibility Information
-
-/// @brief Per-atom accessibility to membrane lipids (0 = not exposed, 15 = exposed)
-core::Real
-ImplicitLipidInfo::per_atom_lipid_accessibility( core::Size rsd, core::Size atom ) const {
-	return per_atom_lipid_accessibility_[ rsd ][ atom ];
-}
-
-/// @brief Per-atom accessibility to membrane lipids
-void
-ImplicitLipidInfo::set_per_atom_lipid_accessibility(
-	utility::vector1< utility::vector1< core::Real > > v ) {
-	per_atom_lipid_accessibility_ = v;
-}
-
 
 // Chemical information about this membrane
 /// @brief Water thickness of the membrane
@@ -337,127 +297,6 @@ ImplicitLipidInfo::water_steepness() const {
 core::Real
 ImplicitLipidInfo::water_pseudo_thickness() const {
 	return transformed_water_thickness_;
-}
-
-/// @brief Calcuclate the hydration of an atom based on its location in a
-/// lipid-specific implicit bilayer
-core::Real
-ImplicitLipidInfo::f_depth( core::Real const z ) const {
-	core::Real abs_z( std::abs(z) );
-	core::Real a(transformed_water_thickness_);
-	core::Real b(change_in_water_density_);
-	core::Real d( 1 + (a*std::exp(-b*abs_z)) );
-	return 1/d;
-}
-
-/// @brief Ccalcculate the gradient of f_depth
-core::Real
-ImplicitLipidInfo::f_depth_gradient( core::Real const z ) const {
-	core::Real abs_z( std::abs(z) );
-	core::Real a(transformed_water_thickness_);
-	core::Real b(change_in_water_density_);
-	core::Real exp_bz( std::exp( b*abs_z ) );
-	core::Real quotient( (a*b*exp_bz)/std::pow(a + exp_bz, 2) );
-	return quotient;
-}
-
-/// @brief Calculate the hydration of an atom based on its location relative to
-/// an aqueous pore or cavity
-core::Real
-ImplicitLipidInfo::f_cavity( numeric::xyzVector< core::Real > const & p ) const {
-	core::Real radius( g_radius(p) );
-	core::Real r_n( std::pow( radius, pore_transition_steepness_ ) );
-	core::Real quotient( r_n / (1+r_n) );
-	return 1-quotient;
-}
-
-/// @brief Calculate the derivative of f_cavity (without any r(x,y,z) dependence)
-core::Real
-ImplicitLipidInfo::f_cavity_gradient( core::Real const r ) const {
-	core::Real top( pore_transition_steepness_*std::pow( r, pore_transition_steepness_-1 ) );
-	core::Real bottom( std::pow( std::pow( r, pore_transition_steepness_) + 1, 2 ) );
-	return top/bottom;
-}
-
-/// @brief Calculate the location of an atom relative to the pore structure
-core::Real
-ImplicitLipidInfo::g_radius( numeric::xyzVector< core::Real > const & p ) const {
-
-	core::Real pore_center_x( pore_params_->pore_center_x( p.z() ) );
-	core::Real pore_center_y( pore_params_->pore_center_y( p.z() ) );
-	core::Real pore_minor_radius( pore_params_->pore_minor_radius( p.z() ) );
-	core::Real pore_major_radius( pore_params_->pore_major_radius( p.z() ) );
-	numeric::MathMatrix< core::Real > rotation( pore_params_->pore_rotation( p.z() ) );
-
-	core::Real lhs = ((p.x()-pore_center_x)*rotation(0,0) + (p.y()-pore_center_y)*rotation(1,0))/pore_major_radius;
-	core::Real rhs = ((p.x()-pore_center_x)*rotation(1,0) - (p.y()-pore_center_y)*rotation(0,0))/pore_minor_radius;
-	core::Real result = pow( lhs, 2 ) + pow( rhs, 2 );
-	return result;
-
-}
-
-/// @breif Calcuclate the gradient of f_cavity
-core::Real
-ImplicitLipidInfo::g_radius_gradient( numeric::xyzVector< core::Real > const & p ) const {
-
-	// Pre-compute z dependent parameters
-	core::Real cos_theta( std::cos( pore_params_->pore_rotation( p.z() )(0,0) ) );
-	core::Real sin_theta( std::cos( pore_params_->pore_rotation( p.z() )(0,1) ) );
-	core::Real h( pore_params_->pore_center_x( p.z() ) );
-	core::Real k( pore_params_->pore_center_y( p.z() ) );
-	core::Real s( pore_params_->pore_major_radius( p.z() ) );
-	core::Real t( pore_params_->pore_minor_radius( p.z() ) );
-
-	core::Real d_theta( pore_params_->pore_rotation_deriv( p.z() ) );
-	core::Real d_h( pore_params_->pore_center_x_deriv( p.z() ) );
-	core::Real d_k( pore_params_->pore_center_y_deriv( p.z() ) );
-	core::Real d_s( pore_params_->pore_major_radius( p.z() ) );
-	core::Real d_t( pore_params_->pore_minor_radius( p.z() ) );
-
-	// dg/dx and dg/dy
-	core::Real dgdx( (2*sin_theta*(h-p.x()))/std::pow(s,2));
-	core::Real dgdy( (2*sin_theta*(k-p.y()))/std::pow(t,2));
-
-	// dg/dz - 7 terms total
-	core::Real t1( (2*d_s*sin_theta*std::pow(p.x()-h, 2))/std::pow(s,3) );
-	core::Real t2( (d_theta*cos_theta*std::pow(p.x()-h, 2))/std::pow(s,2) );
-	core::Real t3( (2*sin_theta*(p.x()-h)*std::pow(d_h, 2))/std::pow(s,2) );
-	core::Real t4( (2*d_t*sin_theta*std::pow(p.y()-k, 2))/std::pow(t,3) );
-	core::Real t5( (d_theta*cos_theta*std::pow(p.y()-k, 2))/std::pow(t,2) );
-	core::Real t6( (2*sin_theta*(p.y()-k)*std::pow(d_k, 2))/std::pow(t, 2) );
-	core::Real t7( 2*d_theta*sin_theta );
-	core::Real dgdz( t1 - t2 + t3 - t4 - t5 + t6 - t7 );
-
-	// f'cav(g_radius)
-	core::Real df_cav_of_r( f_cavity_gradient( g_radius( p ) ) );
-	return df_cav_of_r*( dgdx + dgdy + dgdz );
-}
-
-/// @brief Overall hydration given the atomic depth and cavity structure
-core::Real
-ImplicitLipidInfo::f_hydration( numeric::xyzVector< core::Real > const & p ) const {
-	core::Real f_thk( f_depth( p.z() ) );
-	if ( !has_pore_ ) {
-		return f_thk;
-	}
-	core::Real f_cav( f_cavity( p ) );
-	core::Real total( f_thk+f_cav-(f_thk*f_cav) );
-	return total;
-}
-
-/// @brief Gradient
-core::Real
-ImplicitLipidInfo::f_hydration_gradient( numeric::xyzVector< core::Real > const & p ) const {
-
-	core::Real grad_f_thk( f_depth_gradient( p.z() ) );
-	if ( !has_pore_ ) {
-		return grad_f_thk;
-	}
-	core::Real f_thk( f_depth( p.z() ) );
-	core::Real f_cav( f_cavity( p ) );
-	core::Real grad_f_cav( g_radius_gradient( p ) );
-	core::Real grad_f( grad_f_thk+grad_f_cav-((grad_f_thk*f_cav)+(grad_f_cav*f_thk)));
-	return grad_f;
 }
 
 // Private helper functions for initializing polynomials and parameters
@@ -548,11 +387,9 @@ core::conformation::membrane::ImplicitLipidInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( lipid_composition_name_long_ ) ); // std::string
 	arc( CEREAL_NVP( degrees_of_saturation_ ) ); // core::Real
 	arc( CEREAL_NVP( temperature_ ) ); // core::Real
-	arc( CEREAL_NVP( has_pore_ ) ); // _Bool
 	arc( CEREAL_NVP( is_helical_ ) ); // _Bool
 	arc( CEREAL_NVP( pore_params_ ) ); // AqueousPoreParametersOP
 	arc( CEREAL_NVP( pore_transition_steepness_ ) ); // core::Real
-	arc( CEREAL_NVP( per_atom_lipid_accessibility_ ) ); // utility::vector1<utility::vector1<core::Real> >
 }
 
 /// @brief Automatically generated deserialization method
@@ -568,11 +405,9 @@ core::conformation::membrane::ImplicitLipidInfo::load( Archive & arc ) {
 	arc( lipid_composition_name_long_ ); // std::string
 	arc( degrees_of_saturation_ ); // core::Real
 	arc( temperature_ ); // core::Real
-	arc( has_pore_ ); // _Bool
 	arc( is_helical_ ); // _Bool
 	arc( pore_params_ ); // AqueousPoreParametersOP
 	arc( pore_transition_steepness_ ); // core::Real
-	arc( per_atom_lipid_accessibility_ ); // utility::vector1<utility::vector1<core::Real> >
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::ImplicitLipidInfo );

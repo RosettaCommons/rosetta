@@ -34,6 +34,7 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneGeometry.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
@@ -277,13 +278,7 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 				// determine aqueous/interface/lipid_facing
 				numeric::xyzVector< core::Real > xyz( native_pose.residue( *it ).atom( "CA" ).xyz() );
 				xyz.z() = native_pose.conformation().membrane_info()->atom_z_position( native_pose.conformation(), *it, 2 /* CA */ );
-				core::Real s(0.0);
-				if ( native_pose.conformation().membrane_info()->implicit_lipids() == nullptr ) {
-					core::Real zcoord = xyz.z()/15;
-					s = std::pow(zcoord,10)/(1 + std::pow(zcoord,10));
-				} else {
-					s = native_pose.conformation().membrane_info()->implicit_lipids()->f_hydration( xyz );
-				}
+				core::Real s = native_pose.conformation().membrane_info()->membrane_geometry()->f_transition( native_pose.conformation(), *it, 2 /* CA */ );
 
 				if ( s < 0.25 ) {
 					n_native_lipid_facing[ native_pose.residue(*it).aa() ]++;
@@ -305,13 +300,7 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 			// calculating the CA scaling in the redesigned pose
 			numeric::xyzVector< core::Real > xyz( native_pose.residue( *it ).atom( "CA" ).xyz() );
 			xyz.z() = native_pose.conformation().membrane_info()->atom_z_position( native_pose.conformation(), *it, 2 /* CA */ );
-			core::Real s(0.0);
-			if ( native_pose.conformation().membrane_info()->implicit_lipids() == nullptr ) {
-				core::Real zcoord = xyz.z()/15;
-				s = std::pow(zcoord,10)/(1 + std::pow(zcoord,10));
-			} else {
-				s = native_pose.conformation().membrane_info()->implicit_lipids()->f_hydration( xyz );
-			}
+			core::Real s = native_pose.conformation().membrane_info()->membrane_geometry()->f_transition( native_pose.conformation(), *it, 2 /* CA */ );
 
 			// don't worry about recovery of non-protein residues
 			if ( redesign_pose.residue( *it ).is_protein() ) {

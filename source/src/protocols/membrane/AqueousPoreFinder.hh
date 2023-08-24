@@ -18,6 +18,8 @@
 #include <protocols/membrane/AqueousPoreFinder.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/conformation/membrane/AqueousPoreParameters.fwd.hh>
+#include <core/conformation/membrane/MembraneGeometry.fwd.hh>
+
 
 // Protocol headers
 
@@ -57,6 +59,9 @@ public:
 	/// @brief Apply the mover
 	void
 	apply( core::pose::Pose & pose ) override;
+
+	void
+	update_mp_geo_pore( core::pose::Pose & pose, core::conformation::membrane::AqueousPoreParametersOP aqueous_pore );
 
 	void
 	show( std::ostream & output = std::cout ) const override;

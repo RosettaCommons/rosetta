@@ -95,10 +95,6 @@ public: // Getters for information about the lipid composition
 
 public: // Getters for information about the membrane pore
 
-	/// @brief Does this protein have a water-filled pore?
-	bool has_pore() const;
-	void has_pore( bool const is_there_a_pore );
-
 	/// @brief Is the protein alpha helical or beta barrel
 	bool is_helical() const;
 	void is_helical( bool const is_helical );
@@ -124,16 +120,6 @@ public: // Getters for information about the membrane pore
 	/// @brief Set membrane aqueous pore parameters
 	void set_aqueous_pore_parameters( AqueousPoreParametersOP aqueous_pore );
 
-public: // Lipid Accessibility Information
-
-	/// @brief Per-atom accessibility to membrane lipids (0 = not exposed, 50 = exposed)
-	core::Real
-	per_atom_lipid_accessibility( core::Size rsd, core::Size atom ) const;
-
-	/// @brief Per-atom accessibility to membrane lipids (0 = not exposed, 50 = exposed)
-	void
-	set_per_atom_lipid_accessibility(
-		utility::vector1< utility::vector1< core::Real > > v);
 
 public: // Chemical information about this membrane
 
@@ -162,44 +148,6 @@ public: // Chemical information about this membrane
 		transformed_water_thickness_ = p;
 	}
 
-public: // Functions to define spatially-dependent hydration
-
-	/// UNDER CONSTRUCTION - Derivative functions ///
-
-	/// @brief Calcuclate the hydration of an atom based on its location in a
-	/// lipid-specific implicit bilayer
-	core::Real
-	f_depth( core::Real const z ) const;
-
-	/// @brief Ccalcculate the gradient of f_depth
-	core::Real
-	f_depth_gradient( core::Real const z ) const;
-
-	/// @brief Calculate the hydration of an atom based on its location relative to
-	/// an aqueous pore or cavity
-	core::Real
-	f_cavity( numeric::xyzVector< core::Real > const & p ) const;
-
-	/// @brief Calculate the derivative of f_cavity (without any r(x,y,z) dependence)
-	core::Real
-	f_cavity_gradient( core::Real const r ) const;
-
-	/// @brief Calculate the location of an atom relative to the pore structure
-	core::Real
-	g_radius( numeric::xyzVector< core::Real > const & p ) const;
-
-	/// @breif Calcuclate the gradient of f_cavity
-	core::Real
-	g_radius_gradient( numeric::xyzVector< core::Real > const & p ) const;
-
-	/// @brief Overall hydration given the atomic depth and cavity structure
-	core::Real
-	f_hydration( numeric::xyzVector< core::Real > const & p ) const;
-
-	/// @brief Gradient
-	core::Real
-	f_hydration_gradient( numeric::xyzVector< core::Real > const & p ) const;
-
 public: // Helper functions - making public for testing
 
 	/// @brief Helper function to initialize the lipid composiiton data
@@ -226,8 +174,6 @@ private:
 	core::Real degrees_of_saturation_;
 	core::Real temperature_;
 
-	// Does this protein have a pore?
-	bool has_pore_;
 
 	// Is this protein alpha helical or beta barre?
 	bool is_helical_;
@@ -236,8 +182,6 @@ private:
 	AqueousPoreParametersOP pore_params_;
 	core::Real pore_transition_steepness_;
 
-	// lipid accessibility
-	utility::vector1< utility::vector1< core::Real > > per_atom_lipid_accessibility_;
 
 #ifdef    SERIALIZATION
 	friend class cereal::access;

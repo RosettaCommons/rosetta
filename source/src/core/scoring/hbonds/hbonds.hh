@@ -390,6 +390,10 @@ get_membrane_depth_dependent_weight(
 	pose::Pose const & pose,
 	int const don_nb,
 	int const acc_nb,
+	int const Hrsd, // proton residue
+	int const Arsd, // acceptor residue
+	int const Hatm, // proton
+	int const Aatm, // acceptor
 	Vector const & Hxyz,
 	Vector const & Axyz
 );

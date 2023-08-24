@@ -40,7 +40,7 @@ public:
 	MPSpanAngleEnergyTests() {};
 
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-mp:restore_lazaridis_imm_behavior true" );
 	}
 
 	void tearDown(){}

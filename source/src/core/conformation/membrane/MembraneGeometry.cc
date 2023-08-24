@@ -23,6 +23,8 @@
 
 // Project Headers
 #include <core/conformation/membrane/MembraneParams.hh>
+#include <core/conformation/membrane/ImplicitLipidInfo.hh>
+#include <core/conformation/membrane/AqueousPoreParameters.hh>
 
 // Package Headers
 #include <core/conformation/Conformation.hh>
@@ -52,16 +54,14 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-// class Conformation;
-// class MembraneInfo;
-
-
 /// @brief Create MembraneInfo from initialized data
 MembraneGeometry::MembraneGeometry(
 	core::Real steepness
 ) :
 	thickness_( 15 ),
-	steepness_( steepness )
+	steepness_( steepness ),
+	pore_transition_steepness_( 10.0 ),
+	pore_params_()
 {}
 
 /// @brief Create MembraneInfo from initialized data
@@ -70,12 +70,47 @@ MembraneGeometry::MembraneGeometry(
 	core::Real thickness
 ) :
 	thickness_( thickness ),
-	steepness_( steepness )
+	steepness_( steepness ),
+	pore_transition_steepness_( 10.0 ),
+	pore_params_()
 {}
+
+/// @brief Create MembraneGeometry from initialized data
+MembraneGeometry::MembraneGeometry(
+	core::Real steepness,
+	core::Real thickness,
+	AqueousPoreParametersOP aqueous_pore
+) :
+	thickness_( thickness ),
+	steepness_( steepness ),
+	pore_transition_steepness_( 10.0 ),
+	pore_params_()
+{
+	set_aqueous_pore_parameters( aqueous_pore );
+}
+
 
 /// @brief Destructor
 MembraneGeometry::~MembraneGeometry() {}
 
+
+/// @brief Are we accommodating the aqueous pore?
+bool
+MembraneGeometry::has_pore() const {
+	if ( pore_params_ == nullptr ) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/// @brief Set membrane aqueous pore parameters
+void
+MembraneGeometry::set_aqueous_pore_parameters(
+	AqueousPoreParametersOP aqueous_pore
+) {
+	pore_params_ = aqueous_pore;
+}
 
 //thickness_vector returns a normalized vector that when the protein is tranformed into
 //membrane coordinates, should be in the same direction as the x-axis
@@ -141,19 +176,20 @@ MembraneGeometry::corrected_xyz( Conformation const & conf, core::Size resnum, c
 //f1 returns ((r_alpha X atom_xyz)/|r_alpha - atom_xyz|)*dE/dr, where dE/dr is the derivative of the transition function with respect to the distance between atom_xyz and r_alpha.
 //Here, r_alpha represents the point in space where the derivative of the transition functions depends on the distance between r_alpha and the atom's xyz position.
 core::Vector
-MembraneGeometry::f1( core::Vector atom_xyz, core::Vector r_alpha, core::Real deriv ) const {
+MembraneGeometry::f1( core::Vector const & atom_xyz, core::Vector const & r_alpha, core::Real deriv ) const {
 
 	core::Vector d = r_alpha - atom_xyz;
 	core::Real d_norm = d.length();
 	if ( d_norm == Real(0.0) ) return { 0.0,0.0,0.0 };
 
-	core::Real invd = 1.0 / d_norm; core::Vector f1 = r_alpha.cross( atom_xyz );
+	core::Real invd = 1.0 / d_norm;
+	core::Vector f1 = r_alpha.cross( atom_xyz );
 	return f1*invd*deriv;
 }
 
 //f2 returns ((r_alpha - atom_xyz)/|r_alpha - atom_xyz|)*dE/dr, where dE/dr is the derivative of the transition function with respect to the distance between atom_xyz and r_alpha.
 core::Vector
-MembraneGeometry::f2( core::Vector atom_xyz, core::Vector r_alpha, core::Real deriv ) const {
+MembraneGeometry::f2( core::Vector const & atom_xyz, core::Vector const & r_alpha, core::Real deriv ) const {
 
 	core::Vector d = r_alpha - atom_xyz;
 	core::Real d_norm = d.length();
@@ -166,7 +202,6 @@ MembraneGeometry::f2( core::Vector atom_xyz, core::Vector r_alpha, core::Real de
 //f_imm1 is utilized in slab and bicelle geometry so we define once here
 //n is steepness of hydrophobic -> hydrophillic transition (default = 10)
 //transition function from Lazaridis. Effective Energy Function for Proteins in Lipid Membranes. Proteins. 2003
-
 core::Real
 MembraneGeometry::f_imm1( core::Real z_position ) const {
 
@@ -184,12 +219,310 @@ MembraneGeometry::f_imm1_deriv( core::Real z_position ) const {
 	core::Real t = membrane_thickness();
 	core::Real n = membrane_steepness();
 	core::Real pot = std::abs( z_position )/t;
-	core::Real numerator = n*pow(pot, n-1);
-	core::Real denominator = t*(pow(1 + pow( pot, n ), 2));
+	core::Real numerator = n*std::pow(pot, n-1);
+	core::Real denominator = t*(std::pow(1 + std::pow( pot, n ), 2));
 	core::Real f_dz_position = numerator/denominator;
 	return f_dz_position;
 }
 
+
+//f_franklin is a transition function from:
+//Alfrod, Fleming, Fleming, Gray. Protein Structure Prediction and Design in a Biologically Realistic Implicit Membrane. 2020.
+//Tau and kappa are parameters that depend on the Lipid type, defined in ImplicitLipidInfo
+core::Real
+MembraneGeometry::f_franklin( core::Real const z, core::Real tau, core::Real kappa ) const {
+	core::Real abs_z( std::abs(z) );
+	core::Real d( 1 + (tau*std::exp(-kappa*abs_z)));
+	return 1/d;
+}
+
+core::Real
+MembraneGeometry::f_franklin_gradient( core::Real const z, core::Real tau, core::Real kappa ) const {
+	core::Real abs_z( std::abs(z) );
+	core::Real exp_bz( std::exp(-kappa*abs_z) );
+	core::Real denom = 1 + tau*exp_bz;
+	core::Real quotient( ( tau*kappa*exp_bz )/( denom * denom ) );
+	return quotient;
+}
+
+// Checks for existence of a pore
+// If there isn't a pore, returns the same transition function value as the input f_thk
+// If there is a pore, it calculates the pore transition function value (f_cavity) and
+// returns the composition of the pore and f_thk
+core::Real
+MembraneGeometry::f_hydration( core::Real f_thk, numeric::xyzVector< core::Real > const & p ) const {
+	if ( !has_pore() ) {
+		return f_thk;
+	} else {
+		core::Real f_cav( f_cavity( p ));
+		return f_thk + f_cav - (f_thk*f_cav);
+	}
+
+}
+
+core::Real
+//MembraneGeometry::f_hydration_deriv_dz( numeric::xyzVector< core::Real > const & p, core::Real f_thk, core::Real f_thk_deriv_dz ) const {
+MembraneGeometry::f_hydration_deriv_dz( numeric::xyzVector< core::Real > const & p, core::Real f_thk_deriv_dz ) const {
+	core::Real f_cav( f_cavity( p ));
+
+	return (f_thk_deriv_dz*(1-f_cav));
+}
+
+
+//returns transition value for flat membrane
+//if use_franklin == true returns f_franklin transition
+//else it returns f_imm1
+//This function does NOT take pore into account
+core::Real
+MembraneGeometry::f_thickness( Conformation const & conf, core::Real const z ) const {
+
+	core::Real f_thk;
+	if ( conf.membrane_info()->use_franklin() ) {
+		core::Real tau( conf.membrane_info()->implicit_lipids()->water_pseudo_thickness() );
+		core::Real kappa( conf.membrane_info()->implicit_lipids()->water_steepness() );
+		f_thk = f_franklin( z, tau, kappa) ;
+	} else {
+		f_thk = f_imm1( z );
+	}
+
+	return f_thk;
+}
+
+
+//returns derivative of the transition value for a flat membrane with no pore
+core::Real
+MembraneGeometry::f_thickness_deriv( Conformation const & conf, core::Real const z ) const {
+
+	core::Real f_thk_deriv_dz;
+	if ( conf.membrane_info()->use_franklin() ) {
+		core::Real tau( conf.membrane_info()->implicit_lipids()->water_pseudo_thickness() );
+		core::Real kappa( conf.membrane_info()->implicit_lipids()->water_steepness() );
+		f_thk_deriv_dz = f_franklin_gradient( z, tau, kappa);
+	} else {
+		f_thk_deriv_dz = f_imm1_deriv( z );
+	}
+
+	return f_thk_deriv_dz;
+}
+
+
+// partial derivative with respect to x of the pore transition function
+core::Real
+MembraneGeometry::f_cavity_dx( numeric::xyzVector< core::Real > const & p, core::Real f_thk  ) const {
+	core::Real r( g_radius( p ));
+	core::Real dfcav_dg( f_cavity_gradient( r ) );
+
+	core::Real dg_dx( g_radius_gradient_dx( p ));
+
+	return dfcav_dg * dg_dx * ( 1 - f_thk );
+}
+
+core::Real
+MembraneGeometry::f_cavity_dy( numeric::xyzVector< core::Real > const & p, core::Real f_thk  ) const {
+	core::Real r( g_radius( p ));
+	core::Real dfcav_dg( f_cavity_gradient( r ) );
+	core::Real dg_dy( g_radius_gradient_dy( p ));
+
+	return dfcav_dg * dg_dy * ( 1 - f_thk );
+}
+
+core::Real
+MembraneGeometry::f_cavity_dz( numeric::xyzVector< core::Real > const & p, core::Real f_thk  ) const {
+	core::Real r( g_radius( p ));
+	core::Real dfcav_dg( f_cavity_gradient( r ) );
+	core::Real dg_dz( g_radius_gradient_dz( p ));
+
+	return dfcav_dg * dg_dz * ( 1 - f_thk );
+}
+
+/// @brief Calculate the hydration of an atom based on its location relative to
+/// an aqueous pore or cavity
+core::Real
+MembraneGeometry::f_cavity( numeric::xyzVector< core::Real > const & p ) const {
+	core::Real radius( g_radius(p) );
+	core::Real r_n( std::pow( radius, pore_transition_steepness_ ) );
+	core::Real quotient( r_n / (1+r_n) );
+	return 1-quotient;
+}
+
+/// @brief Calculate the derivative of f_cavity (without any r(x,y,z) dependence)
+core::Real
+MembraneGeometry::f_cavity_gradient( core::Real const r ) const {
+	core::Real top( pore_transition_steepness_*std::pow( r, pore_transition_steepness_-1 ) );
+	core::Real bottom( std::pow( std::pow( r, pore_transition_steepness_) + 1, 2 ) );
+	return -top/bottom;
+}
+
+/// @brief Calculate the location of an atom relative to the pore structure
+core::Real
+MembraneGeometry::g_radius( numeric::xyzVector< core::Real > const & p ) const {
+
+	core::Real pore_center_x( pore_params_->pore_center_x( p.z() ) );
+	core::Real pore_center_y( pore_params_->pore_center_y( p.z() ) );
+	core::Real pore_minor_radius( pore_params_->pore_minor_radius( p.z() ) );
+	core::Real pore_major_radius( pore_params_->pore_major_radius( p.z() ) );
+	numeric::MathMatrix< core::Real > rotation( pore_params_->pore_rotation( p.z() ) );
+
+	core::Real lhs = (std::abs(p.x()-pore_center_x)*rotation(0,0) - std::abs(p.y()-pore_center_y)*rotation(0,1))/pore_major_radius;
+	core::Real rhs = (std::abs(p.x()-pore_center_x)*rotation(1,0) - std::abs(p.y()-pore_center_y)*rotation(0,0))/pore_minor_radius;
+
+	core::Real result = std::pow( lhs, 2 ) + std::pow( rhs, 2 );
+
+	return result;
+}
+
+// Derivative of g_radius with respect to z
+core::Real
+MembraneGeometry::g_radius_gradient_dz( numeric::xyzVector< core::Real > const & p ) const {
+
+	numeric::MathMatrix< core::Real > rotation( pore_params_->pore_rotation( p.z() ) );
+	core::Real c( rotation(0,0) ); //cos_theta
+	core::Real s( rotation(1,0) ); //sin_theta
+
+	core::Real xo( pore_params_->pore_center_x( p.z() ) );
+	core::Real yo( pore_params_->pore_center_y( p.z() ) );
+	core::Real a( pore_params_->pore_major_radius( p.z() ) );
+	core::Real b( pore_params_->pore_minor_radius( p.z() ) );
+
+	core::Real d_theta( pore_params_->pore_rotation_deriv( p.z() ) );
+	core::Real d_xo( pore_params_->pore_center_x_deriv( p.z() ) );
+	core::Real d_yo( pore_params_->pore_center_y_deriv( p.z() ) );
+	core::Real d_a( pore_params_->pore_major_radius_deriv( p.z() ) );
+	core::Real d_b( pore_params_->pore_minor_radius_deriv( p.z() ) );
+
+	core::Real h = (std::abs(p.x()-xo)*c + std::abs(p.y()-yo)*s);
+	core::Real j = (std::abs(p.x()-xo)*s - std::abs(p.y()-yo)*c);
+
+	core::Real dhdz = (((p.x()-xo)/std::abs(p.x()-xo))*(-d_xo * c) + std::abs(p.x() - xo)*(-s)*d_theta) + ( ((p.y()-yo)/std::abs(p.y()-yo))*(-d_yo * s) + std::abs(p.y() - yo)*c*d_theta);
+	core::Real djdz = (((p.x()-xo)/std::abs(p.x()-xo))*(-d_xo * s) + std::abs(p.x() - xo)*c*d_theta) - ( ((p.y()-yo)/std::abs(p.y()-yo))*(-d_yo * c) + std::abs(p.y() - yo)*(-s)*d_theta);
+
+	core::Real dlhs_dz = 2*((h/a)*((dhdz/a) - h*(1/std::pow(a,2))*d_a));
+	core::Real drhs_dz = 2*((j/b)*((djdz/b) - j*(1/std::pow(b,2))*d_b));
+
+	core::Real dgdz = dlhs_dz + drhs_dz;
+
+	return dgdz;
+}
+
+// Derivative of g_radius with respect to x
+core::Real
+MembraneGeometry::g_radius_gradient_dx( numeric::xyzVector< core::Real > const & p ) const {
+
+	core::Real c( pore_params_->pore_rotation( p.z() )(0,0) ); //cos_theta
+	core::Real s( pore_params_->pore_rotation( p.z() )(1,0) ); //sin_theta
+	core::Real ns( pore_params_->pore_rotation( p.z() )(0,1) ); //-sin_theta
+	core::Real xo( pore_params_->pore_center_x( p.z() ) );
+	core::Real yo( pore_params_->pore_center_y( p.z() ) );
+	core::Real a( pore_params_->pore_major_radius( p.z() ) );
+	core::Real b( pore_params_->pore_minor_radius( p.z() ) );
+
+	core::Real dgdx( 2 * ( c/std::pow(a,2) * ( c*std::abs(p.x() - xo) - ns*std::abs(p.y() - yo) ) + s/std::pow(b,2) * ( s*std::abs(p.x() - xo) - c*std::abs(p.y() - yo)) ) );
+
+	return dgdx;
+}
+
+// Derivative of g_radius with respect to y
+core::Real
+MembraneGeometry::g_radius_gradient_dy( numeric::xyzVector< core::Real > const & p ) const {
+
+	core::Real c( pore_params_->pore_rotation( p.z() )(0,0) ); //cos_theta
+	core::Real s( pore_params_->pore_rotation( p.z() )(1,0) ); //sin_theta
+	core::Real ns( pore_params_->pore_rotation( p.z() )(0,1) ); //-sin_theta
+	core::Real xo( pore_params_->pore_center_x( p.z() ) );
+	core::Real yo( pore_params_->pore_center_y( p.z() ) );
+	core::Real a( pore_params_->pore_major_radius( p.z() ) );
+	core::Real b( pore_params_->pore_minor_radius( p.z() ) );
+
+	core::Real dgdy( 2 * ( -ns/std::pow(a,2) * ( c*std::abs(p.x() - xo) - ns*std::abs(p.y() - yo) ) + -c/std::pow(b,2) * ( s*std::abs(p.x() - xo) - c*std::abs(p.y() - yo)) ) );
+
+	return dgdy;
+}
+
+// r_alpha for calculating the derivative of the pore transition function with respect to x
+// See comment for f1 below for description of r_alpha
+core::Vector
+MembraneGeometry::r_alpha_p_x( numeric::xyzVector< core::Real > const & xyz ) const {
+	if ( ! has_pore() ) {
+		core::Vector center = {0.0, 0.0, 0.0};
+		return center;
+	}
+	core::Real pore_center_x( pore_params_->pore_center_x( xyz.z() ) );
+	core::Vector center = { pore_center_x, xyz.y(), xyz.z() };
+	return center;
+}
+
+
+// r_alpha for calculating the derivative of the pore transition function with respect to y
+// See comment for f1 below for description of r_alpha
+core::Vector
+MembraneGeometry::r_alpha_p_y( numeric::xyzVector< core::Real > const & xyz ) const {
+	if ( !has_pore() ) {
+		core::Vector center = {0.0, 0.0, 0.0};
+		return center;
+	}
+	core::Real pore_center_y( pore_params_->pore_center_y( xyz.z() ) );
+	core::Vector center = { xyz.x(), pore_center_y, xyz.z() };
+	return center;
+}
+
+
+// r_alpha for calculating the derivative of the pore transition function with respect to z
+// See comment for f1 below for description of r_alpha
+core::Vector
+MembraneGeometry::r_alpha_p_z( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
+	core::Real z_depth = conf.membrane_info()->atom_z_position( conf, resnum, atomnum );
+	const core::Vector mem_cen = conf.membrane_info()->membrane_center( conf );
+	const core::Vector normal = conf.membrane_info()->membrane_normal( conf );
+	core::Vector const & xyz( conf.residue( resnum ).atom( atomnum ).xyz() );
+	core::Vector proj_i = mem_cen + z_depth * normal;
+	core::Vector i_ip = proj_i - xyz;
+	return ( mem_cen - i_ip );
+}
+// MembraneGeometry::r_alpha_p_z( numeric::xyzVector< core::Real > const & xyz, const core::Vector mem_cen ) const {
+//  core::Vector r_alpha_z = { mem_cen.x(), mem_cen.y(), xyz.z() };
+//  return r_alpha_z;
+// }
+
+
+//Calculate the sum of the x and y portions of f1 vector for the pore
+core::Vector
+MembraneGeometry::f1_pore( core::Real f_thk, numeric::xyzVector< core::Real > const & xyz, Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
+
+	core::Real deriv_x( f_cavity_dx(xyz, f_thk) );
+	core::Vector r_x( r_alpha_p_x( xyz ) );
+	core::Vector f1_x( f1( xyz, r_x, deriv_x) );
+
+	core::Real deriv_y( f_cavity_dy(xyz, f_thk) );
+	core::Vector r_y( r_alpha_p_y( xyz ) );
+	core::Vector f1_y( f1( xyz, r_y, deriv_y) );
+
+	core::Real deriv_z( f_cavity_dz(xyz, f_thk) );
+	core::Vector r_z( r_alpha_p_z( conf, resnum, atomnum ) );
+	core::Vector f1_z( f1( xyz, r_z, deriv_z) );
+
+
+	return f1_x + f1_y + f1_z;
+}
+
+//Calculate the sum of the x and y portions of f2 vector for the pore
+core::Vector
+MembraneGeometry::f2_pore( core::Real f_thk, numeric::xyzVector< core::Real > const & xyz, Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
+
+	core::Real deriv_x( f_cavity_dx(xyz, f_thk) );
+	core::Vector r_x( r_alpha_p_x( xyz ) );
+	core::Vector f2_x( f2( xyz, r_x, deriv_x) );
+
+	core::Real deriv_y( f_cavity_dy(xyz, f_thk) );
+	core::Vector r_y( r_alpha_p_y( xyz ) );
+	core::Vector f2_y( f2( xyz, r_y, deriv_y) );
+
+	core::Real deriv_z( f_cavity_dz(xyz, f_thk) );
+	core::Vector r_z( r_alpha_p_z( conf, resnum, atomnum ) );
+	core::Vector f2_z( f2( xyz, r_z, deriv_z) );
+
+
+	return f2_x + f2_y + f2_z;
+}
 
 /// @brief Effective thickness of the membrane (default = 15)
 core::Real
@@ -203,7 +536,6 @@ MembraneGeometry::membrane_steepness() const {
 	return steepness_;
 }
 
-
 } // membrane
 } // conformation
 } // core
@@ -216,6 +548,8 @@ void
 core::conformation::membrane::MembraneGeometry::save( Archive & arc ) const {
 	arc( CEREAL_NVP( thickness_ ) ); // core::Real
 	arc( CEREAL_NVP( steepness_ ) ); // core::Real
+	arc( CEREAL_NVP( pore_transition_steepness_ ) ); // core::Real
+	arc( CEREAL_NVP( pore_params_ ) ); // core::conformation::membrane::AqueousPoreParametersOP
 }
 
 /// @brief Automatically generated deserialization method
@@ -224,6 +558,8 @@ void
 core::conformation::membrane::MembraneGeometry::load( Archive & arc ) {
 	arc( thickness_ ); // core::Real
 	arc( steepness_ ); // core::Real
+	arc( pore_transition_steepness_ ); // core::Real
+	arc( pore_params_ ); // core::conformation::membrane::AqueousPoreParametersOP
 }
 SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::MembraneGeometry );
 CEREAL_REGISTER_TYPE( core::conformation::membrane::MembraneGeometry )

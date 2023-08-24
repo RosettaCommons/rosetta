@@ -68,7 +68,7 @@ public: // test functions
 		//        using namespace core::import_pose;
 
 		// Initialize core & options system
-		core_init();
+		core_init_with_additional_options( "-mp:lipids:has_pore 0" );
 	}
 
 	/// @brief Tear down the unit test

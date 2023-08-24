@@ -58,8 +58,11 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <numeric/xyzVector.hh>
+#include <basic/Tracer.hh>
 
 // C++ Headers
+
+static basic::Tracer TR( "core.energy_methods.FaMPSolvEnergy" );
 
 namespace core {
 namespace energy_methods {
@@ -477,6 +480,11 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 	core::conformation::Conformation const & conf( pose.conformation() );
 	core::conformation::membrane::MembraneGeometryCOP mp_geometry( conf.membrane_info()->membrane_geometry() );
 
+	if ( conf.membrane_info()->use_franklin() ) {
+		TR.Warning << "Score term optimized with IMM1 membrane transition function, but using franklin transiton funtion!" << std::endl;
+		TR.Warning << "Recommended to run with -mp:restore_lazaridis_imm_behavior true if using mpframework_smooth_fa_2012.wts" << std::endl;
+	}
+
 	// For convenience - grab nres
 	Real nres = pose.size();
 
@@ -764,7 +772,6 @@ FaMPSolvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 			fa_proj_[i][j] = 0.0;
 			fa_f1_[i][j].assign(0.0,0.0,0.0);
 			fa_f2_[i][j].assign(0.0,0.0,0.0);
-
 
 		}
 	}

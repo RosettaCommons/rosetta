@@ -60,15 +60,19 @@ public: // Constructors & Setup
 	/// @details
 	Bicelle( core::Real steepness, core::Real thickness, Conformation const & conf, core::Size membrane_pos );
 
+
 	/// @brief
 	/// @details
 	Bicelle( core::Real steepness, core::Real thickness, core::Real bicelle_inner_radius );
 
+
+	Bicelle( core::Real steepness, core::Real thickness, core::Real bicelle_inner_radius, AqueousPoreParametersOP aqueous_pore );
+
 	/// @brief Destructor
 	~Bicelle() override;
 
-	BicelleOP
-	clone() const;
+	MembraneGeometryOP
+	clone() const override;
 
 	// @brief Generate a string representation of information represented by Bicelle
 	void show() const override;
@@ -119,13 +123,10 @@ private:
 	core::Real h_bicelle( core::Vector xyz, const core::Vector mem_cen ) const;
 
 	//combine h_bicelle and f_imm1
-	core::Real f_bicelle( core::Vector xyz, core::Real z_depth, const core::Vector mem_cen ) const;
+	core::Real f_bicelle( core::Real f_z, core::Vector xyz, const core::Vector mem_cen ) const;
 
 	//derivative of h_bicelle with respect to r
 	core::Real h_bicelle_deriv_wrt_r( core::Vector xyz, const core::Vector mem_cen ) const;
-
-	//derivative of f_bicelle
-	core::Real f_bicelle_deriv( core::Vector xyz, core::Real z_depth, const core::Vector mem_cen ) const;
 
 public:
 

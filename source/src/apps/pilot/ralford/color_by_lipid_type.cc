@@ -21,6 +21,7 @@
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
+#include <core/conformation/membrane/MembraneGeometry.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -69,13 +70,12 @@ public:
 		add_memb->apply( pose );
 
 		ImplicitLipidInfoOP implicit_lipids( pose.conformation().membrane_info()->implicit_lipids() );
+		MembraneGeometryCOP mp_geometry( pose.conformation().membrane_info()->membrane_geometry() );
 
 		// Color rsd by hyd as bfactor
 		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			for ( core::Size jj = 1; jj <= pose.residue( ii ).natoms(); ++jj ) {
-				//core::Real z_n( std::pow( pose.residue(ii).atom( jj ).xyz().z()/15, 10 ) );
-				//core::Real f_of_z( z_n / (1 + z_n ) );
-				core::Real hyd = implicit_lipids->f_hydration( pose.residue( ii ).atom( jj ).xyz() );
+				core::Real hyd = mp_geometry->f_transition( pose.conformation(), ii, jj );
 				pose.pdb_info()->bfactor( ii, jj, hyd );
 			}
 		}

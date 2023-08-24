@@ -18,6 +18,8 @@
 // Core headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneGeometry.hh>
+
 #include <core/conformation/membrane/ImplicitLipidInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/AqueousPoreParameters.hh>
@@ -36,6 +38,7 @@
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <numeric/cubic_polynomial.hh>
+#include <numeric/constants.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -96,8 +99,10 @@ AqueousPoreFinder::find_min_z( utility::vector1< numeric::xyzVector< core::Real 
 
 core::Real
 AqueousPoreFinder::get_rotation_angle( numeric::linear_algebra::EllipseParametersOP ellipse ) const {
-	core::Real a11 = ellipse->rotation()(0,0);
-	return std::acos( a11 );
+
+	core::Real theta = std::atan2( ellipse->rotation()(1,0), ellipse->rotation()(0,0));
+
+	return theta;
 }
 
 numeric::CubicPolynomial
@@ -245,11 +250,12 @@ AqueousPoreFinder::construct_aqueous_pore(
 
 		pore_center_x_values.push_back( ellipse_parameters[ii]->center_h() );
 		pore_center_y_values.push_back( ellipse_parameters[ii]->center_k() );
-		major_radius_values.push_back( ellipse_parameters[ii]->major_radius() );
-		minor_radius_values.push_back( ellipse_parameters[ii]->minor_radius() );
-		rotation_angle_values.push_back( get_rotation_angle( ellipse_parameters[ii] ) );
+		major_radius_values.push_back( ellipse_parameters[ii]->major_radius() + ellipse_radius_buffer); //+ ellipse_radius_buffer added by hw
+		minor_radius_values.push_back( ellipse_parameters[ii]->minor_radius() + ellipse_radius_buffer); //+ ellipse_radius_buffer added by hw
+		rotation_angle_values.push_back( get_rotation_angle( ellipse_parameters[ii] ));
 
 	}
+
 
 	// Generate functions describing motion in the pore center
 	core::Real min_center_x( ellipse_parameters.front()->center_h() );
@@ -289,9 +295,9 @@ AqueousPoreFinder::construct_aqueous_pore(
 		max_z_minor_radius
 		));
 
-	// Generate edge rotation angle parameters
-	core::Real min_z_rotation_angle( get_rotation_angle( ellipse_parameters.front() ) );
-	core::Real max_z_rotation_angle( get_rotation_angle( ellipse_parameters.back() ) );
+
+	core::Real min_z_rotation_angle( rotation_angle_values.front() );
+	core::Real max_z_rotation_angle( rotation_angle_values.back() );
 	piecewise_poly rotation_angle_poly( generate_piecewise_cubic_poly_func(
 		extended_ellipse_locations,
 		rotation_angle_values,
@@ -329,8 +335,10 @@ AqueousPoreFinder::apply( core::pose::Pose & pose ) {
 
 			// Add CA coordinate
 			core::Size CA( 2 );
-			core::Real ca_acc( pose.conformation().membrane_info()->implicit_lipids()->per_atom_lipid_accessibility(ii,CA) );
-			bool ca_in_memb( pose.conformation().membrane_info()->in_membrane( pose.conformation(), ii ) );
+
+			core::Real ca_acc = pose.conformation().membrane_info()->per_atom_lipid_accessibility(ii,CA);
+
+			bool ca_in_memb( pose.conformation().membrane_info()->in_membrane_atom( pose.conformation(), ii, CA ) );
 			if ( ca_acc == 0.0 && ca_in_memb ) {
 				aqueous_coords.push_back( pose.residue( ii ).atom( "CA" ).xyz() );
 			}
@@ -338,8 +346,9 @@ AqueousPoreFinder::apply( core::pose::Pose & pose ) {
 			// Add CB coordinate
 			if ( pose.residue(ii).aa() != core::chemical::AA::aa_gly ) {
 				core::Size CB( pose.residue(ii).first_sidechain_atom() );
-				core::Real cb_acc( pose.conformation().membrane_info()->implicit_lipids()->per_atom_lipid_accessibility(ii,CB) );
-				bool cb_in_memb( pose.conformation().membrane_info()->in_membrane( pose.conformation(), ii ) );
+				core::Real cb_acc = pose.conformation().membrane_info()->per_atom_lipid_accessibility(ii,CB);
+
+				bool cb_in_memb( pose.conformation().membrane_info()->in_membrane_atom( pose.conformation(), ii, CB ) );
 				if ( cb_acc == 0.0 && cb_in_memb ) {
 					aqueous_coords.push_back( pose.residue( ii ).atom( "CB" ).xyz() );
 				}
@@ -347,7 +356,7 @@ AqueousPoreFinder::apply( core::pose::Pose & pose ) {
 		}
 
 		// Sort coordinates into bins
-		core::Real binsize(5);
+		core::Real binsize(2);
 		utility::vector1< utility::vector1< numeric::xyzVector< core::Real > > > sorted_coordinates = distribute_coords_into_bins( aqueous_coords, binsize );
 
 		// Calculate an ellipse for the coordinates in each bin
@@ -363,7 +372,7 @@ AqueousPoreFinder::apply( core::pose::Pose & pose ) {
 				EllipseParametersOP ellipse = minimum_bounding_ellipse( sorted_coordinates[ii], tolerance_ );
 
 				// Widen the ellipse for alpha helical proteins
-				if ( pose.conformation().membrane_info()->implicit_lipids()->is_helical() ) {
+				if ( pose.conformation().membrane_info()->is_helical() ) {
 					ellipse->add_buffer( 3, 3 );
 				}
 
@@ -397,7 +406,15 @@ AqueousPoreFinder::apply( core::pose::Pose & pose ) {
 		TR << "Writing skeleton ellipse layers to an output file" << std::endl;
 		utility::vector1< std::string > temp( utility::string_split( pose.pdb_info()->name(), '/') );
 		std::string tempstr = temp[ temp.size() ].substr(0, temp[ temp.size() ].size()-4 );
-		std::string filename( tempstr + "_" + pose.conformation().membrane_info()->implicit_lipids()->lipid_composition_name() + "_ellipse.dat" );
+
+		std::string filename;
+
+		if ( pose.membrane_info()->implicit_lipids() != nullptr ) {
+			filename = tempstr + "_" + pose.conformation().membrane_info()->implicit_lipids()->lipid_composition_name() + "_ellipse.dat";
+		} else {
+			filename = tempstr + "_ellipse.dat";
+		}
+
 		utility::io::ozstream output( filename );
 
 		// Write header
@@ -420,27 +437,35 @@ AqueousPoreFinder::apply( core::pose::Pose & pose ) {
 			construct_aqueous_pore( z_axis_buffer, ellipse_radius_buffer, ellipse_locations, ellipse_parameters ) );
 
 		// Here is the step where AqueousPoreParameters will be set within ImplicitLipidInfo
-		TR << "Setting aqueous pore parameters in implicit lipid info" << std::endl;
-		pose.conformation().membrane_info()->implicit_lipids()->set_aqueous_pore_parameters( aqueous_pore  );
-		pose.conformation().membrane_info()->implicit_lipids()->has_pore( true );
+		TR << "Setting aqueous pore parameters in membrane geometry" << std::endl;
+
+		update_mp_geo_pore( pose, aqueous_pore );
 
 	} else {
 
-		TR << "Pose has too few TM spans for a pore. Setting an empty pore parameter set in implicit lipid info" << std::endl;
+		TR << "Pose has too few TM spans for a pore." << std::endl;
 
-		// Approximate the minimum bounding ellipse as an extremely small center point
-		utility::vector1< core::Real > empty_boundaries;
-		utility::vector1< CubicPolynomial > empty_poly;
-		AqueousPoreParametersOP aqueous_pore_zero( new AqueousPoreParameters(
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			empty_boundaries, empty_poly, empty_poly, empty_poly, empty_poly, empty_poly ));
-
-		// Set parameters
-		pose.conformation().membrane_info()->implicit_lipids()->set_aqueous_pore_parameters( aqueous_pore_zero  );
-		pose.conformation().membrane_info()->implicit_lipids()->has_pore( false );
 	}
 }
 
+//update aqueous pore in MembraneGeometry
+//have to create a new membrane_geometry since it is const in membrane info
+void
+AqueousPoreFinder::update_mp_geo_pore( core::pose::Pose & pose, core::conformation::membrane::AqueousPoreParametersOP aqueous_pore ) {
+	//Identify membrane geometry
+
+	//current membrane_geometry
+	core::conformation::membrane::MembraneGeometryCOP mp_geometry(pose.conformation().membrane_info()->membrane_geometry() );
+
+	core::conformation::membrane::MembraneGeometryOP mp_geo_new( pose.conformation().membrane_info()->membrane_geometry()->clone() );
+
+	mp_geo_new->set_aqueous_pore_parameters( aqueous_pore );
+
+	core::conformation::membrane::MembraneGeometryCOP cmp_geo_new = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::MembraneGeometry const > (mp_geo_new);
+
+	pose.conformation().membrane_info()->set_membrane_geometry( cmp_geo_new );
+
+}
 
 /// @brief: Return a rotation matrix that results in no rotation
 numeric::MathMatrix< core::Real >

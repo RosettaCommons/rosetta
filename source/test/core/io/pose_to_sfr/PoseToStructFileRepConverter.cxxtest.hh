@@ -127,7 +127,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].chainID, 'C'); // NOTE -- 2 copies of the membrane HETATMs are dumped, apparently.
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].chainID, 'C');
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].chainID, 'C');
-		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].x, 15.0);
+		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].x, 15.3510);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].y, 0.0 );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].z, 0.0 );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].x, 0.0);
@@ -135,7 +135,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].z, 0.0 );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].x, 0.0);
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].y, 0.0 );
-		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].z, 15.0 );
+		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].z, 15.3510 );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][0].element, " H" );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][1].element, " H" );
 		TS_ASSERT_EQUALS(pose_to_sfr.sfr()->chains()[maxchain][2].element, " H" );

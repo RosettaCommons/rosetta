@@ -5,3 +5,4 @@
 -mp:scoring:hbond true 
 -restore_talaris_behavior
 -restore_lazaridis_imm_behavior true
+-has_pore 0

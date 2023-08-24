@@ -162,9 +162,9 @@ AqueousPoreParameters::pore_rotation( core::Real const zcoord ) const {
 
 	MathMatrix< core::Real > rot_matrix( 2, 2 );
 	rot_matrix(0,0) = cos_theta;
+	rot_matrix(1,1) = cos_theta;
 	rot_matrix(0,1) = -sin_theta;
 	rot_matrix(1,0) = sin_theta;
-	rot_matrix(1,1) = cos_theta;
 	return rot_matrix;
 }
 

@@ -586,7 +586,8 @@ sources = {
 	"FaMPEnv",
 	"FaMPSolv",
 	"FaMbsolv",
-	"FaMbenv"
+	"FaMbenv",
+	"FaWaterToBilayer"
   ],
   "scoring/mhc_epitope_energy" : [
 	"MHCEpitopeConstraint",

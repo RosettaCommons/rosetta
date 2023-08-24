@@ -60,11 +60,13 @@ public: // Constructors & Setup
 
 	Vesicle( core::Real steepness, core::Real thickness, core::Real radius );
 
+	Vesicle( core::Real steepness, core::Real thickness, core::Real radius, AqueousPoreParametersOP aqueous_pore );
+
 	/// @brief Destructor
 	~Vesicle() override;
 
-	VesicleOP
-	clone() const;
+	MembraneGeometryOP
+	clone() const override;
 
 	// @brief Generate a string representation of information represented by Bicelle
 	void show() const override;
@@ -80,9 +82,9 @@ public: // Constructors & Setup
 
 protected:
 
-	core::Real f_vesicle( core::Vector xyz ) const;
+	core::Real f_vesicle( Conformation const & conf, core::Vector xyz ) const;
 
-	core::Real f_vesicle_deriv( core:: Vector xyz) const;
+	core::Real f_vesicle_deriv( Conformation const & conf, core:: Vector xyz) const;
 public:
 	//returns the value of the transition function for membrane score functions
 	core::Real f_transition( Conformation const & conf, core::Size resnum, core::Size atomnum ) const override;

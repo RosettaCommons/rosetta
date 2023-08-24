@@ -41,6 +41,7 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -85,6 +86,29 @@ public: // Constructors & Setup
 		SpanningTopologyOP topology,
 		std::string lipid_composition_name,
 		core::Real lipid_composition_temp
+	);
+
+	MembraneInfo(
+		core::Size membrane_pos,
+		core::SSize membrane_jump,
+		core::Real steepness,
+		SpanningTopologyOP topology,
+		std::string lipid_composition_name,
+		core::Real lipid_composition_temp,
+		MP_GEOMETRY_TRANSITION mp_geometry,
+		Conformation const & conf
+	);
+
+	MembraneInfo(
+		core::Size membrane_pos,
+		core::SSize membrane_jump,
+		core::Size membrane_core,
+		core::Real steepness,
+		SpanningTopologyOP topology,
+		std::string lipid_composition_name,
+		core::Real lipid_composition_temp,
+		MP_GEOMETRY_TRANSITION mp_geometry,
+		Conformation const & conf
 	);
 
 	/// @brief Create MembraneInfo from initialized data
@@ -152,6 +176,11 @@ public: // membrane position & orientation
 	/// @brief Is residue in the membrane?
 	bool in_membrane( Conformation const & conf, core::Size resnum ) const;
 
+	/// @brief Is atom in the membrane?
+	bool in_membrane_atom( Conformation const & conf, core::Size resnum, core::ShortSize atomnum ) const;
+
+	bool use_franklin() const;
+
 	/// @brief Compute residue position relative to membrane normal
 	Real
 	residue_z_position( Conformation const & conf, core::Size resnum ) const;
@@ -175,6 +204,10 @@ public: // membrane position & orientation
 	/// @brief Somewhat weak check that a membrane foldtree is valid
 	bool check_membrane_fold_tree( core::kinematics::FoldTree const & ft_in ) const;
 
+	/// @brief Is the protein alpha helical or beta barrel
+	bool is_helical() const;
+	void is_helical( bool const is_helical );
+
 public: // topology of TM spans
 
 	/// @brief Transmembrane spaning topology
@@ -191,6 +224,18 @@ public: // membrane geometry information
 	MembraneGeometryCOP membrane_geometry() const;
 
 	void set_membrane_geometry( MembraneGeometryCOP mem_geo );
+
+
+public: // Lipid Accessibility Information
+
+	/// @brief Per-atom accessibility to membrane lipids (0 = not exposed, 50 = exposed)
+	core::Real
+	per_atom_lipid_accessibility( core::Size rsd, core::Size atom ) const;
+
+	/// @brief Per-atom accessibility to membrane lipids (0 = not exposed, 50 = exposed)
+	void
+	set_per_atom_lipid_accessibility(
+		utility::vector1< utility::vector1< core::Real > > const & v);
 
 
 private: // default constructor
@@ -212,11 +257,17 @@ private: // data
 	// membrane jump position
 	core::SSize membrane_jump_;
 
+	// Is this protein alpha helical or beta barre?
+	bool is_helical_;
+
 	// Spanning Topology information
 	SpanningTopologyOP spanning_topology_;
 
 	// Implicit lipid information
 	ImplicitLipidInfoOP implicit_lipids_;
+
+	// lipid accessibility
+	utility::vector1< utility::vector1< core::Real > > per_atom_lipid_accessibility_;
 
 	//membrane geometry information
 	MembraneGeometryCOP membrane_geometry_;

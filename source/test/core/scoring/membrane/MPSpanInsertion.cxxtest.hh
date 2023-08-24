@@ -130,6 +130,8 @@ public:
 	// @brief test the compute method
 	void test_compute()
 	{
+		core_init_with_additional_options( "-mp:restore_lazaridis_imm_behavior" );
+
 		using namespace core;
 		using namespace core::pose;
 		using namespace core::scoring;

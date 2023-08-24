@@ -221,6 +221,7 @@ private:
 
 	//membrane geometry variables
 	core::conformation::membrane::MP_GEOMETRY_TRANSITION mp_geometry_;
+	bool has_pore_ = false;
 
 };
 

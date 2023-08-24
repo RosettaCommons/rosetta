@@ -2,6 +2,7 @@
 
 -overwrite
 -restore_lazaridis_imm_behavior true
+-has_pore 0
 
 -parser:protocol ./input/fnd.xml
 -in:file:fasta ./input/gpa2.fasta

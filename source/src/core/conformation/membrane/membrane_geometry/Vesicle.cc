@@ -84,10 +84,20 @@ Vesicle::Vesicle(
 	radius_( radius )
 {}
 
+Vesicle::Vesicle(
+	core::Real steepness,
+	core::Real thickness,
+	core::Real radius,
+	AqueousPoreParametersOP aqueous_pore
+) :
+	MembraneGeometry( steepness, thickness, aqueous_pore),
+	radius_( radius )
+{}
+
 /// @brief Destructor
 Vesicle::~Vesicle() {}
 
-VesicleOP Vesicle::clone() const {
+MembraneGeometryOP Vesicle::clone() const {
 	return VesicleOP( new Vesicle( *this ) );
 }
 
@@ -109,7 +119,7 @@ Vesicle::update_radius( ) {
 		set_radius(basic::options::option[ basic::options::OptionKeys::mp::geo::vesicle_radius ]());
 		TR << "Setting vesicle radius from command line option:  " << radius_ << std::endl;
 	} else {
-		TR << "Setting bicelle_inner_radius_ as default 100" << std::endl;
+		TR << "Setting vesicle radius_ as default 100" << std::endl;
 		set_radius( 100 );
 	}
 }
@@ -128,22 +138,19 @@ Vesicle::get_radius() const {
 //xyz is the coordinates in space of the atom of interest
 //n is steepness of hydrophobic -> hydrophillic transition (default = 15)
 core::Real
-Vesicle::f_vesicle( core::Vector xyz ) const {
-	core::Real n = membrane_steepness();
+Vesicle::f_vesicle( Conformation const & conf, core::Vector xyz ) const {
+
 	core::Real center = pow( pow( xyz.x(), 2 ) + pow( xyz.y(), 2 ) + pow( xyz.z()+ radius_ , 2 ), 0.5);
-	core::Real pot = std::abs(radius_-center)/membrane_thickness();
-	core::Real f = pow( pot, n )/(1+pow( pot, n ));
+	core::Real f( f_thickness( conf, std::abs(radius_) - center) );
+
 	return f;
 }
 
 core::Real
-Vesicle::f_vesicle_deriv( core:: Vector xyz) const {
-	core::Real n = membrane_steepness();
+Vesicle::f_vesicle_deriv( Conformation const & conf, core:: Vector xyz) const {
+
 	core::Real center = pow( pow( xyz.x(), 2 ) + pow( xyz.y(), 2 ) + pow( xyz.z()+ radius_ , 2 ), 0.5);
-	core::Real pot = std::abs(radius_-center)/membrane_thickness();
-	core::Real numerator = n*pow(pot, n-1);
-	core::Real denominator = membrane_thickness()*(pow(1 + pow( pot, n ), 2));
-	core::Real df_dc = numerator/denominator;
+	core::Real df_dc( f_thickness_deriv( conf, std::abs(radius_) - center) );
 
 	return df_dc;
 }
@@ -152,13 +159,20 @@ Vesicle::f_vesicle_deriv( core:: Vector xyz) const {
 core::Real
 Vesicle::f_transition( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
-	return f_vesicle( xyz );
+	core::Real f( f_vesicle( conf, xyz ) );
+
+	return f_hydration( f, xyz );
 }
 
 core::Real
 Vesicle::f_transition_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
-	return f_vesicle_deriv( xyz);
+	core::Real f_ves_deriv( f_vesicle_deriv( conf, xyz) );
+	if ( !has_pore() ) {
+		return f_ves_deriv;
+	} else {
+		return f_hydration_deriv_dz( xyz, f_ves_deriv );
+	}
 }
 
 core::Vector
@@ -178,7 +192,17 @@ Vesicle::f_transition_f1( Conformation const & conf, core::Size resnum, core::Si
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
 	core::Real deriv(f_transition_deriv( conf, resnum, atomnum ) );
 	core::Vector r(r_alpha( conf, resnum, atomnum ));
-	return f1( xyz, r, deriv);
+
+	core::Vector f1_vesicle( f1( xyz, r, deriv));
+
+	if ( !has_pore() ) {
+		return f1_vesicle;
+	}
+
+	core::Real f_ves( f_vesicle( conf, xyz ) );
+
+	core::Vector f1_p( f1_pore( f_ves, xyz, conf, resnum, atomnum) );
+	return f1_vesicle + f1_p;
 }
 
 core::Vector
@@ -186,7 +210,17 @@ Vesicle::f_transition_f2( Conformation const & conf, core::Size resnum, core::Si
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
 	core::Real deriv(f_transition_deriv( conf, resnum, atomnum ) );
 	core::Vector r(r_alpha( conf, resnum, atomnum ));
-	return f2( xyz, r, deriv);
+
+	core::Vector f2_vesicle( f2( xyz, r, deriv));
+
+	if ( !has_pore() ) {
+		return f2_vesicle;
+	}
+
+	core::Real f_ves( f_vesicle( conf, xyz ) );
+
+	core::Vector f2_p( f2_pore( f_ves, xyz, conf, resnum, atomnum) );
+	return f2_vesicle + f2_p;
 }
 
 //returning string of name of geometry that was created

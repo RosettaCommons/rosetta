@@ -27,8 +27,8 @@ MEnvAtomParams::MEnvAtomParams() :
 	dGfreeW_( 0.0 ),
 	dGfreeB_( 0.0 ),
 	hyd_( 0.0 ),
-	hyd_deriv_( 0.0 ),
-	memb_coord_( 0.0 )
+	f1_( 0.0 ),
+	f2_( 0.0 )
 {}
 
 MEnvAtomParams::MEnvAtomParams(
@@ -36,15 +36,15 @@ MEnvAtomParams::MEnvAtomParams(
 	core::Real const dGfreeW,
 	core::Real const dGfreeB,
 	core::Real const hyd,
-	core::Real const hyd_deriv,
-	core::Vector const & memb_coord
+	core::Vector const f1,
+	core::Vector const f2
 ) : utility::VirtualBase(),
 	atom_type_name_( atom_type_name ),
 	dGfreeW_( dGfreeW ),
 	dGfreeB_( dGfreeB ),
 	hyd_( hyd ),
-	hyd_deriv_( hyd_deriv ),
-	memb_coord_( memb_coord )
+	f1_( f1 ),
+	f2_( f2 )
 {}
 
 MEnvAtomParams::~MEnvAtomParams() {}
@@ -55,8 +55,8 @@ MEnvAtomParams::MEnvAtomParams( MEnvAtomParams const & src ) :
 	dGfreeW_( src.dGfreeW_ ),
 	dGfreeB_( src.dGfreeB_ ),
 	hyd_( src.hyd_ ),
-	hyd_deriv_( src.hyd_deriv_ ),
-	memb_coord_( src.memb_coord_ )
+	f1_( src.f1_ ),
+	f2_( src.f2_ )
 {}
 
 MEnvAtomParamsOP

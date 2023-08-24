@@ -7,4 +7,5 @@
 -packing:pack_missing_sidechains false 
 -restore_talaris_behavior
 -restore_lazaridis_imm_behavior true
--mp:scoring:hbond true 
+-mp:scoring:hbond true
+-has_pore 0 

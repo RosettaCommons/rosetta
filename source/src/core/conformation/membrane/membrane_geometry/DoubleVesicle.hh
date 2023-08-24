@@ -14,7 +14,7 @@
 ///      and the function to calculate the transition from the hydrophobic
 ///      environment of the bilayer to a hydrophilic environment.
 ///      In membrane coordinates the origin is located at the center of
-///      the outer vesicle membrane.
+///      the inner vesicle membrane.
 ///
 /// @note This object is a member of Conformation and should only be accessed using
 ///            pose.conformation().membrane_geometry().
@@ -60,13 +60,15 @@ public: // Constructors & Setup
 	/// @details
 	DoubleVesicle( core::Real steepness, core::Real thickness );
 
-	DoubleVesicle( core::Real steepness, core::Real thickness, core::Real outer_radius, core::Real distance );
+	DoubleVesicle( core::Real steepness, core::Real thickness, core::Real inner_radius, core::Real distance );
+
+	DoubleVesicle( core::Real steepness, core::Real thickness, core::Real inner_radius, core::Real distance, AqueousPoreParametersOP aqueous_pore);
 
 	/// @brief Destructor
 	~DoubleVesicle() override;
 
-	DoubleVesicleOP
-	clone() const;
+	MembraneGeometryOP
+	clone() const override;
 
 	// @brief Generate a string representation of information represented by Bicelle
 	void show() const override;
@@ -85,10 +87,10 @@ public: // Constructors & Setup
 
 protected:
 	core::Real center( core::Vector xyz ) const;
-	core::Real f_vesicle_membrane( core::Vector xyz, core::Real radius ) const;
-	core::Real f_double_vesicle( core::Vector xyz ) const;
-	core::Real f_deriv( core::Vector xyz, core::Real radius ) const;
-	core::Real f_vesicle_deriv( core::Vector xyz ) const;
+	core::Real f_vesicle_membrane( Conformation const & conf, core::Vector xyz, core::Real radius ) const;
+	core::Real f_double_vesicle( Conformation const & conf, core::Vector xyz ) const;
+	core::Real f_deriv( Conformation const & conf, core::Vector xyz, core::Real radius ) const;
+	core::Real f_vesicle_deriv( Conformation const & conf, core::Vector xyz ) const;
 
 public:
 	//returns the value of the transition function for membrane score functions

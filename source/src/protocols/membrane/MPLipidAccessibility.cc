@@ -168,7 +168,6 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 
 	using namespace core::id;
 	using namespace core::pose;
-
 	// finalize setup
 	finalize_setup( pose );
 
@@ -195,9 +194,12 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 	core::Real minz(0);
 	core::Real maxz(0);
 	if ( pose.membrane_info()->implicit_lipids() != nullptr ) {
+
 		minz = -pose.membrane_info()->implicit_lipids()->water_thickness();
 		maxz = pose.membrane_info()->implicit_lipids()->water_thickness();
+
 	} else {
+
 		minz = -pose.membrane_info()->membrane_thickness();
 		maxz = pose.membrane_info()->membrane_thickness();
 	}
@@ -262,13 +264,9 @@ void MPLipidAccessibility::apply( core::pose::Pose & pose ){
 		} // residues
 	} // slices
 
-	// Set information in the implicit lipid object
-	if ( pose.membrane_info()->implicit_lipids() != nullptr ) {
-		pose.conformation().membrane_info()->implicit_lipids()->set_per_atom_lipid_accessibility( per_atom_accessibility );
-	}
+	pose.conformation().membrane_info()->set_per_atom_lipid_accessibility( per_atom_accessibility );
 
 	TR << "tm alpha? " << tm_alpha_ << " (helical proteins with <= 7 TMs will show up as 'not helical')" << std::endl;
-
 }// apply
 
 ////////////////////////////////////////////////////////////////////////////////

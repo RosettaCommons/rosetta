@@ -146,7 +146,6 @@ FaMPEnvEnergy::eval_atom_derivative(
 	if ( m > rsd1.nheavyatoms() ) return;
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 
-
 	Real cp_weight = 1.0;
 
 	// Initialize f1, f2
@@ -163,11 +162,6 @@ FaMPEnvEnergy::eval_atom_derivative(
 
 	F1 += fa_mbenv_weight_* deriv * cp_weight * f1;
 	F2 += fa_mbenv_weight_ * deriv * cp_weight * f2;
-
-
-
-
-
 }
 
 /// @brief Fa_MbenvEnergy is context independent
@@ -213,6 +207,10 @@ FaMPEnvEnergy::init( pose::Pose & pose ) const {
 	core::conformation::Conformation const & conf( pose.conformation() );
 	core::conformation::membrane::MembraneGeometryCOP mp_geometry( conf.membrane_info()->membrane_geometry() );
 
+	if ( conf.membrane_info()->use_franklin() ) {
+		TR.Warning << "Score term optimized with IMM1 membrane transition function, but using franklin transiton funtion!" << std::endl;
+		TR.Warning << "Recommended to run with -mp:restore_lazaridis_imm_behavior true if using mpframework_smooth_fa_2012.wts" << std::endl;
+	}
 
 	// For convenience - grab nres
 	Real nres = pose.size();
@@ -224,7 +222,6 @@ FaMPEnvEnergy::init( pose::Pose & pose ) const {
 
 			//Compute transition function
 			fa_proj_[i][j] = mp_geometry->f_transition( conf, i, j );
-
 
 			// Compute derivatives
 			fa_f1_[i][j] = mp_geometry->f_transition_f1( conf, i, j );

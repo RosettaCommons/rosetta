@@ -346,6 +346,7 @@ AddMembraneMover::apply( Pose & pose ) {
 		}
 	}
 
+
 	// Step 3: Initialize the membrane Info Object
 	core::Size numjumps = pose.fold_tree().num_jump();
 	if ( restore_lazaridis_IMM1_behavior_ ) {
@@ -367,10 +368,13 @@ AddMembraneMover::apply( Pose & pose ) {
 		MembraneInfoOP mem_info = MembraneInfoOP( new MembraneInfo(
 			static_cast< core::Size >( membrane_pos ),
 			numjumps,
+			membrane_core_,
 			steepness_,
 			topology_,
 			lipid_composition_,
-			temperature_ )
+			temperature_,
+			mp_geometry_,
+			pose.conformation() )
 		);
 		pose.conformation().set_membrane_info( mem_info );
 	}
@@ -400,30 +404,28 @@ AddMembraneMover::apply( Pose & pose ) {
 	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
 
+
+	//Are we calculating a pore? hw
+	if ( !user_override_pore_ && topology_->nspans() >= 4 ) {
+		has_pore_ = true;
+	}
+
 	// IF applicable, setup the pore
-	if ( !restore_lazaridis_IMM1_behavior_ && !user_override_pore_ ) {
-		if ( pose.conformation().membrane_info()->spanning_topology()->nspans() >= 4 ) {
+	if ( has_pore_ ) {
+		// Calculate the per-atom lipid accessibility of the protein (geometry-based)
+		MPLipidAccessibilityOP lipid_acc( new MPLipidAccessibility );
+		core::Real mem_thk( pose.conformation().membrane_info()->membrane_thickness() );
+		core::Real nslices( 3.0 );
+		core::Real slice_width( (mem_thk*2) / nslices );
+		lipid_acc->set_slice_width( slice_width );
+		lipid_acc->apply( pose );
 
-			// Calculate the per-atom lipid accessibility of the protein (geometry-based)
-			MPLipidAccessibilityOP lipid_acc( new MPLipidAccessibility );
-			core::Real implicit_lipid_thk( pose.conformation().membrane_info()->implicit_lipids()->water_thickness() );
-			core::Real nslices( 3.0 );
-			core::Real slice_width( (implicit_lipid_thk*2) / nslices );
-			lipid_acc->set_slice_width( slice_width );
-			lipid_acc->apply( pose );
+		pose.conformation().membrane_info()->is_helical( lipid_acc->is_alpha_helical() );
 
-			pose.conformation().membrane_info()->implicit_lipids()->is_helical( lipid_acc->is_alpha_helical() );
+		// Approximate the pore geoemtry using a minimum bounding ellipse
+		AqueousPoreFinderOP pore_finder( new AqueousPoreFinder );
+		pore_finder->apply( pose );
 
-			// Approximate the pore geoemtry using a minimum bounding ellipse
-			AqueousPoreFinderOP pore_finder( new AqueousPoreFinder );
-			pore_finder->apply( pose );
-
-			pose.conformation().membrane_info()->implicit_lipids()->has_pore( true );
-
-		} else {
-			pose.conformation().membrane_info()->implicit_lipids()->has_pore( false );
-			pose.conformation().membrane_info()->implicit_lipids()->make_no_pore_parameters();
-		}
 	}
 
 

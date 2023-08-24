@@ -58,11 +58,13 @@ public: // Constructors & Setup
 	/// @details
 	Slab( core::Real steepness, core::Real thickness );
 
+	Slab( core::Real steepness, core::Real thickness, AqueousPoreParametersOP aqueous_pore );
+
 	/// @brief Destructor
 	~Slab() override;
 
-	SlabOP
-	clone() const;
+	MembraneGeometryOP
+	clone() const override;
 
 	// @brief Generate a string representation of information represented by Slab
 	void show() const override;

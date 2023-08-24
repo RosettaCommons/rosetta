@@ -43,6 +43,8 @@
 // Hydrogen bonding for membrane proteins - using membrane framework
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneGeometry.hh>
+
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
@@ -1438,7 +1440,7 @@ identify_hbonds_1way_membrane(
 
 			//pba membrane depth dependent correction to the environmental_weight
 			Real environmental_weight(
-				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
+				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, don_rsd.seqpos(), acc_rsd.seqpos(), hatm, aatm, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz()));
 
 			// hydrate/SPaDES protocol for when bond is near water
@@ -1528,9 +1530,8 @@ identify_hbonds_1way_membrane(
 			if ( unweighted_energy >= options.max_hb_energy() ) continue;
 
 			//pba membrane depth dependent weight
-
 			Real environmental_weight(
-				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
+				get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, don_rsd.seqpos(), acc_rsd.seqpos(), hatm, aatm, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz()));
 
 			// hydrate/SPaDES protocol for when bond is near water
@@ -1565,6 +1566,10 @@ get_membrane_depth_dependent_weight(
 	pose::Pose const & pose,
 	int const don_nb,
 	int const acc_nb,
+	int const Hrsd, // proton residue
+	int const Arsd, // acceptor residue
+	int const Hatm, // proton atom
+	int const Aatm, // acceptor atom
 	Vector const & Hxyz, // proton
 	Vector const & Axyz  // acceptor
 )
@@ -1582,6 +1587,7 @@ get_membrane_depth_dependent_weight(
 	Real steepness( 10.0 );
 	Real membrane_core( 15.0 );
 
+	Real fa_proj_H, fa_proj_A;
 
 	if ( pose.conformation().is_membrane() ) {
 
@@ -1591,31 +1597,42 @@ get_membrane_depth_dependent_weight(
 		steepness = pose.conformation().membrane_info()->membrane_steepness();
 		membrane_core = pose.conformation().membrane_info()->membrane_core();
 
+		tr.Debug << "thickness is " << thickness << " membrane_core is " << membrane_core << std::endl;
+
+		core::conformation::Conformation const & conf( pose.conformation() );
+		core::conformation::membrane::MembraneGeometryCOP mp_geometry( conf.membrane_info()->membrane_geometry() );
+
+		fa_proj_H = mp_geometry->f_transition( conf, Hrsd, Hatm );
+		fa_proj_A = mp_geometry->f_transition( conf, Arsd, Aatm );
+
 	} else {
 
 		normal = MembraneEmbed_from_pose( pose ).normal();
 		center = MembraneEmbed_from_pose( pose ).center();
 		thickness = Membrane_FAEmbed_from_pose( pose ).thickness();
 		steepness = Membrane_FAEmbed_from_pose( pose ).steepness();
+
+
+		tr.Debug << "thickness is " << thickness << " membrane_core is " << membrane_core << std::endl;
+
+		// Hdonor depth
+		Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position
+		Real internal_product = std::abs(fa_depth_H);
+		Real z = internal_product;
+		z /= membrane_core;
+		Real zn = std::pow( z, steepness );
+		fa_proj_H = zn/(1 + zn);
+
+
+		// Acc depth
+		Real fa_depth_A = dot(Axyz-center, normal);
+		internal_product = std::abs(fa_depth_A);
+		z = internal_product;
+		z /= membrane_core;
+		zn = std::pow( z, steepness );
+		fa_proj_A = zn/(1 + zn);
+
 	}
-
-	tr.Debug << "thickness is " << thickness << " membrane_core is " << membrane_core << std::endl;
-
-	// Hdonor depth
-	Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position
-	Real internal_product = std::abs(fa_depth_H);
-	Real z = internal_product;
-	z /= membrane_core;
-	Real zn = std::pow( z, steepness );
-	Real fa_proj_H = zn/(1 + zn);
-
-	// Acc depth
-	Real fa_depth_A = dot(Axyz-center, normal);
-	internal_product = std::abs(fa_depth_A);
-	z = internal_product;
-	z /= membrane_core;
-	zn = std::pow( z, steepness );
-	Real fa_proj_A = zn/(1 + zn);
 
 	Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
 	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
@@ -1635,6 +1652,7 @@ get_membrane_depth_dependent_weight(
 	Vector const & Axyz  // acceptor
 )
 {
+
 	Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
 
 	// water phase smooth_hb_env_dep

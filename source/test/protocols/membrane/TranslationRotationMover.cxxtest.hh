@@ -110,7 +110,7 @@ public:
 		// check positions of new center and normal
 		Vector new_center ( 0, 0, 0 );
 		Vector new_normal ( 0, 0, 1 );
-		Real new_thickness ( 15 );
+		Real new_thickness ( 15.3510 );
 
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
@@ -153,7 +153,7 @@ public:
 		// check that membrane didn't move
 		Vector m_center ( 0, 0, 0 );
 		Vector m_normal ( 0, 0, 1 );
-		Real m_thickness ( 15 );
+		Real m_thickness ( 15.3510 );
 
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );

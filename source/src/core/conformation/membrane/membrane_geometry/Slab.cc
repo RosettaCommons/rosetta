@@ -69,10 +69,18 @@ Slab::Slab(
 {}
 
 
+Slab::Slab(
+	core::Real steepness,
+	core::Real thickness,
+	AqueousPoreParametersOP aqueous_pore
+) :
+	MembraneGeometry( steepness, thickness, aqueous_pore )
+{}
+
 /// @brief Destructor
 Slab::~Slab() {}
 
-SlabOP Slab::clone() const {
+MembraneGeometryOP Slab::clone() const {
 	return SlabOP( new Slab( *this ) );
 }
 
@@ -95,15 +103,28 @@ Slab::show( std::ostream & output ) const {
 //returns the value of the transition function for membrane score functions
 core::Real
 Slab::f_transition( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
-	core::Real z_depth = conf.membrane_info()->atom_z_position( conf, resnum, atomnum );
-	return f_imm1( z_depth );
+	Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
+
+	core::Real f_thk( f_thickness( conf, xyz.z()) );
+	return f_hydration( f_thk, xyz );
+
 }
 
 core::Real
 Slab::f_transition_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
-	core::Real z_depth = conf.membrane_info()->atom_z_position( conf, resnum, atomnum );
-	return f_imm1_deriv( z_depth );
+
+	Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
+
+	core::Real f_thk_deriv_dz( f_thickness_deriv( conf, xyz.z() ) );
+
+	if ( !has_pore() ) {
+		return f_thk_deriv_dz;
+	} else {
+		return f_hydration_deriv_dz( xyz, f_thk_deriv_dz );
+	}
+
 }
+
 
 core::Vector
 Slab::r_alpha( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
@@ -133,7 +154,16 @@ Slab::f_transition_f1( Conformation const & conf, core::Size resnum, core::Size 
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
 	core::Real deriv(f_transition_deriv( conf, resnum, atomnum ) );
 	core::Vector r(r_alpha( conf, resnum, atomnum ));
-	return f1( xyz, r, deriv);
+	core::Vector f1_z( f1( xyz, r, deriv));
+
+	if ( !has_pore() ) {
+		return f1_z;
+	}
+
+	core::Real f_thk( f_thickness( conf, xyz.z()) );
+	core::Vector f1_p( f1_pore( f_thk, xyz, conf, resnum, atomnum) );
+
+	return f1_z + f1_p;
 }
 
 core::Vector
@@ -141,9 +171,15 @@ Slab::f_transition_f2( Conformation const & conf, core::Size resnum, core::Size 
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
 	core::Real deriv(f_transition_deriv( conf, resnum, atomnum ) );
 	core::Vector r(r_alpha( conf, resnum, atomnum ));
-	return f2( xyz, r, deriv);
-}
+	core::Vector f2_z( f2( xyz, r, deriv));
+	if ( !has_pore() ) {
+		return f2_z;
+	}
+	core::Real f_thk( f_thickness( conf, xyz.z()) );
+	core::Vector f2_p( f2_pore( f_thk, xyz, conf, resnum, atomnum) );
 
+	return f2_z + f2_p;
+}
 
 
 //returning string of name of geometry that was created

@@ -63,7 +63,7 @@ public: // test functions
 		using namespace core::pose;
 
 		// Initialize core & options system
-		core_init();
+		core_init_with_additional_options( "-mp:restore_lazaridis_imm_behavior true" );
 
 		// Load in pose from pdb
 		pose_ = utility::pointer::make_shared< Pose >();

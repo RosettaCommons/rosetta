@@ -13,7 +13,6 @@
 /// @details This suite is for the FaMPSolv energy term.
 ///      It includes a test to make sure the analytical
 ///      and numeric derivatives are equal.
-///    Last Modified: 5/25/2021
 ///
 /// @author  Hope Woods (hope.woods@vanderbilt.edu)
 
@@ -92,6 +91,61 @@ public: // test functions
 		movemap.set_bb( true );
 		AtomDerivValidator adv( *pose, sfxn, movemap );
 		adv.simple_deriv_check( true, 1e-4);
+
+	}
+
+	void test_fampsolvenergy_deriv_1py6_pore() {
+		using namespace core::scoring;
+		using namespace core::import_pose;
+		using namespace core::pose;
+
+		// Load in pose from pdb
+		core::pose::PoseOP pose = utility::pointer::make_shared< Pose >();
+		TR << "initialize pose" << std::endl;
+		core::import_pose::pose_from_file( *pose, "core/conformation/membrane/1PY6_mp_coords.pdb", core::import_pose::PDB_file);
+		TR << "pose from file" << std::endl;
+
+		// Initialize Spans from spanfile
+		std::string span = "core/conformation/membrane/1PY6.span";
+
+		AddMembraneMoverOP add_memb( new AddMembraneMover( span ));
+
+		add_memb->apply( *pose );
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( FaMPSolv, 0.3 );
+		core::kinematics::MoveMap movemap;
+		movemap.set_bb( true );
+		AtomDerivValidator adv( *pose, sfxn, movemap );
+		adv.simple_deriv_check( true, 1e-3);
+
+	}
+
+
+	void test_fampsolvenergy_bicelle_deriv() {
+		core_init_with_additional_options( "-mp:restore_lazaridis_imm_behavior -mp:geometry bicelle -mp:geo:bicelle_radius 70 -has_pore 0" );
+
+		using namespace core::scoring;
+		using namespace core::import_pose;
+		using namespace core::pose;
+
+		// Load in pose from pdb
+		core::pose::PoseOP pose = utility::pointer::make_shared< Pose >();
+		TR << "initialize pose" << std::endl;
+		core::import_pose::pose_from_file( *pose, "core/conformation/membrane/1AFO_AB.pdb", core::import_pose::PDB_file);
+		TR << "pose from file" << std::endl;
+
+		// Initialize Spans from spanfile
+		std::string span = "core/conformation/membrane/1AFO_AB.span";
+
+		AddMembraneMoverOP add_memb( new AddMembraneMover( span ));
+
+		add_memb->apply( *pose );
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( FaMPSolv, 0.3 );
+		core::kinematics::MoveMap movemap;
+		movemap.set_bb( true );
+		AtomDerivValidator adv( *pose, sfxn, movemap );
+		adv.simple_deriv_check( true, 1e-6);
 
 	}
 

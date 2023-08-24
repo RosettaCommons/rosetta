@@ -6,6 +6,8 @@
 -mp:setup:spanfiles inputs/1afo_tr.span
 -mp:scoring:hbond
 -restore_talaris_behavior
+-restore_lazaridis_imm_behavior 1
+-has_pore 0
 
 # Symmetry Options
 -symmetry:symmetry_definition inputs/1afo_tr.c2.symm  # Symmetry Definition file

@@ -96,7 +96,7 @@ public:
 		// membrane default that are not moved, output in PDB
 		Vector m_center ( 0, 0, 0 );
 		Vector m_normal ( 0, 0, 1 );
-		Real m_thickness( 15 );
+		Real m_thickness( 15.3510 );
 
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
@@ -142,7 +142,7 @@ public:
 		// membrane default that are not moved, output in PDB
 		Vector m_center ( 0, 0, 0 );
 		Vector m_normal ( 0, 0, 1 );
-		Real m_thickness( 15 );
+		Real m_thickness( 15.3510 );
 
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( current_emb ) );
@@ -178,7 +178,7 @@ public:
 		// set new membrane to transform pose into
 		Vector m_center (20, 20, 20);
 		Vector m_normal (1, 0, 0);
-		Real m_thickness( 15 );
+		Real m_thickness( 15.3510 );
 
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( m_center, m_normal ) );
@@ -219,7 +219,7 @@ public:
 		// set new membrane to transform pose into
 		Vector m_center (20, 20, 20);
 		Vector m_normal (1, 0, 0);
-		Real m_thickness( 15 );
+		Real m_thickness( 15.3510 );
 
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( current_emb, m_center, m_normal ) );
