@@ -119,7 +119,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
         with FileLock(f'{git_release_path}/.{git_repository_name}.release.lock'):
 
-            if not os.path.isdir(git_origin): execute('Origin git repository is not present, initializing...', 'git init --bare {git_origin} && cd {git_origin} && git update-server-info'.format(**vars()) )
+            if not os.path.isdir(git_origin): execute('Origin git repository is not present, initializing...', '( git init --initial-branch master --bare {git_origin} || git init --bare {git_origin} ) && cd {git_origin} && git update-server-info'.format(**vars()) )
 
             execute('Clonning origin...', 'cd {working_dir} && git clone {git_origin}'.format(**vars()))
 
@@ -770,18 +770,24 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             if not os.path.isdir(conda_release_path): os.makedirs(conda_release_path)
 
             with FileLock( '{conda_release_path}/.{os}.python{python_version}.release.lock'.format(os=platform['os'], python_version=platform['python'].replace('.', ''), **vars()) ):
+                working_dir_release_path = f'{working_dir}/conda-release'
+                os.makedirs(working_dir_release_path)
 
-                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir} --output-folder {conda_release_path}' # --channel conda-forge
+                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir} --output-folder {working_dir_release_path}' # --channel conda-forge
                 conda_package_output = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True)
 
                 m = re_module.search(r"pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE)
                 conda_package = m.group(0) if m else 'unknown'
+                conda_package_dir = re_module.search(r"/([^/]*)/pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE).group(1)
 
                 TR(f'Building Conda package: {conda_package}...')
                 res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
 
                 results[_LogKey_]  += f'Got package name from conda build command line `{conda_build_command_line}` : {conda_package}\n' + conda_log
                 with open(working_dir+'/conda-build-log.txt', 'w') as f: f.write( to_unicode(conda_log) )
+
+                if not os.path.isdir(f'{conda_release_path}/{conda_package_dir}'): os.makedirs(f'{conda_release_path}/{conda_package_dir}')
+                shutil.move(f'{working_dir_release_path}/{conda_package_dir}/{conda_package}', f'{conda_release_path}/{conda_package_dir}/{conda_package}')
 
             if res:
                 results[_StateKey_] = _S_script_failed_
@@ -796,7 +802,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
 
             if not debug:
-                for d in [conda.root, package_dir]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
+                for d in [conda.root, package_dir, working_dir_release_path]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
 
             # res_code = _S_passed_
             # results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
