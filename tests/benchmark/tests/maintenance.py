@@ -23,7 +23,7 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
     memory = config['memory']
     jobs = config['cpu_count']
     mode = 'release'
-    doc_dir = os.path.join( rosetta_dir, '/documentation/' )
+    doc_dir = os.path.join( rosetta_dir, 'documentation/' )
     results = {}
 
     TR = Tracer(verbose)
