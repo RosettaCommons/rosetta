@@ -1287,6 +1287,8 @@ testinputfiles = [
 	"scoring/membrane/4O79_A.pdb",
 	"scoring/membrane/4O79_A.span",
 	"scoring/membrane/4O79_A.embed",
+	"scoring/membrane/2KSF_tr.pdb",
+	"scoring/membrane/2KSF_tr.span",
 	"scoring/aa_composition_energy/aliphatic_not_pro.comp",
 	"scoring/aa_composition_energy/complex_booleans.comp",
 	"scoring/aa_composition_energy/exactly_three_transACPC.comp",

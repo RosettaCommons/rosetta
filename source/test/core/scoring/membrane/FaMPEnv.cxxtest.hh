@@ -68,7 +68,7 @@ public: // test functions
 	// Test Methods ////////////////////////////////
 
 
-	void test_fampenvenergy_deriv_1py6_pore() {
+	void test_fampenvenergy_deriv_pore() {
 		using namespace core::scoring;
 		using namespace core::import_pose;
 		using namespace core::pose;
@@ -76,11 +76,11 @@ public: // test functions
 		// Load in pose from pdb
 		core::pose::PoseOP pose = utility::pointer::make_shared< Pose >();
 		TR << "initialize pose" << std::endl;
-		core::import_pose::pose_from_file( *pose, "core/conformation/membrane/1PY6_mp_coords.pdb", core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( *pose, "core/scoring/membrane/2KSF_tr.pdb", core::import_pose::PDB_file);
 		TR << "pose from file" << std::endl;
 
 		// Initialize Spans from spanfile
-		std::string span = "core/conformation/membrane/1PY6.span";
+		std::string span = "core/scoring/membrane/2KSF_tr.span";
 
 		AddMembraneMoverOP add_memb( new AddMembraneMover( span ));
 
