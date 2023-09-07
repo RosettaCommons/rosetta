@@ -107,9 +107,7 @@ def get_protocols_list_of_str(
                     if "decoy_name" in scorefile_entry["metadata"]:
                         if scorefile_entry["metadata"]["decoy_name"] == decoy_name:
                             if "protocols" in scorefile_entry["metadata"]:
-                                protocols_list_of_str = scorefile_entry["metadata"][
-                                    "protocols"
-                                ]
+                                protocols_list_of_str = scorefile_entry["metadata"]["protocols"]
                                 break
                             else:
                                 raise KeyError(
@@ -210,8 +208,9 @@ def to_iterable(obj: Any, func: Callable[..., Any], attr: str) -> List[Any]:
 
 @to_iterable.register(Pose)
 @to_iterable.register(PackedPose)
-def _catch_pose(
-    obj: Union[Pose, PackedPose], func: Callable[..., Any], attr: str
+@to_iterable.register(dict)
+def _catch_pose_or_kwargs(
+    obj: Union[Pose, PackedPose, Dict[Any, Any]], func: Callable[..., Any], attr: str
 ) -> List[Any]:
     return [func(obj, attr)]
 
@@ -239,7 +238,7 @@ def to_packed(obj: Any, protocol_name: str) -> NoReturn:
     """Parse a single result from the user-provided PyRosetta protocol."""
 
     logging.error(
-        f"{protocol_name} did not return objects of type `Pose` or `PackedPose`!"
+        f"{protocol_name} did not return objects of type `NoneType`, `Pose`, `PackedPose`, or `dict`!"
     )
     raise OutputError(obj)
 
@@ -250,7 +249,8 @@ def _to_packed(obj: Pose, protocol_name: str) -> PackedPose:
 
 
 @to_packed.register(PackedPose)
-def _is_packed(obj: PackedPose, protocol_name: str) -> PackedPose:
+@to_packed.register(dict)
+def _is_packed_or_kwargs(obj: Union[PackedPose, Dict[Any, Any]], protocol_name: str) -> PackedPose:
     return obj
 
 
@@ -361,7 +361,8 @@ def _parse_iterable(
     out = []
     for obj in objs:
         packed = to_packed(obj, protocol_name)
-        packed.scores = toolz.dicttoolz.merge(_scores_dict, packed.scores)
+        if isinstance(packed, PackedPose):
+            packed.scores = toolz.dicttoolz.merge(_scores_dict, packed.scores)
         out.append(packed)
     return out
 
@@ -431,3 +432,15 @@ def _parse_dict(obj: Dict[Any, Any]) -> Dict[Any, Any]:
 @parse_instance_kwargs.register(type(None))
 def _default_none(obj: None) -> Dict[Any, Any]:
     return {}
+
+
+def is_bytes(obj: Any) -> bool:
+    return isinstance(obj, bytes)
+
+
+def is_packed(obj: Any) -> bool:
+    return isinstance(obj, PackedPose)
+
+
+def is_dict(obj: Any) -> bool:
+    return isinstance(obj, dict)

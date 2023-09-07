@@ -11,15 +11,13 @@ __email__ = "klima.jason@gmail.com"
 
 try:
     import billiard
-    import cloudpickle
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.multiprocessing' requires the "
-        + "third-party packages 'billiard' and 'cloudpickle' as dependencies!\n"
-        + "Please install these packages into your python environment. "
+        + "third-party package 'billiard' as a dependency!\n"
+        + "Please install the package into your python environment. "
         + "For installation instructions, visit:\n"
         + "https://pypi.org/project/billiard/\n"
-        + "https://pypi.org/project/cloudpickle/\n"
     )
     raise
 
@@ -27,7 +25,6 @@ import tempfile
 
 from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.cluster.base import (
-    _get_packed_pose_kwargs_pairs_list,
     _get_residue_type_set,
     capture_task_metadata,
 )
@@ -41,7 +38,9 @@ from pyrosetta.distributed.cluster.exceptions import (
     trace_subprocess_exceptions,
 )
 from pyrosetta.distributed.cluster.logging_support import setup_target_logging
+from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.validators import _validate_residue_type_sets
+
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     AbstractSet,
@@ -49,6 +48,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Optional,
     Tuple,
     TypeVar,
     Union,
@@ -57,16 +57,20 @@ from typing import (
 
 Q = TypeVar("Q", bound=billiard.Queue)
 P = TypeVar("P", bound=billiard.context.Process)
+S = TypeVar("S", bound=Serialization)
 
 
 @trace_protocol_exceptions
 def user_protocol(
-    pose: PackedPose, protocol: Callable[..., Any], ignore_errors: bool, **kwargs: Any
+    packed_pose: PackedPose,
+    protocol: Callable[..., Any],
+    ignore_errors: bool,
+    **kwargs: Dict[Any, Any],
 ) -> Any:
     """Run the user-provided PyRosetta protocol."""
-
-    with tempfile.TemporaryDirectory():
-        result = protocol(pose, **kwargs)
+    with tempfile.TemporaryDirectory() as tmp_path:
+        kwargs["PyRosettaCluster_tmp_path"] = tmp_path
+        result = protocol(packed_pose, **kwargs)
 
     return result
 
@@ -74,16 +78,18 @@ def user_protocol(
 @capture_task_metadata
 def run_protocol(
     protocol: Callable[..., Any],
-    pose: PackedPose,
+    packed_pose: PackedPose,
     DATETIME_FORMAT: str,
     ignore_errors: bool,
-    **kwargs: Any,
-) -> List[Union[PackedPose, bytes]]:
+    protocols_key: str,
+    decoy_ids: List[int],
+    serializer: S,
+    **kwargs: Dict[Any, Any],
+) -> List[Tuple[bytes, bytes]]:
     """Parse the user-provided PyRosetta protocol results."""
 
-    result = user_protocol(pose, protocol, ignore_errors, **kwargs)
-    results = _parse_protocol_results(result, protocol.__name__)
-    results.append(cloudpickle.dumps(kwargs))
+    result = user_protocol(packed_pose, protocol, ignore_errors, **kwargs)
+    results = _parse_protocol_results(result, kwargs, protocol.__name__, protocols_key, decoy_ids, serializer)
 
     return results
 
@@ -92,11 +98,11 @@ def run_protocol(
 def get_target_results_kwargs(
     q: Q,
     p: P,
-    kwargs: Dict[Any, Any],
+    compressed_kwargs: bytes,
     protocol_name: str,
     timeout: Union[float, int],
     ignore_errors: bool,
-) -> Tuple[List[PackedPose], Dict[Any, Any]]:
+) -> List[Tuple[Optional[bytes], bytes]]:
     """Get and parse the billiard subprocess results."""
 
     if p.is_alive():
@@ -104,25 +110,35 @@ def get_target_results_kwargs(
             [obj for obj in iter(q.get(block=True, timeout=timeout))]
         )
     else:
-        return _parse_empty_queue(protocol_name), kwargs
+        return [
+            (_parse_empty_queue(protocol_name, ignore_errors), compressed_kwargs),
+        ]
 
 
 @setup_target_logging
 @requires_init
 def target(
     protocol: Callable[..., Any],
-    pose: PackedPose,
+    compressed_packed_pose: bytes,
+    compressed_kwargs: bytes,
     q: Q,
     logging_file: str,
     logging_level: str,
     DATETIME_FORMAT: str,
     ignore_errors: bool,
+    protocols_key: str,
+    decoy_ids: List[int],
+    compression: Optional[Union[str, bool]],
     master_residue_type_set: AbstractSet[str],
-    **kwargs: Any,
+    **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
-
-    results = run_protocol(protocol, pose, DATETIME_FORMAT, ignore_errors, **kwargs,)
+    serializer = Serialization(compression=compression)
+    packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
+    kwargs = serializer.decompress_kwargs(compressed_kwargs)
+    results = run_protocol(
+        protocol, packed_pose, DATETIME_FORMAT, ignore_errors, protocols_key, decoy_ids, serializer, **kwargs
+    )
     _validate_residue_type_sets(
         _get_residue_type_set(), master_residue_type_set,
     )
@@ -131,8 +147,9 @@ def target(
 
 def user_spawn_thread(
     protocol: Callable[..., Any],
-    pose: PackedPose,
-    kwargs: Dict[Any, Any],
+    compressed_packed_pose: bytes,
+    compressed_kwargs: bytes,
+    pyrosetta_init_kwargs: Dict[str, Any],
     decoy_ids: List[int],
     protocols_key: str,
     timeout: Union[float, int],
@@ -140,8 +157,9 @@ def user_spawn_thread(
     logging_file: str,
     logging_level: str,
     DATETIME_FORMAT: str,
+    compression: Optional[Union[str, bool]],
     master_residue_type_set: AbstractSet[str],
-) -> List[Tuple[PackedPose, Dict[Any, Any]]]:
+) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
 
     q = billiard.Queue()
@@ -149,22 +167,24 @@ def user_spawn_thread(
         target=target,
         args=(
             protocol,
-            pose,
+            compressed_packed_pose,
+            compressed_kwargs,
             q,
             logging_file,
             logging_level,
             DATETIME_FORMAT,
             ignore_errors,
+            protocols_key,
+            decoy_ids,
+            compression,
             master_residue_type_set,
         ),
-        kwargs=kwargs,
+        kwargs=pyrosetta_init_kwargs,
     )
     p.start()
-    results, kwargs = get_target_results_kwargs(
-        q, p, kwargs, protocol.__name__, timeout, ignore_errors
+    results = get_target_results_kwargs(
+        q, p, compressed_kwargs, protocol.__name__, timeout, ignore_errors
     )
     p.join()
 
-    return _get_packed_pose_kwargs_pairs_list(
-        results, kwargs, protocol.__name__, protocols_key, decoy_ids
-    )
+    return results

@@ -70,9 +70,9 @@ class OutputError(TypeError):
     def __init__(self, obj: Any) -> NoReturn:
         super().__init__(
             " ".join(
-                "Returned object(s) should be an instance of `Pose` or `PackedPose`, \
-                an iterable containing `Pose` or `PackedPose` objects. The output object \
-                obtained was `{0}` of type `{1}`.".format(
+                "Returned object(s) should be an instance of `NoneType`, `Pose`, `PackedPose`, or `dict`; or \
+                an iterable containing `NoneType`, `Pose`, or `PackedPose` objects, and optionally one object of type `dict`. \
+                The output object obtained was `{0}` of type `{1}`.".format(
                     obj, type(obj)
                 ).split()
             )
@@ -88,8 +88,8 @@ class WorkerError(WorkerLostError):
     @staticmethod
     def _msg(protocol_name: str) -> str:
         return (
-            "\nWorker thread killed due to an error or segmentation fault encountered "
-            + f"in the user-provided PyRosetta protocol '{protocol_name}'. "
+            "Worker thread killed due to an error or segmentation fault encountered "
+            + f"in the user-provided PyRosetta protocol '{protocol_name}'."
         )
 
     @staticmethod
@@ -111,10 +111,10 @@ def trace_protocol_exceptions(func: T) -> Union[T, NoReturn]:
     """Trace exceptions in user-provided PyRosetta protocols."""
 
     @wraps(func)
-    def wrapper(pose, protocol, ignore_errors, **kwargs):
+    def wrapper(compressed_packed_pose, protocol, ignore_errors, **kwargs):
         protocol_name = protocol.__name__
         try:
-            result = func(pose, protocol, ignore_errors, **kwargs)
+            result = func(compressed_packed_pose, protocol, ignore_errors, **kwargs)
         except:
             logging.error(
                 traceback.format_exc()
@@ -134,24 +134,24 @@ def trace_subprocess_exceptions(func: T) -> Union[T, NoReturn]:
     """Trace exceptions in billiard subprocesses."""
 
     @wraps(func)
-    def wrapper(q, p, kwargs, protocol_name, timeout, ignore_errors):
+    def wrapper(q, p, compressed_kwargs, protocol_name, timeout, ignore_errors):
         while True:
             try:
-                _results, _kwargs = func(
-                    q, p, kwargs, protocol_name, timeout, ignore_errors
+                _results = func(
+                    q, p, compressed_kwargs, protocol_name, timeout, ignore_errors
                 )
                 break
             except Empty:
                 if not p.is_alive():
                     if ignore_errors:
                         logging.error(WorkerError._ignore_errors_msg(protocol_name))
-                        _results, _kwargs = func(
-                            q, p, kwargs, protocol_name, timeout, ignore_errors
+                        _results = func(
+                            q, p, compressed_kwargs, protocol_name, timeout, ignore_errors
                         )
                         break
                     else:
                         raise WorkerError(protocol_name)
 
-        return _results, _kwargs
+        return _results
 
     return cast(T, wrapper)

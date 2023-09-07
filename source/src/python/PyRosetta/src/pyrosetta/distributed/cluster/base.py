@@ -9,8 +9,18 @@
 __author__ = "Jason C. Klima"
 __email__ = "klima.jason@gmail.com"
 
-import copy
-import logging
+try:
+    import toolz
+except ImportError:
+    print(
+        "Importing 'pyrosetta.distributed.cluster.base' requires the "
+        + "third-party package 'toolz' as a dependency!\n"
+        + "Please install this package into your python environment. "
+        + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/toolz/\n"
+    )
+    raise
+
 import pyrosetta
 import pyrosetta.distributed
 
@@ -72,31 +82,44 @@ class TaskBase(Generic[G]):
         self,
         protocols: List[Callable[..., Any]],
         seed: Optional[str],
-        kwargs: Dict[Any, Any],
-    ) -> Dict[str, Union[Dict[Any, Any], List[Callable[..., Any]], str]]:
+        task: Dict[Any, Any],
+    ) -> Tuple[bytes, Dict[str, Any]]:
         """Setup the kwargs for the initial task."""
 
-        return {
+        kwargs = {
             self.protocols_key: protocols.copy(),
+            "PyRosettaCluster_output_path": self.output_path,
             "PyRosettaCluster_logging_file": self.logging_file,
-            "PyRosettaCluster_task": copy.deepcopy(kwargs),
-            **self._setup_seed(copy.deepcopy(kwargs), seed),
+            "PyRosettaCluster_task": self.serializer.deepcopy_kwargs(task),
+            **self._setup_seed(self.serializer.deepcopy_kwargs(task), seed),
         }
+        pyrosetta_init_kwargs = self._setup_pyrosetta_init_kwargs(kwargs)
+        compressed_kwargs = self.serializer.compress_kwargs(kwargs)
+
+        return compressed_kwargs, pyrosetta_init_kwargs
+
+    def _setup_pyrosetta_init_kwargs(self, kwargs: Dict[Any, Any]) -> Dict[str, Any]:
+        pyrosetta_init_kwargs = toolz.dicttoolz.keyfilter(
+            lambda k: k in self.pyrosetta_init_args,
+            kwargs,
+        )
+
+        return pyrosetta_init_kwargs
 
     def _setup_kwargs(
         self, kwargs: Dict[Any, Any]
-    ) -> Tuple[Dict[Any, Any], Callable[..., Any]]:
+    ) -> Tuple[bytes, Dict[str, Any], Callable[..., Any]]:
         """Setup the kwargs for the subsequent tasks."""
 
         _protocols, protocol, seed = self._get_task_state(kwargs[self.protocols_key])
         kwargs[self.protocols_key] = _protocols
         kwargs = self._setup_seed(kwargs, seed)
+        pyrosetta_init_kwargs = self._setup_pyrosetta_init_kwargs(kwargs)
+        compressed_kwargs = self.serializer.compress_kwargs(kwargs)
 
-        return kwargs, protocol
+        return compressed_kwargs, pyrosetta_init_kwargs, protocol
 
-    def _setup_seed(
-        self, kwargs: Dict[Any, Any], seed: Optional[str]
-    ) -> Dict[Any, Any]:
+    def _setup_seed(self, kwargs: Dict[Any, Any], seed: Optional[str]) -> Dict[Any, Any]:
         """
         Setup the 'options' or 'extra_options' task kwargs with the `-run:jran`
         PyRosetta command line flag.
@@ -134,55 +157,19 @@ class TaskBase(Generic[G]):
         )
 
 
-def _get_decoy_id(protocols: Sized, decoy_ids: List[int]) -> Optional[int]:
-    """Get the decoy number given the user-provided PyRosetta protocols."""
-
-    if decoy_ids:
-        decoy_id_index = (len(decoy_ids) - len(protocols)) - 1
-        decoy_id = decoy_ids[decoy_id_index]
-    else:
-        decoy_id = None
-
-    return decoy_id
-
-
-def _get_packed_pose_kwargs_pairs_list(
-    results: List[PackedPose],
-    kwargs: Dict[Any, Any],
-    protocol_name: str,
-    protocols_key: str,
-    decoy_ids: List[int],
-) -> List[Tuple[PackedPose, Dict[Any, Any]]]:
-    """Parse PackedPose and kwargs objects into a list of tuples."""
-
-    decoy_id = _get_decoy_id(kwargs[protocols_key], decoy_ids)
-    packed_pose_kwargs_pairs_list = []
-    for i, packed_pose in enumerate(results):
-        if (decoy_id != None) and (i != decoy_id):
-            logging.info(
-                "Discarding a returned decoy because it does "
-                + "not match the user-provided decoy_ids."
-            )
-            continue
-        task_kwargs = copy.deepcopy(kwargs)
-        if "PyRosettaCluster_decoy_ids" not in task_kwargs:
-            task_kwargs["PyRosettaCluster_decoy_ids"] = []
-        task_kwargs["PyRosettaCluster_decoy_ids"].append((protocol_name, i))
-        packed_pose_kwargs_pairs_list.append((packed_pose, task_kwargs))
-    if decoy_id:
-        assert (
-            len(packed_pose_kwargs_pairs_list) == 1
-        ), "When specifying decoy_ids, there may only be one decoy_id per protocol."
-
-    return packed_pose_kwargs_pairs_list
-
-
 def capture_task_metadata(func: M) -> M:
     """Capture a task's metadata as kwargs."""
 
     @wraps(func)
     def wrapper(
-        protocol, pose, DATETIME_FORMAT, ignore_errors, **kwargs,
+        protocol,
+        compressed_packed_pose,
+        DATETIME_FORMAT,
+        ignore_errors,
+        protocols_key,
+        decoy_ids,
+        serializer,
+        **kwargs,
     ):
         """Wrapper function to capture_task_metadata."""
 
@@ -204,6 +191,15 @@ def capture_task_metadata(func: M) -> M:
             (protocol_name, str(pyrosetta.rosetta.numeric.random.rg().get_seed()))
         )
 
-        return func(protocol, pose, DATETIME_FORMAT, ignore_errors, **kwargs,)
+        return func(
+            protocol,
+            compressed_packed_pose,
+            DATETIME_FORMAT,
+            ignore_errors,
+            protocols_key,
+            decoy_ids,
+            serializer,
+            **kwargs,
+        )
 
     return cast(M, wrapper)

@@ -15,6 +15,7 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     get_yml,
 )
 from pyrosetta.distributed.cluster.tools import (
+    Serialization,
     get_instance_kwargs,
     get_protocols,
     produce,
@@ -22,5 +23,6 @@ from pyrosetta.distributed.cluster.tools import (
     reproduce,
     reserve_scores,
     run,
+    update_scores,
     _print_conda_warnings,
 )

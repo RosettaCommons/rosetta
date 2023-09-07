@@ -10,16 +10,14 @@ __author__ = "Jason C. Klima"
 __email__ = "klima.jason@gmail.com"
 
 try:
-    import cloudpickle
     import git
     import toolz
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.converters' requires the "
-        + "third-party packages 'cloudpickle', 'gitpython', and 'toolz' as dependencies!\n"
+        + "third-party packages 'gitpython' and 'toolz' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/cloudpickle/\n"
         + "https://gitpython.readthedocs.io/en/stable/intro.html\n"
         + "https://pypi.org/project/toolz/\n"
     )
@@ -29,7 +27,6 @@ import collections
 import logging
 import os
 import pyrosetta
-import pyrosetta.distributed.io as io
 import sys
 import types
 
@@ -38,13 +35,16 @@ from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.distributed.cluster.converter_tasks import (
     environment_cmd,
     get_yml,
+    is_bytes,
+    is_dict,
+    is_packed,
     parse_input_packed_pose as _parse_input_packed_pose,
     to_int,
     to_iterable,
     to_packed,
     to_str,
 )
-from pyrosetta.distributed.cluster.exceptions import OutputError
+from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
@@ -53,9 +53,14 @@ from typing import (
     Iterable,
     List,
     NoReturn,
+    Optional,
+    Sized,
     Tuple,
+    TypeVar,
     Union,
 )
+
+S = TypeVar("S", bound=Serialization)
 
 
 def _parse_decoy_ids(objs: Any) -> List[int]:
@@ -66,10 +71,13 @@ def _parse_decoy_ids(objs: Any) -> List[int]:
     return to_iterable(objs, to_int, "decoy_ids")
 
 
-def _parse_empty_queue(attr: str) -> List[PackedPose]:
-    """Return a `list` object containing an empty `PackedPose` object."""
-
-    return to_iterable(None, to_packed, attr)
+def _parse_empty_queue(protocol_name: str, ignore_errors: bool) -> None:
+    """Return a `None` object when a protocol results in an error with `ignore_errors=True`."""
+    logging.warning(
+        f"User-provided PyRosetta protocol '{protocol_name}' resulted in an empty queue with `ignore_errors={ignore_errors}`!"
+        + "Putting a `None` object into the queue."
+    )
+    return None
 
 
 def _parse_environment(obj: Any) -> str:
@@ -161,12 +169,6 @@ def _parse_protocols(objs: Any) -> List[Union[Callable[..., Any], Iterable[Any]]
         return list(objs)
 
     return converter(objs)
-
-
-def _parse_protocol_results(obj: Any, protocol_name: str) -> List[PackedPose]:
-    """Parse results from the user-provided PyRosetta protocol."""
-
-    return to_iterable(obj, to_packed, protocol_name)
 
 
 def _parse_pyrosetta_build(obj: Any) -> str:
@@ -337,23 +339,111 @@ def _parse_system_info(obj: Any) -> Dict[Any, Any]:
     return converter(obj)
 
 
-def _parse_target_results(
-    objs: List[Union[PackedPose, bytes]]
+def _get_decoy_id(protocols: Sized, decoy_ids: List[int]) -> Optional[int]:
+    """Get the decoy number given the user-provided PyRosetta protocols."""
+
+    if decoy_ids:
+        decoy_id_index = (len(decoy_ids) - len(protocols)) - 1
+        decoy_id = decoy_ids[decoy_id_index]
+    else:
+        decoy_id = None
+
+    return decoy_id
+
+
+def _get_packed_poses_output_kwargs(
+    result: Any,
+    input_kwargs: Dict[Any, Any],
+    protocol_name: str,
 ) -> Tuple[List[PackedPose], Dict[Any, Any]]:
+    packed_poses = []
+    protocol_kwargs = []
+    for obj in to_iterable(result, to_packed, protocol_name):
+        if is_packed(obj):
+            packed_poses.append(obj)
+        elif is_dict(obj):
+            protocol_kwargs.append(obj)
+
+    if len(packed_poses) == 0:
+        packed_poses = to_iterable(None, to_packed, protocol_name)
+
+    if len(protocol_kwargs) == 0:
+        output_kwargs = input_kwargs
+    elif len(protocol_kwargs) == 1:
+        output_kwargs = next(iter(protocol_kwargs))
+        output_kwargs.update(
+            toolz.dicttoolz.keyfilter(lambda k: k.startswith("PyRosettaCluster_"), input_kwargs)
+        )
+    elif len(protocol_kwargs) >= 2:
+        raise ValueError(
+            f"User-provided PyRosetta protocol '{protocol_name}' may return at most one object of type `dict`."
+        )
+
+    return packed_poses, output_kwargs
+
+
+def _get_compressed_packed_pose_kwargs_pairs_list(
+    packed_poses: List[PackedPose],
+    output_kwargs: Dict[Any, Any],
+    protocol_name: str,
+    protocols_key: str,
+    decoy_ids: List[int],
+    serializer: S,
+) -> List[Tuple[bytes, bytes]]:
+    decoy_id = _get_decoy_id(output_kwargs[protocols_key], decoy_ids)
+    compressed_packed_pose_kwargs_pairs_list = []
+    for i, packed_pose in enumerate(packed_poses):
+        if (decoy_id != None) and (i != decoy_id):
+            logging.info(
+                "Discarding a returned decoy because it does not match the user-provided 'decoy_ids'."
+            )
+            continue
+        task_kwargs = serializer.deepcopy_kwargs(output_kwargs)
+        if "PyRosettaCluster_decoy_ids" not in task_kwargs:
+            task_kwargs["PyRosettaCluster_decoy_ids"] = []
+        task_kwargs["PyRosettaCluster_decoy_ids"].append((protocol_name, i))
+        compressed_packed_pose = serializer.compress_packed_pose(packed_pose)
+        compressed_task_kwargs = serializer.compress_kwargs(task_kwargs)
+        compressed_packed_pose_kwargs_pairs_list.append((compressed_packed_pose, compressed_task_kwargs))
+
+    if decoy_id:
+        assert (
+            len(compressed_packed_pose_kwargs_pairs_list) == 1
+        ), "When specifying decoy_ids, there may only be one decoy_id per protocol."
+
+    return compressed_packed_pose_kwargs_pairs_list
+
+
+def _parse_protocol_results(
+    result: Any,
+    input_kwargs: Dict[Any, Any],
+    protocol_name: str,
+    protocols_key: str,
+    decoy_ids: List[int],
+    serializer: S,
+) -> List[Tuple[bytes, bytes]]:
+    """Parse results from the user-provided PyRosetta protocol."""
+    packed_poses, output_kwargs = _get_packed_poses_output_kwargs(result, input_kwargs, protocol_name)
+    compressed_packed_pose_kwargs_pairs_list = _get_compressed_packed_pose_kwargs_pairs_list(
+        packed_poses, output_kwargs, protocol_name, protocols_key, decoy_ids, serializer
+    )
+
+    return compressed_packed_pose_kwargs_pairs_list
+
+
+def _parse_target_results(objs: List[Tuple[bytes, bytes]]) -> List[Tuple[bytes, bytes]]:
     """Parse results returned from the spawned thread."""
 
-    for obj in objs[:-1]:
-        if not isinstance(obj, PackedPose):
-            raise TypeError("Returned results must be of type `PackedPose`.")
-    results = objs[:-1]
+    ids = set()
+    n_obj = 0
+    for obj in objs:
+        if len(obj) != 2:
+            raise TypeError("Returned result should be of length 2.")
+        n_obj += len(obj)
+        ids.update(set(map(id, obj)))
+    assert len(ids) == n_obj, "Returned results do not have unique memory addresses."
 
-    if not isinstance(objs[-1], bytes):
-        raise TypeError("Returned target kwargs must be of type `bytes`.")
-    kwargs = cloudpickle.loads(objs[-1])
-    if not isinstance(kwargs, dict):
-        raise TypeError("Returned kwargs must be of type `dict`.")
-
-    return results, kwargs
+    return objs
 
 
 def _parse_tasks(objs):

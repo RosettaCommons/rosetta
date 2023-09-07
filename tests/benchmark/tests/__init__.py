@@ -387,7 +387,9 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
 
 
     if python_version <= (3, 8):
-        packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1'
+        packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1 python-xz>=0.4.0'
+        if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
+        elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
 
     elif python_version == (3, 9): packages = 'numpy>=1.20.2'
     elif python_version == (3, 10): packages = 'numpy>=1.22.3'
@@ -399,7 +401,8 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
 
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
 
-    for p in packages: assert '=' in p
+    if python_version >= (3, 7):
+        for p in packages: assert '=' in p
 
     return packages
 
@@ -428,17 +431,26 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         jupyter>=1.0.0       \
         numpy>=1.17.3        \
         pandas>=0.25.2       \
+        python-xz>=0.4.0     \
         scipy>=1.4.1         \
         traitlets>=4.3.3     \
         '
+        if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
+        elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
+
     else:
         #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
         packages = 'numpy>=1.20.2'
 
-    if conda: packages = packages.replace('blosc', 'python-blosc')
+    if conda:
+        packages = packages.replace('blosc', 'python-blosc')
+        packages = " ".join(map(lambda p: "xz" if p.startswith("python-xz") else p, packages.split()))
 
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', DEFAULT_PYTHON_VERSION)[:2] != '2.' else []
-    for p in packages: assert '=' in p
+
+    if not conda:
+        for p in packages: assert '=' in p
+
     return packages
 
 

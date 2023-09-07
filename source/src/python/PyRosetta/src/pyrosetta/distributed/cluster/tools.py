@@ -39,13 +39,15 @@ from pyrosetta.distributed.cluster.converter_tasks import (
     parse_client,
     parse_decoy_name,
     parse_input_file_to_instance_kwargs,
-    parse_input_packed_pose,
     parse_instance_kwargs,
     parse_scorefile,
     reserve_scores_in_results,
 )
+from pyrosetta.distributed.cluster.serialization import (
+    Serialization,
+    update_scores,
+)
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
-from pyrosetta.distributed.cluster.exceptions import OutputError
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.rosetta.core.pose import Pose
 from typing import (
@@ -67,10 +69,14 @@ P = TypeVar("P", bound=Callable[..., Any])
 def _print_conda_warnings() -> None:
     """
     Print warning message if Anaconda or Miniconda are not installed and we are
-    not in an active conda environment.
+    not in an active conda environment on the client.
     """
     if shutil.which("conda"):  # Anaconda or Miniconda is installed
-        if get_yml() == "":
+        try:
+            _worker = distributed.get_worker()
+        except ValueError:
+            _worker = None
+        if not _worker and get_yml() == "":
             print(
                 "Warning: To use the `pyrosetta.distributed.cluster` namespace, please "
                 + "create and activate a conda environment (other than 'base') to ensure "
@@ -393,7 +399,6 @@ def reserve_scores(func: P) -> Union[P, NoReturn]:
 
     @wraps(func)
     def wrapper(pose, **kwargs):
-
         if pose:
             _scores_dict = dict(pose.scores)
         else:
@@ -471,7 +476,7 @@ def reproduce(
             ),
         ),
         client=parse_client(client),
-        input_packed_pose=parse_input_packed_pose(input_packed_pose),
+        input_packed_pose=input_packed_pose,
     ).distribute(
         protocols=get_protocols(
             protocols=protocols,

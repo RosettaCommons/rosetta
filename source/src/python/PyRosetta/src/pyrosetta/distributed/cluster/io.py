@@ -23,7 +23,6 @@ except ImportError:
 
 import bz2
 import collections
-import copy
 import json
 import logging
 import os
@@ -66,9 +65,12 @@ class IO(Generic[G]):
         kwargs into the PyRosettaCluster instance kwargs and ancillary metadata.
         """
 
-        instance_state = dict(zip(self.__slots__, self.__getstate__()))
+        instance_state = self.__getstate__()
+        if isinstance(instance_state, tuple):
+            instance_state = dict(zip(self.__slots__, self.__getstate__()))
+        assert isinstance(instance_state, dict)
         instance_state.pop("client", None)
-        instance_kwargs = copy.deepcopy(instance_state)
+        instance_kwargs = self.serializer.deepcopy_kwargs(instance_state)
         for i in self.__attrs_attrs__:
             if not i.init:
                 instance_kwargs.pop(i.name)
@@ -119,32 +121,35 @@ class IO(Generic[G]):
 
         return (_pdbstring, _scores_dict)
 
-    @classmethod
     def _parse_results(
-        cls,
+        self,
         results: Union[
-            Iterable[Optional[Union[Pose, PackedPose]]],
+            Iterable[Optional[Union[Pose, PackedPose, bytes]]],
             Optional[Union[Pose, PackedPose]],
         ],
     ) -> Union[List[Tuple[str, Dict[Any, Any]]], NoReturn]:
         """
         Format output results on distributed worker. Input argument `results` can be a
-        `Pose` or `PackedPose` object, or a `list` or `tuple` of `Pose` and/or `PackedPose`
+        `Pose`, `PackedPose`, or `None` object, or a `list` or `tuple` of `Pose` and/or `PackedPose`
         objects, or an empty `list` or `tuple`. Returns a list of tuples, each tuple
         containing the pdb string and a scores dictionary.
         """
+        if isinstance(results, bytes):
+            results = self.serializer.decompress_packed_pose(results)
 
-        if isinstance(results, (Pose, PackedPose,),):
+        if isinstance(results, (Pose, PackedPose)):
             if not io.to_pose(results).empty():
-                out = [cls._format_result(results)]
+                out = [IO._format_result(results)]
             else:
                 out = []
         elif isinstance(results, collections.abc.Iterable):
             out = []
             for result in results:
-                if isinstance(result, (Pose, PackedPose,),):
+                if isinstance(results, bytes):
+                    result = self.serializer.decompress_packed_pose(result)
+                if isinstance(result, (Pose, PackedPose)):
                     if not io.to_pose(result).empty():
-                        out.append(cls._format_result(result))
+                        out.append(IO._format_result(result))
                 else:
                     raise OutputError(result)
         elif not results:
@@ -166,6 +171,8 @@ class IO(Generic[G]):
         kwargs.pop(self.protocols_key, None)
         kwargs.pop("PyRosettaCluster_protocol_number", None)
         kwargs.pop("PyRosettaCluster_protocol_name", None)
+        kwargs.pop("PyRosettaCluster_output_path", None)
+        kwargs.pop("PyRosettaCluster_tmp_path", None)
         task_protocols = kwargs["PyRosettaCluster_protocols"]
         task_seeds = kwargs["PyRosettaCluster_seeds"]
         task_decoy_ids = kwargs["PyRosettaCluster_decoy_ids"]

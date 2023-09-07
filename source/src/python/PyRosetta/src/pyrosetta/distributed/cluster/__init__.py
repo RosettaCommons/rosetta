@@ -14,6 +14,7 @@ import warnings
 from contextlib import suppress
 from pyrosetta.distributed.cluster.core import PyRosettaCluster
 from pyrosetta.distributed.cluster.toolkit import (
+    Serialization,
     get_instance_kwargs,
     get_protocols,
     get_protocols_list_of_str,
@@ -24,6 +25,7 @@ from pyrosetta.distributed.cluster.toolkit import (
     reproduce,
     reserve_scores,
     run,
+    update_scores,
     _print_conda_warnings,
 )
 from typing import List
@@ -31,6 +33,7 @@ from typing import List
 
 __all__: List[str] = [
     "PyRosettaCluster",
+    "Serialization",
     "get_instance_kwargs",
     "get_protocols",
     "get_protocols_list_of_str",
@@ -41,8 +44,9 @@ __all__: List[str] = [
     "reproduce",
     "reserve_scores",
     "run",
+    "update_scores",
 ]
-__version__: str = "1.0.0"
+__version__: str = "1.1.0"
 
 _print_conda_warnings()
 

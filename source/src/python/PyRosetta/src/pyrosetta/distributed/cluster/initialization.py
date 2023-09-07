@@ -21,16 +21,24 @@ except ImportError:
     )
     raise
 
-import os
+import inspect
 import pyrosetta
 import pyrosetta.distributed
 
 from typing import (
     AbstractSet,
+    List,
     NoReturn,
     Optional,
     Union,
 )
+
+
+def _get_pyrosetta_init_args() -> List[str]:
+    """
+    Return a `list` object representing `pyrosetta.init` arguments.
+    """
+    return inspect.getfullargspec(pyrosetta.init).args
 
 
 def _get_residue_type_set_name3() -> Union[AbstractSet[str], NoReturn]:

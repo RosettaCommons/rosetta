@@ -83,6 +83,12 @@ Args:
     compressed: A `bool` object specifying whether or not to compress the output
         .pdb files with bzip2, resulting in .pdb.bz2 files.
         Default: True
+    compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
+        object representing the internal compression library for pickled `PackedPose` 
+        objects and user-defined PyRosetta protocol `kwargs` objects. The default of
+        `True` uses 'xz' for serialization if it's installed, otherwise uses 'zlib'
+        for serialization.
+        Default: True
     system_info: A `dict` or `NoneType` object specifying the system information
         required to reproduce the simulation. If `None` is provided, then PyRosettaCluster
         automatically detects the platform and returns this attribute as a dictionary
@@ -210,10 +216,8 @@ except ImportError:
     )
     raise
 
-import copy
 import logging
 import os
-import pyrosetta.distributed.io as io
 
 from datetime import datetime
 from pyrosetta.rosetta.core.pose import Pose
@@ -229,10 +233,11 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_system_info,
     _parse_tasks,
 )
-from pyrosetta.distributed.cluster.initialization import _maybe_init_master
+from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_master
 from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.cluster.logging_support import LoggingSupport
 from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
+from pyrosetta.distributed.cluster.serialization import Serialization
 from pyrosetta.distributed.cluster.utilities import SchedulerManager
 from pyrosetta.distributed.cluster.validators import (
     _validate_dir,
@@ -246,6 +251,7 @@ from typing import (
     NoReturn,
     Optional,
     TypeVar,
+    Union,
 )
 
 
@@ -254,7 +260,6 @@ G = TypeVar("G")
 
 @attr.s(kw_only=True, slots=True, frozen=False)
 class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G]):
-
     tasks = attr.ib(
         type=list,
         default=[{}],
@@ -467,6 +472,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=attr.validators.instance_of(bool),
         converter=attr.converters.default_if_none(default=True),
     )
+    compression = attr.ib(
+        type=Optional[Union[str, bool]],
+        default=True,
+        validator=attr.validators.optional(attr.validators.instance_of((bool, str))),
+    )
     sha1 = attr.ib(
         type=str,
         default="",
@@ -539,11 +549,21 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         init=False,
         validator=attr.validators.instance_of(str),
     )
+    pyrosetta_init_args = attr.ib(
+        type=list,
+        default=attr.Factory(_get_pyrosetta_init_args),
+        init=False,
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(str),
+            iterable_validator=attr.validators.instance_of(list),
+        ),
+    )
 
     def __attrs_post_init__(self):
         _maybe_init_master()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
+        self.serializer = Serialization(compression=self.compression)
 
     def distribute(self, *args: Any, protocols: Any = None) -> Optional[NoReturn]:
         """
@@ -572,6 +592,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             None
         """
 
+        compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
         protocols, protocol, seed = self._setup_protocols_protocol_seed(args, protocols)
         client, cluster, adaptive = self._setup_client_cluster_adaptive()
         master_residue_type_set = _get_residue_type_set()
@@ -583,6 +604,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             self.logging_file,
             self.logging_level,
             self.DATETIME_FORMAT,
+            self.compression,
             master_residue_type_set,
         )
         seq = as_completed(
@@ -590,14 +612,14 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 client.submit(
                     user_spawn_thread,
                     protocol,
-                    self.input_packed_pose,
-                    kwargs,
+                    compressed_input_packed_pose,
+                    compressed_kwargs,
+                    pyrosetta_init_kwargs,
                     *extra_args,
                     pure=False,
                 )
-                for kwargs in (
-                    self._setup_initial_kwargs(protocols, seed, task_kwargs)
-                    for task_kwargs in self.tasks
+                for compressed_kwargs, pyrosetta_init_kwargs in (
+                    self._setup_initial_kwargs(protocols, seed, task_kwargs) for task_kwargs in self.tasks
                 )
                 for _ in range(self.nstruct)
             ]
@@ -611,17 +633,25 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             logging.info(
                 "Percent Complete = {0:0.5f} %".format((i / self.tasks_size) * 100.0)
             )
-            for packed_pose, kwargs in results:
+            for compressed_packed_pose, compressed_kwargs in results:
+                kwargs = self.serializer.decompress_kwargs(compressed_kwargs)
                 if not kwargs[self.protocols_key]:
-                    self._save_results(packed_pose, kwargs)
+                    self._save_results(compressed_packed_pose, kwargs)
                 else:
                     if self.save_all:
                         self._save_results(
-                            packed_pose.pose.clone(), copy.deepcopy(kwargs),
+                            compressed_packed_pose,
+                            self.serializer.deepcopy_kwargs(kwargs),
                         )
-                    kwargs, protocol = self._setup_kwargs(kwargs)
+                    compressed_kwargs, pyrosetta_init_kwargs, protocol = self._setup_kwargs(kwargs)
                     scatter = client.scatter(
-                        (protocol, packed_pose, kwargs, *extra_args,)
+                        (
+                            protocol,
+                            compressed_packed_pose,
+                            compressed_kwargs,
+                            pyrosetta_init_kwargs,
+                            *extra_args,
+                        )
                     )
                     seq.add(client.submit(user_spawn_thread, *scatter, pure=False,))
                     self.tasks_size += 1

@@ -11,6 +11,7 @@ import time
 import threading
 import unittest
 
+import pyrosetta
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import pyrosetta.distributed.tasks.rosetta_scripts as rosetta_scripts
@@ -21,6 +22,8 @@ pyrosetta.distributed.init(options="-run:constant_seed 1", set_logging_handler=N
 
 class TestConcurrentScripts(unittest.TestCase):
 
+    # RestrictInteractionGraphThreadsOperation only has an effect in the multi-threaded build of Rosetta (built with the "extras=cxx11thread" option).
+    @unittest.skipIf("cxx11thread" not in pyrosetta._version_string(), 'Rosetta not built with the "extras=cxx11thread" option.')
     def test_concurrent_on_task(self):
 
         protocol = rosetta_scripts.SingleoutputRosettaScriptsTask("""
@@ -45,6 +48,8 @@ class TestConcurrentScripts(unittest.TestCase):
         with concurrent.futures.ThreadPoolExecutor(max_workers=3) as p:
             result = list(p.map(protocol, [test_pose] * 3))
 
+    # RestrictInteractionGraphThreadsOperation only has an effect in the multi-threaded build of Rosetta with the "extras=cxx11thread" option.
+    @unittest.skipIf("cxx11thread" not in pyrosetta._version_string(), 'Rosetta not built with the "extras=cxx11thread" option.')
     def test_concurrent_multi_task(self):
 
         def run_task(seq):

@@ -71,14 +71,18 @@ def setup_target_logging(func: L) -> L:
     @wraps(func)
     def wrapper(
         protocol,
-        pose,
+        compressed_packed_pose,
+        compressed_kwargs,
         q,
         logging_file,
         logging_level,
         DATETIME_FORMAT,
         ignore_errors,
+        protocols_key,
+        decoy_ids,
+        compression,
         master_residue_type_set,
-        **kwargs,
+        **pyrosetta_init_kwargs,
     ):
         """Wrapper function to setup_target_logging."""
 
@@ -101,16 +105,26 @@ def setup_target_logging(func: L) -> L:
         )
         logger.addHandler(fh)
 
-        return func(
+        result = func(
             protocol,
-            pose,
+            compressed_packed_pose,
+            compressed_kwargs,
             q,
             logging_file,
             logging_level,
             DATETIME_FORMAT,
             ignore_errors,
+            protocols_key,
+            decoy_ids,
+            compression,
             master_residue_type_set,
-            **kwargs,
+            **pyrosetta_init_kwargs,
         )
+
+        for handler in logger.handlers[:]:
+            handler.close()
+            logger.removeHandler(handler)
+
+        return result
 
     return cast(L, wrapper)

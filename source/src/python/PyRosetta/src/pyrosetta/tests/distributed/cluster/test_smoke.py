@@ -13,14 +13,27 @@ __author__ = "Jason C. Klima"
 __email__ = "klima.jason@gmail.com"
 
 import json
+import numpy
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import random
+import sys
 import tempfile
 import unittest
 
-from pyrosetta.distributed.cluster import PyRosettaCluster, produce, reserve_scores, run
+from pyrosetta import Pose
+from pyrosetta.distributed.packed_pose.core import PackedPose
+
+from pyrosetta.distributed.cluster import (
+    PyRosettaCluster,
+    Serialization,
+    produce,
+    reserve_scores,
+    run,
+    update_scores,
+)
+from pyrosetta.distributed.cluster.exceptions import WorkerError
 
 
 class SmokeTest(unittest.TestCase):
@@ -56,7 +69,6 @@ class SmokeTest(unittest.TestCase):
             return packed_pose
 
         with tempfile.TemporaryDirectory() as workdir:
-
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=io.pose_from_sequence("TESTING"),
@@ -91,59 +103,328 @@ class SmokeTest(unittest.TestCase):
                 pyrosetta_build=None,
             )
             cluster = PyRosettaCluster(**instance_kwargs)
-            cluster.distribute(my_pyrosetta_protocol,)
+            cluster.distribute(
+                my_pyrosetta_protocol,
+            )
 
             instance_kwargs.update({"protocols": my_pyrosetta_protocol})
             produce(**instance_kwargs)
             run(**instance_kwargs)
 
+    def test_ignore_errors(self):
+        """Test PyRosettaCluster usage with user-provided PyRosetta protocol error."""
+        pyrosetta.distributed.init(
+            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 300",
+            set_logging_handler="logging",
+        )
+
+        def create_tasks():
+            yield {
+                "extra_options": "-ex1 -multithreading:total_threads 1",
+                "set_logging_handler": "logging",
+            }
+
+        def protocol_with_error(packed_pose, **kwargs):
+            raise NotImplementedError("Testing an error in a user-provided PyRosetta protocol.")
+
+        with tempfile.TemporaryDirectory() as workdir:
+            instance_kwargs = dict(
+                tasks=create_tasks,
+                input_packed_pose=None,
+                seeds=None,
+                decoy_ids=None,
+                client=None,
+                scheduler=None,
+                scratch_dir=workdir,
+                cores=None,
+                processes=None,
+                memory=None,
+                min_workers=1,
+                max_workers=1,
+                nstruct=1,
+                dashboard_address=None,
+                compressed=True,
+                logging_level="INFO",
+                scorefile_name=None,
+                project_name="PyRosettaCluster_Tests",
+                simulation_name=None,
+                environment=None,
+                output_path=os.path.join(workdir, "outputs"),
+                simulation_records_in_scorefile=False,
+                decoy_dir_name="decoys",
+                logs_dir_name="logs",
+                ignore_errors=True,
+                timeout=0.1,
+                sha1=None,
+                dry_run=False,
+                save_all=False,
+                system_info=None,
+                pyrosetta_build=None,
+            )
+            cluster = PyRosettaCluster(**instance_kwargs)
+            cluster.distribute(protocol_with_error)
+
+        with tempfile.TemporaryDirectory() as workdir:
+            instance_kwargs = dict(
+                tasks=create_tasks,
+                input_packed_pose=None,
+                seeds=None,
+                decoy_ids=None,
+                client=None,
+                scheduler=None,
+                scratch_dir=workdir,
+                cores=None,
+                processes=None,
+                memory=None,
+                min_workers=1,
+                max_workers=1,
+                nstruct=1,
+                dashboard_address=None,
+                compressed=True,
+                logging_level="INFO",
+                scorefile_name=None,
+                project_name="PyRosettaCluster_Tests",
+                simulation_name=None,
+                environment=None,
+                output_path=os.path.join(workdir, "outputs"),
+                simulation_records_in_scorefile=False,
+                decoy_dir_name="decoys",
+                logs_dir_name="logs",
+                ignore_errors=False,
+                timeout=0.1,
+                sha1=None,
+                dry_run=False,
+                save_all=False,
+                system_info=None,
+                pyrosetta_build=None,
+            )
+            cluster = PyRosettaCluster(**instance_kwargs)
+            with self.assertRaises(WorkerError):
+                cluster.distribute(protocol_with_error)
+
 
 class SmokeTestMulti(unittest.TestCase):
+    _ref_kwargs = {
+        "test_str": "testing",
+        "test_int": 100,
+        "test_float": 12345.67890,
+        "test_complex": 3j,
+        "test_list": list(range(5)),
+        "test_tuple": tuple(range(6)),
+        "test_range": range(7),
+        "test_dict": dict(enumerate(range(8))),
+        "test_set": set(range(9)),
+        "test_frozenset": frozenset({"foo", "bar"}),
+        "test_bool": True,
+        "test_bytes": b"Bytes",
+        "test_bytearray": bytearray(10),
+        "test_none": None,
+        "test_memoryview": memoryview(bytes(3)),
+    }
+
     def test_smoke_multi(self):
         """Smoke test for PyRosettaCluster usage with multiple protocols."""
+        import pyrosetta
+        import pyrosetta.distributed
+        import pyrosetta.distributed.io as io
+
         pyrosetta.distributed.init(
             options="-run:constant_seed 1 -multithreading:total_threads 1",
             extra_options="-out:level 200",
             set_logging_handler="logging",
         )
 
+        def _get_xyz_from_packed_pose(packed_pose):
+            return list(packed_pose.pose.residue(1).atom(1).xyz())
+
         def create_tasks():
-            for i in range(1, 5):
+            for i in range(1, 4):
                 yield {
                     "extra_options": "-ex1 -multithreading:total_threads 1",
                     "set_logging_handler": "logging",
                     "seq": "TEST" * i,
+                    "task_packed_pose": io.pose_from_sequence("PACKED" * i),
                 }
 
         def my_first_protocol(packed_pose, **kwargs):
             import pyrosetta
+            import pyrosetta.distributed.io as io
 
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
-            pyrosetta.rosetta.core.pose.setPoseExtraScore(
-                pose, "test_setPoseExtraScore", 123
-            )
+            pyrosetta.rosetta.core.pose.setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
 
-            return [pose.clone() for _ in range(3)]
+            self.assertIn("task_packed_pose", kwargs)
+            self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
+            self.assertIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertEqual(
+                kwargs["PyRosettaCluster_task"]["task_packed_pose"].pose.sequence(),
+                kwargs["task_packed_pose"].pose.sequence(),
+            )
+            saved_packed_pose = io.to_packed(pose.clone())
+            kwargs["saved_packed_pose"] = saved_packed_pose
+            kwargs["saved_xyz"] = _get_xyz_from_packed_pose(saved_packed_pose)
+
+            saved_pose = pose.clone()
+            kwargs["saved_pose"] = saved_pose
+
+            return [pose.clone() for _ in range(2)] + [kwargs]
 
         @reserve_scores
         def my_second_protocol(packed_pose, **kwargs):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io  # noqa
 
-            self.assertDictContainsSubset(
-                {"test_setPoseExtraScore": 123}, packed_pose.scores
-            )
+            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             pose = io.to_pose(packed_pose)
-            for _ in range(3):
-                yield pose.clone()
+
+            self.assertIn("task_packed_pose", kwargs)
+            task_packed_pose = kwargs["task_packed_pose"]
+            self.assertIsInstance(task_packed_pose, PackedPose)
+
+            self.assertIn("saved_packed_pose", kwargs)
+            saved_packed_pose = kwargs["saved_packed_pose"]
+            self.assertIsInstance(saved_packed_pose, PackedPose)
+
+            self.assertIn("saved_xyz", kwargs)
+            saved_xyz = kwargs["saved_xyz"]
+            self.assertListEqual(_get_xyz_from_packed_pose(saved_packed_pose), saved_xyz)
+
+            self.assertIn("saved_pose", kwargs)
+            saved_pose = kwargs["saved_pose"]
+            self.assertIsInstance(saved_pose, Pose)
+
+            if not "saved_variable" in kwargs.keys():
+                kwargs["saved_variable"] = {"foo": "bar"}
+            else:
+                self.assertIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+                kwargs["PyRosettaCluster_task"].pop("task_packed_pose")
+                self.assertNotIn(
+                    "task_packed_pose",
+                    kwargs["PyRosettaCluster_task"],
+                    msg="Object of type `PackedPose` is not JSON serializable.",
+                )
+                self.assertIn(
+                    "task_packed_pose",
+                    kwargs,
+                    msg="`kwargs` with `PackedPose` object(s) should not get JSON serialized.",
+                )
+
+            yield kwargs
+            yield pose.clone()
 
         def my_third_protocol(packed_pose, **kwargs):
-            self.assertDictContainsSubset(
-                {"test_setPoseExtraScore": 123}, packed_pose.scores
-            )
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
+
+            self.assertIn("task_packed_pose", kwargs)
+            self.assertIsInstance(kwargs["task_packed_pose"], PackedPose)
+
+            self.assertIn("saved_packed_pose", kwargs)
+            saved_packed_pose = kwargs["saved_packed_pose"]
+            self.assertIsInstance(saved_packed_pose, PackedPose)
+
+            self.assertIn("saved_xyz", kwargs)
+            saved_xyz = kwargs["saved_xyz"]
+            self.assertListEqual(_get_xyz_from_packed_pose(saved_packed_pose), saved_xyz)
+
+            self.assertIn("saved_variable", kwargs)
+            self.assertDictEqual(kwargs["saved_variable"], {"foo": "bar"})
+
             return my_second_protocol(packed_pose, **kwargs)
+
+        def my_fourth_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            self.assertFalse(packed_pose.pose.empty())
+            self.assertIsInstance(packed_pose, PackedPose)
+            self.assertIsInstance(kwargs, dict)
+            self.assertNotIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertIn("saved_packed_pose", kwargs)
+            self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
+
+            yield None
+            yield kwargs
+            yield None
+
+        def my_fifth_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            self.assertIsInstance(packed_pose, PackedPose)
+            self.assertTrue(packed_pose.pose.empty())
+            self.assertIsInstance(kwargs, dict)
+            self.assertIn("saved_packed_pose", kwargs)
+            self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
+
+            return kwargs
+
+        def my_sixth_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            self.assertIsInstance(packed_pose, PackedPose)
+            self.assertTrue(packed_pose.pose.empty())
+            self.assertIsInstance(kwargs, dict)
+            self.assertNotIn("task_packed_pose", kwargs["PyRosettaCluster_task"])
+            self.assertIn("saved_packed_pose", kwargs)
+            self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
+
+            return None, None, None
+
+        def my_seventh_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            self.assertIsInstance(packed_pose, PackedPose)
+            self.assertTrue(packed_pose.pose.empty())
+            self.assertIsInstance(kwargs, dict)
+            self.assertIn("saved_packed_pose", kwargs)
+            self.assertIsInstance(kwargs["saved_packed_pose"], PackedPose)
+
+            return kwargs, None
+
+        def my_eighth_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            kwargs = dict(foo="bar", baz="qux")
+
+            yield kwargs
+
+        def my_ninth_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            self.assertIn("PyRosettaCluster_protocols_container", kwargs)
+            self.assertIn("PyRosettaCluster_logging_file", kwargs)
+            self.assertIn("PyRosettaCluster_task", kwargs)
+            self.assertIn("PyRosettaCluster_protocol_name", kwargs)
+            self.assertIn("PyRosettaCluster_protocols", kwargs)
+            self.assertIn("PyRosettaCluster_protocol_number", kwargs)
+            self.assertIn("PyRosettaCluster_datetime_start", kwargs)
+            self.assertIn("PyRosettaCluster_seeds", kwargs)
+            self.assertIn("PyRosettaCluster_decoy_ids", kwargs)
+            self.assertIn("foo", kwargs)
+            self.assertIn("baz", kwargs)
+
+            kwargs = SmokeTestMulti._ref_kwargs
+
+            return kwargs
+
+        def my_tenth_protocol(packed_pose, **kwargs):
+            import pyrosetta
+            import pyrosetta.distributed.io as io
+
+            ref_kwargs = SmokeTestMulti._ref_kwargs
+            for k in ref_kwargs.keys():
+                self.assertIn(k, kwargs)
+                self.assertEqual(ref_kwargs[k], kwargs[k])
 
         with tempfile.TemporaryDirectory() as workdir:
             PyRosettaCluster(
@@ -179,7 +460,18 @@ class SmokeTestMulti(unittest.TestCase):
                 system_info=None,
                 pyrosetta_build=None,
             ).distribute(
-                protocols=(my_first_protocol, my_second_protocol, my_third_protocol),
+                protocols=(
+                    my_first_protocol,
+                    my_second_protocol,
+                    my_third_protocol,
+                    my_fourth_protocol,
+                    my_fifth_protocol,
+                    my_sixth_protocol,
+                    my_seventh_protocol,
+                    my_eighth_protocol,
+                    my_ninth_protocol,
+                    my_tenth_protocol,
+                ),
             )
 
     def test_smoke_multi_from_instance(self):
@@ -194,9 +486,7 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta
 
             pose = pyrosetta.io.pose_from_sequence(kwargs["seq"])
-            pyrosetta.rosetta.core.pose.setPoseExtraScore(
-                pose, "test_setPoseExtraScore", 123
-            )
+            pyrosetta.rosetta.core.pose.setPoseExtraScore(pose, "test_setPoseExtraScore", 123)
             self.assertEqual(kwargs["PyRosettaCluster_protocol_number"], 0)
             return [pose.clone() for _ in range(3)]
 
@@ -205,9 +495,7 @@ class SmokeTestMulti(unittest.TestCase):
             import pyrosetta  # noqa
             import pyrosetta.distributed.io as io
 
-            self.assertDictContainsSubset(
-                {"test_setPoseExtraScore": 123}, packed_pose.scores
-            )
+            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
             packed_pose.scores.clear()
             self.assertDictEqual({}, packed_pose.scores)
             self.assertIn(kwargs["PyRosettaCluster_protocol_number"], [1, 2])
@@ -216,9 +504,7 @@ class SmokeTestMulti(unittest.TestCase):
                 yield pose.clone()
 
         def my_third_protocol(packed_pose, **kwargs):
-            self.assertDictContainsSubset(
-                {"test_setPoseExtraScore": 123}, packed_pose.scores
-            )
+            self.assertDictContainsSubset({"test_setPoseExtraScore": 123}, packed_pose.scores)
             self.assertEqual(kwargs["PyRosettaCluster_protocol_number"], 2)
             return my_second_protocol(packed_pose, **kwargs)
 
@@ -230,10 +516,7 @@ class SmokeTestMulti(unittest.TestCase):
                     "seq": "TEST" * 7,
                 },
                 input_packed_pose=io.pose_from_sequence("LYELL"),
-                seeds=[
-                    random.randint(-int((2 ** 32) / 2), int((2 ** 32) / 2) - 1)
-                    for _ in range(3)
-                ],
+                seeds=[random.randint(-int((2**32) / 2), int((2**32) / 2) - 1) for _ in range(3)],
                 decoy_ids=[random.randint(0, 2) for _ in range(3)],
                 client=None,
                 scheduler=None,
@@ -262,9 +545,7 @@ class SmokeTestMulti(unittest.TestCase):
                 save_all=False,
                 system_info=None,
                 pyrosetta_build=None,
-            ).distribute(
-                protocols=(my_first_protocol, my_second_protocol, my_third_protocol)
-            )
+            ).distribute(protocols=(my_first_protocol, my_second_protocol, my_third_protocol))
 
             cluster = PyRosettaCluster(
                 tasks={
@@ -273,10 +554,7 @@ class SmokeTestMulti(unittest.TestCase):
                     "seq": "ACDEFGHIKLMNPQRSTVWY" * 10,
                 },
                 input_packed_pose=None,
-                seeds=[
-                    random.randint(-int((2 ** 32) / 2), int((2 ** 32) / 2) - 1)
-                    for _ in range(3)
-                ],
+                seeds=[random.randint(-int((2**32) / 2), int((2**32) / 2) - 1) for _ in range(3)],
                 decoy_ids=[random.randint(0, 2) for _ in range(3)],
                 client=None,
                 scheduler=None,
@@ -307,9 +585,7 @@ class SmokeTestMulti(unittest.TestCase):
                 pyrosetta_build=None,
             )
 
-            cluster.distribute(
-                protocols=[my_first_protocol, my_second_protocol, my_third_protocol]
-            )
+            cluster.distribute(protocols=[my_first_protocol, my_second_protocol, my_third_protocol])
 
 
 class SaveAllTest(unittest.TestCase):
@@ -453,11 +729,88 @@ class SaveAllTest(unittest.TestCase):
             self.assertTrue(os.path.exists(os.path.join(output_path, decoy_dir_name)))
             self.assertTrue(os.path.exists(os.path.join(output_path, logs_dir_name)))
             self.assertEqual(
-                os.listdir(os.path.join(output_path, decoy_dir_name)), [],
+                os.listdir(os.path.join(output_path, decoy_dir_name)),
+                [],
             )
             self.assertNotEqual(
-                os.listdir(os.path.join(output_path, logs_dir_name)), [],
+                os.listdir(os.path.join(output_path, logs_dir_name)),
+                [],
             )
+
+
+class SerializationTest(unittest.TestCase):
+    def test_serialization(self):
+        """Smoke test for PyRosettaCluster PackedPose serialization round-trip."""
+        for _compression in ("xz", "zlib", "bz2", True, False, None):
+            scores = {"test_str": "foo", "test_int": 123, "test_float": numpy.pi}
+            for _test_case in range(3):
+                input_packed_pose = io.pose_from_sequence("A" * 100)
+                if _test_case == 0:
+                    # Test scores not cached in Pose
+                    input_packed_pose.scores = scores
+                elif _test_case == 1:
+                    # Test scores not cached in Pose, then update scores
+                    input_packed_pose.scores = scores
+                    input_packed_pose = update_scores(input_packed_pose)
+                elif _test_case == 2:
+                    # Test scores cached in Pose
+                    input_packed_pose = input_packed_pose.update_scores(scores)
+
+                serializer = Serialization(compression=_compression)
+                compressed_packed_pose = serializer.compress_packed_pose(input_packed_pose)
+                output_packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
+
+                _error_msg = f"Failed on test case {_test_case} with compression {_compression}"
+                self.assertLess(
+                    sys.getsizeof(compressed_packed_pose),
+                    sys.getsizeof(input_packed_pose.pickled_pose),
+                    msg=_error_msg,
+                )
+                self.assertLess(
+                    sys.getsizeof(compressed_packed_pose),
+                    sys.getsizeof(output_packed_pose.pickled_pose),
+                    msg=_error_msg,
+                )
+                if _compression in (False, None):
+                    self.assertEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
+                else:
+                    self.assertNotEqual(id(input_packed_pose), id(output_packed_pose), msg=_error_msg)
+                if _test_case == 0 and _compression in (False, None):
+                    self.assertEqual(scores, output_packed_pose.scores, msg=_error_msg)
+                else:
+                    self.assertNotEqual(scores, output_packed_pose.scores, msg=_error_msg)
+                self.assertSetEqual(
+                    set(input_packed_pose.scores.keys()),
+                    set(output_packed_pose.scores.keys()),
+                    msg=_error_msg,
+                )
+                for scoretype in input_packed_pose.scores.keys():
+                    input_value = input_packed_pose.scores[scoretype]
+                    output_value = output_packed_pose.scores[scoretype]
+                    if isinstance(input_value, str):
+                        self.assertEqual(input_value, output_value, msg=_error_msg)
+                    elif isinstance(input_value, (int, float)):
+                        self.assertAlmostEqual(input_value, output_value, places=6, msg=_error_msg)
+
+                if _compression not in (False, None):
+                    if _test_case == 0:
+                        self.assertEqual(scores, input_packed_pose.scores, msg=_error_msg)
+                        self.assertNotEqual(
+                            input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg
+                        )
+                        self.assertNotEqual(
+                            input_packed_pose.pickled_pose,
+                            output_packed_pose.pickled_pose,
+                            msg=_error_msg,
+                        )
+                    elif _test_case in (1, 2):
+                        self.assertNotEqual(scores, input_packed_pose.scores, msg=_error_msg)
+                        self.assertEqual(input_packed_pose.scores, output_packed_pose.scores, msg=_error_msg)
+                        self.assertEqual(
+                            input_packed_pose.pickled_pose,
+                            output_packed_pose.pickled_pose,
+                            msg=_error_msg,
+                        )
 
 
 if __name__ == "__main__":

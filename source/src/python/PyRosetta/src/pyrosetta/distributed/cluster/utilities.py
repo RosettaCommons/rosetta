@@ -10,15 +10,19 @@ __author__ = "Jason C. Klima"
 __email__ = "klima.jason@gmail.com"
 
 try:
+    import cloudpickle
     import psutil
     from dask.distributed import Adaptive, Client, LocalCluster
     from dask_jobqueue import SGECluster, SLURMCluster
+    from distributed.protocol import dask_serialize, dask_deserialize
+    from distributed.protocol.serialize import register_serialization_family
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.utilities' requires the "
-        + "third-party packages 'dask', 'dask-jobqueue', and 'psutil' as dependencies!\n"
+        + "third-party packages 'cloudpickle', 'dask', 'dask-jobqueue', and 'psutil' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/cloudpickle/\n"
         + "https://pypi.org/project/dask/\n"
         + "https://pypi.org/project/dask-jobqueue/\n"
         + "https://pypi.org/project/psutil/\n"
@@ -27,9 +31,14 @@ except ImportError:
 
 import logging
 import os
+import warnings
 
 from typing import (
+    Any,
+    Callable,
+    Dict,
     Generic,
+    List,
     Optional,
     Tuple,
     TypeVar,
@@ -51,12 +60,19 @@ class SchedulerManager(Generic[G]):
             _n_workers = (
                 _cpu_count if (_cpu_count < self.max_workers) else self.max_workers
             )
-            cluster = LocalCluster(
-                n_workers=_n_workers,
-                threads_per_worker=1,
-                dashboard_address=self.dashboard_address,
-                local_directory=self.scratch_dir,
-            )
+            with warnings.catch_warnings():
+                # Catch 'ResourceWarning: unclosed <socket.socket ...' from distributed/node.py:235
+                # Catch 'UserWarning: Port 8787 is already in use' from distributed/node.py:240
+                # Catch 'DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)' from bokeh/core/property/primitive.py:37
+                warnings.simplefilter("ignore", category=ResourceWarning)
+                warnings.simplefilter("default", category=UserWarning)
+                warnings.simplefilter("ignore", category=DeprecationWarning)
+                cluster = LocalCluster(
+                    n_workers=_n_workers,
+                    threads_per_worker=1,
+                    dashboard_address=self.dashboard_address,
+                    local_directory=self.scratch_dir,
+                )
         else:
             if self.scheduler == "sge":
                 cluster_func = SGECluster
