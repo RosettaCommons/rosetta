@@ -154,6 +154,8 @@ GALigandDock::GALigandDock() {
 	entropy_method_ = "MCEntropy";
 	// estimate buried unsat hydrogen bonds
 	estimate_buns_ = false;
+	use_dalphaball_ = false;
+
 	hb_resids_.clear();
 	hb_resids_include_bb_ = false;
 	hb_resids_metric_ = "default";
@@ -1007,7 +1009,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		buns_filter.set_is_ligand_residue( true );
 		buns_filter.set_use_ddG_style( true );
 		buns_filter.set_report_all_heavy_atom_unsats( true );
-		buns_filter.set_dalphaball_sasa();
+		if ( use_dalphaball_ ) buns_filter.set_dalphaball_sasa();
 		buns_filter.set_probe_radius( 1.1 );
 		buns_filter.set_atomic_depth_apo_surface( -1.0 );
 		core::Real n_unsats(buns_filter.compute( *pose ));
@@ -1050,7 +1052,7 @@ GALigandDock::eval_docked_pose_helper( core::pose::Pose &pose,
 		buns_filter.set_is_ligand_residue( true );
 		buns_filter.set_use_ddG_style( true );
 		buns_filter.set_report_all_heavy_atom_unsats( true );
-		buns_filter.set_dalphaball_sasa();
+		if ( use_dalphaball_ ) buns_filter.set_dalphaball_sasa();
 		buns_filter.set_probe_radius( 1.1 );
 		buns_filter.set_atomic_depth_apo_surface( -1.0 );
 		core::Real n_unsats(buns_filter.compute( pose ));
@@ -2995,6 +2997,8 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("entropy_method") ) { entropy_method_ = tag->getOption<std::string>("entropy_method"); }
 
 	if ( tag->hasOption("estimate_buns") ) { estimate_buns_ = tag->getOption<bool>("estimate_buns"); }
+	if ( tag->hasOption("use_dalphaball") ) { use_dalphaball_ = tag->getOption<bool>("use_dalphaball"); }
+
 	if ( tag->hasOption("hb_resids") ) {
 		std::string hb_resids = tag->getOption<std::string>("hb_resids");
 		utility::vector1<std::string> hb_resids_string_vec = utility::string_split( hb_resids, ',' );
@@ -3332,6 +3336,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "estimate_dG", xsct_rosetta_bool, "Estimate dG of binding on lowest-energy docked pose. Default: false");
 	attlist + XMLSchemaAttribute( "entropy_method", xs_string, "Entropy method name. Default: MCEntropy");
 	attlist + XMLSchemaAttribute( "estimate_buns", xsct_rosetta_bool, "Estimate buried unstatsified hydrogen bonds of the lowest-energy docked pose. Default: false");
+	attlist + XMLSchemaAttribute( "use_dalphaball", xsct_rosetta_bool, "If or not use dalphaball to compute SASA. Default: false");
 	attlist + XMLSchemaAttribute( "hb_resids", xs_string, "Residue indices to calculate the number of hydrogen bonds with the ligand.");
 	attlist + XMLSchemaAttribute( "hb_resids_include_bb", xsct_rosetta_bool, "If include backbone atoms when calculating the number of hydrogen bonds with the ligand. Default: false");
 	attlist + XMLSchemaAttribute( "hb_resids_metric", xs_string, "The method used to calculate the number of hydrogen bonds with the ligand, default or simple. Default: default.");
