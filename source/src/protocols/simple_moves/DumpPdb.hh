@@ -40,8 +40,13 @@ public:
 	}
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< DumpPdb >(); }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
+
+	///@brief If set, will use the original pose name in the name. Useful if running xml in parallel.
+	void set_use_pose_name( bool use_pose_name){use_pose_name_ = use_pose_name;}
+
 	void tag_time(bool setting) { addtime_ = setting; }
 	bool tag_time() const { return addtime_; }
+
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	/// @brief Set the filename for writing.
@@ -68,6 +73,7 @@ private:
 	/// @brief Add timing information to filename?
 
 	std::string dir_ = "";
+	bool use_pose_name_ = false;
 };
 
 

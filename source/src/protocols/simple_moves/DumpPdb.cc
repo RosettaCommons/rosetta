@@ -67,8 +67,15 @@ DumpPdb::~DumpPdb() = default;
 void DumpPdb::apply( core::pose::Pose & pose ) {
 
 	std::string name( fname_ );
-	if ( pose.pdb_info() && pose.pdb_info()->name() != "" ) {
-		name = utility::pathname(name)+"/"+utility::filename(name)+ "_"+utility::filename(pose.pdb_info()->name());
+	if ( use_pose_name_ ) {
+		if ( pose.pdb_info() && pose.pdb_info()->name() != "" ) {
+			if ( utility::pathname(name).empty() ) {
+				name = utility::filename(name)+ "_"+utility::filename(pose.pdb_info()->name());
+			} else {
+				name = utility::pathname(name)+"/"+utility::filename(name)+ "_"+utility::filename(pose.pdb_info()->name());
+
+			}
+		}
 	}
 
 	if ( !dir_.empty() ) {
@@ -111,6 +118,9 @@ DumpPdb::parse_my_tag(
 	if ( tag->hasOption("dir") ) {
 		dir_ = tag->getOption< std::string >("dir");
 	}
+	if ( tag->hasOption("use_pose_name") ) {
+		use_pose_name_ = tag->getOption< bool >("use_pose_name");
+	}
 	tag_time( tag->getOption<bool>( "tag_time", false ) );
 	TR.Warning << "DEFINED DUMP_PDB MOVER. THIS IS USUALLY ONLY GOOD FOR DEBUGGING." << std::endl;
 	TR << "dump_pdb mover with filename "<<fname_<<std::endl;
@@ -131,6 +141,7 @@ void DumpPdb::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attlist;
 
 	attlist + XMLSchemaAttribute::attribute_w_default( "fname" , xs_string , "Filename of dumped PDB.  If PDBInfo is present, we will also append the pdb name." , "dump.pdb" )
+		+XMLSchemaAttribute::attribute_w_default( "use_pose_name" , xsct_rosetta_bool , "Use the original filename of the pose in the final name as fname+'_'+pose_name", "0")
 		+ XMLSchemaAttribute::attribute_w_default( "tag_time" , xsct_rosetta_bool , "If true, adds timestamp to name of pdb file." , "false" )
 		+ XMLSchemaAttribute( "dir" , xs_string , "Any directory to give.  Will use this and fname as the final name. " ) ;
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist) ;
