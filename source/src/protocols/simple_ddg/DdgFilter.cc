@@ -279,6 +279,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 			ddg.task_factory( task_factory() );
 		}
 		ddg.repack_bound( repack_bound() );
+		ddg.repack_unbound( repack_unbound() );
 		ddg.relax_bound( relax_bound() );
 		ddg.relax_unbound( relax_unbound() );
 		ddg.translate_by( translate_by() );
