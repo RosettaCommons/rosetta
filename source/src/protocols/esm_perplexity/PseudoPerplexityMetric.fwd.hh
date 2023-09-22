@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/esm_perplexity/PseudoPerplexityMetric.fwd.hh
-/// @brief A class for predicting amino acid probabilities P(Sequence|Sequence) using the ESM language model.
+/// @brief A class for predicting the likelihood of a sequence given some predicted probabilities.
 /// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
 
 // The code for a Tensorflow based metric has been adpated from:

@@ -100,9 +100,9 @@ PerResidueEsmProbabilitiesMetric::parse_my_tag(
 
 	model_ = tag->getOption< std::string >( "model" );
 
-	write_pssm_ = tag->getOption< std::string >( "write_pssm" );
+	write_pssm_ = tag->getOption< std::string >( "write_pssm", "" );
 
-	multirun_ = tag->getOption< bool >( "multirun" );
+	multirun_ = tag->getOption< bool >( "multirun", true );
 #ifdef USE_TENSORFLOW
 	// checking that we have fitting floating point values
 	runtime_assert_string_msg( sizeof( float ) == 4 && CHAR_BIT == 8, "Model depends on 32-bit floating point values, if you see this message your operating system doesn't support this" );
@@ -127,7 +127,7 @@ PerResidueEsmProbabilitiesMetric::provide_xml_schema( utility::tag::XMLSchemaDef
 
 	attlist + XMLSchemaAttribute::required_attribute( "model", xs_string, "Which ESM model to use for the prediction" );
 
-	attlist + XMLSchemaAttribute( "write_pssm", xs_string, "Output filename for the psi-blast like position-specific-scoring-matrix to be used with the FavorSequenceProfile Mover" );
+	attlist + XMLSchemaAttribute::attribute_w_default( "write_pssm", xs_string, "Output filename for the psi-blast like position-specific-scoring-matrix to be used with the FavorSequenceProfile Mover", "" );
 
 	attlist + XMLSchemaAttribute::attribute_w_default( "multirun", xsct_rosetta_bool, "Whether to run multirun the network (one inference pass for all selected residues", "true");
 

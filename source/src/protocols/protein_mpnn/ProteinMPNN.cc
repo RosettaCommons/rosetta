@@ -137,6 +137,63 @@ ProteinMPNN::sample( const core::pose::Pose & pose ){
 	return sample( pose, mpnn_options );
 }
 
+///@brief Predict amino acid probabilities/logits and fill them into maps
+void
+ProteinMPNN::get_probabilities_and_logits( core::pose::Pose const & pose, ProteinMPNNOptions const & mpnn_options,
+                                           std::map<core::Size, utility::vector1<core::Real>>& probs_map,
+                                           std::map<core::Size, utility::vector1<core::Real>>& logits_map){
+
+    // verify options
+    if (!verify_options(pose, mpnn_options)) {
+        TR.Error << "Bad inputs, aborting ProteinMPNN::sample()..." << std::endl;
+        throw CREATE_EXCEPTION(utility::excn::Exception,
+                               "Invalid options passed to ProteinMPNN. Check log for details.");
+    }
+
+    // do we want the model's sample() or tied_sample() method
+    bool tied(false);
+    torch::jit::script::Method sample_method = mpnn_module.get_method("sample");
+    if (!mpnn_options.tied_positions.empty()) {
+        tied = true;
+        sample_method = mpnn_module.get_method("tied_sample");
+    }
+
+    // prepare PyTorch inputs
+    std::vector<torch::jit::IValue> inputs = generate_sample_inputs(pose, mpnn_options, tied);
+    std::unordered_map<std::string, torch::jit::IValue> optional_inputs = generate_sample_optional_inputs(pose,
+                                                                                                          mpnn_options,
+                                                                                                          tied);
+    // inference
+    c10::Dict<c10::IValue, c10::IValue> sample_dict = sample_method(inputs, optional_inputs).toGenericDict();
+    torch::Tensor sample_probs_t = sample_dict.at("probs").toTensor();
+
+    // transfer to CPU if on GPU
+    if (sample_probs_t.is_cuda()) {
+        sample_probs_t = sample_probs_t.cpu();
+    }
+
+    // get logits from probs
+    torch::Tensor sample_logits_t = torch::logit(sample_probs_t);
+
+    // get accessor to the two tensors
+    auto accessor_probs = sample_probs_t.accessor<float, 3>();
+    auto accessor_logits = sample_logits_t.accessor<float, 3>();
+
+    // iterate over tensors and fill return map
+    for (int protein_pos = 0; protein_pos < accessor_probs.size(1); ++protein_pos) {
+        utility::vector1<core::Real> prob_vector;
+        utility::vector1<core::Real> logit_vector;
+
+        // iterate over the third dimension (probabilities) to fill the prob_vector and logit_vector
+        for (int prob_pos = 0; prob_pos < accessor_probs.size(2); ++prob_pos) {
+            prob_vector.push_back(accessor_probs[0][protein_pos][prob_pos]);
+            logit_vector.push_back(accessor_logits[0][protein_pos][prob_pos]);
+        }
+        probs_map[protein_pos + 1] = prob_vector;
+        logits_map[protein_pos + 1] = logit_vector;
+    }
+}
+
 /// @brief Get the citation for ProteinMPNN
 /// @details TODO: fill in details for Dauparas et al.
 /*static*/
@@ -313,7 +370,7 @@ ProteinMPNN::verify_options( const core::pose::Pose & pose, const ProteinMPNNOpt
 	// verify temperature
 	// warning if temperature is >1.0 (completely random sampling)
 	// this is allowed, but usually undesirable
-	if( mpnn_options.temperature >= 1.0 ){
+	if( mpnn_options.temperature > 1.0 ){
 		TR.Warning << "!!! temperature is greater than 1.0 and will sample randomly !!!" << std::endl;
 	}
 

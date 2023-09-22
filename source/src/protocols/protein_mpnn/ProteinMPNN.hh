@@ -136,6 +136,17 @@ public:
 	std::string
 	sample( const core::pose::Pose & pose );
 
+    ///@brief Predict amino acid probabilities/logits and fill them into maps
+    ///@details Runs ProteinMPNN inference using the provided options and fills the predicted probabilities/logits into provided maps
+    ///@param[in] pose The pose which will be used for prediction
+    ///@param[in] mpnn_options An ProteinMPNNOptions object specifying options for inference
+    ///@param[in] probs_map A map of residue positions to vectors of amino acid probabilities that will be filled
+    ///@param[in] logits_map A map of residue positions to vectors of amino acid logits that will be filled
+    void
+    get_probabilities_and_logits( core::pose::Pose const & pose, ProteinMPNNOptions const & mpnn_options,
+                                               std::map<core::Size, utility::vector1<core::Real>>& probs_map,
+                                               std::map<core::Size, utility::vector1<core::Real>>& logits_map);
+
 	/// @brief Get the citation for ProteinMPNN
 	/// @details TODO: fill in details for Dauparas et al.
 	static

@@ -232,6 +232,7 @@ sources = {
 		"ProteinMPNN",
 		"util",
 		"ProteinMPNNMover",
+                "ProteinMPNNProbabilitiesMetric",
 	],
 	"protocols/fold_from_loops/filters": [
 		"RmsdFromResidueSelectorFilter",

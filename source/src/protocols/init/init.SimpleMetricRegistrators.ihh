@@ -128,6 +128,9 @@ static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::WindowPo
 static SimpleMetricRegistrator< protocols::esm_perplexity::PseudoPerplexityMetricCreator > reg_EsmPerplexityMetricCreator;
 static SimpleMetricRegistrator< protocols::esm_perplexity::PerResidueEsmProbabilitiesMetricCreator > reg_PerResidueEsmProbabilitiesCreator;
 
+// Added by ME, 15 July 2023:
+static SimpleMetricRegistrator< protocols::protein_mpnn::ProteinMPNNProbabilitiesMetricCreator > reg_ProteinMPNNProbabilitiesCreator;
+
 // Added by ME, 8 December 2022:
 static SimpleMetricRegistrator< protocols::ptm_prediction::PTMPredictionMetricCreator > reg_PTMPredictionMetricCreator;
 

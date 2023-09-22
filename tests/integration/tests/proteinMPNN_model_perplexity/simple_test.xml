@@ -1,0 +1,18 @@
+<ROSETTASCRIPTS>
+    <RESIDUE_SELECTORS>
+        <Chain name="res" chains="A" />
+        <Index name="mask" resnums="25"/>
+    </RESIDUE_SELECTORS>
+    <SIMPLE_METRICS>
+        <ProteinMPNNProbabilitiesMetric name="prediction" residue_selector="res" coord_selector="res" sequence_mask_selector="mask"/>
+        <PseudoPerplexityMetric name="perplex" metric="prediction"/>
+    </SIMPLE_METRICS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        <RunSimpleMetrics name="run" metrics="perplex"/>
+    </MOVERS>
+    <PROTOCOLS>
+        <Add mover_name="run"/>
+    </PROTOCOLS>
+</ROSETTASCRIPTS>

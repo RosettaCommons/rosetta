@@ -415,6 +415,7 @@ EsmPerplexityTensorflowProtocol::download_model_if_not_existing( std::string con
 		// automatically download if the user has set the -auto_download flag
 		if ( auto_download ) {
 			std::string const tar_file = model_name + ".tar.gz";
+			TR.Info << "Downloading missing model files.... " << std::endl;
 			// TODO: remove certificate flag after updating ssl stuff on our gitlab
 			std::string message = "Downloading model from GitLab";
 			std::string command = "wget";

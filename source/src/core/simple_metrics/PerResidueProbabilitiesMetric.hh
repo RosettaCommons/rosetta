@@ -166,7 +166,8 @@ private:
 	/// @brief Output the sequence_profile as file
 	/// @param[in] profile A SequenceProfile filled with the logits
 	/// @param[in] output_filename A string defining the name of the output file
-	static void write_profile(core::sequence::SequenceProfile &profile, std::string const &output_filename) ;
+	/// @param[in] index_to_key A vector specifiying to map profile rows to pose numbering
+	static void write_profile(core::sequence::SequenceProfile &profile, std::string const &output_filename, utility::vector1<core::Size> const & index_to_key) ;
 
 protected:
 

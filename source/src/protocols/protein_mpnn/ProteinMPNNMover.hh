@@ -101,6 +101,19 @@ public:
 	void
 	set_tied_pos_rs( utility::vector1< utility::vector1< core::select::residue_selector::ResidueSelectorCOP > > tied_pos_rs );
 
+	static void
+	validate_residue_selectors(
+		utility::vector1< utility::vector1< core::Size > > const & selection_positions,
+		core::Size const expected_size
+	);
+
+	/// @brief Turn a bunch of residue selectors into a bunch of lists of resnums selected by those residue selectors
+	static utility::vector1< utility::vector1< core::Size > >
+	residue_selectors_to_indices(
+		core::pose::Pose const & pose,
+		utility::vector1< core::select::residue_selector::ResidueSelectorCOP > const & residue_selectors
+	);
+
 private:
 
 	bool deterministic_flag_ = false;
@@ -116,19 +129,6 @@ private:
 	utility::vector1< utility::vector1< core::select::residue_selector::ResidueSelectorCOP > > tied_pos_rs_;
 
 	core::pack::task::TaskFactoryOP task_factory_;
-
-	void
-	validate_residue_selectors(
-		utility::vector1< utility::vector1< core::Size > > const & selection_positions,
-		core::Size const expected_size
-	);
-
-	/// @brief Turn a bunch of residue selectors into a bunch of lists of resnums selected by those residue selectors
-	utility::vector1< utility::vector1< core::Size > >
-	residue_selectors_to_indices(
-		core::pose::Pose const & pose,
-		utility::vector1< core::select::residue_selector::ResidueSelectorCOP > const & residue_selectors
-	);
 
 };
 

@@ -46,7 +46,7 @@
 namespace protocols {
 namespace esm_perplexity {
 
-///@brief A metric for calculating the (pseudo-)perplexity of a sequence using the ESM language model family
+///@brief A metric for calculating the (pseudo-)perplexity of a sequence
 class PseudoPerplexityMetric : public core::simple_metrics::RealMetric{
 
 public:

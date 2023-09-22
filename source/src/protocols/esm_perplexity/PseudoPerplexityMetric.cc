@@ -179,7 +179,7 @@ PseudoPerplexityMetric::provide_xml_schema(utility::tag::XMLSchemaDefinition & x
 	attlist + XMLSchemaAttribute::attribute_w_default("fail_on_missing_cache", xsct_rosetta_bool, "If use_cached_data is True and cache is not found, should we fail?", "true");
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
-		"A metric for estimating the probability of an amino acid at a given position, as predicted by the ESM language model.", attlist);
+		"A metric for estimating the likeliness of a sequence given some predicted probabilities.", attlist);
 
 }
 
@@ -219,7 +219,7 @@ PseudoPerplexityMetric::provide_citation_info(basic::citation_manager::CitationC
 		"Moritz Ertelt",
 		"University of Leipzig",
 		"moritz.ertelt@gmail.com",
-		"Wrote the PseudoPerplexityMetric."
+		""
 		)
 	);
 }

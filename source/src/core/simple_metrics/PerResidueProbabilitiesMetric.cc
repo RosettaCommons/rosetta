@@ -167,6 +167,9 @@ PerResidueProbabilitiesMetric::output_sequence_profile( std::string const & sequ
 	// vector to fill with all probability rows for each position
 	utility::vector1<utility::vector1<core::Real> > all_pssm_rows_vec(logit_map.size(),
 		utility::vector1<core::Real>(20, 0));
+	// Record mapping from index to actual key
+	utility::vector1<core::Size> index_to_key(logit_map.size());
+	core::Size idx = 1;
 	// go through positions and fill sequence profile
 	for ( auto const & position_map_pair : logit_map ) {
 		utility::vector1< core::Real > pssm_row_vec( 20, 0);
@@ -175,11 +178,14 @@ PerResidueProbabilitiesMetric::output_sequence_profile( std::string const & sequ
 			core::Size index = psiblast_alphabet.find( cur_aa ) + 1;
 			pssm_row_vec[index] = aa_logits_pair.second;
 		}
-		all_pssm_rows_vec[position_map_pair.first] = pssm_row_vec;
+		all_pssm_rows_vec[idx] = pssm_row_vec;
+		index_to_key[idx] = position_map_pair.first;
+
+		++idx;
 	}
 	sequence_profile.profile( all_pssm_rows_vec );
 	sequence_profile.sequence( sequence );
-	write_profile( sequence_profile, output_filename );
+	write_profile( sequence_profile, output_filename, index_to_key );
 }
 
 /// @brief Output the sequence_profile
@@ -188,7 +194,8 @@ PerResidueProbabilitiesMetric::output_sequence_profile( std::string const & sequ
 void
 PerResidueProbabilitiesMetric::write_profile(
 	core::sequence::SequenceProfile & profile,
-	std::string const & output_filename ) {
+	std::string const & output_filename,
+	utility::vector1<core::Size> const & index_to_key) {
 
 	utility::io::ozstream out( output_filename, std::ios::out | std::ios::binary );
 	out << std::endl;
@@ -200,14 +207,14 @@ PerResidueProbabilitiesMetric::write_profile(
 	boost::format line_format(
 		"%5i %1s   %3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f%3.0f");
 
-	for ( core::Size i = 0; i < profile.length(); i++ ) {
+	for ( core::Size i = 1; i <= profile.length(); ++i ) {
 		line_format.clear_binds();
-		line_format.bind_arg( 1, i+1 );
-		line_format.bind_arg( 2, profile.sequence()[i]);
-		for ( core::Size j = 0; j < profile.width(); ++j ) {
+		line_format.bind_arg( 1, index_to_key[i] );
+		line_format.bind_arg( 2, profile.sequence()[i-1]);
+		for ( core::Size j = 1; j <= profile.width(); ++j ) {
 			line_format.bind_arg(
 				line_format.cur_arg(),
-				profile.prof_row( i+1 )[ j+1 ]
+				profile.prof_row( i )[ j ]
 			);
 		}
 		out << line_format << std::endl;

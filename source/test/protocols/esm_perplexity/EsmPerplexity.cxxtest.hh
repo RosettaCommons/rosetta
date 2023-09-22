@@ -17,7 +17,8 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-# include <protocols/esm_perplexity/EsmPerplexityTensorflowProtocol.hh>
+#include <protocols/esm_perplexity/EsmPerplexityTensorflowProtocol.hh>
+#include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.tmpl.hh>
 
 // Project headers
 #include <core/types.hh>

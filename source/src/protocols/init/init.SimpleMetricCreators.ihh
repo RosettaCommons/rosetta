@@ -50,5 +50,8 @@
 #include <protocols/pose_sewing/simple_metrics/BlockwiseShapeCompMetricCreator.hh>
 #include <protocols/pose_sewing/simple_metrics/MinimumInterAlphaDistanceMetricCreator.hh>
 #include <protocols/pose_sewing/simple_metrics/WindowPoseCompMotifMetricCreator.hh>
+
+#include <protocols/protein_mpnn/ProteinMPNNProbabilitiesMetricCreator.hh> // Added by ME, 15 July 2023
+
 #include <protocols/ptm_prediction/PTMPredictionMetricCreator.hh> // Added by ME, 8 December 2022.
 
