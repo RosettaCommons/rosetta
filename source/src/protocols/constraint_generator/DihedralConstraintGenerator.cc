@@ -223,8 +223,8 @@ DihedralConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacac
 		parsed_atoms_ = tag->getOption< std::string >( "dihedral_atoms");
 		parsed_custom_torsion_ = true;
 	}
-	if ( tag->hasOption("dihedral_resnums") ) {
-		parsed_resnums_ = tag->getOption< std::string >( "dihedral_resnums");
+	if ( tag->hasOption("dihedral_residues") ) {
+		parsed_resnums_ = tag->getOption< std::string >( "dihedral_residues");
 		parsed_custom_torsion_ = true;
 	}
 
