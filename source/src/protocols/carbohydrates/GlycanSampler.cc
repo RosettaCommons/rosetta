@@ -120,6 +120,8 @@ GlycanSampler::parse_my_tag(
 	kt_ = tag->getOption< core::Real >("kt", kt_);
 	rounds_ = tag->getOption< core::Size >("rounds", rounds_);
 
+	refine_ = tag->getOption< bool >("refine", refine_);
+
 	final_min_ = tag->getOption< bool >("final_min", final_min_);
 
 	pymol_movie_ = tag->getOption< bool >("pymol_movie", pymol_movie_);
