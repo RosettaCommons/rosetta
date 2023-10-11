@@ -737,6 +737,8 @@ sources = {
 		"ReturnSidechainMover",
 		"ResTypeFragmentMover",
 		"RingConformationMover",
+        "SampleSequenceFromProbabilities",
+        "SaveProbabilitiesMetricMover",
 		"ScoreMover",
 		"SequenceProfileMover",
 		"SetTorsion",

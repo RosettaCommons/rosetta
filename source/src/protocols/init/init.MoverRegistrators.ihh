@@ -613,6 +613,8 @@ static MoverRegistrator< simple_moves::ResetFoldTreeCreator > reg_ResetFoldTreeC
 static MoverRegistrator< simple_moves::ResetFullModelInfoMoverCreator > reg_ResetFullModelInfoMoverCreator;
 static MoverRegistrator< simple_moves::RingConformationMoverCreator > reg_RingConformationMoverCreator;
 static MoverRegistrator< simple_moves::SaveSequenceToCommentsMoverCreator > reg_SaveSequenceToCommentsMoverCreator;
+static MoverRegistrator< simple_moves::SampleSequenceFromProbabilitiesCreator > reg_SampleSequenceFromProbabilitiesCreator;
+static MoverRegistrator< simple_moves::SaveProbabilitiesMetricMoverCreator > reg_SaveProbabilitiesMetricMoverCreator;
 static MoverRegistrator< simple_moves::ScoreMoverCreator > reg_ScoreMoverCreator;
 static MoverRegistrator< simple_moves::SequenceProfileMoverCreator > reg_SequenceProfileMoverCreator;
 static MoverRegistrator< simple_moves::SetTorsionCreator > reg_SetTorsionCreator;

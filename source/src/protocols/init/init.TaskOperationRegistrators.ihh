@@ -64,6 +64,7 @@ static TaskOperationRegistrator< protocols::task_operations::PruneBuriedUnsatsOp
 static TaskOperationRegistrator< protocols::task_operations::ReadResfileFromDBCreator > ReadResfileFromDBCreator_registrator;
 static TaskOperationRegistrator< protocols::task_operations::ResfileCommandOperationCreator > ResfileCommandOperationCreator;
 static TaskOperationRegistrator< protocols::task_operations::ResidueProbDesignOperationCreator > ResidueProbDesignOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::task_operations::RestrictAAsFromProbabilitiesCreator > RestrictAAsFromProbabilitiesCreator;
 static TaskOperationRegistrator< protocols::task_operations::RestrictByCalculatorsOperationCreator > RestrictByCalculatorsOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::task_operations::RestrictChainToRepackingOperationCreator > RestrictChainToRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::task_operations::RestrictConservedLowDdgOperationCreator > RestrictConservedLowDdgOperationCreator_registrator;

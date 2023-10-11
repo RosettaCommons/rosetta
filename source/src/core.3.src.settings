@@ -207,6 +207,7 @@ sources = {
 	],
 	"core/simple_metrics/per_residue_metrics": [
 		"HbondMetric",
+        	"LoadedProbabilitiesMetric",
 		"PerResidueClashMetric",
 		"PerResidueDensityFitMetric",
 		"PerResidueEnergyMetric",

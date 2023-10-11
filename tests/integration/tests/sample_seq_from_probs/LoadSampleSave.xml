@@ -1,0 +1,20 @@
+<ROSETTASCRIPTS>
+    <RESIDUE_SELECTORS>
+        <Chain name="res" chains="A" />
+    </RESIDUE_SELECTORS>
+    <SIMPLE_METRICS>
+        <LoadedProbabilitiesMetric name="loaded_probs" filename="probs.weights"/>
+    </SIMPLE_METRICS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+        <RunSimpleMetrics name="load" metrics="loaded_probs"/>
+        <SaveProbabilitiesMetricMover name="save" metric="loaded_probs" filename="probs_2.weights"/>
+        <SampleSequenceFromProbabilities name="sample" metric="loaded_probs" pos_temp="0.001" aa_temp="1.0" prob_cutoff="0.15" delta_prob_cutoff="0.0" max_mutations="1" use_cached_data="true"/>
+    </MOVERS>
+    <PROTOCOLS>
+        <Add mover_name="load"/>
+        <Add mover_name="sample"/>
+        <Add mover_name="save"/>
+    </PROTOCOLS>
+</ROSETTASCRIPTS>

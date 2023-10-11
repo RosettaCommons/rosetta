@@ -75,6 +75,7 @@
 #include <protocols/task_operations/ReadResfileFromDBCreator.hh>
 #include <protocols/task_operations/ResfileCommandOperationCreator.hh>
 #include <protocols/task_operations/ResidueProbDesignOperationCreator.hh>
+#include <protocols/task_operations/RestrictAAsFromProbabilitiesCreator.hh>
 #include <protocols/task_operations/RestrictByCalculatorsOperationCreator.hh>
 #include <protocols/task_operations/RestrictChainToRepackingOperationCreator.hh>
 #include <protocols/task_operations/RestrictToAlignedSegmentsCreator.hh>

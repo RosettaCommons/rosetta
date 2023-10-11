@@ -595,6 +595,8 @@
 #include <protocols/constraint_movers/ResidueTypeConstraintMoverCreator.hh>
 #include <protocols/simple_moves/RingConformationMoverCreator.hh>
 #include <protocols/simple_moves/SaveSequenceToCommentsMoverCreator.hh>
+#include <protocols/simple_moves/SampleSequenceFromProbabilitiesCreator.hh>
+#include <protocols/simple_moves/SaveProbabilitiesMetricMoverCreator.hh>
 #include <protocols/simple_moves/ScoreMoverCreator.hh>
 #include <protocols/simple_moves/SequenceProfileMoverCreator.hh>
 #include <protocols/simple_moves/SetTorsionCreator.hh>

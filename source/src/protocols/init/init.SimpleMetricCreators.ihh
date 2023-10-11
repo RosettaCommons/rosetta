@@ -17,6 +17,7 @@
 
 #include <core/simple_metrics/simple_metric_creators.hh>
 
+#include <core/simple_metrics/per_residue_metrics/LoadedProbabilitiesMetricCreator.hh> // Added by ME, 14 Sept. 2023
 #include <core/simple_metrics/per_residue_metrics/SidechainNeighborCountMetricCreator.hh>
 #include <core/simple_metrics/test_classes_creators.hh>
 

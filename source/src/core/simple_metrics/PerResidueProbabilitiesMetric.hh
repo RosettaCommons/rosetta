@@ -118,6 +118,13 @@ public: // constructors / destructors
 		bool fail_on_missing_cache=true,
 		bool use_ref_pose_for_cache=true) const;
 
+	/// @brief Format the probabilities in psi-blast position-specific-scoring-matrix (PSSM) format and write to file
+	/// @param[in] sequence The sequence of the pose
+	/// @param[in] logit_map A map containing the predicted logits for each position
+	/// @param[in] output_filename A string defining the name of the output file
+	static void output_sequence_profile(std::string const & sequence, std::map<core::Size, std::map<core::chemical::AA, core::Real>> const &logit_map,
+		std::string const &output_filename) ;
+
 public:
 
 	///@brief Name of the class
@@ -168,15 +175,6 @@ private:
 	/// @param[in] output_filename A string defining the name of the output file
 	/// @param[in] index_to_key A vector specifiying to map profile rows to pose numbering
 	static void write_profile(core::sequence::SequenceProfile &profile, std::string const &output_filename, utility::vector1<core::Size> const & index_to_key) ;
-
-protected:
-
-	/// @brief Format the probabilities in psi-blast position-specific-scoring-matrix (PSSM) format and write to file
-	/// @param[in] sequence The sequence of the pose
-	/// @param[in] logit_map A map containing the predicted logits for each position
-	/// @param[in] output_filename A string defining the name of the output file
-	static void output_sequence_profile(std::string const & sequence, std::map<core::Size, std::map<core::chemical::AA, core::Real>> const &logit_map,
-		std::string const &output_filename) ;
 
 #ifdef    SERIALIZATION
 public:
