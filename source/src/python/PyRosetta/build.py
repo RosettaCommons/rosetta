@@ -160,7 +160,9 @@ def install_llvm_tool(name, source_location, prefix_root, debug, compiler, jobs,
     llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang') if Platform == 'macos' and platform.machine() == 'arm64' else ('6.0.1', 'tools/clang/lib/Headers/clang-headers')
     #llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang') if Platform == 'macos' else ('6.0.1', 'tools/clang/lib/Headers/clang-headers')
     #llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang')
-    #if Platform == 'macos': headers += ' clang'
+
+    if Platform == 'macos'  and  tuple( platform.mac_ver()[0].split('.') ) >= ('13','3') : llvm_version, headers = ('13.0.0', 'tools/clang/lib/Headers/clang-resource-headers clang')
+    #print(f'{Platform=} {llvm_version=}')
 
     prefix = prefix_root + '/llvm-' + llvm_version
 
@@ -189,6 +191,9 @@ def install_llvm_tool(name, source_location, prefix_root, debug, compiler, jobs,
         llvm_url, clang_url = {
             '6.0.1'  : ('https://releases.llvm.org/6.0.1/llvm-6.0.1.src.tar.xz', 'https://releases.llvm.org/6.0.1/cfe-6.0.1.src.tar.xz'),
             '13.0.0' : ('https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/llvm-13.0.0.src.tar.xz', 'https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang-13.0.0.src.tar.xz'),
+            '14.0.6' : ('https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.6/llvm-14.0.6.src.tar.xz', 'https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.6/clang-14.0.6.src.tar.xz'),
+            '15.0.7' : ('https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.7/llvm-15.0.7.src.tar.xz', 'https://github.com/llvm/llvm-project/releases/download/llvmorg-15.0.7/clang-15.0.7.src.tar.xz'),
+            '16.0.0' : ('https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/llvm-16.0.0.src.tar.xz', 'https://github.com/llvm/llvm-project/releases/download/llvmorg-16.0.0/clang-16.0.0.src.tar.xz'),
         }[llvm_version]
 
         if not os.path.isfile(prefix + '/CMakeLists.txt'):

@@ -759,11 +759,12 @@ def local_python_install(platform, config):
         '3.9'  : 'https://www.python.org/ftp/python/3.9.14/Python-3.9.14.tgz',
         '3.10' : 'https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz',
         '3.11' : 'https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tgz',
+        '3.12' : 'https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
     extras = {
-        #('mac',) :          ('__PYVENV_LAUNCHER__="" MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),  # __PYVENV_LAUNCHER__ now used by-default for all platform installs
+        ('m1',) :           ('unset CPATH LDFLAGS CPPFLAGS && MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
         ('mac',) :          ('MACOSX_DEPLOYMENT_TARGET={}'.format(platform_module.mac_ver()[0]), ''),
         ('linux',  '2.7') : ('', '--enable-unicode=ucs4'),
         ('ubuntu', '2.7') : ('', '--enable-unicode=ucs4'),
@@ -818,7 +819,7 @@ def local_python_install(platform, config):
 
         #if False and platform['os'] == 'mac' and platform_module.machine() == 'arm64' and tuple( map(int, python_version.split('.') ) ) >= (3, 9):
         if ( platform['os'] == 'mac' and python_version == '3.6' ) \
-           or ( platform_is_linux and python_version in ['3.10', '3.11'] ):
+           or ( platform_is_linux and python_version in ['3.10', '3.11', '3.12'] ):
             open_ssl_url = local_open_ssl_install(root, build_prefix, jobs)
             options += f' --with-openssl={root} --with-openssl-rpath=auto'
             #signature += 'OpenSSL install: ' + open_ssl_url + '\n'
