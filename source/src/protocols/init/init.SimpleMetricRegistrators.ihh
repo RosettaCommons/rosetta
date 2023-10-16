@@ -18,6 +18,8 @@ namespace protocols {
 
 using core::simple_metrics::SimpleMetricRegistrator;
 
+static SimpleMetricRegistrator< core::simple_metrics::metrics::AverageProbabilitiesMetricCreator > reg_AverageProbabilitiesMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::CalculatorMetricCreator > reg_CalculatorMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::CustomStringValueMetricCreator > reg_CustomStringValueMetricCreator;
@@ -75,6 +77,8 @@ static SimpleMetricRegistrator< core::simple_metrics::TestPerResidueStringMetric
 
 /////////// Composite   /////////////
 
+static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::BestMutationsFromProbabilitiesMetricCreator > reg_BestMutationsFromProbabilitiesMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::CompositeEnergyMetricCreator  > reg_CompositeEnergyMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ElectrostaticComplementarityMetricCreator  > reg_ElectrostaticComplementarityMetricCreator;
@@ -84,9 +88,14 @@ static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::Electro
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ProtocolSettingsMetricCreator  > reg_ProtocolSettingsMetricCreator;
 
 /////////// Per Residue ////////////
+
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::CurrentProbabilityMetricCreator > reg_CurrentProbabilityMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::HbondMetricCreator > reg_HbondMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::WaterMediatedHbondMetricCreator > reg_WaterMediatedHbondMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::ProbabilityConservationMetricCreator > reg_ProbabilityConservationCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueClashMetricCreator > reg_PerResidueClashMetricCreator;
 
@@ -127,7 +136,7 @@ static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::MinimumI
 static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::WindowPoseCompMotifMetricCreator > reg_WindowPoseCompMotifMetricCreator;
 
 // Added by ME, 24 December 2022:
-static SimpleMetricRegistrator< protocols::esm_perplexity::PseudoPerplexityMetricCreator > reg_EsmPerplexityMetricCreator;
+static SimpleMetricRegistrator< protocols::esm_perplexity::PseudoPerplexityMetricCreator > reg_PseudoPerplexityMetricCreator;
 static SimpleMetricRegistrator< protocols::esm_perplexity::PerResidueEsmProbabilitiesMetricCreator > reg_PerResidueEsmProbabilitiesCreator;
 
 // Added by ME, 15 July 2023:

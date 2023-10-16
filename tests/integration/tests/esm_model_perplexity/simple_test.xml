@@ -4,15 +4,24 @@
         <Index name="mask" resnums="25"/>
     </RESIDUE_SELECTORS>
     <SIMPLE_METRICS>
-        <PerResidueEsmProbabilitiesMetric name="prediction" residue_selector="res" attention_mask_selection="mask"  write_pssm="test.pssm" model="esm2_t6_8M_UR50D" multirun="true"/>
-        <PseudoPerplexityMetric name="perplex" metric="prediction"/>
+        # Inference
+        <PerResidueEsmProbabilitiesMetric name="prediction" residue_selector="res" attention_mask_selection="mask"  write_pssm="test.pssm" model="esm2_t6_8M_UR50D" multirun="true" custom_type="first"/>
+        <PerResidueEsmProbabilitiesMetric name="prediction2" residue_selector="res" write_pssm="test2.pssm" model="esm2_t6_8M_UR50D" multirun="true" custom_type="second"/>
+        # Analysis using cached data
+        <AverageProbabilitiesMetric name="avg" metrics="prediction,prediction2" use_cached_data="true"/>
+        <BestMutationsFromProbabilitiesMetric name="mutations" metric="prediction" use_cached_data="true"/>
+        <PseudoPerplexityMetric name="perplex" metric="prediction" use_cached_data="true" />
+        <CurrentProbabilityMetric name="current" metric="prediction" use_cached_data="true" />
+        <ProbabilityConservationMetric name="conservation" metric="prediction" use_cached_data="true"/>
     </SIMPLE_METRICS>
     <FILTERS>
     </FILTERS>
     <MOVERS>
-        <RunSimpleMetrics name="run" metrics="perplex"/>
+        <RunSimpleMetrics name="inference" metrics="prediction,prediction2"/>
+        <RunSimpleMetrics name="run" metrics="avg,mutations,perplex,current,conservation"/>
     </MOVERS>
     <PROTOCOLS>
+        <Add mover_name="inference"/>
         <Add mover_name="run"/>
     </PROTOCOLS>
 </ROSETTASCRIPTS>

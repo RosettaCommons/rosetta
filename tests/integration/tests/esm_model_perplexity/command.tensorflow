@@ -30,7 +30,6 @@ cd %(workdir)s
 
 [ -x %(bin)s/tensorflow_test2.%(binext)s ] || exit 1
 
-sleep 0.6
 
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST \
 -parser:protocol simple_test.xml -s %(minidir)s/../tests/integration/tests/zinc_heterodimer/1UBQ.pdb 2>&1 \

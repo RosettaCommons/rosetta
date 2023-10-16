@@ -7,18 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/esm_perplexity/PseudoPerplexityMetric.hh
-/// @brief A class for calculating the pseudo-perplexity from a given PerResidueProbabilitiesMetric.
+/// @file core/simple_metrics/per_residue_metrics/ProbabilityConservationMetric.hh
+/// @brief A class for calculating the conservation of a position given some predicted probabilities (using the relative Shannon Entropy).
 /// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
-/// @note This has been adopted from how the ResidueSummaryMetric from Jared works.
 
 
-#ifndef INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetric_HH
-#define INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetric_HH
+#ifndef INCLUDED_core_simple_metrics_per_residue_metrics_ProbabilityConservationMetric_HH
+#define INCLUDED_core_simple_metrics_per_residue_metrics_ProbabilityConservationMetric_HH
 
-#include <protocols/esm_perplexity/PseudoPerplexityMetric.fwd.hh>
-#include <protocols/esm_perplexity/EsmPerplexityTensorflowProtocol.fwd.hh>
-#include <core/simple_metrics/RealMetric.hh>
+#include <core/simple_metrics/per_residue_metrics/ProbabilityConservationMetric.fwd.hh>
+#include <core/simple_metrics/PerResidueRealMetric.hh>
 
 // Core headers
 #include <core/types.hh>
@@ -43,11 +41,12 @@
 // C++ headers
 #include <map>
 
-namespace protocols {
-namespace esm_perplexity {
+namespace core {
+namespace simple_metrics {
+namespace per_residue_metrics {
 
-///@brief A metric for calculating the (pseudo-)perplexity of a sequence
-class PseudoPerplexityMetric : public core::simple_metrics::RealMetric{
+///@brief A metric for calculating the conservation of a position given some predicted probabilities (using the relative Shannon Entropy).
+class ProbabilityConservationMetric : public core::simple_metrics::PerResidueRealMetric{
 
 public:
 
@@ -56,15 +55,15 @@ public:
 	/////////////////////
 
 	/// @brief Default constructor
-	PseudoPerplexityMetric();
+	ProbabilityConservationMetric();
 
-	PseudoPerplexityMetric( core::simple_metrics::PerResidueProbabilitiesMetricCOP metric );
+	ProbabilityConservationMetric( core::simple_metrics::PerResidueProbabilitiesMetricCOP metric );
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
-	PseudoPerplexityMetric(PseudoPerplexityMetric const & src );
+	ProbabilityConservationMetric(ProbabilityConservationMetric const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	~PseudoPerplexityMetric() override;
+	~ProbabilityConservationMetric() override;
 
 
 public:
@@ -74,7 +73,7 @@ public:
 	/////////////////////
 
 	///@brief Calculate the metric.
-	core::Real
+	std::map< core::Size, core::Real >
 	calculate( core::pose::Pose const & pose ) const override;
 
 public:
@@ -92,7 +91,7 @@ public:
 	std::string
 	metric() const override;
 
-	///@brief Set the PerResidueProbabilitiesMetric that will be used to calculate the pseudo-perplexity.
+	///@brief Set the PerResidueProbabilitiesMetric that will be used to calculate the conservation.
 	void
 	set_metric( core::simple_metrics::PerResidueProbabilitiesMetricCOP metric );
 
@@ -109,14 +108,9 @@ public:
 	void
 	set_fail_on_missing_cache(bool fail);
 
-	/// @brief Function to return the (pseudo-)perplexity from a map of probabilities
-	/// @details Takes a map of amino acid probabilities, gets the amino acid present in the pose, add the logarithm
-	///          of its probability to a sum and then returns the exp of the negative ratio of this sum divided by the total length.
-	/// @param[in] pose The pose used to refer which core::chemical::AA types are actually present
-	/// @param[in] values The resulting values of a PerResidueProbabilitiesMetric
-	/// @returns A core::Real value representing the pseud-perplexity
-	static core::Real compute_perplexity(core::pose::Pose const &pose,
-		std::map<core::Size, std::map<core::chemical::AA, core::Real>> const &values) ;
+	///@brief calculate the delta
+	std::map<core::Size, core::Real> compute_conservation( std::map<core::Size, std::map<core::chemical::AA, core::Real>> const & values  ) const;
+
 public:
 
 	/// @brief called by parse_my_tag -- should not be used directly
@@ -152,18 +146,18 @@ public:
 	/// @brief This metric is unpublished.  It returns Moritz Ertelt as its author.
 	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const override;
 
-
 };
 
-} //esm_perplexity
-} //protocols
+} //per_residue_metrics
+} //simple_metrics
+} //core
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( protocols_esm_perplexity_PseudoPerplexityMetric )
+CEREAL_FORCE_DYNAMIC_INIT( core_simple_metrics_per_residue_metrics_ProbabilityConservationMetric )
 #endif // SERIALIZATION
 
 
-#endif //INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetric_HH
+#endif //INCLUDED_core_simple_metrics_per_residue_metrics_ProbabilityConservationMetric_HH
 
 
 

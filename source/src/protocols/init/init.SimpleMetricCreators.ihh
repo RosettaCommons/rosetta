@@ -17,10 +17,16 @@
 
 #include <core/simple_metrics/simple_metric_creators.hh>
 
+#include <core/simple_metrics/composite_metrics/BestMutationsFromProbabilitiesMetricCreator.hh> // Added by ME, 31.08.2023
+
 #include <core/simple_metrics/per_residue_metrics/LoadedProbabilitiesMetricCreator.hh> // Added by ME, 14 Sept. 2023
+#include <core/simple_metrics/per_residue_metrics/ProbabilityConservationMetricCreator.hh> // Added by ME, 28.08.2023
+
 #include <core/simple_metrics/per_residue_metrics/SidechainNeighborCountMetricCreator.hh>
+#include <core/simple_metrics/per_residue_metrics/CurrentProbabilityMetricCreator.hh> // Added by ME, 25.08.2023
 #include <core/simple_metrics/test_classes_creators.hh>
 
+#include <core/simple_metrics/metrics/AverageProbabilitiesMetricCreator.hh> // Added by ME, 28.08.2023
 #include <core/simple_metrics/metrics/CustomStringValueMetricCreator.hh> //Added by VKM, 28 Sept. 2021.
 #include <core/simple_metrics/metrics/CustomRealValueMetricCreator.hh> //Added by VKM, 28 Jun. 2022.
 #include <core/simple_metrics/metrics/CalculatorMetricCreator.hh>

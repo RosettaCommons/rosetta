@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/esm_perplexity/PseudoPerplexityMetricCreator.hh
-/// @brief A class for calculating the pseudo-perplexity from a given PerResidueProbabilitiesMetric.
-/// @author MoritzErtelt (moritz.ertelt@googlemail.com)
+/// @file core/simple_metrics/per_residue_metrics/CurrentProbabilityMetricCreator.hh
+/// @brief A class for returning just the probability of the amino acid currently present in the pose from a PerResidueProbabilitiesMetric.
+/// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
 
-#ifndef INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetricCreator_HH
-#define INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetricCreator_HH
+#ifndef INCLUDED_core_simple_metrics_per_residue_metrics_CurrentProbabilityMetricCreator_HH
+#define INCLUDED_core_simple_metrics_per_residue_metrics_CurrentProbabilityMetricCreator_HH
 
 // Unit headers
 #include <core/simple_metrics/SimpleMetricCreator.hh>
@@ -21,10 +21,11 @@
 #include <core/simple_metrics/SimpleMetric.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
-namespace protocols {
-namespace esm_perplexity {
+namespace core {
+namespace simple_metrics {
+namespace per_residue_metrics {
 
-class PseudoPerplexityMetricCreator : public core::simple_metrics::SimpleMetricCreator {
+class CurrentProbabilityMetricCreator : public core::simple_metrics::SimpleMetricCreator {
 public:
 
 
@@ -40,8 +41,9 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
-} //esm_perplexity
-} //protocols
+} //per_residue_metrics
+} //simple_metrics
+} //core
 
-#endif //INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetricCreator_HH
+#endif //INCLUDED_core_simple_metrics_per_residue_metrics_CurrentProbabilityMetricCreator_HH
 

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/esm_perplexity/PseudoPerplexityMetricCreator.hh
-/// @brief A class for calculating the pseudo-perplexity from a given PerResidueProbabilitiesMetric.
-/// @author MoritzErtelt (moritz.ertelt@googlemail.com)
+/// @file core/simple_metrics/composite_metrics/BestMutationsFromProbabilitiesMetricCreator.hh
+/// @brief A class for calculating the mutations with the highest delta_probability to the current residues from a PerResidueProbabilitiesMetric.
+/// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
 
-#ifndef INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetricCreator_HH
-#define INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetricCreator_HH
+#ifndef INCLUDED_core_simple_metrics_composite_metrics_BestMutationsFromProbabilitiesMetricCreator_HH
+#define INCLUDED_core_simple_metrics_composite_metrics_BestMutationsFromProbabilitiesMetricCreator_HH
 
 // Unit headers
 #include <core/simple_metrics/SimpleMetricCreator.hh>
@@ -21,10 +21,11 @@
 #include <core/simple_metrics/SimpleMetric.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
-namespace protocols {
-namespace esm_perplexity {
+namespace core {
+namespace simple_metrics {
+namespace composite_metrics {
 
-class PseudoPerplexityMetricCreator : public core::simple_metrics::SimpleMetricCreator {
+class BestMutationsFromProbabilitiesMetricCreator : public core::simple_metrics::SimpleMetricCreator {
 public:
 
 
@@ -40,8 +41,9 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
-} //esm_perplexity
-} //protocols
+} //composite_metrics
+} //simple_metrics
+} //core
 
-#endif //INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetricCreator_HH
+#endif //INCLUDED_core_simple_metrics_composite_metrics_BestMutationsFromProbabilitiesMetricCreator_HH
 

@@ -7,22 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/esm_perplexity/PseudoPerplexityMetric.cc
-/// @brief A class for calculating the pseudo-perplexity from a given PerResidueProbabilitiesMetric.
+/// @file core/simple_metrics/per_residue_metrics/CurrentProbabilityMetric.cc
+/// @brief A class for for returning just the probability of the amino acid currently present in the pose from a PerResidueProbabilitiesMetric.
 /// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
-/// @note This has been adopted from how the ResidueSummaryMetric from Jared works.
 
 // Unit headers
-#include <protocols/esm_perplexity/PseudoPerplexityMetric.hh>
-#include <protocols/esm_perplexity/PseudoPerplexityMetricCreator.hh>
-#include <protocols/esm_perplexity/EsmPerplexityTensorflowProtocol.hh>
+#include <core/simple_metrics/per_residue_metrics/CurrentProbabilityMetric.hh>
+#include <core/simple_metrics/per_residue_metrics/CurrentProbabilityMetricCreator.hh>
 
 // Core headers
 #include <core/simple_metrics/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
@@ -41,62 +38,62 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-static basic::Tracer TR( "protocols.esm_perplexity.PseudoPerplexityMetric" );
+static basic::Tracer TR( "core.simple_metrics.per_residue_metrics.CurrentProbabilityMetric" );
 
-
-namespace protocols {
-namespace esm_perplexity {
+namespace core {
+namespace simple_metrics {
+namespace per_residue_metrics {
 
 /////////////////////
 /// Constructors  ///
 /////////////////////
 
 /// @brief Default constructor
-PseudoPerplexityMetric::PseudoPerplexityMetric():
-	core::simple_metrics::RealMetric()
+CurrentProbabilityMetric::CurrentProbabilityMetric():
+	core::simple_metrics::PerResidueRealMetric()
 {}
 
-PseudoPerplexityMetric::PseudoPerplexityMetric( core::simple_metrics::PerResidueProbabilitiesMetricCOP metric ):
-	core::simple_metrics::RealMetric()
+CurrentProbabilityMetric::CurrentProbabilityMetric(core::simple_metrics::PerResidueProbabilitiesMetricCOP metric ):
+	core::simple_metrics::PerResidueRealMetric()
 {
 	set_metric( metric );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
-PseudoPerplexityMetric::~PseudoPerplexityMetric()= default;
+CurrentProbabilityMetric::~CurrentProbabilityMetric()= default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-PseudoPerplexityMetric::PseudoPerplexityMetric(PseudoPerplexityMetric const &  ) = default;
+CurrentProbabilityMetric::CurrentProbabilityMetric(CurrentProbabilityMetric const &  ) = default;
 
 core::simple_metrics::SimpleMetricOP
-PseudoPerplexityMetric::clone() const {
-	return utility::pointer::make_shared< PseudoPerplexityMetric >(*this );
+CurrentProbabilityMetric::clone() const {
+	return utility::pointer::make_shared< CurrentProbabilityMetric >(*this );
 }
 
 std::string
-PseudoPerplexityMetric::name() const {
+CurrentProbabilityMetric::name() const {
 	return name_static();
 }
 
 std::string
-PseudoPerplexityMetric::name_static() {
-	return "PseudoPerplexityMetric";
+CurrentProbabilityMetric::name_static() {
+	return "CurrentProbabilityMetric";
 
 }
 std::string
-PseudoPerplexityMetric::metric() const {
+CurrentProbabilityMetric::metric() const {
 	return name_static();
 }
 
 void
-PseudoPerplexityMetric::set_metric(core::simple_metrics::PerResidueProbabilitiesMetricCOP metric){
+CurrentProbabilityMetric::set_metric(core::simple_metrics::PerResidueProbabilitiesMetricCOP metric){
 	metric_ = metric;
 }
 
 void
-PseudoPerplexityMetric::set_use_cached_data(bool use_cache, std::string const & prefix, std::string const & suffix){
+CurrentProbabilityMetric::set_use_cached_data(bool use_cache, std::string const & prefix, std::string const & suffix){
 	use_cache_ = use_cache;
 	cache_prefix_ = prefix;
 	cache_suffix_ = suffix;
@@ -106,35 +103,35 @@ PseudoPerplexityMetric::set_use_cached_data(bool use_cache, std::string const & 
 }
 
 void
-PseudoPerplexityMetric::set_fail_on_missing_cache(bool fail){
+CurrentProbabilityMetric::set_fail_on_missing_cache(bool fail){
 	fail_on_missing_cache_ = fail;
 }
 
-/// @brief Function to return the (pseudo-)perplexity from a map of probabilities
-core::Real
-PseudoPerplexityMetric::compute_perplexity(
-	core::pose::Pose const & pose,
-	std::map< core::Size, std::map< core::chemical::AA, core::Real>> const & values
-) {
-	core::Real log_probabilities_sum = 0;
-	for ( auto const & position_pair : values ) {
-		core::chemical::AA aa_type = pose.residue( position_pair.first ).aa();
-		if ( aa_type == core::chemical::aa_unk ) {
-			utility_exit_with_message("Residue type is unknown, this might lead to ambiguity and shouldn't have happened in the first place.");
+std::map<core::Size, core::Real>
+CurrentProbabilityMetric::get_current_probabilities(std::map<core::Size, std::map<core::chemical::AA, core::Real> > const & values,
+	core::pose::Pose const & pose) {
+
+	std::map<core::Size, core::Real> current_probs;
+
+	for ( auto const& position_and_probs : values ) {
+		core::Size const& position = position_and_probs.first;
+		std::map<core::chemical::AA, core::Real> const& aa_probs = position_and_probs.second;
+
+		// Get the current AA from the pose
+		core::chemical::AA current_aa = pose.residue(position).aa();
+
+		// Get its probability
+		auto it = aa_probs.find(current_aa);
+		if ( it != aa_probs.end() ) {  // Make sure the amino acid is in the map
+			core::Real current_prob = it->second;
+			current_probs[position] = current_prob;
 		}
-		core::Real aa_probability = position_pair.second.at( aa_type );
-		// if the probability is zero add a small constant to it to prevent -inf
-		if ( aa_probability == 0 ) {
-			aa_probability += std::numeric_limits< core::Real >::min();
-		}
-		log_probabilities_sum += std::log( aa_probability );
 	}
-	core::Real perplexity = std::exp( -log_probabilities_sum/static_cast<core::Real>(values.size()));
-	return perplexity;
+	return current_probs;
 }
 
 void
-PseudoPerplexityMetric::parse_my_tag(
+CurrentProbabilityMetric::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data )
 {
@@ -143,7 +140,7 @@ PseudoPerplexityMetric::parse_my_tag(
 	core::simple_metrics::SimpleMetricCOP metric = core::simple_metrics::get_metric_from_datamap_and_subtags(tag, data, "metric");
 
 	if ( metric->simple_metric_type() != "PerResidueProbabilitiesMetric" ) {
-		utility_exit_with_message("PseudoPerplexityMetric only works with PerResidueProbabilitiesMetrics!");
+		utility_exit_with_message("CurrentProbabilityMetric only works with PerResidueProbabilitiesMetrics!");
 	}
 
 	core::simple_metrics::PerResidueProbabilitiesMetricCOP res_metric = utility::pointer::dynamic_pointer_cast< core::simple_metrics::PerResidueProbabilitiesMetric const>( metric );
@@ -165,13 +162,13 @@ PseudoPerplexityMetric::parse_my_tag(
 }
 
 void
-PseudoPerplexityMetric::provide_xml_schema(utility::tag::XMLSchemaDefinition & xsd ) {
+CurrentProbabilityMetric::provide_xml_schema(utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	using namespace core::select::residue_selector;
 
 	AttributeList attlist;
 
-	attlist + XMLSchemaAttribute::required_attribute( "metric", xs_string, "A PerResidueProbabilitiesMetric to calculate the pseudo-perplexity from." );
+	attlist + XMLSchemaAttribute::required_attribute( "metric", xs_string, "A PerResidueProbabilitiesMetric to lookup the probability of the current amino acid in the pose from." );
 
 	attlist + XMLSchemaAttribute::attribute_w_default( "use_cached_data",  xsct_rosetta_bool, "Use any data stored in the datacache that matches the set metrics name (and any prefix/suffix.)  Data is stored during a SimpleMetric's apply function, which is called during RunSimpleMetrics", "false");
 	attlist + XMLSchemaAttribute("cache_prefix", xs_string, "Any prefix used during apply (RunSimpleMetrics), that we will match on if use_cache is true");
@@ -179,43 +176,44 @@ PseudoPerplexityMetric::provide_xml_schema(utility::tag::XMLSchemaDefinition & x
 	attlist + XMLSchemaAttribute::attribute_w_default("fail_on_missing_cache", xsct_rosetta_bool, "If use_cached_data is True and cache is not found, should we fail?", "true");
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
-		"A metric for estimating the likeliness of a sequence given some predicted probabilities.", attlist);
+		"A PerResidueRealMetric for returning just the probability of the amino acid currently present in the pose from a PerResidueProbabilitiesMetric.", attlist);
 
 }
 
-core::Real
-PseudoPerplexityMetric::calculate(core::pose::Pose const &pose ) const {
+std::map< core::Size, core::Real >
+CurrentProbabilityMetric::calculate(core::pose::Pose const &pose ) const {
 
 	if ( metric_ == nullptr ) {
-		utility_exit_with_message("PseudoPerplexityMetric: This metric requires a PerResidueProbabilitiesMetric!");
+		utility_exit_with_message("CurrentProbabilityMetric: This metric requires a PerResidueProbabilitiesMetric!");
 	}
 
 	std::map< core::Size, std::map< core::chemical::AA, core::Real >> const values = metric_->cached_calculate( pose, use_cache_, cache_prefix_, cache_suffix_, fail_on_missing_cache_ );
 
-	core::Real pseudo_perplexity = compute_perplexity( pose, values );
-	return pseudo_perplexity;
+	std::map< core::Size, core::Real > probability_map = get_current_probabilities( values, pose );
+
+	return probability_map;
 }
 
 void
-PseudoPerplexityMetricCreator::provide_xml_schema(utility::tag::XMLSchemaDefinition & xsd ) const {
-	PseudoPerplexityMetric::provide_xml_schema(xsd );
+CurrentProbabilityMetricCreator::provide_xml_schema(utility::tag::XMLSchemaDefinition & xsd ) const {
+	CurrentProbabilityMetric::provide_xml_schema(xsd );
 }
 
 std::string
-PseudoPerplexityMetricCreator::keyname() const {
-	return PseudoPerplexityMetric::name_static();
+CurrentProbabilityMetricCreator::keyname() const {
+	return CurrentProbabilityMetric::name_static();
 }
 
 core::simple_metrics::SimpleMetricOP
-PseudoPerplexityMetricCreator::create_simple_metric() const {
-	return utility::pointer::make_shared< PseudoPerplexityMetric >();
+CurrentProbabilityMetricCreator::create_simple_metric() const {
+	return utility::pointer::make_shared< CurrentProbabilityMetric >();
 }
 
 void
-PseudoPerplexityMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+CurrentProbabilityMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
-		"PseudoPerplexityMetric", basic::citation_manager::CitedModuleType::SimpleMetric,
+		"CurrentProbabilityMetric", basic::citation_manager::CitedModuleType::SimpleMetric,
 		"Moritz Ertelt",
 		"University of Leipzig",
 		"moritz.ertelt@gmail.com",
@@ -224,16 +222,17 @@ PseudoPerplexityMetric::provide_citation_info(basic::citation_manager::CitationC
 	);
 }
 
-} //esm_perplexity
-} //protocols
+} //per_residue_metrics
+} //simple_metrics
+} //core
 
 
 #ifdef    SERIALIZATION
 
 template< class Archive >
 void
-protocols::esm_perplexity::PseudoPerplexityMetric::save( Archive & arc ) const {
-	arc( cereal::base_class< core::simple_metrics::RealMetric>( this ) );
+core::simple_metrics::per_residue_metrics::CurrentProbabilityMetric::save( Archive & arc ) const {
+	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric>( this ) );
 	arc( CEREAL_NVP( metric_ ) );
 	arc( CEREAL_NVP( use_cache_ ) );
 	arc( CEREAL_NVP( cache_prefix_ ) );
@@ -244,8 +243,8 @@ protocols::esm_perplexity::PseudoPerplexityMetric::save( Archive & arc ) const {
 
 template< class Archive >
 void
-protocols::esm_perplexity::PseudoPerplexityMetric::load( Archive & arc ) {
-	arc( cereal::base_class< core::simple_metrics::RealMetric >( this ) );
+core::simple_metrics::per_residue_metrics::CurrentProbabilityMetric::load( Archive & arc ) {
+	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric >( this ) );
 
 	std::shared_ptr< core::simple_metrics::PerResidueProbabilitiesMetric > local_metric;
 	arc( local_metric); // PerResidueRealMetricCOP
@@ -258,10 +257,10 @@ protocols::esm_perplexity::PseudoPerplexityMetric::load( Archive & arc ) {
 	arc( fail_on_missing_cache_ );
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( protocols::esm_perplexity::PseudoPerplexityMetric );
-CEREAL_REGISTER_TYPE( protocols::esm_perplexity::PseudoPerplexityMetric )
+SAVE_AND_LOAD_SERIALIZABLE( core::simple_metrics::per_residue_metrics::CurrentProbabilityMetric );
+CEREAL_REGISTER_TYPE( core::simple_metrics::per_residue_metrics::CurrentProbabilityMetric )
 
-CEREAL_REGISTER_DYNAMIC_INIT( protocols_esm_perplexity_PseudoPerplexityMetric )
+CEREAL_REGISTER_DYNAMIC_INIT( core_simple_metrics_per_residue_metrics_CurrentProbabilityMetric )
 #endif // SERIALIZATION
 
 

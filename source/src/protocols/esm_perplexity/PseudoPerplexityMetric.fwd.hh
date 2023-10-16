@@ -8,15 +8,12 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/esm_perplexity/PseudoPerplexityMetric.fwd.hh
-/// @brief A class for predicting the likelihood of a sequence given some predicted probabilities.
+/// @brief A class for calculating the pseudo-perplexity from a given PerResidueProbabilitiesMetric.
 /// @author Moritz Ertelt (moritz.ertelt@googlemail.com)
 
-// The code for a Tensorflow based metric has been adpated from:
-// protocols/cyclic_peptide/peptide_fold_propensity_metric/Peptide10merFoldPropensityTensorflowProtocol_v1
-// which was authored by Vikram K. Mulligan (PR #3936)
 
-#ifndef INCLUDED_protocols_esm_perplexity_EsmPerplexityMetric_fwd_hh
-#define INCLUDED_protocols_esm_perplexity_EsmPerplexityMetric_fwd_hh
+#ifndef INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetric_fwd_hh
+#define INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetric_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -27,10 +24,10 @@ namespace esm_perplexity {
 
 class PseudoPerplexityMetric;
 
-using EsmPerplexityMetricOP = utility::pointer::shared_ptr< PseudoPerplexityMetric >;
-using EsmPerplexityMetricCOP = utility::pointer::shared_ptr< PseudoPerplexityMetric const >;
+using PseudoPerplexityMetricOP = utility::pointer::shared_ptr< PseudoPerplexityMetric >;
+using PseudoPerplexityMetricCOP = utility::pointer::shared_ptr< PseudoPerplexityMetric const >;
 
 } //esm_perplexity
 } //protocols
 
-#endif //INCLUDED_protocols_esm_perplexity_EsmPerplexityMetric_fwd_hh
+#endif //INCLUDED_protocols_esm_perplexity_PseudoPerplexityMetric_fwd_hh
