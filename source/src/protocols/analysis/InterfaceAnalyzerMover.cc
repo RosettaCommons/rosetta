@@ -62,6 +62,9 @@
 
 // Utility Headers
 #include <core/types.hh>
+#include <core/simple_metrics/util.hh>
+#include <core/simple_metrics/SimpleMetric.hh>
+#include <core/simple_metrics/RealMetric.hh>
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
 #include <basic/options/option.hh>
@@ -300,6 +303,8 @@ InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
 	data_.interface_to_surface_fraction.resize(3, 0);
 	data_.interface_residues.resize(3, vector1< bool >(pose.size(), false));
 
+	data_.delta_metrics.resize( 0, 0 );
+
 }
 
 void
@@ -430,7 +435,6 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		separated_pose.conformation().detect_disulfides();
 	}
 
-
 	//actual computation here
 	if ( compute_separated_sasa_ ) compute_separated_sasa( complexed_pose, separated_pose );
 	if ( compute_interface_energy_ ) compute_interface_energy( complexed_pose, separated_pose );
@@ -442,6 +446,8 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	if ( compute_interface_delta_hbond_unsat_ ) compute_interface_delta_hbond_unsat( complexed_pose, separated_pose );
 	//find the shape complementarity stats for the interface
 	if ( compute_interface_sc_ ) compute_interface_sc(interface_jump_, complexed_pose);
+	// calculate difference for a RealMetric in complexed vs separated pose
+	if ( !delta_metrics_.empty() ) compute_delta_metric( complexed_pose, separated_pose );
 
 	setup_score_data();
 
@@ -1091,6 +1097,16 @@ void InterfaceAnalyzerMover::compute_interface_energy( core::pose::Pose & comple
 	return;
 }
 
+void InterfaceAnalyzerMover::compute_delta_metric( core::pose::Pose const & complexed_pose, core::pose::Pose const & separated_pose ) {
+
+	for ( auto const & metric : delta_metrics_ ) {
+		core::Real complexed_value = metric->calculate(complexed_pose);
+		core::Real separated_value = metric->calculate(separated_pose);
+		data_.delta_metrics.emplace_back( complexed_value - separated_value );
+	}
+
+}
+
 /// @details calculate the average energy per residue in the interface as well as other data
 void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pose & complexed_pose, core::pose::Pose & separated_pose ) {
 	using namespace core::scoring;
@@ -1572,6 +1588,17 @@ InterfaceAnalyzerMover::parse_my_tag(
 		set_scorefile_reporting_prefix( tag->getOption<std::string>( "scorefile_reporting_prefix" ));
 	}
 
+	if ( tag->hasOption( "delta_metrics" ) ) {
+		utility::vector1<core::simple_metrics::SimpleMetricCOP> delta_metrics = core::simple_metrics::get_metrics_from_datamap_and_subtags(tag, datamap, "delta_metrics");
+		utility::vector1<core::simple_metrics::RealMetricCOP> delta_real_metrics;
+		for ( auto const & metric : delta_metrics ) {
+			if ( metric->simple_metric_type() != "RealMetric" ) { utility_exit_with_message("InterfaceAnalyzerMover: Only RealMetrics can be specified for the metrics tag!");}
+			core::simple_metrics::RealMetricCOP delta_real_metric = utility::pointer::dynamic_pointer_cast< core::simple_metrics::RealMetric const >( metric );
+			delta_real_metrics.push_back( delta_real_metric );
+		}
+		set_metrics( delta_real_metrics );
+	}
+
 	//      tracer_(false), //output to tracer
 	//      calcs_ready_(false), //calculators are not ready
 	//      use_jobname_(false), //use the pose name
@@ -1614,6 +1641,12 @@ void InterfaceAnalyzerMover::setup_score_data() {
 	score_data_["sc_value"] = data_.sc_value;
 	score_data_["hbonds_int"] = data_.interface_hbonds;
 
+	if ( !data_.delta_metrics.empty() ) {
+		for ( core::Size index = 1; index <= delta_metrics_.size(); ++index ) {
+			score_data_["delta_" + delta_metrics_[index]->get_final_sm_type()] = data_.delta_metrics[index];
+		}
+	}
+
 }
 
 /// @details reports all the cool stuff we calculate to tracer output OR puts it into the job object.
@@ -1654,6 +1687,11 @@ void InterfaceAnalyzerMover::report_data(){
 		}
 		if ( compute_interface_sc_ ) {
 			my_tr << "SHAPE COMPLEMENTARITY VALUE: " << data_.sc_value << std::endl;
+		}
+		if ( !data_.delta_metrics.empty() ) {
+			for ( core::Size index = 1; index <= delta_metrics_.size(); ++index ) {
+				my_tr << "Delta " + delta_metrics_[index]->get_final_sm_type() + ": " << data_.delta_metrics[index] << std::endl;
+			}
 		}
 
 	} else {
@@ -1877,6 +1915,8 @@ core::Real InterfaceAnalyzerMover::get_total_Hbond_E() { return data_.total_hb_E
 
 bool InterfaceAnalyzerMover::get_use_centroid_dG() const {return use_centroid_;}
 
+utility::vector1< core::simple_metrics::RealMetricCOP > InterfaceAnalyzerMover::get_metrics() { return delta_metrics_; }
+
 /// @details setters
 void InterfaceAnalyzerMover::set_use_resfile( bool const use_resfile ) { use_resfile_ = use_resfile; }
 void InterfaceAnalyzerMover::set_use_centroid_dG( bool const use_centroid ) { use_centroid_ = use_centroid; }
@@ -1897,6 +1937,8 @@ void InterfaceAnalyzerMover::set_use_tracer( bool const tracer) {tracer_ = trace
 void InterfaceAnalyzerMover::set_use_jobname( bool const use_jobname ) { use_jobname_ = use_jobname; }
 void InterfaceAnalyzerMover::set_scorefile_reporting_prefix( std::string const & prefix ) { scorefile_reporting_prefix_ = prefix; }
 void InterfaceAnalyzerMover::set_scorefunction( core::scoring::ScoreFunctionCOP sf ) { sf_ = sf->clone(); }
+
+void InterfaceAnalyzerMover::set_metrics( utility::vector1<core::simple_metrics::RealMetricCOP> const & delta_metrics ) { delta_metrics_ = delta_metrics; }
 
 // Packing the input and/or separated pose changes how results should be interpretted
 // Thus, using tracers to inform user of intended IAM packing behavior
@@ -1944,6 +1986,9 @@ void InterfaceAnalyzerMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attlist + XMLSchemaAttribute( "ligandchain", xs_string, "Move ONLY this PDB chain. " + exclusive_warning );
 	attlist + XMLSchemaAttribute( "jump", xsct_non_negative_integer, "Residues upstream/downstream of this Jump are on opposite sides of the interface; this Jump moves in the separation step. " + exclusive_warning );
 	attlist + XMLSchemaAttribute( "scorefile_reporting_prefix", xs_string, "Prefix to add to column names for the values that are put in the Pose for eventual output into a score file. An extra underscore is added between the value specified here and the standard column names if this option is used.");
+
+	attlist + XMLSchemaAttribute( "delta_metrics", xs_string, "A comma separated list of RealMetrics to calculate the difference between complexed and single state for.");
+
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Authors: Steven Lewis, Bryan Der, Ben Stranges, Jared Adolf-Bryfogle\n"

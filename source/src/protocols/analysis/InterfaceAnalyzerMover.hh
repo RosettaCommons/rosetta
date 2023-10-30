@@ -29,6 +29,8 @@
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <set>
+#include <core/simple_metrics/SimpleMetric.fwd.hh>
+#include <core/simple_metrics/RealMetric.hh>
 
 #include <core/id/AtomID.fwd.hh>
 
@@ -143,6 +145,9 @@ struct InterfaceData {
 
 	/// @brief PackStat value of the interface
 	core::Real packstat;
+
+	///@brief Difference of a RealMetric between complexed and separated pose
+	utility::vector1< core::Real > delta_metrics;
 
 
 	/// @brief Total energy of the complex in each InterfaceRegion
@@ -356,6 +361,8 @@ public:
 	void set_use_resfile(bool const use_resfile); //does not do anything.
 	//bool get_use_resfile() const;
 
+	void set_metrics( utility::vector1<core::simple_metrics::RealMetricCOP> const & metrics );
+
 	///////////////////////////////////////////////////
 	//Getters for the various parameters used by the analyzer
 	//
@@ -465,6 +472,9 @@ public:
 	core::Real
 	get_centroid_dG();
 
+	utility::vector1<core::simple_metrics::RealMetricCOP>
+	get_metrics();
+
 	std::string
 	get_name() const override;
 
@@ -545,6 +555,10 @@ private:
 
 	virtual void
 	score_separated_chains(core::pose::Pose & complexed_pose, core::pose::Pose & separated_pose);
+
+	///@brief Calculates the difference of a RealMetric in the complexed vs seperated pose
+	virtual void
+	compute_delta_metric(core::pose::Pose const & complexed_pose, core::pose::Pose const & separeted_pose);
 
 
 	/// @brief Calculate the average energy per residue in the interface as well as other data.
@@ -627,6 +641,9 @@ private:
 
 	utility::file::FileName posename_;
 	std::string posename_base_;
+
+	///@brief a RealMetric to calculate the difference between complexed and single state for
+	utility::vector1<core::simple_metrics::RealMetricCOP> delta_metrics_;
 
 	core::Size chain1_ = 1;
 	core::Size chain2_ = 2;
