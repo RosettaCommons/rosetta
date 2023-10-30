@@ -501,7 +501,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
             execute('Creating PyRosetta4 distribution package...', '{build_command_line} -sd --create-package {package_dir}'.format(**vars()))
 
-            release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in ['Release', 'MinSizeRel'] else False )
+            release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in [] else False )
 
             # releasing PyMOL-RosettaServer scripts
             release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python2',        package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.py',                use_rosetta_versioning=False)
