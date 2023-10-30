@@ -127,6 +127,20 @@ static SimpleMetricRegistrator< protocols::drug_design::RDKitMetricCreator > reg
 
 static SimpleMetricRegistrator< protocols::filters::FilterValueMetricCreator > reg_FilterValueMetricCreator;
 
+// Added by ME, 24 December 2022:
+static SimpleMetricRegistrator< protocols::esm_perplexity::PseudoPerplexityMetricCreator > reg_EsmPerplexityMetricCreator;
+static SimpleMetricRegistrator< protocols::esm_perplexity::PerResidueEsmProbabilitiesMetricCreator > reg_PerResidueEsmProbabilitiesCreator;
+
+// Added by ME, 20 September 2023:
+static SimpleMetricRegistrator< protocols::inverse_folding::MIFSTProbabilitiesMetricCreator > reg_MIFSTProbabilitiesCreator;
+
+// Added by ME, 8 December 2022:
+static SimpleMetricRegistrator< protocols::ptm_prediction::PTMPredictionMetricCreator > reg_PTMPredictionMetricCreator;
+
+// Added by ME, 15 July 2023:
+static SimpleMetricRegistrator< protocols::protein_mpnn::ProteinMPNNProbabilitiesMetricCreator > reg_ProteinMPNNProbabilitiesCreator;
+
+
 // Added by VKM, 5 Sept. 2018:
 static SimpleMetricRegistrator< protocols::quantum_annealing::InteractionGraphSummaryMetricCreator > reg_InteractionGraphSummaryMetricCreator;
 
@@ -134,15 +148,5 @@ static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::Blockwis
 static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::BlockwiseShapeCompMetricCreator > reg_BlockwiseShapeCompMetricCreator;
 static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::MinimumInterAlphaDistanceMetricCreator > reg_MinimumInterAlphaDistanceMetricCreator;
 static SimpleMetricRegistrator< protocols::pose_sewing::simple_metrics::WindowPoseCompMotifMetricCreator > reg_WindowPoseCompMotifMetricCreator;
-
-// Added by ME, 24 December 2022:
-static SimpleMetricRegistrator< protocols::esm_perplexity::PseudoPerplexityMetricCreator > reg_PseudoPerplexityMetricCreator;
-static SimpleMetricRegistrator< protocols::esm_perplexity::PerResidueEsmProbabilitiesMetricCreator > reg_PerResidueEsmProbabilitiesCreator;
-
-// Added by ME, 15 July 2023:
-static SimpleMetricRegistrator< protocols::protein_mpnn::ProteinMPNNProbabilitiesMetricCreator > reg_ProteinMPNNProbabilitiesCreator;
-
-// Added by ME, 8 December 2022:
-static SimpleMetricRegistrator< protocols::ptm_prediction::PTMPredictionMetricCreator > reg_PTMPredictionMetricCreator;
 
 } // namespace protocols

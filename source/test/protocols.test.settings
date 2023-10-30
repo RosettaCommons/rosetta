@@ -520,6 +520,9 @@ sources = {
 	"metal_interface" : [
 		"RemoveMetalConnectionsMoverTests",
 	],
+    "inverse_folding" : [
+        "MIFST",
+    ],
 	"minimization_packing" : [
 		"GreenPacker",
 	],

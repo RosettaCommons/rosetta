@@ -211,6 +211,11 @@ sources = {
 	"protocols/indel": [
 		"IndelOptimizationMover",
 	],
+    "protocols/inverse_folding/": [
+        "MIFST",
+        "MIFSTProbabilitiesMetric",
+        "util",
+    ],
 	"protocols/pack_interface": [
 		"ProteinProteinInterfaceUpweighterTaskOperation",
 	],

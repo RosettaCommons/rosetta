@@ -1382,3 +1382,29 @@
         10.1126/science.add2187
     [END_DOI]
 [END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Kevin K." "Yang" "KK"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Hugh" "Yeh" "H"
+        "Niccolò" "Zanichelli" "N"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2023
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Masked Inverse Folding with Sequence Transfer for Protein Representation Learning
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        bioRxiv
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1101/2022.05.25.493516
+    [END_DOI]
+[END_CITATION]

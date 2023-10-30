@@ -1,0 +1,1 @@
+This folder will contain the traced PyTorch graph of the MIF-ST model either through auto-download or by manually downloading from https://git.iwe-lab.de/moritzertelt/ML_graphs/.
