@@ -316,10 +316,10 @@ HBondOptions::parse_my_tag(
 		exclude_ether_oxygens( tag->getOption<bool>( "hbonds__exclude_ether_oxygens" ) );
 	}
 	if ( tag->hasOption( "hbonds__Mbhbond" ) ) {
-		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds__Mbhbond" ) );
+		Mbhbond( tag->getOption<bool>( "hbonds__Mbhbond" ) );
 	}
 	if ( tag->hasOption( "hbonds__mphbond" ) ) {
-		bb_donor_acceptor_check( tag->getOption<bool>( "hbonds__mphbond" ) );
+		mphbond( tag->getOption<bool>( "hbonds__mphbond" ) );
 	}
 }
 
@@ -352,8 +352,8 @@ HBondOptions::append_schema_attributes( utility::tag::AttributeList & attributes
 		+ XMLSchemaAttribute( "hbonds__measure_sp3acc_BAH_from_hvy", xsct_rosetta_bool , "XRW TO DO" )
 		+ XMLSchemaAttribute( "hbonds__fade_energy", xsct_rosetta_bool , "XRW TO DO" )
 		+ XMLSchemaAttribute( "hbonds__exclude_ether_oxygens", xsct_rosetta_bool , "XRW TO DO" )
-		+ XMLSchemaAttribute( "hbonds__Mbhbond", xsct_rosetta_bool , "XRW TO DO" )
-		+ XMLSchemaAttribute( "hbonds__mphbond", xsct_rosetta_bool , "XRW TO DO" );
+		+ XMLSchemaAttribute( "hbonds__Mbhbond", xsct_rosetta_bool , "XRW TO DO: pba" )
+		+ XMLSchemaAttribute( "hbonds__mphbond", xsct_rosetta_bool , "Membrane framework hbonding correction" );
 
 }
 
