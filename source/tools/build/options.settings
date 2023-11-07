@@ -192,6 +192,7 @@ options = {
 
 	# PyTorch
 	"pytorch",
+	"pytorch_gpu",
     ],
 
 

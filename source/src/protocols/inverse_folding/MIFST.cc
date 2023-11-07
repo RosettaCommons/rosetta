@@ -104,11 +104,15 @@ MIFST::predict( core::pose::Pose const & pose, core::select::residue_selector::R
     // checking whether inference can and should be run on GPU
     bool cuda_wanted_and_available = false;
     if ( use_gpu ) {
+#ifndef USE_PYTORCH_GPU
+       TR.Warning << "If you'd like to run PyTorch on the GPU you need to download the appropriate libtorch library and compile with extras=pytorch_gpu! Falling back to CPU instead." << std::endl;
+#else
        if ( torch::hasCUDA() ) {
           cuda_wanted_and_available = true;
        } else {
            TR.Warning << "You need to download the appropriate libtorch library to run inference on the GPU! Falling back to CPU instead." << std::endl;
        }
+#endif //USE_PYTORCH_GPU
     }
 
     // Process coordinates and get features
@@ -153,63 +157,68 @@ MIFST::predict( core::pose::Pose const & pose, core::select::residue_selector::R
     std::tie(src, nodes, edges, connections, edge_mask) = collated_data;
 
     torch::Tensor logits;
+    // Move inputs and model to GPU if CUDA is available and wanted
+    if (cuda_wanted_and_available) {
+        mifst_module_.to(at::Device(at::kCUDA));
+	src = src.to(torch::device(torch::kCUDA));
+	nodes = nodes.to(torch::device(torch::kCUDA));
+	edges = edges.to(torch::device(torch::kCUDA));
+	connections = connections.to(torch::device(torch::kCUDA));
+	edge_mask = edge_mask.to(torch::device(torch::kCUDA));
+    }
+
     // decide whether we run inference on all residues of the selection at once, or one-by-one
-    if (multirun) {
+    {
+	    // enabling no_grad 	    
+	    torch::NoGradGuard no_grad;
+	    TR << "Starting prediction..." << std::endl;
+	    if (multirun) {
 
-        // Prepare inputs for the model
-        std::vector<torch::jit::IValue> inputs;
-        inputs.emplace_back(src);
-        inputs.emplace_back(nodes);
-        inputs.emplace_back(edges);
-        inputs.emplace_back(connections);
-        inputs.emplace_back(edge_mask);
+		// Prepare inputs for the model
+		std::vector<torch::jit::IValue> inputs;
+		inputs.emplace_back(src);
+		inputs.emplace_back(nodes);
+		inputs.emplace_back(edges);
+		inputs.emplace_back(connections);
+		inputs.emplace_back(edge_mask);
+		// inference time
+		logits = mifst_module_(inputs).toTensor();
 
-        // Move inputs to GPU if CUDA is available and wanted
-        if (cuda_wanted_and_available) {
-            for (auto& input : inputs) {
-                input = input.toTensor().to(torch::device(torch::kCUDA));
-            }
-        }
+		// Move logits back to CPU if they were on GPU
+		if (cuda_wanted_and_available) {
+		    logits = logits.to(torch::device(torch::kCPU));
+		}
+		// Clear IValues explicitly to free up GPU memory
+		inputs.clear();
 
-        // inference time
-        logits = mifst_module_(inputs).toTensor();
 
-        // Move logits back to CPU if they were on GPU
-        if (cuda_wanted_and_available) {
-            logits = logits.to(torch::device(torch::kCPU));
-        }
+	    } else {
+		std::vector<torch::Tensor> logits_list;
+		for (int64_t i = 0; i < src.size(0); ++i) { //int64_t because we are in torch land
+		    // Prepare inputs for the model for each sequence
+		    std::vector<torch::jit::IValue> inputs;
+		    inputs.emplace_back(src[i].unsqueeze(0));
+		    inputs.emplace_back(nodes[i].unsqueeze(0));
+		    inputs.emplace_back(edges[i].unsqueeze(0));
+		    inputs.emplace_back(connections[i].unsqueeze(0));
+		    inputs.emplace_back(edge_mask[i].unsqueeze(0));
 
-    } else {
-        std::vector<torch::Tensor> logits_list;
-        for (int64_t i = 0; i < src.size(0); ++i) { //int64_t because we are in torch land
+		    // inference time for each sequence
+		    torch::Tensor single_logit = mifst_module_(inputs).toTensor();
 
-            // Prepare inputs for the model for each sequence
-            std::vector<torch::jit::IValue> inputs;
-            inputs.emplace_back(src[i].unsqueeze(0));
-            inputs.emplace_back(nodes[i].unsqueeze(0));
-            inputs.emplace_back(edges[i].unsqueeze(0));
-            inputs.emplace_back(connections[i].unsqueeze(0));
-            inputs.emplace_back(edge_mask[i].unsqueeze(0));
+		    // Move logits back to CPU if they were on GPU
+		    if (cuda_wanted_and_available) {
+			single_logit = single_logit.to(torch::device(torch::kCPU));
+		    }
 
-            // Move inputs to GPU if CUDA is available and wanted
-            if (cuda_wanted_and_available) {
-                for (auto& input : inputs) {
-                    input = input.toTensor().to(torch::device(torch::kCUDA));
-                }
-            }
-
-            // inference time for each sequence
-            torch::Tensor single_logit = mifst_module_(inputs).toTensor();
-
-            // Move logits back to CPU if they were on GPU
-            if (cuda_wanted_and_available) {
-                single_logit = single_logit.to(torch::device(torch::kCPU));
-            }
-
-            logits_list.push_back(single_logit.squeeze(0));
-        }
-        // Stack the logits to form the final tensor
-        logits = torch::stack(logits_list, 0);
+		    logits_list.push_back(single_logit.squeeze(0));
+		    // Clear IValues explicitly to free up GPU memory
+		    inputs.clear();
+		}
+		// Stack the logits to form the final tensor
+		logits = torch::stack(logits_list, 0);
+	    }
+	    TR << "... finished!" << std::endl;
     }
 
     return logits;
