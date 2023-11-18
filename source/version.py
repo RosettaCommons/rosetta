@@ -141,7 +141,7 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
     if res: git_describe = None
     else:
         # Use git-describe --long to always include post-version and sha information
-        git_describe_str = execute('Getting `git describe` for current commit...',  'git describe --tags --long --match "v[0-9]*"'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)[:-1] # remove \n at the end
+        git_describe_str = execute('Getting `git describe` for current commit...',  'git describe --tags --long --match "release/v[0-9]*"'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)[:-1] # remove \n at the end
         describe_match = re.match("v(?P<year>\d+)\.(?P<week>\d+)(-dev(?P<dev_revision>\d+))?-(?P<post_revision>\d+)-g(?P<commit>\w+)", git_describe_str)
 
         if describe_match:
