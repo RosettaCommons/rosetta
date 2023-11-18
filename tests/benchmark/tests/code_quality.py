@@ -503,11 +503,11 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
                     branches.add(br)
                 #if br != 'HEAD': branches.add(br)
 
-        if 'master' in branches: branches = set( ['master'] )
+        if 'main' in branches: branches = set( ['main'] )
 
         commit = execute('Getting current commit sha1...', 'cd {} && git rev-parse HEAD'.format(rosetta_dir), return_='output')
         if len(branches) != 1:
-            state, output = _S_failed_, 'Could not figure out which branch to beautify, commit {} belong to following branches (expecting exactly one origin/<branch> or origin/master to be present):\n{}\nAborting...\n'.format(commit, o)
+            state, output = _S_failed_, 'Could not figure out which branch to beautify, commit {} belong to following branches (expecting exactly one origin/<branch> or origin/main to be present):\n{}\nAborting...\n'.format(commit, o)
 
         else:
             branch = branches.pop()
@@ -515,7 +515,7 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
             output += execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch} && git submodule update && git branch --set-upstream-to=origin/{branch} {branch}'.format(rosetta_dir, branch=branch), return_='output', add_message_and_command_line_to_output=True)
 
-            if branch == 'master': res, o = execute('Beautifying...', 'cd {}/source && python3 ../tools/python_cc_reader/beautify_rosetta.py --overwrite -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
+            if branch == 'main': res, o = execute('Beautifying...', 'cd {}/source && python3 ../tools/python_cc_reader/beautify_rosetta.py --overwrite -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
             else: res, o = execute('Beautifying...', 'cd {}/source && python3 ../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
 
             if res:
@@ -538,7 +538,6 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
                 output = output.replace( '<{}>'.format(config['user_email']), '<rosetta@university.edu>' )
 
                 state =_S_passed_
-
 
 
     return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }
@@ -572,7 +571,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
     if res: retval[_LogKey_] = "Error getting SHA1: " + main_sha1; return retval
     main_sha1 = main_sha1.strip()
 
-    res, merge_base = execute('Getting master merge-base...', f'cd {rosetta_dir} && git merge-base origin/master HEAD', return_='tuple')
+    res, merge_base = execute('Getting rosetta merge-base...', f'cd {rosetta_dir} && git merge-base origin/main HEAD', return_='tuple')
     if res: retval[_LogKey_] = "Error getting mergebase: " + merge_base; return retval
     merge_base = merge_base.strip()
 
