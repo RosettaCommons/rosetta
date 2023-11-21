@@ -1,0 +1,2 @@
+-s obj01.pdb
+-parser:protocol add_constraints.xml

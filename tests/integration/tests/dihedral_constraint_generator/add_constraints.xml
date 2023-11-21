@@ -1,0 +1,47 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+        <ScoreFunction name="ref2015"     weights="ref2015_cst.wts" />
+        <ScoreFunction name="ref2015_cst" weights="ref2015_cst.wts" />
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+        <Index name="five_through_ten" resnums="5A-10A" />
+    </RESIDUE_SELECTORS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <PACKER_PALETTES>
+    </PACKER_PALETTES>
+    <MOVERS>
+        <AddConstraints name="add_cst_from_current" >
+            <DihedralConstraintGenerator name="add_from_current" dihedral="phi" sd="0.5" residue_selector="five_through_ten" />
+        </AddConstraints>
+        <AddConstraints name="add_cst_to_res" >
+            <DihedralConstraintGenerator name="add_to_three" sd="1.0" dihedral_angle="90" dihedral_atoms="N,CA,C,O" dihedral_residues="3A,3A,3A,3A" />
+        </AddConstraints>
+        
+        <ClearConstraintsMover name="remove_constraints" />
+        
+        <Small name="small"
+               residue_selector="five_through_ten"
+               scorefxn="ref2015"
+               temperature="0.5"
+               nmoves="10"
+               angle_max="6.0"
+               preserve_detailed_balance="0" />
+        
+    </MOVERS>
+    <FILTERS>
+        <ScoreType name="dih_cst_current_score_pre" score_type="dihedral_constraint" scorefxn="ref2015_cst" confidence="0" threshold="10000000"/>
+        <ScoreType name="dih_cst_current_score_post" score_type="dihedral_constraint" scorefxn="ref2015_cst" confidence="0" threshold="10000000"/>
+        <ScoreType name="dih_cst_single_res_score"  score_type="dihedral_constraint" scorefxn="ref2015_cst" confidence="0" threshold="10000000"/>
+    </FILTERS>
+    <PROTOCOLS>
+        <Add mover_name="add_cst_to_res" />
+        <Add filter_name="dih_cst_single_res_score"   report_at_end="false" />
+        <Add mover_name="remove_constraints" />
+        <Add mover_name="add_cst_from_current" />
+        <Add filter_name="dih_cst_current_score_pre"   report_at_end="false" />
+        <Add mover_name="small" />
+        <Add filter_name="dih_cst_current_score_post" report_at_end="false" />
+    </PROTOCOLS>
+    <OUTPUT scorefxn="ref2015_cst" />
+</ROSETTASCRIPTS>

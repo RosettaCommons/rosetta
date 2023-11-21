@@ -152,10 +152,14 @@ DihedralConstraintGenerator::apply( core::pose::Pose const & pose) const
 		numeric::xyzVector< core::Real> const atom4_xyz = pose.residue(local_custom_torsion[4].rsd()).xyz( local_custom_torsion[4].atomno());
 
 		current_torsion_angle = numeric::dihedral_degrees(atom1_xyz, atom2_xyz, atom3_xyz, atom4_xyz);
+
 		if ( use_custom_dihedral_angle_ ) {
-			TR.Warning << "Cannot use dihedral angle derivied parsed dihedral_atoms/dihedral_residues"
-				<< " in addition to setting dihedral_angle. Defaulting to use the parsed angles from"
-				<< " the user defined residues/atoms." << std::endl;
+			//TR.Warning << "Cannot use dihedral angle derived parsed dihedral_atoms/dihedral_residues"
+			// << " in addition to setting dihedral_angle. Defaulting to use the parsed angles from"
+			// << " the user defined residues/atoms." << std::endl;
+			current_torsion_angle = dihedral_angle_;
+			TR << "custom torsion angle = " << core::Real(current_torsion_angle) << std::endl;
+			TR << "sd_ = " << core::Real(sd_) << std::endl;
 		}
 
 		core::Real const current_torsion_angle_radians = numeric::conversions::radians( current_torsion_angle );
@@ -213,6 +217,7 @@ DihedralConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacac
 
 
 	set_sd_degree( tag->getOption< core::Real >("sd", sd_ ));
+
 	if ( tag->hasOption("dihedral") ) {
 		std::string dih = tag->getOption< std::string >( "dihedral" );
 		set_torsion_type( parse_torsion_type( dih ) );
@@ -235,14 +240,14 @@ DihedralConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacac
 	//Input error checking.
 	if ( parsed_custom_torsion_ ) {
 		if ( (parsed_atoms_ == "") || ( parsed_resnums_ == "") ) {
-			utility_exit_with_message(" If setting a custom dihedral angle from atoms/residues, both dihedral_atoms and dihedral_resnums must be set!");
+			utility_exit_with_message(" If setting a custom dihedral angle from atoms/residues, both dihedral_atoms and dihedral_residues must be set!");
 		} else if ( tag->hasOption("dihedral") ) {
 			utility_exit_with_message(" Custom dihedral angle from atoms/residues with a set dihedral cannot be done.  Choose one or the other.");
 		} else if ( tag->hasOption("residue_selector") ) {
 			utility_exit_with_message("Custom dihedral angle from atoms/residues not currently compatible with a residue selector. ");
 		}
-		if ( tag->hasOption("dihedral_angle_") && ( (parsed_atoms_ == "") || ( parsed_resnums_ == "") ) ) {
-			utility_exit_with_message("Custom dihedral angle from atoms/residues cannot be used with defined dihedral_angle. ");
+		if ( tag->hasOption("dihedral_angle") && ( (parsed_atoms_ == "") || ( parsed_resnums_ == "") ) ) {
+			utility_exit_with_message("Custom dihedral angle from atoms/residues cannot be used with defined dihedral (e.g., phi/psi/omega). ");
 		}
 	}
 
