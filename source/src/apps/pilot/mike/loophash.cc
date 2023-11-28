@@ -178,7 +178,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 	for ( int round = 1; round <= option[ OptionKeys::lh::rounds ]; round ++ ) {
 		core::Size total_starttime = time(nullptr);
 
-		static int casecount = 0;
+		//static int casecount = 0;
 		core::pose::Pose opose = pose;
 		std::vector< core::io::silent::SilentStructOP > lib_structs;
 
@@ -322,7 +322,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 				relax_winner = rpose;
 			}
 		}
-		casecount++;
+		//casecount++;
 
 
 		TR.Info << "Metropolis decision: " << std::endl;

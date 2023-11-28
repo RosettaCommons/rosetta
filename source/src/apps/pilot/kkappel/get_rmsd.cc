@@ -119,7 +119,7 @@ get_rmsd()
 
 	pose::Pose pose,start_pose;
 
-	Size i( 0 );
+	//Size i( 0 );
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
@@ -132,7 +132,7 @@ get_rmsd()
 	while ( input->has_another_pose() ) {
 
 		input->fill_pose( pose, *rsd_set );
-		i++;
+		//i++;
 
 		//if ( !option[ in::file::silent ].user() ) cleanup( pose );
 

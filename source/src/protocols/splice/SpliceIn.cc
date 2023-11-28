@@ -277,7 +277,8 @@ void SpliceIn::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data ) 
 		delta_lengths_.push_back(0);
 	}
 	std::sort(delta_lengths_.begin(), delta_lengths_.end());
-	std::unique(delta_lengths_.begin(), delta_lengths_.end());
+	auto last = std::unique(delta_lengths_.begin(), delta_lengths_.end());
+	delta_lengths_.erase(last,delta_lengths_.end());
 
 
 	//Read map between segments and PSSMs

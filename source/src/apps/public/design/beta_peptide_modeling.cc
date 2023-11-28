@@ -86,7 +86,7 @@ figure_out_fold_tree( pose::Pose & pose )
 	kinematics::FoldTree f( nres );
 	Real const dist2_cutoff = 1.7 * 1.7;
 
-	Size m( 0 );
+	//Size m( 0 );
 
 	for ( Size i=1; i < nres; ++i ) {
 
@@ -100,7 +100,7 @@ figure_out_fold_tree( pose::Pose & pose )
 		if ( dist2 > dist2_cutoff ) {
 			std::cout << "Jump from " << i << " to " << i+1 << std::endl;
 			f.new_jump( i, i+1, i );
-			m++;
+			//m++;
 		}
 
 	}

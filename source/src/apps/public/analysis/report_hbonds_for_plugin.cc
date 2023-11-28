@@ -232,7 +232,7 @@ public:
 		dssp.insert_ss_into_pose( pose );
 
 		//core::Real hbond_energies = 0; // to get average energy for structure;
-		Size nhbonds_used = 0;
+		//Size nhbonds_used = 0;
 
 		std::cout << "don_chain don_resname don_resnum don_pdbresnum don_atomname - ";
 		std::cout << "acc_chain acc_resname acc_resnum acc_pdbresnum acc_atomname ";
@@ -369,7 +369,7 @@ public:
 
 			std::cout << std::endl;
 
-			nhbonds_used++;
+			//nhbonds_used++;
 		}
 
 		TR << "DONE getting hbonds. Number hydrogen bonds found: " << set1.nhbonds() << std::endl;

@@ -1064,12 +1064,12 @@ public:
 		// 2: find interface residues
 		utility::vector1<bool> interface;
 		get_interface_residues( pose, sf, interface);
-		int ndes=0;
-		for ( int i=1; i<=(int)interface.size(); ++i ) {
-			if ( interface[i] ) {
-				ndes++;
-			}
-		}
+		//int ndes=0;
+		//for ( int i=1; i<=(int)interface.size(); ++i ) {
+		// if ( interface[i] ) {
+		//  ndes++;
+		// }
+		//}
 
 		bool pass, need_greedy;
 		if ( !revertonly_ ) {

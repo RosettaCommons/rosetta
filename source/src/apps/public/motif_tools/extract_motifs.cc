@@ -401,22 +401,22 @@ process_for_motifs(
 			Real hb_score = get_hbond_score( pose, other_pos, aaoi_pos, scorefxn );
 			Real elec_score = get_elec_score( pose, other_pos, aaoi_pos, scorefxn );
 
-			int num_contacts( 0 );
+			//int num_contacts( 0 );
 
 			// Loop over all amino acid atoms
-			for ( Size this_atom = 1 ; this_atom <= res_type.nheavyatoms() ; ++this_atom ) {
-				// Loop over heavy atoms
-				for ( Size other_atom = other_type.first_sidechain_atom() ;
-						other_atom <= other_type.nheavyatoms() ; ++other_atom ) {
+			//for ( Size this_atom = 1 ; this_atom <= res_type.nheavyatoms() ; ++this_atom ) {
+			// // Loop over heavy atoms
+			// for ( Size other_atom = other_type.first_sidechain_atom() ;
+			//   other_atom <= other_type.nheavyatoms() ; ++other_atom ) {
 
-					Real const dis2( pose.residue( other_pos ).xyz( other_atom ).distance_squared(
-						pose.residue( aaoi_pos ).xyz( this_atom ) ) );
-					if ( dis2 < (3.9*3.9) ) {
-						++num_contacts;
-					}
+			//  Real const dis2( pose.residue( other_pos ).xyz( other_atom ).distance_squared(
+			//   pose.residue( aaoi_pos ).xyz( this_atom ) ) );
+			//  if ( dis2 < (3.9*3.9) ) {
+			//   ++num_contacts;
+			//  }
 
-				}
-			} // End loop over atoms
+			// }
+			//} // End loop over atoms
 
 			check_hb_score += hb_score;
 
@@ -451,13 +451,13 @@ process_for_motifs(
 					bool unique_motif( true );
 
 					// Check against other motifs
-					core::Size check_i( 1 );
+					//core::Size check_i( 1 );
 					for ( auto const & this_motif : motif_lib ) {
 						core::Real dist_diff( 0.0 );
 						core::Real angl_diff( 0.0 );
 						motif_distances( work_motif, *this_motif, dist_diff, angl_diff );
 						//      TR << "Motif dist from current motif " << check_i << " is translation " << dist_diff << " and angle " << angl_diff << std::endl;
-						check_i++;
+						//check_i++;
 						if ( dist_diff < dist_threshold && angl_diff < angl_threshold ) {
 							unique_motif = false;
 							break;

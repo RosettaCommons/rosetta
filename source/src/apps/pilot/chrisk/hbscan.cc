@@ -447,8 +447,8 @@ scan_hbond_jumps(
 	Size bbatm( pose.residue( acc_pos ).atom_base( batm ) ); //base of base needed for defined torsion DOF, is sometimes diff than abase2
 	Size dbatm( pose.residue( don_pos ).atom_base( datm ) ); //hpol base2
 
-	Size hb_states_tot( 0 );
-	Size hb_states_good( 0 );
+	//Size hb_states_tot( 0 );
+	//Size hb_states_good( 0 );
 	hbonds::HBEvalTuple hbe_type( datm, pose.residue( don_pos ), aatm, pose.residue( acc_pos ) );
 	//granularity of enumeration
 	//must import from hbonds/constants.hh
@@ -489,7 +489,7 @@ scan_hbond_jumps(
 						//      TR << hb_energy << std::endl;
 						//      if( hb_energy >= 0.0 ) continue; //was not actually an hbond
 
-						++hb_states_tot;
+						//++hb_states_tot;
 
 						//reset chem  bond ftree
 						pose.fold_tree( f_rot );
@@ -570,7 +570,7 @@ scan_hbond_jumps(
 							TR << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
 								+ " total_score: " + to_string( pose.energies().total_energies()[ total_score ] );
 							TR << std::endl;
-							++hb_states_good;
+							//++hb_states_good;
 							pose.dump_pdb( pdbname );
 							//now print cst file
 							if ( option[ hbscan::write_cst_file ] ) {

@@ -302,7 +302,7 @@ main( int argc, char * argv [] )
 						ty/=count;
 						tz/=count;*/
 
-						int gridResCount=0;
+						//int gridResCount=0;
 						core::Real gridDDG = 0.;
 						for ( int i = 1, resnum = input_pose.size(); i <= resnum; ++i ) {
 							ddg=interface_residue_ddg(input_pose, i);
@@ -332,7 +332,7 @@ main( int argc, char * argv [] )
 									//if ( (input_pose.pdb_info()->number(j) == 97 || input_pose.pdb_info()->number(k) == 97) && (input_pose.pdb_info()->number(j) == 143 || input_pose.pdb_info()->number(k) == 143)){
 									//std::cout<<input_pose.pdb_info()->number(i)<<" "<<ddg<<std::endl;
 									//}
-									gridResCount++;
+									//gridResCount++;
 									gridDDG += ddg;
 								}
 

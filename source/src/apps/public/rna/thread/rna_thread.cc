@@ -141,12 +141,12 @@ setup_mask(
 	}
 
 	// Save into a file.
-	Size count( 0 );
+	//Size count( 0 );
 	if ( option[ sequence_mask_file ].user() ) {
 		utility::io::ozstream out( option[ OptionKeys::sequence_mask_file ]() );
 		for ( Size i = 1; i <= alignment_length; i++ ) {
 			if ( sequences[1][i-1] == '-' ) continue; //Assume native numbering
-			count++;
+			//count++;
 			out << sequence_mask(i);
 		}
 		out << std::endl;

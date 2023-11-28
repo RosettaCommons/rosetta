@@ -140,7 +140,8 @@ MRSJobQueen::cluster (
 	auto is_empty_dummy = []( ResultElements const & res_elem ) -> bool {
 		return res_elem.global_job_id == 0;
 		};
-	std::remove_if( results_from_previous_stage.begin(), results_from_previous_stage.end(), is_empty_dummy );
+	auto last = std::remove_if( results_from_previous_stage.begin(), results_from_previous_stage.end(), is_empty_dummy );
+	results_from_previous_stage.erase(last,results_from_previous_stage.end());
 
 	//populate_vector
 	utility::vector1< cluster::ClusterMetricCOP > points ( results_from_previous_stage.size(), nullptr );

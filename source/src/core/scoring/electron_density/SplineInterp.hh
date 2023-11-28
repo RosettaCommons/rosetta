@@ -189,7 +189,7 @@ int grad3(core::Real grad[3], const S *Bcoeff, const int dims[3], core::Real X[3
 // 4d --- periodic boundaries on dimensions 2-4; mirror boundaries on dimension 1
 core::Real interp4(const core::Real *Bcoeff, const int dims[4], core::Real X[4]);
 int grad4(core::Real grad[4], const core::Real *Bcoeff, const int dims[4], core::Real X[4]);
-int compute_coefficients4(core::Real *data, int dims[3]);
+int compute_coefficients4(core::Real *data, int dims[4]);
 
 }
 }

@@ -133,9 +133,9 @@ void statistics( std::string filename ) {
 	std::string nres, dres;
 	unsigned int isTer;
 	std::string pdbCode="";
-	Real BoundaryNum(0), SurfaceNum(0), BuriedNum(0);
+	//Real BoundaryNum(0), SurfaceNum(0), BuriedNum(0);
 	Real hydroNonPolarTotal(0), polarUnchargeTotal(0), polarChargeTotal(0), basicTotal(0), cysTotal(0);
-	Size neighbor(0),totalNo(0),lineNo(0);
+	Size totalNo(0); //,neighbor(0),lineNo(0);
 
 	// Final calculation variables
 	//Size actualTotal(0), RedesignhydroNonPolarTotal(0), RedesignpolarUnchargeTotal(0), RedesignpolarChargeTotal(0), RedesignbasicTotal(0);
@@ -161,7 +161,7 @@ void statistics( std::string filename ) {
 	while ( getline(redesign_file,line) ) {
 		nres = line.substr(13,3);
 		dres = line.substr(17,3);
-		neighbor = std::atol(line.substr(24,2).c_str());
+		//neighbor = std::atol(line.substr(24,2).c_str());
 		if ( line.substr(0,4) != pdbCode ) {
 			//dont count those N terminus MET
 			if ( ( nres == "MET") || (dres == "MET") ) {
@@ -181,23 +181,23 @@ void statistics( std::string filename ) {
 		}
 		//NatBoundary[i] keeps track of the numbers in boundary for each residue in native state
 		//DesBoundary[i] keeps track of the numbers in boundary for each residue in redesign state
-		if ( isBoundary(neighbor) ) {
-			//NativeBoundary[nres]++;
-			//DesignBoundary[dres]++;
-			BoundaryNum++;
-		} else if ( isBuried(neighbor) ) {
-			//NatBuried[i] keeps track of the numbers in buried for each residue in native state
-			//DesBuried[i] keeps track of the numbers in buried for each residues in redesign state
-			//NativeBuried[nres]++;
-			//DesignBuried[dres]++;
-			BuriedNum++;
-		} else {
-			//NatSurface[i] keeps track of the numbers in surface for each residue in native state
-			//DesSurface[i] keeps track of the numbers in surface for each residue in redesign state
-			//NativeSurface[nres]++;
-			//DesignSurface[dres]++;
-			SurfaceNum++;
-		}
+		//if ( isBoundary(neighbor) ) {
+		// //NativeBoundary[nres]++;
+		// //DesignBoundary[dres]++;
+		// BoundaryNum++;
+		//} else if ( isBuried(neighbor) ) {
+		// //NatBuried[i] keeps track of the numbers in buried for each residue in native state
+		// //DesBuried[i] keeps track of the numbers in buried for each residues in redesign state
+		// //NativeBuried[nres]++;
+		// //DesignBuried[dres]++;
+		// BuriedNum++;
+		//} else {
+		// //NatSurface[i] keeps track of the numbers in surface for each residue in native state
+		// //DesSurface[i] keeps track of the numbers in surface for each residue in redesign state
+		// //NativeSurface[nres]++;
+		// //DesignSurface[dres]++;
+		// SurfaceNum++;
+		//}
 		//matrix[a,b] keeps all residues
 		//--- matrix[a,b]++
 		//group[i,j] is grouped by four categories
@@ -223,7 +223,7 @@ void statistics( std::string filename ) {
 				basicSum++;
 			} else cysSum++;
 		}
-		++lineNo;
+		//++lineNo;
 	}
 	// Final calculations
 	//actualTotal = totalNo-cysTotal;
