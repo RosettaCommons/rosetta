@@ -168,7 +168,7 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
             # On a non-release revision, format a "local" tag
             version = '{git_describe[year]}.{git_describe[week]:=02}.post.dev+{git_describe[post_revision]}.{mangled_branch}.{git_describe[commit]}'.format(**vars())
         else:
-            version = 'unknown'
+            version = '0.0.dev0'
 
     info = dict(branch = branch,
                 revision       = revision,
@@ -223,7 +223,7 @@ def retrieve_version_information():
             pass
 
         if not ver:
-            ver = "unknown"
+            ver = "0.0.dev0"
         if not url:
             url = "unknown"
 
