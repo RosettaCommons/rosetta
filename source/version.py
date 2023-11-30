@@ -141,18 +141,21 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
     if res: git_describe = None
     else:
         # Use git-describe --long to always include post-version and sha information
-        git_describe_str = execute('Getting `git describe` for current commit...',  'git describe --tags --long --match "releases/v[0-9]*"'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)[:-1] # remove \n at the end
-        describe_match = re.match("v(?P<year>\d+)\.(?P<week>\d+)(-dev(?P<dev_revision>\d+))?-(?P<post_revision>\d+)-g(?P<commit>\w+)", git_describe_str)
-
-        if describe_match:
-            git_describe = describe_match.groupdict()
-            for int_field in ("year", "week", "dev_revision", "post_revision"):
-                if git_describe[int_field] is not None:
-                    git_describe[int_field] = int(git_describe[int_field])
-
-            git_describe["describe"] = git_describe_str
+        res, git_describe_str = execute('Getting `git describe` for current commit...',  'git describe --tags --long --match "releases/v[0-9]*"'.format(**vars()), return_='tuple', silent=True, cwd=rosetta_dir)
+        if res: git_describe = None
         else:
-            git_describe = None
+            git_describe_str = git_describe_str[:-1] # remove \n at the end
+            describe_match = re.match("v(?P<year>\d+)\.(?P<week>\d+)(-dev(?P<dev_revision>\d+))?-(?P<post_revision>\d+)-g(?P<commit>\w+)", git_describe_str)
+
+            if describe_match:
+                git_describe = describe_match.groupdict()
+                for int_field in ("year", "week", "dev_revision", "post_revision"):
+                    if git_describe[int_field] is not None:
+                        git_describe[int_field] = int(git_describe[int_field])
+
+                git_describe["describe"] = git_describe_str
+            else:
+                git_describe = None
 
     if version is None:
         # 'version' string was not specified, so we assume that we producing local build and Generating PEP-440 version string
