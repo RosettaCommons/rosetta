@@ -540,7 +540,6 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
                 state =_S_passed_
 
 
-
     return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }
 
 
