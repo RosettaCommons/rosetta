@@ -394,6 +394,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     elif python_version == (3, 9): packages = 'numpy>=1.20.2'
     elif python_version == (3, 10): packages = 'numpy>=1.22.3'
     elif python_version == (3, 11): packages = 'numpy>=1.23.5'
+    elif python_version == (3, 12): packages = 'numpy>=1.26.0'
     else: packages = 'numpy>=1.23'
 
     if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
