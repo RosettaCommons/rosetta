@@ -42,7 +42,6 @@ def find_branches(rosetta_dir):
             branches.add( br[len('origin/'):] )
 
     if 'master' in branches: branches = set( ['master'] )
-
     return branches
 
 def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
@@ -83,13 +82,13 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
     # I think this should probably work decently.
     doc_branch = main_branch
 
-    res, output = execute("Does the doc branch exist?", f'cd {doc_dir} && git rev-parse --verify origin/{doc_branch}')
+    res, output = execute("Does the doc branch exist?", f'cd {doc_dir} && git rev-parse --verify origin/{doc_branch}', return_='tuple')
     if res:
         # Branch does not exist - create it.
-        res, output = execute("Creating branch for documentation updates", f'cd {doc_dir} && git checkout -b {doc_branch} && git branch --set-upstream-to=origin/{doc_branch} {doc_branch}' )
+        res, output = execute("Creating branch for documentation updates", f'cd {doc_dir} && git checkout -b {doc_branch} && git branch --set-upstream-to=origin/{doc_branch} {doc_branch}', return_='tuple' )
     else:
         # Branch already exists - check it out, and then make sure we include what we have currently for the documentation
-        res, output = execute("Checking out branch for documentation updates", f'cd {doc_dir} && git checkout {doc_branch} && git pull && git merge {doc_rev}')
+        res, output = execute("Checking out branch for documentation updates", f'cd {doc_dir} && git checkout {doc_branch} && git pull && git merge {doc_rev}', return_='tuple')
         if res:
             return FAIL(output, f"Can't properly checkout documentation repo branch {doc_branch}")
 
@@ -122,7 +121,7 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
             os.remove(f)
 
         # Parse the XSD into the appropriate format.
-        res, gen_output = execute('Generating Markdown from XSD ...', f'cd {doc_dir} && {rosetta_dir}/tools/doc_tools/xsd_to_doc_fragments.py rosettascripts.xsd  ./scripting_documentation/RosettaScripts/xsd/', return_='tuple')
+        res, gen_output = execute('Generating Markdown from XSD ...', f'cd {doc_dir} && python2 {rosetta_dir}/tools/doc_tools/xsd_to_doc_fragments.py rosettascripts.xsd  ./scripting_documentation/RosettaScripts/xsd/', return_='tuple')
         if res:
             results[_StateKey_] = _S_script_failed_
             results[_LogKey_]   = 'Issue converting XSD to Markdown: \n' + gen_output
@@ -174,7 +173,7 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
             return FAIL(output, "Couldn't push documentation update")
 
         # Update main and push to branch on main
-        res, output = execute("Updating current branch", f'cd {rosetta_dir} && git add documentation/ && git commit -m "Test server updating documentation submodule"')
+        res, output = execute("Updating current branch", f'cd {rosetta_dir} && git add documentation/ && git commit -m "Test server updating documentation submodule"', return_='tuple')
         if res:
             return FAIL(output, "Couldn't update main repo")
         res, output = execute("Pushing main...", f'cd {rosetta_dir} && git push', return_='tuple' )
