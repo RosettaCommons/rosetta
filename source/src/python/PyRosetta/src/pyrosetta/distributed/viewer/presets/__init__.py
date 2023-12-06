@@ -25,6 +25,8 @@ For Developers: contribute your own preset Viewer
     viewer.presets.myCustomPreset(poses, window_size=(800, 600), continuous_update=True)
 """
 
+__author__ = "Jason C. Klima"
+
 import logging
 import pyrosetta
 

@@ -6,6 +6,7 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
+__author__ = "Jason C. Klima"
 
 import logging
 import os

@@ -140,6 +140,8 @@ non-canonical residues in the input molecule(s), otherwise `pyrosetta.distribute
 initializes PyRosetta with default command line options.
 """
 
+__author__ = "Jason C. Klima"
+
 import warnings
 
 from pyrosetta.distributed.viewer.core import (

@@ -7,7 +7,6 @@
 
 
 __author__ = "Jason C. Klima"
-__email__ = "klima.jason@gmail.com"
 
 from pyrosetta.distributed.cluster.converter_tasks import (
     get_protocols_list_of_str,
