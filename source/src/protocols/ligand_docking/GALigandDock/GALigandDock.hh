@@ -303,6 +303,26 @@ public:
 	core::Size
 	dens_size( ){ return dens_struct_store_.size(); }
 
+	void
+	resize( core::Size n ) {
+		std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoComp > struct_store_temp_;
+		std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoCompdH > struct_store_dH_temp_;
+		std::priority_queue< DensStructInfo, std::vector<DensStructInfo> , DensStructInfoComp > dens_struct_store_temp_;
+		while ( struct_store_temp_.size()<n && struct_store_.size()>0 ) {
+			struct_store_temp_.push( struct_store_.top() );
+			struct_store_dH_temp_.push( struct_store_dH_.top() );
+			struct_store_.pop();
+			struct_store_dH_.pop();
+		}
+		while ( dens_struct_store_temp_.size()<n && dens_struct_store_.size()>0 ) {
+			dens_struct_store_temp_.push( dens_struct_store_.top() );
+			dens_struct_store_.pop();
+		}
+		struct_store_ = struct_store_temp_;
+		struct_store_dH_ = struct_store_dH_temp_;
+		dens_struct_store_ = dens_struct_store_temp_;
+	}
+
 private:
 	std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoComp > struct_store_;
 	std::priority_queue< StructInfo, std::vector<StructInfo> , StructInfoCompdH > struct_store_dH_;
@@ -547,6 +567,7 @@ private:
 	core::scoring::ScoreFunctionOP scfxn_relax_; // scorefunction to be used in relax
 	std::string runmode_; // preset modes; see setup_params_for_runmode
 	std::string top_pose_metric_;
+	bool debug_report_; // print out debug info
 
 	core::pose::PoseOP pose_native_; // native pose (for reporting purposes only)
 

@@ -208,6 +208,7 @@ GALigandDock::GALigandDock() {
 
 	runmode_ = "dockflex"; // high-resolution pharmacophore docking
 	top_pose_metric_ = "score";
+	debug_report_ = false;
 	output_ligand_only_ = false;
 }
 
@@ -739,6 +740,7 @@ GALigandDock::apply( pose::Pose & pose )
 		gene_initial.set_sample_ring_conformers( sample_ring_conformers_ );
 		gene_initial.set_has_density_map( has_density_map_);
 		pose = run_docking( gene_initial, gridscore, aligner, remaining_outputs_ );
+		remaining_outputs_.resize(nreport_-1);
 		auto end = std::chrono::steady_clock::now();
 		std::chrono::duration<double> diff = end-start;
 		TR << "GALigand Dock took " << (diff).count() << " seconds." << std::endl;
@@ -826,8 +828,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		pose_tmp->remove_constraints();
 		//pose_tmp->dump_pdb(prefix + ".premin."+std::to_string(i)+".pdb");
 
-		if ( pose_native_ ) {
-
+		if ( pose_native_ && TR.Debug.visible() ) {
 			core::Real rms = core::scoring::automorphic_rmsd(
 				pose_native_->residue( lig_resno ), pose_tmp->residue( lig_resno ), false );
 			TR.Debug << "Pre-minimized ligand rmsd from native " << rms << std::endl;
@@ -837,7 +838,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		// idealize again... why do we need this again here?
 		for ( core::Size i=1; i<=movable_scs.size(); ++i ) {
 			utility::vector1< core::Real > chis_i = pose_tmp->residue(movable_scs[i]).chi();
-			core::conformation::Residue newres( pose_tmp->residue_type(movable_scs[i]) , false);
+			core::conformation::Residue newres( pose_tmp->residue_type(movable_scs[i]), false);
 			pose_tmp->replace_residue(movable_scs[i], newres, true);
 			for ( core::Size j=1; j<=chis_i.size(); ++j ) {
 				pose_tmp->set_chi( j, movable_scs[i], chis_i[j] );
@@ -1065,6 +1066,12 @@ GALigandDock::eval_docked_pose_helper( core::pose::Pose &pose,
 	TR << "Evaluating docked pose." << std::endl;
 	auto time0 = std::chrono::steady_clock::now();
 	core::Real complex_score = (*scfxn_relax_)(pose);
+	if ( debug_report_ ) {
+		TR << "Complex_TOTAL_SCORE: " << complex_score << std::endl;
+		core::scoring::EnergyMap const & wts( scfxn_relax_->weights() );
+		TR << "WTS: " << wts.show_nonzero() << std::endl;
+		TR << "TOTAL_WTD: " << pose.energies().total_energies().weighted_string_of( wts ) << std::endl;
+	}
 	core::Real ligscore = calculate_free_ligand_score( pose, lig_ids );
 	core::Real recscore = calculate_free_receptor_score( pose, lig_ids, movable_scs, true );
 	core::Real dH = complex_score - ligscore - recscore;
@@ -1417,7 +1424,14 @@ GALigandDock::calculate_free_receptor_score(
 	pose.delete_residue_range_slow(startid, endid);
 
 	if ( simple ) {
-		return (*scfxn_relax_)(pose);
+		core::Real score = (*scfxn_relax_)(pose);
+		if ( debug_report_ ) {
+			TR << "Free_Receptor_TOTAL_SCORE: " << score << std::endl;
+			core::scoring::EnergyMap const & wts( scfxn_relax_->weights() );
+			TR << "WTS: " << wts.show_nonzero() << std::endl;
+			TR << "TOTAL_WTD: " << pose.energies().total_energies().weighted_string_of( wts ) << std::endl;
+		}
+		return score;
 	}
 
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
@@ -1469,7 +1483,14 @@ GALigandDock::calculate_free_receptor_score(
 	relax.set_movemap_disables_packing_of_fixed_chi_positions( true );
 	relax.apply( pose );
 
-	return (*scfxn_relax_)(pose);
+	core::Real score = (*scfxn_relax_)(pose);
+	if ( debug_report_ ) {
+		TR << "Free_Receptor_TOTAL_SCORE: " << score << std::endl;
+		core::scoring::EnergyMap const & wts( scfxn_relax_->weights() );
+		TR << "WTS: " << wts.show_nonzero() << std::endl;
+		TR << "TOTAL_WTD: " << pose.energies().total_energies().weighted_string_of( wts ) << std::endl;
+	}
+	return score;
 }
 
 Real
@@ -1524,6 +1545,13 @@ GALigandDock::calculate_free_ligand_score(
 	//turn off coordinate constraint in the actual scoring
 	scfxn_ligmin->set_weight( core::scoring::coordinate_constraint, 0.0 );
 	Real ligandscore = scfxn_ligmin->score( *pose );
+
+	if ( debug_report_ ) {
+		TR << "Free_Ligand_TOTAL_SCORE: " << ligandscore << std::endl;
+		core::scoring::EnergyMap const & wts( scfxn_ligmin->weights() );
+		TR << "WTS: " << wts.show_nonzero() << std::endl;
+		TR << "TOTAL_WTD: " << pose->energies().total_energies().weighted_string_of( wts ) << std::endl;
+	}
 
 	return ligandscore;
 }
@@ -1960,7 +1988,7 @@ GALigandDock::final_exact_scmin(
 	protocols::relax::FastRelax relax;
 	std::vector< std::string > lines;
 	if ( pre_optH_relax_ && final_optH_mode_ != OPTH_NONE ) {
-		TR << "==== quick relax after optH, Use FastRelax hardcoded. " << std::endl;
+		TR << "==== quick relax before optH, Use FastRelax hardcoded. " << std::endl;
 		lines.push_back( "switch:torsion" );
 		lines.push_back( "repeat 1" );
 		lines.push_back( "ramp_repack_min 0.02 0.01 1.0 50" );
@@ -1975,6 +2003,9 @@ GALigandDock::final_exact_scmin(
 		relax.apply( pose );
 
 		TR << "final_scmin: score after relax1: " << (*scfxn_relax_)(pose) <<std::endl;
+	}
+	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt && !has_density_map_ ) {
+		pose.delete_residue_slow( pose.fold_tree().root() );
 	}
 
 	// opt-H: re-optimize full pose!
@@ -2849,6 +2880,7 @@ GALigandDock::parse_my_tag(
 	}
 
 	if ( tag->hasOption("top_pose_metric") ) { top_pose_metric_ = tag->getOption<std::string>("top_pose_metric"); }
+	if ( tag->hasOption("debug_report") ) { debug_report_ = tag->getOption<bool>("debug_report"); }
 
 	// Below are detailed controls
 	if ( tag->hasOption("ngen") ) { ngen_ = tag->getOption<int>("ngen"); }
@@ -3285,6 +3317,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "runmode", xs_string, "run mode [dock/dockPH/refine/optligand]");
 
 	attlist + XMLSchemaAttribute( "top_pose_metric", xs_string, "top_pose_metric [score/dH/best]");
+	attlist + XMLSchemaAttribute( "debug_report", xsct_rosetta_bool, "Use this flag to output more information. Default: false");
 	attlist + XMLSchemaAttribute( "sample_ring_conformers", xsct_rosetta_bool, "Allow ring conformer sampling if defined in params.");
 	attlist + XMLSchemaAttribute( "rotprob", xsct_real, "max cumulative rotamer probability");
 	attlist + XMLSchemaAttribute( "rotEcut", xsct_real, "rotamer 1b energy");
