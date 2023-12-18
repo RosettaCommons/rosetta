@@ -66,18 +66,48 @@ def analyze_one_funnel( suffix='1A', expected_rmsd_of_lowest=0.3, expected_min_r
         raise ValueError( "Logfile `" + logfile + "` is empty, but it shouldn't be." )
 
     # read relevant data:
-    rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
-    rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
-    energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $5} }'" ) ).split() ]
-    pnear = float( str( subprocess.getoutput( "grep PNear: " + logfile + " | awk '{print $2}'" ) ) )
-    pnear_to_lowest = float( str( subprocess.getoutput( "grep PNearLowest: " + logfile + " | awk '{print $2}'" ) ) )
-    DG_folding = float( str(subprocess.getoutput( "grep 'kB\*T\*ln(Keq):' " + logfile + " | awk '{print $2}'" ) ) )
-    DG_folding_to_lowest = float( str(subprocess.getoutput( "grep 'kB\*T\*ln(KeqLowest):' " + logfile + " | awk '{print $2}'" ) ) )
+
+    rmsd_vals = []
+    rmsd_vals_to_lowest = []
+    energy_vals = []
+    pnear = None
+    pnear_to_lowest = None
+    DG_folding = None
+    DG_folding_to_lowest = None
+
+    in_table = False
+    for line in logfile_contents:
+        try:
+            sline = line.split():
+            if in_table:
+                if line.startswith("End summary"):
+                    in_table = False
+                    continue
+                rmsd_vals.append( float(sline[2]) )
+                rmsd_vals_to_lowest.append( float(sline[3]) )
+                energy_vals.append( float(sline[4]) )
+            elif sline[0] == "MPI_worker_node":
+                in_table = True
+                continue
+            elif sline[0] == "PNear:":
+                pnear = float( sline[1] )
+            elif sline[0] == "PNearLowest:":
+                pnear_to_lowest = float( sline[1] )
+            elif sline[0] == "-kB*T*ln(Keq):":
+                DG_folding = float( sline[1] )
+            elif sline[0] == "-kB*T*ln(KeqLowest):":
+                DG_folding_to_lowest = float( sline[1] )
+        except:
+            # Provide a slightly more useful debugging info for outputs
+            print("ISSUE IN", logfile, "can't parse", line)
+            raise
 
     print( "Read PNear=" + str(pnear) + " from " + logfile + "." )
     print( "Read PNearLowest=" + str(pnear_to_lowest) + " from " + logfile + "." )
     print( "Read DG_folding=" + str(DG_folding) + " from " + logfile + "." )
     print( "Read DG_folding_to_lowest=" + str(DG_folding_to_lowest) + " from " + logfile + "." )
+
+    assert None not in [ pnear, pnear_to_lowest, DG_folding, DG_folding_to_lowest ]
 
     sample_match = re.search("[1-90]+ jobs returned structures", str( subprocess.getoutput( 'grep "application completed" ' + logfile ) ) )
     if sample_match is not None:

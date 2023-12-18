@@ -31,7 +31,8 @@ cd %(workdir)s
 sleep 10 # otherwise test counts as failed because its too short
 
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -parser:protocol ./Bfactor_test.xml -database %(database)s -s %(minidir)s/../tests/integration/tests/zinc_heterodimer/1UBQ.pdb -testing:INTEGRATION_TEST  2>&1 \
-    > /dev/null
+     | egrep -vf ../../ignore_list \
+     > log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

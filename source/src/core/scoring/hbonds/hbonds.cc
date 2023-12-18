@@ -1579,23 +1579,15 @@ get_membrane_depth_dependent_weight(
 	// water phase smooth_hb_env_dep
 	wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
 
-
-	// Initialize to defaults (taken from Barth, 2007)
-	Vector normal( 0, 0, 1 );
-	Vector center( 0, 0, 0 );
-	Real thickness( 15.0 );
-	Real steepness( 10.0 );
-	Real membrane_core( 15.0 );
-
 	Real fa_proj_H, fa_proj_A;
 
 	if ( pose.conformation().is_membrane() ) {
 
-		center = pose.conformation().membrane_info()->membrane_center(pose.conformation());
-		normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
-		thickness = pose.conformation().membrane_info()->membrane_thickness();
-		steepness = pose.conformation().membrane_info()->membrane_steepness();
-		membrane_core = pose.conformation().membrane_info()->membrane_core();
+		Vector center = pose.conformation().membrane_info()->membrane_center(pose.conformation());
+		Vector normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+		Real thickness = pose.conformation().membrane_info()->membrane_thickness();
+		//Real steepness = pose.conformation().membrane_info()->membrane_steepness();
+		Real membrane_core = pose.conformation().membrane_info()->membrane_core();
 
 		tr.Debug << "thickness is " << thickness << " membrane_core is " << membrane_core << std::endl;
 
@@ -1607,10 +1599,12 @@ get_membrane_depth_dependent_weight(
 
 	} else {
 
-		normal = MembraneEmbed_from_pose( pose ).normal();
-		center = MembraneEmbed_from_pose( pose ).center();
-		thickness = Membrane_FAEmbed_from_pose( pose ).thickness();
-		steepness = Membrane_FAEmbed_from_pose( pose ).steepness();
+		Vector normal = MembraneEmbed_from_pose( pose ).normal();
+		Vector center = MembraneEmbed_from_pose( pose ).center();
+		Real thickness = Membrane_FAEmbed_from_pose( pose ).thickness();
+		Real steepness = Membrane_FAEmbed_from_pose( pose ).steepness();
+		// Initialize to defaults (taken from Barth, 2007)
+		Real membrane_core( 15.0 );
 
 
 		tr.Debug << "thickness is " << thickness << " membrane_core is " << membrane_core << std::endl;

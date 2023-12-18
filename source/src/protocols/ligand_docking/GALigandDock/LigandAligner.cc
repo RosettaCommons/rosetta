@@ -1345,20 +1345,12 @@ ConstraintInfo::update_ligand_coord( core::pose::Pose const & pose )
 }
 
 //////////////////////////////////////////////////////////////////
-LigandAligner::LigandAligner() :
-	movable_scs_( utility::vector1< core::Size >() ),
-	refine_input_(false),
-	trans_step_(3.0), rot_step_(30.0), chi_step_(30.0), istruct_( 0 ),
-	use_pharmacophore_( true ),
-	faster_( false )
-{}
+LigandAligner::LigandAligner() = default;
 
 LigandAligner::LigandAligner( bool use_pharmacophore,
 	utility::vector1< core::Size > const &movable_scs,
 	bool faster ) :
 	movable_scs_( movable_scs ),
-	refine_input_(false),
-	trans_step_(3.0), rot_step_(30.0), chi_step_(30.0), istruct_( 0 ),
 	use_pharmacophore_( use_pharmacophore ),
 	faster_( faster )
 {}

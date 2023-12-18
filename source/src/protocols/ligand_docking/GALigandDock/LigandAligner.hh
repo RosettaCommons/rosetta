@@ -427,22 +427,22 @@ private:
 
 	// perturbation parameters
 	utility::vector1< core::Size > movable_scs_;
-	bool refine_input_;
-	bool prealigned_input_;
-	core::Real trans_step_, rot_step_, chi_step_;
+	bool refine_input_ = false;
+	bool prealigned_input_ = false;
+	core::Real trans_step_ = 3.0, rot_step_ = 30.0, chi_step_ = 30.0;
 	utility::vector1< utility::vector1< core::Real > > weighted_score_ij_;
 
 	// history of howmany structs generated through
-	core::Size istruct_;
+	core::Size istruct_ = 0;
 
 	// pharmacophore docking
-	bool use_pharmacophore_;
+	bool use_pharmacophore_ = true;
 
 	// estimation of nsamples to try
 	//core::Size nstruct_sample_estimation_;
 
 	// faster version (support for VSX mode in GAdock)
-	bool faster_;
+	bool faster_ = false;
 
 	/// @brief Should ring conformers be sampled?  Default true.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).

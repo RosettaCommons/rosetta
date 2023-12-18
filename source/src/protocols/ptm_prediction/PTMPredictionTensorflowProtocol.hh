@@ -53,7 +53,7 @@ public:
 	PTMPredictionTensorflowProtocol(PTMPredictionTensorflowProtocol const & src);
 
 	/// @brief Destructor.
-	virtual ~PTMPredictionTensorflowProtocol();
+	~PTMPredictionTensorflowProtocol() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	basic::tensorflow_manager::RosettaTensorflowProtocolBaseOP clone() const override;

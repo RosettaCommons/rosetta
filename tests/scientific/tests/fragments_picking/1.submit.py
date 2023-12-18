@@ -30,7 +30,7 @@ extension   = benchmark.calculate_extension()
 #==> EDIT HERE
 frag_command_line = '''
 -database 			{rosetta_dir}/database
--in::file::vall 		{rosetta_dir}/../tools/fragment_tools/vall.jul19.2011.gz
+-in::file::vall 		{rosetta_dir}/tools/fragment_tools/vall.jul19.2011.gz
 -in:file::native 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
 -in::file::checkpoint 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}.checkpoint
 -in::file::s 			 {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb

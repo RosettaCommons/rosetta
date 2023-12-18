@@ -60,7 +60,7 @@ public:
 	PTMPredictionTensorflowProtocolBase( PTMPredictionTensorflowProtocolBase const & ) = default;
 
 	/// @brief Destructor.
-	virtual ~PTMPredictionTensorflowProtocolBase();
+	~PTMPredictionTensorflowProtocolBase() override;
 
 public:
 #ifdef USE_TENSORFLOW

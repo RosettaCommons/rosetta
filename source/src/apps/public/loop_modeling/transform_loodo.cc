@@ -55,8 +55,8 @@ parse_into_stub( utility::vector1<core::Real> const & in_vec )
 		utility_exit_with_message("Need 12 values to parse into stub.");
 	}
 	core::kinematics::Stub to_apply_stub;
-	Matrix M;
-	Vector v;
+	Matrix M(0); // Intialize to zero to avoid (mistaken) clang tidy complaining
+	Vector v(0);
 	int count (0), i(1), j(1), k(0);
 	for ( core::Real val: in_vec ) {
 		count++;

@@ -26,6 +26,8 @@
 # All command files should start with this line:
 #
 
+cd %(workdir)s
+
 # Check behavior when loading scores
 [ -x %(bin)s/energy_based_clustering.%(binext)s ] || exit 1
 %(bin)s/energy_based_clustering.%(binext)s %(additional_flags)s @inputs/rosetta.flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \

@@ -93,7 +93,7 @@ def setup_from_options(options):
         with open(options.config) as f: user_config.readfp(f)
 
     else:
-        print(f"\n\n>>> Config file `{options.config}` not found. You may want to manually copy `benchmark.ini.template` to `{options.config}` and edit the settings\n\n")
+        print(f"\n\n>>> Config file `{options.config}` not found. You may want to manually copy `benchmark.template.ini` to `{options.config}` and edit the settings\n\n")
         user_config = ConfigParser()
         user_config.set('main', 'cpu_count',  '1')
         user_config.set('main', 'hpc_driver', 'MultiCore')

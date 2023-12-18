@@ -30,7 +30,7 @@
     <TrialCounterObserver name="count" file="trial.stats"/>
     <SilentTrajectoryRecorder name="traj" score_stride="1" stride="20" cumulate_replicas="1" /> <!--stride normally 1000 -->
     <Backrub name="bbmover" movemap_factory="Interface" max_angle_disp_4="3.1" max_angle_disp_7="3.0" max_angle_disp_slope="-0.5" require_mm_bend="0"/>
-    <MetropolisHastings name="sampler" trials="100" scorefxn="score_dock_low" > <!--trial number normally use 10000000 for productive simulation-->
+    <MetropolisHastings name="sampler" trials="20" scorefxn="score_dock_low" > <!--trial number normally use 10000000 for productive simulation-->
         <Add mover_name="h_exchange"/>
         <Add mover_name="traj"/>
         <Add mover_name="count"/>
