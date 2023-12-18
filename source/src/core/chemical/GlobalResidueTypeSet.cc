@@ -60,6 +60,7 @@
 // Utility headers
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
+#include <utility/io/tarparser.hh>
 #include <utility/sql_database/types.hh>
 #include <utility/pointer/memory.hh>
 
@@ -78,6 +79,7 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/string_util.hh>
 
 #include <utility/stream_util.hh> // AUTO IWYU For operator<<
 
@@ -221,11 +223,34 @@ void GlobalResidueTypeSet::init_restypes_from_commandline() {
 	utility::vector1< std::string > extra_params_files( params_files_from_commandline() );
 
 	for ( std::string const & filename : extra_params_files ) {
-		MutableResidueTypeOP rsd_type( read_topology_file(
-			filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
-		add_base_residue_type( rsd_type );
-		exclude_pdb_component_ids_.insert( rsd_type->name3() ); // if user has bothered to specify params file, don't look in pdb components dictionary
-		TR.Debug << "Loading ResidueType " << rsd_type->name() << " from file " << filename << std::endl;
+		if ( utility::endswith(filename, ".tar") || utility::endswith(filename, ".tar.gz") ) {
+			utility::io::TarParser parser;
+			utility::io::izstream is( filename.c_str(), std::ios::binary );
+			std::string content, fileName;
+			while ( is ) {
+				try {
+					parser.read(is, fileName, content);
+				} catch (const std::runtime_error& e) {
+					if ( TR.Debug.visible() ) {
+						TR.Debug << "Error reading tar file " << filename << ": " << e.what() << std::endl;
+					}
+					continue;
+				}
+				if ( !utility::endswith(fileName , ".params") ) continue;
+				std::istringstream iss(content);
+				MutableResidueTypeOP rsd_type( read_topology_file(iss, fileName,
+					atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
+				add_base_residue_type( rsd_type );
+				exclude_pdb_component_ids_.insert( rsd_type->name3() ); // if user has bothered to specify params file, don't look in pdb components dictionary
+				TR.Debug << "Loading ResidueType " << rsd_type->name() << " from file " << filename << std::endl;
+			}
+		} else {
+			MutableResidueTypeOP rsd_type( read_topology_file(
+				filename, atom_type_set(), element_set(), mm_atom_type_set(), orbital_type_set() ) );
+			add_base_residue_type( rsd_type );
+			exclude_pdb_component_ids_.insert( rsd_type->name3() ); // if user has bothered to specify params file, don't look in pdb components dictionary
+			TR.Debug << "Loading ResidueType " << rsd_type->name() << " from file " << filename << std::endl;
+		}
 	}
 
 	if ( mode () == FULL_ATOM_t ) {

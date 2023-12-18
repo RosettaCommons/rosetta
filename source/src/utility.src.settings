@@ -61,7 +61,8 @@ sources = {
 		"ocstream",
 		"ozstream",
 		"util",
-	        "base64",
+		"base64",
+		"tarparser",
 	],
 	"utility/keys": [
                 "Key",
