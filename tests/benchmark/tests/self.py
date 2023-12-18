@@ -22,6 +22,15 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 
 _api_version_ = '1.1'
 
+
+def run_info_test(repository_root, working_dir, platform, config):
+    user = execute('getting current user...', "whoami", silent=True, return_='output')[:-1]
+    home = execute('getting current user...', "echo $HOME", silent=True, return_='output')[:-1]
+
+    log = f'user: {user}\nhome: {home}\n'
+    return {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : log}
+
+
 def run_state_test(repository_root, working_dir, platform, config):
     revision_id = config['revision']
     states = (_S_passed_, _S_failed_, _S_build_failed_, _S_script_failed_)
@@ -199,7 +208,8 @@ def compare(test, results, files_path, previous_results, previous_files_path):
 
 
 def run(test, repository_root, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if   test == 'state':      return run_state_test      (repository_root, working_dir, platform, config)
+    if   test == 'info':       return run_info_test       (repository_root, working_dir, platform, config)
+    elif test == 'state':      return run_state_test      (repository_root, working_dir, platform, config)
     elif test == 'regression': return run_regression_test (repository_root, working_dir, platform, config)
     elif test == 'subtests':   return run_subtests_test   (repository_root, working_dir, platform, config)
     elif test == 'release':    return run_release_test    (repository_root, working_dir, platform, config)
