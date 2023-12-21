@@ -34,7 +34,7 @@ def run_info_test(repository_root, working_dir, platform, config):
 def run_state_test(repository_root, working_dir, platform, config):
     revision_id = config['revision']
     states = (_S_passed_, _S_failed_, _S_build_failed_, _S_script_failed_)
-    state = states[revision_id % len(states)]
+    state = states[revision_id % len(states)] if config['branch'] == 'benchmark' else _S_passed_
 
     return {_StateKey_ : state,  _ResultsKey_ : {},  _LogKey_ : f'run_state_test: setting test state to {state!r}...' }
 
