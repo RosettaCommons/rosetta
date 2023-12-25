@@ -57,9 +57,9 @@ namespace scoring {
 /// @brief Return a fresh instance of the energy method
 core::scoring::methods::EnergyMethodOP
 FaWaterToBilayerEnergyCreator::create_energy_method(
-	core::scoring::methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	return core::scoring::methods::EnergyMethodOP( new FaWaterToBilayerEnergy() );
+	return utility::pointer::make_shared< FaWaterToBilayerEnergy >( options );
 }
 
 /// @brief Return Score Types Required for Method
@@ -71,11 +71,12 @@ FaWaterToBilayerEnergyCreator::score_types_for_method() const {
 }
 
 /// @brief Construct Energy Method from Etable
-FaWaterToBilayerEnergy::FaWaterToBilayerEnergy() :
-	parent( core::scoring::methods::EnergyMethodCreatorOP( new FaWaterToBilayerEnergyCreator ) ),
+FaWaterToBilayerEnergy::FaWaterToBilayerEnergy( core::scoring::methods::EnergyMethodOptions const & options ):
+	parent( utility::pointer::make_shared< FaWaterToBilayerEnergyCreator >() ),
 	memb_lk_dgrefce_(),
 	water_lk_dgrefce_(),
-	atypes_list_()
+	atypes_list_(),
+	use_fleming_de_( options.use_fleming_de() )
 {
 	std::string dbfile( "membrane/memb_fa_params_2019.txt" );
 	using namespace basic;
@@ -135,12 +136,13 @@ FaWaterToBilayerEnergy::residue_energy(
 
 	using namespace core;
 	using namespace core::scoring;
-
+	//geting rid of fixed values for each residue.
 	if ( rsd.name3() == "MEM" || !rsd.is_protein() ) return;
 	for ( core::Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i ) {
 		MEnvAtomParamsCOP menv_params = get_menv_params_for_residue( pose, rsd, i );
 		emap[ core::scoring::fa_water_to_bilayer ] += eval_fa_wtbe( *menv_params );
 	}
+
 }
 
 /// @brief Fianlzie Total Per-Residue Energies
@@ -197,6 +199,7 @@ FaWaterToBilayerEnergy::eval_atom_derivative(
 
 	F1 += fa_wtbe_weight_ * cp_weight * deriv * p->f1();
 	F2 += fa_wtbe_weight_ * cp_weight * deriv * p->f2();
+
 }
 
 /// @brief Fa_MbenvEnergy is context independent
@@ -238,6 +241,14 @@ FaWaterToBilayerEnergy::get_menv_params_for_residue(
 	core::Real dGfreeW = water_lk_dgrefce_[ index ];
 	core::Real dGfreeB = memb_lk_dgrefce_[ index ];
 
+	if ( use_fleming_de_ && ( rsd.atom_type( atomno ).name()=="COO" || rsd.atom_type( atomno ).name()=="OOC" ) ) {
+		if ( rsd.atom_type( atomno ).name()=="COO" ) {
+			dGfreeB = -0.5225;
+		} else {
+			dGfreeB = -9.2649;
+		}
+		//TR << rsd.atom_type( atomno ).name() << dGfreeB << std::endl;
+	}
 
 	core::conformation::Conformation const & conf( pose.conformation() );
 	core::conformation::membrane::MembraneGeometryCOP mp_geometry( conf.membrane_info()->membrane_geometry() );
@@ -252,6 +263,7 @@ FaWaterToBilayerEnergy::get_menv_params_for_residue(
 	core::Vector f2 = mp_geometry->f_transition_f2( conf, rsd.seqpos(), atomno );
 
 	MEnvAtomParamsCOP menv_parameter = MEnvAtomParamsCOP( new MEnvAtomParams( rsd.atom_type(atomno).name(), dGfreeW, dGfreeB, hydration, f1, f2 ) );
+
 	return menv_parameter;
 
 }

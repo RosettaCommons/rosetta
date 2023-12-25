@@ -20,6 +20,11 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
+#include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
+#include <protocols/membrane/TranslationRotationMover.hh>
+#include <protocols/membrane/util.hh>
+#include <core/energy_methods/pHEnergy.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <protocols/membrane/TranslationRotationMover.fwd.hh>
 
 
@@ -30,7 +35,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-//#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
+#include <utility/io/ozstream.hh>
 
 namespace protocols {
 namespace membrane_benchmark {
@@ -51,11 +56,12 @@ public:
 	MembraneEnergyLandscapeSampler(
 		std::string sfxn_weights,
 		std::string rotation_type,
-		bool interface = false,
-		core::Real start_z = -70,
-		core::Real end_z = 70,
-		core::Real flag_axis = 1,
-		core::Real azimuthal_delta = 30
+		bool interface,
+		core::Real start_z,
+		core::Real end_z,
+		core::Real flag_axis,
+		core::Real azimuthal_delta,
+		bool repack
 	);
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
@@ -123,7 +129,21 @@ public:
 		core::Real flag
 	);
 
+
+
 private: // methods
+
+	void
+	init_from_options();
+
+	//protocols::minimization_packing::PackRotamersMoverOP
+	//get_packer( core::pose::Pose const & pose );
+
+	protocols::minimization_packing::PackRotamersMoverOP
+	get_pH_aware_packer( core::scoring::ScoreFunctionOP sfxn ) const;
+
+	core::Vector
+	get_rotation_axis();
 
 	protocols::membrane::RotationMoverOP
 	get_rotation(
@@ -134,16 +154,29 @@ private: // methods
 		std::string rotation_type
 	);
 
+	core::Real get_pH_value();
+
+	core::Real
+	count_res( std::string res,
+		core::pose::Pose const & pose);
+
+	core::Real
+	count_diff( core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2);
+
 private: // data
 
 	core::scoring::ScoreFunctionOP sfxn_;
 	std::string sfxn_weights_;
-	std::string rotation_type_;
-	bool interface_;
-	core::Real start_z_;
-	core::Real end_z_;
-	core::Real flag_axis_;
-	core::Real azimuthal_delta_;
+	std::string rotation_type_="YZ";
+	// Landscape generation options
+	bool interface_=false;
+	core::Real start_z_=-60;
+	core::Real end_z_=60;
+	core::Real flag_axis_=1.0;
+	core::Real azimuthal_delta_=30;
+	bool repack_=false;
+	bool pH_mode_=false;
 };
 
 std::ostream &

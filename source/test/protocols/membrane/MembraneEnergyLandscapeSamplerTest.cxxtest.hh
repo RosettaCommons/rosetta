@@ -38,8 +38,7 @@ static basic::Tracer TR("MembraneEnergyLandscapeSamplerTest");
 
 
 class MembraneEnergyLandscapeSamplerTest : public CxxTest::TestSuite {
-	//Define Variables
-	protocols::membrane_benchmark::MembraneEnergyLandscapeSampler test_memb;
+
 public:
 
 	void setUp() {
@@ -57,6 +56,7 @@ public:
 		using namespace protocols::membrane;
 		using namespace core::import_pose;
 		using namespace core::pose;
+		using namespace protocols::membrane_benchmark;
 
 		// 1. TM domain of the M2 proton channel (single helix): 1mp6
 		PoseOP m2_pose ( utility::pointer::make_shared< Pose >() );
@@ -64,11 +64,13 @@ public:
 		AddMembraneMoverOP add_memb1 = utility::pointer::make_shared< AddMembraneMover >( "protocols/membrane/1mp6.span" );
 		add_memb1->apply( *m2_pose );
 
+		MembraneEnergyLandscapeSamplerOP test_memb = utility::pointer::make_shared< MembraneEnergyLandscapeSampler >();
+
 		//std::string filename5( "/Users/rsamant2/posetomembrane_1mp6.pdb" );
 		//m2_pose->dump_pdb( filename5 );
 
-		TR << "This is a unit test for: "<< test_memb.get_name()<< std::endl;
-		Vector m2_axis( test_memb.getaxis(*m2_pose, 0) );
+		TR << "This is a unit test for: "<< test_memb->get_name()<< std::endl;
+		Vector m2_axis( test_memb->getaxis(*m2_pose, 0) );
 		Vector expected_axis_0( -0.124216,0.0455334,0.99121 );
 
 		TR <<"The axis is:" << m2_axis.x() << "i+ " << m2_axis.y() << "j+" << m2_axis.z() << "k" << std::endl;
@@ -78,7 +80,7 @@ public:
 		TS_ASSERT_DELTA( expected_axis_0, m2_axis, 0.001 );
 		//TS_ASSERT(true)
 
-		Vector m2_center( test_memb.getcenter(*m2_pose, 0) );
+		Vector m2_center( test_memb->getcenter(*m2_pose, 0) );
 		Vector expected_center_0( 0.10425, -0.11875, 0.91825 );
 		TR <<"The center is:" << m2_center.x() << "i+ " << m2_center.y() << "j+" << m2_center.z() << "k" << std::endl;
 
@@ -92,6 +94,9 @@ public:
 		using namespace protocols::membrane;
 		using namespace core::import_pose;
 		using namespace core::pose;
+		using namespace protocols::membrane_benchmark;
+
+		MembraneEnergyLandscapeSamplerOP test_memb = utility::pointer::make_shared< MembraneEnergyLandscapeSampler >();
 
 		// 1. TM domain of the 1U19__tr: Multipass protein
 		PoseOP mp_pose ( utility::pointer::make_shared< Pose >() );
@@ -100,7 +105,7 @@ public:
 		add_memb1->apply( *mp_pose );
 
 
-		Vector mp_axis( test_memb.getaxis(*mp_pose, 2) );
+		Vector mp_axis( test_memb->getaxis(*mp_pose, 2) );
 		Vector expected_axis_2( -0.060021, -0.0647234, 0.996097 );
 
 		TR <<"The axis is:" << mp_axis.x() << "i+ " << mp_axis.y() << "j+" << mp_axis.z() << "k" << std::endl;
@@ -109,7 +114,7 @@ public:
 		TS_ASSERT_DELTA( std::abs(mp_axis.z()), 1.00, 0.01 );
 		TS_ASSERT_DELTA( expected_axis_2, mp_axis, 0.001 );
 
-		Vector mp_center( test_memb.getcenter(*mp_pose, 2) );
+		Vector mp_center( test_memb->getcenter(*mp_pose, 2) );
 		Vector expected_center_2( -0.11102, 0.278718, -0.56644 );
 		TR <<"The center is:" << mp_center.x() << "i+ " << mp_center.y() << "j+" << mp_center.z() << "k" << std::endl;
 

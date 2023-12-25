@@ -28,6 +28,7 @@
 
 // Project Headers
 #include <core/conformation/membrane/MembraneParams.hh>
+#include <core/conformation/membrane/ImplicitLipidInfo.hh>
 
 // Package Headers
 #include <core/conformation/Conformation.hh>
@@ -237,6 +238,27 @@ core::Real
 DoubleVesicle::f_transition_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
 	core::Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
 	return f_vesicle_deriv( conf, xyz );
+}
+
+//returns electrostatic field due to the DoubleVesicle geometry
+//xyz is the coordinates in space of the atom of interest
+core::Real
+DoubleVesicle::fa_elec_lipid( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
+	TR.Warning << "This term is only configured for Slab geometry. This term is set to 0.0 in this geometry" << std::endl;
+	Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
+	core::Real f_elec_lipid( conf.membrane_info()->implicit_lipids()->f_elec_field( xyz.z() ) );
+	return f_elec_lipid;
+
+}
+
+core::Real
+DoubleVesicle::fa_elec_lipid_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
+
+	TR.Warning << "This term is only configured for Slab geometry. This term is set to 0.0 in this geometry" << std::endl;
+	Vector const & xyz( corrected_xyz( conf, resnum, atomnum) );
+	core::Real f_elec_lipid_deriv( conf.membrane_info()->implicit_lipids()->f_elec_field_gradient( xyz.z() ) );
+	return f_elec_lipid_deriv;
+
 }
 
 core::Vector

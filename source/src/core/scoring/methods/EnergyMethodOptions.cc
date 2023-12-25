@@ -146,6 +146,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	loop_close_use_6D_potential_(false),
 	fa_stack_base_all_(false),
 	hb_cen_soft_(false),
+	use_fleming_de_(false),
 
 	//Options for the NMerSVMEnergy:
 	nmer_ref_seq_length_(9),
@@ -289,6 +290,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		loop_close_use_6D_potential_ = src.loop_close_use_6D_potential_;
 		fa_stack_base_all_ = src.fa_stack_base_all_;
 		hb_cen_soft_ = src.hb_cen_soft_;
+		use_fleming_de_=src.use_fleming_de_;
 
 		//Options for the NMerSVMEnergy:
 		nmer_ref_seq_length_ = src.nmer_ref_seq_length_;
@@ -1385,6 +1387,18 @@ EnergyMethodOptions::fa_stack_base_all( bool const setting ) {
 	fa_stack_base_all_ = setting;
 }
 
+bool
+EnergyMethodOptions::use_fleming_de() const{
+	return use_fleming_de_;
+}
+
+///@brief Set the dG_memb for COO and OOC as per the values of D,E using fleming scale.
+///@author Rituparna Samanta(rsamant@jh.edu)
+void
+EnergyMethodOptions::use_fleming_de( bool const setting ) {
+	use_fleming_de_ = setting;
+}
+
 /// @brief Set whether the CenHBEnergy will use a softened version of its potential.  Default false.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 void
@@ -2407,6 +2421,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( loop_close_use_6D_potential_ ) ); // _Bool
 	arc( CEREAL_NVP( fa_stack_base_all_ ) ); // _Bool
 	arc( CEREAL_NVP( hb_cen_soft_ ) ); //Bool
+	arc( CEREAL_NVP( use_fleming_de_ ) ); //Bool
 
 
 	arc( CEREAL_NVP( nmer_ref_seq_length_ ) );
@@ -2534,6 +2549,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( loop_close_use_6D_potential_ ); // _Bool
 	arc( fa_stack_base_all_ ); // _Bool
 	arc( hb_cen_soft_ ); //Bool
+	arc( use_fleming_de_); //Bool
 
 	arc( nmer_ref_seq_length_ );
 	arc( nmer_svm_term_length_ );

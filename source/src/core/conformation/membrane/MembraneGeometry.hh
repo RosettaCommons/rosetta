@@ -265,7 +265,13 @@ public: // Information about the membrane geometry
 	virtual core::Vector
 	f_transition_f2( Conformation const & conf, core::Size resnum, core::Size atomnum ) const = 0;
 
+	//fa_elec_lipid calculates the charge times electrostatic potential due to the lipid layer
+	virtual core::Real
+	fa_elec_lipid( Conformation const & conf, core::Size resnum, core::Size atomnum ) const = 0;
 
+	//fa_elec_lipid_deriv calculates the derivativ due to fa_elec_lipid
+	virtual core::Real
+	fa_elec_lipid_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const = 0;
 
 
 

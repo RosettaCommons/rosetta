@@ -733,6 +733,9 @@ public:
 	bool fa_stack_base_all() const;
 	void fa_stack_base_all( bool const setting );
 
+	bool use_fleming_de() const;
+	void use_fleming_de( bool const setting);
+
 	/// @brief Set whether the CenHBEnergy will use a softened version of its potential.  Default false.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	void hb_cen_soft( bool const setting );
@@ -1152,6 +1155,7 @@ private:
 	bool loop_close_use_6D_potential_;
 	bool fa_stack_base_all_;
 	bool hb_cen_soft_ = false;
+	bool use_fleming_de_ = false;
 
 	//Options for the NMerSVMEnergy:
 	core::Size nmer_ref_seq_length_ = 9;

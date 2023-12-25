@@ -311,8 +311,8 @@ sources = {
 		"util",
 	],
 	"protocols/membrane_benchmark" :[
-	        "MembraneEnergyLandscapeSampler",
-	        "PeptideOrientationMover",
+		"MembraneEnergyLandscapeSampler",
+		"PeptideOrientationMover",
 	],
 	"protocols/membrane/benchmark" :[
 		"MakeCanonicalHelix",
@@ -324,6 +324,8 @@ sources = {
 	],
 	"protocols/membrane/scoring" : [
 		"MEnvAtomParams",
+		"MEnvElectroAtomParams",
+		"ElectricfieldLipidlayer",
 		"FaWaterToBilayerEnergy",
 	],
 	"protocols/membrane/symmetry" : [

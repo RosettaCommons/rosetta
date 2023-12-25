@@ -141,6 +141,7 @@
 #include <core/energy_methods/OccludedHbondSolEnergy_onebodyCreator.hh>
 #include <core/energy_methods/DEEREnergyCreator.hh>
 #include <core/scoring/elec/FA_ElecEnergyCreator.hh>
+#include <core/energy_methods/ImplicitMembraneElecEnergyCreator.hh>
 #include <core/energy_methods/FA_GrpElecEnergyCreator.hh>
 #include <core/energy_methods/FA_ElecEnergyAroAroCreator.hh>
 #include <core/energy_methods/FA_ElecEnergyAroAllCreator.hh>
@@ -538,6 +539,7 @@ static EnergyMethodRegistrator< energy_methods::ContextIndependentGeometricSolEn
 static EnergyMethodRegistrator< energy_methods::OccludedHbondSolEnergyCreator > OccludedHbondSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::OccludedHbondSolEnergy_onebodyCreator > OccludedHbondSolEnergy_onebodyCreator_registrator;
 static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyCreator > FA_ElecEnergyCreator_registrator;
+static EnergyMethodRegistrator< energy_methods::ImplicitMembraneElecEnergyCreator > ImplicitMembraneElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::RNA_FA_ElecEnergyCreator > RNA_FA_ElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::FA_ElecEnergyAroAroCreator > FA_ElecEnergyAroAroCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::FA_ElecEnergyAroAllCreator > FA_ElecEnergyAroAllCreator_registrator;

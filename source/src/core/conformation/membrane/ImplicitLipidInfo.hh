@@ -62,8 +62,6 @@ public:
 		core::Real temperature
 	);
 
-	ImplicitLipidInfo( ImplicitLipidInfo const & src );
-	ImplicitLipidInfo & operator=( ImplicitLipidInfo const & src );
 
 	~ImplicitLipidInfo() override;
 
@@ -148,11 +146,25 @@ public: // Chemical information about this membrane
 		transformed_water_thickness_ = p;
 	}
 
+	/// @brief Calculates the electric field due to lipid layer, water and salt
+	/// based on pre-calculated fitting parameters from md-runs.
+	core::Real
+	f_elec_field( core::Real z) const;
+
+	/// @brief Calculates the gradient of electric field.
+	core::Real
+	f_elec_field_gradient( core::Real z) const;
+
 public: // Helper functions - making public for testing
 
 	/// @brief Helper function to initialize the lipid composiiton data
 	void
 	initialize_implicit_lipid_parameters();
+
+	/// @brief Helper function to initialize the electrostatic properties of lipid layer
+	void
+	initialize_implicit_lipid_electricfield_parameters();
+
 
 private:
 
@@ -165,6 +177,20 @@ private:
 	core::Real water_thickness_;
 	core::Real change_in_water_density_;
 	core::Real transformed_water_thickness_;
+
+	// Parameters to define the electrostatic field of the implicit membrane
+	core::Real center_a_;
+	core::Real center_b_;
+	core::Real center_c_;
+	core::Real center_d_;
+	core::Real center_e_;
+	core::Real center_root_;
+
+	core::Real pp_a_;
+	core::Real pp_b_;
+	core::Real pp_c_;
+	core::Real pp_d_;
+
 
 	// Parameters about this membrane composition
 	std::string chain_type_;
@@ -180,7 +206,6 @@ private:
 
 	// aqueous pore parameters
 	AqueousPoreParametersOP pore_params_;
-	core::Real pore_transition_steepness_;
 
 
 #ifdef    SERIALIZATION

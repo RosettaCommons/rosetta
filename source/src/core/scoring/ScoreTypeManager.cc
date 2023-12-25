@@ -133,6 +133,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_elec_rna_sugr_base_fast" ] = fa_elec_rna_sugr_base_fast;
 	name2score_type_[ "fa_elec_rna_base_base_fast" ] = fa_elec_rna_base_base_fast;
 
+	name2score_type_[ "fa_imm_elec" ] = fa_imm_elec;
 	name2score_type_[ "fa_elec_aro_aro" ] = fa_elec_aro_aro;
 	name2score_type_[ "fa_elec_aro_all" ] = fa_elec_aro_all;
 	name2score_type_[ "hack_aro" ] = hack_aro;
@@ -386,6 +387,7 @@ ScoreTypeManager::setup_score_type_names()
 
 	// new implicit lipid env energy
 	name2score_type_[ "fa_water_to_bilayer" ] = fa_water_to_bilayer;
+	name2score_type_[ "f_elec_lipidlayer" ] = f_elec_lipidlayer;
 
 	name2score_type_[ "rg" ] = rg;
 	name2score_type_[ "rg_local" ] = rg_local;

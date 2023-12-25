@@ -1,0 +1,31 @@
+### Parameters for electric field for the implicit lipid membranes
+### Author: Rituparna Samanta (rsamant2@jhu.edu)
+### Citation: 
+###
+### Below are parameters describing the electric field due to different membrane lipid compositions. The parameters are derived from a combination of 
+### all-atom molecular dynamics simulations: 
+### 	     lipid = Four letter code describing the phospholipid type
+###	     	 center_A-C = fitting parameters for the following equation:
+###          center: y=A*exp(-(x-B)*(x-B)/(C*C)) #there was a jump discontinuity
+###          center: y = A*x^4 + B*x^3 + C*x^4 + D*x + E
+###          root: is where the first derivative of center function drops to 0 and matchees that of the periphery.          
+###          periphery_A1-A4 = fitting parameters for the following equation:
+###          periphery: y=A1+(A1-A2)/(1+exp((abs(x)-A3)/A4))
+### The parameters in the implicit membrane can be changed using the following flags: 
+### 	-mp:lipids:composition <LIPID_NAME>
+###	
+###
+#lipid center_A center_B center_C center_D center_E root periphery_A periphery_B periphery_C periphery_D
+DPPG 0.0000783 0.0000300 -0.004936 0.0002105 0.09878 4.0234 -0.180797 -0.3902 20.2879 1.5814
+DPPC 0.0001741 0.0000263 -0.008995 0.0013297 0.14660 3.6749 -0.1770 -0.3868 18.4572 1.1071
+DPPE 0.0005390 -0.0000697 -0.024067 0.0048306 0.35361 3.4864 -0.3046 -0.7151 25.1904 2.2492
+DMPC 0.0001293 -0.00000836 -0.007608 -0.003279 0.18717 4.1189 -0.1842 -0.4466 15.4337 1.0344
+POPC 0.0000715 0.0000236 -0.005297 -0.0016197 0.14942 4.4886 -0.1902 -0.4294 17.1945 1.0003                               
+POPE 0.0001477 -0.0000215 -0.008436 0.001116 0.17122 3.9833 -0.2329 -0.5043 22.5922 1.6290
+POPG 0.0000473 0.0000328 -0.004060 -0.0018251 0.07642 5.2109 -0.1650 -0.3316 18.6755 1.2361
+DLPC 0.0001502 -0.0000247 -0.007949 -0.0008695 0.21089 4.0287 -0.1838 -0.4757 13.2291 1.2150
+DLPE 0.0002711 0.0000014 -0.013158 0.0002332 0.26946 3.7339 -0.2409 -0.5953 18.5127 2.0282
+DLPG 0.0001010 -0.0000383 -0.005655 0.0009176 0.12592 4.0507 -0.1155 -0.2786 13.5622 1.0265
+DOPE 0.0000647 0.0000081 -0.005635 -0.0000250 0.16829 4.8381 -0.2288 -0.5016 22.4992 1.6509
+DOPC 0.0000601 -0.0000073 -0.005226 0.0021469 0.14194 4.8219 -0.1842 -0.4036 17.2339 0.8044
+DOPG 0.0000385 0.0000323 -0.003805 -0.0002444 0.05122 6.0645 -0.1517 -0.2873 18.9140 1.1062

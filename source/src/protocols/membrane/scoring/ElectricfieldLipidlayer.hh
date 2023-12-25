@@ -7,20 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file  protocols/membrane/scoring/FaWaterToBilayerEnergy.hh
-/// @brief Implicit Lipid Membrane Model Water-to-Bilayer transfer energy (one-body)
-/// @author  Rebecca Alford (ralford3@jhu.edu)
+/// @file  protocols/membrane/scoring/ElectricfieldLipidlayer.hh
+/// @brief Implicit Lipid Membrane Model electrostatic energy due to the field created by lipid layers(one-body)
+/// @author  Rituparna Samanta (rsamant2@jhu.edu)
 
-#ifndef INCLUDED_protocols_membrane_scoring_FaWaterToBilayerEnergy_hh
-#define INCLUDED_protocols_membrane_scoring_FaWaterToBilayerEnergy_hh
+#ifndef INCLUDED_protocols_membrane_scoring_ElectricfieldLipidlayer_hh
+#define INCLUDED_protocols_membrane_scoring_ElectricfieldLipidlayer_hh
 
 // Unit headers
-#include <protocols/membrane/scoring/FaWaterToBilayerEnergy.fwd.hh>
+#include <protocols/membrane/scoring/ElectricfieldLipidlayer.fwd.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
 // Package headers
-#include <protocols/membrane/scoring/MEnvAtomParams.fwd.hh>
+#include <protocols/membrane/scoring/MEnvElectroAtomParams.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 
@@ -36,14 +35,14 @@ namespace membrane {
 namespace scoring {
 
 /// @brief Fullatom Membrane Environment Energy
-class FaWaterToBilayerEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
+class ElectricfieldLipidlayer : public core::scoring::methods::ContextDependentOneBodyEnergy {
 
 public:
 
 	typedef core::scoring::methods::ContextDependentOneBodyEnergy parent;
 
 	/// @brief Construct Energy Method from Etable
-	FaWaterToBilayerEnergy( core::scoring::methods::EnergyMethodOptions const & options );
+	ElectricfieldLipidlayer();
 
 	/// @brief Clone Energy Method
 	core::scoring::methods::EnergyMethodOP
@@ -57,13 +56,6 @@ public:
 		core::scoring::EnergyMap & emap
 	) const override;
 
-	/// @brief Fianlzie Total Per-Residue Energies
-	void
-	finalize_total_energy(
-		core::pose::Pose & pose,
-		core::scoring::ScoreFunction const &,
-		core::scoring::EnergyMap & emap
-	) const override;
 
 	/// @brief Setup for Computing Derivatives
 	void
@@ -95,24 +87,21 @@ public:
 		core::scoring::ScoreFunction const &
 	) const override;
 
-	MEnvAtomParamsCOP
+	/// @brief Evaluate Per-Atom Energy term
+	core::Real
+	eval_felec_lipidlayer(
+		MEnvElectroAtomParams const & p
+	) const;
+	/// @brief Evaluate Per-Atom Env term
+	MEnvElectroAtomParamsCOP
 	get_menv_params_for_residue(
 		core::pose::Pose const & pose,
 		core::conformation::Residue const & rsd,
 		core::Size atomno
 	) const;
 
-	/// @brief Evaluate Per-Atom Env term
-	core::Real
-	eval_fa_wtbe(
-		MEnvAtomParams const & p
-	) const;
-
 
 private: // helper methods
-
-	core::Size
-	get_atype_index( std::string atype_name ) const;
 
 	/// @brief Versioning
 	core::Size version() const override;
@@ -120,14 +109,8 @@ private: // helper methods
 
 private:
 
-	// will clean this up later
-	mutable utility::vector1< core::Real > memb_lk_dgrefce_;
-	mutable utility::vector1< core::Real > water_lk_dgrefce_;
-	mutable utility::vector1< std::string > atypes_list_;
-
-	// Store mbenv weight when computing derivatives
-	mutable core::Real fa_wtbe_weight_;
-	bool use_fleming_de_;
+	// Store weight when computing derivatives
+	mutable core::Real f_elec_lipidlayer_weight_;
 
 };
 
@@ -135,4 +118,4 @@ private:
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_scoring_FaWaterToBilayerEnergy_hh
+#endif // INCLUDED_protocols_membrane_scoring_ElectricfieldLipidlayer_hh

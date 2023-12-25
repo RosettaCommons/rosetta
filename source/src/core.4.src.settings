@@ -55,6 +55,9 @@ sources = {
 
 		"HackAroEnergy",
 
+		"ImplicitMembraneCoulomb",
+		"ImplicitMembraneElecEnergy",
+
 		"NPDHBondEnergy",
 
 		"LoopCloseEnergy",

@@ -1,11 +1,11 @@
 NAME LK_DGREFCE	MEMB_LK_DGREFCE	MEMB_LK_DGFREE LK_DGFREE
 CNH2     0.0000	         0.9292	        0.0000    0.0000
-COO		-0.8900	        -0.5225	       -2.1236   -1.4000
+COO		-0.8900	        -2.3900	       -2.1236   -1.4000#changing -0.5225(franklin2019) to -2.39(franklin2021)
 CH0		-0.1870	        -0.9495	       -0.8620   -0.2500
 CH1		-0.1870	        -0.8759	       -0.8620   -0.2500
 CH2		 0.3720	        -0.3698	       -1.0000    0.5200
 CH3		 1.0890	         0.2039	       -0.9160    1.5000
-aroC	 0.0570	        -0.3962	       -0.5750    0.0800
+aroC	 0.0570	        -0.3962       -0.5750    0.0800
 Ntrp	-5.9500	        -2.6051	       -1.7130   -8.9000
 Nhis	-3.8200	        -1.5644	       -1.7070   -4.0000
 NtrR	-5.9500	        -4.9863	       -1.7130   -8.9000
@@ -16,7 +16,7 @@ Npro	-1.0000	        -1.1000	       -1.7750   -1.5500
 OH		-5.9200	        -4.5007	       -1.0860   -6.7700
 OW		-5.9200	        -4.5007	       -1.0860   -6.7700
 ONH2	-5.3300	        -4.4008	       -1.3940  -10.0000
-OOC    -10.0000	        -9.2649	       -0.9000  -10.0000 #changing the second column from -9.2649 to -8.0; trying to increase the dGw,l for D,E as a test for outliers of Test3
+OOC    -10.0000	        -5.8750	       -0.9000  -10.0000 #changing the second column from -9.2649 to -8.0 (in benchmark paper); changing from -9.2649 to -5.875 to match dG D-1, E-1 from Fleming scale extrapolated with fitting to WW scale. 
 Oaro	-5.9200			-2.6200	       -1.0860   -4.0000
 Oet2	-5.3300	        -2.5570	       -1.3940  -10.0000
 Oet3	-5.9200	        -2.6200	       -1.0860   -6.7700

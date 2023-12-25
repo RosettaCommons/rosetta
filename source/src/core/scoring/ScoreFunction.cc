@@ -453,6 +453,8 @@ ScoreFunction::_add_weights_from_stream( std::istream & data, bool patch/*=false
 			for ( int i=1; i<=(int) core::chemical::num_canonical_aas; ++i ) {
 				energy_method_options_->set_density_sc_scale_byres( (core::chemical::AA)i, scale_sc_density[i] );
 			}
+		} else if ( tag=="USE_FLEMING_DE" ) {
+			energy_method_options_->use_fleming_de(true);
 		} else {
 
 			// //////////// Regular Weights ///////////////////////

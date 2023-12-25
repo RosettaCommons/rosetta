@@ -496,6 +496,7 @@ sources = {
 		"AddMPLigandMover",
 		"FlipMover",
 		"MembraneEnergyLandscapeSamplerTest",
+		"MembraneElectrostatics",
 		"MembranePositionFromTopologyMover",
 		"MembraneUtil",
 		"MPLipidAccessibility",

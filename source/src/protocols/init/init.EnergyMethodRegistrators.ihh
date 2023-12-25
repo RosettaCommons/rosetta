@@ -38,5 +38,6 @@ static EnergyMethodRegistrator< nmr::rdc::RDCEnergyCreator > RDCEnergyCreator_re
 static EnergyMethodRegistrator< nmr::pre::PREEnergyCreator > PREEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< protocols::membrane::scoring::FaWaterToBilayerEnergyCreator > FaWaterToBilayerEnergyCreator_registrator;
+static EnergyMethodRegistrator< protocols::membrane::scoring::ElectricfieldLipidlayerCreator > ElectricfieldLipidlayerCreator_registrator;
 
 } //namespace protocols

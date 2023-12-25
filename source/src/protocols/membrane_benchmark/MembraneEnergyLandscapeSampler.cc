@@ -24,11 +24,13 @@
 #include <protocols/membrane_benchmark/MembraneEnergyLandscapeSampler.hh>
 #include <protocols/membrane_benchmark/MembraneEnergyLandscapeSamplerCreator.hh>
 
-// Pakcage headers
+// Package headers
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/membrane/TranslationRotationMover.hh>
 #include <protocols/membrane/util.hh>
+//#include <protocols/membrane/scoring/MembranepHEnergy.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -39,6 +41,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
+#include <core/energy_methods/pHEnergy.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -48,6 +51,10 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/palette/DefaultPackerPalette.hh>
+//#include <core/pack/palette/NoDesignPackerPalette.hh>
+//#include <protocols/task_operations/pHVariantTaskOperation.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
 
@@ -57,18 +64,24 @@
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/conformation/util.hh>
+#include <core/chemical/AA.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/io/ozstream.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
+#include <basic/options/keys/pH.OptionKeys.gen.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.io.hh>
 #include <numeric/constants.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <numeric/xyzMatrix.hh>
+#include <numeric/random/random.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1.hh>
@@ -102,8 +115,12 @@ MembraneEnergyLandscapeSampler::MembraneEnergyLandscapeSampler():
 	start_z_( -60 ),
 	end_z_( 60 ),
 	flag_axis_( 1.0 ),
-	azimuthal_delta_( 30 )
-{}
+	azimuthal_delta_( 30 ),
+	repack_( false ),
+	pH_mode_( false )
+{
+	init_from_options();
+}
 
 /// @brief Non-defualt cnstructor for landscape sampling
 MembraneEnergyLandscapeSampler::MembraneEnergyLandscapeSampler(
@@ -113,7 +130,8 @@ MembraneEnergyLandscapeSampler::MembraneEnergyLandscapeSampler(
 	core::Real start_z,
 	core::Real end_z,
 	core::Real flag_axis,
-	core::Real azimuthal_delta ) :
+	core::Real azimuthal_delta,
+	bool repack ):
 	protocols::moves::Mover( MembraneEnergyLandscapeSampler::mover_name() ),
 	sfxn_( core::scoring::ScoreFunctionFactory::create_score_function( sfxn_weights ) ),
 	sfxn_weights_( sfxn_weights ),
@@ -122,8 +140,13 @@ MembraneEnergyLandscapeSampler::MembraneEnergyLandscapeSampler(
 	start_z_( start_z ),
 	end_z_( end_z ),
 	flag_axis_( flag_axis ),
-	azimuthal_delta_( azimuthal_delta )
-{}
+	azimuthal_delta_( azimuthal_delta ),
+	repack_( repack ),
+	pH_mode_( false )
+{
+
+	init_from_options();
+}
 
 /// @brief Copy constructor
 MembraneEnergyLandscapeSampler::MembraneEnergyLandscapeSampler( MembraneEnergyLandscapeSampler const & src ):
@@ -135,7 +158,9 @@ MembraneEnergyLandscapeSampler::MembraneEnergyLandscapeSampler( MembraneEnergyLa
 	start_z_( src.start_z_ ),
 	end_z_( src.end_z_ ),
 	flag_axis_( src.flag_axis_ ),
-	azimuthal_delta_(src.azimuthal_delta_)
+	azimuthal_delta_( src.azimuthal_delta_ ),
+	repack_( src.repack_ ),
+	pH_mode_( src.pH_mode_ )
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,6 +184,7 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	using namespace protocols::membrane::geometry;
 	using namespace core::conformation::membrane;
 	using namespace numeric::conversions;
+	using namespace protocols::minimization_packing;
 
 	// Check that the pose is a membrane protein before continuing
 	if ( !pose.conformation().is_membrane() ) {
@@ -166,10 +192,8 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	}
 
 	// Abort if the membrane is not fixed. Leads to significant rounding errors
-	if ( is_membrane_fixed( pose ) ) {
-		TR << "Membrane is fixed and the pose is moveable" << std::endl;
-	} else {
-		utility_exit_with_message( "The pose is moveable and the membrane is fixed. Exiting..." );
+	if ( !is_membrane_fixed( pose ) ) {
+		utility_exit_with_message( "The pose is moveable and the membrane is not fixed. Exiting..." );
 	}
 
 	// Perform an initial transformation of the pose into the membrane
@@ -194,13 +218,6 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	// Setup energy function based on user specified weights file
 	TR << "Creating an energy function with weights " << sfxn_weights_ << std::endl;
 
-	//to vary the weight of franklin2019 term
-	/*if(sfxn_weights_.compare("franklin2019") == 0){
-	TR << "score function matches franklin2019; imposing weight" << std::endl;
-	core::Real sfxn_factor_ = 1.50;
-	sfxn_->set_weight( core::scoring::fa_water_to_bilayer, sfxn_factor_ );
-
-	}*/
 	// Setup output filename and Header
 	TR << "Configuring output file with 3D lanscape data" << std::endl;
 	utility::vector1< std::string > temp( utility::string_split( pose.pdb_info()->name(), '/') );
@@ -210,13 +227,10 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 
 	std::string filename2( tempstr +  "_" + sfxn_->get_name() + "_" + std::to_string( end_z_ ) + "_" + std::to_string( start_z_ ) + "_energybreakdown.dat" );
 	utility::io::ozstream output2( filename2 );
-	output2<<"zcoord angle azimuthal res_type res# total_energy fa_water_to_bilayer"<<std::endl;
-
-
-
+	output2<<"zcoord angle azimuthal res_type res# total_energy fa_atr fa_rep fa_sol fa_water_to_bilayer f_elec_lipidlayer fa_imm_elec fa_elec"<<std::endl;
 
 	// Write header, including score types available in the given energy function
-	output << "zcoord angle azimuthal total_score ";
+	output << "loop zcoord angle azimuthal total_score ";
 	ScoreTypes const nonzero_types( sfxn_->get_nonzero_weighted_scoretypes() );
 	for ( core::Size ii = 1; ii <= nonzero_types.size(); ++ii ) {
 		output << name_from_score_type( nonzero_types[ii] ) << " ";
@@ -224,24 +238,9 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	output << std::endl;
 
 
-	/* // Create a pack rotamers mover
-	using namespace protocols::minimization_packing;
-	using namespace core::pack::task;
-	using namespace core::pack::task::operation;
-	//PackerTaskOP pack_task( TaskFactory::create_packer_task( pose ) );
-	//PackRotamersMoverOP pack_mover( new PackRotamersMover( sfxn_, pack_task ) );
-	TaskFactoryOP tf( utility::pointer::make_shared< TaskFactory >() );
-	RestrictToRepackingOP rtrp( utility::pointer::make_shared< RestrictToRepacking >() );
-	tf->push_back( rtrp );
-	//tf->push_back( utility::pointer::make_shared<  >() );
+	PackRotamersMoverOP pack_mover = get_pH_aware_packer( sfxn_ );
 
-	PackRotamersMoverOP pack_mover( utility::pointer::make_shared< PackRotamersMover >( sfxn_ ) );
-	//only PackRotamer changes the residues, eventhough the backbone remains the same.
-	pack_mover->task_factory( tf );
-	pack_mover->nloop(2);
-	pack_mover->apply( pose );*/
-
-	std::string filename5( tempstr+"_posetomembrane_"+std::to_string( end_z_ ) + "_" + std::to_string( start_z_ ) +"_.pdb" );
+	std::string filename5( tempstr+"_posetomembrane_"+std::to_string( end_z_ ) + "_" + std::to_string( start_z_ ) +".pdb" );
 	pose.dump_pdb( filename5 );
 	//Side chains are packed once it is inside the membrane.
 
@@ -289,6 +288,7 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 
 	// Set up deltas for rotations in normal and azimuthal angle & translations and spin axes
 	// We densely sample the grid to more easily inspect for discontinuities
+
 	core::Real rotation_delta( 1 ); // Degrees
 	//core::Real azimuthal_delta( 30 ); //Degrees
 	core::Vector translation_delta( 0, 0, 1 ); // Angstroms
@@ -350,8 +350,8 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 
 	}
 
-	// Translate along the z axis in very small steps
 
+	// Translate along the z axis in very small steps
 	for ( core::Real z_coord = limit1; z_coord < limit2 ; z_coord += translation_delta.z() ) {
 
 		// Define the rotation center from the transmembrane center of mass
@@ -369,14 +369,15 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 
 			for ( core::Real azimuthal_angle = 0; azimuthal_angle <= 360; azimuthal_angle += azimuthal_delta_ ) {
 
+				// Make a copy of the pose to avoid rounding errors
+				core::pose::PoseOP pose_copy = pose.clone();
+
 				TR << " azimuthal angle " << azimuthal_angle << std::endl;
 				// Verify the membrane information
 				TR << "Membrane center:" << pose.conformation().membrane_info()->membrane_center( pose.conformation() ) << std::endl;
 
 				using namespace core::conformation::membrane;
 
-				// Make a copy of the pose to avoid rounding errors
-				core::pose::PoseOP pose_copy = pose.clone();
 
 				/*Azimuthal angle rotation about the axis of minimum moment of Inertia
 				The axis is calculated in the RotationMover*/
@@ -386,51 +387,66 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 				RotationMoverOP rotate_azim( utility::pointer::make_shared< RotationMover >( peptide_normal, peptide_normal, peptide_center, membrane_jump, azimuthal_angle ) );
 				rotate_azim->apply( *pose_copy );
 
-
 				/*Rotation about the Normal angle*/
 
 				RotationMoverOP rotate( get_rotation( normal_angle, peptide_normal, peptide_center, membrane_jump, rotation_type_ ));
 				rotate->apply( *pose_copy );
 
+				if ( (z_coord == 0.0 || z_coord == 40.0) && (std::fmod(normal_angle,30.0) == 0.0) ) {
 
-
-				/*if( z_coord == limit1 ) {
-				if( normal_angle == 0 || normal_angle == 90 || normal_angle == 180){
-				std::string filename4( tempstr + "limit_" + std::to_string(z_coord) + "_norm" + std::to_string( normal_angle ) + "_azrot" + std::to_string( azimuthal_angle )  + ".pdb" );
-				pose_copy->dump_pdb( filename4 );
+					std::string filename4( tempstr + "limit_" + std::to_string(z_coord) + "_norm" + std::to_string( normal_angle ) + "_azrot" + std::to_string( azimuthal_angle ) +".pdb" );
+					pose_copy->dump_pdb( filename4 );
 				}
-				}*/
 
 
-				// Write data to output file
-				output << z_coord << " " << normal_angle << " " << azimuthal_angle;
-				output << " " << sfxn_->score( *pose_copy );
-				for ( core::Size ii = 1; ii <= nonzero_types.size(); ++ii ) {
-					output << " " << sfxn_->score_by_scoretype( *pose_copy, nonzero_types[ii] );
-				} // finish writing scores
-				output <<std::endl;
+				if ( pH_mode_ ) {
+					TR << "=========================================" << std::endl;
+					TR << "the pH mode implementation is under constaruction. It will be added in future versions. In this form the calculations are done at neutral pH." << std::endl;
+					TR << "=========================================" << std::endl;
 
-				//---useful to show the energies residue wise-----
-				/* if( z_coord == limit1+2 ) {
-				if( normal_angle == 0 || normal_angle == 90){
-				utility::vector1< bool > is_scoringres( pose.size(), false);
-				//is_scoringres[ resno ] = true;
+				} else {
+					core::Real nloop( 0.0 );
 
-				// Energies E( pose_copy->energies() );
-				for( core::Size jj=1; jj<pose.total_residue(); jj++){
-				is_scoringres[ jj ] = true;
-				Real score = sfxn_->get_sub_score( *pose_copy, is_scoringres );
-				Real res_score = pose_copy->energies().residue_total_energies(jj)[scoring::fa_elec];
-				output2 << z_coord << " " << normal_angle << " " << azimuthal_angle;
-				output2<< pose.residue(jj).name()<<" ";
-				output2<<jj<<" "<<score<<" "<<res_score<<" "<<pose_copy->energies().residue_total_energies(jj)[scoring::total_score]<<std::endl;
-				is_scoringres[ jj ] = false;
-				//    E.show(jj);
+					pack_mover->apply( *pose_copy );
+					// Write data to output file
+					output << nloop << " " << z_coord << " " << normal_angle << " " << azimuthal_angle;
+					output << " " << sfxn_->score( *pose_copy );
+					for ( core::Size ii = 1; ii <= nonzero_types.size(); ++ii ) {
+						output << " " << sfxn_->score_by_scoretype( *pose_copy, nonzero_types[ii] );
+					} // finish writing scores
+					output <<std::endl;
+
+					if ( z_coord == limit1 ) {
+						if ( (normal_angle == 0 || normal_angle == 90) && (azimuthal_angle == 0 || azimuthal_angle == 90) ) {
+							utility::vector1< bool > is_scoringres( pose.size(), false);
+							//is_scoringres[ resno ] = true;
+
+							// Energies E( pose_copy->energies() );
+							for ( core::Size jj=1; jj<pose.total_residue(); jj++ ) {
+								is_scoringres[ jj ] = true;
+								core::Real score = pose_copy->energies().residue_total_energies(jj)[total_score];
+								core::Real res_score_1 = pose_copy->energies().residue_total_energies(jj)[fa_water_to_bilayer];
+								core::Real res_score_2 = pose_copy->energies().residue_total_energies(jj)[f_elec_lipidlayer];
+								core::Real res_score_3 = pose_copy->energies().residue_total_energies(jj)[fa_imm_elec];
+								core::Real res_score_5 = pose_copy->energies().residue_total_energies(jj)[fa_elec];
+								core::Real res_score_6 = pose_copy->energies().residue_total_energies(jj)[fa_atr];
+								core::Real res_score_7 = pose_copy->energies().residue_total_energies(jj)[fa_rep];
+								core::Real res_score_8 = pose_copy->energies().residue_total_energies(jj)[fa_sol];
+
+
+								output2 << z_coord << " " << normal_angle << " " << azimuthal_angle << " ";
+								output2 << pose_copy->residue(jj).name() << " ";
+								output2 << jj << " " << score << " " << res_score_6 << " " << res_score_7 << " " << res_score_8 << " " << res_score_1 << " " << res_score_2 << " " << res_score_3 << " " << res_score_5 << std::endl;
+								is_scoringres[ jj ] = false;
+							}
+							std::string filename4( tempstr + "limit_" + std::to_string(z_coord) + "_norm" + std::to_string( normal_angle ) + "_azrot" + std::to_string( azimuthal_angle )  + + "_nloop" + std::to_string( nloop ) + "afterdesign.pdb" );
+							pose_copy->dump_pdb( filename4 );
+							//    E.show(jj);
+
+						}
+					}
 
 				}
-				}
-				}*/
-
 			}// end of azimuthal angle loop
 
 
@@ -443,6 +459,113 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	} // end translation loop
 
 } // apply
+
+/// @brief initialize the options
+void
+MembraneEnergyLandscapeSampler::init_from_options() {
+
+	using namespace basic::options;
+	if ( option[ OptionKeys::pH::pH_mode ].user() ) {
+		pH_mode_ = option[ OptionKeys::pH::pH_mode ].value();
+	}
+}
+
+/// @brief get user input pH value
+core::Real
+MembraneEnergyLandscapeSampler::get_pH_value() {
+
+	using namespace basic::options;
+	if ( pH_mode_ ) {
+		return option[ OptionKeys::pH::value_pH ].value();
+	} else {
+		utility_exit_with_message( " pH mode is not enabled. calculations being done at neutral pH. " );
+	}
+}
+
+/// @brief count the number of residue "res" in the pose "pose"
+core::Real
+MembraneEnergyLandscapeSampler::count_res(std::string res, core::pose::Pose const & pose){
+	core::Real count(0.0);
+	for ( core::Size ii=1; ii<pose.total_residue(); ++ii ) {
+		if ( pose.residue(ii).name() == res ) {
+			count = count+1.0;
+		}
+	}
+
+	return count;
+}
+/// @brief count the number of occurences the 3 letter name of residue is different in pose1 and pose2
+core::Real
+MembraneEnergyLandscapeSampler::count_diff(core::pose::Pose const & pose1, core::pose::Pose const & pose2){
+	core::Real count(0.0);
+	for ( core::Size ii=1; ii<pose1.total_residue(); ++ii ) {
+		//TR << "residues: " << pose2.residue(ii).name3() << std::endl;
+		if ( pose1.residue(ii).name3() != pose2.residue(ii).name3() ) {
+			count = count+1.0;
+		}
+	}
+
+	return count;
+}
+
+
+
+core::Vector
+MembraneEnergyLandscapeSampler::get_rotation_axis() {
+
+	// Setup the axis of rotation (formerly the membrane normal
+	core::Vector axis(0,0,0);
+	if ( rotation_type_ == "YZ" || rotation_type_ == "XZ" ) {
+		axis.z() = 1;
+	} else if ( rotation_type_ == "XY" ) {
+		axis.x() = 1;
+	} else {
+		utility_exit_with_message( "Unknown rotation type " + rotation_type_ );
+	}
+
+	return axis;
+}
+
+
+protocols::minimization_packing::PackRotamersMoverOP
+MembraneEnergyLandscapeSampler::get_pH_aware_packer( core::scoring::ScoreFunctionOP sfxn ) const {
+
+	//using namespace protocols::task_operations;
+	using namespace core::pack::task::operation;
+	using namespace protocols::minimization_packing;
+	using namespace core::pack::task;
+	using namespace core::pack::palette;
+
+	//NoDesignPackerPaletteOP pp( new NoDesignPackerPalette() );
+	//this was totally stopping from design
+	DefaultPackerPaletteOP pp( utility::pointer::make_shared< DefaultPackerPalette >() );
+	TaskFactoryOP tf( new TaskFactory() );
+	tf->set_packer_palette(pp);
+
+	PackRotamersMoverOP packer( utility::pointer::make_shared< PackRotamersMover >() );
+
+	if ( pH_mode_ ) {
+
+		// tf->push_back( utility::pointer::make_shared< pHVariantTaskOperation >() );
+		tf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking>() );
+		packer->score_function(sfxn);
+		packer->task_factory(tf);
+		packer->nloop(3);
+
+	} else {
+
+		tf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking>() );
+		PackRotamersMoverOP packer( utility::pointer::make_shared< PackRotamersMover >() );
+		packer->score_function(sfxn);
+		packer->task_factory(tf);
+
+	}
+	//This packertask after every move is different from franklin2019;
+
+	return packer;
+
+
+}
 
 protocols::membrane::RotationMoverOP
 MembraneEnergyLandscapeSampler::get_rotation( core::Real normal_angle, core::Vector axis, core::Vector rot_center, core::Size membrane_jump, std::string rotation_type ) {
@@ -541,7 +664,7 @@ MembraneEnergyLandscapeSampler::getaxis( core::pose::Pose & pose, core::Real fla
 			//  }
 
 		}
-		avg_axis.normalize();
+		//avg_axis.normalize();
 
 		Mat1.yx() = Mat1.xy();
 		Mat1.zx() = Mat1.xz();
@@ -765,7 +888,15 @@ MembraneEnergyLandscapeSampler::parse_my_tag(
 		azimuthal_delta_ = tag->getOption< core::Real >( "azimuthal_delta" );
 	}
 
+	// Should I repack each pose prior to scoring
+	if ( tag->hasOption( "repack" ) ) {
+		repack_ = tag->getOption< bool >( "repack" );
+	}
 
+	// Should I incorporate protonation variants during repacking
+	if ( tag->hasOption( "pH_mode" ) ) {
+		pH_mode_ = tag->getOption< bool >( "pH_mode" );
+	}
 
 }
 
@@ -801,11 +932,14 @@ void MembraneEnergyLandscapeSampler::provide_xml_schema( utility::tag::XMLSchema
 	attlist
 		+ XMLSchemaAttribute( "sfxn_weights", xs_string, "Energy function weights file" )
 		+ XMLSchemaAttribute( "rotation_type", xs_string, "Rotation axis: XY, XZ, or YZ" )
-		+ XMLSchemaAttribute( "interface", xsct_rosetta_bool, "Should I treat this like an interface landscape scanning problem?" )
+		+ XMLSchemaAttribute( "interface", xsct_rosetta_bool, "Should I treat this like an interface landscape scanning problem?")
 		+ XMLSchemaAttribute( "start_z", xsct_real, "lower limit of z-coord" )
 		+ XMLSchemaAttribute( "end_z", xsct_real, "upper limit of z-coord" )
 		+ XMLSchemaAttribute( "flag_axis", xsct_real, "select the axis of rotation" )
-		+ XMLSchemaAttribute( "azimuthal_delta", xsct_real, "select the frequency of azimuthal/rotation angle" );
+		+ XMLSchemaAttribute( "azimuthal_delta", xsct_real, "select the frequency of azimuthal/rotation angle" )
+		+ XMLSchemaAttribute( "repack", xsct_rosetta_bool, "Should I repack each pose prior to scoring?" )
+		+ XMLSchemaAttribute( "pH_mode", xsct_rosetta_bool, "Should I include protonation variants during packing?" );
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sample the membrane energy function landscape using a given energy function", attlist );
 
 }

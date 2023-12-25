@@ -73,8 +73,7 @@ ImplicitLipidInfo::ImplicitLipidInfo() :
 	degrees_of_saturation_( 0 ),
 	temperature_( 0.0 ),
 	is_helical_( true ),
-	pore_params_(),
-	pore_transition_steepness_( 0.0 )
+	pore_params_()
 {}
 
 ImplicitLipidInfo::ImplicitLipidInfo(
@@ -91,51 +90,12 @@ ImplicitLipidInfo::ImplicitLipidInfo(
 	degrees_of_saturation_( 0 ),
 	temperature_( temperature ),
 	is_helical_( true ),
-	pore_params_(),
-	pore_transition_steepness_( 10.0 )
+	pore_params_()
 {
 
 	// Initialize lipid composition specific parameters
 	initialize_implicit_lipid_parameters();
-}
-
-ImplicitLipidInfo::ImplicitLipidInfo( ImplicitLipidInfo const & src ) :
-	utility::VirtualBase( src ),
-	water_thickness_( src.water_thickness_ ),
-	change_in_water_density_( src.change_in_water_density_ ),
-	transformed_water_thickness_( src.transformed_water_thickness_ ),
-	chain_type_( src.chain_type_ ),
-	headgroup_type_( src.headgroup_type_ ),
-	lipid_composition_name_( src.lipid_composition_name_ ),
-	lipid_composition_name_long_( src.lipid_composition_name_long_ ),
-	degrees_of_saturation_( src.degrees_of_saturation_ ),
-	temperature_( src.temperature_ ),
-	is_helical_( src.is_helical_ ),
-	pore_transition_steepness_( src.pore_transition_steepness_ )
-{}
-
-ImplicitLipidInfo &
-ImplicitLipidInfo::operator=( ImplicitLipidInfo const & src ) {
-
-	// Abort self-assignment
-	if ( this == &src ) {
-		return *this;
-	}
-
-	// make a deep copy of everything
-	this->water_thickness_ = src.water_thickness_;
-	this->change_in_water_density_ = src.change_in_water_density_;
-	this->transformed_water_thickness_ = src.transformed_water_thickness_;
-	this->chain_type_ = src.chain_type_;
-	this->headgroup_type_ = src.headgroup_type_;
-	this->lipid_composition_name_ = src.lipid_composition_name_;
-	this->lipid_composition_name_long_ = src.lipid_composition_name_long_;
-	this->degrees_of_saturation_ = src.degrees_of_saturation_;
-	this->is_helical_ = src.is_helical_;
-	this->temperature_ = src.temperature_;
-	this->pore_transition_steepness_ = src.pore_transition_steepness_;
-
-	return *this;
+	initialize_implicit_lipid_electricfield_parameters();
 }
 
 ImplicitLipidInfo::~ImplicitLipidInfo() {}
@@ -299,6 +259,39 @@ ImplicitLipidInfo::water_pseudo_thickness() const {
 	return transformed_water_thickness_;
 }
 
+/// @brief Overall hydration given the atomic depth and cavity structure
+core::Real
+ImplicitLipidInfo::f_elec_field( core::Real z ) const {
+	core::Real phi_z( 0.0 );
+
+	if ( z>=-1.0*std::abs(center_root_) && z<=std::abs(center_root_) ) {
+		///phi_z = center_a_ * std::exp(-1.0*(z-center_b_)*(z-center_b_)/(center_c_*center_c_));
+		phi_z = ( center_a_ * z * z * z * z ) + ( center_b_ * z * z * z ) + ( center_c_ * z * z ) + ( center_d_ * z ) + center_e_ ;
+
+	} else {
+		phi_z = pp_a_ + (( pp_a_-pp_b_ )/( 1.0 + std::exp((std::abs(z)-pp_c_)/pp_d_) ));
+	}
+	return phi_z;
+}
+
+/// @brief Gradient
+core::Real
+ImplicitLipidInfo::f_elec_field_gradient( core::Real z ) const {
+
+	core::Real grad_phi_z( 0.0 );
+	//bringing the derivative as close as possible. 0.70 came with trial and error/
+	if ( z>=-1.0*std::abs(center_root_+0.70) && z<=std::abs(center_root_+0.70) ) {
+		/// grad_phi_z = -2.0 * (z-center_b_) * (center_a_/(center_c_*center_c_)) * std::exp(-1.0*(z-center_b_)*(z-center_b_)/(center_c_*center_c_));
+		grad_phi_z = ( 4.0 * center_a_ * z * z * z ) + ( 3.0 * center_b_ * z * z ) + ( 2.0 * center_c_ * z ) + center_d_ ;
+
+	} else {
+		grad_phi_z = -1.0 * (z/std::abs(z)) * (( pp_a_-pp_b_ )/pp_d_)*(std::exp((std::abs(z)-pp_c_)/pp_d_)/( (1.0 + std::exp((std::abs(z)-pp_c_)/pp_d_) )*(1.0 + std::exp((std::abs(z)-pp_c_)/pp_d_) )));
+	}
+
+	return grad_phi_z;
+}
+
+
 // Private helper functions for initializing polynomials and parameters
 
 /// @brief Helper function to initialize the lipid composiiton data
@@ -361,15 +354,97 @@ ImplicitLipidInfo::initialize_implicit_lipid_parameters() {
 	}
 }
 
+// Private helper functions for initializing polynomials and parameters
+
+/// @brief Helper function to initialize the lipid composiiton data
+void
+ImplicitLipidInfo::initialize_implicit_lipid_electricfield_parameters() {
+
+	std::string dbfile( "membrane/lipid_electric_field_params.txt" );
+	using namespace basic;
+	using namespace core;
+
+	bool lipid_composition_found(false);
+	utility::io::izstream infile;
+	TR << "Reading electric field fitting parameters from the database" << std::endl;
+	database::open( infile, dbfile );
+	if ( !infile.good() ) {
+		utility_exit_with_message( "Unable to open database file containing electric field fitting parameters" );
+	}
+
+	std::string line;
+	getline( infile, line );
+	while ( getline( infile, line ) ) {
+		utility::trim(line, "\t\n" );
+		if ( line.empty() > 0 ) continue;
+		if ( line.find("#",0) == 0 ) continue;
+
+		std::istringstream l( line );
+
+		std::string lipid_type(""), center_a(""), center_b("");
+		std::string center_c(""), center_d(""), center_e(""), center_root("");
+		std::string pp_a(""), pp_b(""), pp_c(""), pp_d("");
+		l >> lipid_type >> center_a >> center_b >> center_c >> center_d >> center_e >> center_root >> pp_a >> pp_b >> pp_c >> pp_d ;
+		//TR << "Reading the line is done" <<std::endl;
+		if ( l.fail() ) {
+			utility_exit_with_message( "bad input line: " + line );
+		}
+
+		if ( lipid_type == lipid_composition_name_ ) {
+			lipid_composition_found = true;
+			//should there be more meaningful names? will have to think more.
+			if ( center_a == " " || center_b == " " || center_c == " " || center_d == " " || center_e == " " || center_root == " " ) {
+				std::string msg = "center_variables for " + lipid_composition_name_ + " is missing!";
+				utility_exit_with_message( msg );
+			} else {
+
+
+				center_a_ = utility::from_string( center_a, core::Real(0.0) );
+				center_b_ = utility::from_string( center_b, core::Real(0.0) );
+				center_c_ = utility::from_string( center_c, core::Real(0.0) );
+				center_d_ = utility::from_string( center_d, core::Real(0.0) );
+				center_e_ = utility::from_string( center_e, core::Real(0.0) );
+				center_root_ = utility::from_string( center_root, core::Real(0.0) );
+
+			}
+
+			//should there be more meaningful names? will have to think more.
+			if ( pp_a == " " || pp_b == " " || pp_c == " " || pp_d == " " ) {
+				std::string msg = "pp_variables for " + lipid_composition_name_ + " is missing!";
+				utility_exit_with_message( msg );
+			} else {
+
+				TR << "lipid parameters are read" <<std::endl;
+				//TR << "pp_a:"<< pp_a <<"pp_b:"<< pp_b <<"pp_c:"<< pp_c <<std::endl;
+
+				//pp_a_ = std::stof( pp_a );
+				//pp_b_ = std::stof( pp_b );
+				//pp_c_ = std::stof( pp_c );
+				//pp_d_ = std::stof( pp_d );
+
+				pp_a_ = utility::from_string( pp_a, core::Real(0.0) );
+				pp_b_ = utility::from_string( pp_b, core::Real(0.0) );
+				pp_c_ = utility::from_string( pp_c, core::Real(0.0) );
+				pp_d_ = utility::from_string( pp_d, core::Real(0.0) );
+
+				// TR << "pp_a:"<< pp_a_ <<"pp_b:"<< pp_b_ <<"pp_c:"<< pp_c_ <<std::endl;
+
+
+			}
+		}
+
+	}
+	// Check that a lipid composition was found
+	if ( !lipid_composition_found ) {
+		std::string msg = "Lipid composition parameters for " + lipid_composition_name_ + " were not found!";
+		utility_exit_with_message( msg );
+	}
+}
+
 
 } //core
 } //conformation
 } //membrane
-
-
-
-
-
 
 
 #ifdef    SERIALIZATION
@@ -389,7 +464,17 @@ core::conformation::membrane::ImplicitLipidInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( temperature_ ) ); // core::Real
 	arc( CEREAL_NVP( is_helical_ ) ); // _Bool
 	arc( CEREAL_NVP( pore_params_ ) ); // AqueousPoreParametersOP
-	arc( CEREAL_NVP( pore_transition_steepness_ ) ); // core::Real
+
+	arc( CEREAL_NVP( center_a_ ) ); //core::Real
+	arc( CEREAL_NVP( center_b_ ) ); //core::Real
+	arc( CEREAL_NVP( center_c_ ) ); //core::Real
+	arc( CEREAL_NVP( center_d_ ) ); //core::Real
+	arc( CEREAL_NVP( center_e_ ) ); //core::Real
+	arc( CEREAL_NVP( center_root_ ) ); //core::Real
+	arc( CEREAL_NVP( pp_a_ ) ); //core::Real
+	arc( CEREAL_NVP( pp_b_ ) ); //core::Real
+	arc( CEREAL_NVP( pp_c_ ) ); //core::Real
+	arc( CEREAL_NVP( pp_d_ ) ); //core::Real
 }
 
 /// @brief Automatically generated deserialization method
@@ -407,7 +492,17 @@ core::conformation::membrane::ImplicitLipidInfo::load( Archive & arc ) {
 	arc( temperature_ ); // core::Real
 	arc( is_helical_ ); // _Bool
 	arc( pore_params_ ); // AqueousPoreParametersOP
-	arc( pore_transition_steepness_ ); // core::Real
+
+	arc( center_a_ ); //core::Real
+	arc( center_b_ ); //core::Real
+	arc( center_c_ ); //core::Real
+	arc( center_d_ ); //core::Real
+	arc( center_e_ ); //core::Real
+	arc( center_root_ ); //core::Real
+	arc( pp_a_ ); //core::Real
+	arc( pp_b_ ); //core::Real
+	arc( pp_c_ ); //core::Real
+	arc( pp_d_ ); //core::Real
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::ImplicitLipidInfo );

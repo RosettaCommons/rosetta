@@ -33,6 +33,7 @@
 #include <protocols/fldsgn/potentials/sspot/NatbiasSecondaryStructureEnergyCreator.hh>
 
 #include <protocols/membrane/scoring/FaWaterToBilayerEnergyCreator.hh>
+#include <protocols/membrane/scoring/ElectricfieldLipidlayerCreator.hh>
 #include <protocols/nmr/pcs/PCSEnergyCreator.hh>
 #include <protocols/nmr/rdc/RDCEnergyCreator.hh>
 #include <protocols/nmr/pre/PREEnergyCreator.hh>

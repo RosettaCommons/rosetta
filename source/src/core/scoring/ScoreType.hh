@@ -90,6 +90,7 @@ enum ScoreType {
 	fa_elec_bb_sc,
 	fa_elec_sc_sc,
 	fa_intra_elec,
+	fa_imm_elec,//added by Rebecca
 	h2o_hbond,
 	dna_dr,
 	dna_bp,
@@ -495,9 +496,9 @@ enum ScoreType {
 	FaMPEnv,
 	FaMPEnvSmooth,
 
-	// New water to bilayer transfer free energy
-	// Added by @ralford 6/13/18
-	fa_water_to_bilayer,
+	fa_water_to_bilayer,// New water to bilayer transfer free energy by @ralford 6/13/18
+
+	f_elec_lipidlayer,//New energy due to electricfield due to bilayer by @rsamanta 8/22/21
 
 	FaMPAsymEzCB, //added by @mwfranklin 9/6/19
 	FaMPAsymEzCG, //added by @mwfranklin 9/6/19

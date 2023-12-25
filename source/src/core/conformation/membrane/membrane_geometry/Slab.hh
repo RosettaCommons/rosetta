@@ -78,6 +78,10 @@ public:
 
 	core::Real f_transition_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const;
 
+	core::Real fa_elec_lipid( Conformation const & conf, core::Size resnum, core::Size atomnum ) const override;
+
+	core::Real fa_elec_lipid_deriv( Conformation const & conf, core::Size resnum, core::Size atomnum ) const override;
+
 	core::Vector r_alpha( Conformation const & conf, core::Size resnum, core::Size atomnum ) const;
 
 	core::Vector f_transition_f1( Conformation const & conf, core::Size resnum, core::Size atomnum ) const override;
