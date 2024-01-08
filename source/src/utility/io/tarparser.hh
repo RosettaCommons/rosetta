@@ -19,6 +19,7 @@
 #include <fstream>
 #include <string>
 
+#include <cstdint>
 
 namespace utility {
 namespace io {
