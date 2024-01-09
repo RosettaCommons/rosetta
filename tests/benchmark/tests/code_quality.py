@@ -539,7 +539,6 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
                 state =_S_passed_
 
 
-
     return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }
 
 
@@ -571,7 +570,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
     if res: retval[_LogKey_] = "Error getting SHA1: " + rosetta_sha1; return retval
     rosetta_sha1 = rosetta_sha1.strip()
 
-    res, merge_base = execute('Getting merge-base with main branch...', f'cd {rosetta_dir} && git merge-base origin/main HEAD', return_='tuple')
+    res, merge_base = execute('Getting merge-base with the rosetta main branch...', f'cd {rosetta_dir} && git merge-base origin/main HEAD', return_='tuple')
     if res: retval[_LogKey_] = "Error getting mergebase: " + merge_base; return retval
     merge_base = merge_base.strip()
 
