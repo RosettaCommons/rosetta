@@ -568,6 +568,9 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         retval[_LogKey_] = "Rosetta is not a git repo -- can't test submodules."
         return retval
 
+    res, error_msg = execute('Synchronizing submodules...', f'cd {rosetta_dir} && git submodule sync', return_='tuple')
+    if res: retval[_LogKey_] = "Error syncing submodules: " + error_msg; return retval
+
     res, rosetta_sha1 = execute('Getting current rosetta SHA1...', f'cd {rosetta_dir} && git rev-parse HEAD', return_='tuple')
     if res: retval[_LogKey_] = "Error getting SHA1: " + rosetta_sha1; return retval
     rosetta_sha1 = rosetta_sha1.strip()
