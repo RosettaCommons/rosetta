@@ -547,18 +547,20 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
 
     # These are the Rosetta-originated modules which we're likely interested in tracking the most recent submodule main branch
     # This doesn't include those repos (e.g. external code repos) where we're pinning things to a particular revision for a long time.
-    submodules_to_check = [
-        'demos',
-        'documentation',
-        'PyRosetta.notebooks',
-        'pyrosetta_scripts',
-        'rosetta_scripts_scripts',
-        'tools',
-        'tests/scientific/data',
-        'database/additional_protocol_data',
-        'source/external/pybind11',
-        'source/src/python/PyRosetta/binder',
-    ]
+    # The value is the "main" branch for each.
+    submodules_to_check = {
+        'demos':'main',
+        'documentation':'master',
+        'PyRosetta.notebooks':'master',
+        'pyrosetta_scripts':'main',
+        'rosetta_scripts_scripts':'main',
+        'tools':'main',
+        'tests/scientific/data':'main',
+        'database/additional_protocol_data':'main',
+        'database/protocol_data/tensorflow_graphs/tensorflow_graph_repo_submodule':'main',
+        'source/external/pybind11':'master',
+        'source/src/python/PyRosetta/binder':'master',
+    }
 
     retval = {_StateKey_ : _S_script_failed_,  _ResultsKey_ : {},  _LogKey_ : '' }
 
@@ -583,7 +585,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         to_check = [ merge_base ]
 
     submodule_states = {}
-    for submodule in submodules_to_check:
+    for submodule, primary_branch in submodules_to_check.items():
         submodule_status = {_StateKey_ : _S_script_failed_, _LogKey_ : '' }
         retval[_ResultsKey_][ submodule ] = submodule_status
         submodule_states[submodule] = "ERROR WHEN RUNNING"
@@ -618,7 +620,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
 
         if regression:
             submodule_status[_StateKey_] = _S_script_failed_ # We want the magenta
-            submodule_status[_LogKey_] = f"Submodule {submodule} is being reset to state that *removes* commits which were previously in main"
+            submodule_status[_LogKey_] = f"Submodule {submodule} is being reset to state that *removes* commits which were previously in Rosetta"
             submodule_states[submodule] = "INTRODUCES A SUBMODULE REGRESSION"
             continue
 
@@ -644,12 +646,12 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
             continue
 
         #############
-        # Test to see if we're lagging behind the submodule's main
+        # Test to see if we're lagging behind the submodule's primary branch
         # (Test against the submodule's main)
 
-        res, submain_sha1 = execute("Getting submodule main...", f'cd {rosetta_dir}/{submodule} && git rev-parse origin/main', return_='tuple')
+        res, submain_sha1 = execute("Getting submodule primary branch...", f'cd {rosetta_dir}/{submodule} && git rev-parse origin/{primary_branch}', return_='tuple')
         if res:
-            submodule_states[submodule] = "NO MAIN BRANCH TO TEST!"
+            submodule_states[submodule] = "NO PRIMARY BRANCH TO TEST!"
             submodule_status[_StateKey_] = _S_failed_
             submodule_status[_LogKey_] = "Error message: " + submain_sha1
             continue
@@ -657,7 +659,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         submain_sha1 = submain_sha1.strip()
 
         res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {submain_sha1}', return_='tuple')
-        if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and submodule's main ({submain_sha1}) in submodule {submodule}: " + base; continue
+        if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and submodule's primary branch head ({submain_sha1}) in submodule {submodule}: " + base; continue
         base = base.strip()
 
         if base != submain_sha1:
