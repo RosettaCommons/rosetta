@@ -205,10 +205,19 @@ def _version_string():
 
 
 def version():
-    return "PyRosetta-4 " + rosetta.utility.Version.date().split("-").pop(0) + \
-           " [Rosetta " + _version_string() + ' ' + rosetta.utility.Version.date() + \
-           "] retrieved from: " + rosetta.utility.Version.url() + \
-           "\n(C) Copyright Rosetta Commons Member Institutions. Created in JHU by Sergey Lyskov and PyRosetta Team."
+    return (
+        '┌──────────────────────────────────────────────────────────────────────────────┐\n'
+        '│                                 PyRosetta-4                                  │\n'
+        '│              Created in JHU by Sergey Lyskov and PyRosetta Team              │\n'
+        '│              (C) Copyright Rosetta Commons Member Institutions               │\n'
+        '│                                                                              │\n'
+        '│ NOTE: USE OF PyRosetta FOR COMMERCIAL PURPOSES REQUIRE PURCHASE OF A LICENSE │\n'
+        '│              See LICENSE.md or email license@uw.edu for details              │\n'
+        '└──────────────────────────────────────────────────────────────────────────────┘\n'
+    ) + \
+    'PyRosetta-4 ' + rosetta.utility.Version.date().split('-').pop(0) + \
+    ' [Rosetta ' + _version_string() + ' ' + rosetta.utility.Version.date() + \
+    '] retrieved from: ' + rosetta.utility.Version.url()
 
 
 ###############################################################################
