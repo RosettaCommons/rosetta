@@ -62,4 +62,3 @@ Additional information is located in submodules:
 * rosetta/pyrosetta_scripts -- https://github.com/RosettaCommons/pyrosetta_scripts -- Example PyRosetta scripts
 * rosetta/PyRosetta.notebooks -- https://github.com/RosettaCommons/PyRosetta.notebooks -- Example Jupyter notebooks using PyRosetta.
 * rosetta/source/external/... -- Various 'venderized' external dependencies
-
