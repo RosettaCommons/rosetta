@@ -69,7 +69,7 @@ def setup_package():
             packages = find_packages(include=["pyrosetta*", "rosetta*"]),
             package_data = {
                 "pyrosetta" :
-                    ["*.so"] +
+                    ["*.so"] + ["*.md"] +
                     [os.path.join("database", f) for f in get_file_list("pyrosetta/database")] +
                     [os.path.join("lib", f) for f in get_file_list("pyrosetta/lib")],
             },
