@@ -799,7 +799,7 @@ def create_package(rosetta_source_path, path):
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
 
     for f in 'setup.py setup.cfg ez_setup.py'.split(): shutil.copy(build_prefix + '/' + f, package_prefix)
-    shutil.copy(rosetta_source_path + '/../LICENSE.md', package_prefix)
+    #shutil.copy(rosetta_source_path + '/../LICENSE.md', package_prefix)
 
     for d in ['pyrosetta', 'rosetta']:
         dir_util_module.copy_tree(build_prefix + '/' + d, package_prefix + '/' + d, update=False)
