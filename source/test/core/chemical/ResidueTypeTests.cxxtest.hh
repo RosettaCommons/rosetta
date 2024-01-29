@@ -83,12 +83,12 @@ void add_atom(
 	core::Real const& charge
 ){
 	core::Size natoms = rsd.natoms();
-	core::Size nheavyatoms = rsd.nheavyatoms();
+	// core::Size nheavyatoms = rsd.nheavyatoms();
 
 	TS_ASSERT(atom_types->has_atom(type));
 	AtomType const& at = (*atom_types)[ atom_types->atom_type_index(type)];
 	++natoms;
-	if ( at.is_heavyatom() ) ++nheavyatoms;
+	// if ( at.is_heavyatom() ) ++nheavyatoms;
 
 	rsd.add_atom( name, type, mm_type, charge);
 

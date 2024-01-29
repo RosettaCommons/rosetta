@@ -505,9 +505,9 @@ public:
 		std::list< LarvalJobOP > hopefully_no_ljobs = zero_queen.determine_job_list( JobDAGNodeID( 4 ), 4 );
 		TS_ASSERT_EQUALS( hopefully_no_ljobs.size(), 0 );
 
-		core::Size local_job_id = 0;
+		// core::Size local_job_id = 0;
 		for ( LarvalJobOP ljob : ljobs_1_through_3 ) {
-			++local_job_id;
+			// ++local_job_id;
 			JobOP job_op = worker_queen.mature_larval_job( ljob, result_vec_ );
 			//JobOP job_op = worker_queen.complete_larval_job_maturation( ljob, 0, result_vec_ );
 			MRSJob & job = static_cast< MRSJob & > ( * job_op );
