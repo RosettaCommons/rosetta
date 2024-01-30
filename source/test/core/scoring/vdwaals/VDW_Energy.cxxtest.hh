@@ -116,7 +116,7 @@ public:
 			//std::cout << std::endl;
 		}
 
-		// Size count_comparisons( 0 ), count_wrong(0);
+		Size count_comparisons( 0 ), count_wrong(0);
 		for ( Size ii = 8; ii <= 11; ++ii ) {
 			RotamerSet const & iiset = *rotsets.rotamer_set_for_residue( ii );
 			for ( Size jj = ii+1; jj <= 11; ++jj ) {
@@ -131,13 +131,13 @@ public:
 				EnergyMap emap;
 				for ( Size kk = 1, kk_end = iiset.num_rotamers(); kk <= kk_end; ++kk ) {
 					for ( Size ll = 1, ll_end = jjset.num_rotamers(); ll <= ll_end; ++ll ) {
-						// ++count_comparisons;
+						++count_comparisons;
 						emap.zero();
 						vdw_energy.residue_pair_energy( *iiset.rotamer( kk ), *jjset.rotamer( ll ), pose, sfxn, emap );
 						temp_table3( ll, kk ) += sfxn.weights().dot( emap );
 						TS_ASSERT( std::abs( energy_table( ll, kk ) - temp_table3( ll, kk )) <= 1e-3 );
 						if ( std::abs( energy_table( ll, kk ) - temp_table3( ll, kk )) > 1e-3 ) {
-							// ++count_wrong;
+							++count_wrong;
 							std::cout << "Residues " << iiset.resid() << " & " << jjset.resid() << " rotamers: " << kk << " & " << ll;
 							std::cout << " tvt/reg discrepancy: tvt= " <<  energy_table( ll, kk ) << " reg= " << temp_table3( ll, kk );
 							std::cout << " delta: " << energy_table( ll, kk ) - temp_table3( ll, kk ) << std::endl;
@@ -146,6 +146,9 @@ public:
 				}
 			}
 		}
+
+		TS_ASSERT_LESS_THAN_EQUALS( count_wrong, count_comparisons );
+		
 		//std::cout << "Total energy comparisons: " << count_comparisons << " total wrong " << count_wrong << std::endl;
 	}
 

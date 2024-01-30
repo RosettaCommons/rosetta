@@ -413,13 +413,15 @@ public:
 
 		// Update the packer task to use only the native AA or ASP.
 		// Also keep track of the number of initial ASPs in the pose.
-		// core::Size num_init_asp = 0;
+		core::Size num_init_asp = 0;
 		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			task->nonconst_residue_task( i ).restrict_nonnative_canonical_aas( keep_aas );
-			// if ( pose.aa(i) == core::chemical::aa_asp ) {
-			// 	++num_init_asp;
-			// }
+			if ( pose.aa(i) == core::chemical::aa_asp ) {
+				++num_init_asp;
+			}
 		}
+
+		TS_ASSERT_LESS_THAN_EQUALS( num_init_asp, pose.size() );
 
 		// Setup rotamer sets
 		RotamerSetsOP rotsets( utility::pointer::make_shared<RotamerSets>() );

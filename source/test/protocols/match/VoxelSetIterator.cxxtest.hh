@@ -700,14 +700,14 @@ public:
 
 		VoxelSetIterator iter( bb, n_xyz_bins, n_euler_bins, xyz_bin_widths, euler_bin_widths, xyz_bin_halfwidths, euler_bin_halfwidths, point );
 
-		// int count(1);
+		int count(1);
 		while ( ! iter.at_end() ) {
 			//std::cout << "Count: " << count << std::endl;
 			++iter;
-			// ++count;
+			++count;
 			//iter.calc_bin_and_pos();
 		}
-
-		TS_ASSERT( true );
+		
+		TS_ASSERT( count >= 1 );
 	}
 };

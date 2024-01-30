@@ -1195,7 +1195,7 @@ public:
 		for ( Size ii = 8; ii <= 11; ++ii ) etab_energy.prepare_rotamers_for_packing( pose, *rotsets.rotamer_set_for_residue( ii ) );
 		for ( Size ii = 8; ii <= 11; ++ii ) TS_ASSERT( rotsets.rotamer_set_for_residue(ii)->get_trie( etable_method ).get() != 0 );
 
-		// Size count_comparisons( 0 );
+		Size count_comparisons( 0 );
 		for ( Size ii = 8; ii <= 11; ++ii ) {
 			RotamerSet const & iiset = *rotsets.rotamer_set_for_residue( ii );
 			for ( Size jj = ii+1; jj <= 11; ++jj ) {
@@ -1210,7 +1210,7 @@ public:
 				EnergyMap emap;
 				for ( Size kk = 1, kk_end = iiset.num_rotamers(); kk <= kk_end; ++kk ) {
 					for ( Size ll = 1, ll_end = jjset.num_rotamers(); ll <= ll_end; ++ll ) {
-						// ++count_comparisons;
+						++count_comparisons;
 						emap.zero();
 						etab_energy.residue_pair_energy( *iiset.rotamer( kk ), *jjset.rotamer( ll ), pose, sfxn, emap );
 						temp_table3( ll, kk ) += sfxn.weights().dot( emap );
@@ -1224,6 +1224,7 @@ public:
 				}
 			}
 		}
+		TS_ASSERT_DIFFERS(count_comparisons, 0);
 		//std::cout << "Total energy comparisons: " << count_comparisons << std::endl;
 	}
 
