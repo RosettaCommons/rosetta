@@ -86,7 +86,7 @@ void add_atom(
 	// core::Size nheavyatoms = rsd.nheavyatoms();
 
 	TS_ASSERT(atom_types->has_atom(type));
-	AtomType const& at = (*atom_types)[ atom_types->atom_type_index(type)];
+	// AtomType const& at = (*atom_types)[ atom_types->atom_type_index(type)];
 	++natoms;
 	// if ( at.is_heavyatom() ) ++nheavyatoms;
 
