@@ -115,6 +115,9 @@ public:
 	core::simple_metrics::SimpleMetricOP
 	clone() const override;
 
+private:
+    std::string atom_type_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

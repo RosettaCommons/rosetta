@@ -18,6 +18,9 @@
 // Core headers
 #include <core/simple_metrics/PerResidueRealMetric.hh>
 #include <core/simple_metrics/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
@@ -84,7 +87,7 @@ PerResidueBfactorMetric::name_static() {
 std::string
 PerResidueBfactorMetric::metric() const {
 
-	return "SHORT_NAME_FOR_SCOREFILE_HEADER_DEFAULT";
+	return "Bfact";
 }
 
 void
@@ -97,8 +100,8 @@ PerResidueBfactorMetric::parse_my_tag(
 	PerResidueRealMetric::parse_per_residue_tag( tag, datamap );
 
 
-	if (tag->hasOption("bogus_option")){
-		return;
+	if (tag->hasOption("atom_type")){
+		atom_type_ = tag->getOption<std::string>("atom_type", "CA");
 	}
 }
 
@@ -108,7 +111,7 @@ PerResidueBfactorMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	using namespace core::select::residue_selector;
 
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::attribute_w_default("bogus_option", xsct_rosetta_bool, "test bogus option", "false");
+	attlist + XMLSchemaAttribute::attribute_w_default("atom_type", xs_string, "Atom of which to get the b factor value", "CA");
 
 	//attributes_for_parse_residue_selector( attlist, "residue_selector",
 	//	"Selector specifying residues." );
@@ -121,6 +124,15 @@ std::map< core::Size, core::Real >
 PerResidueBfactorMetric::calculate(const core::pose::Pose & pose) const {
 	utility::vector1< core::Size > selection1 = selection_positions(get_selector()->apply(pose));
 
+    std::map< core::Size, core::Real > b_fact_map;
+    for (core::Size resi_index : selection1){
+        //Make sure atom name is in residue before getting the b factor
+        if (pose.residue_type(resi_index).has( atom_type_ )) {
+            b_fact_map[resi_index] = pose.pdb_info()->bfactor(resi_index,pose.residue_type(resi_index).atom_index(atom_type_));
+        }
+    }
+    //pose.residue();
+    return b_fact_map;
 }
 
 /// @brief This simple metric is unpublished.  It returns tydingcw as its author.
