@@ -135,14 +135,14 @@ PerResidueBfactorMetric::calculate(const core::pose::Pose & pose) const {
     return b_fact_map;
 }
 
-/// @brief This simple metric is unpublished.  It returns tydingcw as its author.
+/// @brief This simple metric is unpublished.  It returns Clay Tydings as its author.
 void
 PerResidueBfactorMetric::provide_citation_info( basic::citation_manager::CitationCollectionList & citations ) const {
 	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		"PerResidueBfactorMetric", basic::citation_manager::CitedModuleType::SimpleMetric,
-		"tydingcw",
-		"TODO: institution",
+		"Clay Tydings",
+		"Vanderbilty University",
 		"claiborne.w.tydings@vanderbilt.edu",
 		"Wrote the PerResidueBfactorMetric."
 		)
@@ -177,6 +177,7 @@ template< class Archive >
 void
 core::simple_metrics::per_residue_metrics::PerResidueBfactorMetric::save( Archive & arc ) const {
 	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric>( this ) );
+    arc( CEREAL_NVP( atom_tupe_ ) );
 	//arc( CEREAL_NVP( output_as_pdb_nums_ ) );
 
 }
@@ -185,6 +186,7 @@ template< class Archive >
 void
 core::simple_metrics::per_residue_metrics::PerResidueBfactorMetric::load( Archive & arc ) {
 	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric >( this ) );
+    arc( CEREAL_NVP( atom_tupe_ ) );
 	//arc( output_as_pdb_nums_ );
 
 
