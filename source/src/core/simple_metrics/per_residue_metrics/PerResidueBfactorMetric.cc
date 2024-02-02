@@ -177,7 +177,7 @@ template< class Archive >
 void
 core::simple_metrics::per_residue_metrics::PerResidueBfactorMetric::save( Archive & arc ) const {
 	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric>( this ) );
-    arc( CEREAL_NVP( atom_tupe_ ) );
+    arc( CEREAL_NVP( atom_type_ ) );
 	//arc( CEREAL_NVP( output_as_pdb_nums_ ) );
 
 }
@@ -186,7 +186,7 @@ template< class Archive >
 void
 core::simple_metrics::per_residue_metrics::PerResidueBfactorMetric::load( Archive & arc ) {
 	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric >( this ) );
-    arc( CEREAL_NVP( atom_tupe_ ) );
+    arc( CEREAL_NVP( atom_type_ ) );
 	//arc( output_as_pdb_nums_ );
 
 
