@@ -5,5 +5,5 @@
 #
 # lines that start with ‘#’ symbol treated as comments and ignored
 
-master:brahm.yachnin@rutgers.edu
-master:cbk@cs.dartmouth.edu
+main:brahm.yachnin@rutgers.edu
+main:cbk@cs.dartmouth.edu

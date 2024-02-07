@@ -1109,8 +1109,9 @@ def convert_submodule_urls_from_ssh_to_https(repository_root):
     with open(f'{repository_root}/.gitmodules', 'w') as f:
         f.write(
             m
-            .replace('url = git@github.com:', 'url = https://github.com/')
-            .replace('url = ../../../',       'url = https://github.com/RosettaCommons/')
-            .replace('url = ../../',          'url = https://github.com/RosettaCommons/')
-            .replace('url = ../',             'url = https://github.com/RosettaCommons/')
+            .replace('url = git@github.com:',       'url = https://github.com/')
+            .replace('url = ../../RosettaCommons/', 'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../../',             'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../',                'url = https://github.com/RosettaCommons/')
+            .replace('url = ../',                   'url = https://github.com/RosettaCommons/')
         )

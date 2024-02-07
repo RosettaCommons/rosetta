@@ -41,7 +41,7 @@ def find_branches(rosetta_dir):
         if br.startswith('origin/'):
             branches.add( br[len('origin/'):] )
 
-    if 'master' in branches: branches = set( ['master'] )
+    if 'main' in branches: branches = set( ['main'] )
     return branches
 
 def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
