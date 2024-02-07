@@ -417,6 +417,7 @@ def run(test, repository_root, working_dir, platform, config, hpc_driver=None, v
     elif test == 'pytorch':                  return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix pytorch')
     elif test == 'tensorflow':               return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix tensorflow')
     elif test == 'thread':                   return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix thread')
+    elif test == 'bcl':                      return run_integration_tests('debug',                    repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug, additional_flags='--suffix bcl')
     elif test == 'addsan':                   return run_integration_tests('addsan',                   repository_root, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'ubsan':
         os.environ["UBSAN_OPTIONS"]="print_stacktrace=1" # Get the backtrace in the log when running ubsan
