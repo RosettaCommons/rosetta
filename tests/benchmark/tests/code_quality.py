@@ -568,9 +568,9 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         retval[_LogKey_] = "Rosetta is not a git repo -- can't test submodules."
         return retval
 
-    # Git sync to make sure the URLs are up-to-date with the current .gitmodules
-    res, error_msg = execute('Synchronizing submodules...', f'cd {rosetta_dir} && git submodule sync', return_='tuple')
-    if res: retval[_LogKey_] = "Error syncing submodules: " + error_msg; return retval
+    ## Git sync to make sure the URLs are up-to-date with the current .gitmodules; Now done by test server setup
+    #res, error_msg = execute('Synchronizing submodules...', f'cd {rosetta_dir} && git submodule sync', return_='tuple')
+    #if res: retval[_LogKey_] = "Error syncing submodules: " + error_msg; return retval
 
     res, rosetta_sha1 = execute('Getting current rosetta SHA1...', f'cd {rosetta_dir} && git rev-parse HEAD', return_='tuple')
     if res: retval[_LogKey_] = "Error getting SHA1: " + rosetta_sha1; return retval
@@ -657,12 +657,12 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         # Test to see if we're lagging behind the submodule's primary branch
         # (Test against the submodule's main)
 
-        # Make sure that we have the up-to-date info about the repo's primary branch
-        res, error_msg = execute('Updating submodule...', f'cd {rosetta_dir}/{submodule} && git fetch', return_='tuple')
-        if res:
-            submodule_status[_StateKey_] = _S_script_failed_
-            submodule_status[_LogKey_] = f"Error updating submodule {submodule}: " + error_msg
-            continue
+        ## Make sure that we have the up-to-date info about the repo's primary branch; Now done by test server setup
+        #res, error_msg = execute('Updating submodule...', f'cd {rosetta_dir}/{submodule} && git fetch', return_='tuple')
+        #if res:
+        #    submodule_status[_StateKey_] = _S_script_failed_
+        #    submodule_status[_LogKey_] = f"Error updating submodule {submodule}: " + error_msg
+        #    continue
 
         res, submain_sha1 = execute("Getting submodule primary branch...", f'cd {rosetta_dir}/{submodule} && git rev-parse origin/{primary_branch}', return_='tuple')
         if res:
