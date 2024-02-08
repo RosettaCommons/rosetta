@@ -568,6 +568,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         retval[_LogKey_] = "Rosetta is not a git repo -- can't test submodules."
         return retval
 
+    # Git sync to make sure the URLs are up-to-date with the current .gitmodules
     res, error_msg = execute('Synchronizing submodules...', f'cd {rosetta_dir} && git submodule sync', return_='tuple')
     if res: retval[_LogKey_] = "Error syncing submodules: " + error_msg; return retval
 
@@ -609,9 +610,12 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         regression = False
         for check_sha1 in to_check:
             res, prev_sha1 = execute("Getting parent submodule commit ...", f'cd {rosetta_dir} && git ls-tree {check_sha1} {submodule}', return_='tuple')
-            if res: submodule_statu[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in {check_sha1}: " + prev_sha1; break
+            if res: submodule_status[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in {check_sha1}: " + prev_sha1; break
             if len(prev_sha1.strip()) == 0: continue # No submodule on this branch
             prev_sha1 = prev_sha1.split()[2] # format `mode commit SHA1 name`
+
+            if current_sha1 == prev_sha1:
+                continue # No regression because it's the same
 
             res, base = execute("Checking for regression...",f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {prev_sha1}', return_='tuple')
             if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and {prev_sha1} in submodule {submodule}: " + base; break
@@ -636,38 +640,52 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         #if len(main_sha1.strip()) == 0: continue # No submodule for main??
         main_sha1 = main_sha1.split()[2] # format `mode commit SHA1 name`
 
-        res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {main_sha1}', return_='tuple')
-        if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and rosetta's main branch's version ({main_sha1}) in submodule {submodule}: " + base; continue
-        base = base.strip()
+        if main_sha1 != current_sha1:
+            res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {main_sha1}', return_='tuple')
+            if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and rosetta's main branch's version ({main_sha1}) in submodule {submodule}: " + base; continue
+            base = base.strip()
 
-        # We want to trigger if there's a divergence between this and the most recent main
-        # (This is different from before, which was checking for regression regarding the divergence point of main and main.)
-        if base != main_sha1 and base != current_sha1: # We have a submodule which isn't up-to-date with main's main
-            submodule_states[submodule] = "NEEDS MERGE"
-            submodule_status[_StateKey_] = _S_failed_
-            submodule_status[_LogKey_] = f"Submodule {submodule} has commits which diverge with the version in main's main's {submodule}. You need to merge the submodule versions."
-            continue
+            # We want to trigger if there's a divergence between this and the most recent main
+            # (This is different from before, which was checking for regression regarding the divergence point of main and main.)
+            if base != main_sha1 and base != current_sha1: # We have a submodule which isn't up-to-date with main's main
+                submodule_states[submodule] = "NEEDS MERGE"
+                submodule_status[_StateKey_] = _S_failed_
+                submodule_status[_LogKey_] = f"Submodule {submodule} has commits which diverge with the version in Rosetta's main branch's {submodule}. You need to merge the submodule versions."
+                continue
 
         #############
         # Test to see if we're lagging behind the submodule's primary branch
         # (Test against the submodule's main)
 
+        # Try to pull in the most up-to-date info about the repo's primary branch (but don't wait too long on errors.)
+        fetch_error, fetch_msg = execute('Updating submodule...', f'cd {rosetta_dir}/{submodule} && timeout --signal KILL 30s git fetch', return_='tuple')
+        # This is only an error if we can't otherwise get the primary branch info
+
         res, submain_sha1 = execute("Getting submodule primary branch...", f'cd {rosetta_dir}/{submodule} && git rev-parse origin/{primary_branch}', return_='tuple')
         if res:
-            submodule_states[submodule] = "NO PRIMARY BRANCH TO TEST!"
-            submodule_status[_StateKey_] = _S_failed_
-            submodule_status[_LogKey_] = "Error message: " + submain_sha1
-            continue
+            if fetch_error:
+                submodule_states[submodule] = "Issue updating to get primary branch."
+                submodule_status[_StateKey_] = _S_passed_
+                submodule_status[_LogKey_] = "Error message: " + fetch_error
+                continue
+            else:
+                submodule_states[submodule] = "NO PRIMARY BRANCH TO TEST!"
+                submodule_status[_StateKey_] = _S_failed_
+                submodule_status[_LogKey_] = "Error message: " + submain_sha1
+                continue
 
         submain_sha1 = submain_sha1.strip()
 
-        res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {submain_sha1}', return_='tuple')
-        if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and submodule's primary branch head ({submain_sha1}) in submodule {submodule}: " + base; continue
-        base = base.strip()
+        if current_sha1 != submain_sha1:
+            res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {submain_sha1}', return_='tuple')
+            if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and submodule's primary branch head ({submain_sha1}) in submodule {submodule}: " + base; continue
+            base = base.strip()
 
-        if base != submain_sha1:
-            submodule_states[submodule] = "is not up-to-date with submodule main"
-            # This is not an error, just an info message
+            if base != submain_sha1:
+                submodule_states[submodule] = f"is not up-to-date with submodule primary branch of `{primary_branch}`"
+                # This is not an error, just an info message
+            else:
+                submodule_states[submodule] = 'okay'
         else:
             submodule_states[submodule] = 'okay'
 
