@@ -568,8 +568,8 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         retval[_LogKey_] = "Rosetta is not a git repo -- can't test submodules."
         return retval
 
-    # Git sync to make sure the URLs are up-to-date with the current .gitmodules, and then git fetch to make sure we have the remote's current info.
-    res, error_msg = execute('Synchronizing submodules...', f'cd {rosetta_dir} && git submodule sync && cd {submodule} && git fetch', return_='tuple')
+    # Git sync to make sure the URLs are up-to-date with the current .gitmodules
+    res, error_msg = execute('Synchronizing submodules...', f'cd {rosetta_dir} && git submodule sync', return_='tuple')
     if res: retval[_LogKey_] = "Error syncing submodules: " + error_msg; return retval
 
     res, rosetta_sha1 = execute('Getting current rosetta SHA1...', f'cd {rosetta_dir} && git rev-parse HEAD', return_='tuple')
@@ -657,6 +657,13 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         # Test to see if we're lagging behind the submodule's primary branch
         # (Test against the submodule's main)
 
+        # Make sure that we have the up-to-date info about the repo's primary branch
+        res, error_msg = execute('Updating submodule...', f'cd {rosetta_dir}/{submodule} && git fetch', return_='tuple')
+        if res:
+            submodule_status[_StateKey_] = _S_script_failed_
+            submodule_status[_LogKey_] = f"Error updating submodule {submodule}: " + error_msg
+            continue
+
         res, submain_sha1 = execute("Getting submodule primary branch...", f'cd {rosetta_dir}/{submodule} && git rev-parse origin/{primary_branch}', return_='tuple')
         if res:
             submodule_states[submodule] = "NO PRIMARY BRANCH TO TEST!"
@@ -672,7 +679,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
             base = base.strip()
 
             if base != submain_sha1:
-                submodule_states[submodule] = "is not up-to-date with submodule primary branch " + primary_branch
+                submodule_states[submodule] = f"is not up-to-date with submodule primary branch of `{primary_branch}`"
                 # This is not an error, just an info message
             else:
                 submodule_states[submodule] = 'okay'
