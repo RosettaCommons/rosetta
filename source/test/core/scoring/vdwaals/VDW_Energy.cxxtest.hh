@@ -148,7 +148,7 @@ public:
 		}
 
 		TS_ASSERT_LESS_THAN_EQUALS( count_wrong, count_comparisons );
-		
+
 		//std::cout << "Total energy comparisons: " << count_comparisons << " total wrong " << count_wrong << std::endl;
 	}
 

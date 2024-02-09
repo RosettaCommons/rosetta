@@ -707,7 +707,7 @@ public:
 			++count;
 			//iter.calc_bin_and_pos();
 		}
-		
+
 		TS_ASSERT( count >= 1 );
 	}
 };

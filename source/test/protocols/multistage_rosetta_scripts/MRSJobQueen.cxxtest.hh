@@ -580,7 +580,7 @@ public:
 			TS_ASSERT_EQUALS( cjo.job_results.size(), 0 );
 			TS_ASSERT_EQUALS( cjo.status, jd3_job_status_failed_do_not_retry );
 		}
-		
+
 		TS_ASSERT_EQUALS( local_job_id, ljobs_1_through_3.size() );
 
 	}
