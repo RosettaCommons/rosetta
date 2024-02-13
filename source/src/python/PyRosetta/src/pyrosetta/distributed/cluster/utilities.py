@@ -33,14 +33,13 @@ import os
 import warnings
 
 from typing import (
-    Any,
-    Callable,
     Dict,
     Generic,
-    List,
+    NoReturn,
     Optional,
     Tuple,
     TypeVar,
+    Union,
 )
 
 
@@ -51,6 +50,20 @@ G = TypeVar("G")
 
 
 class SchedulerManager(Generic[G]):
+    def _setup_clients_dict(self) -> Union[Dict[int, ClientType], NoReturn]:
+        if all(x is None for x in (self.client, self.clients)):
+            return {}
+        elif isinstance(self.client, Client) and self.clients is None:
+            return {0: self.client}
+        elif isinstance(self.clients, (tuple, list)) and self.client is None:
+            return dict(enumerate(self.clients, start=0))
+        else:
+            raise ValueError(
+                "The PyRosettaCluster `client` and `clients` attribute parameters may not both be set. Received:\n" 
+                + f"PyRosettaCluster().client: {self.client}\n"
+                + f"PyRosettaCluster().clients: {self.clients}\n"
+            )
+
     def _get_cluster(self) -> ClusterType:
         """Given user input arguments, return the requested cluster instance."""
 
@@ -93,17 +106,17 @@ class SchedulerManager(Generic[G]):
 
         return cluster
 
-    def _setup_client_cluster_adaptive(
+    def _setup_clients_cluster_adaptive(
         self,
     ) -> Tuple[
-        ClientType, Optional[ClusterType], Optional[AdaptiveType],
+        Dict[int, ClientType], Optional[ClusterType], Optional[AdaptiveType],
     ]:
         """
         Given user input arguments, return the requested client, cluster,
         and adaptive instance.
         """
-        if self.client:
-            client = self.client
+        if self.clients_dict:
+            clients = self.clients_dict
             cluster = None
             adaptive = None
         else:
@@ -116,14 +129,15 @@ class SchedulerManager(Generic[G]):
                 cluster._adaptive.adapt()
             else:
                 adaptive = None
+            clients = {0: client}
 
-        return client, cluster, adaptive
+        return clients, cluster, adaptive
 
     def _maybe_adapt(self, adaptive: Optional[AdaptiveType]) -> None:
         """Adjust max_workers."""
 
         if (
-            not self.client
+            not self.clients_dict
             and self.scheduler
             and (self.max_workers >= 1000)
             and adaptive
@@ -131,12 +145,12 @@ class SchedulerManager(Generic[G]):
             adaptive.maximum = self.tasks_size
 
     def _maybe_teardown(
-        self, client: ClientType, cluster: Optional[ClusterType],
+        self, clients: Dict[int, ClientType], cluster: Optional[ClusterType],
     ) -> None:
         """Teardown client and cluster."""
 
         logging.info("PyRosettaCluster simulation complete!")
-        if not self.client and cluster:
+        if not self.clients_dict and cluster:
             cluster.scale(0)
-            client.close()
+            clients[0].close()
             cluster.close()

@@ -40,7 +40,15 @@ Args:
     client: An initialized dask `distributed.client.Client` object to be used as
         the dask client interface to the local or remote compute cluster. If `None`,
         then PyRosettaCluster initializes its own dask client based on the
-        `PyRosettaCluster(scheduler=...)` class attribute.
+        `PyRosettaCluster(scheduler=...)` class attribute. Deprecated in favor of the
+        `PyRosettaCluster(clients=...)` class attribute, but supported for legacy
+        purposes.
+        Default: None
+    clients: A `list` or `tuple` object of initialized dask `distributed.client.Client`
+        objects to be used as the dask client interfaces to the local or remote compute
+        clusters. If `None`, then PyRosettaCluster initializes its own dask client based
+        on the `PyRosettaCluster(scheduler=...)` class attribute. Optionally used in
+        combination with the `PyRosettaCluster().distribute(clients_indices=...)` method.
         Default: None
     scheduler: A `str` of either "sge" or "slurm", or `None`. If "sge", then
         PyRosettaCluster schedules jobs using `SGECluster` with `dask-jobqueue`.
@@ -247,6 +255,7 @@ from pyrosetta.distributed.cluster.validators import (
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
+    List,
     NoReturn,
     Optional,
     TypeVar,
@@ -302,10 +311,20 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         converter=attr.converters.optional(_parse_decoy_ids),
     )
     client = attr.ib(
-        type=distributed.client.Client,
+        type=Optional[distributed.client.Client],
         default=None,
         validator=attr.validators.optional(
             attr.validators.instance_of(distributed.client.Client)
+        ),
+    )
+    clients = attr.ib(
+        type=Optional[List[distributed.client.Client]],
+        default=None,
+        validator=attr.validators.optional(
+            attr.validators.deep_iterable(
+                member_validator=attr.validators.instance_of(distributed.client.Client),
+                iterable_validator=attr.validators.instance_of((tuple, list)),
+            )
         ),
     )
     scheduler = attr.ib(
@@ -563,8 +582,9 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self._setup_logger()
         self._write_environment_file(self.environment_file)
         self.serializer = Serialization(compression=self.compression)
+        self.clients_dict = self._setup_clients_dict()
 
-    def distribute(self, *args: Any, protocols: Any = None) -> Optional[NoReturn]:
+    def distribute(self, *args: Any, protocols: Any = None, clients_indices=None) -> Optional[NoReturn]:
         """
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
         the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
@@ -577,6 +597,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             PyRosettaCluster().distribute(protocol_1, protocol_2, protocol_3)
             PyRosettaCluster().distribute(protocols=(protocol_1, protocol_2, protocol_3))
             PyRosettaCluster().distribute(protocol_1, protocol_2, protocols=[protocol_3, protocol_4])
+            PyRosettaCluster(clients=[client_1, client_2]).distribute(
+                protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
+                clients_indices=[0, 1, 0, 1],
+            ) # Run `protocol_1` on `client_1`, then `protocol_2` on `client_2`, then `protocol_3` on `client_1`, then `protocol_4` on `client_2`
 
         Args:
             *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
@@ -586,14 +610,19 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 `types.FunctionType` types; or a single instance of type
                 `types.GeneratorType` or `types.FunctionType`.
                 Default: None
+            clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
+                a zero-based index corresponding to the clients passed to the `PyRosettaCluster(clients=...)` class attribute.
+                If not `NoneType`, then the length of the `clients_indices` object must equal the number of protocols
+                passed to the `PyRosettaCluster().distribute` method.
+                Default: None
 
         Returns:
             None
         """
 
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
-        protocols, protocol, seed = self._setup_protocols_protocol_seed(args, protocols)
-        client, cluster, adaptive = self._setup_client_cluster_adaptive()
+        protocols, protocol, seed = self._setup_protocols_protocol_seed(args, protocols, clients_indices)
+        clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         master_residue_type_set = _get_residue_type_set()
         extra_args = (
             self.decoy_ids,
@@ -608,7 +637,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         )
         seq = as_completed(
             [
-                client.submit(
+                clients[0].submit(
                     user_spawn_thread,
                     protocol,
                     compressed_input_packed_pose,
@@ -642,8 +671,8 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             compressed_packed_pose,
                             self.serializer.deepcopy_kwargs(kwargs),
                         )
-                    compressed_kwargs, pyrosetta_init_kwargs, protocol = self._setup_kwargs(kwargs)
-                    scatter = client.scatter(
+                    compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index = self._setup_kwargs(kwargs, clients_indices)
+                    scatter = clients[clients_index].scatter(
                         (
                             protocol,
                             compressed_packed_pose,
@@ -652,11 +681,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             *extra_args,
                         )
                     )
-                    seq.add(client.submit(user_spawn_thread, *scatter, pure=False,))
+                    seq.add(clients[clients_index].submit(user_spawn_thread, *scatter, pure=False,))
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
-        self._maybe_teardown(client, cluster)
+        self._maybe_teardown(clients, cluster)
         self._close_logger()
 
 

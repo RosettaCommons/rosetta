@@ -22,7 +22,37 @@ from typing import (
     Union,
 )
 
+def _validate_clients_indices(clients_indices, _protocols, clients_dict):
+    """Validate the `clients_indices` attribute parameter."""
+    if clients_indices is not None:
+        if not isinstance(clients_indices, (tuple, list)):
+            raise RuntimeError(f"The `clients_indices` attribute parameter must be of type `list` or `tuple`. Received: {type(clients_indices)}")
+        for i in clients_indices:
+            if not isinstance(i, int):
+                raise RuntimeError(f"Each element of the `clients_indices` attribute parameter must be of type `int`. Received: {type(i)}")
+        if (len(clients_indices) != len(_protocols)):
+            raise RuntimeError(
+                "The `clients_indices` attribute parameter must have the same length as the number of user-defined PyRosetta protocols! Received:\n"
+                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
+                + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
+            )
+        _clients_dict_keys = list(clients_dict.keys())
+        if not all(x in _clients_dict_keys for x in set(clients_indices)):
+            raise RuntimeError(
+                "Each element of the `clients_indices` attribute parameter must correspond to a index passed to `PyRosettaCluster(clients=...)` class attribute.\n"
+                + f"Available clients indices based on the `PyRosettaCluster(clients=...)` class attribute: {_clients_dict_keys}\n"
+                + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
+            )
+        for i in _clients_dict_keys:
+            if clients_indices.count(i) == 0:
+                logging.warning(
+                    f"The initialized dask `distributed.client.Client` object at index {i} of the `PyRosettaCluster(clients=...)` class attribute "
+                    + "will *not* be used in the simulation because it was not added as an index in the `PyRosettaCluster().distribute(clients_indices=...)` method!\n"
+                    + f"Available clients indices based on the `PyRosettaCluster(clients=...)` class attribute: {_clients_dict_keys}\n"
+                    + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
+                )
 
+    
 def _validate_dirs(self, attribute: str, value: Any) -> None:
     """Validate the output, logging, and decoy directories."""
 
