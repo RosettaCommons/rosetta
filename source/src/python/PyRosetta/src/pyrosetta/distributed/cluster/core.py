@@ -321,9 +321,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         type=Optional[List[distributed.client.Client]],
         default=None,
         validator=attr.validators.optional(
-            attr.validators.deep_iterable(
-                member_validator=attr.validators.instance_of(distributed.client.Client),
-                iterable_validator=attr.validators.instance_of((tuple, list)),
+            attr.validators.and_(
+                attr.validators.deep_iterable(
+                    member_validator=attr.validators.instance_of(distributed.client.Client),
+                    iterable_validator=attr.validators.instance_of((tuple, list)),
+                ),
+                attr.validators.min_len(1),
             )
         ),
     )
