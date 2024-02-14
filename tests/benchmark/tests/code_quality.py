@@ -666,7 +666,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
             if fetch_error:
                 submodule_states[submodule] = "Issue updating to get primary branch."
                 submodule_status[_StateKey_] = _S_passed_
-                submodule_status[_LogKey_] = "Error message: " + fetch_error
+                submodule_status[_LogKey_] = "Error message: " + fetch_msg
                 continue
             else:
                 submodule_states[submodule] = "NO PRIMARY BRANCH TO TEST!"
