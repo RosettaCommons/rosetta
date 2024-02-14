@@ -21,6 +21,18 @@ import sys
 import tempfile
 import unittest
 
+try:
+    from dask.distributed import Client, LocalCluster
+except ImportError:
+    print(
+        "Importing 'pyrosetta.tests.distributed.cluster.test_smoke' requires the "
+        + "third-party package 'dask' as a dependency!\n"
+        + "Please install these packages into your python environment. "
+        + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/dask/\n"
+    )
+    raise
+
 from pyrosetta import Pose
 from pyrosetta.distributed.packed_pose.core import PackedPose
 
@@ -811,6 +823,83 @@ class SerializationTest(unittest.TestCase):
                             msg=_error_msg,
                         )
 
+
+class MultipleClientsTest(unittest.TestCase):
+    def test_clients(self):
+        """Smoke test for the use case of multiple clients with PyRosettaCluster."""
+        pyrosetta.distributed.init(
+            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 200",
+            set_logging_handler="logging",
+        )
+    
+        def create_tasks():
+            for i in range(1, 5):
+                yield {
+                    "extra_options": "-ex1 -multithreading:total_threads 1",
+                    "set_logging_handler": "logging",
+                }
+
+        def my_pyrosetta_protocol_1(packed_pose, **kwargs):
+            from dask.distributed import get_client
+
+            _client = get_client()
+            _client_repr = repr(_client)
+
+            return packed_pose
+        
+        def my_pyrosetta_protocol_2(packed_pose, **kwargs):
+            from dask.distributed import get_client
+
+            _client = get_client()
+            _client_repr = repr(_client)
+            
+            return packed_pose
+        
+        cluster_1 = LocalCluster()
+        client_1 = Client(cluster_1)
+
+        cluster_2 = LocalCluster()
+        client_2 = Client(cluster_2)
+
+        with tempfile.TemporaryDirectory() as workdir:
+            instance_kwargs = dict(
+                tasks=create_tasks,
+                input_packed_pose=io.pose_from_sequence("TESTING"),
+                seeds=None,
+                decoy_ids=None,
+                client=None,
+                clients=[client_1, client_2]
+                clients_indices=[0, 1]
+                protocols=[my_pyrosetta_protocol_1, my_pyrosetta_protocol_2]
+                scheduler=None,
+                scratch_dir=workdir,
+                cores=None,
+                processes=None,
+                memory=None,
+                min_workers=1,
+                max_workers=1,
+                nstruct=1,
+                dashboard_address=None,
+                compressed=True,
+                logging_level="INFO",
+                scorefile_name=None,
+                project_name="PyRosettaCluster_Tests",
+                simulation_name=None,
+                environment=None,
+                output_path=os.path.join(workdir, "outputs"),
+                simulation_records_in_scorefile=False,
+                decoy_dir_name="decoys",
+                logs_dir_name="logs",
+                ignore_errors=False,
+                timeout=0.1,
+                sha1=None,
+                dry_run=False,
+                save_all=False,
+                system_info=None,
+                pyrosetta_build=None,
+            )
+            produce(**instance_kwargs)
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
