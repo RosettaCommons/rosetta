@@ -69,6 +69,7 @@ class IO(Generic[G]):
             instance_state = dict(zip(self.__slots__, self.__getstate__()))
         assert isinstance(instance_state, dict)
         instance_state.pop("client", None)
+        instance_state.pop("clients", None)
         instance_kwargs = self.serializer.deepcopy_kwargs(instance_state)
         for i in self.__attrs_attrs__:
             if not i.init:
