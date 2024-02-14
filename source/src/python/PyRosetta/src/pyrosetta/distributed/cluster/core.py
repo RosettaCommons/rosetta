@@ -228,7 +228,6 @@ import logging
 import os
 
 from datetime import datetime
-from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
 from pyrosetta.distributed.cluster.converters import (
     _parse_decoy_ids,
