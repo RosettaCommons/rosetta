@@ -9,7 +9,6 @@
 __author__ = "Jason C. Klima"
 
 try:
-    import cloudpickle
     import psutil
     from dask.distributed import Adaptive, Client, LocalCluster
     from dask_jobqueue import SGECluster, SLURMCluster
@@ -18,10 +17,9 @@ try:
 except ImportError:
     print(
         "Importing 'pyrosetta.distributed.cluster.utilities' requires the "
-        + "third-party packages 'cloudpickle', 'dask', 'dask-jobqueue', and 'psutil' as dependencies!\n"
+        + "third-party packages 'dask', 'dask-jobqueue', and 'psutil' as dependencies!\n"
         + "Please install these packages into your python environment. "
         + "For installation instructions, visit:\n"
-        + "https://pypi.org/project/cloudpickle/\n"
         + "https://pypi.org/project/dask/\n"
         + "https://pypi.org/project/dask-jobqueue/\n"
         + "https://pypi.org/project/psutil/\n"
