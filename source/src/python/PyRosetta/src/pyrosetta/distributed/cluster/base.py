@@ -105,7 +105,10 @@ class TaskBase(Generic[G]):
 
         return pyrosetta_init_kwargs
     
-    def _get_clients_index(self, clients_indices: List[int], protocols: List[Callable[..., Any]]) -> int:
+    def _get_clients_index(
+            self, clients_indices: List[int], protocols: List[Callable[..., Any]]
+        ) -> int:
+        """Return the clients index for the current protocol."""
         if clients_indices is None:
             return 0
         else:
@@ -153,15 +156,18 @@ class TaskBase(Generic[G]):
 
     def _setup_protocols_protocol_seed(
         self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any,
-    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str]]:
+    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str], int]:
         """Parse, validate, and setup the user-provided PyRosetta protocol(s)."""
 
         _protocols = _parse_protocols(args) + _parse_protocols(protocols)
         _validate_clients_indices(clients_indices, _protocols, self.clients_dict)
+        _clients_index = self._get_clients_index(clients_indices, _protocols)
 
-        return self._get_task_state(
+        _protocols, _protocol, _seed = self._get_task_state(
             _validate_protocols_seeds_decoy_ids(_protocols, self.seeds, self.decoy_ids)
         )
+
+        return _protocols, _protocol, _seed, _clients_index
 
 
 def capture_task_metadata(func: M) -> M:

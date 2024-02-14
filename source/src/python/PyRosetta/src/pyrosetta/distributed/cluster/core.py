@@ -40,15 +40,16 @@ Args:
     client: An initialized dask `distributed.client.Client` object to be used as
         the dask client interface to the local or remote compute cluster. If `None`,
         then PyRosettaCluster initializes its own dask client based on the
-        `PyRosettaCluster(scheduler=...)` class attribute. Deprecated in favor of the
+        `PyRosettaCluster(scheduler=...)` class attribute. Deprecated by the
         `PyRosettaCluster(clients=...)` class attribute, but supported for legacy
         purposes.
         Default: None
     clients: A `list` or `tuple` object of initialized dask `distributed.client.Client`
-        objects to be used as the dask client interfaces to the local or remote compute
-        clusters. If `None`, then PyRosettaCluster initializes its own dask client based
+        objects to be used as the dask client interface(s) to the local or remote compute
+        cluster(s). If `None`, then PyRosettaCluster initializes its own dask client based
         on the `PyRosettaCluster(scheduler=...)` class attribute. Optionally used in
         combination with the `PyRosettaCluster().distribute(clients_indices=...)` method.
+        See the `PyRosettaCluster().distribute()` method docstring for usage examples.
         Default: None
     scheduler: A `str` of either "sge" or "slurm", or `None`. If "sge", then
         PyRosettaCluster schedules jobs using `SGECluster` with `dask-jobqueue`.
@@ -604,6 +605,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
                 clients_indices=[0, 1, 0, 1],
             ) # Run `protocol_1` on `client_1`, then `protocol_2` on `client_2`, then `protocol_3` on `client_1`, then `protocol_4` on `client_2`
+            PyRosettaCluster(clients=[client_1, client_2, client_3]).distribute(
+                protocols=[protocol_1, protocol_2, protocol_3],
+                clients_indices=[1, 2, 0],
+            ) # Run `protocol_1` on `client_2`, then `protocol_2` on `client_3`, then `protocol_3` on `client_1`
 
         Args:
             *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
@@ -614,9 +619,10 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 `types.GeneratorType` or `types.FunctionType`.
                 Default: None
             clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
-                a zero-based index corresponding to the clients passed to the `PyRosettaCluster(clients=...)` class attribute.
-                If not `NoneType`, then the length of the `clients_indices` object must equal the number of protocols
-                passed to the `PyRosettaCluster().distribute` method.
+                a zero-based index corresponding to the initialized dask `distributed.client.Client` object(s) passed 
+                to the `PyRosettaCluster(clients=...)` class attribute. If not `NoneType`, then the length of the 
+                `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
+                method.
                 Default: None
 
         Returns:
@@ -624,7 +630,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         """
 
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
-        protocols, protocol, seed = self._setup_protocols_protocol_seed(args, protocols, clients_indices)
+        protocols, protocol, seed, clients_index = self._setup_protocols_protocol_seed(args, protocols, clients_indices)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         master_residue_type_set = _get_residue_type_set()
         extra_args = (
@@ -640,7 +646,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         )
         seq = as_completed(
             [
-                clients[0].submit(
+                clients[clients_index].submit(
                     user_spawn_thread,
                     protocol,
                     compressed_input_packed_pose,
