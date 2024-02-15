@@ -56,9 +56,9 @@ namespace per_residue_metrics {
 using namespace core::select;
 using namespace core::select::residue_selector;
 
-	/////////////////////
-	/// Constructors  ///
-	/////////////////////
+/////////////////////
+/// Constructors  ///
+/////////////////////
 
 /// @brief Default constructor
 PerResidueBfactorMetric::PerResidueBfactorMetric():
@@ -92,15 +92,15 @@ PerResidueBfactorMetric::metric() const {
 
 void
 PerResidueBfactorMetric::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap)
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & datamap)
 {
 
 	SimpleMetric::parse_base_tag( tag );
 	PerResidueRealMetric::parse_per_residue_tag( tag, datamap );
 
 
-	if (tag->hasOption("atom_type")){
+	if ( tag->hasOption("atom_type") ) {
 		atom_type_ = tag->getOption<std::string>("atom_type", "CA");
 	}
 }
@@ -114,7 +114,7 @@ PerResidueBfactorMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	attlist + XMLSchemaAttribute::attribute_w_default("atom_type", xs_string, "Atom of which to get the b factor value", "CA");
 
 	//attributes_for_parse_residue_selector( attlist, "residue_selector",
-	//	"Selector specifying residues." );
+	// "Selector specifying residues." );
 
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),
 		"Making a b factor per residue simple metric", attlist);
@@ -124,15 +124,15 @@ std::map< core::Size, core::Real >
 PerResidueBfactorMetric::calculate(const core::pose::Pose & pose) const {
 	utility::vector1< core::Size > selection1 = selection_positions(get_selector()->apply(pose));
 
-    std::map< core::Size, core::Real > b_fact_map;
-    for (core::Size resi_index : selection1){
-        //Make sure atom name is in residue before getting the b factor
-        if (pose.residue_type(resi_index).has( atom_type_ )) {
-            b_fact_map[resi_index] = pose.pdb_info()->bfactor(resi_index,pose.residue_type(resi_index).atom_index(atom_type_));
-        }
-    }
-    //pose.residue();
-    return b_fact_map;
+	std::map< core::Size, core::Real > b_fact_map;
+	for ( core::Size resi_index : selection1 ) {
+		//Make sure atom name is in residue before getting the b factor
+		if ( pose.residue_type(resi_index).has( atom_type_ ) ) {
+			b_fact_map[resi_index] = pose.pdb_info()->bfactor(resi_index,pose.residue_type(resi_index).atom_index(atom_type_));
+		}
+	}
+	//pose.residue();
+	return b_fact_map;
 }
 
 /// @brief This simple metric is unpublished.  It returns Clay Tydings as its author.
@@ -177,7 +177,7 @@ template< class Archive >
 void
 core::simple_metrics::per_residue_metrics::PerResidueBfactorMetric::save( Archive & arc ) const {
 	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric>( this ) );
-    arc( CEREAL_NVP( atom_type_ ) );
+	arc( CEREAL_NVP( atom_type_ ) );
 	//arc( CEREAL_NVP( output_as_pdb_nums_ ) );
 
 }
@@ -186,7 +186,7 @@ template< class Archive >
 void
 core::simple_metrics::per_residue_metrics::PerResidueBfactorMetric::load( Archive & arc ) {
 	arc( cereal::base_class< core::simple_metrics::PerResidueRealMetric >( this ) );
-    arc( CEREAL_NVP( atom_type_ ) );
+	arc( CEREAL_NVP( atom_type_ ) );
 	//arc( output_as_pdb_nums_ );
 
 

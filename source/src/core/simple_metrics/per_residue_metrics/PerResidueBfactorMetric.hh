@@ -116,7 +116,7 @@ public:
 	clone() const override;
 
 private:
-    std::string atom_type_;
+	std::string atom_type_;
 
 #ifdef    SERIALIZATION
 public:
