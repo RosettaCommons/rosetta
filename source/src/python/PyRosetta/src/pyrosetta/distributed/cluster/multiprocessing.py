@@ -161,6 +161,14 @@ def user_spawn_thread(
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
 
+    if logging_level == "DEBUG":
+        from dask.distributed import get_client
+        _client = get_client()
+        _serializer = Serialization(compression=compression)
+        _kwargs = _serializer.decompress_kwargs(compressed_kwargs)
+        _kwargs["PyRosettaCluster_client_repr"] = repr(_client)
+        compressed_kwargs = _serializer.compress_kwargs(_kwargs)
+
     q = billiard.Queue()
     p = billiard.context.Process(
         target=target,

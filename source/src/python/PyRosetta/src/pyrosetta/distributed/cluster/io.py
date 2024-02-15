@@ -173,6 +173,7 @@ class IO(Generic[G]):
         kwargs.pop("PyRosettaCluster_protocol_name", None)
         kwargs.pop("PyRosettaCluster_output_path", None)
         kwargs.pop("PyRosettaCluster_tmp_path", None)
+        kwargs.pop("PyRosettaCluster_client_repr", None)
         task_protocols = kwargs["PyRosettaCluster_protocols"]
         task_seeds = kwargs["PyRosettaCluster_seeds"]
         task_decoy_ids = kwargs["PyRosettaCluster_decoy_ids"]
