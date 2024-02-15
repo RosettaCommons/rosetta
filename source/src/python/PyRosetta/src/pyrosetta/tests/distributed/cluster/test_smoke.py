@@ -20,6 +20,7 @@ import random
 import sys
 import tempfile
 import unittest
+import warnings
 
 try:
     from dask.distributed import Client, LocalCluster
@@ -832,46 +833,90 @@ class MultipleClientsTest(unittest.TestCase):
             extra_options="-out:level 200",
             set_logging_handler="logging",
         )
-    
-        def create_tasks():
-            for i in range(1, 5):
-                yield {
-                    "extra_options": "-ex1 -multithreading:total_threads 1",
-                    "set_logging_handler": "logging",
-                }
-
-        def my_pyrosetta_protocol_1(packed_pose, **kwargs):
-            from dask.distributed import get_client
-
-            _client = get_client()
-            _client_repr = repr(_client)
-
-            return packed_pose
-        
-        def my_pyrosetta_protocol_2(packed_pose, **kwargs):
-            from dask.distributed import get_client
-
-            _client = get_client()
-            _client_repr = repr(_client)
-            
-            return packed_pose
-        
-        cluster_1 = LocalCluster()
-        client_1 = Client(cluster_1)
-
-        cluster_2 = LocalCluster()
-        client_2 = Client(cluster_2)
-
         with tempfile.TemporaryDirectory() as workdir:
+            with warnings.catch_warnings():
+                # Catch 'ResourceWarning: unclosed <socket.socket ...' from distributed/node.py:235
+                # Catch 'UserWarning: Port 8787 is already in use' from distributed/node.py:240
+                # Catch 'DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)' from bokeh/core/property/primitive.py:37
+                # Catch 'DeprecationWarning: pkg_resources is deprecated as an API.' from jupyter_server_proxy/config.py:10
+                warnings.simplefilter("ignore", category=ResourceWarning)
+                warnings.simplefilter("ignore", category=UserWarning)
+                warnings.simplefilter("ignore", category=DeprecationWarning)
+                cluster_1 = LocalCluster(
+                    n_workers=1,
+                    threads_per_worker=1,
+                    dashboard_address=None,
+                    local_directory=workdir,
+                )
+                cluster_2 = LocalCluster(
+                    n_workers=1,
+                    threads_per_worker=1,
+                    dashboard_address=None,
+                    local_directory=workdir,
+                )
+
+            client_1 = Client(cluster_1)
+            client_1_repr = repr(client_1)
+
+            client_2 = Client(cluster_2)        
+            client_2_repr = repr(client_2)
+
+            clients = [client_1, client_2]
+            clients_indices = [0, 1, 1, 0]
+        
+            def create_tasks(client_1_repr=client_1_repr, client_2_repr=client_2_repr):
+                for _ in range(1, 7):
+                    yield {
+                        "extra_options": "-ex1 -multithreading:total_threads 1",
+                        "set_logging_handler": "logging",
+                        "client_1_repr": client_1_repr,
+                        "client_2_repr": client_2_repr,
+                    }
+
+            def my_pyrosetta_protocol_1(packed_pose, **kwargs):
+                _client_repr = kwargs["PyRosettaCluster_client_repr"]
+                _protocol_number = kwargs["PyRosettaCluster_protocol_number"]
+                _client_1_repr = kwargs["client_1_repr"]
+                _client_2_repr = kwargs["client_2_repr"]
+
+                if _protocol_number == 0:
+                    self.assertEqual(_client_repr, _client_1_repr)
+                    self.assertNotEqual(_client_repr, _client_2_repr)
+                elif _protocol_number == 2:
+                    self.assertEqual(_client_repr, _client_2_repr)
+                    self.assertNotEqual(_client_repr, _client_1_repr)
+                self.assertNotIn(_protocol_number, (1, 3))
+            
+            def my_pyrosetta_protocol_2(packed_pose, **kwargs):
+                _client_repr = kwargs["PyRosettaCluster_client_repr"]
+                _protocol_number = kwargs["PyRosettaCluster_protocol_number"]
+                _client_1_repr = kwargs["client_1_repr"]
+                _client_2_repr = kwargs["client_2_repr"]
+
+                if _protocol_number == 1:
+                    self.assertEqual(_client_repr, _client_2_repr)
+                    self.assertNotEqual(_client_repr, _client_1_repr)
+                elif _protocol_number == 3:
+                    self.assertEqual(_client_repr, _client_1_repr)
+                    self.assertNotEqual(_client_repr, _client_2_repr)
+                self.assertNotIn(_protocol_number, (0, 2))
+            
+            protocols = [
+                my_pyrosetta_protocol_1,
+                my_pyrosetta_protocol_2,
+                my_pyrosetta_protocol_1,
+                my_pyrosetta_protocol_2,
+            ]
+        
             instance_kwargs = dict(
                 tasks=create_tasks,
                 input_packed_pose=io.pose_from_sequence("TESTING"),
                 seeds=None,
                 decoy_ids=None,
                 client=None,
-                clients=[client_1, client_2]
-                clients_indices=[0, 1]
-                protocols=[my_pyrosetta_protocol_1, my_pyrosetta_protocol_2]
+                clients=clients,
+                clients_indices=clients_indices,
+                protocols=protocols,
                 scheduler=None,
                 scratch_dir=workdir,
                 cores=None,
@@ -882,7 +927,7 @@ class MultipleClientsTest(unittest.TestCase):
                 nstruct=1,
                 dashboard_address=None,
                 compressed=True,
-                logging_level="INFO",
+                logging_level="DEBUG",
                 scorefile_name=None,
                 project_name="PyRosettaCluster_Tests",
                 simulation_name=None,
@@ -900,6 +945,13 @@ class MultipleClientsTest(unittest.TestCase):
                 pyrosetta_build=None,
             )
             produce(**instance_kwargs)
+
+            for worker in cluster_1.workers.values():
+                worker.close_gracefully()
+            client_1.close()
+            for worker in cluster_2.workers.values():
+                worker.close_gracefully()
+            client_2.close()
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
