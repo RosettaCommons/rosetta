@@ -240,7 +240,7 @@ from pyrosetta.distributed.cluster.converters import (
     _parse_system_info,
     _parse_tasks,
 )
-from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_master
+from pyrosetta.distributed.cluster.initialization import _get_pyrosetta_init_args, _maybe_init_client
 from pyrosetta.distributed.cluster.io import IO
 from pyrosetta.distributed.cluster.logging_support import LoggingSupport
 from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
@@ -581,7 +581,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
     )
 
     def __attrs_post_init__(self):
-        _maybe_init_master()
+        _maybe_init_client()
         self._setup_logger()
         self._write_environment_file(self.environment_file)
         self.serializer = Serialization(compression=self.compression)
@@ -631,7 +631,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
         protocols, protocol, seed, clients_index = self._setup_protocols_protocol_seed(args, protocols, clients_indices)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
-        master_residue_type_set = _get_residue_type_set()
+        client_residue_type_set = _get_residue_type_set()
         extra_args = (
             self.decoy_ids,
             self.protocols_key,
@@ -641,7 +641,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             self.logging_level,
             self.DATETIME_FORMAT,
             self.compression,
-            master_residue_type_set,
+            client_residue_type_set,
         )
         seq = as_completed(
             [

@@ -130,7 +130,7 @@ def target(
     protocols_key: str,
     decoy_ids: List[int],
     compression: Optional[Union[str, bool]],
-    master_residue_type_set: AbstractSet[str],
+    client_residue_type_set: AbstractSet[str],
     client_repr: str,
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
@@ -143,7 +143,7 @@ def target(
         protocol, packed_pose, DATETIME_FORMAT, ignore_errors, protocols_key, decoy_ids, serializer, **kwargs
     )
     _validate_residue_type_sets(
-        _get_residue_type_set(), master_residue_type_set,
+        _get_residue_type_set(), client_residue_type_set,
     )
     q.put(results)
 
@@ -161,7 +161,7 @@ def user_spawn_thread(
     logging_level: str,
     DATETIME_FORMAT: str,
     compression: Optional[Union[str, bool]],
-    master_residue_type_set: AbstractSet[str],
+    client_residue_type_set: AbstractSet[str],
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
     client_repr = repr(get_client())
@@ -181,7 +181,7 @@ def user_spawn_thread(
             protocols_key,
             decoy_ids,
             compression,
-            master_residue_type_set,
+            client_residue_type_set,
             client_repr,
         ),
         kwargs=pyrosetta_init_kwargs,

@@ -128,18 +128,18 @@ def _validate_protocols_seeds_decoy_ids(
 
 def _validate_residue_type_sets(
     _target_residue_type_set: Optional[AbstractSet[str]] = None,
-    _master_residue_type_set: Optional[AbstractSet[str]] = None,
+    _client_residue_type_set: Optional[AbstractSet[str]] = None,
 ) -> Optional[NoReturn]:
     """
     Validate that the compute instance (distributed worker) ResidueType set equals
-    master instance (local host) ResidueType set.
+    client instance (local host) ResidueType set.
     """
 
-    if _target_residue_type_set != _master_residue_type_set:
+    if _target_residue_type_set != _client_residue_type_set:
         _msg = (
             "Error! The compute instance (distributed worker) ResidueType set does not equal "
-            + "the master instance (local host) ResidueType set! Please ensure that the "
-            + "compute instance (distributed worker) and master instance (local host) have "
+            + "the client instance (local host) ResidueType set! Please ensure that the "
+            + "compute instance (distributed worker) and client instance (local host) have "
             + "initialized PyRosetta with identical '-extra_res_fa' and '-extra_res_cen' options."
         )
         logging.error(_msg)
