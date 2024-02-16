@@ -81,6 +81,7 @@ def setup_target_logging(func: L) -> L:
         decoy_ids,
         compression,
         master_residue_type_set,
+        client_repr,
         **pyrosetta_init_kwargs,
     ):
         """Wrapper function to setup_target_logging."""
@@ -117,6 +118,7 @@ def setup_target_logging(func: L) -> L:
             decoy_ids,
             compression,
             master_residue_type_set,
+            client_repr,
             **pyrosetta_init_kwargs,
         )
 

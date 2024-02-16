@@ -131,12 +131,14 @@ def target(
     decoy_ids: List[int],
     compression: Optional[Union[str, bool]],
     master_residue_type_set: AbstractSet[str],
+    client_repr: str,
     **pyrosetta_init_kwargs: Dict[str, Any],
 ) -> None:
     """A wrapper function for a user-provided PyRosetta protocol."""
     serializer = Serialization(compression=compression)
     packed_pose = serializer.decompress_packed_pose(compressed_packed_pose)
     kwargs = serializer.decompress_kwargs(compressed_kwargs)
+    kwargs["PyRosettaCluster_client_repr"] = client_repr
     results = run_protocol(
         protocol, packed_pose, DATETIME_FORMAT, ignore_errors, protocols_key, decoy_ids, serializer, **kwargs
     )
@@ -162,13 +164,7 @@ def user_spawn_thread(
     master_residue_type_set: AbstractSet[str],
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
-
-    if logging_level == "DEBUG":
-        _client = get_client()
-        _serializer = Serialization(compression=compression)
-        _kwargs = _serializer.decompress_kwargs(compressed_kwargs)
-        _kwargs["PyRosettaCluster_client_repr"] = repr(_client)
-        compressed_kwargs = _serializer.compress_kwargs(_kwargs)
+    client_repr = repr(get_client())
 
     q = billiard.Queue()
     p = billiard.context.Process(
@@ -186,6 +182,7 @@ def user_spawn_thread(
             decoy_ids,
             compression,
             master_residue_type_set,
+            client_repr,
         ),
         kwargs=pyrosetta_init_kwargs,
     )
