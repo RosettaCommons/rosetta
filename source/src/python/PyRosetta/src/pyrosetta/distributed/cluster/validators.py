@@ -15,6 +15,7 @@ from typing import (
     AbstractSet,
     Any,
     Callable,
+    Dict,
     Iterable,
     List,
     NoReturn,
@@ -22,7 +23,10 @@ from typing import (
     Union,
 )
 
-def _validate_clients_indices(clients_indices, _protocols, clients_dict):
+
+def _validate_clients_indices(
+        clients_indices: Any, _protocols: List[Callable[..., Any]], _clients_dict_keys: List[int],
+    ) -> Optional[NoReturn]:
     """Validate the `clients_indices` attribute parameter."""
     if clients_indices is not None:
         if not isinstance(clients_indices, (tuple, list)):
@@ -42,7 +46,6 @@ def _validate_clients_indices(clients_indices, _protocols, clients_dict):
                 + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
                 + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
             )
-        _clients_dict_keys = list(clients_dict.keys())
         if not all(x in _clients_dict_keys for x in set(clients_indices)):
             raise RuntimeError(
                 "Each element of the `clients_indices` attribute parameter must correspond to an index passed to `PyRosettaCluster(clients=...)` class attribute.\n"
@@ -60,7 +63,7 @@ def _validate_clients_indices(clients_indices, _protocols, clients_dict):
                 )
 
 
-def _validate_resources(resources, _protocols):
+def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
     if resources is not None:
         if not isinstance(resources, (tuple, list)):
             raise RuntimeError(

@@ -175,7 +175,8 @@ class TaskBase(Generic[G]):
         """Parse, validate, and setup the user-provided PyRosetta protocol(s)."""
 
         _protocols = _parse_protocols(args) + _parse_protocols(protocols)
-        _validate_clients_indices(clients_indices, _protocols, self.clients_dict)
+        _clients_dict_keys = list(self.clients_dict.keys())
+        _validate_clients_indices(clients_indices, _protocols, _clients_dict_keys)
         _validate_resources(resources, _protocols)
         _clients_index = self._get_clients_index(clients_indices, _protocols)
         _resource = self._get_resource(resources, _protocols)
