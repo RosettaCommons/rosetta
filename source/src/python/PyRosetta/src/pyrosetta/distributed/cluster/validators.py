@@ -71,9 +71,9 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
                 + f"Received: {type(resources)}\n"
             )
         for obj in resources:
-            if not isinstance(obj, dict):
+            if not isinstance(obj, (dict, type(None))):
                 raise RuntimeError(
-                    "Each element of the `resources` attribute parameter must be of type `dict`.\n"
+                    "Each element of the `resources` attribute parameter must be of type `dict` or `NoneType`.\n"
                     + f"Received: {type(obj)}"
                 )
         if (len(resources) != len(_protocols)):
