@@ -602,21 +602,39 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             PyRosettaCluster().distribute(protocol_1, protocol_2, protocol_3)
             PyRosettaCluster().distribute(protocols=(protocol_1, protocol_2, protocol_3))
             PyRosettaCluster().distribute(protocol_1, protocol_2, protocols=[protocol_3, protocol_4])
+
+            # Run `protocol_1` on `client_1`,
+            # then `protocol_2` on `client_2`, 
+            # then `protocol_3` on `client_1`,
+            # then `protocol_4` on `client_2`:
             PyRosettaCluster(clients=[client_1, client_2]).distribute(
                 protocols=[protocol_1, protocol_2, protocol_3, protocol_4],
                 clients_indices=[0, 1, 0, 1],
-            ) # Run `protocol_1` on `client_1`, then `protocol_2` on `client_2`, then `protocol_3` on `client_1`, then `protocol_4` on `client_2`
+            )
+
+            # Run `protocol_1` on `client_2`,
+            # then `protocol_2` on `client_3`,
+            # then `protocol_3` on `client_1`:
             PyRosettaCluster(clients=[client_1, client_2, client_3]).distribute(
                 protocols=[protocol_1, protocol_2, protocol_3],
                 clients_indices=[1, 2, 0],
-            ) # Run `protocol_1` on `client_2`, then `protocol_2` on `client_3`, then `protocol_3` on `client_1`
+            )
+
+            # Run `protocol_1` on `client_1` with dask worker resource constraints "GPU=2",
+            # then `protocol_2` on `client_1` with dask worker resource constraints "MEMORY=100e9",
+            # then `protocol_3` on `client_1` without dask worker resource constraints:
             PyRosettaCluster(client=client_1).distribute(
                 protocols=[protocol_1, protocol_2, protocol_3],
                 resources=[{"GPU": 2}, {"MEMORY": 100e9}, None],
-            ) # Run `protocol_1` on `client_1` with resource constraints "GPU=2",
-            # then `protocol_2` on `client_1` with resource constraints "MEMORY=100e9",
-            # then `protocol_3` on `client_1` without resource constraints
+            )
 
+            # Run `protocol_1` on `client_1` with dask worker resource constraints "GPU=2",
+            # then `protocol_2` on `client_2` with dask worker resource constraints "MEMORY=100e9":
+            PyRosettaCluster(clients=[client_1, client_2]).distribute(
+                protocols=[protocol_1, protocol_2],
+                resources=[{"GPU": 2}, {"MEMORY": 100e9}],
+            )
+            
         Args:
             *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
                 in the order of protocols to be executed.
@@ -627,21 +645,22 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 Default: None
             clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
                 a zero-based index corresponding to the initialized dask `distributed.client.Client` object(s) passed 
-                to the `PyRosettaCluster(clients=...)` class attribute. If not `NoneType`, then the length of the 
+                to the `PyRosettaCluster(clients=...)` class attribute. If not `None`, then the length of the 
                 `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method.
                 Default: None
             resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
                 an abstract, arbitrary resource to constrain which dask workers run the user-defined PyRosetta protocols.
-                If `NoneType`, then do not impose resource constaints on any protocols. If not `NoneType`, then the length
+                If `None`, then do not impose resource constaints on any protocols. If not `None`, then the length
                 of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method, such that each resource specified indicates the unique resource constraints for the protocol at the
-                corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this advanced feature 
-                is only useful when one passes in their own instantiated client(s) with dask workers set up with various resource
-                constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols will hang
-                indefinitely because the dask scheduler is waiting for workers that meet the specified resource constraints so that it
-                can schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
-                See https://distributed.dask.org/en/latest/resources.html for more information.
+                corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this feature is only 
+                useful when one passes in their own instantiated client(s) with dask workers set up with various resource
+                constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols
+                will hang indefinitely because the dask scheduler is waiting for workers that meet the specified resource 
+                constraints so that it can schedule these protocols. Unless workers were created with these resource tags
+                applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
+                information.
                 Default: None
 
         Returns:

@@ -469,20 +469,22 @@ def reproduce(
             Default: None
         clients_indices: An optional `list` or `tuple` object of `int` objects, where each `int` object represents
             a zero-based index corresponding to the initialized dask `distributed.client.Client` object(s) passed 
-            to the `clients` attribute. If not `NoneType`, then the length must equal the number of protocols passed
-            to the `protocols` attribute.
+            to the `PyRosettaCluster(clients=...)` class attribute. If not `None`, then the length of the 
+            `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
+            method.
             Default: None
         resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
             an abstract, arbitrary resource to constrain which dask workers run the user-defined PyRosetta protocols.
-            If `NoneType`, then do not impose resource constaints on any protocols. If not `NoneType`, then the length
+            If `None`, then do not impose resource constaints on any protocols. If not `None`, then the length
             of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
             method, such that each resource specified indicates the unique resource constraints for the protocol at the
-            corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this advanced feature 
-            is only useful when one passes in their own instantiated client(s) with dask workers set up with various resource
-            constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols will hang
-            indefinitely because the dask scheduler is waiting for workers that meet the specified resource constraints so that it
-            can schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
-            See https://distributed.dask.org/en/latest/resources.html for more information.
+            corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this feature is only 
+            useful when one passes in their own instantiated client(s) with dask workers set up with various resource
+            constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols
+            will hang indefinitely because the dask scheduler is waiting for workers that meet the specified resource 
+            constraints so that it can schedule these protocols. Unless workers were created with these resource tags
+            applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
+            information.
             Default: None
 
     Returns:
