@@ -473,12 +473,12 @@ def reproduce(
             to the `protocols` attribute.
             Default: None
         resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
-            an abstract, arbitrary resource to constrain how the user-defined PyRosetta protocols run on dask workers.
-            If `NoneType`, then do not impose resource constaints on any dask workers. If not `NoneType`, then the length
+            an abstract, arbitrary resource to constrain which dask workers run the user-defined PyRosetta protocols.
+            If `NoneType`, then do not impose resource constaints on any protocols. If not `NoneType`, then the length
             of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
             method, such that each resource specified indicates the unique resource constraints for the protocol at the
             corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this advanced feature 
-            is only needed when one passes in their own instantiated client(s) with dask workers set up with various resource
+            is only helpful when one passes in their own instantiated client(s) with dask workers set up with various resource
             constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols will hang
             forever because the dask scheduler is waiting for workers that meet the specified resource constraints so that it can
             schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
