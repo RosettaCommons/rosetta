@@ -11,6 +11,7 @@ PyRosettaCluster smoke tests using the `unittest` framework.
 
 __author__ = "Jason C. Klima"
 
+import glob
 import json
 import numpy
 import os
@@ -40,6 +41,7 @@ from pyrosetta.distributed.packed_pose.core import PackedPose
 from pyrosetta.distributed.cluster import (
     PyRosettaCluster,
     Serialization,
+    get_scores_dict,
     produce,
     reserve_scores,
     run,
@@ -952,6 +954,105 @@ class MultipleClientsTest(unittest.TestCase):
             for worker in cluster_2.workers.values():
                 worker.close_gracefully()
             client_2.close()
+
+
+class ResourcesTest(unittest.TestCase):
+    def test_resources(self):
+        """Smoke test for the use case of abstract resource constraints for dask workers with PyRosettaCluster."""
+        pyrosetta.distributed.init(
+            options="-run:constant_seed 1 -multithreading:total_threads 1",
+            extra_options="-out:level 200",
+            set_logging_handler="logging",
+        )
+        with tempfile.TemporaryDirectory() as workdir:
+            with warnings.catch_warnings():
+                # Catch 'ResourceWarning: unclosed <socket.socket ...' from distributed/node.py:235
+                # Catch 'UserWarning: Port 8787 is already in use' from distributed/node.py:240
+                # Catch 'DeprecationWarning: `np.bool8` is a deprecated alias for `np.bool_`.  (Deprecated NumPy 1.24)' from bokeh/core/property/primitive.py:37
+                # Catch 'DeprecationWarning: pkg_resources is deprecated as an API.' from jupyter_server_proxy/config.py:10
+                warnings.simplefilter("ignore", category=ResourceWarning)
+                warnings.simplefilter("ignore", category=UserWarning)
+                warnings.simplefilter("ignore", category=DeprecationWarning)
+                cluster = LocalCluster(
+                    n_workers=1,
+                    threads_per_worker=1,
+                    dashboard_address=None,
+                    local_directory=workdir,
+                    resources={"foo": 1, "bar": 2, "baz": 3},
+                )
+            client = Client(cluster)
+        
+            def create_tasks():
+                for _ in range(1, 4):
+                    yield {
+                        "extra_options": "-ex1 -multithreading:total_threads 1",
+                        "set_logging_handler": "logging",
+                    }
+
+            def my_pyrosetta_protocol_1(packed_pose, **kwargs):   
+                return packed_pose.update_scores(sequence=packed_pose.pose.sequence())
+            
+            def my_pyrosetta_protocol_2(packed_pose, **kwargs):
+                return packed_pose
+            
+            protocols = [
+                my_pyrosetta_protocol_1,
+                my_pyrosetta_protocol_2,
+                my_pyrosetta_protocol_2,
+            ]
+            resources = [{"foo": 1}, {"bar": 2}, {"baz": 3 - 0.5}]
+            output_path = os.path.join(workdir, "outputs")
+            decoy_dir_name = "decoys"
+            sequence = "TESTING"
+
+            instance_kwargs = dict(
+                tasks=create_tasks,
+                input_packed_pose=io.pose_from_sequence(sequence),
+                seeds=None,
+                decoy_ids=None,
+                client=client,
+                clients=None,
+                clients_indices=None,
+                protocols=protocols,
+                resources=resources,
+                scheduler=None,
+                scratch_dir=workdir,
+                cores=None,
+                processes=None,
+                memory=None,
+                min_workers=1,
+                max_workers=1,
+                nstruct=1,
+                dashboard_address=None,
+                compressed=True,
+                logging_level="DEBUG",
+                scorefile_name=None,
+                project_name="PyRosettaCluster_Tests",
+                simulation_name=None,
+                environment=None,
+                output_path=output_path,
+                simulation_records_in_scorefile=False,
+                decoy_dir_name=decoy_dir_name,
+                logs_dir_name="logs",
+                ignore_errors=False,
+                timeout=0.1,
+                sha1=None,
+                dry_run=False,
+                save_all=False,
+                system_info=None,
+                pyrosetta_build=None,
+            )
+            produce(**instance_kwargs)
+
+            for worker in cluster.workers.values():
+                worker.close_gracefully()
+            client.close()
+
+            decoy_files = glob.glob(os.path.join(output_path, decoy_dir_name, "*", "*.bz2"))
+            self.assertEqual(len(decoy_files), 3)
+            for decoy_file in decoy_files:
+                scores_dict = get_scores_dict(decoy_file)
+                self.assertEqual(scores_dict["scores"]["sequence"], sequence)
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
