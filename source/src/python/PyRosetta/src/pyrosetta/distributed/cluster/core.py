@@ -632,6 +632,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             # then `protocol_2` on `client_2` with dask worker resource constraints "MEMORY=100e9":
             PyRosettaCluster(clients=[client_1, client_2]).distribute(
                 protocols=[protocol_1, protocol_2],
+                clients_indices=[0, 1],
                 resources=[{"GPU": 2}, {"MEMORY": 100e9}],
             )
             
