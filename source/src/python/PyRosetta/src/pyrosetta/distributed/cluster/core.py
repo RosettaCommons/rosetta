@@ -42,13 +42,15 @@ Args:
         then PyRosettaCluster initializes its own dask client based on the
         `PyRosettaCluster(scheduler=...)` class attribute. Deprecated by the
         `PyRosettaCluster(clients=...)` class attribute, but supported for legacy
-        purposes.
+        purposes. Either or both of the `client` or `clients` attribute parameters
+        must be `None`.
         Default: None
     clients: A `list` or `tuple` object of initialized dask `distributed.client.Client`
         objects to be used as the dask client interface(s) to the local or remote compute
         cluster(s). If `None`, then PyRosettaCluster initializes its own dask client based
         on the `PyRosettaCluster(scheduler=...)` class attribute. Optionally used in
         combination with the `PyRosettaCluster().distribute(clients_indices=...)` method.
+        Either or both of the `client` or `clients` attribute parameters must be `None`.
         See the `PyRosettaCluster().distribute()` method docstring for usage examples.
         Default: None
     scheduler: A `str` of either "sge" or "slurm", or `None`. If "sge", then
@@ -635,11 +637,11 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method, such that each resource specified indicates the unique resource constraints for the protocol at the
                 corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this advanced feature 
-                is only helpful when one passes in their own instantiated client(s) with dask workers set up with various resource
+                is only useful when one passes in their own instantiated client(s) with dask workers set up with various resource
                 constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols will hang
-                forever because the dask scheduler is waiting for workers that meet the specified resource constraints so that it can
-                schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
-                See https://distributed.dask.org/en/latest/resources.html for further information.
+                indefinitely because the dask scheduler is waiting for workers that meet the specified resource constraints so that it
+                can schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
+                See https://distributed.dask.org/en/latest/resources.html for more information.
                 Default: None
 
         Returns:

@@ -478,11 +478,11 @@ def reproduce(
             of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
             method, such that each resource specified indicates the unique resource constraints for the protocol at the
             corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this advanced feature 
-            is only helpful when one passes in their own instantiated client(s) with dask workers set up with various resource
+            is only useful when one passes in their own instantiated client(s) with dask workers set up with various resource
             constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols will hang
-            forever because the dask scheduler is waiting for workers that meet the specified resource constraints so that it can
-            schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
-            See https://distributed.dask.org/en/latest/resources.html for further information.
+            indefinitely because the dask scheduler is waiting for workers that meet the specified resource constraints so that it
+            can schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
+            See https://distributed.dask.org/en/latest/resources.html for more information.
             Default: None
 
     Returns:
