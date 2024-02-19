@@ -59,6 +59,28 @@ def _validate_clients_indices(clients_indices, _protocols, clients_dict):
                     + "Continuing with the simulation."
                 )
 
+
+def _validate_resources(resources, _protocols):
+    if resources is not None:
+        if not isinstance(resources, (tuple, list)):
+            raise RuntimeError(
+                "The `resources` attribute parameter must be of type `list` or `tuple`.\n"
+                + f"Received: {type(resources)}\n"
+            )
+        for obj in resources:
+            if not isinstance(obj, dict):
+                raise RuntimeError(
+                    "Each element of the `resources` attribute parameter must be of type `dict`.\n"
+                    + f"Received: {type(obj)}"
+                )
+        if (len(resources) != len(_protocols)):
+            raise RuntimeError(
+                "The `resources` attribute parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
+                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
+                + f"Received `PyRosettaCluster().distribute(resources=...)`: {resources}\n"
+            )
+        
+
     
 def _validate_dirs(self, attribute: str, value: Any) -> None:
     """Validate the output, logging, and decoy directories."""

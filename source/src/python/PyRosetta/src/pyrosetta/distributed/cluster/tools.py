@@ -419,6 +419,7 @@ def reproduce(
     input_packed_pose: Optional[Union[Pose, PackedPose]] = None,
     instance_kwargs: Optional[Dict[Any, Any]] = None,
     clients_indices: Optional[List[int]] = None,
+    resources: Optional[Dict[Any, Any]] = None,
 ) -> Optional[NoReturn]:
     """
     Given an input file that was written by PyRosettaCluster (or a full scorefile
@@ -471,6 +472,18 @@ def reproduce(
             to the `clients` attribute. If not `NoneType`, then the length must equal the number of protocols passed
             to the `protocols` attribute.
             Default: None
+        resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
+            an abstract, arbitrary resource to constrain how the user-defined PyRosetta protocols run on dask workers.
+            If `NoneType`, then do not impose resource constaints on any dask workers. If not `NoneType`, then the length
+            of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
+            method, such that each resource specified indicates the unique resource constraints for the protocol at the
+            corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this advanced feature 
+            is only needed when one passes in their own instantiated client(s) with dask workers set up with various resource
+            constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols will hang
+            forever because the dask scheduler is waiting for workers that meet the specified resource constraints so that it can
+            schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
+            See https://distributed.dask.org/en/latest/resources.html for further information.
+            Default: None
 
     Returns:
         None
@@ -499,6 +512,7 @@ def reproduce(
             decoy_name=decoy_name,
         ),
         clients_indices=clients_indices,
+        resources=resources,
     )
 
 
@@ -522,7 +536,12 @@ def produce(**kwargs: Any) -> Optional[NoReturn]:
 
     protocols = kwargs.pop("protocols", None)
     clients_indices = kwargs.pop("clients_indices", None)
-    PyRosettaCluster(**kwargs).distribute(protocols=protocols, clients_indices=clients_indices)
+    resources = kwargs.pop("resources", None)
+    PyRosettaCluster(**kwargs).distribute(
+        protocols=protocols,
+        clients_indices=clients_indices,
+        resources=resources,
+    )
 
 
 run: Callable[..., Optional[NoReturn]] = produce

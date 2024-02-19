@@ -587,7 +587,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         self.serializer = Serialization(compression=self.compression)
         self.clients_dict = self._setup_clients_dict()
 
-    def distribute(self, *args: Any, protocols: Any = None, clients_indices=None) -> Optional[NoReturn]:
+    def distribute(self, *args: Any, protocols: Any = None, clients_indices: Any = None, resources: Any = None) -> Optional[NoReturn]:
         """
         Run user-provided PyRosetta protocols on a local or remote compute cluster using
         the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
@@ -608,6 +608,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 protocols=[protocol_1, protocol_2, protocol_3],
                 clients_indices=[1, 2, 0],
             ) # Run `protocol_1` on `client_2`, then `protocol_2` on `client_3`, then `protocol_3` on `client_1`
+            PyRosettaCluster(client=client_1).distribute(
+                protocols=[protocol_1, protocol_2, protocol_3],
+                resources=[{"GPU": 2}, {"MEMORY": 100e9}, None],
+            ) # Run `protocol_1` on `client_1` with resource constraints "GPU=2",
+            # then `protocol_2` on `client_1` with resource constraints "MEMORY=100e9",
+            # then `protocol_3` on `client_1` without resource constraints
 
         Args:
             *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
@@ -623,13 +629,25 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 `clients_indices` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
                 method.
                 Default: None
+            resources: An optional `list` or `tuple` object of `dict` objects, where each `dict` object represents
+                an abstract, arbitrary resource to constrain how the user-defined PyRosetta protocols run on dask workers.
+                If `NoneType`, then do not impose resource constaints on any dask workers. If not `NoneType`, then the length
+                of the `resources` object must equal the number of protocols passed to the `PyRosettaCluster().distribute`
+                method, such that each resource specified indicates the unique resource constraints for the protocol at the
+                corresponding index of the protocols passed to `PyRosettaCluster().distribute`. Note that this advanced feature 
+                is only needed when one passes in their own instantiated client(s) with dask workers set up with various resource
+                constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols will hang
+                forever because the dask scheduler is waiting for workers that meet the specified resource constraints so that it can
+                schedule these protocols. Unless workers were created with these resource tags applied, the protocols will not run.
+                See https://distributed.dask.org/en/latest/resources.html for further information.
+                Default: None
 
         Returns:
             None
         """
 
         compressed_input_packed_pose = self.serializer.compress_packed_pose(self.input_packed_pose)
-        protocols, protocol, seed, clients_index = self._setup_protocols_protocol_seed(args, protocols, clients_indices)
+        protocols, protocol, seed, clients_index, resource = self._setup_protocols_protocol_seed(args, protocols, clients_indices, resources)
         clients, cluster, adaptive = self._setup_clients_cluster_adaptive()
         client_residue_type_set = _get_residue_type_set()
         extra_args = (
@@ -653,6 +671,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                     pyrosetta_init_kwargs,
                     *extra_args,
                     pure=False,
+                    resources=resource,
                 )
                 for compressed_kwargs, pyrosetta_init_kwargs in (
                     self._setup_initial_kwargs(protocols, seed, task_kwargs) for task_kwargs in self.tasks
@@ -679,7 +698,9 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             compressed_packed_pose,
                             self.serializer.deepcopy_kwargs(kwargs),
                         )
-                    compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index = self._setup_kwargs(kwargs, clients_indices)
+                    compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource = self._setup_kwargs(
+                        kwargs, clients_indices, resources
+                    )
                     scatter = clients[clients_index].scatter(
                         (
                             protocol,
@@ -689,7 +710,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             *extra_args,
                         )
                     )
-                    seq.add(clients[clients_index].submit(user_spawn_thread, *scatter, pure=False,))
+                    seq.add(clients[clients_index].submit(user_spawn_thread, *scatter, pure=False, resources=resource))
                     self.tasks_size += 1
                     self._maybe_adapt(adaptive)
 
