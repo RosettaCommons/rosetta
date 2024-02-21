@@ -85,7 +85,7 @@ def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) ->
         
 
     
-def _validate_dirs(self, attribute: str, value: Any) -> None:
+def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
     """Validate the output, logging, and decoy directories."""
 
     output_dir = os.path.abspath(self.output_path)
