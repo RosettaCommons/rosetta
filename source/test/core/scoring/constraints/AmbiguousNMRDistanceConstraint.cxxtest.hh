@@ -16,6 +16,16 @@
 
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh> // DO NOT AUTO-REMOVE
 
+//protocol headers
+#include <protocols/cyclic_peptide/PeptideStubMover.hh>
+
+//core headers
+#include <core/pose/Pose.hh>
+#include <core/chemical/AA.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/id/AtomID.hh>
+
 // basic headers
 
 // unit headers
@@ -33,7 +43,39 @@
 
 class AmbiguousNMRDistanceConstraintTests : public CxxTest::TestSuite
 {
+private:
+    std::string const test_label_ = "PEPTIDE_STUB_MOVER_TEST_LABEL";
 public:
+
+    void setUp(){
+    }
+
+    void tearDown(){
+
+	}
+
+    void test_ala() {
+        typedef utility::vector1< core::id::AtomID > Atoms;
+        core::pose::Pose pose( (core::pose::Pose()) );
+
+        protocols::cyclic_peptide::PeptideStubMover stubmover;
+        stubmover.set_reset_mode(false);
+        stubmover.add_residue( "Append", "ALA", 0, false, "", 0, pose.total_residue(), nullptr, "" );
+        stubmover.set_residue_label( test_label_ );
+        stubmover.apply(pose);
+
+        //utility::vector1< core::id::AtomID > atoms_old;
+        //utility::vector1< core::id::AtomID > atoms_new;
+        Atoms atoms_old, atoms_new;
+
+        core::Size res (1);
+        core::chemical::AA const aa( pose.residue_type( res ).aa() );
+
+        core::scoring::constraints::parse_NMR_name("HA", res, aa, atoms_old);
+        core::scoring::constraints::parse_NMR_name("HA", res, aa, atoms_new);
+
+        TS_ASSERT( atoms_new == atoms_old );
+    }
 
 	void test_serialize_AmbiguousNMRDistanceConstraint() {
 		TS_ASSERT( true ); // for non-serialization builds

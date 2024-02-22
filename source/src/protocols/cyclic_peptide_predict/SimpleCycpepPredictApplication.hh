@@ -13,6 +13,8 @@
 /// using generalized kinematic closure (GenKIC) for cyclization, and enforcing user-defined requiresments for numbers of mainchain hydrogen bonds.
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
 
+//CTW TODO add lanthipeptides
+
 #ifndef INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_hh
 #define INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_hh
 
@@ -59,6 +61,7 @@ enum SCPA_cyclization_type {
 	SCPA_n_to_c_amide_bond = 1, //Keep this first
 	SCPA_terminal_disulfide,
 	SCPA_thioether_lariat,
+	SCPA_lanthipeptide,
 	SCPA_nterm_isopeptide_lariat,
 	SCPA_cterm_isopeptide_lariat,
 	SCPA_sidechain_isopeptide,
@@ -312,6 +315,10 @@ private:
 	/// peptides, but for the moment "closest to the opposite terminus" is sufficient.
 	void find_first_and_last_thioether_lariat_residues( core::pose::PoseCOP pose, core::Size &firstres, core::Size &lastres ) const;
 
+	/// @brief Given a pose, find the first and last thioether lanthipeptide.
+	/// @details Randomly selects a pair, added by CWT
+	void find_first_and_last_lanthipeptide_residues( core::Size &firstres, core::Size &lastres ) const;
+
 	/// @brief Count the number of cis-peptide bonds in the pose.
 	///
 	core::Size count_cis_peptide_bonds(
@@ -398,6 +405,9 @@ private:
 	/// @brief Set up the mover that creates thioether lariat bonds.
 	void set_up_thioether_lariat_cyclization_mover( protocols::simple_moves::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
 
+	/// @brief Set up the mover that creates lanthipeptide bonds by CWT.
+	void set_up_lanthipeptide_cyclization_mover( protocols::simple_moves::DeclareBondOP termini, core::pose::PoseCOP pose ) const;
+
 	/// @brief Set up the DeclareBond mover used to connect the termini, or whatever
 	/// atoms are involved in the cyclization.  (Handles different cyclization modes).
 	void
@@ -453,6 +463,11 @@ private:
 	/// @param[in] c_index The index of the C-terminal sidechain for an isopeptide bond.  Set to 0 for C-terminus.
 	void add_thioether_lariat_cyclic_constraints ( core::pose::PoseOP pose, core::Size n_index, core::Size c_index ) const;
 
+	/// @brief Function to add lanthipeptide constraints to a pose.
+	/// @details This version does this for lanthipeptides, by CWT
+	/// @param[in] pose The pose to modify.
+	void add_lanthipeptide_cyclic_constraints ( core::pose::PoseOP pose ) const;
+
 	/// @brief Function to add cyclic constraints to a pose.
 	/// @details Calls functions that do this for particular cyclization types.
 	void add_cyclic_constraints ( core::pose::PoseOP pose ) const;
@@ -487,6 +502,10 @@ private:
 	/// @brief Set up the logic to close the bond at the cyclization point.
 	/// @details This version is for all types of thioether lariat cyclization.
 	void add_closebond_logic_thioether_lariat( core::pose::PoseCOP pose, core::Size const cyclization_point_start, core::Size const cyclization_point_end, protocols::generalized_kinematic_closure::GeneralizedKICOP genkic ) const;
+
+	/// @brief Set up the logic to close the bond at the cyclization point by CWT.
+	/// @details This version is for all types of lanthipeptide cyclization.
+	void add_closebond_logic_lanthipeptide( core::pose::PoseCOP pose, core::Size const cyclization_point_start, core::Size const cyclization_point_end, protocols::generalized_kinematic_closure::GeneralizedKICOP genkic ) const;
 
 	/// @brief Set up the logic to close the bond at the cyclization point.
 	/// @details Calls different functions for different cyclization types.
@@ -1061,6 +1080,10 @@ private:
 	/// @brief List of positions (in original sequence indexing -- not permuted) that are N-methylated.
 	/// @details Defaults to empty list.
 	utility::vector1< core::Size > n_methyl_positions_;
+
+	/// @brief List of positions linked with lanthionine linkages.
+	/// @details This is a vector of vectors of two residues.
+	mutable utility::vector1< utility::vector1 < core::Size >  > lanthionine_positions_;
 
 	/// @brief List of positions linked by 1,4-bis(bromomethyl)benzene.
 	/// @details This is a vector of vectors of two residues.

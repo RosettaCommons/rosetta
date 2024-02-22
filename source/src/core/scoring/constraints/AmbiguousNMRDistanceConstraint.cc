@@ -325,6 +325,7 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 	}
 
 	///now fix terminus problems
+	//Cannot assume this to be true in the world of NCAA
 	if ( name == "H" && res == 1 && pose.is_fullatom() ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1H", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2H", res ), pose ) );
