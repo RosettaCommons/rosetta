@@ -142,8 +142,8 @@ The command line below shows what was done; broadly all versions of this test ex
 <br/>
 <p>
  To update reference results please copy the files below into the main repository:<br/>
- &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
- &nbsp;&nbsp;&nbsp;&nbsp;<a href="blocklist.{mode}.new.json">blocklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blocklist.json</a> (note the cif/pdb/fast mode is ignored: the blocklist is segfaults and huge PDBs and is shared)<br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/rosetta">「Rosetta repository」</a> as <a href="https://github.com/RosettaCommons/rosetta/tree/main/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="blocklist.{mode}.new.json">blocklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/rosetta">「Rosetta repository」</a> as <a href="https://github.com/RosettaCommons/rosetta/tree/main/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blocklist.json</a> (note the cif/pdb/fast mode is ignored: the blocklist is segfaults and huge PDBs and is shared)<br/>
 </p>
 </body></html>
 '''

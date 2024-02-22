@@ -384,6 +384,8 @@ def link_supplemental_files(rosetta_source_path):
     # os.symlink('../../../../../../../../../database', database_dest)
     symlink(rosetta_source_path + '/../database', prefix + '/pyrosetta/database')
 
+    symlink(rosetta_source_path + '/../LICENSE.md', prefix + '/pyrosetta/LICENSE.md')
+
     #if not os.path.islink(prefix + '/apps'): os.symlink('../../../../../../../scripts/PyRosetta/public', prefix + '/apps')  # creating link to PyRosetta apps dir
     symlink(rosetta_source_path + '/scripts/PyRosetta/public', prefix + '/apps')
 
@@ -797,6 +799,7 @@ def create_package(rosetta_source_path, path):
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
 
     for f in 'setup.py setup.cfg ez_setup.py'.split(): shutil.copy(build_prefix + '/' + f, package_prefix)
+    #shutil.copy(rosetta_source_path + '/../LICENSE.md', package_prefix)
 
     for d in ['pyrosetta', 'rosetta']:
         dir_util_module.copy_tree(build_prefix + '/' + d, package_prefix + '/' + d, update=False)

@@ -1277,6 +1277,15 @@ void init(int argc, char * argv [])
 	//Tracers control output to std::cout and std::cerr
 	init_tracers();
 
+#ifndef PYROSETTA
+	// We want to print this in pretty much all cases (though silence it if we're completely muted.
+	if ( TR.Error.visible() ) {
+		std::cout << "********  (C) Copyright Rosetta Commons Member Institutions.  ***************" << std::endl;
+		std::cout << "* Use of Rosetta for commercial purposes may require purchase of a license. *" << std::endl;
+		std::cout << "********  See LICENSE.md or email license@uw.edu for more details. **********" << std::endl;
+	}
+#endif
+
 	//Read flag config file (common options/custom setup)
 	check_load_fconfig();
 
