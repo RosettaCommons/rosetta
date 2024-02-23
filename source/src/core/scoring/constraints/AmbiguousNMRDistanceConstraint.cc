@@ -80,10 +80,18 @@ bool is_aromatic( core::chemical::AA aa ) {
 void parse_NMR_name_general( std::string name, core::Size res, core::pose::Pose const& pose, NamedAtoms& atoms ) {
 	//Parse the names in a general fashion. Start with non-ambiguous.
 	core::Size input_size = atoms.size();
-	//H will get handled in the calling function
+    std::string const errmsg( "Error in core::scoring::constraints::AmbiguousNMRDistanceConstraint::parse_NMR_name_general() " );
+	//H will get handled in the calling function for start
+    //Need to catch H passed, but no .has H to prevent passing every atom containing H
 	if ( pose.residue_type(res).has(name) ) {
 		atoms.push_back( core::id::NamedAtomID(name, res));
-	} else {
+	} else if (name == "H") {
+        runtime_assert_string_msg(
+                name == "H",
+                errmsg + "function was called on " + name + " and res " + std::to_string( res )
+                + " but H is not a name of an atom in this residue."
+        );
+    } else {
 		//The constraint is ambiguous
 		//First check for QQ or Q and change to H
 		if ( name.substr(0,2) == "QQ" ) {
@@ -104,7 +112,6 @@ void parse_NMR_name_general( std::string name, core::Size res, core::pose::Pose 
 		}
 	}
 	//Catch did not push_back any atoms
-	std::string const errmsg( "Error in core::scoring::constraints::AmbiguousNMRDistanceConstraint::parse_NMR_name_general() " );
 	runtime_assert_string_msg(
 		atoms.size() > input_size,
 		errmsg + "function was called on " + name + " and res " + std::to_string( res )
@@ -381,6 +388,7 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 		if ( pose.residue_type(res).has("3H") ) {
 			atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("3H", res), pose));
 		}
+        //This will catch H at start
 		return;
 	}
 
