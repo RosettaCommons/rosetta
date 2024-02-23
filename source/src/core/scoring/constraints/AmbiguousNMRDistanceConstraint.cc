@@ -41,6 +41,8 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility>
 #include <utility/vector1.hh>
+#include <algorithm>
+#include <cctype>
 
 
 static basic::Tracer tr( "core.scoring.constraints" );
@@ -72,6 +74,40 @@ bool is_aromatic( core::chemical::AA aa ) {
 	using core::chemical::AA;
 	using namespace core::chemical;
 	return ( aa == aa_trp || aa == aa_phe || aa == aa_tyr || aa == aa_his );
+}
+
+void parse_NMR_name_general( std::string name, core::Size res, core::pose::Pose const& pose, NamedAtoms& atoms ) {
+    //Parse the names in a general fashion. Start with non-ambiguous.
+    core::Size input_size = atoms.size();
+    if (pose.residue_type(res).has(name)) {
+        atoms.push_back( core::id::NamedAtomID(name, res));
+    } else {
+        //The constraint is ambiguous
+        //First check for QQ or Q and change to H
+        if (name.substr(0,2) == "QQ" ) {
+            name = 'H' + name.substr(2, name.size() -1 );
+        } else if (name.substr(0, 1) == "Q" ) {
+            name = 'H' + name.substr(1, name.size() - 1);
+        }
+
+        //Now check for all atom names containing the substring
+        for ( core::Size num = 1; num <= pose.residue_type(res).natoms(); ++num) {
+            //std::cout << "Num: " << num << " of" << pose.residue_type(res).natoms() << std::endl;
+            size_t find = pose.residue_type(res).atom_name(num).find(name);
+            if ( find != std::string::npos) {
+                auto atm_name = pose.residue_type(res).atom_name(num);
+                atm_name.erase(std::remove_if(atm_name.begin(), atm_name.end(), ::isspace), atm_name.end());
+                atoms.push_back( core::id::NamedAtomID( atm_name, res) );
+            }
+        }
+    }
+    //Catch did not push_back any atoms
+    std::string const errmsg( "Error in core::scoring::constraints::AmbiguousNMRDistanceConstraint::parse_NMR_name_general() " );
+    runtime_assert_string_msg(
+            atoms.size() > input_size,
+            errmsg + "function was called on " + name + " and res " + std::to_string( res )
+            + " but no atoms matched in residue type " + pose.residue_type(res).name() + "."
+    );
 }
 
 void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, NamedAtoms& atoms ) {
@@ -262,6 +298,10 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 		atoms.push_back( NamedAtomID( "2HG1", res ) );
 	} else if ( name == "HG13" ) {
 		if ( aa == aa_ile ) {
+            //From what I can tell HG13 should actually be 2HG1, so this may be a bug
+            //This corresponds to the pare_NMR_name_old, which has a similar issue
+            //Just look at the structures before and after being read by Rosetta
+            //It should be that 2 -> 1 and 3 -> 2; not 3->1
 			atoms.push_back( NamedAtomID( "1HG1", res ) );
 		} else {
 			atoms.push_back( NamedAtomID( "3HG1", res ) );
@@ -334,7 +374,8 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 	}
 
 	NamedAtoms named_atoms;
-	parse_NMR_name( name, res, aa, named_atoms );
+	//parse_NMR_name( name, res, aa, named_atoms );
+    parse_NMR_name_general(name, res, pose, named_atoms);
 
 	for ( NamedAtoms::const_iterator it= named_atoms.begin(); it!=named_atoms.end(); ++it ) {
 		atoms.push_back( named_atom_id_to_atom_id( *it, pose ) );

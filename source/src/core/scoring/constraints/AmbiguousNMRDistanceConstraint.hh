@@ -24,6 +24,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <utility/vector1.hh>
 
@@ -207,6 +208,7 @@ public:
 
 typedef utility::vector1< core::id::NamedAtomID > NamedAtoms;
 void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, NamedAtoms& );
+void parse_NMR_name_general( std::string name, core::Size res, core::pose::Pose const& pose, NamedAtoms& atoms );
 
 } // constraints
 } // scoring
