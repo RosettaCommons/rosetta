@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/cyclic_peptide/crosslinker/Lanthionine_Helper.fwd.hh
-/// @brief A CrosslinkerMoverHelper for placing a terminal (or lariat-style) thioether linkage.
+/// @brief A crosslinker for lanthipeptides (lanthionine and methyllanthionine)
 /// @author Clay Tydings (claiborne.w.tydings@vanderbilt.edu)
 
 #ifndef INCLUDED_protocols_cyclic_peptide_crosslinker_Lanthionine_Helper_fwd_hh

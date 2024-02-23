@@ -611,8 +611,8 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	);
 	runtime_assert_string_msg(
 		!( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 2 && (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_thioether_lariat
-        || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat
-        || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_lanthipeptide ) ),
+		|| cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat
+		|| cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_lanthipeptide ) ),
 		"Error in simple_cycpep_predict app: quasi-symmetric sampling (\"-cyclic_peptide:require_symmetry_repeats\" flag) is incompatible with teriminal disulfide cyclization, thioether lariat cyclization, lanthipeptides, or with isopeptide bond cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
 	);
 	runtime_assert_string_msg(
@@ -815,22 +815,22 @@ SimpleCycpepPredictApplication::initialize_from_options(
 
 	//CWT store lan and melan positions
 	if ( option[basic::options::OptionKeys::cyclic_peptide::lanthionine_positions].user() ) {
-			core::Size const nlanres(option[basic::options::OptionKeys::cyclic_peptide::lanthionine_positions]().size());
-			runtime_assert_string_msg( nlanres > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of residues to form lanthionine rings." );
-			//runtime_assert_string_msg( nlanres % 2 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of two.  Pairs of residues must form lanthionine rings." );
-            //Only allowing two specified residues at the moment
-            runtime_assert_string_msg( nlanres == 2, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of two residues. Pairs of residues must form lanthionine rings." );
-			core::Size count(0);
-			lanthionine_positions_.resize(nlanres / 2);
-			for ( core::Size i(1), imax(nlanres / 2); i<=imax; ++i ) {
-				utility::vector1 <core::Size> innervect(2);
-				for ( core::Size j=1; j<=2; ++j ) {
-					++count;
-					innervect[j] = option[basic::options::OptionKeys::cyclic_peptide::lanthionine_positions]()[count];
-				}
-				lanthionine_positions_[i] = innervect;
+		core::Size const nlanres(option[basic::options::OptionKeys::cyclic_peptide::lanthionine_positions]().size());
+		runtime_assert_string_msg( nlanres > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of residues to form lanthionine rings." );
+		//runtime_assert_string_msg( nlanres % 2 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of two.  Pairs of residues must form lanthionine rings." );
+		//Only allowing two specified residues at the moment
+		runtime_assert_string_msg( nlanres == 2, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of two residues. Pairs of residues must form lanthionine rings." );
+		core::Size count(0);
+		lanthionine_positions_.resize(nlanres / 2);
+		for ( core::Size i(1), imax(nlanres / 2); i<=imax; ++i ) {
+			utility::vector1 <core::Size> innervect(2);
+			for ( core::Size j=1; j<=2; ++j ) {
+				++count;
+				innervect[j] = option[basic::options::OptionKeys::cyclic_peptide::lanthionine_positions]()[count];
 			}
+			lanthionine_positions_[i] = innervect;
 		}
+	}
 
 	//Store the paraBBMB positions.
 	if ( option[basic::options::OptionKeys::cyclic_peptide::paraBBMB_positions].user() ) {
@@ -1791,15 +1791,15 @@ SimpleCycpepPredictApplication::run() const {
 			set_up_terminal_disulfide_variants( pose ); //Add disulfide variants, if we're doing disulfide cyclization.
 		} else if ( cyclization_type() == SCPA_thioether_lariat ) {
 			thioether_sidechain_index = set_up_terminal_thioether_lariat_variants( pose ); //Add thioether lariat variant to the N-terminus, if we're doing that type of cyclization.
-		} else if ( cyclization_type() == SCPA_lanthipeptide){
+		} else if ( cyclization_type() == SCPA_lanthipeptide ) {
 			//need to call for all lan and melan resi pairs
 			if ( lanthionine_positions_.size() > 0 ) {
 				for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
 					debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
 					protocols::cyclic_peptide::crosslinker::set_up_lanthionine_variants(*pose, lanthionine_positions_[i][1], lanthionine_positions_[i][2]);
 				}
-                core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
-                core::pose::add_upper_terminus_type_to_pose_residue( *pose, pose->size() );
+				core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
+				core::pose::add_upper_terminus_type_to_pose_residue( *pose, pose->size() );
 			} else {
 				runtime_assert_string_msg( lanthionine_positions_.size() > 0 , "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication lanthionine positions are empty");
 			}
@@ -1814,7 +1814,7 @@ SimpleCycpepPredictApplication::run() const {
 		if ( cyclization_type() == SCPA_thioether_lariat ) {
 			runtime_assert( thioether_sidechain_index != 0  );
 			protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *pose, 1, thioether_sidechain_index );
-		} else if ( cyclization_type() == SCPA_lanthipeptide){
+		} else if ( cyclization_type() == SCPA_lanthipeptide ) {
 			if ( lanthionine_positions_.size() > 0 ) {
 				for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
 					debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
@@ -2065,7 +2065,7 @@ SimpleCycpepPredictApplication::position_backbone_is_randomizable(
 		return false;
 	} else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && res_index == 1 ) {
 		return false;
-	} else if ( cyclization_type() == SCPA_lanthipeptide ){
+	} else if ( cyclization_type() == SCPA_lanthipeptide ) {
 		return false;
 	}
 	return true;
@@ -2226,12 +2226,12 @@ SimpleCycpepPredictApplication::find_first_and_last_lanthipeptide_residues(
 	runtime_assert( cyclization_type() == SCPA_lanthipeptide );
 
 	//only lanthionine rings rn
-	if ( lanthionine_positions_.size() > 0){
+	if ( lanthionine_positions_.size() > 0 ) {
 		core::Size  lan_ring( numeric::random::rg().random_range(1, lanthionine_positions_.size()) );
 		if ( lanthionine_positions_[lan_ring][1] < lanthionine_positions_[lan_ring][2] ) {
 			firstres = lanthionine_positions_[lan_ring][1];
 			lastres = lanthionine_positions_[lan_ring][2];
-		} else{
+		} else {
 			firstres = lanthionine_positions_[lan_ring][2];
 			lastres = lanthionine_positions_[lan_ring][1];
 		}
@@ -2240,9 +2240,9 @@ SimpleCycpepPredictApplication::find_first_and_last_lanthipeptide_residues(
 	}
 	//firstres = 1;
 	//if ( lariat_sidechain_index_ != 0 ) {
-	//	lastres = lariat_sidechain_index_;
+	// lastres = lariat_sidechain_index_;
 	//} else {
-	//	lastres = find_last_disulf_res( pose );
+	// lastres = find_last_disulf_res( pose );
 	//}
 }
 
@@ -2670,7 +2670,7 @@ SimpleCycpepPredictApplication::set_up_lanthipeptide_cyclization_mover(
 			debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
 			protocols::cyclic_peptide::crosslinker::set_up_lanthionine_bond_mover(*termini, *pose, lanthionine_positions_[i][1], lanthionine_positions_[i][2]);
 		}
-        //termini->set( 1, "C", 2, "N", true );
+		//termini->set( 1, "C", 2, "N", true );
 	} else {
 		runtime_assert_string_msg( lanthionine_positions_.size() > 0 , "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication lanthionine positions are empty");
 	}
@@ -2826,7 +2826,7 @@ SimpleCycpepPredictApplication::set_up_native (
 	if ( cyclization_type() == SCPA_thioether_lariat ) {
 		runtime_assert( thioether_sidechain_index != 0 ); //Should be true.
 		protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *native_pose, 1, thioether_sidechain_index );
-	} else if (cyclization_type() == SCPA_lanthipeptide) {
+	} else if ( cyclization_type() == SCPA_lanthipeptide ) {
 		if ( lanthionine_positions_.size() > 0 ) {
 			for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
 				debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
@@ -2969,9 +2969,9 @@ SimpleCycpepPredictApplication::add_lanthipeptide_cyclic_constraints (
 	//first res should be ala equiv, second cys
 ) const {
 	//protocols::cyclic_peptide::crosslinker::set_up_lanthipeptide_constraints(
-	//	*pose,
-	//	n_index,
-	//	c_index
+	// *pose,
+	// n_index,
+	// c_index
 	//);
 	if ( lanthionine_positions_.size() > 0 ) {
 		for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
@@ -3443,24 +3443,24 @@ SimpleCycpepPredictApplication::add_closebond_logic_lanthipeptide(
 	if ( pose->residue_type(cyclization_point_start).base_name() == "CYS" ) {
 		ala_res = cyclization_point_end;
 		cys_res = cyclization_point_start;
-    } else {
-        ala_res = cyclization_point_start;
+	} else {
+		ala_res = cyclization_point_start;
 		cys_res = cyclization_point_end;
-    }
+	}
 	//} else if( pose->residue_type(cyclization_point_end).base_name() == "DALA" || pose->residue_type(cyclization_point_end).base_name() == "ALA") {
-	//	ala_res = cyclization_point_end;
-	//	cys_res = cyclization_point_start;
+	// ala_res = cyclization_point_end;
+	// cys_res = cyclization_point_start;
 	//} else {
-	//	runtime_assert_string_msg(
-	//		pose->residue_type(cyclization_point_start).base_name() == "DALA" || pose->residue_type(cyclization_point_start).base_name() == "ALA" ||
-	//		pose->residue_type(cyclization_point_end).base_name() == "DALA" || pose->residue_type(cyclization_point_end).base_name() == "ALA",
-	//		"Neither " + std::to_string( cyclization_point_end ) + " nor " + std::to_string( cyclization_point_start ) +
-	//		"is a D-ALA or ALA."
-	//	);
+	// runtime_assert_string_msg(
+	//  pose->residue_type(cyclization_point_start).base_name() == "DALA" || pose->residue_type(cyclization_point_start).base_name() == "ALA" ||
+	//  pose->residue_type(cyclization_point_end).base_name() == "DALA" || pose->residue_type(cyclization_point_end).base_name() == "ALA",
+	//  "Neither " + std::to_string( cyclization_point_end ) + " nor " + std::to_string( cyclization_point_start ) +
+	//  "is a D-ALA or ALA."
+	// );
 	//}
 	//Close lanthionine bond
 	core::chemical::ResidueType const & rt_start( pose->residue_type( cys_res ) );
-	std::string const startatom 	( rt_start.get_disulfide_atom_name() );
+	std::string const startatom  ( rt_start.get_disulfide_atom_name() );
 	std::string const endatom ( "CB" );
 	genkic->close_bond(
 		cys_res,
@@ -3474,32 +3474,32 @@ SimpleCycpepPredictApplication::add_closebond_logic_lanthipeptide(
 		180.0, false, false );
 
 	//sidechain randomization
-    genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
 
-    core::Size const first_sc_at( pose->residue_type(cys_res).first_sidechain_atom() ); //Value is 5
-    core::chemical::ResidueType const & curtype( pose->residue_type(cys_res) );
-    for ( core::Size curat( curtype.residue_connect_atom_index( curtype.n_possible_residue_connections() ) );
-    curat!=first_sc_at; curat = curtype.icoor(curat).stub_atom1().atomno() ) { //March up from the thiol (n.possible_residue_connections()==SG) atom
-        core::Size const otherat( curtype.icoor(curat).stub_atom1().atomno() ); //Get the parent of the current atom
-        utility::vector1< core::id::NamedAtomID > sc_vect;
-        sc_vect.push_back( core::id::NamedAtomID( curtype.atom_name(curat), cys_res ) );
-        sc_vect.push_back( core::id::NamedAtomID( curtype.atom_name(otherat), cys_res ) );
-        genkic->add_atomset_to_perturber_atomset_list( sc_vect );
-    }
+	core::Size const first_sc_at( pose->residue_type(cys_res).first_sidechain_atom() ); //Value is 5
+	core::chemical::ResidueType const & curtype( pose->residue_type(cys_res) );
+	for ( core::Size curat( curtype.residue_connect_atom_index( curtype.n_possible_residue_connections() ) );
+			curat!=first_sc_at; curat = curtype.icoor(curat).stub_atom1().atomno() ) { //March up from the thiol (n.possible_residue_connections()==SG) atom
+		core::Size const otherat( curtype.icoor(curat).stub_atom1().atomno() ); //Get the parent of the current atom
+		utility::vector1< core::id::NamedAtomID > sc_vect;
+		sc_vect.push_back( core::id::NamedAtomID( curtype.atom_name(curat), cys_res ) );
+		sc_vect.push_back( core::id::NamedAtomID( curtype.atom_name(otherat), cys_res ) );
+		genkic->add_atomset_to_perturber_atomset_list( sc_vect );
+	}
 
-    //Randomize upper res backbone:
-    genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
-    utility::vector1< core::id::NamedAtomID > upper_bb_vect;
-    upper_bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
-    upper_bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_start ) );
-    genkic->add_atomset_to_perturber_atomset_list( upper_bb_vect );
+	//Randomize upper res backbone:
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+	utility::vector1< core::id::NamedAtomID > upper_bb_vect;
+	upper_bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
+	upper_bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_start ) );
+	genkic->add_atomset_to_perturber_atomset_list( upper_bb_vect );
 
-    //Randomize lower res backbone:
-    genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
-    utility::vector1< core::id::NamedAtomID > lower_bb_vect;
-    lower_bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
-    lower_bb_vect.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
-    genkic->add_atomset_to_perturber_atomset_list( lower_bb_vect );
+	//Randomize lower res backbone:
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+	utility::vector1< core::id::NamedAtomID > lower_bb_vect;
+	lower_bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
+	lower_bb_vect.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
+	genkic->add_atomset_to_perturber_atomset_list( lower_bb_vect );
 }
 
 /// @brief Set up the logic to close the bond at the cyclization point.
@@ -3527,7 +3527,7 @@ SimpleCycpepPredictApplication::add_closebond_logic(
 	case SCPA_thioether_lariat :
 		add_closebond_logic_thioether_lariat( pose, cyclization_point_start, cyclization_point_end, genkic );
 		return;
-	case SCPA_lanthipeptide:
+	case SCPA_lanthipeptide :
 		add_closebond_logic_lanthipeptide( pose, cyclization_point_start, cyclization_point_end, genkic);
 		return;
 	case SCPA_invalid_type :
@@ -5047,8 +5047,8 @@ SimpleCycpepPredictApplication::set_up_terminal_thioether_lariat_variants(
 /// @brief Given the basename of a residue type, return true if this is a type that can donate the nitrogen to an
 /// isopeptide bond, false otherwise.
 bool SimpleCycpepPredictApplication::is_isopeptide_forming_amide_type( std::string const &basename ) const {
-  return (basename == "LYS" || basename == "ORN" || basename == "DAB" || basename == "DPP" ||
-    basename == "DLYS" || basename == "DORN" || basename == "DDAB" || basename == "DDPP");
+	return (basename == "LYS" || basename == "ORN" || basename == "DAB" || basename == "DPP" ||
+		basename == "DLYS" || basename == "DORN" || basename == "DDAB" || basename == "DDPP");
 }
 
 /// @brief Given the AA of a residue type, return true if this is a type that can donate the carbonyl to an

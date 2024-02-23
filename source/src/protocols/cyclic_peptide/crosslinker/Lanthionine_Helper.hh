@@ -6,10 +6,9 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
-//TODO(CT): Fill out these @'s
-/// @file --path--/--class--.hh
-/// @brief --brief--
-/// @author --name-- (--email--)
+/// @file protocols/cyclic_peptide/crosslinker/Lanthionine_Helper.hh
+/// @brief A crosslinker for lanthipeptides (lanthionine and methyllanthionine).
+/// @author Clay Tydings (claiborne.w.tydings@vanderbilt.edu)
 
 #ifndef INCLUDED_protocols_cyclic_peptide_crosslinker_Lanthionine_Helper_HH
 #define INCLUDED_protocols_cyclic_peptide_crosslinker_Lanthionine_Helper_HH
@@ -32,7 +31,7 @@ namespace protocols {
 namespace cyclic_peptide {
 namespace crosslinker {
 
-/// @brief --brief--
+/// @brief A crosslinker class for lanthipeptides (lanthionine and methyllanthionine).
 /// @author Clay Tydings (claiborne.w.tydings@vanderbilt.edu)
 class Lanthionine_Helper : public protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelper {
 
@@ -62,7 +61,7 @@ public: // public methods
 	/// coordinate the linker.
 	/// @details Can be called by add_linker_asymmetric().  Must be defined by derived classes
 	/// (pure virtual).  Version for asymmetric poses.
-	void 
+	void
 	add_linker_bonds_asymmetric(
 		core::pose::Pose & pose,
 		utility::vector1< core::Size > const & res_indices,
@@ -181,17 +180,17 @@ public: // public methods
 	}
 
 private: // private methods
-  
-  ///@brief Given a selection of exactly two residues and a pose, return the two lanthionine
-  ///residues.  
-  
-  void
-  get_lanthionine_residues_from_selection(
-    core::select::residue_selector::ResidueSubset const & selection,
-    core::pose::Pose const & pose,
-    core::Size & dalares,
-    core::Size & cysres
-  ) const;
+
+	///@brief Given a selection of exactly two residues and a pose, return the two lanthionine
+	///residues.
+
+	void
+	get_lanthionine_residues_from_selection(
+		core::select::residue_selector::ResidueSubset const & selection,
+		core::pose::Pose const & pose,
+		core::Size & dalares,
+		core::Size & cysres
+	) const;
 
 
 private: // data

@@ -120,8 +120,8 @@ CrosslinkerMover::get_crosslinker_name(
 		return "TMA";
 	case CrossLinker::thioether :
 		return "thioether";
-  case CrossLinker::lanthionine :
-    return "lanthionine";
+	case CrossLinker::lanthionine :
+		return "lanthionine";
 	case CrossLinker::tetrahedral_metal :
 		return "tetrahedral_metal";
 	case CrossLinker::octahedral_metal :
@@ -499,8 +499,8 @@ CrosslinkerMover::crosslinkermover_helper_from_type() const {
 		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TMA_Helper >();
 	case CrossLinker::thioether :
 		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::Thioether_Helper >();
-  case CrossLinker::lanthionine :
-    return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::Lanthionine_Helper >();
+	case CrossLinker::lanthionine :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::Lanthionine_Helper >();
 	case CrossLinker::tetrahedral_metal :
 		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper >( metal_type() );
 	case CrossLinker::octahedral_metal :

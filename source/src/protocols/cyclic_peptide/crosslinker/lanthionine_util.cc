@@ -63,21 +63,21 @@ set_up_lanthionine_variants(
 	runtime_assert_string_msg(
 		//pose.residue(dalares).connected_residue_at_lower() == 0,
 		//pose.residue_type(dalares).is_d_aa(),
-        pose.residue_type( dalares ).base_name() == "BDS"  || pose.residue_type( dalares ).base_name() == "BDR"
-        || pose.residue_type( dalares ).base_name() == "BLS"  || pose.residue_type( dalares ).base_name() == "BLR"
-        || pose.residue_type(dalares).base_name() == "DALA" || pose.residue_type(dalares).base_name() == "ALA",
+		pose.residue_type( dalares ).base_name() == "BDS"  || pose.residue_type( dalares ).base_name() == "BDR"
+		|| pose.residue_type( dalares ).base_name() == "BLS"  || pose.residue_type( dalares ).base_name() == "BLR"
+		|| pose.residue_type(dalares).base_name() == "DALA" || pose.residue_type(dalares).base_name() == "ALA",
 		errmsg + "Position " + std::to_string( dalares ) + " was selected as the non-cys residue for a "
 		"lanthionine connection, but this residue is not a D-ALA or ALA or Butyrine Variant."
 	);
 
 	//if ( pose.residue_type(dalares).is_lower_terminus() ) {
-	//	core::pose::remove_lower_terminus_type_from_pose_residue( pose, dalares );
-	//	TR << "Removed lower terminus type from residue " << pose.residue_type(dalares).base_name() << dalares << "." << std::endl;
+	// core::pose::remove_lower_terminus_type_from_pose_residue( pose, dalares );
+	// TR << "Removed lower terminus type from residue " << pose.residue_type(dalares).base_name() << dalares << "." << std::endl;
 	//}
-	
+
 	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SIDECHAIN_CONJUGATION, cysres );
 	TR << "Added sidechain conjugation type to residue " << pose.residue_type(cysres).base_name() << cysres << "." << std::endl;
-	
+
 	core::pose::add_variant_type_to_pose_residue( pose, core::chemical::SC_BRANCH_POINT, dalares );
 	TR << "Added acetylated SC_BRANCH_POINT connection type to residue " << pose.residue_type(dalares).base_name() << dalares << "." << std::endl;
 
@@ -88,7 +88,7 @@ set_up_lanthionine_variants(
 
 	// Force rebuild of the "H":
 	//if ( pose.residue_type(dalares).has("H") ) {
-	//	pose.set_xyz( core::id::NamedAtomID( "H", dalares ), pose.residue_type( dalares ).icoor( pose.residue_type( dalares ).atom_index("H") ).build( pose.residue( dalares ), pose.conformation() ) );
+	// pose.set_xyz( core::id::NamedAtomID( "H", dalares ), pose.residue_type( dalares ).icoor( pose.residue_type( dalares ).atom_index("H") ).build( pose.residue( dalares ), pose.conformation() ) );
 	//}
 
 	//pose.update_residue_neighbors();
@@ -189,8 +189,8 @@ set_up_lanthionine_constraints(
 	//The four atoms defining the lanthionine bond:
 	//TODO change this to six atoms
 	AtomID const atom_ao(
-    cystype.icoor(cystype.icoor(cystype.residue_connect_atom_index(cystype.n_possible_residue_connections())).stub_atom1().atomno()).stub_atom1().atomno(),
-    cysres );
+		cystype.icoor(cystype.icoor(cystype.residue_connect_atom_index(cystype.n_possible_residue_connections())).stub_atom1().atomno()).stub_atom1().atomno(),
+		cysres );
 	AtomID const atom_a(
 		cystype.icoor(cystype.residue_connect_atom_index(cystype.n_possible_residue_connections())).stub_atom1().atomno(),
 		cysres );
@@ -204,8 +204,8 @@ set_up_lanthionine_constraints(
 		dalatype.icoor( dalatype.residue_connect_atom_index( dalatype.n_possible_residue_connections() ) ).stub_atom1().atomno(),
 		dalares );
 	AtomID const atom_do(
-    dalatype.icoor(dalatype.icoor(dalatype.residue_connect_atom_index(dalatype.n_possible_residue_connections())).stub_atom1().atomno()).stub_atom1().atomno(),
-    dalares );
+		dalatype.icoor(dalatype.icoor(dalatype.residue_connect_atom_index(dalatype.n_possible_residue_connections())).stub_atom1().atomno()).stub_atom1().atomno(),
+		dalares );
 
 	AtomID const atom_virt_cysres(
 		pose.residue_type(cysres).atom_index("V1"),
@@ -239,375 +239,370 @@ set_up_lanthionine_constraints(
 		pose.add_constraint (distconst3);
 	}
 
-    if (pose.residue_type(dalares).base_name() == "DALA" || pose.residue_type(dalares).base_name() == "ALA") {
-        if (pose.residue_type(
-                dalares).is_d_aa()) { //Llanthionine dihedral angle (N-Ca-Cb-S, from DALA) constraints for D_AA steriochem
-            FuncOP n_ca_cb_s_harm0(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 9.73, 0));
-            ConstraintCOP n_ca_cb_s_cnst0(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm0));
-            pose.add_constraint(n_ca_cb_s_cnst0);
-            FuncOP n_ca_cb_s_harm1(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.602, 1));
-            ConstraintCOP n_ca_cb_s_cnst1(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm1));
-            pose.add_constraint(n_ca_cb_s_cnst1);
-            FuncOP n_ca_cb_s_harm2(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -1.412, 2));
-            ConstraintCOP n_ca_cb_s_cnst2(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm2));
-            pose.add_constraint(n_ca_cb_s_cnst2);
-            FuncOP n_ca_cb_s_harm3(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -3.249, 3));
-            ConstraintCOP n_ca_cb_s_cnst3(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm3));
-            pose.add_constraint(n_ca_cb_s_cnst3);
-            FuncOP n_ca_cb_s_harm4(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -0.023, 4));
-            ConstraintCOP n_ca_cb_s_cnst4(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm4));
-            pose.add_constraint(n_ca_cb_s_cnst4);
-            FuncOP n_ca_cb_s_harm5(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.232, 1));
-            ConstraintCOP n_ca_cb_s_cnst5(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm5));
-            pose.add_constraint(n_ca_cb_s_cnst5);
-            FuncOP n_ca_cb_s_harm6(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.82, 2));
-            ConstraintCOP n_ca_cb_s_cnst6(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm6));
-            pose.add_constraint(n_ca_cb_s_cnst6);
-            FuncOP n_ca_cb_s_harm7(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.633, 3));
-            ConstraintCOP n_ca_cb_s_cnst7(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm7));
-            pose.add_constraint(n_ca_cb_s_cnst7);
-            FuncOP n_ca_cb_s_harm8(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.023, 4));
-            ConstraintCOP n_ca_cb_s_cnst8(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm8));
-            pose.add_constraint(n_ca_cb_s_cnst8);
-        }
-            //.base_name() == "ALA"
-        else if (pose.residue_type(dalares).is_l_aa()) {
-            //Lanthionine dihedral angle (N-Ca-Cb-S, from ALA) constraints for L_AA steriochem
-            FuncOP n_ca_cb_s_harm0(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 6.304, 0));
-            ConstraintCOP n_ca_cb_s_cnst0(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm0));
-            pose.add_constraint(n_ca_cb_s_cnst0);
-            FuncOP n_ca_cb_s_harm1(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.838, 1));
-            ConstraintCOP n_ca_cb_s_cnst1(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm1));
-            pose.add_constraint(n_ca_cb_s_cnst1);
-            FuncOP n_ca_cb_s_harm2(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.439, 2));
-            ConstraintCOP n_ca_cb_s_cnst2(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm2));
-            pose.add_constraint(n_ca_cb_s_cnst2);
-            FuncOP n_ca_cb_s_harm3(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -3.417, 3));
-            ConstraintCOP n_ca_cb_s_cnst3(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm3));
-            pose.add_constraint(n_ca_cb_s_cnst3);
-            FuncOP n_ca_cb_s_harm4(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.116, 4));
-            ConstraintCOP n_ca_cb_s_cnst4(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm4));
-            pose.add_constraint(n_ca_cb_s_cnst4);
-            FuncOP n_ca_cb_s_harm5(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.562, 1));
-            ConstraintCOP n_ca_cb_s_cnst5(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm5));
-            pose.add_constraint(n_ca_cb_s_cnst5);
-            FuncOP n_ca_cb_s_harm6(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 1.234, 2));
-            ConstraintCOP n_ca_cb_s_cnst6(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm6));
-            pose.add_constraint(n_ca_cb_s_cnst6);
-            FuncOP n_ca_cb_s_harm7(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.144, 3));
-            ConstraintCOP n_ca_cb_s_cnst7(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm7));
-            pose.add_constraint(n_ca_cb_s_cnst7);
-            FuncOP n_ca_cb_s_harm8(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.116, 4));
-            ConstraintCOP n_ca_cb_s_cnst8(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
-                                                                      n_ca_cb_s_harm8));
-            pose.add_constraint(n_ca_cb_s_cnst8);
-        }
+	if ( pose.residue_type(dalares).base_name() == "DALA" || pose.residue_type(dalares).base_name() == "ALA" ) {
+		if ( pose.residue_type(
+				dalares).is_d_aa() ) { //Llanthionine dihedral angle (N-Ca-Cb-S, from DALA) constraints for D_AA steriochem
+			FuncOP n_ca_cb_s_harm0(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 9.73, 0));
+			ConstraintCOP n_ca_cb_s_cnst0(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm0));
+			pose.add_constraint(n_ca_cb_s_cnst0);
+			FuncOP n_ca_cb_s_harm1(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.602, 1));
+			ConstraintCOP n_ca_cb_s_cnst1(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm1));
+			pose.add_constraint(n_ca_cb_s_cnst1);
+			FuncOP n_ca_cb_s_harm2(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -1.412, 2));
+			ConstraintCOP n_ca_cb_s_cnst2(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm2));
+			pose.add_constraint(n_ca_cb_s_cnst2);
+			FuncOP n_ca_cb_s_harm3(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -3.249, 3));
+			ConstraintCOP n_ca_cb_s_cnst3(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm3));
+			pose.add_constraint(n_ca_cb_s_cnst3);
+			FuncOP n_ca_cb_s_harm4(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -0.023, 4));
+			ConstraintCOP n_ca_cb_s_cnst4(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm4));
+			pose.add_constraint(n_ca_cb_s_cnst4);
+			FuncOP n_ca_cb_s_harm5(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.232, 1));
+			ConstraintCOP n_ca_cb_s_cnst5(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm5));
+			pose.add_constraint(n_ca_cb_s_cnst5);
+			FuncOP n_ca_cb_s_harm6(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.82, 2));
+			ConstraintCOP n_ca_cb_s_cnst6(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm6));
+			pose.add_constraint(n_ca_cb_s_cnst6);
+			FuncOP n_ca_cb_s_harm7(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.633, 3));
+			ConstraintCOP n_ca_cb_s_cnst7(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm7));
+			pose.add_constraint(n_ca_cb_s_cnst7);
+			FuncOP n_ca_cb_s_harm8(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.023, 4));
+			ConstraintCOP n_ca_cb_s_cnst8(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm8));
+			pose.add_constraint(n_ca_cb_s_cnst8);
+		} else if ( pose.residue_type(dalares).is_l_aa() ) {
+			//.base_name() == "ALA"
+			//Lanthionine dihedral angle (N-Ca-Cb-S, from ALA) constraints for L_AA steriochem
+			FuncOP n_ca_cb_s_harm0(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 6.304, 0));
+			ConstraintCOP n_ca_cb_s_cnst0(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm0));
+			pose.add_constraint(n_ca_cb_s_cnst0);
+			FuncOP n_ca_cb_s_harm1(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.838, 1));
+			ConstraintCOP n_ca_cb_s_cnst1(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm1));
+			pose.add_constraint(n_ca_cb_s_cnst1);
+			FuncOP n_ca_cb_s_harm2(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.439, 2));
+			ConstraintCOP n_ca_cb_s_cnst2(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm2));
+			pose.add_constraint(n_ca_cb_s_cnst2);
+			FuncOP n_ca_cb_s_harm3(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -3.417, 3));
+			ConstraintCOP n_ca_cb_s_cnst3(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm3));
+			pose.add_constraint(n_ca_cb_s_cnst3);
+			FuncOP n_ca_cb_s_harm4(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.116, 4));
+			ConstraintCOP n_ca_cb_s_cnst4(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm4));
+			pose.add_constraint(n_ca_cb_s_cnst4);
+			FuncOP n_ca_cb_s_harm5(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.562, 1));
+			ConstraintCOP n_ca_cb_s_cnst5(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm5));
+			pose.add_constraint(n_ca_cb_s_cnst5);
+			FuncOP n_ca_cb_s_harm6(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 1.234, 2));
+			ConstraintCOP n_ca_cb_s_cnst6(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm6));
+			pose.add_constraint(n_ca_cb_s_cnst6);
+			FuncOP n_ca_cb_s_harm7(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.144, 3));
+			ConstraintCOP n_ca_cb_s_cnst7(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm7));
+			pose.add_constraint(n_ca_cb_s_cnst7);
+			FuncOP n_ca_cb_s_harm8(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.116, 4));
+			ConstraintCOP n_ca_cb_s_cnst8(
+				utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_d, atom_do,
+				n_ca_cb_s_harm8));
+			pose.add_constraint(n_ca_cb_s_cnst8);
+		}
 
-        { //Lanthionine dihedral angle (Ca-Cb-S-Cb, from ALA) constraint
-            FuncOP ala_ca_cb_s_cb_harm0(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 4.892, 0));
-            ConstraintCOP ala_ca_cb_s_cb_cnst0(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm0));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst0);
-            FuncOP ala_ca_cb_s_cb_harm1(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -2.008, 1));
-            ConstraintCOP ala_ca_cb_s_cb_cnst1(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm1));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst1);
-            FuncOP ala_ca_cb_s_cb_harm2(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -0.383, 2));
-            ConstraintCOP ala_ca_cb_s_cb_cnst2(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm2));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst2);
-            FuncOP ala_ca_cb_s_cb_harm3(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -1.45, 3));
-            ConstraintCOP ala_ca_cb_s_cb_cnst3(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm3));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst3);
-            FuncOP ala_ca_cb_s_cb_harm4(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.37, 4));
-            ConstraintCOP ala_ca_cb_s_cb_cnst4(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm4));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst4);
-            FuncOP ala_ca_cb_s_cb_harm5(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.156, 1));
-            ConstraintCOP ala_ca_cb_s_cb_cnst5(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm5));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst5);
-            FuncOP ala_ca_cb_s_cb_harm6(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 1.384, 2));
-            ConstraintCOP ala_ca_cb_s_cb_cnst6(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm6));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst6);
-            FuncOP ala_ca_cb_s_cb_harm7(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.045, 3));
-            ConstraintCOP ala_ca_cb_s_cb_cnst7(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm7));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst7);
-            FuncOP ala_ca_cb_s_cb_harm8(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.37, 4));
-            ConstraintCOP ala_ca_cb_s_cb_cnst8(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
-                                                                      ala_ca_cb_s_cb_harm8));
-            pose.add_constraint(ala_ca_cb_s_cb_cnst8);
+		{ //Lanthionine dihedral angle (Ca-Cb-S-Cb, from ALA) constraint
+			FuncOP ala_ca_cb_s_cb_harm0(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 4.892, 0));
+			ConstraintCOP ala_ca_cb_s_cb_cnst0(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm0));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst0);
+			FuncOP ala_ca_cb_s_cb_harm1(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -2.008, 1));
+			ConstraintCOP ala_ca_cb_s_cb_cnst1(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm1));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst1);
+			FuncOP ala_ca_cb_s_cb_harm2(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -0.383, 2));
+			ConstraintCOP ala_ca_cb_s_cb_cnst2(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm2));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst2);
+			FuncOP ala_ca_cb_s_cb_harm3(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -1.45, 3));
+			ConstraintCOP ala_ca_cb_s_cb_cnst3(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm3));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst3);
+			FuncOP ala_ca_cb_s_cb_harm4(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.37, 4));
+			ConstraintCOP ala_ca_cb_s_cb_cnst4(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm4));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst4);
+			FuncOP ala_ca_cb_s_cb_harm5(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.156, 1));
+			ConstraintCOP ala_ca_cb_s_cb_cnst5(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm5));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst5);
+			FuncOP ala_ca_cb_s_cb_harm6(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 1.384, 2));
+			ConstraintCOP ala_ca_cb_s_cb_cnst6(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm6));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst6);
+			FuncOP ala_ca_cb_s_cb_harm7(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.045, 3));
+			ConstraintCOP ala_ca_cb_s_cb_cnst7(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm7));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst7);
+			FuncOP ala_ca_cb_s_cb_harm8(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.37, 4));
+			ConstraintCOP ala_ca_cb_s_cb_cnst8(
+				utility::pointer::make_shared<DihedralConstraint>(atom_a, atom_b, atom_c, atom_d,
+				ala_ca_cb_s_cb_harm8));
+			pose.add_constraint(ala_ca_cb_s_cb_cnst8);
 
-            //Lanthionine dihedral angle (Cb-S-Cb-Ca, from CYS) constraints
-            FuncOP cys_ca_cb_s_cb_harm0(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 4.592, 0));
-            ConstraintCOP cys_ca_cb_s_cb_cnst0(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm0));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst0);
-            FuncOP cys_ca_cb_s_cb_harm1(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -1.923, 1));
-            ConstraintCOP cys_ca_cb_s_cb_cnst1(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm1));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst1);
-            FuncOP cys_ca_cb_s_cb_harm2(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -0.463, 2));
-            ConstraintCOP cys_ca_cb_s_cb_cnst2(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm2));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst2);
-            FuncOP cys_ca_cb_s_cb_harm3(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -1.378, 3));
-            ConstraintCOP cys_ca_cb_s_cb_cnst3(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm3));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst3);
-            FuncOP cys_ca_cb_s_cb_harm4(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.384, 4));
-            ConstraintCOP cys_ca_cb_s_cb_cnst4(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm4));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst4);
-            FuncOP cys_ca_cb_s_cb_harm5(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.171, 1));
-            ConstraintCOP cys_ca_cb_s_cb_cnst5(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm5));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst5);
-            FuncOP cys_ca_cb_s_cb_harm6(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 1.255, 2));
-            ConstraintCOP cys_ca_cb_s_cb_cnst6(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm6));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst6);
-            FuncOP cys_ca_cb_s_cb_harm7(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.002, 3));
-            ConstraintCOP cys_ca_cb_s_cb_cnst7(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm7));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst7);
-            FuncOP cys_ca_cb_s_cb_harm8(
-                    utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.384, 4));
-            ConstraintCOP cys_ca_cb_s_cb_cnst8(
-                    utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
-                                                                      cys_ca_cb_s_cb_harm8));
-            pose.add_constraint(cys_ca_cb_s_cb_cnst8);
-        }
-    } else{
-        //There are four possible steriochem configurations for methyllanthionine linkers
-        // the CA can be D(S)/L(R) and the CB can be R/S
-        //.base_name() == "DALA"
-        if (pose.residue_type(dalares).is_d_aa())
-        { //Methyllanthionine dihedral angle (N-Ca-Cb-S, from AAB) constraints for 2S (D_AA) steriochem
-            FuncOP s2_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.707, 0 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm0) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst0);
-            FuncOP s2_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.073, 1 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm1) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst1);
-            FuncOP s2_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.917, 2 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm2) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst2);
-            FuncOP s2_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -2.833, 3 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm3) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst3);
-            FuncOP s2_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.011, 4 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm4) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst4);
-            FuncOP s2_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.43, 1 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm5) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst5);
-            FuncOP s2_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.276, 2 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm6) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst6);
-            FuncOP s2_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.58, 3 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm7) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst7);
-            FuncOP s2_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.011, 4 ) );
-            ConstraintCOP s2_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm8) );
-            pose.add_constraint (s2_ca_cb_s_cb_cnst8);
-        }
-            //.base_name() == "ALA"
-        else if ( pose.residue_type(dalares).is_l_aa())
-        {
-            //Methyllanthionine dihedral angle (N-Ca-Cb-S, from AAB) constraints for 2R (D_AA) steriochem
-            FuncOP r2_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.626, 0 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm0) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst0);
-            FuncOP r2_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.524, 1 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm1) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst1);
-            FuncOP r2_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 1.18, 2 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm2) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst2);
-            FuncOP r2_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -3.111, 3 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm3) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst3);
-            FuncOP r2_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -0.074, 4 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm4) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst4);
-            FuncOP r2_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.458, 1 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm5) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst5);
-            FuncOP r2_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.396, 2 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm6) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst6);
-            FuncOP r2_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.368, 3 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm7) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst7);
-            FuncOP r2_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.074, 4 ) );
-            ConstraintCOP r2_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm8) );
-            pose.add_constraint (r2_ca_cb_s_cb_cnst8);
-        }
+			//Lanthionine dihedral angle (Cb-S-Cb-Ca, from CYS) constraints
+			FuncOP cys_ca_cb_s_cb_harm0(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 4.592, 0));
+			ConstraintCOP cys_ca_cb_s_cb_cnst0(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm0));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst0);
+			FuncOP cys_ca_cb_s_cb_harm1(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -1.923, 1));
+			ConstraintCOP cys_ca_cb_s_cb_cnst1(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm1));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst1);
+			FuncOP cys_ca_cb_s_cb_harm2(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -0.463, 2));
+			ConstraintCOP cys_ca_cb_s_cb_cnst2(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm2));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst2);
+			FuncOP cys_ca_cb_s_cb_harm3(utility::pointer::make_shared<CharmmPeriodicFunc>(0, -1.378, 3));
+			ConstraintCOP cys_ca_cb_s_cb_cnst3(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm3));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst3);
+			FuncOP cys_ca_cb_s_cb_harm4(utility::pointer::make_shared<CharmmPeriodicFunc>(0, 0.384, 4));
+			ConstraintCOP cys_ca_cb_s_cb_cnst4(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm4));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst4);
+			FuncOP cys_ca_cb_s_cb_harm5(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.171, 1));
+			ConstraintCOP cys_ca_cb_s_cb_cnst5(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm5));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst5);
+			FuncOP cys_ca_cb_s_cb_harm6(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 1.255, 2));
+			ConstraintCOP cys_ca_cb_s_cb_cnst6(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm6));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst6);
+			FuncOP cys_ca_cb_s_cb_harm7(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, -0.002, 3));
+			ConstraintCOP cys_ca_cb_s_cb_cnst7(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm7));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst7);
+			FuncOP cys_ca_cb_s_cb_harm8(
+				utility::pointer::make_shared<CharmmPeriodicFunc>(numeric::constants::d::pi_over_2, 0.384, 4));
+			ConstraintCOP cys_ca_cb_s_cb_cnst8(
+				utility::pointer::make_shared<DihedralConstraint>(atom_ao, atom_a, atom_b, atom_c,
+				cys_ca_cb_s_cb_harm8));
+			pose.add_constraint(cys_ca_cb_s_cb_cnst8);
+		}
+	} else {
+		//There are four possible steriochem configurations for methyllanthionine linkers
+		// the CA can be D(S)/L(R) and the CB can be R/S
+		//.base_name() == "DALA"
+		if ( pose.residue_type(dalares).is_d_aa() ) {
+			//Methyllanthionine dihedral angle (N-Ca-Cb-S, from AAB) constraints for 2S (D_AA) steriochem
+			FuncOP s2_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.707, 0 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm0) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst0);
+			FuncOP s2_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.073, 1 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm1) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst1);
+			FuncOP s2_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.917, 2 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm2) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst2);
+			FuncOP s2_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -2.833, 3 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm3) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst3);
+			FuncOP s2_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.011, 4 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm4) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst4);
+			FuncOP s2_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.43, 1 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm5) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst5);
+			FuncOP s2_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.276, 2 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm6) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst6);
+			FuncOP s2_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.58, 3 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm7) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst7);
+			FuncOP s2_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.011, 4 ) );
+			ConstraintCOP s2_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm8) );
+			pose.add_constraint (s2_ca_cb_s_cb_cnst8);
+		} else if ( pose.residue_type(dalares).is_l_aa() ) {
+			//.base_name() == "ALA"
+			//Methyllanthionine dihedral angle (N-Ca-Cb-S, from AAB) constraints for 2R (D_AA) steriochem
+			FuncOP r2_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.626, 0 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm0) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst0);
+			FuncOP r2_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.524, 1 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm1) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst1);
+			FuncOP r2_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 1.18, 2 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm2) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst2);
+			FuncOP r2_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -3.111, 3 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm3) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst3);
+			FuncOP r2_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -0.074, 4 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm4) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst4);
+			FuncOP r2_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.458, 1 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm5) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst5);
+			FuncOP r2_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.396, 2 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm6) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst6);
+			FuncOP r2_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.368, 3 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm7) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst7);
+			FuncOP r2_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.074, 4 ) );
+			ConstraintCOP r2_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm8) );
+			pose.add_constraint (r2_ca_cb_s_cb_cnst8);
+		}
 
-        if (pose.residue_type(dalares).base_name() == "BDS" || pose.residue_type(dalares).base_name() == "BLS")
-        { //Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from CYS) constraints for 3S steriochem
-            FuncOP s3_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 3.8, 0 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm0) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst0);
-            FuncOP s3_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -1.478, 1 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm1) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst1);
-            FuncOP s3_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.217, 2 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm2) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst2);
-            FuncOP s3_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -1.391, 3 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm3) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst3);
-            FuncOP s3_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.246, 4 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm4) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst4);
-            FuncOP s3_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.336, 1 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm5) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst5);
-            FuncOP s3_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.164, 2 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm6) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst6);
-            FuncOP s3_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.114, 3 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm7) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst7);
-            FuncOP s3_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.246, 4 ) );
-            ConstraintCOP s3_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm8) );
-            pose.add_constraint (s3_ca_cb_s_cb_cnst8);
-        }
-        else if ( pose.residue_type(dalares).base_name() == "BDR" || pose.residue_type(dalares).base_name() == "BLR")
-        {
-            //Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from CYS) constraints for 3R steriochem
-            FuncOP r3_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 2.318, 0 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm0) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst0);
-            FuncOP r3_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -0.946, 1 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm1) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst1);
-            FuncOP r3_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.183, 2 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm2) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst2);
-            FuncOP r3_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -1.323, 3 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm3) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst3);
-            FuncOP r3_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.15, 4 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm4) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst4);
-            FuncOP r3_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.471, 1 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm5) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst5);
-            FuncOP r3_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.078, 2 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm6) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst6);
-            FuncOP r3_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.211, 3 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm7) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst7);
-            FuncOP r3_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.15, 4 ) );
-            ConstraintCOP r3_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm8) );
-            pose.add_constraint (r3_ca_cb_s_cb_cnst8);
-        }
+		if ( pose.residue_type(dalares).base_name() == "BDS" || pose.residue_type(dalares).base_name() == "BLS" ) {
+			//Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from CYS) constraints for 3S steriochem
+			FuncOP s3_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 3.8, 0 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm0) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst0);
+			FuncOP s3_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -1.478, 1 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm1) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst1);
+			FuncOP s3_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.217, 2 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm2) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst2);
+			FuncOP s3_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -1.391, 3 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm3) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst3);
+			FuncOP s3_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.246, 4 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm4) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst4);
+			FuncOP s3_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.336, 1 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm5) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst5);
+			FuncOP s3_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.164, 2 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm6) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst6);
+			FuncOP s3_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.114, 3 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm7) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst7);
+			FuncOP s3_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.246, 4 ) );
+			ConstraintCOP s3_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm8) );
+			pose.add_constraint (s3_ca_cb_s_cb_cnst8);
+		} else if ( pose.residue_type(dalares).base_name() == "BDR" || pose.residue_type(dalares).base_name() == "BLR" ) {
+			//Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from CYS) constraints for 3R steriochem
+			FuncOP r3_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 2.318, 0 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm0) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst0);
+			FuncOP r3_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -0.946, 1 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm1) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst1);
+			FuncOP r3_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.183, 2 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm2) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst2);
+			FuncOP r3_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -1.323, 3 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm3) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst3);
+			FuncOP r3_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.15, 4 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm4) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst4);
+			FuncOP r3_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.471, 1 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm5) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst5);
+			FuncOP r3_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.078, 2 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm6) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst6);
+			FuncOP r3_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.211, 3 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm7) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst7);
+			FuncOP r3_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.15, 4 ) );
+			ConstraintCOP r3_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm8) );
+			pose.add_constraint (r3_ca_cb_s_cb_cnst8);
+		}
 
-        //Non-sterio dependent constraints
-        {//Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from AAB) constraint
-            FuncOP cys_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.86, 0 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm0) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst0);
-            FuncOP cys_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -2.577, 1 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm1) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst1);
-            FuncOP cys_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -0.294, 2 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm2) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst2);
-            FuncOP cys_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -1.159, 3 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm3) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst3);
-            FuncOP cys_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.392, 4 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm4) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst4);
-            FuncOP cys_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.236, 1 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm5) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst5);
-            FuncOP cys_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.566, 2 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm6) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst6);
-            FuncOP cys_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.103, 3 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm7) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst7);
-            FuncOP cys_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.392, 4 ) );
-            ConstraintCOP cys_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm8) );
-            pose.add_constraint (cys_ca_cb_s_cb_cnst8);
-        }
-    }
+		//Non-sterio dependent constraints
+		{//Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from AAB) constraint
+			FuncOP cys_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.86, 0 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm0) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst0);
+			FuncOP cys_ca_cb_s_cb_harm1( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -2.577, 1 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst1( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm1) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst1);
+			FuncOP cys_ca_cb_s_cb_harm2( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -0.294, 2 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst2( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm2) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst2);
+			FuncOP cys_ca_cb_s_cb_harm3( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, -1.159, 3 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst3( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm3) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst3);
+			FuncOP cys_ca_cb_s_cb_harm4( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 0.392, 4 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst4( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm4) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst4);
+			FuncOP cys_ca_cb_s_cb_harm5( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.236, 1 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst5( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm5) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst5);
+			FuncOP cys_ca_cb_s_cb_harm6( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 1.566, 2 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst6( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm6) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst6);
+			FuncOP cys_ca_cb_s_cb_harm7( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, -0.103, 3 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst7( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm7) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst7);
+			FuncOP cys_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.392, 4 ) );
+			ConstraintCOP cys_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm8) );
+			pose.add_constraint (cys_ca_cb_s_cb_cnst8);
+		}
+	}
 
 	{ //Lanthionine bond angle constraints sd from methionine:
 		FuncOP circharmfunc2a( utility::pointer::make_shared< CircularHarmonicFunc >( LANTHIONINE_UTIL_LANTHIONINE_BOND_S_ANGLE, 0.18) );

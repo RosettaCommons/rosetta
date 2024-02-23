@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/cyclic_peptide/crosslinker/Lanthionine_Helper.cc
-/// @brief --brief--
-/// @author Clay Tydings (claiborne.w.tydings@vanderbilt.edu) 
+/// @brief A crosslinker for lanthipeptides (lanthionine and methyllanthionine)
+/// @author Clay Tydings (claiborne.w.tydings@vanderbilt.edu)
 // Unit headers
 //#include <protocols/cyclic_peptide/crosslinker/Lanthionine_Helper.fwd.hh>
 #include <protocols/cyclic_peptide/crosslinker/Lanthionine_Helper.hh>
@@ -74,10 +74,10 @@ Lanthionine_Helper::add_linker_asymmetric(
 	//This will not compile until this is implemented.
 	//TODO
 	core::Size firstres, secondres; //Firstres has the backbone linkage, secondres has the sidechain linkage. - change var name to dala and cystine
-  get_lanthionine_residues_from_selection( selection, pose, firstres, secondres );
-  set_up_lanthionine_variants( pose, firstres, secondres ); //Defined in utility file, lanthionine_util.hh/cc.
-  //TR << "Added lanthionine variant types." << std::endl;
-  add_linker_bonds_asymmetric( pose, utility::vector1< core::Size >{ firstres, secondres }, 0 );
+	get_lanthionine_residues_from_selection( selection, pose, firstres, secondres );
+	set_up_lanthionine_variants( pose, firstres, secondres ); //Defined in utility file, lanthionine_util.hh/cc.
+	//TR << "Added lanthionine variant types." << std::endl;
+	add_linker_bonds_asymmetric( pose, utility::vector1< core::Size >{ firstres, secondres }, 0 );
 }
 
 /// @brief Given a pose and a linker, add bonds between the linker and the residues
@@ -94,12 +94,12 @@ Lanthionine_Helper::add_linker_bonds_asymmetric(
 	std::string const errmsg( "Error in Lanthionine_Helper::add_linker_bonds_asymmetric(): " );
 	protocols::simple_moves::DeclareBond declbond;
 	runtime_assert_string_msg( res_indices.size() == 2 && res_indices[1] != res_indices[2], errmsg + "Exactly two residues must be selected to set up linker bonds." );
-  runtime_assert_string_msg( res_indices[1] > 0 && res_indices[1] <= pose.total_residue(), errmsg + "The first residue index must be within the range of pose residues (1-" + std::to_string(pose.total_residue()) + "), but got " + std::to_string(res_indices[1]) + " instead." );
-  runtime_assert_string_msg( res_indices[2] > 0 && res_indices[2] <= pose.total_residue(), errmsg + "The second residue index must be within the range of pose residues (1-" + std::to_string(pose.total_residue()) + "), but got " + std::to_string(res_indices[2]) + " instead." );
-  set_up_lanthionine_bond_mover( declbond, pose, res_indices[1], res_indices[2] );
+	runtime_assert_string_msg( res_indices[1] > 0 && res_indices[1] <= pose.total_residue(), errmsg + "The first residue index must be within the range of pose residues (1-" + std::to_string(pose.total_residue()) + "), but got " + std::to_string(res_indices[1]) + " instead." );
+	runtime_assert_string_msg( res_indices[2] > 0 && res_indices[2] <= pose.total_residue(), errmsg + "The second residue index must be within the range of pose residues (1-" + std::to_string(pose.total_residue()) + "), but got " + std::to_string(res_indices[2]) + " instead." );
+	set_up_lanthionine_bond_mover( declbond, pose, res_indices[1], res_indices[2] );
 	declbond.apply(pose);
-  correct_lanthionine_virtuals( pose, res_indices[1], res_indices[2] );
-  TR << "Added lanthionine bond." << std::endl;
+	correct_lanthionine_virtuals( pose, res_indices[1], res_indices[2] );
+	TR << "Added lanthionine bond." << std::endl;
 }
 
 /// @brief Given a pose and a selection of residues, add the linker,
@@ -140,8 +140,8 @@ Lanthionine_Helper::add_linker_constraints_asymmetric(
 ) const {
 	//This will not compile until this is implemented.
 	core::Size firstres, secondres; //Firstres has the backbone linkage, secondres has the sidechain linkage.--change/check this
-  get_lanthionine_residues_from_selection( selection, pose, firstres, secondres );
-  set_up_lanthionine_constraints( pose, firstres, secondres );
+	get_lanthionine_residues_from_selection( selection, pose, firstres, secondres );
+	set_up_lanthionine_constraints( pose, firstres, secondres );
 }
 
 /// @brief Given a selection of residues that have already been connected to a crosslinker,
@@ -194,16 +194,16 @@ Lanthionine_Helper::filter_by_sidechain_distance_asymmetric(
 ) const {
 	//This will not compile until this is implemented.
 	core::Size dalares, cysres;
-  get_lanthionine_residues_from_selection( selection, pose, dalares, cysres );
+	get_lanthionine_residues_from_selection( selection, pose, dalares, cysres );
 
-  core::Real const ref_dist( MAX_CA_CB_DIST_MINUS_NBR + pose.residue_type(cysres).nbr_radius() );
-  core::Real const ref_dist_sq( ref_dist*ref_dist );
-  core::Real const comparison_val( filter_multiplier*filter_multiplier*ref_dist_sq );
+	core::Real const ref_dist( MAX_CA_CB_DIST_MINUS_NBR + pose.residue_type(cysres).nbr_radius() );
+	core::Real const ref_dist_sq( ref_dist*ref_dist );
+	core::Real const comparison_val( filter_multiplier*filter_multiplier*ref_dist_sq );
 
-  core::Real const distsq( pose.residue(dalares).xyz("CA").distance_squared( pose.residue(cysres).xyz("CB") ) );
-  if ( distsq > comparison_val ) return true; //Filter fails if distance greater than maximum CB-CB separation.
+	core::Real const distsq( pose.residue(dalares).xyz("CA").distance_squared( pose.residue(cysres).xyz("CB") ) );
+	if ( distsq > comparison_val ) return true; //Filter fails if distance greater than maximum CB-CB separation.
 
-  return false;
+	return false;
 }
 
 /// @brief Given a pose with residues selected to be linked by a linker, determine whether
@@ -256,52 +256,52 @@ PRIVATE FUNCTIONS
 /// residues.
 void
 Lanthionine_Helper::get_lanthionine_residues_from_selection(
-  core::select::residue_selector::ResidueSubset const & selection,
-  core::pose::Pose const & pose,
-  core::Size & dalares,
-  core::Size & cysres
+	core::select::residue_selector::ResidueSubset const & selection,
+	core::pose::Pose const & pose,
+	core::Size & dalares,
+	core::Size & cysres
 ) const {
-  //This will not compile until this is implemented.
-  std::string const errmsg( "Error in Lanthionine_Helper::get_lanthionine_residues_from_selection(): " );
-  dalares = 0;
-  cysres = 0;
+	//This will not compile until this is implemented.
+	std::string const errmsg( "Error in Lanthionine_Helper::get_lanthionine_residues_from_selection(): " );
+	dalares = 0;
+	cysres = 0;
 
-  debug_assert( selection.size() == pose.total_residue() );
-  debug_assert( selection.size() >= 2 );
+	debug_assert( selection.size() == pose.total_residue() );
+	debug_assert( selection.size() >= 2 );
 
-  for ( core::Size i(1), imax(selection.size()); i<=imax; ++i ) {
-    if ( selection[i] ) {
-      if ( dalares == 0 ) {
-        dalares = i;
-      } else if ( cysres == 0 ) {
-        cysres = i;
-				if (!pose.residue_type( cysres ).is_sidechain_thiol()) {cysres=dalares; dalares=i;}
-      } else {
-        utility_exit_with_message( errmsg + "More than two residues were selected!  A lanthionine connection is specified by exactly two residues." );
-      }
-    }
-  }
+	for ( core::Size i(1), imax(selection.size()); i<=imax; ++i ) {
+		if ( selection[i] ) {
+			if ( dalares == 0 ) {
+				dalares = i;
+			} else if ( cysres == 0 ) {
+				cysres = i;
+				if ( !pose.residue_type( cysres ).is_sidechain_thiol() ) { cysres=dalares; dalares=i;}
+			} else {
+				utility_exit_with_message( errmsg + "More than two residues were selected!  A lanthionine connection is specified by exactly two residues." );
+			}
+		}
+	}
 
-  runtime_assert_string_msg( dalares != 0, errmsg + "No suitable D-ALA or ALA or BDR or BDS or BLR or BLS residue that can accept a lanthionine bond" );
-  runtime_assert_string_msg( cysres != 0, "No suitable cystine residue that can form a lanthionine connection from its side-chain was selected!" );
-	
+	runtime_assert_string_msg( dalares != 0, errmsg + "No suitable D-ALA or ALA or BDR or BDS or BLR or BLS residue that can accept a lanthionine bond" );
+	runtime_assert_string_msg( cysres != 0, "No suitable cystine residue that can form a lanthionine connection from its side-chain was selected!" );
+
 	//((!pose.residue_type( dalares ).is_d_aa()) )
-  TR << cysres << " is " << pose.residue_type( cysres ).base_name() << std::endl;
-  TR << dalares << " is " << pose.residue_type( dalares ).base_name() << " and sidechain thiol is " << pose.residue_type( cysres ).is_sidechain_thiol() << std::endl;
-  //TR.Debug
-  if ( (!pose.residue_type( cysres ).is_sidechain_thiol()) || !( (pose.residue_type( dalares ).base_name() == "BDS" ) || (pose.residue_type( dalares ).base_name() == "BDR" )
-                                                                 || (pose.residue_type( dalares ).base_name() == "BLS" ) || (pose.residue_type( dalares ).base_name() == "BLR" )
-                                                                 || (pose.residue_type( dalares ).base_name() == "DALA" ) || (pose.residue_type( dalares ).base_name() == "ALA" ) )) {
-    runtime_assert_string_msg( pose.residue_type( dalares ).is_sidechain_thiol(), errmsg + "Neither of the selected residues has a sidechain thiol (CYS), as is required for a lanthionine connection." );
-    runtime_assert_string_msg( ( (pose.residue_type( dalares ).base_name() == "BDS" ) || (pose.residue_type( dalares ).base_name() == "BDR" )
-                                 || (pose.residue_type( dalares ).base_name() == "BLS" ) || (pose.residue_type( dalares ).base_name() == "BLR" )
-                                 || (pose.residue_type( cysres ).base_name() == "ALA" ) || (pose.residue_type( cysres ).base_name() == "DALA" )),
-        errmsg + "Neither of the selected residues is named ALA or DALA or BDR or BDS or BLR or BLS as is required for a lanthionine connection." );
-    //runtime_assert_string_msg( pose.residue_type( dalares ).is_sidechain_thiol(), errmsg + "Neither of the selected residues has a sidechain thiol, as is required for a lanthionine connection." );
-    //runtime_assert_string_msg( pose.residue( cysres ).connected_residue_at_lower() == 0, errmsg + "Neither of the selected residues is D-ALA, as is required for a lanthionine connection." );
-    // TODO runtime_assert_string_msg( pose.residue_type( cysres ).is_d_aa(), errmsg + "Neither of the selected residues is D-ALA or ALA, as is required for a lanthionine connection." );
-    std::swap( cysres, dalares );
-  }
+	TR << cysres << " is " << pose.residue_type( cysres ).base_name() << std::endl;
+	TR << dalares << " is " << pose.residue_type( dalares ).base_name() << " and sidechain thiol is " << pose.residue_type( cysres ).is_sidechain_thiol() << std::endl;
+	//TR.Debug
+	if ( (!pose.residue_type( cysres ).is_sidechain_thiol()) || !( (pose.residue_type( dalares ).base_name() == "BDS" ) || (pose.residue_type( dalares ).base_name() == "BDR" )
+			|| (pose.residue_type( dalares ).base_name() == "BLS" ) || (pose.residue_type( dalares ).base_name() == "BLR" )
+			|| (pose.residue_type( dalares ).base_name() == "DALA" ) || (pose.residue_type( dalares ).base_name() == "ALA" ) ) ) {
+		runtime_assert_string_msg( pose.residue_type( dalares ).is_sidechain_thiol(), errmsg + "Neither of the selected residues has a sidechain thiol (CYS), as is required for a lanthionine connection." );
+		runtime_assert_string_msg( ( (pose.residue_type( dalares ).base_name() == "BDS" ) || (pose.residue_type( dalares ).base_name() == "BDR" )
+			|| (pose.residue_type( dalares ).base_name() == "BLS" ) || (pose.residue_type( dalares ).base_name() == "BLR" )
+			|| (pose.residue_type( cysres ).base_name() == "ALA" ) || (pose.residue_type( cysres ).base_name() == "DALA" )),
+			errmsg + "Neither of the selected residues is named ALA or DALA or BDR or BDS or BLR or BLS as is required for a lanthionine connection." );
+		//runtime_assert_string_msg( pose.residue_type( dalares ).is_sidechain_thiol(), errmsg + "Neither of the selected residues has a sidechain thiol, as is required for a lanthionine connection." );
+		//runtime_assert_string_msg( pose.residue( cysres ).connected_residue_at_lower() == 0, errmsg + "Neither of the selected residues is D-ALA, as is required for a lanthionine connection." );
+		// TODO runtime_assert_string_msg( pose.residue_type( cysres ).is_d_aa(), errmsg + "Neither of the selected residues is D-ALA or ALA, as is required for a lanthionine connection." );
+		std::swap( cysres, dalares );
+	}
 }
 
 //--end_namespace--
