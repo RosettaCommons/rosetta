@@ -1,0 +1,26 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+	<ScoreFunction name="cst" >
+		<Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+	</ScoreFunction>
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+    </RESIDUE_SELECTORS>
+    <PACKER_PALETTES>
+    </PACKER_PALETTES>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <SIMPLE_METRICS>
+    </SIMPLE_METRICS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+	<ConstraintSetMover name="add_nmr_cst" add_constraints="true" cst_file="inputs/6VLJ.cst"/>
+    </MOVERS>
+    <APPLY_TO_POSE>
+    </APPLY_TO_POSE>
+    <PROTOCOLS>
+        <Add mover="add_nmr_cst" />
+    </PROTOCOLS>
+    <OUTPUT scorefxn="cst" />
+</ROSETTASCRIPTS>
