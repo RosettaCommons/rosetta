@@ -375,21 +375,40 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 
 	///now fix terminus problems
 	//Cannot assume will have 1H, 2H, 3H in the world of NCAA
-	if ( name == "H" && res == 1 && pose.is_fullatom() ) {
+    //If residue does not have H, check for 1H, 2H, 3H
+    //If none of H or 1H, 2H, 3H, this is an error
+    //If it does have H, pass H
+	//if ( name == "H" && res == 1 && pose.is_fullatom() ) {
+    if ( name == "H" ) {
 		if ( pose.residue_type(res).has("H") ) {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "H", res ), pose ) );
-		}
-		if ( pose.residue_type(res).has("1H") ) {
-			atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("1H", res), pose));
-		}
-		if ( pose.residue_type(res).has("2H") ) {
-			atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("2H", res), pose));
-		}
-		if ( pose.residue_type(res).has("3H") ) {
-			atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("3H", res), pose));
-		}
-        //This will catch H at start
-		return;
+            return;
+		} else {
+            bool found = false;
+            if (pose.residue_type(res).has("1H")) {
+                atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("1H", res), pose));
+                found = true;
+            }
+            if (pose.residue_type(res).has("2H")) {
+                atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("2H", res), pose));
+                found = true;
+            }
+            if (pose.residue_type(res).has("3H")) {
+                atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("3H", res), pose));
+                found = true;
+            }
+            //This will catch H at start
+            if (found) {
+                return;
+            } else {
+                std::string const errmsg( "Error in core::scoring::constraints::AmbiguousNMRDistanceConstraint::parse_NMR_name() " );
+                runtime_assert_string_msg(
+                        pose.residue_type(res).has("H"),
+                        errmsg + "function was called on " + name + " and res " + std::to_string( res )
+                        + " but " + pose.residue_type(res).name() + " does not have H, 1H, 2H, or 3H."
+                );
+            }
+        }
 	}
 
 	NamedAtoms named_atoms;
