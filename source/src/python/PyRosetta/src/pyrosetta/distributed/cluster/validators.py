@@ -117,7 +117,7 @@ def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
 def _validate_min_len(self, attribute: str, value: int) -> Optional[NoReturn]:
     """Optionally validate that iterables have at least one object."""
 
-    if value is not None and len(value) <= 1:
+    if value is not None and len(value) < 1:
         raise ValueError(
             f"`{attribute}` must have at least one item if not `None`."
         )
