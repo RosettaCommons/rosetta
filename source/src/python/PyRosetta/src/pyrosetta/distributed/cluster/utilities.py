@@ -151,8 +151,8 @@ class SchedulerManager(Generic[G]):
         if not self.clients_dict and cluster:
             cluster.scale(0)
             clients[0].close()
-            try:
-                for worker in cluster.workers.values():
-                    worker.close_gracefully()
-            except:
-                cluster.close()
+            # try:
+            #     for worker in cluster.workers.values():
+            #         worker.close_gracefully()
+            # except:
+            cluster.close()
