@@ -253,6 +253,7 @@ from pyrosetta.distributed.cluster.validators import (
     _validate_dirs,
     _validate_float,
     _validate_int,
+    _validate_min_len,
 )
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
@@ -322,15 +323,15 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
     clients = attr.ib(
         type=Optional[List[distributed.client.Client]],
         default=None,
-        validator=attr.validators.optional(
-            attr.validators.and_(
+        validator=[
+            attr.validators.optional(
                 attr.validators.deep_iterable(
                     member_validator=attr.validators.instance_of(distributed.client.Client),
                     iterable_validator=attr.validators.instance_of((tuple, list)),
                 ),
-                attr.validators.min_len(1),
-            )
-        ),
+            ),
+            _validate_min_len,
+        ],
     )
     scheduler = attr.ib(
         type=str,

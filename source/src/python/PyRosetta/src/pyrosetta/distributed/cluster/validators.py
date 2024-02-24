@@ -112,6 +112,15 @@ def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
         raise ValueError(
             f"`{attribute}` must be a positive integer greater than or equal to 1."
         )
+    
+
+def _validate_min_len(self, attribute: str, value: int) -> Optional[NoReturn]:
+    """Optionally validate that iterables have at least one object."""
+
+    if value is not None and len(value) <= 1:
+        raise ValueError(
+            f"`{attribute}` must have at least one item if not `None`."
+        )
 
 
 def _validate_float(
