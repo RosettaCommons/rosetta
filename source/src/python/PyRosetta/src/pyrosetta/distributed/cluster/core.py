@@ -153,7 +153,7 @@ Args:
         Default: "scores.json"
     simulation_records_in_scorefile: A `bool` object specifying whether or not to
         write full simulation records to the scorefile. If `True`, then write
-        full simulations records to the scorefile. This results in some redundant
+        full simulation records to the scorefile. This results in some redundant
         information on each line, allowing downstream reproduction of a decoy from
         the scorefile, but a larger scorefile. If `False`, then write
         curtailed simulation records to the scorefile. This results in minimally
