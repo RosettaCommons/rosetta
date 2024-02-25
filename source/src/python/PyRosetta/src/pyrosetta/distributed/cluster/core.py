@@ -661,7 +661,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                 constraints. If dask workers were not instantiated to satisfy the specified resource constraints, protocols
                 will hang indefinitely because the dask scheduler is waiting for workers that meet the specified resource 
                 constraints so that it can schedule these protocols. Unless workers were created with these resource tags
-                applied, the protocols will not run. See https://distributed.dask.org/en/latest/resources.html for more
+                applied, the protocols will not run. See https://distributed.dask.org/en/stable/resources.html for more
                 information.
                 Default: None
 
