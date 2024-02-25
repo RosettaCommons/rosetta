@@ -58,17 +58,21 @@ Args:
         If "slurm", then PyRosettaCluster schedules jobs using `SLURMCluster` with
         `dask-jobqueue`. If `None`, then PyRosettaCluster schedules jobs using
         `LocalCluster` with `dask.distributed`. If `PyRosettaCluster(client=...)`
-        is provided, then `PyRosettaCluster(scheduler=...)` is ignored.
+        or `PyRosettaCluster(clients=...)` is provided, then 
+        `PyRosettaCluster(scheduler=...)` is ignored.
         Default: None
     cores: An `int` object specifying the total number of cores per job, which
-        is input to the `dask_jobqueue.SLURMCluster(cores=...)` argument.
+        is input to the `dask_jobqueue.SLURMCluster(cores=...)` argument or
+        the `dask_jobqueue.SGECluster(cores=...)` argument.
         Default: 1
     processes: An `int` object specifying the total number of processes per job,
-        which is input to the `dask_jobqueue.SLURMCluster(processes=...)` argument.
+        which is input to the `dask_jobqueue.SLURMCluster(processes=...)` argument
+        or the `dask_jobqueue.SGECluster(processes=...)` argument.
         This cuts the job up into this many processes.
         Default: 1
     memory: A `str` object specifying the total amount of memory per job, which
-        is input to the `dask_jobqueue.SLURMCluster(memory=...)` argument.
+        is input to the `dask_jobqueue.SLURMCluster(memory=...)` argument or
+        the `dask_jobqueue.SGECluster(memory=...)` argument.
         Default: "4g"
     scratch_dir: A `str` object specifying the path to a scratch directory where
         dask litter may go.
@@ -92,7 +96,7 @@ Args:
         user-provided PyRosetta protocol run later.
         Default: 1
     compressed: A `bool` object specifying whether or not to compress the output
-        .pdb files with bzip2, resulting in .pdb.bz2 files.
+        '.pdb' files with bzip2, resulting in '.pdb.bz2' files.
         Default: True
     compression: A `str` object of 'xz', 'zlib' or 'bz2', or a `bool` or `NoneType`
         object representing the internal compression library for pickled `PackedPose` 
@@ -131,7 +135,7 @@ Args:
         Default: datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f") if not specified,
             else "PyRosettaCluster" if None
     simulation_name: A `str` object specifying the name of this simulation.
-        This option just adds the user-provided simulation_name to the scorefile
+        This option just adds the user-provided `simulation_name` to the scorefile
         for accounting.
         Default: `project_name` if not specified, else "PyRosettaCluster" if None
     environment: A `NoneType` or `str` object specifying the active conda environment
@@ -152,7 +156,7 @@ Args:
         full simulations records to the scorefile. This results in some redundant
         information on each line, allowing downstream reproduction of a decoy from
         the scorefile, but a larger scorefile. If `False`, then write
-        curtailed simulations records to the scorefile. This results in minimally
+        curtailed simulation records to the scorefile. This results in minimally
         redundant information on each line, disallowing downstream reproduction
         of a decoy from the scorefile, but a smaller scorefile. If `False`, also
         write the active conda environment to a YML file in 'output_path'. Full
@@ -188,10 +192,11 @@ Args:
         PyRosetta protocols. This option may be used for checkpointing trajectories.
         To save arbitrary poses to disk, from within any user-provided PyRosetta
         protocol:
-            `pose.dump_pdb(os.path.join(kwargs["output_path"], "checkpoint.pdb")`
+            `pose.dump_pdb(
+                os.path.join(kwargs["PyRosettaCluster_output_path"], "checkpoint.pdb"))`
         Default: False
-    dry_run: A `bool` object specifying whether or not to save .pdb files to
-        disk. If `True`, then do not write .pdb or .pdb.bz2 files to disk.
+    dry_run: A `bool` object specifying whether or not to save '.pdb' files to
+        disk. If `True`, then do not write '.pdb' or '.pdb.bz2' files to disk.
         Default: False
 
 Returns:
