@@ -80,18 +80,18 @@ bool is_aromatic( core::chemical::AA aa ) {
 void parse_NMR_name_general( std::string name, core::Size res, core::pose::Pose const& pose, NamedAtoms& atoms ) {
 	//Parse the names in a general fashion. Start with non-ambiguous.
 	core::Size input_size = atoms.size();
-    std::string const errmsg( "Error in core::scoring::constraints::AmbiguousNMRDistanceConstraint::parse_NMR_name_general() " );
+	std::string const errmsg( "Error in core::scoring::constraints::AmbiguousNMRDistanceConstraint::parse_NMR_name_general() " );
 	//H will get handled in the calling function for start
-    //Need to catch H passed, but no .has H to prevent passing every atom containing H
+	//Need to catch H passed, but no .has H to prevent passing every atom containing H
 	if ( pose.residue_type(res).has(name) ) {
 		atoms.push_back( core::id::NamedAtomID(name, res));
-	} else if (name == "H") {
-        runtime_assert_string_msg(
-                name == "H",
-                errmsg + "function was called on " + name + " and res " + std::to_string( res )
-                + " but H is not a name of an atom in this residue."
-        );
-    } else {
+	} else if ( name == "H" ) {
+		runtime_assert_string_msg(
+			name == "H",
+			errmsg + "function was called on " + name + " and res " + std::to_string( res )
+			+ " but H is not a name of an atom in this residue."
+		);
+	} else {
 		//The constraint is ambiguous
 		//First check for QQ or Q and change to H
 		if ( name.substr(0,2) == "QQ" ) {
@@ -375,40 +375,40 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 
 	///now fix terminus problems
 	//Cannot assume will have 1H, 2H, 3H in the world of NCAA
-    //If residue does not have H, check for 1H, 2H, 3H
-    //If none of H or 1H, 2H, 3H, this is an error
-    //If it does have H, pass H
+	//If residue does not have H, check for 1H, 2H, 3H
+	//If none of H or 1H, 2H, 3H, this is an error
+	//If it does have H, pass H
 	//if ( name == "H" && res == 1 && pose.is_fullatom() ) {
-    if ( name == "H" ) {
+	if ( name == "H" ) {
 		if ( pose.residue_type(res).has("H") ) {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "H", res ), pose ) );
-            return;
+			return;
 		} else {
-            bool found = false;
-            if (pose.residue_type(res).has("1H")) {
-                atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("1H", res), pose));
-                found = true;
-            }
-            if (pose.residue_type(res).has("2H")) {
-                atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("2H", res), pose));
-                found = true;
-            }
-            if (pose.residue_type(res).has("3H")) {
-                atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("3H", res), pose));
-                found = true;
-            }
-            //This will catch H at start
-            if (found) {
-                return;
-            } else {
-                std::string const errmsg( "Error in core::scoring::constraints::AmbiguousNMRDistanceConstraint::parse_NMR_name() " );
-                runtime_assert_string_msg(
-                        pose.residue_type(res).has("H"),
-                        errmsg + "function was called on " + name + " and res " + std::to_string( res )
-                        + " but " + pose.residue_type(res).name() + " does not have H, 1H, 2H, or 3H."
-                );
-            }
-        }
+			bool found = false;
+			if ( pose.residue_type(res).has("1H") ) {
+				atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("1H", res), pose));
+				found = true;
+			}
+			if ( pose.residue_type(res).has("2H") ) {
+				atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("2H", res), pose));
+				found = true;
+			}
+			if ( pose.residue_type(res).has("3H") ) {
+				atoms.push_back(named_atom_id_to_atom_id(NamedAtomID("3H", res), pose));
+				found = true;
+			}
+			//This will catch H at start
+			if ( found ) {
+				return;
+			} else {
+				std::string const errmsg( "Error in core::scoring::constraints::AmbiguousNMRDistanceConstraint::parse_NMR_name() " );
+				runtime_assert_string_msg(
+					pose.residue_type(res).has("H"),
+					errmsg + "function was called on " + name + " and res " + std::to_string( res )
+					+ " but " + pose.residue_type(res).name() + " does not have H, 1H, 2H, or 3H."
+				);
+			}
+		}
 	}
 
 	NamedAtoms named_atoms;

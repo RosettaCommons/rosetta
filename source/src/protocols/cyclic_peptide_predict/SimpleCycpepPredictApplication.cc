@@ -3375,16 +3375,16 @@ SimpleCycpepPredictApplication::add_closebond_logic_thioether_lariat(
 	// and I'm going to say that we basically cannot randomize any dihedrals in 2-chloro-acetyl.
 	// In theory you could randomize CONN2-CP2-CO-N and CO-N-CA-C but that's tomorrow's problem. AMW TODO
 
-    //This application appears to only produce cis CA-N-CO-CP2 bonds without randomization,
-    // trans should be energetically favored, so setting bond to trans here
-    genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
-    utility::vector1< core::id::NamedAtomID > omega_vect;
-    omega_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_end));
-    omega_vect.push_back( core::id::NamedAtomID( "CO", cyclization_point_end));
-    genkic->add_atomset_to_perturber_atomset_list( omega_vect );
-    genkic->add_value_to_perturber_value_list( 180.0 );
+	//This application appears to only produce cis CA-N-CO-CP2 bonds without randomization,
+	// trans should be energetically favored, so setting bond to trans here
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
+	utility::vector1< core::id::NamedAtomID > omega_vect;
+	omega_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_end));
+	omega_vect.push_back( core::id::NamedAtomID( "CO", cyclization_point_end));
+	genkic->add_atomset_to_perturber_atomset_list( omega_vect );
+	genkic->add_value_to_perturber_value_list( 180.0 );
 
-    genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
 	core::Size const first_sc_at( pose->residue_type(cyclization_point_start).first_sidechain_atom() );
 	core::chemical::ResidueType const & curtype( pose->residue_type(cyclization_point_start) );
 	for ( core::Size curat( curtype.residue_connect_atom_index( curtype.n_possible_residue_connections() ) ); curat!=first_sc_at; curat = curtype.icoor(curat).stub_atom1().atomno() ) { //March up from the thiol atom
