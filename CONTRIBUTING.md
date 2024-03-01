@@ -28,7 +28,7 @@ If you are making contributions as an employee (which includes employees and gra
 In that case, please confirm with your employer that you are authorized to sign the CLA on their behalf.
 If you change employers, please re-sign the agreement with your new employer's information.
 
-To sign the CLA, please visit <<CLA WEBSITE>>>.
+To sign the CLA, please visit <https://www.rosettacommons.org/forms/cla>.
 
 If you are a member of a RosettaCommons lab, there is a separate Developers Agreement process. 
 Please consult an existing member of the lab or your PI for details.
@@ -37,8 +37,6 @@ Submodules
 ----------
 
 Rosetta uses a number of git submodules to hold code and materials which are generally not needed for rountine development and usage, or which would be too large to include directly. Submodules which are needed for building Rosetta should be automatically downloaded by the Rosetta build system, if they haven't already been.
-
-<< QUESTION -- How does submodule locations work with forking? >>
 
 Note that if you wish to alter the content of one of the submodules, you will need to separately fork the submodule and make your modifications in that forked repo. You would then open a PR against the `main` branch of that submodule to incorporate.
 
