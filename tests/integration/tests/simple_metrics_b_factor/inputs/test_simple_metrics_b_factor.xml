@@ -1,0 +1,19 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+	</RESIDUE_SELECTORS>
+	<MOVE_MAP_FACTORIES>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+		
+		<PerResidueBfactorMetric name="b_factor" atom_type="C" />
+
+	</SIMPLE_METRICS>
+	<MOVERS>
+		<RunSimpleMetrics name="run_metrics_b_factor" metrics="b_factor" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="run_metrics_b_factor"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
