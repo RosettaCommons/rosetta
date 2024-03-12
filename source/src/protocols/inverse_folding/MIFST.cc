@@ -235,7 +235,7 @@ MIFST::set_defaults() {
 void
 MIFST::auto_download( bool setting ) { auto_download_ = setting; }
 
-/// @brief Get the citation for ProteinMPNN
+/// @brief Get the citation for MIF-ST
 /*static*/
 basic::citation_manager::CitationCollectionBaseCOP
 MIFST::get_MIFST_neural_net_citation() {

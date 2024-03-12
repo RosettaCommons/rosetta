@@ -61,7 +61,6 @@ public:
     MIFST operator=( MIFST const & ) = delete;
 
     /// @brief Get the citation for MIF-ST
-    /// @details TODO: fill in details for Yang et al.
     static
     basic::citation_manager::CitationCollectionBaseCOP
     get_MIFST_neural_net_citation();
