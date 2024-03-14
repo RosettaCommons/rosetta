@@ -8,17 +8,34 @@ Rosetta is maintained by the RosettaCommons, a collaboration of 50+ academic res
 Rosetta Code
 ============
 
-While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information. 
+While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information.
+
+The main GitHub repository on https://github.com/RosettaCommons/rosetta integrates all the Rosetta-associated code base.
+It should be noted that many parts of Rosetta are structured as GitHub projects on their own, which the main repository conveniently presents as submodules.
+Dominant are external software packages that Rosetta is redistributing, which will help synchronizing development and thus supports users and developers in their communication.
+
+It is not required to manually retrieve those subprojects, or to auto-retrieve them all.
+For the basic Rosetta infrastruture most parts are not required and anything extra unnecessarily compliates the build process.
+Instead, the scons build management will auto-retrieve only those external repositories that are required for the build.
+The retrieval of external source trees is independent from the software that may already be installed via the Operating System, which is intentional.
+
+``` sh
+git clone https://github.com/RosettaCommons/rosetta
+```
+and change to that directory
+``` sh
+cd rosetta
+```
 
 Getting Started Using Rosetta
-============================
+=============================
 
 Start here: https://www.rosettacommons.org/docs/latest/getting_started/Getting-Started
 
 Compilation quick-start (see <https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation> for more details):
 
 ``` sh
-$ cd Rosetta/main/source
+$ cd source
 $ ./scons.py -j<NumOfJobs> mode=release bin
 ```
 
@@ -27,7 +44,7 @@ Questions about how to use Rosetta are best directed to the RosettaCommons forum
 PyRosetta
 =========
 
-PyRosetta are Python bindings to the Rosetta library. These can be built from the Rosetta source code. 
+PyRosetta are Python bindings to the Rosetta library. These can be built from the Rosetta source code.
 
 See <https://www.pyrosetta.org> for more information about PyRosetta.
 
@@ -42,8 +59,8 @@ Various reference Docker files could be found in `rosetta/docker` dir.
 Developing Rosetta
 ==================
 
-We welcome contributions to improve Rosetta. We use a fork-and-PR system for contribution. 
-To contribute to Rosetta, please fork the Rosetta repo(s) under your own Github user space. 
+We welcome contributions to improve Rosetta. We use a fork-and-PR system for contribution.
+To contribute to Rosetta, please fork the Rosetta repo(s) under your own Github user space.
 You can then develop your additions in your own space. Once you're ready to contribute it back, open a PR agaist the main Rosetta repos.
 You will need to sign the Rosetta Contributor License Agreement before your contribution can be accepted.
 
