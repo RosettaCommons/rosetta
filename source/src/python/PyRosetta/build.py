@@ -86,6 +86,7 @@ def get_defines():
     if Options.type in 'Release MinSizeRel': defines += ' NDEBUG BCL_NO_OS_SIGNAL_HANDLING'
     if Options.serialization: defines += ' SERIALIZATION'
     if Options.multi_threaded: defines += ' MULTI_THREADED'
+    if Options.torch: defines += ' USE_PYTORCH'
     #if Options.hdf5: defines += ' USEHDF5'
     return defines.split()
 
@@ -314,6 +315,7 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False, docum
     p = os.path.join(p, Options.type.lower()
                      + ('.serialization' if Options.serialization else '')
                      + ('.thread' if Options.multi_threaded else '')
+                     + ('.torch' if Options.torch else '')
                      + ('.annotate' if Options.annotate_includes else '')
                      + ('.trace' if Options.trace else '')
                      )
@@ -446,8 +448,11 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
             defines[lib_name] = ' '.join( G.get('defines',[]) )
 
     modified = False
+
+    source_extensions = dict(sqlite3='.c', cppdb='.cpp')
+
     for l in libs:
-        t  = 'add_library({} OBJECT\n{})\n\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/' + s for s in libs[l]] ))
+        t  = 'add_library({} OBJECT\n{})\n\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/' + s +  source_extensions.get(l, '') for s in libs[l]] ))
         t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(l)
         if defines[l]: t += 'target_compile_options({} PRIVATE {})\n'.format(l, ' '.join( ['-D'+d for d in defines[l].split()] ) )   #  target_compile_definitions
         #t += 'target_compile_options({} PUBLIC -fPIC {})\n'.format(l, ' '.join([ '-D'+d for d in defines[l].split() ] ) )   #  target_compile_definitions
@@ -504,10 +509,15 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
 
         sources.sort()
 
+
+
         t  = 'add_library({} OBJECT\n{})\n\n'.format(lib, '\n'.join( [ rosetta_source_path + '/src/' + s for s in sources] ))
         #t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(lib)
         t += 'set_target_properties({} PROPERTIES POSITION_INDEPENDENT_CODE ON LINKER_LANGUAGE CXX)\n'.format(lib)
         #t += '\ntarget_compile_options({} PUBLIC -fPIC)\n'.format(lib)  # Enable Position Independent Code generation for libraries
+
+        if Options.torch: t += f'target_compile_options({lib} PRIVATE -std=c++14)\n'
+
         modified |= update_source_file(prefix + lib + '.cmake', t)
 
         libs.append(lib)
@@ -565,6 +575,8 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
         cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join(extra_sources + ['$<TARGET_OBJECTS:{}>'.format(l) for l in libs] ) )  # cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join([ os.path.abspath(prefix + f) for f in extra_sources]))
         cmake = cmake.replace('#%__Rosetta_libraries__%#', '')  # cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs))
         cmake = cmake.replace('#%__PyRosetta_build_config__%#', build_config)
+        cmake = cmake.replace('#%__PyRosetta_compile_options__%#', '-std=c++14' if Options.torch else '')
+        cmake = cmake.replace('#%__PyRosetta_target_link_libraries__%#', 'c10 torch torch_cpu torch_global_deps' if Options.torch else '')
 
         modified |= update_source_file(prefix + 'CMakeLists.txt', cmake)
 
@@ -683,12 +695,12 @@ def generate_bindings(rosetta_source_path):
     if Options.binder_options:      include  += ' ' + Options.binder_options
     if Options.binder_llvm_options: includes += ' ' + Options.binder_llvm_options
 
-    binder_command_line_options = '--config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {include} -- -std=c++11 {includes} {defines}'.format(
-        prefix=prefix, include=include, includes=includes, defines=defines,
-        config='./rosetta.config',
-        annotate=' --annotate-includes' if Options.annotate_includes else '',
-        trace=' --trace' if Options.trace else '',
-    )
+    cpp_standard = 'c++14' if Options.torch else 'c++11'
+    config='./rosetta.config'
+    annotate=' --annotate-includes' if Options.annotate_includes else ''
+    trace=' --trace' if Options.trace else ''
+
+    binder_command_line_options = f'--config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {include} -- -std={cpp_standard} {includes} {defines}'
     signature_update(binder_command_line_options)
 
     signature = signature.hexdigest()
@@ -864,6 +876,7 @@ def main(args):
 
     parser.add_argument('--serialization', action="store_true", help="Build PyRosetta with serialization enabled (off by default)")
     parser.add_argument('--multi-threaded', action="store_true", help="Build PyRosetta with multi_threaded enabled (off by default)")
+    parser.add_argument('--torch', action="store_true", help="Build PyRosetta with libtorch support enabled (off by default)")
     #parser.add_argument('--hdf5', action="store_true", help="Build PyRosetta with HDF5 enabled (off by default)")
 
     parser.add_argument('--binder-options', default=None, help='Specify Binder extra (non LLVM) options. Use this to specify options specific to Binder.')
