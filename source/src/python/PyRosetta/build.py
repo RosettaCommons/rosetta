@@ -87,6 +87,7 @@ def get_defines():
     if Options.serialization: defines += ' SERIALIZATION'
     if Options.multi_threaded: defines += ' MULTI_THREADED'
     if Options.torch: defines += ' USE_PYTORCH'
+    if Options.tensorflow: defines += ' USE_TENSORFLOW USE_TENSORFLOW_CPU'
     #if Options.hdf5: defines += ' USEHDF5'
     return defines.split()
 
@@ -316,6 +317,7 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False, docum
                      + ('.serialization' if Options.serialization else '')
                      + ('.thread' if Options.multi_threaded else '')
                      + ('.torch' if Options.torch else '')
+                     + ('.tensorflow' if Options.tensorflow else '')
                      + ('.annotate' if Options.annotate_includes else '')
                      + ('.trace' if Options.trace else '')
                      )
@@ -516,7 +518,7 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
         t += 'set_target_properties({} PROPERTIES POSITION_INDEPENDENT_CODE ON LINKER_LANGUAGE CXX)\n'.format(lib)
         #t += '\ntarget_compile_options({} PUBLIC -fPIC)\n'.format(lib)  # Enable Position Independent Code generation for libraries
 
-        if Options.torch: t += f'target_compile_options({lib} PRIVATE -std=c++14)\n'
+        if Options.torch or Options.tensorflow: t += f'target_compile_options({lib} PRIVATE -std=c++14)\n'
 
         modified |= update_source_file(prefix + lib + '.cmake', t)
 
@@ -575,8 +577,11 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
         cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join(extra_sources + ['$<TARGET_OBJECTS:{}>'.format(l) for l in libs] ) )  # cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join([ os.path.abspath(prefix + f) for f in extra_sources]))
         cmake = cmake.replace('#%__Rosetta_libraries__%#', '')  # cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs))
         cmake = cmake.replace('#%__PyRosetta_build_config__%#', build_config)
-        cmake = cmake.replace('#%__PyRosetta_compile_options__%#', '-std=c++14' if Options.torch else '')
-        cmake = cmake.replace('#%__PyRosetta_target_link_libraries__%#', 'c10 torch torch_cpu torch_global_deps' if Options.torch else '')
+        cmake = cmake.replace('#%__PyRosetta_compile_options__%#', '-std=c++14' if Options.torch or Options.tensorflow else '')
+        cmake = cmake.replace('#%__PyRosetta_target_link_libraries__%#',
+                              ( 'c10 torch torch_cpu torch_global_deps' if Options.torch else '' )
+                              + ( ' tensorflow' if Options.tensorflow else '' )
+                              )
 
         modified |= update_source_file(prefix + 'CMakeLists.txt', cmake)
 
@@ -876,7 +881,8 @@ def main(args):
 
     parser.add_argument('--serialization', action="store_true", help="Build PyRosetta with serialization enabled (off by default)")
     parser.add_argument('--multi-threaded', action="store_true", help="Build PyRosetta with multi_threaded enabled (off by default)")
-    parser.add_argument('--torch', action="store_true", help="Build PyRosetta with libtorch support enabled (off by default)")
+    parser.add_argument('--torch', action="store_true", help="Build PyRosetta with lib torch support enabled (off by default)")
+    parser.add_argument('--tensorflow', action="store_true", help="Build PyRosetta with lib tensorflow support enabled (off by default)")
     #parser.add_argument('--hdf5', action="store_true", help="Build PyRosetta with HDF5 enabled (off by default)")
 
     parser.add_argument('--binder-options', default=None, help='Specify Binder extra (non LLVM) options. Use this to specify options specific to Binder.')
