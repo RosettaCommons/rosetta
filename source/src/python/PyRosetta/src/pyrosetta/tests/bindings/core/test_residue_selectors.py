@@ -79,7 +79,7 @@ class TestResidueSelectors(unittest.TestCase):
         xor_selector_test = selector_1 ^ selector_2
         self.assertListEqual([1, 2, 9, 10], xor_selector_test.get_residues(pose))
 
-        # Test Logic
+        # Test selection logic using python operators
         selector_1 = ResidueIndexSelector("2,4,6,8,10")
         selector_2 = ResidueIndexSelector("1,4,6,8,9")
         selector_3 = ResidueIndexSelector("1,3,5,7,9")
@@ -91,7 +91,7 @@ class TestResidueSelectors(unittest.TestCase):
         logic_selector_test = (selector_1 & ~selector_2) | (selector_3 & ~(selector_2 | selector_4))
         self.assertListEqual(logic_selector.get_residues(pose), logic_selector_test.get_residues(pose))
 
-        # Test compatibility with LogicSelector in XML
+        # Test compatibility with LogicResidueSelector in XML
         xml_str = """
         <RESIDUE_SELECTORS>
             <Index name="selector_1" resnums="2,4,6,8,10"/>
