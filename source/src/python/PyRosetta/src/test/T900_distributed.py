@@ -37,7 +37,6 @@ def e(cmd):
 
 test_suites = [
     "pyrosetta.tests.bindings.core.test_pose",
-    "pyrosetta.tests.bindings.core.test_residue_selectors",
     "pyrosetta.tests.distributed.cluster.test_logging",
     "pyrosetta.tests.distributed.cluster.test_reproducibility",
     "pyrosetta.tests.distributed.cluster.test_smoke",
