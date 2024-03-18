@@ -307,6 +307,8 @@ version_utility_template = '''\
 #ifndef INCLUDED_utility_version_hh
 #define INCLUDED_utility_version_hh
 
+#include <utility/stream_util.hh>
+
 #include <string>
 #include <vector>
 
