@@ -2,7 +2,7 @@
 ## This patch is used for C-linked Lanthionine.
 
 ## full-atom C-linked conjugation patches for ALPHA-AMINOBUTYRIC ACID (DBB or AAB) adding Cystine(SG) steriochemical linkage
-## assumes that DBB has been renamed to one of BDR BDS BLR BLS based on steriochem at postions 2 and 3 ie 2S3S is BDS
+## assumes that DBB has been renamed to one of DBR DBS DDBR DDBS based on steriochem at postions 2 and 3 ie 2S3S is DBS
 ## This patch is used for C-linked Methyllanthionine.
 
 NAME C-conjugated
@@ -57,7 +57,7 @@ END_CASE
 BEGIN_CASE  ## AAB with 3S steriochem #########################################################
 
 BEGIN_SELECTOR
-NAME3 BDS BLS 
+NAME3 DBS DDBS 
 END_SELECTOR
 
 # Delete the extra hydrogen atoms on the sidechain CB: 
@@ -93,7 +93,7 @@ END_CASE
 BEGIN_CASE  ## AAB with 3R steriochem #########################################################
 
 BEGIN_SELECTOR
-NAME3 BDR BLR
+NAME3 DBR DDBR
 END_SELECTOR
 
 # Delete the extra hydrogen atoms on the sidechain CB:

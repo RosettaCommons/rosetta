@@ -19,7 +19,7 @@ xsi:noNamespaceSchemaLocation="schema.xsd"
 
 		<PeptideStubMover name="make_pep" reset="true">
 			<Append resname="GLY" />
-			<Append resname="BDR" />
+			<Append resname="DBR" />
 			<Append resname="GLY" />
 			<Append resname="GLY" />
 			<Append resname="GLY" />

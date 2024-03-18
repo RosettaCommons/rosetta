@@ -63,8 +63,8 @@ set_up_lanthionine_variants(
 	runtime_assert_string_msg(
 		//pose.residue(dalares).connected_residue_at_lower() == 0,
 		//pose.residue_type(dalares).is_d_aa(),
-		pose.residue_type( dalares ).base_name() == "BDS"  || pose.residue_type( dalares ).base_name() == "BDR"
-		|| pose.residue_type( dalares ).base_name() == "BLS"  || pose.residue_type( dalares ).base_name() == "BLR"
+		pose.residue_type( dalares ).base_name() == "DBS"  || pose.residue_type( dalares ).base_name() == "DBR"
+		|| pose.residue_type( dalares ).base_name() == "DDBS"  || pose.residue_type( dalares ).base_name() == "DDBR"
 		|| pose.residue_type(dalares).base_name() == "DALA" || pose.residue_type(dalares).base_name() == "ALA",
 		errmsg + "Position " + std::to_string( dalares ) + " was selected as the non-cys residue for a "
 		"lanthionine connection, but this residue is not a D-ALA or ALA or Butyrine Variant."
@@ -450,9 +450,8 @@ set_up_lanthionine_constraints(
 	} else {
 		//There are four possible steriochem configurations for methyllanthionine linkers
 		// the CA can be D(S)/L(R) and the CB can be R/S
-		//.base_name() == "DALA"
 		if ( pose.residue_type(dalares).is_d_aa() ) {
-			//Methyllanthionine dihedral angle (N-Ca-Cb-S, from AAB) constraints for 2S (D_AA) steriochem
+			//Methyllanthionine dihedral angle (N-Ca-Cb-S, from DBB/AAB) constraints for 2S (D_AA) steriochem
 			FuncOP s2_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.707, 0 ) );
 			ConstraintCOP s2_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm0) );
 			pose.add_constraint (s2_ca_cb_s_cb_cnst0);
@@ -481,8 +480,7 @@ set_up_lanthionine_constraints(
 			ConstraintCOP s2_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, s2_ca_cb_s_cb_harm8) );
 			pose.add_constraint (s2_ca_cb_s_cb_cnst8);
 		} else if ( pose.residue_type(dalares).is_l_aa() ) {
-			//.base_name() == "ALA"
-			//Methyllanthionine dihedral angle (N-Ca-Cb-S, from AAB) constraints for 2R (D_AA) steriochem
+			//Methyllanthionine dihedral angle (N-Ca-Cb-S, from DBB/AAB) constraints for 2R (L_AA) steriochem
 			FuncOP r2_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.626, 0 ) );
 			ConstraintCOP r2_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_b, atom_c, atom_d, atom_do, r2_ca_cb_s_cb_harm0) );
 			pose.add_constraint (r2_ca_cb_s_cb_cnst0);
@@ -512,7 +510,7 @@ set_up_lanthionine_constraints(
 			pose.add_constraint (r2_ca_cb_s_cb_cnst8);
 		}
 
-		if ( pose.residue_type(dalares).base_name() == "BDS" || pose.residue_type(dalares).base_name() == "BLS" ) {
+		if ( pose.residue_type(dalares).base_name() == "DBS" || pose.residue_type(dalares).base_name() == "DDBS" ) {
 			//Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from CYS) constraints for 3S steriochem
 			FuncOP s3_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 3.8, 0 ) );
 			ConstraintCOP s3_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm0) );
@@ -541,7 +539,7 @@ set_up_lanthionine_constraints(
 			FuncOP s3_ca_cb_s_cb_harm8( utility::pointer::make_shared< CharmmPeriodicFunc >( numeric::constants::d::pi_over_2, 0.246, 4 ) );
 			ConstraintCOP s3_ca_cb_s_cb_cnst8( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, s3_ca_cb_s_cb_harm8) );
 			pose.add_constraint (s3_ca_cb_s_cb_cnst8);
-		} else if ( pose.residue_type(dalares).base_name() == "BDR" || pose.residue_type(dalares).base_name() == "BLR" ) {
+		} else if ( pose.residue_type(dalares).base_name() == "DBR" || pose.residue_type(dalares).base_name() == "DDBR" ) {
 			//Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from CYS) constraints for 3R steriochem
 			FuncOP r3_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 2.318, 0 ) );
 			ConstraintCOP r3_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_ao, atom_a, atom_b, atom_c, r3_ca_cb_s_cb_harm0) );
@@ -573,7 +571,7 @@ set_up_lanthionine_constraints(
 		}
 
 		//Non-sterio dependent constraints
-		{//Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from AAB) constraint
+		{//Methyllanthionine dihedral angle (Ca-Cb-S-Cb, from DBB/AAB) constraint
 			FuncOP cys_ca_cb_s_cb_harm0( utility::pointer::make_shared< CharmmPeriodicFunc >( 0, 4.86, 0 ) );
 			ConstraintCOP cys_ca_cb_s_cb_cnst0( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, cys_ca_cb_s_cb_harm0) );
 			pose.add_constraint (cys_ca_cb_s_cb_cnst0);
