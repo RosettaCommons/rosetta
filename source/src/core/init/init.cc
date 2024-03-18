@@ -1028,6 +1028,7 @@ init_source_revision(){
 		if ( utility::Version::package() != "devel" ) TR << " " << utility::Version::package();
 		if ( utility::Version::revision() != "None" ) TR << " r" << utility::Version::revision();
 		TR << " " << utility::Version::version() << " " << utility::Version::commit() << " " << utility::Version::url() << " " << utility::Version::date() << std::endl;
+		TR << "Rosetta extras: " << utility::Version::extras() << std::endl;
 	}
 }
 
