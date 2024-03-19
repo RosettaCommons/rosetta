@@ -288,14 +288,14 @@ Lanthionine_Helper::get_lanthionine_residues_from_selection(
 	//((!pose.residue_type( dalares ).is_d_aa()) )
 	TR << cysres << " is " << pose.residue_type( cysres ).base_name() << std::endl;
 	TR << dalares << " is " << pose.residue_type( dalares ).base_name() << " and sidechain thiol is " << pose.residue_type( cysres ).is_sidechain_thiol() << std::endl;
-    //TR << dalares << " is " << (pose.residue_type( dalares ).base_name() == "DBLR") << std::endl;
+	//TR << dalares << " is " << (pose.residue_type( dalares ).base_name() == "DBLR") << std::endl;
 	//TR.Debug
 	if ( (!pose.residue_type( cysres ).is_sidechain_thiol()) || !( (pose.residue_type( dalares ).base_name() == "DBS" ) || (pose.residue_type( dalares ).base_name() == "DBR" )
-            || (pose.residue_type( dalares ).base_name() == "DDBS" )  || (pose.residue_type( dalares ).base_name() == "DDBR" )
+			|| (pose.residue_type( dalares ).base_name() == "DDBS" )  || (pose.residue_type( dalares ).base_name() == "DDBR" )
 			|| (pose.residue_type( dalares ).base_name() == "DALA" ) || (pose.residue_type( dalares ).base_name() == "ALA" ) ) ) {
 		runtime_assert_string_msg( pose.residue_type( dalares ).is_sidechain_thiol(), errmsg + "Neither of the selected residues has a sidechain thiol (CYS), as is required for a lanthionine connection." );
 		runtime_assert_string_msg( ( (pose.residue_type( dalares ).base_name() == "DBS" ) || (pose.residue_type( dalares ).base_name() == "DBR" )
-            || (pose.residue_type( dalares ).base_name() == "DDBS" )  || (pose.residue_type( dalares ).base_name() == "DDBR" )
+			|| (pose.residue_type( dalares ).base_name() == "DDBS" )  || (pose.residue_type( dalares ).base_name() == "DDBR" )
 			|| (pose.residue_type( cysres ).base_name() == "ALA" ) || (pose.residue_type( cysres ).base_name() == "DALA" )),
 			errmsg + "Neither of the selected residues is named ALA or DALA or BDR or BDS or BLR or BLS as is required for a lanthionine connection." );
 		//runtime_assert_string_msg( pose.residue_type( dalares ).is_sidechain_thiol(), errmsg + "Neither of the selected residues has a sidechain thiol, as is required for a lanthionine connection." );
