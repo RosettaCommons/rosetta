@@ -374,6 +374,10 @@ RosettaTensorflowTensorContainer<T>::copy_data( T const * src ){
  	std::memcpy( tensor_data_, src, sizeof(T) * num_tensor_elements() );
 }
 
+#ifdef PYROSETTA
+template class RosettaTensorflowTensorContainer<float>;
+#endif
+
 } //tensorflow_manager
 } //basic
 

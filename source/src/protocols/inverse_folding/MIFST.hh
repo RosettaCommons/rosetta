@@ -38,6 +38,9 @@
 #include <utility/vector1.hh>
 
 // Torch header
+#ifdef Assert
+	#undef Assert
+#endif
 #include <torch/script.h>
 
 // Eigen header
