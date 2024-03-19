@@ -1,17 +1,3 @@
-Rosetta Software
-================
-
-0. Preamble
---------------
-
-_This preamble is explanatory in nature, and is not part of the license agreement._
-
-a. While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Use of Rosetta is governed by the license agreement -- either the one below or a separate commercial agreement obtained through University of Washington CoMotion)
-b. Use for commercial purposes is not permitted under the following license. To obtain a commercial/for-profit license (or for questions about whether your use is considered commercial), please contact University of Washington CoMotion (license@uw.edu). If you and your organization have a commercial license or an Institution Participation Agreement for Rosetta from UW CoMotion, the terms of that license supersede the ones below.
-c. All forks of the Rosetta code must maintain the current licensing restrictions.
-d. Modifications and improvements to the Rosetta code are encouraged. Please see CONTRIBUTING.md for more details.
-
-
 PyRosetta Software Non-Commercial License Agreement
 --------------------------
 
