@@ -163,7 +163,7 @@ def split_ver( ver_string, leng=None ):
     elif leng < len(split):
         return split[:leng]
     else:
-        return split + ( (0,) * (len(split) - len) )
+        return split + ( (0,) * (len(split) - leng) )
 
 def cxx_version_match( spec, ver ):
     """Does the provided version match the specification?
