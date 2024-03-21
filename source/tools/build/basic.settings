@@ -443,7 +443,7 @@ settings = {
         },
     },
 
-    "gcc, 13.1" : {
+    "gcc, |cxx_ver:>=13.0|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
@@ -454,165 +454,9 @@ settings = {
                 ],
             },
         },
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
     },
 
-    "gcc, 12.3" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 12.2" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 12.1" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-
-    "gcc, 11.4" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 11.3" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 11.2" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 11.1" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-
-
-    "gcc, 10.5" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 10.4" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 10.3" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 10.2" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 10.1" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-
-
-    "gcc, 9.5" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 9.4" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 9.3" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 9.2" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 9.1" : {
+    "gcc, |cxx_ver:>9.0|" : {
         "removes" : {
             "flags" : {
                 "cxx" : [
@@ -2322,7 +2166,7 @@ settings = {
     #    },
     #},
 
-    "clang, 3.7" : {
+    "clang, |cxx_ver:>=3.7|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
@@ -2332,77 +2176,11 @@ settings = {
         },
     },
 
-    "clang, 3.8" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 3.9" : {
+    "clang, |cxx_ver:>=3.9|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
                     "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 4.0" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 4.1" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 4.2" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 5.0" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 5.1" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
                 ],
             },
         },
