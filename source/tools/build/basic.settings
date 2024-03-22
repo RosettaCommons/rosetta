@@ -443,7 +443,7 @@ settings = {
         },
     },
 
-    "gcc, |cxx_ver:>=13.0|" : {
+    "gcc, |cxx_ver:>=12.0|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
