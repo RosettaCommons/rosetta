@@ -12,7 +12,8 @@ While the Rosetta source code is published on GitHub, it is not "Open Source" (a
 
 The main GitHub repository on https://github.com/RosettaCommons/rosetta integrates all the Rosetta-associated code base.
 It should be noted that many parts of Rosetta are structured as GitHub projects on their own, which the main repository conveniently presents as submodules.
-Dominant are external software packages that Rosetta is redistributing, which will help synchronizing development and thus supports users and developers in their communication.
+Dominant are external software packages that Rosetta is redistributing, which will help synchronizing development to exact versions of those external softwares across software distributions
+and thus support users and developers in their communication.
 
 It is not required to manually retrieve those subprojects, or to auto-retrieve them all.
 For the basic Rosetta infrastruture most parts are not required and anything extra unnecessarily compliates the build process.
@@ -32,7 +33,17 @@ Getting Started Using Rosetta
 
 Start here: https://www.rosettacommons.org/docs/latest/getting_started/Getting-Started
 
-Compilation quick-start (see <https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation> for more details):
+The fastest way to address your scientific modeling challenge at hand may be with the official Docker images.
+Accessible from the official Docker hub at https://hub.docker.com/r/rosettacommons/rosetta,
+the images have both Rosetta and PyRosetta pre-installed, such that Rosetta tutorials can be followed.
+
+Anticipating that you like what you see or if coming with a Computer Science background,
+you may decide to extend and compile the Rosetta source tree yourself. See the
+Compilation quick-start on <https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation> for more details.
+
+The Rosetta source tree ships with all its run-time dependencies, just when building you
+need to install the C++ compiler (g++ or clang). Also you need the scripting language Python to be installed,
+The compilation is then performed by:
 
 ``` sh
 $ cd source
@@ -40,6 +51,10 @@ $ ./scons.py -j<NumOfJobs> mode=release bin
 ```
 
 Questions about how to use Rosetta are best directed to the RosettaCommons forums <https://www.rosettacommons.org/forum>
+The Rosetta source tree is big and uses a series of advanced features of the C++ language.
+Some C++ compilers may not yet perfectly master these features.
+Later versions of those compilers have that fixed.
+Talk back to us when you run into issues.
 
 PyRosetta
 =========
@@ -55,6 +70,22 @@ Official Rosetta/PyRosetta images could be found at https://hub.docker.com/r/ros
 
 Various reference Docker files could be found in `rosetta/docker` dir.
 
+
+The Docker image referenced above already ships with PyRosetta.
+To prepare the PyRosetta Python module locally from this source tree, do the following:
+
+``` sh
+$ cd source/src/python/PyRosetta
+$ cowsay "Abracadabra!"
+ ______________
+< Abracadabra! >
+ --------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
 
 Developing Rosetta
 ==================
