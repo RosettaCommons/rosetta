@@ -62,21 +62,22 @@ PyRosetta
 PyRosetta are Python bindings to the Rosetta library. These can be built from the Rosetta source code.
 
 See <https://www.pyrosetta.org/> for more information about PyRosetta.
+For details on the building and installation from the source tree refer to
+<https://www.pyrosetta.org/documentation#h.q91xbiqnd5yv>.
 
 The Docker image referenced above already ships with PyRosetta.
-To prepare the PyRosetta Python module locally from this source tree, do the following:
+To prepare the PyRosetta Python module locally from this source tree,
+you need
+ * a C++ compiler, like the one you used to compile the other parts of Rosetta
+ * the Ninja ([conda](https://anaconda.org/conda-forge/ninja), [Debian](https://tracker.debian.org/pkg/ninja-build)) build management tool 
+ * and also CMake ([conda](https://anaconda.org/conda-forge/cmake), [Debian](https://tracker.debian.org/pkg/cmake))
+which should all be readily available from your regular Linux distribution.
 
 ``` sh
 $ cd source/src/python/PyRosetta
-$ cowsay "Abracadabra!"
- ______________
-< Abracadabra! >
- --------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
+$ python3 build.py -j24 --create-package $HOME/my_pyrosetta_package
+$ cd $HOME/my_pyrosetta_package/setup
+$ python3 setup.py install
 ```
 
 Developing Rosetta
