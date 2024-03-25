@@ -819,6 +819,8 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		runtime_assert_string_msg( nlanres > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of residues to form lanthionine rings." );
 		//runtime_assert_string_msg( nlanres % 2 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of two.  Pairs of residues must form lanthionine rings." );
 		//Only allowing two specified residues at the moment
+		//This is due to limitations of the application only being able to handle rings within rings
+		//i.e. cannot handle overlapping or adjacent rings.
 		runtime_assert_string_msg( nlanres == 2, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of two residues. Pairs of residues must form lanthionine rings." );
 		core::Size count(0);
 		lanthionine_positions_.resize(nlanres / 2);
