@@ -56,6 +56,15 @@ Some C++ compilers may not yet perfectly master these features.
 Later versions of those compilers have that fixed.
 Talk back to us when you run into issues.
 
+Docker
+======
+
+Official Rosetta/PyRosetta images could be found at https://hub.docker.com/r/rosettacommons/rosetta.
+Both `serial` and `mpi` Rosetta builds provided as well as the number of PyRosetta builds including fully functional Jupyter setups with PyRosetta pre-installed and experimenta builds with `libtorch` and `tensorflow` integration.
+Please see https://hub.docker.com/r/rosettacommons/rosetta for more information.
+
+Various reference Docker files could be found in `rosetta/docker` dir.
+
 PyRosetta
 =========
 
@@ -63,28 +72,19 @@ PyRosetta are Python bindings to the Rosetta library. These can be built from th
 
 See <https://www.pyrosetta.org> for more information about PyRosetta.
 
-Docker
-======
-
-Official Rosetta/PyRosetta images could be found at https://hub.docker.com/r/rosettacommons/rosetta. Both `serial` and `mpi` Rosetta builds provided as well as the number of PyRosetta builds including fully functional Jupyter setups with PyRosetta pre-installed and experimenta builds with `libtorch` and `tensorflow` integration. Please see https://hub.docker.com/r/rosettacommons/rosetta for more information.
-
-Various reference Docker files could be found in `rosetta/docker` dir.
-
-
 The Docker image referenced above already ships with PyRosetta.
-To prepare the PyRosetta Python module locally from this source tree, do the following:
+To prepare the PyRosetta Python module locally from this source tree,
+you need
+ * a C++ compiler, like the one you used to compile the other parts of Rosetta
+ * the Ninja ([conda](https://anaconda.org/conda-forge/ninja), [Debian](https://tracker.debian.org/pkg/ninja-build)) build management tool 
+ * and also CMake ([conda](https://anaconda.org/conda-forge/cmake), [Debian](https://tracker.debian.org/pkg/cmake))
+which should all be readily available from your regular Linux distribution.
 
 ``` sh
 $ cd source/src/python/PyRosetta
-$ cowsay "Abracadabra!"
- ______________
-< Abracadabra! >
- --------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
+$ python3 build.py -j24 --create-package $HOME/my_pyrosetta_package
+$ cd $HOME/my_pyrosetta_package/setup
+$ python3 setup.py install
 ```
 
 Developing Rosetta
