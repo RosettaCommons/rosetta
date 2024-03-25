@@ -8,34 +8,83 @@ Rosetta is maintained by the RosettaCommons, a collaboration of 50+ academic res
 Rosetta Code
 ============
 
-While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information. 
+While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information.
+
+The main GitHub repository on https://github.com/RosettaCommons/rosetta integrates all the Rosetta-associated code base.
+It should be noted that many parts of Rosetta are structured as GitHub projects on their own, which the main repository conveniently presents as submodules.
+Dominant are external software packages that Rosetta is redistributing, which will help synchronizing development to exact versions of those external softwares across software distributions
+and thus support users and developers in their communication.
+
+It is not required to manually retrieve those subprojects, or to auto-retrieve them all.
+For the basic Rosetta infrastruture most parts are not required and anything extra unnecessarily compliates the build process.
+Instead, the scons build management will auto-retrieve only those external repositories that are required for the build.
+The retrieval of external source trees is independent from the software that may already be installed via the Operating System, which is intentional.
+
+``` sh
+git clone https://github.com/RosettaCommons/rosetta
+```
+and change to that directory
+``` sh
+cd rosetta
+```
 
 Getting Started Using Rosetta
-============================
+=============================
 
 Start here: https://www.rosettacommons.org/docs/latest/getting_started/Getting-Started
 
-Compilation quick-start (see <https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation> for more details):
+The fastest way to address your scientific modeling challenge at hand may be with the official Docker images.
+Accessible from the official Docker hub at https://hub.docker.com/r/rosettacommons/rosetta,
+the images have both Rosetta and PyRosetta pre-installed, such that Rosetta tutorials can be followed.
+
+Anticipating that you like what you see or if coming with a Computer Science background,
+you may decide to extend and compile the Rosetta source tree yourself. See the
+Compilation quick-start on <https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation> for more details.
+
+The Rosetta source tree ships with all its run-time dependencies, just when building you
+need to install the C++ compiler (g++ or clang). Also you need the scripting language Python to be installed,
+The compilation is then performed by:
 
 ``` sh
-$ cd Rosetta/main/source
+$ cd source
 $ ./scons.py -j<NumOfJobs> mode=release bin
 ```
 
 Questions about how to use Rosetta are best directed to the RosettaCommons forums <https://www.rosettacommons.org/forum>
+The Rosetta source tree is big and uses a series of advanced features of the C++ language.
+Some C++ compilers may not yet perfectly master these features.
+Later versions of those compilers have that fixed.
+Talk back to us when you run into issues.
 
 PyRosetta
 =========
 
-PyRosetta are Python bindings to the Rosetta library. These can be built from the Rosetta source code. 
+PyRosetta are Python bindings to the Rosetta library. These can be built from the Rosetta source code.
 
 See <https://www.pyrosetta.org/> for more information about PyRosetta.
+For details on the building and installation from the source tree refer to
+<https://www.pyrosetta.org/documentation#h.q91xbiqnd5yv>.
+
+The Docker image referenced above already ships with PyRosetta.
+To prepare the PyRosetta Python module locally from this source tree,
+you need
+ * a C++ compiler, like the one you used to compile the other parts of Rosetta
+ * the Ninja ([conda](https://anaconda.org/conda-forge/ninja), [Debian](https://tracker.debian.org/pkg/ninja-build)) build management tool 
+ * and also CMake ([conda](https://anaconda.org/conda-forge/cmake), [Debian](https://tracker.debian.org/pkg/cmake))
+which should all be readily available from your regular Linux distribution.
+
+``` sh
+$ cd source/src/python/PyRosetta
+$ python3 build.py -j24 --create-package $HOME/my_pyrosetta_package
+$ cd $HOME/my_pyrosetta_package/setup
+$ python3 setup.py install
+```
 
 Developing Rosetta
 ==================
 
-We welcome contributions to improve Rosetta. We use a fork-and-PR system for contribution. 
-To contribute to Rosetta, please fork the Rosetta repo(s) under your own Github user space. 
+We welcome contributions to improve Rosetta. We use a fork-and-PR system for contribution.
+To contribute to Rosetta, please fork the Rosetta repo(s) under your own Github user space.
 You can then develop your additions in your own space. Once you're ready to contribute it back, open a PR agaist the main Rosetta repos.
 You will need to sign the Rosetta Contributor License Agreement before your contribution can be accepted.
 
