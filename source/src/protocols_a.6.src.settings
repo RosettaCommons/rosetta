@@ -31,6 +31,8 @@ sources = {
 	"protocols/cyclic_peptide/crosslinker": [
 		"1_4_BBMB_Helper",
 		"CrosslinkerMoverHelper",
+		"Lanthionine_Helper",
+		"lanthionine_util",
 		"Metal_HelperBase",
 		"OctahedralMetal_Helper",
 		"SquarePlanarMetal_Helper",

@@ -45,6 +45,7 @@ enum class CrossLinker {
 	One_Four_BBMB,
 	TMA,
 	thioether,
+	lanthionine,
 	tetrahedral_metal,
 	octahedral_metal,
 	trigonal_planar_metal,

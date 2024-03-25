@@ -1,0 +1,80 @@
+# This is for adding an 2-oxobutryryl group (CCC(=O)C=O) to the N terminus
+# 2KT in PDB 2KTO
+# Claiborne Tydings (claiborne.w.tydings@vanderbilt.edu) Dec 2023
+# from M052X/6-311+G(d,p) geometry optimization
+
+NAME Nterm2_Oxobutrylation 
+TYPES NTERM2_OXOBUTRYLATION
+
+## general requirements for this patch
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE NTERM2_OXOBUTRYLATION
+NOT VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
+NOT VARIANT_TYPE METHYLATED_NTERM_VARIANT
+NOT VARIANT_TYPE CUTPOINT_LOWER
+NOT VARIANT_TYPE N_METHYLATION
+NOT VARIANT_TYPE N_ACETYLATION
+NOT VARIANT_TYPE N_FORMYLATION
+END_SELECTOR
+
+
+################################
+
+# Should only happen in lanthipeptides
+BEGIN_CASE
+
+BEGIN_SELECTOR
+NAME3 DBU DHA
+END_SELECTOR
+
+# add these atoms and bonds instead
+ADD_ATOM C1   CObb C 0.51
+ADD_ATOM O1   OCbb O -0.51
+ADD_ATOM C2   CObb C 0.51
+ADD_ATOM O2   OCbb O -0.51
+ADD_ATOM C3   CH2 CT2 -0.24
+ADD_ATOM C4   CH3 CT3 -0.24
+ADD_ATOM 1H3  Hapo HA 0.0964167
+ADD_ATOM 2H3  Hapo HA 0.0964167
+ADD_ATOM 1H4  Hapo HA 0.0964167
+ADD_ATOM 2H4  Hapo HA 0.0964167
+ADD_ATOM 3H4  Hapo HA 0.0964167
+
+ADD_BOND N C1
+ADD_BOND  C1 O1
+ADD_BOND  C1 C2
+ADD_BOND  C2 O2
+ADD_BOND  C2 C3
+ADD_BOND  C3 C4
+ADD_BOND  C3 1H3
+ADD_BOND  C3 2H3
+ADD_BOND  C4 1H4
+ADD_BOND  C4 2H4
+ADD_BOND  C4 3H4
+
+# set internal coordinates for this functional group
+SET_ICOOR  C1   180.00  57.69  1.326  N   CA  H
+SET_ICOOR  C2   180.00  66.02  1.542  C1  N   CA
+SET_ICOOR  O1   180.00  54.64  1.231  C1  N   C2
+SET_ICOOR  H   -180.00  61.38  1.012  N   CA  C1
+SET_ICOOR  O2   0.00  60.83  1.211  C2  C1  N
+SET_ICOOR  C3   180.00  63.90  1.490  C2  C1  N
+SET_ICOOR  C4   180.00  67.07  1.518  C3  C2  C1
+SET_ICOOR  1H3 -56.0    73.1   1.094  C3  C2  C1
+SET_ICOOR  2H3  56.0    73.1   1.094  C3  C2  C1
+SET_ICOOR  1H4  180.0   70.0   1.089  C4  C3  C2
+SET_ICOOR  2H4  60.0    70.0   1.089  C4  C3  C2
+SET_ICOOR  3H4 -60.0    70.0   1.089  C4  C3  C2
+#Unpatched H gets its geometry from LOWER, which we have removed
+
+SET_POLYMER_CONNECT LOWER NONE
+
+# If modified, no longer canonical.
+DELETE_PROPERTY CANONICAL_AA
+DELETE_PROPERTY CANONICAL_NUCLEIC
+
+END_CASE # End apply to all other cases.
+
+################################

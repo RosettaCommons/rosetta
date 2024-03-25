@@ -274,7 +274,7 @@ functions. -- Doug
 ###########################################
 BEGIN_CASE ### AIB
 BEGIN_SELECTOR
-NAME3 AIB
+NAME3 AIB DBU DHA
 END_SELECTOR
 
 ADD_ATOM  CP   CObb   C     0.62
