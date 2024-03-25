@@ -13,8 +13,6 @@
 /// using generalized kinematic closure (GenKIC) for cyclization, and enforcing user-defined requiresments for numbers of mainchain hydrogen bonds.
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
 
-//CTW TODO add lanthipeptides
-
 #ifndef INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_hh
 #define INCLUDED_protocols_cyclic_peptide_predict_SimpleCycpepPredictApplication_hh
 

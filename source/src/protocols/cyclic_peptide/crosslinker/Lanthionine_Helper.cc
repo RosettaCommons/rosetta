@@ -71,8 +71,6 @@ Lanthionine_Helper::add_linker_asymmetric(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
-	//This will not compile until this is implemented.
-	//TODO
 	core::Size firstres, secondres; //Firstres has the backbone linkage, secondres has the sidechain linkage. - change var name to dala and cystine
 	get_lanthionine_residues_from_selection( selection, pose, firstres, secondres );
 	set_up_lanthionine_variants( pose, firstres, secondres ); //Defined in utility file, lanthionine_util.hh/cc.
@@ -90,7 +88,6 @@ Lanthionine_Helper::add_linker_bonds_asymmetric(
 	utility::vector1< core::Size > const & res_indices,
 	core::Size const /*linker_index*/
 ) const {
-	//This will not compile until this is implemented.
 	std::string const errmsg( "Error in Lanthionine_Helper::add_linker_bonds_asymmetric(): " );
 	protocols::simple_moves::DeclareBond declbond;
 	runtime_assert_string_msg( res_indices.size() == 2 && res_indices[1] != res_indices[2], errmsg + "Exactly two residues must be selected to set up linker bonds." );
@@ -110,7 +107,6 @@ Lanthionine_Helper::add_linker_symmetric(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
-	//This will not compile until this is implemented.
 	add_linker_asymmetric( pose, selection );
 }
 
@@ -125,7 +121,6 @@ Lanthionine_Helper::add_linker_bonds_symmetric(
 	core::Size const linker_index1,
 	core::Size const linker_index2
 ) const {
-	//This will not compile until this is implemented.
 	add_linker_bonds_asymmetric( pose, utility::vector1< core::Size >{ linker_index1, linker_index2 }, 0 );
 }
 
@@ -138,7 +133,6 @@ Lanthionine_Helper::add_linker_constraints_asymmetric(
 	core::pose::Pose & pose,
 	core::select::residue_selector::ResidueSubset const & selection
 ) const {
-	//This will not compile until this is implemented.
 	core::Size firstres, secondres; //Firstres has the backbone linkage, secondres has the sidechain linkage.--change/check this
 	get_lanthionine_residues_from_selection( selection, pose, firstres, secondres );
 	set_up_lanthionine_constraints( pose, firstres, secondres );
@@ -153,7 +147,6 @@ Lanthionine_Helper::add_linker_constraints_symmetric(
 	core::select::residue_selector::ResidueSubset const & selection,
 	bool const //linker_was_added
 ) const {
-	//This will not compile until this is implemented.
 	add_linker_constraints_asymmetric( pose, selection );
 }
 
@@ -165,7 +158,6 @@ Lanthionine_Helper::get_linker_index_asymmetric(
 	core::pose::Pose const & /*pose*/,
 	utility::vector1< core::Size > const & /*res_indices*/
 ) const {
-	//This will not compile until this is implemented.
 	return 0;
 }
 
@@ -178,7 +170,6 @@ Lanthionine_Helper::get_linker_indices_symmetric(
 	utility::vector1< core::Size > const & /*res_indices*/,
 	utility::vector1< core::Size > & linker_indices
 ) const {
-	//This will not compile until this is implemented.
 	linker_indices.clear();
 }
 
@@ -192,7 +183,6 @@ Lanthionine_Helper::filter_by_sidechain_distance_asymmetric(
 	core::select::residue_selector::ResidueSubset const & selection,
 	core::Real const & filter_multiplier
 ) const {
-	//This will not compile until this is implemented.
 	core::Size dalares, cysres;
 	get_lanthionine_residues_from_selection( selection, pose, dalares, cysres );
 
@@ -217,7 +207,6 @@ Lanthionine_Helper::filter_by_sidechain_distance_symmetric(
 	core::select::residue_selector::ResidueSubset const & selection,
 	core::Real const & filter_multiplier
 ) const {
-	//This will not compile until this is implemented.
 	return filter_by_constraints_energy( pose, selection, false, false, filter_multiplier );
 }
 
@@ -261,7 +250,6 @@ Lanthionine_Helper::get_lanthionine_residues_from_selection(
 	core::Size & dalares,
 	core::Size & cysres
 ) const {
-	//This will not compile until this is implemented.
 	std::string const errmsg( "Error in Lanthionine_Helper::get_lanthionine_residues_from_selection(): " );
 	dalares = 0;
 	cysres = 0;

@@ -105,8 +105,9 @@ void parse_NMR_name_general( std::string name, core::Size res, core::pose::Pose 
 			//std::cout << "Num: " << num << " of" << pose.residue_type(res).natoms() << std::endl;
 			size_t find = pose.residue_type(res).atom_name(num).find(name);
 			if ( find != std::string::npos ) {
-				auto atm_name = pose.residue_type(res).atom_name(num);
-				atm_name.erase(std::remove_if(atm_name.begin(), atm_name.end(), ::isspace), atm_name.end());
+				std::sting atm_name = pose.residue_type(res).atom_name(num);
+				//atm_name.erase(std::remove_if(atm_name.begin(), atm_name.end(), ::isspace), atm_name.end());
+				atm_name = utility::strip_whitespace(atm_name);
 				atoms.push_back( core::id::NamedAtomID( atm_name, res) );
 			}
 		}
