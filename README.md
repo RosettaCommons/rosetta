@@ -29,7 +29,15 @@ PyRosetta
 
 PyRosetta are Python bindings to the Rosetta library. These can be built from the Rosetta source code. 
 
-See <https://www.pyrosetta.org/> for more information about PyRosetta.
+See <https://www.pyrosetta.org> for more information about PyRosetta.
+
+Docker
+======
+
+Official Rosetta/PyRosetta images could be found at https://hub.docker.com/r/rosettacommons/rosetta. Both `serial` and `mpi` Rosetta builds provided as well as the number of PyRosetta builds including fully functional Jupyter setups with PyRosetta pre-installed and experimenta builds with `libtorch` and `tensorflow` integration. Please see https://hub.docker.com/r/rosettacommons/rosetta for more information.
+
+Various reference Docker files could be found in `rosetta/docker` dir.
+
 
 Developing Rosetta
 ==================

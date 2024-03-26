@@ -404,7 +404,7 @@ def setup_source_directory_links(rosetta_source_path):
         if os.path.islink(s): os.unlink(s)
         os.symlink(source_path, s)
 
-    if Options.external_link:
+    if False and Options.external_link:
         target_lib_path = os.path.relpath( os.path.join(rosetta_source_path, "cmake", "build_PyRosetta.{}".format(Options.external_link) ), prefix)
 
         s = os.path.join(prefix, "lib")
@@ -547,7 +547,7 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
              python_lib = Options.python_lib)
     )
 
-    if Options.external_link:
+    if False and Options.external_link:
         rosetta_cmake = """
             include_directories(SYSTEM {system_include})
             include_directories({rosetta_include})
@@ -864,7 +864,7 @@ def main(args):
     parser.add_argument('--binder', default='', help='Path to Binder tool. If none is given then download, build and install binder into main/source/build/prefix. Use "--binder-debug" to control which mode of binder (debug/release) is used.')
     parser.add_argument("--binder-debug", action="store_true", help="Run binder tool in debug mode (only relevant if no '--binder' option was specified)")
     parser.add_argument("--binder-config", action="append", default=["rosetta.config"], help="Binder config file. [Default='rosetta.config']")
-    parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given options and exit. Use this option to automate package creation.")
+    parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given build options and exit. Use this option to automate package creation.")
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
     parser.add_argument('--annotate-includes', action="store_true", help='Annotate includes in generated PyRosetta source files')
@@ -872,7 +872,6 @@ def main(args):
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
-    parser.add_argument('--external-link', default=None, choices=["debug", "release"], help="Instead of building Rosetta libraries link to Rosetta libraries compiled with CMake PyRosetta.<kind> build")
 
     parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
     parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')
