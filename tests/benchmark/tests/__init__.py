@@ -472,6 +472,8 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     if 'cxx11thread'   in platform['extras']: extra += ' --multi-threaded'
     if 'serialization' in platform['extras']: extra += ' --serialization'
+    if 'torch' in platform['extras']: extra += ' --torch'
+    if 'tensorflow' in platform['extras']: extra += ' --tensorflow'
 
     if version: extra += " --version '{version}'".format(**vars())
 
