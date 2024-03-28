@@ -3,7 +3,8 @@ Rosetta Biomolecular Modeling Library
 
 The Rosetta software suite includes algorithms for computational modeling and analysis of protein structures. It has enabled notable scientific advances in computational biology, including de novo protein design, enzyme design, ligand docking, and structure prediction of biological macromolecules and macromolecular complexes.
 
-Rosetta is maintained by the RosettaCommons, a collaboration of 50+ academic research groups, who have been developing Rosetta for over 20 years. See <https://ww.rosettacommons.org> for more information about Rosetta and the RosettaCommons.
+Rosetta is maintained by the RosettaCommons, a collaboration of 50+ academic research groups, who have been developing Rosetta for over 20 years.
+See <https://www.rosettacommons.org> for more information about Rosetta and the RosettaCommons.
 
 Rosetta Code
 ============
@@ -76,7 +77,7 @@ The Docker image referenced above already ships with PyRosetta.
 To prepare the PyRosetta Python module locally from this source tree,
 you need
  * a C++ compiler, like the one you used to compile the other parts of Rosetta
- * the Ninja ([conda](https://anaconda.org/conda-forge/ninja), [Debian](https://tracker.debian.org/pkg/ninja-build)) build management tool 
+ * the Ninja ([conda](https://anaconda.org/conda-forge/ninja), [Debian](https://tracker.debian.org/pkg/ninja-build)) build management tool
  * and also CMake ([conda](https://anaconda.org/conda-forge/cmake), [Debian](https://tracker.debian.org/pkg/cmake))
 which should all be readily available from your regular Linux distribution.
 
@@ -106,7 +107,7 @@ The main repository (RosettaCommons/rosetta) contains the Rosetta source code, d
 * rosetta/source/src -- The Rosetta source
 * rosetta/database/ -- The Rosetta database (used during runtime)
 * rosetta/source/test/ -- The compiled unit tests
-* rosetta/test/integration/ -- The integration tests
+* rosetta/tests/integration/ -- The integration tests
 * rosetta/source/bin/ -- The location of the (symlinks to) the Rosetta executables
 * rosetta/source/build/ -- The location of the built libraries
 
