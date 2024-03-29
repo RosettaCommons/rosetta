@@ -11,7 +11,7 @@
 /// @brief A class for using the MIF-ST model developed by Yang et al.
 /// @author Moritz Ertelt (moritz.ertelt@gmail.com)
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 
 #ifndef INCLUDED_protocols_inverse_folding_MIFST_hh
 #define INCLUDED_protocols_inverse_folding_MIFST_hh
@@ -110,4 +110,4 @@ private: //data
 
 #endif //INCLUDED_protocols_inverse_folding_MIFST_hh
 
-#endif //USE_PYTORCH
+#endif //USE_TORCH

@@ -86,7 +86,7 @@ def get_defines():
     if Options.type in 'Release MinSizeRel': defines += ' NDEBUG BCL_NO_OS_SIGNAL_HANDLING'
     if Options.serialization: defines += ' SERIALIZATION'
     if Options.multi_threaded: defines += ' MULTI_THREADED'
-    if Options.torch: defines += ' USE_PYTORCH'
+    if Options.torch: defines += ' USE_TORCH'
     if Options.tensorflow: defines += ' USE_TENSORFLOW USE_TENSORFLOW_CPU'
     #if Options.hdf5: defines += ' USEHDF5'
     return defines.split()
