@@ -37,6 +37,9 @@ Start here: https://www.rosettacommons.org/docs/latest/getting_started/Getting-S
 The fastest way to address your scientific modeling challenge at hand may be with the official Docker images.
 Accessible from the official Docker hub at https://hub.docker.com/r/rosettacommons/rosetta,
 the images have both Rosetta and PyRosetta pre-installed, such that Rosetta tutorials can be followed.
+You may also conveniently inspect the Dockerfiles
+(see [docker/README.md](https://github.com/RosettaCommons/rosetta/blob/main/docker/README.md))
+as a templated for the Rosetta installation on your local system.
 
 Anticipating that you like what you see or if coming with a Computer Science background,
 you may decide to extend and compile the Rosetta source tree yourself. See the
