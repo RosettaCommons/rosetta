@@ -1399,10 +1399,10 @@ settings = {
         },
     },
 
-    "gcc, pytorch" : {
+    "gcc, torch" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
+                "USE_TORCH",
                 "CXX14",
                 "CXX14_OR_LATER",
                 # Uncomment if using torchlib with pre-cxx11 ABI
@@ -1435,11 +1435,11 @@ settings = {
         },
     },
 
-    "gcc, pytorch_gpu" : {
+    "gcc, torch_gpu" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
-		"USE_PYTORCH_GPU",
+                "USE_TORCH",
+		"USE_TORCH_GPU",
 		#Libtorch with cuda needs at least C++17
                 "CXX17",
                 "CXX17_OR_LATER",
@@ -2940,10 +2940,10 @@ settings = {
     },
 
 
-    "clang, pytorch" : {
+    "clang, torch" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
+                "USE_TORCH",
                 "CXX14",
                 "CXX14_OR_LATER",
                 # Uncomment if using torchlib with pre-cxx11 ABI
@@ -2976,11 +2976,11 @@ settings = {
         },
     },
 
-    "clang, pytorch_gpu" : {
+    "clang, torch_gpu" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
-		"USE_PYTORCH_GPU",
+                "USE_TORCH",
+		"USE_TORCH_GPU",
 		# Libtorch with cuda needs at least C++17
                 "CXX17",
                 "CXX17_OR_LATER",
@@ -3110,10 +3110,10 @@ settings = {
         },
     },
 
-    "clang, macos, pytorch" : {
+    "clang, macos, torch" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
+                "USE_TORCH",
                 "CXX14",
                 "CXX14_OR_LATER",
                 # Uncomment if using torchlib with pre-cxx11 ABI
@@ -3146,11 +3146,11 @@ settings = {
         },
     },
 
-    "clang, macos, pytorch_gpu" : {
+    "clang, macos, torch_gpu" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
-		"USE_PYTORCH_GPU",
+                "USE_TORCH",
+		"USE_TORCH_GPU",
 		# Libtorch needs at least CXX17
                 "CXX17",
                 "CXX17_OR_LATER",
