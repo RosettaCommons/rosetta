@@ -1,6 +1,8 @@
-
 PyRosetta 4
 ===========
+
+
+**NOTE: Use for PyRosetta for commercial purposes requires purchase of a separate PyRosetta license which is different from Rosetta commercial license.** (This includes fee-for-service work by academic users.) Please see [UW Comotion](https://els2.comotion.uw.edu/product/pyrosetta) or email license@uw.edu for more information.
 
 Building from source
 --------------------
