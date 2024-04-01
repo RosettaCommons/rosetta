@@ -307,7 +307,10 @@ version_utility_template = '''\
 #ifndef INCLUDED_utility_version_hh
 #define INCLUDED_utility_version_hh
 
+#include <utility/stream_util.hh>
+
 #include <string>
+#include <vector>
 
 namespace utility {
 
@@ -320,6 +323,32 @@ struct Version
     static inline std::string commit()   { return "%(commit)s"; }
     static inline std::string url()      { return "%(url)s"; }
     static inline std::string date()     { return "%(date)s"; }
+
+    static inline std::vector<std::string> extras()   {
+      std::vector<std::string> r;
+
+      #ifdef MULTI_THREADED
+        r.push_back("cxx11thread");
+      #endif
+
+      #ifdef USEMPI
+        r.push_back("mpi");
+      #endif
+
+      #ifdef SERIALIZATION
+        r.push_back("serialization");
+      #endif
+
+      #ifdef USE_TENSORFLOW
+        r.push_back("tensorflow");
+      #endif
+
+      #ifdef USE_PYTORCH
+        r.push_back("torch");
+      #endif
+
+      return r;
+    }
 };
 
 } // utility

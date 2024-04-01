@@ -1,87 +1,32 @@
 PyRosetta 4
 ===========
 
-Building with external Rosetta libraries
-----------------------------------------
 
-PyRosetta may be linked against externally compiled Rosetta shared libraries.
-This may be used to suppport "extras" builds or debug builds of the shared
-libraries with release-mode bindings. To support external links, configure &
-build via cmake and clang, then specify `--external-link` to `build.py`.
+**NOTE: Use for PyRosetta for commercial purposes requires purchase of a separate PyRosetta license which is different from Rosetta commercial license.** (This includes fee-for-service work by academic users.) Please see [UW Comotion](https://els2.comotion.uw.edu/product/pyrosetta) or email license@uw.edu for more information.
 
-For example:
-````
-export CC=`which clang`
-export CXX=`which clang++`
+Building from source
+--------------------
 
-cd `git rev-parse --show-toplevel`
+Requirements:
+* CLang-3.4+ or GCC-4.8+
+* CMake
+* [Ninja](https://ninja-build.org/)
+* Python-3.8+
 
-pushd source/cmake
-./make_project.py all
-
-pushd build_debug
-cmake -G ninja && ninja
-
-popd
-popd
-
-pushd source/src/python/PyRosetta
-python build.py --external-link debug
-````
-
-Building PyRosetta under Anaconda python
-----------------------------------------
-If you use Anaconda python (https://www.continuum.io) and would like to use
-it to build PyRosetta, you will need to make the build system aware of the
-location of the appropriate C headers and library. These values are specified
-using the `python-include-dir` and `python-lib` command line flags when calling
-`build.py`. For example, if Anaconda 3 is installed in the default location,
-the command to run `build.py` would be:
-
-`python build.py -jX --python-include-dir=$HOME/anaconda3/include/python3.5m --python-lib=$HOME/anaconda3/lib/libpython3.5m.dylib`
-
-where X is the number of jobs to parallelize the build over.
-
-Bootstrap PyRosetta Development Environment
--------------------------------------------
-
-An existing PyRosetta build can be used to bootstrap a development
-environment for python-level development. The bootstrap process will (a)
-reset the work tree to match the source binary version and (b) copy the
-source binary compiled module and database into the PyRosetta `src`
-directory.
-
-To bootstrap into a conda-based development environment:
-
+Building PyRosetta:
 ```
-# Create and activate a development environment.
-conda create -n pyrosetta-dev python=3.6
-conda activate pyrosetta-dev
-
-# Install pyrosetta, optionally specifying a target development version.
-conda install -c rosettacommons pyrosetta
-
-# Copy binary and reset tree to the prebuilt version.
-./bootstrap_dev_env
-
-# Replace conda package with development-mode install of working tree.
-conda remove pyrosetta && pushd src && python setup.py develop
+cd rosetta/source/src/python/PyRosetta
+python3 build.py -j8
 ```
 
-The bootstrap process resets the git working tree to the prebuilt version
-in a detached HEAD state. To begin development create a feature branch
-`git checkout -b user/py_feature`. If you have already created commits on
-a existing branch your git HEAD will no longer point to this branch.
+Useful build script options:
+* `--create-package` create Python setup.py package
+* `--create-wheel` create Python wheel package
+* `--print-build-root` print path to where PyRosetta binaries will be located with given build options
 
-You can recover this initial work post-bootstrap by checkout,
-cherry-pick, or rebase. Assuming you were on an branch pre-bootstrap:
 
-* Create new branch `git checkout -b user/py_new`, checkout the state of
-  the old branch, `git checkout HEAD@{1} -- src` and work and
-  recommit `git commit`.
+Developing PyRosetta
+---------------------------
+When developing/debugging PyRosetta is usually too time consuming to create and install it as a package during testing. To mitigate this PyRosetta build system is setup in way to allow PyRosetta import to be done at build location. Also, all Python files at build location are symlinks to original source files so it is possible to edit and test Python scripts without explicitly rebuilding the PyRosetta.
 
-* Create new branch `git checkout -b user/py_new`, cherry-pick all the
-  work in the old branch `git cherry-pick origin/master..HEAD@{1}`.
-
-* Rebase the old branch (here `user/py_feature`) onto the current HEAD
-  `git rebase -i --onto HEAD origin/master user/py_feature`.
+To use this feature you will first need to determent path of binaries with currently build options using `--print-build-root` build script options. Note that report path will be vary for different build options, compiler settings etc. Final build path could be obtained by adding `/build` suffix to reported location. Starting python interpreter at final build path will allow you to fully import and PyRosetta as if it was installed.
