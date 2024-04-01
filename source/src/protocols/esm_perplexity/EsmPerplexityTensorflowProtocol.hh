@@ -89,8 +89,8 @@ public:
 
 	// @brief get the citation for ESM
 	static
-        basic::citation_manager::CitationCollectionBaseCOP
-        get_ESM_neural_net_citation();
+	basic::citation_manager::CitationCollectionBaseCOP
+	get_ESM_neural_net_citation();
 
 	/// @brief The tensorflow session
 #ifdef USE_TENSORFLOW

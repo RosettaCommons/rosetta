@@ -92,30 +92,30 @@ SampleSequenceFromProbabilities::apply( core::pose::Pose& pose ){
 	std::string modified_sequence = construct_modified_sequence(pose, mutations );
 	TR << " Done!" << std::endl;
 
-	  // Check if the sequence is unmutated (only hyphens)
-	  bool is_unmutated = true;
-	  for (std::size_t i = 0; i < modified_sequence.length(); i += 4) {
-	      if ( i >= modified_sequence.length() || modified_sequence[i] != '-' ) {
-		  is_unmutated = false;
-		  break;
-	      }
-	  }
+	// Check if the sequence is unmutated (only hyphens)
+	bool is_unmutated = true;
+	for ( std::size_t i = 0; i < modified_sequence.length(); i += 4 ) {
+		if ( i >= modified_sequence.length() || modified_sequence[i] != '-' ) {
+			is_unmutated = false;
+			break;
+		}
+	}
 
-	  // Call SimpleThreadingMover with sampled sequence if mutated
-	  if (!is_unmutated) {
-	    TR << "Threading sequence onto pose..." << std::endl;
-	    SimpleThreadingMoverOP threader(utility::pointer::make_shared<SimpleThreadingMover>(modified_sequence, 1));
-	    threader->set_pack_neighbors(true);
-	    // disable packing if specified by user
-	    if (!packing_) {
-		threader->set_pack_rounds(0);
-	    }
-	    threader->set_sequence_mode("threeletter");
-	    threader->apply(pose);
-	    TR.Info << " Done!" << std::endl;
-	  } else {
-	    TR.Warning << "No mutations match the thresholds set. Skipping SimpleThreadingMover." << std::endl;
-	  }
+	// Call SimpleThreadingMover with sampled sequence if mutated
+	if ( !is_unmutated ) {
+		TR << "Threading sequence onto pose..." << std::endl;
+		SimpleThreadingMoverOP threader(utility::pointer::make_shared<SimpleThreadingMover>(modified_sequence, 1));
+		threader->set_pack_neighbors(true);
+		// disable packing if specified by user
+		if ( !packing_ ) {
+			threader->set_pack_rounds(0);
+		}
+		threader->set_sequence_mode("threeletter");
+		threader->apply(pose);
+		TR.Info << " Done!" << std::endl;
+	} else {
+		TR.Warning << "No mutations match the thresholds set. Skipping SimpleThreadingMover." << std::endl;
+	}
 }
 
 void

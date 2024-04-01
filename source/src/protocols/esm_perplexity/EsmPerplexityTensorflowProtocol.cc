@@ -372,28 +372,28 @@ EsmPerplexityTensorflowProtocol::softmax(
 	std::map< core::Size, utility::vector1< core::Real >> const &logit_map,
 	std::map< core::Size, utility::vector1< core::Real >> &softmax_map
 ) {
-	  for (const auto& pair : logit_map) {
-	    core::Size selected_residue = pair.first;
-	    utility::vector1< core::Real > logit_vec = pair.second;
+	for ( const auto& pair : logit_map ) {
+		core::Size selected_residue = pair.first;
+		utility::vector1< core::Real > logit_vec = pair.second;
 
-	    core::Real max_val = *std::max_element(logit_vec.begin(), logit_vec.end());
+		core::Real max_val = *std::max_element(logit_vec.begin(), logit_vec.end());
 
-	    for (auto& logit : logit_vec) {
-	      logit -= max_val;
-	    }
+		for ( auto& logit : logit_vec ) {
+			logit -= max_val;
+		}
 
-	    core::Real sum_exp = 0.0;
-	    for (const auto& scaled_logit : logit_vec) {
-	      sum_exp += std::exp(scaled_logit);
-	    }
+		core::Real sum_exp = 0.0;
+		for ( const auto& scaled_logit : logit_vec ) {
+			sum_exp += std::exp(scaled_logit);
+		}
 
-	    utility::vector1< core::Real > softmax_vec;
-	    for (const auto& scaled_logit : logit_vec) {
-	      softmax_vec.push_back(std::exp(scaled_logit) / sum_exp);
-	    }
+		utility::vector1< core::Real > softmax_vec;
+		for ( const auto& scaled_logit : logit_vec ) {
+			softmax_vec.push_back(std::exp(scaled_logit) / sum_exp);
+		}
 
-	    softmax_map[selected_residue] = softmax_vec;
-	  }
+		softmax_map[selected_residue] = softmax_vec;
+	}
 
 }
 
@@ -463,14 +463,14 @@ EsmPerplexityTensorflowProtocol::download_model_if_not_existing( std::string con
 /*static*/
 basic::citation_manager::CitationCollectionBaseCOP
 EsmPerplexityTensorflowProtocol::get_ESM_neural_net_citation() {
-    using namespace basic::citation_manager;
-    CitationCollectionOP citation(
-            utility::pointer::make_shared< CitationCollection >(
-                    "ESM", CitedModuleType::NeuralNetwork
-            )
-    );
-    citation->add_citation( CitationManager::get_instance()->get_citation_by_doi( "10.1126/science.ade2574" ) );
-    return citation;
+	using namespace basic::citation_manager;
+	CitationCollectionOP citation(
+		utility::pointer::make_shared< CitationCollection >(
+		"ESM", CitedModuleType::NeuralNetwork
+		)
+	);
+	citation->add_citation( CitationManager::get_instance()->get_citation_by_doi( "10.1126/science.ade2574" ) );
+	return citation;
 }
 
 

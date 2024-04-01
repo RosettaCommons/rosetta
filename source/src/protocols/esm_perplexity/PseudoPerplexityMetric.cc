@@ -127,8 +127,8 @@ PseudoPerplexityMetric::compute_perplexity(
 		if ( aa_probability == 0 || aa_probability < 0.00001 ) {
 			aa_probability += 0.00001;
 		}
-		if ( std::isnan(aa_probability) || std::isinf(aa_probability)) {
-			aa_probability += 0.00001;
+		if ( std::isnan(aa_probability) || std::isinf(aa_probability) ) {
+			aa_probability = 0.00001;
 		}
 		log_probabilities_sum += std::log( aa_probability );
 	}

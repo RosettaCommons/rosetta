@@ -189,7 +189,7 @@ PerResidueEsmProbabilitiesMetric::fill_return_map( std::map< core::Size, utility
 			core::chemical::AA const aa_enum = core::chemical::aa_from_oneletter_code(curr_aa);
 			core::Real probability = softmax_vec[prob_index + 1];
 			// check for NaN/inf to avoid problems later
-			if (std::isnan(probability) || std::isinf(probability)) {
+			if ( std::isnan(probability) || std::isinf(probability) ) {
 				probability = 0.0;
 			}
 
