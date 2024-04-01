@@ -105,14 +105,14 @@ private:
 private:
 	utility::vector1<std::string> chains_;
 	core::pose::PoseOP native_;
-	bool native_ensemble_best_;
+	bool native_ensemble_best_ = false;
 	core::scoring::ScoreFunctionOP score_fxn_;
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function_;
-	bool compute_grid_scores_;
+	bool compute_grid_scores_ = false;
 	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
 	std::string prefix_;
 	//Compute mem_interface_delta_X by translating the ligand in the membrane.
-	bool score_in_mem_;
+	bool score_in_mem_ = false;
 
 };
 
