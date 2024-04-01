@@ -750,8 +750,8 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
                 about = dict(
                     home    = 'http://www.pyrosetta.org',
-                    license = 'Rosetta license',
-                    license_file = f'{rosetta_dir}/LICENSE.md',
+                    license = 'PyRosetta license',
+                    license_file = f'{rosetta_dir}/LICENSE.PyRosetta.md',
                     summary = 'Python binding for Rosetta, biomolecular modeling software package',
                     description = 'The Rosetta software suite includes algorithms for computational modeling and analysis of protein structures. It has enabled notable scientific advances in computational biology, including de novo protein design, enzyme design, ligand docking, and structure prediction of biological macromolecules and macromolecular complexes.',
                 ),

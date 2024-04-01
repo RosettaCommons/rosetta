@@ -131,6 +131,15 @@ add_library(rosetta SHARED
 #%__PyRosetta_sources__%#
 )
 
+target_compile_options(rosetta PRIVATE
+  #%__PyRosetta_compile_options__%#
+)
+
+target_link_libraries(rosetta
+  #%__PyRosetta_target_link_libraries__%#
+)
+
+
 target_link_libraries(rosetta #%__Rosetta_libraries__%#  ${ZLIB_LIBRARIES} )
 
 # Don't add a 'lib' prefix to the shared library

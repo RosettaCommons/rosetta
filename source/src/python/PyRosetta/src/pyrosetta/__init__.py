@@ -212,7 +212,7 @@ def version():
         '│              (C) Copyright Rosetta Commons Member Institutions               │\n'
         '│                                                                              │\n'
         '│ NOTE: USE OF PyRosetta FOR COMMERCIAL PURPOSES REQUIRE PURCHASE OF A LICENSE │\n'
-        '│              See LICENSE.md or email license@uw.edu for details              │\n'
+        '│         See LICENSE.PyRosetta.md or email license@uw.edu for details         │\n'
         '└──────────────────────────────────────────────────────────────────────────────┘\n'
     ) + \
     'PyRosetta-4 ' + rosetta.utility.Version.date().split('-').pop(0) + \
