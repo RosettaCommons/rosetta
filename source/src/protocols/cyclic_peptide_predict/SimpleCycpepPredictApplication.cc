@@ -199,6 +199,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::n_methyl_positions                   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lariat_sample_cis               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices         );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lanthionine_positions                       );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::paraBBMB_positions                       );
@@ -439,6 +440,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	required_symmetry_perturbation_(0.0),
 	exclude_residues_from_rms_(),
 	lariat_sidechain_index_(0),
+	lariat_sample_cis_(true),
 	sidechain_isopeptide_indices_(std::pair<core::Size, core::Size>(0,0))
 	//TODO -- initialize variables here.
 {
@@ -572,6 +574,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	required_symmetry_perturbation_(src.required_symmetry_perturbation_),
 	exclude_residues_from_rms_(src.exclude_residues_from_rms_),
 	lariat_sidechain_index_(src.lariat_sidechain_index_),
+	lariat_sample_cis_(src.lariat_sample_cis_),
 	sidechain_isopeptide_indices_(src.sidechain_isopeptide_indices_),
 	out_prefix_(src.out_prefix_),
 	out_suffix_(src.out_suffix_),
@@ -976,6 +979,7 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		runtime_assert_string_msg( is_lariat_type( cyclization_type_ ), "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lariat_sidechain_index\" option may only be used with a lariat cyclization type." );
 	}
 	lariat_sidechain_index_ = option[basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index]();
+	lariat_sample_cis_ = option[basic::options::OptionKeys::cyclic_peptide::lariat_sample_cis]();
 
 	if ( option[basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices].user() ) {
 		runtime_assert_string_msg( cyclization_type_ == SCPA_sidechain_isopeptide, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:sidechain_isopeptide_indices\" option may only be used with the \"sidechain_isopeptide\" cyclization type." );
@@ -3378,13 +3382,16 @@ SimpleCycpepPredictApplication::add_closebond_logic_thioether_lariat(
 	// In theory you could randomize CONN2-CP2-CO-N and CO-N-CA-C but that's tomorrow's problem. AMW TODO
 
 	//This application appears to only produce cis CA-N-CO-CP2 bonds without randomization,
-	// trans should be energetically favored, so setting bond to trans here
-	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
-	utility::vector1< core::id::NamedAtomID > omega_vect;
-	omega_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_end));
-	omega_vect.push_back( core::id::NamedAtomID( "CO", cyclization_point_end));
-	genkic->add_atomset_to_perturber_atomset_list( omega_vect );
-	genkic->add_value_to_perturber_value_list( 180.0 );
+	// trans should be energetically favored, so setting bond to trans here if option specified
+	//lariat_sample_cis_ should be false for this option to sample trans peptide bonds
+	if ( !lariat_sample_cis_ ) {
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
+		utility::vector1< core::id::NamedAtomID > omega_vect;
+		omega_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_end));
+		omega_vect.push_back( core::id::NamedAtomID( "CO", cyclization_point_end));
+		genkic->add_atomset_to_perturber_atomset_list( omega_vect );
+		genkic->add_value_to_perturber_value_list( 180.0 );
+	}
 
 	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
 	core::Size const first_sc_at( pose->residue_type(cyclization_point_start).first_sidechain_atom() );

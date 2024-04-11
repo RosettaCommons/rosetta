@@ -1267,6 +1267,10 @@ private:
 	/// @details If set to zero (default), the residue of appropriate type that's closest to the other end is used.
 	core::Size lariat_sidechain_index_;
 
+	/// @brief Should cis or trans bonds be sampled at the N terminal peptide bond of thioether lariats?
+	/// @details Defaults true, sample only cis bonds.
+	bool lariat_sample_cis_;
+
 	/// @brief If the cyclization type is sidechain_isopeptide, these are the indices of the residues forming the
 	/// sidechain-sidechain isopeptide bond.
 	/// @details If (0, 0), the default, then the most widely-separated pair of appropriate type is automatically chosen.

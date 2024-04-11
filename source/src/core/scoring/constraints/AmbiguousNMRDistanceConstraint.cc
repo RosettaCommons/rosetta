@@ -105,7 +105,7 @@ void parse_NMR_name_general( std::string name, core::Size res, core::pose::Pose 
 			//std::cout << "Num: " << num << " of" << pose.residue_type(res).natoms() << std::endl;
 			size_t find = pose.residue_type(res).atom_name(num).find(name);
 			if ( find != std::string::npos ) {
-				std::sting atm_name = pose.residue_type(res).atom_name(num);
+				std::string atm_name = pose.residue_type(res).atom_name(num);
 				//atm_name.erase(std::remove_if(atm_name.begin(), atm_name.end(), ::isspace), atm_name.end());
 				atm_name = utility::strip_whitespace(atm_name);
 				atoms.push_back( core::id::NamedAtomID( atm_name, res) );
@@ -413,8 +413,18 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 	}
 
 	NamedAtoms named_atoms;
-	//parse_NMR_name( name, res, aa, named_atoms );
-	parse_NMR_name_general(name, res, pose, named_atoms);
+	//pose.residue_type(res).properties().get_list_of_properties().empty(); //should be empty, or cterm or nterm
+	//pose.residue_type(res).is_canonical_aa();
+	//pose.residue_type(res).has_property(); //UPPER_TERMINUS, LOWER_TERMINUS
+	if ( pose.residue_type(res).is_canonical_aa() && (
+			pose.residue_type(res).properties().get_list_of_properties().empty() ||
+			pose.residue_type(res).has_property(UPPER_TERMINUS) ||
+			pose.residue_type(res).has_property(LOWER_TERMINUS)
+			) ) {
+		parse_NMR_name( name, res, aa, named_atoms );
+	} else {
+		parse_NMR_name_general(name, res, pose, named_atoms);
+	}
 
 	for ( NamedAtoms::const_iterator it= named_atoms.begin(); it!=named_atoms.end(); ++it ) {
 		atoms.push_back( named_atom_id_to_atom_id( *it, pose ) );

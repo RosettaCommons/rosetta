@@ -5319,6 +5319,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'sidechain_isopeptide_indices', 'IntegerVector', desc="If the sidechain_isopeptide cyclization type is specified, these are the indices of the residues that are linked by a sidechain-sidechain isopeptide bond to make the loop.  If not specified, the residues furthest apart of appropriate types are used.  Note that exactly two indices must be given." ),
 
 		Option( 'lanthionine_positions', 'IntegerVector', desc="If provided, then these positions will be linked by a lanthionine, crosslinker.  2 positions must be specified, and this group of two will be linked.  Unused if not specified." ),
+		Option( 'lariat_sample_cis', 'Boolean', desc="If true(default), then thioether_lariats will sample cis peptide bonds at the N terminus, trans if false.", default='true'),
 
 		Option( 'paraBBMB_positions', 'IntegerVector', desc="If provided, then these positions will be linked by a 1,4-bis(bromomethyl)benzene, or para-BBMB, crosslinker.  2N positions must be specified, and every group of two will be linked.  Unused if not specified." ),
 		Option( 'use_paraBBMB_filters', 'Boolean', desc="If true, then filters are applied based on distance between BBMB cysteines and on constraints to discard GenKIC solutions that can't be crosslinked easily.  True by default.", default='true' ),

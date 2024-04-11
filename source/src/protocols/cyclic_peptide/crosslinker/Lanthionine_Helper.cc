@@ -19,6 +19,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 //#include <core/chemical/AA.hh>
+#include <core/select/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 // Protocols headers
@@ -257,18 +258,30 @@ Lanthionine_Helper::get_lanthionine_residues_from_selection(
 	debug_assert( selection.size() == pose.total_residue() );
 	debug_assert( selection.size() >= 2 );
 
-	for ( core::Size i(1), imax(selection.size()); i<=imax; ++i ) {
-		if ( selection[i] ) {
-			if ( dalares == 0 ) {
-				dalares = i;
-			} else if ( cysres == 0 ) {
-				cysres = i;
-				if ( !pose.residue_type( cysres ).is_sidechain_thiol() ) { cysres=dalares; dalares=i;}
-			} else {
-				utility_exit_with_message( errmsg + "More than two residues were selected!  A lanthionine connection is specified by exactly two residues." );
-			}
+	utility::vector1< core::Size > residues = core::select::get_residues_from_subset(selection);
+	if ( residues.size() != 2 ) {
+		utility_exit_with_message( errmsg + "More than two residues were selected!  A lanthionine connection is specified by exactly two residues." );
+	} else {
+		if ( pose.residue_type(residues[1]).is_sidechain_thiol() ) {
+			cysres = residues[1];
+			dalares = residues[2];
+		} else {
+			cysres = residues[2];
+			dalares = residues[1];
 		}
 	}
+	//for ( core::Size i(1), imax(selection.size()); i<=imax; ++i ) {
+	// if ( selection[i] ) {
+	//  if ( dalares == 0 ) {
+	//   dalares = i;
+	//  } else if ( cysres == 0 ) {
+	//   cysres = i;
+	//   if ( !pose.residue_type( cysres ).is_sidechain_thiol() ) { cysres=dalares; dalares=i;}
+	//  } else {
+	//   utility_exit_with_message( errmsg + "More than two residues were selected!  A lanthionine connection is specified by exactly two residues." );
+	//  }
+	// }
+	//}
 
 	runtime_assert_string_msg( dalares != 0, errmsg + "No suitable D-ALA or ALA or (D-) DBR/DBS residue that can accept a lanthionine bond" );
 	runtime_assert_string_msg( cysres != 0, "No suitable cystine residue that can form a lanthionine connection from its side-chain was selected!" );
