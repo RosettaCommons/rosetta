@@ -2086,10 +2086,10 @@ LigandAligner::apply(
 	//5*50*3 takes 2sec per model; 5*10*3 1sec ~1sec
 	core::Size cycles1 = 20, minsteps1 = 0, repeats1 = 0; // very fast... ~0.001 s per cycle
 	if ( lig.has_density_map() ) {
-		cycles1 = 20, minsteps1 = 10, repeats1 = 1;
+		cycles1 = 20; minsteps1 = 10; repeats1 = 1;
 	}
 	if ( prealigned_input_ ) {
-		cycles1 = 5, minsteps1 = 10, repeats1 = 1;
+		cycles1 = 5; minsteps1 = 10; repeats1 = 1;
 	}
 	core::Size cycles2 = 5, minsteps2 = 50, repeats2 = 3; // adjusted for init-pool gen
 	core::Size minsteps_med = 30; // proper minimization b/w stage 1~2
