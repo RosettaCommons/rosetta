@@ -12,12 +12,11 @@ Rosetta Code
 While the Rosetta source code is published on GitHub, it is not "Open Source" (according to the OSI definition). Most notably, use for commercial purposes requires purchase of a separate license. See LICENSE.md for further information.
 
 The main GitHub repository on https://github.com/RosettaCommons/rosetta integrates all the Rosetta-associated code base.
-It should be noted that many parts of Rosetta are structured as GitHub projects on their own, which the main repository conveniently presents as submodules.
-Dominant are external software packages that Rosetta is redistributing, which will help synchronizing development to exact versions of those external softwares across software distributions
+It should be noted that many parts of Rosetta are structured as separate GitHub repositories, which the main repository conveniently presents as submodules.
+A significant number are external software packages that Rosetta is redistributing, which helps synchronize development to exact versions of those external softwares across software distributions
 and thus support users and developers in their communication.
 
-It is not required to manually retrieve those subprojects, or to auto-retrieve them all.
-For the basic Rosetta infrastruture most parts are not required and anything extra unnecessarily compliates the build process.
+It is not required to manually retrieve those subprojects.
 Instead, the scons build management will auto-retrieve only those external repositories that are required for the build.
 The retrieval of external source trees is independent from the software that may already be installed via the Operating System, which is intentional.
 
@@ -41,9 +40,13 @@ You may also conveniently inspect the Dockerfiles
 (see [docker/README.md](https://github.com/RosettaCommons/rosetta/blob/main/docker/README.md))
 as a templated for the Rosetta installation on your local system.
 
-Anticipating that you like what you see or if coming with a Computer Science background,
-you may decide to extend and compile the Rosetta source tree yourself. See the
-Compilation quick-start on <https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation> for more details.
+Questions about how to use Rosetta are best directed to the RosettaCommons forums <https://www.rosettacommons.org/forum>
+
+Compiling Rosetta
+-----------------
+
+To use Rosetta without Docker, or to modify and extend Rosetta yourself, you can compile the Rosetta source tree yourself.
+(See also <https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation> for details.)
 
 The Rosetta source tree ships with all its run-time dependencies, just when building you
 need to install the C++ compiler (g++ or clang). Also you need the scripting language Python to be installed,
@@ -54,11 +57,10 @@ $ cd source
 $ ./scons.py -j<NumOfJobs> mode=release bin
 ```
 
-Questions about how to use Rosetta are best directed to the RosettaCommons forums <https://www.rosettacommons.org/forum>
 The Rosetta source tree is big and uses a series of advanced features of the C++ language.
-Some C++ compilers may not yet perfectly master these features.
-Later versions of those compilers have that fixed.
-Talk back to us when you run into issues.
+While we endeavor to support most compilers where possible, some C++ compilers may not yet perfectly master these features.
+Later versions of those compilers may have that fixed.
+Please let us know if you run into issues.
 
 Docker
 ======
@@ -111,8 +113,8 @@ The main repository (RosettaCommons/rosetta) contains the Rosetta source code, d
 * rosetta/database/ -- The Rosetta database (used during runtime)
 * rosetta/source/test/ -- The compiled unit tests
 * rosetta/tests/integration/ -- The integration tests
-* rosetta/source/bin/ -- The location of the (symlinks to) the Rosetta executables
-* rosetta/source/build/ -- The location of the built libraries
+* rosetta/source/bin/ -- The location of the (symlinks to) the Rosetta executables -- (created during compilation)
+* rosetta/source/build/ -- The location of the built libraries -- (created during compilation)
 
 Additional information is located in submodules:
 * rosetta/documentation/ -- https://github.com/RosettaCommons/documentation -- Source for the online documentation
@@ -122,3 +124,14 @@ Additional information is located in submodules:
 * rosetta/pyrosetta_scripts -- https://github.com/RosettaCommons/pyrosetta_scripts -- Example PyRosetta scripts
 * rosetta/PyRosetta.notebooks -- https://github.com/RosettaCommons/PyRosetta.notebooks -- Example Jupyter notebooks using PyRosetta.
 * rosetta/source/external/... -- Various 'venderized' external dependencies
+
+The default clone does not pull down submodules, leaving an empty directory. 
+The compilation script will automatically clone the submodules needed for compilation, but not others.
+To obtain the contents of submodules which aren't currently cloned:
+
+    git submodule update --init -- ./submodule_directory_name
+    # e.g. git submodule update --init -- ./tools/
+
+or if you want to get all the submodules
+
+    git submodule update --init --recursive
