@@ -14,7 +14,7 @@ If you haven't already, you will need to sign the Rosetta Contributor Licensing 
 
 Once you've opened your PR, members of the Rosetta development team will take a look at the code and check to make sure it works in the wider framework of Rosetta. They may ask you to make some changes to alter your code to fit with Rosetta conventions, or to fix edge cases. Once your code looks good, they will squash-merge the code into the Rosetta main branch. (Squash-merge means that all of your changes will be re-written to be a single commit.)
 
-See <<<LINK>>> for more information about the recommended workflow.
+See https://www.rosettacommons.org/docs/latest/internal_documentation/GithubWorkflow for more information about the recommended workflow.
 
 Contributor Licensing Agreement
 -----------------------------
