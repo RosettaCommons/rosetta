@@ -416,10 +416,12 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 	//pose.residue_type(res).properties().get_list_of_properties().empty(); //should be empty, or cterm or nterm
 	//pose.residue_type(res).is_canonical_aa();
 	//pose.residue_type(res).has_property(); //UPPER_TERMINUS, LOWER_TERMINUS
+	//can use the original implementation if residue is canonical and (no patch or upper/lower term is only patch)
 	if ( pose.residue_type(res).is_canonical_aa() && (
-			pose.residue_type(res).properties().get_list_of_properties().empty() ||
+			pose.residue_type(res).properties().get_list_of_properties().empty() || (
+			pose.residue_type(res).properties().get_list_of_properties().size() == 1 && (
 			pose.residue_type(res).has_property(UPPER_TERMINUS) ||
-			pose.residue_type(res).has_property(LOWER_TERMINUS)
+			pose.residue_type(res).has_property(LOWER_TERMINUS) ) )
 			) ) {
 		parse_NMR_name( name, res, aa, named_atoms );
 	} else {
