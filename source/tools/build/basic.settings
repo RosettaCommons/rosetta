@@ -462,7 +462,7 @@ settings = {
                 "warn" : [
                     "Wno-error=array-bounds", # There's a probably spurious "__builtin_memmove() forming offset is out of the bounds" warning for vector1<bool>
                     "Wno-error=restrict", # Issue with json-spirit
-
+                    "Wno-error=use-after-free", # Issue with utility/tag/Tag.cc
                 ],
             },
         },
