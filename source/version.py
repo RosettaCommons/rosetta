@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This function expects that the current working directory is the Rosetta root directory.
 # If that's ever not true, we need to modify this to take an optional dir name on the cmd line.
 # (c) Copyright Rosetta Commons Member Institutions.
