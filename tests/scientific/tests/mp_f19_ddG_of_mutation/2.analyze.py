@@ -57,7 +57,7 @@ f.write( "target\tcorrcoeff\tslope\tintercept\n" )
 
 # go through scorefiles of targets
 for i in range( 0, len( ddG_files ) ):
-    if not os.path.isfile(fname):
+    if not os.path.isfile(ddG_files[i]):
         raise RuntimeError("Cannot find datafile: "+ddG_files[i])
 
     try:
