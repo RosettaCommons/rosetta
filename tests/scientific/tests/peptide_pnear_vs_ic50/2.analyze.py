@@ -78,7 +78,7 @@ def analyze_one_funnel( suffix='1A', expected_rmsd_of_lowest=0.3, expected_min_r
     in_table = False
     for line in logfile_contents:
         try:
-            sline = line.split():
+            sline = line.split()
             if in_table:
                 if line.startswith("End summary"):
                     in_table = False

@@ -30,7 +30,6 @@ import sys
 import types
 
 from functools import singledispatch
-from pyrosetta.rosetta.core.pose import Pose
 from pyrosetta.distributed.cluster.converter_tasks import (
     environment_cmd,
     get_yml,

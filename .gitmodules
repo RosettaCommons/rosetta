@@ -1,3 +1,6 @@
+# Most of these are listed as relative paths to allow for https/ssh matching with the primary Rosetta repo
+# But we do explicitly specify RosettaCommons, to allow things to work for forks
+
 ############################
 # External Modules
 ############################
@@ -9,16 +12,16 @@
 	url = https://github.com/CMA-ES/c-cmaes.git
 [submodule "source/external/libzmq"]
 	path = source/external/libzmq
-	url = ../libzmq.git
+	url = ../../RosettaCommons/libzmq.git
 [submodule "source/external/mmtf/mmtf-cpp"]
 	path = source/external/mmtf/mmtf-cpp
-	url = ../mmtf-cpp.git
+	url = ../../RosettaCommons/mmtf-cpp.git
 [submodule "source/external/rdkit/rdkit.upstream"]
 	path = source/external/rdkit/rdkit.upstream
-	url = https://github.com/RosettaCommons/rdkit.git
+	url = ../../RosettaCommons/rdkit.git
 [submodule "source/external/bcl"]
 	path = source/external/bcl
-	url = ../bcl.git
+	url = https://github.com/RosettaCommons/bcl_rosetta
 	branch = bcl_rosetta
 ############################
 # Boost Modules
@@ -299,38 +302,38 @@
 ###########################
 [submodule "source/src/python/PyRosetta/binder"]
 	path = source/src/python/PyRosetta/binder
-	url = ../binder.git
+	url = ../../RosettaCommons/binder.git
 [submodule "source/external/pybind11"]
 	path = source/external/pybind11
-	url = ../pybind11.git
+	url = ../../RosettaCommons/pybind11.git
 ###########################
 # Rosetta modules
 ###########################
 [submodule "tools"]
 	path = tools
-	url = ../tools.git
+	url = ../../RosettaCommons/tools.git
 [submodule "demos"]
 	path = demos
-	url = ../demos.git
+	url = ../../RosettaCommons/demos.git
 [submodule "documentation"]
 	path = documentation
-	url = ../documentation.git
+	url = ../../RosettaCommons/documentation.git
 [submodule "database/additional_protocol_data"]
 	path = database/additional_protocol_data
-	url = ../additional_protocol_data.git
+	url = ../../RosettaCommons/additional_protocol_data.git
 [submodule "tests/scientific/data"]
 	path = tests/scientific/data
-	url = ../scientific_benchmark_data.git
+	url = ../../RosettaCommons/scientific_benchmark_data.git
 [submodule "rosetta_scripts_scripts"]
 	path = rosetta_scripts_scripts
-	url = ../rosetta_scripts_scripts.git
+	url = ../../RosettaCommons/rosetta_scripts_scripts.git
 [submodule "pyrosetta_scripts"]
 	path = pyrosetta_scripts
-	url = ../pyrosetta_scripts.git
+	url = ../../RosettaCommons/pyrosetta_scripts.git
 [submodule "PyRosetta.notebooks"]
 	path = PyRosetta.notebooks
-	url = ../PyRosetta.notebooks.git
+	url = ../../RosettaCommons/PyRosetta.notebooks.git
 ############################
 [submodule "database/protocol_data/tensorflow_graphs/tensorflow_graph_repo_submodule"]
 	path = database/protocol_data/tensorflow_graphs/tensorflow_graph_repo_submodule
-	url = ../tensorflow_graphs.git
+	url = ../../RosettaCommons/tensorflow_graphs.git

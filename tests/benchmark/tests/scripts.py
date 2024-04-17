@@ -146,17 +146,17 @@ def run_pyrosetta_test(rosetta_dir, working_dir, platform, config, hpc_driver=No
 
 
 def upgrade_submodule(submodule_path, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
-    ''' Upgrade submodule to given SHA1 or latest origin/master
+    ''' Upgrade submodule to given SHA1 or latest origin/main
         submodule_path is local path (from main/) to submodule
     '''
-    upgrade_master_to_origin_master = 'git fetch && git update-ref refs/heads/master origin/master && git reset --hard master && git checkout master && git submodule update'
+    upgrade_main_to_origin_main = 'git fetch && git update-ref refs/heads/main origin/main && git reset --hard main && git checkout main && git submodule update'
 
     output = ''
 
-    output += execute('Upgrading main to latest origin/master...', 'cd {rosetta_dir} && {upgrade_master_to_origin_master}'.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
+    output += execute('Upgrading main to latest origin/main...', 'cd {rosetta_dir} && {upgrade_main_to_origin_main}'.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
     output += execute('Checking if there is no local changes in main repository...', 'cd {rosetta_dir} && ( git --no-pager diff --no-color --exit-code >/dev/null && git --no-pager diff --no-color --exit-code --cached >/dev/null ) '.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
 
-    output += execute('Upgrading submodule {submodule_path} to latest origin/master...'.format(**vars()), 'cd {rosetta_dir}/{submodule_path} && {upgrade_master_to_origin_master}'.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
+    output += execute('Upgrading submodule {submodule_path} to latest origin/main...'.format(**vars()), 'cd {rosetta_dir}/{submodule_path} && {upgrade_main_to_origin_main}'.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
     output += execute('Checking if there is no local changes in {submodule_path} submodule...'.format(**vars()), 'cd {rosetta_dir}/{submodule_path} && ( git --no-pager diff --no-color --exit-code >/dev/null && git --no-pager diff --no-color --exit-code --cached >/dev/null ) '.format(**vars()), add_message_and_command_line_to_output=True, return_='output')
 
 
@@ -176,7 +176,7 @@ def upgrade_submodule(submodule_path, rosetta_dir, working_dir, platform, config
             if res[_StateKey_] != _S_passed_: return res
 
     author = '{user_name} <{user_email}>'.format(user_name=config['user_name'], user_email=config['user_email'])
-    output += execute('Committing changes into main and pushing results to GitHub...', "cd {rosetta_dir} && git commit --author='{author}' -m 'RosettaAI: Setting {submodule_path} submodule to latest origin/master version.' -- {submodule_path} && git fetch && git rebase && git push".format(**vars()), add_message_and_command_line_to_output=True, return_='output')
+    output += execute('Committing changes into main and pushing results to GitHub...', "cd {rosetta_dir} && git commit --author='{author}' -m 'RosettaAI: Setting {submodule_path} submodule to latest origin/main version.' -- {submodule_path} && git fetch && git rebase && git push".format(**vars()), add_message_and_command_line_to_output=True, return_='output')
 
     output = output.replace( '<{}>'.format(config['user_email']), '<rosetta@university.edu>' )
 

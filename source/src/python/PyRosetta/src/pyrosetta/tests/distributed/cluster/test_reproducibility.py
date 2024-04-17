@@ -11,7 +11,6 @@ PyRosettaCluster reproducibility unit test suite using the `unittest` framework.
 
 __author__ = "Jason C. Klima"
 
-import glob
 import json
 import os
 import pyrosetta

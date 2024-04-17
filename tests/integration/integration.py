@@ -265,7 +265,7 @@ EXAMPLES For Running Demos/Tutorials
 
     parser.add_option("--suffix",
       default=None,
-      help="Specify `command` suffix. When used only tests that have `command.<suffix>` is run. Default is None: run only plain test (command)",
+      help="Specify `command` suffix. When used only tests that have `command.<suffix>` is run, with corresponding extras build. Default is None: run only plain test (command)",
     )
 
     parser.add_option("--mpi-tests",
@@ -1008,7 +1008,9 @@ def get_binext():
     if Options.extras:
         extras = Options.extras
     elif Options.suffix:
-        extras =  dict(mpi='mpi', tensorflow='tensorflow', thread='cxx11thread')[Options.suffix]
+        # Use .get() to default to whatever the suffix is for the compiler tag
+        # Only need to list those which differ
+        extras =  dict(thread='cxx11thread',).get( Options.suffix, Options.suffix )
     else :
         extras='default'
 

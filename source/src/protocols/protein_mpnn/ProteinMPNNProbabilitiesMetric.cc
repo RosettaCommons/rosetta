@@ -200,7 +200,7 @@ ProteinMPNNProbabilitiesMetric::calculate( core::pose::Pose const &pose ) const 
 
 	std::map< core::Size, std::map< core::chemical::AA, core::Real >> return_probabilities_map;
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 
     using namespace protocols::simple_moves;
     using namespace core::select;
@@ -312,12 +312,12 @@ ProteinMPNNProbabilitiesMetric::calculate( core::pose::Pose const &pose ) const 
 #else
 	(void)pose; // avert error: unused parameter
 	utility_exit_with_message( "This metric needs to be compiled with extras=pytorch!" );
-#endif // USE_PYTORCH
+#endif // USE_TORCH
 
 	return return_probabilities_map;
 }
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 /// @brief Fill the return_map with the probabilities from the softmax_map for all amino acids
 /// @param[in] softmax_map The map containing all probabilities or logits returned
 /// @param[in] return_map The map that will be returned by the calculate function, will be filled with probabilities by this function
@@ -335,7 +335,7 @@ ProteinMPNNProbabilitiesMetric::fill_return_map( std::map< core::Size, utility::
         }
     }
 }
-#endif // USE_PYTORCH
+#endif // USE_TORCH
 
 /// @brief Get the sequence of the selection from a map of positions->logits value
 std::string
@@ -404,9 +404,9 @@ ProteinMPNNProbabilitiesMetric::provide_citation_info(basic::citation_manager::C
 		""
 		)
 	);
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
     citations.add( ProteinMPNN::get_ProteinMPNN_neural_net_citation() );
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 }
 } //protein_mpnn
 } //protocols

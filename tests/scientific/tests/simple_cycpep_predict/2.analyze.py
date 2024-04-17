@@ -70,7 +70,7 @@ pnear_to_lowest = None
 in_table = False
 for line in logfile_contents:
     try:
-        sline = line.split():
+        sline = line.split()
         if in_table:
             if line.startswith("End summary"):
                 in_table = False
