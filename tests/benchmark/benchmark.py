@@ -289,6 +289,7 @@ def run_test(setup):
         if state_override:
             log_prefix = \
                 f'WARNING: Previous test results does not have `.execution.results.json` file, so comparision with None was performed instead!\n' \
+                f'WARNING: This can often be fixed by merging with the latest `main`.\n' \
                 f'WARNING: Overriding calcualted test state `{res[_StateKey_]}` → `{_S_failed_}`...\n\n'
 
             res[_LogKey_] = log_prefix + res[_LogKey_]
