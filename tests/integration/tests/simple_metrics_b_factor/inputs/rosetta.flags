@@ -1,0 +1,2 @@
+-in:file:s inputs/3gml.pdb
+-parser:protocol inputs/test_simple_metrics_b_factor.xml

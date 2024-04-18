@@ -21,7 +21,7 @@
 	url = ../../RosettaCommons/rdkit.git
 [submodule "source/external/bcl"]
 	path = source/external/bcl
-	url = ../../RosettaCommons/bcl.git
+	url = https://github.com/RosettaCommons/bcl_rosetta
 	branch = bcl_rosetta
 ############################
 # Boost Modules

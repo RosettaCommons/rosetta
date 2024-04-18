@@ -14,7 +14,7 @@ If you haven't already, you will need to sign the Rosetta Contributor Licensing 
 
 Once you've opened your PR, members of the Rosetta development team will take a look at the code and check to make sure it works in the wider framework of Rosetta. They may ask you to make some changes to alter your code to fit with Rosetta conventions, or to fix edge cases. Once your code looks good, they will squash-merge the code into the Rosetta main branch. (Squash-merge means that all of your changes will be re-written to be a single commit.)
 
-See <<<LINK>>> for more information about the recommended workflow.
+See https://www.rosettacommons.org/docs/latest/internal_documentation/GithubWorkflow for more information about the recommended workflow.
 
 Contributor Licensing Agreement
 -----------------------------
@@ -28,7 +28,7 @@ If you are making contributions as an employee (which includes employees and gra
 In that case, please confirm with your employer that you are authorized to sign the CLA on their behalf.
 If you change employers, please re-sign the agreement with your new employer's information.
 
-To sign the CLA, please visit <<CLA WEBSITE>>>.
+To sign the CLA, please visit <https://www.rosettacommons.org/forms/cla>.
 
 If you are a member of a RosettaCommons lab, there is a separate Developers Agreement process. 
 Please consult an existing member of the lab or your PI for details.
@@ -37,8 +37,6 @@ Submodules
 ----------
 
 Rosetta uses a number of git submodules to hold code and materials which are generally not needed for rountine development and usage, or which would be too large to include directly. Submodules which are needed for building Rosetta should be automatically downloaded by the Rosetta build system, if they haven't already been.
-
-<< QUESTION -- How does submodule locations work with forking? >>
 
 Note that if you wish to alter the content of one of the submodules, you will need to separately fork the submodule and make your modifications in that forked repo. You would then open a PR against the `main` branch of that submodule to incorporate.
 

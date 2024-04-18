@@ -62,6 +62,7 @@
 #endif
 
 #if defined(TRIO_PLATFORM_UNIX)
+# include <strings.h>
 # define USE_STRCASECMP
 # define USE_STRNCASECMP
 # if defined(TRIO_PLATFORM_SUNOS)
