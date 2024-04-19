@@ -935,12 +935,13 @@ def generate_version_information(rosetta_dir, **kwargs):
     This is a light wrapper around the generate_version_information() function in Rosetta/main/source/version.py -- see there for the interface definition.
     '''
 
-    contents = {}
-    exec(open(rosetta_dir + '/source/version.py').read(), contents)
-    generate_version_information = contents['generate_version_information']
+    import importlib.util
 
-    return version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
+    spec = importlib.util.spec_from_file_location('rosetta_source_version', rosetta_dir + '/source/version.py' )
+    rosetta_source_version = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rosetta_source_version)
 
+    return rosetta_source_version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
 
 
 def _get_path_to_conda_root(platform, config):

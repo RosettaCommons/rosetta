@@ -14,10 +14,11 @@
 ## For example of how to implement test which require extra files (beside access to 'data' checkout) please see rosetta/benchmark/tests/benchmark/tests/scientific/_template_dir_
 ## @author Sergey Lyskov
 
-# A bit of Python magic here, what we trying to say is this: from ../../__init__ import *, but init path is calculated relatively to this location
-exec(open('/'.join(__file__.split('/')[:-2]) +  '/__init__.py').read(), globals())
-
 import os, json
+
+# A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-2]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 
 _api_version_ = '1.0'  # api version
