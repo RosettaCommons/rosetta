@@ -13,14 +13,13 @@
 ## Benchmark script for running serialization test
 ## @author Sergey Lyskov
 
+# A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
+exec(open('/'.join(__file__.split('/')[:-1]) +  '/__init__.py').read(), globals())
+
 import os, json
 import glob, shutil
 import plistlib
 import time
-
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
-
 
 _api_version_ = '1.1'
 

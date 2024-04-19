@@ -12,9 +12,10 @@
 ## @brief  Test suite for Rosetta/PyRosetta scripts
 ## @author Sergey Lyskov
 
+# A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
+exec(open('/'.join(__file__.split('/')[:-1]) +  '/__init__.py').read(), globals())
 
-import os, sys, imp, json, shutil, distutils.dir_util, codecs
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+import os, sys, json, shutil, distutils.dir_util, codecs
 
 _api_version_ = '1.1'
 

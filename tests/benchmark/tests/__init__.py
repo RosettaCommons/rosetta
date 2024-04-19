@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, shutil, codecs, urllib.request, imp, subprocess, json, hashlib  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, subprocess, json, hashlib  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
@@ -935,7 +935,10 @@ def generate_version_information(rosetta_dir, **kwargs):
     This is a light wrapper around the generate_version_information() function in Rosetta/main/source/version.py -- see there for the interface definition.
     '''
 
-    version = imp.load_source('version', rosetta_dir + '/source/version.py')
+    contents = {}
+    exec(open(rosetta_dir + '/source/version.py').read(), contents)
+    generate_version_information = contents['generate_version_information']
+
     return version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
 
 
@@ -974,7 +977,7 @@ def _get_path_to_conda_root(platform, config):
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     packages = ['conda-build anaconda-client conda-verify',]
 
-    signature = f'url: {url}\nversion: {version}\channels: {channels}\npackages: {packages}\n'
+    signature = f'url: {url}\nversion: {version}\nchannels: {channels}\npackages: {packages}\n'
 
     root = calculate_unique_prefix_path(platform, config) + '/conda'
 
