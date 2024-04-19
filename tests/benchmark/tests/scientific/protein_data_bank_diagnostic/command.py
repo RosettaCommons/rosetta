@@ -12,8 +12,8 @@
 ## @brief  Benchmark script for testing how Rosetta can load PBD's from www.rcsb.org
 ## @author Sergey Lyskov
 
-# A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
-exec(open('/'.join(__file__.split('/')[:-1]) +  '/__init__.py').read(), globals())
+# A bit of Python magic here, what we trying to say is this: from ../../../__init__ import *, but init path is calculated relatively to this location
+exec(open('/'.join(__file__.split('/')[:-3]) +  '/__init__.py').read(), globals())
 
 import os, json, enum, time, shutil
 from collections import namedtuple, OrderedDict
