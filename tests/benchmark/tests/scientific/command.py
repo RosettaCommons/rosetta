@@ -135,7 +135,7 @@ def run(test, repository_root, working_dir, platform, config, hpc_driver=None, v
 
         mp_f19_tilt_angle     = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
         mp_f19_sequence_recovery    = 'numpy matplotlib==3.2',
-        mp_f19_ddG_of_mutation      = 'numpy matplotlib==3.2',
+        mp_f19_ddG_of_mutation      = 'numpy matplotlib==3.7', # Requires Python 3.8!
         mp_f19_decoy_discrimination = 'numpy matplotlib==3.2',
 
         mp_dock            = 'numpy matplotlib==3.2',
