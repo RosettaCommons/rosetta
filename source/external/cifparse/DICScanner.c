@@ -40,7 +40,12 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
+
+#ifdef WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 /* end standard C headers. */
 
