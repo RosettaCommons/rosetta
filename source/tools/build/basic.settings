@@ -1123,25 +1123,25 @@ settings = {
     "gcc, macos, opencl" : {
         "appends" : {
             "include_path" : [
-                "/Developer/GPU\ Computing/OpenCL/common/inc",
-                "/Developer/GPU\ Computing/OpenCL/common/inc/CL",
-                "/Developer/GPU\ Computing/shared/inc",
-                "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
-                "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
-                "/Developer-3.2.6/GPU\ Computing/shared/inc"
+                r"/Developer/GPU\ Computing/OpenCL/common/inc",
+                r"/Developer/GPU\ Computing/OpenCL/common/inc/CL",
+                r"/Developer/GPU\ Computing/shared/inc",
+                r"/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
+                r"/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
+                r"/Developer-3.2.6/GPU\ Computing/shared/inc"
             ],
             #"include_path" : [\
-            #    "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
-            #    "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
-            #    "/Developer-3.2.6/GPU\ Computing/shared/inc"
+            #    r"/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
+            #    r"/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
+            #    r"/Developer-3.2.6/GPU\ Computing/shared/inc"
             #],
             #"include_path" : [
-            #    "/Developer/GPU\ Computing/OpenCL/common/inc",
-            #    "/Developer/GPU\ Computing/OpenCL/common/inc/CL",
-            #    "/Developer/GPU\ Computing/shared/inc"
+            #    r"/Developer/GPU\ Computing/OpenCL/common/inc",
+            #    r"/Developer/GPU\ Computing/OpenCL/common/inc/CL",
+            #    r"/Developer/GPU\ Computing/shared/inc"
             #],
             #"libraries" : [ "OpenCL" ],
-            #"library_path" : [ "/Developer/CUDA/lib" ],
+            #"library_path" : [ r"/Developer/CUDA/lib" ],
             "defines"  : [
                 "USEOPENCL",
                 "MACOPENCL"
