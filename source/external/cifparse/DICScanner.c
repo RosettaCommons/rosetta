@@ -40,8 +40,9 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
+#ifndef WIN32
 #include <unistd.h>
-
+#endif
 /* end standard C headers. */
 
 /* flex integer type definitions */
