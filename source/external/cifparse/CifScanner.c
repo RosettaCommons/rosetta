@@ -41,7 +41,7 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 #include <io.h>
 #else
 #include <unistd.h>
