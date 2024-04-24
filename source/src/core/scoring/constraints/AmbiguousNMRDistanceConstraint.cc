@@ -160,7 +160,7 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 		atoms.push_back( NamedAtomID( "1HD2", res ) );
 		atoms.push_back( NamedAtomID( "2HD2", res ) );
 		if ( aa == aa_leu ) atoms.push_back( NamedAtomID( "3HD2", res ) );
-	} else if ( ( name == "QQD" || name == "QD" ) && aa == aa_leu ) {
+	} else if ( ( name == "QQD" || name == "QD" || name == "HD" ) && aa == aa_leu ) {
 		atoms.push_back( NamedAtomID( "1HD2", res ) );
 		atoms.push_back( NamedAtomID( "2HD2", res ) );
 		atoms.push_back( NamedAtomID( "3HD2", res ) );
