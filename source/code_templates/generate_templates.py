@@ -17,7 +17,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 import os
 work_dir = os.getcwd()
-
+# change the directory to this file's directory, if it is run from elsewhere.
 if os.path.dirname(__file__): os.chdir(os.path.dirname(__file__))
 from argparse import ArgumentParser
 
@@ -115,9 +115,7 @@ class GenerateRosettaTemplates(object):
         for template in sorted(files):
             extension = "."+".".join(os.path.basename(template).split(".")[1:])
 
-            if hasattr(self.options, "type") and self.options.type == "util":
-                out_basename = "util" + extension
-            elif re.search("Creator", os.path.basename(template)):
+            if re.search("Creator", os.path.basename(template)):
                 out_basename = self.get_outname()+"Creator"+extension
             else:
                 out_basename = self.get_outname()+extension
@@ -165,12 +163,8 @@ class GenerateRosettaTemplates(object):
 
 
         if hasattr(self.options, "type"):
-
-            if self.options.type == "util":
-                print("\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/util"+"*")
-            else:
-                print("\nRemember to add your newly created files to the git repository:")
-                print("\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
+            print("\nRemember to add your newly created files to the git repository:")
+            print("\ngit add "+os.path.join(self.get_base_outdir(), self.get_outfile_rel_path())+"/"+\
                       self.get_option("class_name", fail_on_none=False)+"*")
 
 
@@ -354,7 +348,7 @@ class GenerateGeneralTemplates(GenerateRosettaTemplates):
                             choices = self.types)
 
         required.add_argument("--class_name", "-c",
-                            help = "The name of the class you are creating if not creating util files.")
+                            help = "The name of the class you are creating. In case of util type, this will be the prefix for util files.")
 
         required.add_argument("--brief", "-b",
                             help = "A brief description of the class/file.  Enclose in quotes.",
