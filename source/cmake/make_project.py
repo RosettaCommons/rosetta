@@ -14,23 +14,22 @@ PATH_TO_SOURCE_DIR = os.path.dirname( os.path.dirname( os.path.abspath(sys.argv[
 PATH_TO_SOURCE_DIR = PATH_TO_SOURCE_DIR.replace('\\', '/')
 
 
-def execute_rosetta_script_from_source_dir(script_name):
+def execute_rosetta_script_from_source_dir(script_name, parser='bash'):
     command = os.path.join( '.', script_name )
     print("Executing setup script:", command)
-    result = subprocess.run(command, cwd="..", check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    result = subprocess.run([parser, command], cwd="..", check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     print("Setup script finished", command)
     print("Return code: ", result.returncode)
-    print("Output: ", result.stdout)
-    print("Stderr: ", result.stderr)
+    print("Output: ", result.stdout.decode("utf-8") )
     print("-----------------------------------")
 
-def update_version(): execute_rosetta_script_from_source_dir('version.py')
+def update_version(): execute_rosetta_script_from_source_dir('version.py','python')
 
-def update_options(): execute_rosetta_script_from_source_dir('update_options.sh')
+def update_options(): execute_rosetta_script_from_source_dir('update_options.sh','bash')
 
-def update_submodules(): execute_rosetta_script_from_source_dir('update_submodules.sh')
+def update_submodules(): execute_rosetta_script_from_source_dir('update_submodules.sh','bash')
 
-def update_ResidueType_enum_files(): execute_rosetta_script_from_source_dir('update_ResidueType_enum_files.sh')
+def update_ResidueType_enum_files(): execute_rosetta_script_from_source_dir('update_ResidueType_enum_files.sh','bash')
 
 
 def project_callback(project, project_path, project_files):
