@@ -16,8 +16,9 @@ PATH_TO_SOURCE_DIR = PATH_TO_SOURCE_DIR.replace('\\', '/')
 
 def execute_rosetta_script_from_source_dir(script_name, parser='bash'):
     command = os.path.join( '.', script_name )
+    command = parser + ' ' + command
     print("Executing setup script:", command)
-    result = subprocess.run([parser, command], cwd="..", check=True, stderr=subprocess.STDOUT)
+    result = subprocess.run(command, cwd="..", check=True, stderr=subprocess.STDOUT, shell=True)
     print("Setup script finished", command)
     print("Return code: ", result.returncode)
     #print("Output: ", result.stdout.decode("utf-8") )
