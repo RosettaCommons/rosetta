@@ -15,16 +15,13 @@ PATH_TO_SOURCE_DIR = PATH_TO_SOURCE_DIR.replace('\\', '/')
 
 
 def execute_rosetta_script_from_source_dir(script_name, parser='bash'):
-    command = os.path.join( '.', script_name )
-    command = parser + ' ' + command
-    print("Executing setup script:", command)
-    result = subprocess.run(command, cwd="..", check=True, stderr=subprocess.STDOUT, shell=True)
-    print("Setup script finished", command)
-    print("Return code: ", result.returncode)
-    #print("Output: ", result.stdout.decode("utf-8") )
-    print("-----------------------------------")
+    if parser == 'python':
+        parser = sys.executable
+    command = parser + ' ' + script_name
+    subprocess.run(command, cwd="..", check=True, stderr=subprocess.STDOUT, shell=True)
 
-def update_version(): execute_rosetta_script_from_source_dir('version.py',sys.executable)
+
+def update_version(): execute_rosetta_script_from_source_dir('version.py','python')
 
 def update_options(): execute_rosetta_script_from_source_dir('update_options.sh','bash')
 
