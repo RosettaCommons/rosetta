@@ -605,7 +605,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		{
 			//call function to export, use "empty" as the string prefix
 			export_space_fill_matrix_as_C_H_O_N_pdb(protein_representation_matrix_space_fill_, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
-				sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, "empty", *dummylig_mrt);
+				occupied_ratios, "empty", *dummylig_mrt);
 			//export_space_fill_matrix_as_C_H_O_N_pdb(protein_representation_matrix_, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
 			//	sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, "empty");
 		}
@@ -858,7 +858,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						utility::vector1<core::Real> space_fill_scores (2,0);
 
 						//run space fill analysis function, set to a vector
-						utility::vector1<utility::vector1<utility::vector1<core::Size>>> current_space_fill_matrix = space_fill_analysis(ligresOP, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, space_fill_scores, matrix_data_counts, score_cutoffs_sf);
+						utility::vector1<utility::vector1<utility::vector1<core::Size>>> current_space_fill_matrix = space_fill_analysis(ligresOP, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, space_fill_scores, matrix_data_counts);
 
 						//derive a differential score for the sub area between the placed and empty system
 						//only do anything if the user used the differencial cutoff score
@@ -878,7 +878,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							std::string matrix_pdb_prefix = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 							//call function to export, use "empty" as the string prefix
 							export_space_fill_matrix_as_C_H_O_N_pdb(current_space_fill_matrix, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
-								sub_xyz_min_sf, sub_xyz_max_sf, space_fill_scores, matrix_pdb_prefix, *dummylig_mrt);
+								space_fill_scores, matrix_pdb_prefix, *dummylig_mrt);
 							//export_space_fill_matrix_as_C_H_O_N_pdb(current_space_fill_matrix, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
 							//	sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, matrix_pdb_prefix);
 						}
@@ -2032,7 +2032,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		binding_pocket_dimensions.push_back(radius_real);
 		binding_pocket_dimensions.push_back(radius_real);
 		if (verbose_ >= 1){
-			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] std::endl;
+			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] << std::endl;
 		}
 
 		//overwrite if we used binding_pocket_dimensions_sf flag (which can use a different value in x,y,z)
@@ -2072,7 +2072,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		}
 
 		if (verbose_ >= 1){
-			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] std::endl;
+			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] << std::endl;
 		}
 
 		//apply the radius
