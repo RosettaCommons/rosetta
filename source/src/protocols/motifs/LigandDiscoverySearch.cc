@@ -521,8 +521,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		utility::vector1<core::Size>  sub_xyz_max_sf (3,0);
 
 		//value to hold the ratio of the unfilled area and sub area
-		core::Real occupied_ratio = 0;
-		core::Real sub_occupied_ratio = 0;
+		//core::Real occupied_ratio = 0;
+		//core::Real sub_occupied_ratio = 0;
 
 		//create 2 vectors to hold occupied ratio scores (core::Real) and raw counts of occupied, unoccupied, and total cells (core::Size) for both the main area and sub area
 
@@ -2032,7 +2032,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		binding_pocket_dimensions.push_back(radius_real);
 		binding_pocket_dimensions.push_back(radius_real);
 		if (verbose_ >= 1){
-			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions << std::endl;
+			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] std::endl;
 		}
 
 		//overwrite if we used binding_pocket_dimensions_sf flag (which can use a different value in x,y,z)
@@ -2072,7 +2072,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		}
 
 		if (verbose_ >= 1){
-			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions << std::endl;
+			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] std::endl;
 		}
 
 		//apply the radius
@@ -2261,7 +2261,7 @@ bool LigandDiscoverySearch::ligand_clash_check(core::conformation::ResidueOP lig
 //returns space_fill_matrix_copy (the filled matrix with the ligand)
 
 utility::vector1<utility::vector1<utility::vector1<core::Size>>> LigandDiscoverySearch::space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts, utility::vector1<core::Real> & score_cutoffs_sf)
+		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts)
 {
 	//values that can be seeded into the matrix with their meaning. Only 5,7,9,11 can be seeded using this function since we adjust values based on the ligand being present
 	//note, 0 and 2 are only even numbers that are currently used for now
@@ -2466,7 +2466,7 @@ utility::vector1<utility::vector1<utility::vector1<core::Size>>> LigandDiscovery
 //if desired, returns the pose created
 //highly recommended to only use this for debugging and small-scale purposes, as this method is extremely slow compared to the rest of the protocol
 pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(utility::vector1<utility::vector1<utility::vector1<core::Size>>> space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt)
+		utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt)
 {
 	//create tracer to identify points of the run
 	static basic::Tracer ms_tr( "LigandDiscoverySearch_export_space_fill_matrix_as_C_H_O_N_pdb", basic::t_info );
