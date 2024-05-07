@@ -128,6 +128,8 @@ using utility::string_split;
 
 #include <protocols/motifs/LigandDiscoverySearch.hh>
 
+#include <protocols/motifs/IdentifyLigandMotifs.hh>
+
 // Time profiling header
 #include <time.h>
 
@@ -1214,7 +1216,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					{
 						//whole_score_fxn_->score(*working_pose_);
 						//5/1/24 replacing score with the atr_rep function instead of whole
-						core::Real fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
+						core::Real fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*minipose);
 
 						//check if after is worse than cutoff
 						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff ) {
@@ -1228,7 +1230,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 
 
-
+					//values will be zero if post highresdock scoring for the atr_rep or whole functions are not performed (use flags OptionKeys::motifs::post_highresdock_fa_atr_rep_score and/or option[ OptionKeys::motifs::score_with_ligand_wts_function ])
 					fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
 					fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
 					//sc_constraint_check = working_pose_->energies().total_energies()[ coordinate_constraint ] ;
