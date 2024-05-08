@@ -334,6 +334,16 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	//create tracer to identify points of the run
 	static basic::Tracer ms_tr( "LigandDiscoverySearch_out", basic::t_info );
 
+	//initiate an IdentifyLigandMotifs object for potential use later in the script
+	//use the following flags to change behaviors of the ILM (especially what outputs you want)
+	//option[ OptionKeys::motifs::ligand_motif_output_directory_name ];
+	//option[ OptionKeys::motifs::ligand_motif_output_file_name ];
+	//default true
+	//option[ OptionKeys::motifs::output_motifs ];
+	//default true
+	//option[ OptionKeys::motifs::output_motifs_as_pdb ];
+	protocol::motifs::IdentifyLigandMotifs ilm;
+
 	//iterate over all indices in working_positions_
 	//if the size of working_positions is 0, return -1 because we want at least 1 index to work with
 	if (working_positions_.size() == 0)
@@ -1216,7 +1226,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					{
 						//whole_score_fxn_->score(*working_pose_);
 						//5/1/24 replacing score with the atr_rep function instead of whole
-						core::Real fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*minipose);
+						core::Real fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
 
 						//check if after is worse than cutoff
 						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff ) {
