@@ -412,6 +412,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		}
 
 		//define cutoff thresholds for distance and angles for comparing motifs (default values are 1 and 0.4 respectively)
+		//distance cutoff of 0.8 and angle of 0.3 used in filtering of motif library that I (Ari Ginsparg) have used
 		Real dist_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ]  );
 		Real angl_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] );
 
@@ -1143,9 +1144,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					working_pose_->constraint_set(sc_cst_set);
 
 					//get free energy of pose with placed ligand
-					//std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_no_constraints_, "");
+					std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
 					//5/1/24 replacing score with the atr_rep function instead of whole
-					std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
+					//std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
 					
 					core::Real delta_score = interface_mapX["interface_delta_2"];
 
@@ -1216,7 +1217,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					protocols::ligand_docking::MoveMapBuilderOP my_movemapbuilder ( new protocols::ligand_docking::MoveMapBuilder(sc_interface, blank_interface, true));
 
 					//use movemapbuilder to make highresdocker
-					protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, fa_atr_rep_fxn_, my_movemapbuilder) );
+					//protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, fa_atr_rep_fxn_, my_movemapbuilder) );
+					protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, whole_score_fxn_, my_movemapbuilder) );
 
 					//set highresdocker to not repack
 					my_HighResDocker->set_allow_repacking(false);
@@ -1225,9 +1227,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					my_HighResDocker->apply(*working_pose_);
 
 					//score pose after using highresdocker
-					//std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_no_constraints_, "");
+					std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
 					//5/1/24 replacing score with the atr_rep function instead of whole
-					std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
+					//std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
 
 					delta_score = interface_mapX_postdock["interface_delta_2"];
 					//delta_score = delta_score * -1;
