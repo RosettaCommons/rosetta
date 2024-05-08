@@ -1352,6 +1352,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						core::Size min_motifs_cutoff = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
 						core::Size min_sig_motifs_cutoff = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
 
+						if (verbose_ >= 2){
+							ms_tr << "Ligand placement created " << motifs_made << " total motifs" << std::endl;
+						}
+
 						//if minimum number of motifs made is not enough, kill placement
 						if(motifs_made < min_motifs_cutoff)
 						{
@@ -1360,6 +1364,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							++clashing_counter;
 							continue;
 						}
+
+						pdb_name = pdb_name + "_motifs_" + std::to_string(motifs_made);
 
 						//check if there are motifs made for all mandatory residues
 						if(option[ OptionKeys::motifs::mandatory_residues_for_motifs].user())
@@ -1383,6 +1389,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								//if kill is still true, we didn't get a motif for the mandatory residue, move forward with killing the ligand
 								if (kill)
 								{
+									if (verbose_ >= 3){
+										ms_tr << "Not motifs made for residue index " << sig_res_pos << std::endl;
+									}
 									break;
 								}
 							}
@@ -1394,6 +1403,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								continue;
 							}
 
+							if (verbose_ >= 2){
+								ms_tr << "Made motifs for all mandatory residues" << std::endl;
+							}
+
 						}
 
 						//variable to track how many motifs hit a significant residue
@@ -1401,6 +1414,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						if(option[ OptionKeys::motifs::significant_residues_for_motifs].user())
 						{
+							if (verbose_ >= 2){
+								ms_tr << "Ligand placement created motifs against significant residues: ";
+							}
+
 							utility::vector1< int > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
 							for ( core::Size sig_res_pos = 1; sig_res_pos < significant_residues_for_motifs.size(); ++sig_res_pos )
 							{
@@ -1410,9 +1427,20 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 									{
 										//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
 										++significant_motifs_made;
+										
+										if (verbose_ >= 2){
+											ms_tr << prot_pos_that_made_motifs[motif_made] << ",";
+										}
 									}
 								} 
 							}
+
+							if (verbose_ >= 2){
+								ms_tr << std::endl;
+								ms_tr << "Ligand placement created " << significant_motifs_made << " motifs for significant residues" << std::endl;
+							}
+
+							pdb_name = pdb_name + "_sigmotifs_" + std::to_string(significant_motifs_made);
 						}
 
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
