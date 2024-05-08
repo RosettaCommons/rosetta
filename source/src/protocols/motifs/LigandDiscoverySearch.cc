@@ -1225,42 +1225,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							++clashing_counter;
 							continue;
 						}
+
+						//reset atr and rep values based on score of whole pose
+						fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
+						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
 					}
 
-
-
-
-					//values will be zero if post highresdock scoring for the atr_rep or whole functions are not performed (use flags OptionKeys::motifs::post_highresdock_fa_atr_rep_score and/or option[ OptionKeys::motifs::score_with_ligand_wts_function ])
-					fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
-					fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
-					//sc_constraint_check = working_pose_->energies().total_energies()[ coordinate_constraint ] ;
-					//temporary removal of sc_constraint_check, since we may not want that now (at least at this point)
-					//sc_constraint_check = 0;
-
-					if (verbose_ >= 2){
-						//ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
-						//with atr_rep
-						if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ])
-						{
-							ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep after = " << fa_atr_rep_score_after << std::endl;
-						}
-						//without atr_rep
-						else
-						{
-							ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << std::endl;
-						}
-					}
-					//check if whole_score is within cutoff, kill if not
-					//need to remove ligand from poses so that they can be recycled
-
-					if ( delta_score > score_cutoff || fa_atr > fa_atr_cutoff || fa_rep > fa_rep_cutoff ) {
-						minipose->delete_residue_slow(minipose->size());
-						working_pose_->delete_residue_slow(working_pose_->size());
-						++clashing_counter;
-						continue;
-					}
-
-					core::Real whole_score = 0;
 
 					//run optional check of using ligand.wts score function as additional cutoff before attempting to keep
 					if(use_ligand_wts)
@@ -1280,13 +1250,55 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						if (verbose_ >= 2){
 							ms_tr << "ligand.wts score function score: " << whole_score << std::endl;
 						}
+						//reset atr and rep values based on score of whole pose
+						fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
+						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
 					}
+
+
+					//sc_constraint_check = working_pose_->energies().total_energies()[ coordinate_constraint ] ;
+					//temporary removal of sc_constraint_check, since we may not want that now (at least at this point)
+					//sc_constraint_check = 0;
+
+					//only print post dock delta score if we did a score with the whole or atrrep function
+					if (verbose_ >= 2 && (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts)){
+						//ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
+						
+						ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep;
+
+						//with atr_rep
+						if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ])
+						{
+							ms_tr << ", fa_atr_rep after = " << fa_atr_rep_score_after;
+						}
+						//without atr_rep
+						else if (use_ligand_wts)
+						{
+							ms_tr << ", whole = " << whole_score;
+						}
+						ms_tr << std::endl;
+					}
+					//check if whole_score is within cutoff, kill if not
+					//need to remove ligand from poses so that they can be recycled
+					if ( delta_score > score_cutoff || fa_atr > fa_atr_cutoff || fa_rep > fa_rep_cutoff ) {
+						minipose->delete_residue_slow(minipose->size());
+						working_pose_->delete_residue_slow(working_pose_->size());
+						++clashing_counter;
+						continue;
+					}
+
+					core::Real whole_score = 0;
+
+
 
 					//name the pdb  that could come from the pose
 					//current naming convention
 					//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_constr_" + std::to_string(sc_constraint_check) + ".pdb";
 					//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_atrrep_" + std::to_string(fa_atr_rep_score_after) + ".pdb";
 					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score);
+
+					//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
+					std::string pdb_short_unique_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 
 					//adjust if using optional atr_rep post highresdock
 					if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ])
