@@ -1338,16 +1338,22 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						protocols::motifs::MotifLibrary placement_library;
 
 						//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
-						utility::vector1< Size > prot_pos_that_made_motifs;
+						utility::vector1< Size > prot_pos_that_made_motifs_size;
 
 						//use ilm process_for_motifs to obtain motifs from the pose
-						ilm.process_for_motifs(*working_pose_, pdb_short_unique_name, placement_library, prot_pos_that_made_motifs);
+						ilm.process_for_motifs(*working_pose_, pdb_short_unique_name, placement_library, prot_pos_that_made_motifs_size);
+
+						//convery the prot_pos vector from size to int (easier to use int because this interacts with vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but that is extra work)
+						utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
 
 						//determine how many motifs were made and how many were made on significant residues
 						core::Size motifs_made = prot_pos_that_made_motifs.size();
 
+						core::Size min_motifs_cutoff = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
+						core::Size min_sig_motifs_cutoff = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
+
 						//if minimum number of motifs made is not enough, kill placement
-						if(motifs_made < option[ OptionKeys::motifs::minimum_motifs_formed_cutoff])
+						if(motifs_made < min_motifs_cutoff)
 						{
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
@@ -1360,7 +1366,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						{
 							//bool to help control loops to determine whether to kill the placed ligand
 							bool kill = false;
-							utility::vector1< Size > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs] ;
+							utility::vector1< int > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs] ;
 							for ( core::Size sig_res_pos = 1; sig_res_pos < mandatory_residues_for_motifs.size(); ++sig_res_pos )
 							{
 								//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
@@ -1395,7 +1401,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						if(option[ OptionKeys::motifs::significant_residues_for_motifs].user())
 						{
-							utility::vector1< Size > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
+							utility::vector1< int > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
 							for ( core::Size sig_res_pos = 1; sig_res_pos < significant_residues_for_motifs.size(); ++sig_res_pos )
 							{
 								for( core::Size motif_made = 1; motif_made < prot_pos_that_made_motifs.size(); ++motif_made )
@@ -1410,7 +1416,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						}
 
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
-						if(significant_motifs_made < option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff])
+						if(significant_motifs_made < min_sig_motifs_cutoff)
 						{
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
