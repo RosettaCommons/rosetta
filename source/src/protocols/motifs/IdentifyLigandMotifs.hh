@@ -54,7 +54,7 @@ public:
 		core::pose::Pose & pose,
 		std::string & pdb_name,
 		protocols::motifs::MotifLibrary & motifs,
-		utility::vector1< Size > & prot_pos_that_made_motifs
+		utility::vector1< core::Size > & prot_pos_that_made_motifs
 	);
 
 	// @brief returns the motif_library_ within the class, in case it is needed for additional usage beyond the scope of this protocol
@@ -118,7 +118,7 @@ private:
 		protocols::motifs::MotifLibrary & motifs,
 		core::scoring::ScoreFunctionOP scorefxn,
 		utility::vector1< utility::vector1< core::Size > > & motif_indices_list,
-		utility::vector1< Size > & prot_pos_that_made_motifs
+		utility::vector1< core::Size > & prot_pos_that_made_motifs
 	);
 
 	// @brief string to control the directory that motif pdbs will be outputted to
