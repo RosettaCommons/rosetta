@@ -68,6 +68,7 @@
 #include <string>
 #include <queue>
 #include <functional>
+#include <map>
 
 // option key includes
 
