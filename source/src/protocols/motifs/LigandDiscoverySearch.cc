@@ -1231,6 +1231,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
 					}
 
+					core::Real whole_score = 0;
 
 					//run optional check of using ligand.wts score function as additional cutoff before attempting to keep
 					if(use_ligand_wts)
@@ -1287,7 +1288,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						continue;
 					}
 
-					core::Real whole_score = 0;
+					
 
 
 
