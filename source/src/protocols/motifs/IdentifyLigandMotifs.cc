@@ -433,7 +433,8 @@ void
 IdentifyLigandMotifs::process_for_motifs(
 	Pose & pose,
 	std::string & pdb_name,
-	protocols::motifs::MotifLibrary & motifs
+	protocols::motifs::MotifLibrary & motifs,
+	utility::vector1< Size > & prot_pos_that_made_motifs
 )
 {
 
@@ -493,7 +494,7 @@ IdentifyLigandMotifs::process_for_motifs(
 		for ( core::Size prot_pos = 1 ; prot_pos <= nres ; ++prot_pos ) {
 
 			//break motif identification into its own function for better readability
-			ligand_to_residue_analysis(lig_pos, prot_pos, pose, pdb_name, motifs, scorefxn, motif_indices_list);
+			ligand_to_residue_analysis(lig_pos, prot_pos, pose, pdb_name, motifs, scorefxn, motif_indices_list, prot_pos_that_made_motifs);
 
 		}
 
@@ -513,7 +514,8 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 	std::string & pdb_name,
 	protocols::motifs::MotifLibrary & motifs,
 	core::scoring::ScoreFunctionOP scorefxn,
-	utility::vector1< utility::vector1< Size > > & motif_indices_list
+	utility::vector1< utility::vector1< Size > > & motif_indices_list,
+	utility::vector1< Size > & prot_pos_that_made_motifs
 )
 {
 	ResidueType const & prot_type( pose.residue_type( prot_pos ) );
@@ -628,6 +630,9 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 			TR << "Size of this_triplet:  " << this_triplet.size() << std::endl;
 			TR <<  this_triplet_number << ": " << this_triplet[1] << "-" << this_triplet[2] << "-" <<  this_triplet[3]  ;
 
+			//if we got a motif worth keeping, record the index of the residue that made it in prot_pos_that_made_motifs
+			prot_pos_that_made_motifs.push_back(prot_pos);
+
 			//output motifs to library and .motifs file
 			if ( output_motifs_ ) {
 				output_single_motif_to_MotifLibrary( pose, motifs, pdb_name, prot_pos, lig_pos, this_triplet, pack_score, hb_score );
@@ -698,7 +703,8 @@ IdentifyLigandMotifs::process_file_list()
 		//derive a pdb name to use
 		std::string pdb_name = input.get_last_pose_descriptor_string();
 		//run process_for_motifs
-		process_for_motifs( pose, pdb_name, motif_library_ );
+		utility::vector1< Size > prot_pos_that_made_motifs;
+		process_for_motifs( pose, pdb_name, motif_library_ , prot_pos_that_made_motifs);
 	}
 
 	//decoupling write of motifs to disk so that it may be called separately if desired
