@@ -1306,10 +1306,24 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//current naming convention
 					//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_constr_" + std::to_string(sc_constraint_check) + ".pdb";
 					//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_atrrep_" + std::to_string(fa_atr_rep_score_after) + ".pdb";
-					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score);
+					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 
 					//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
-					std::string pdb_short_unique_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
+					std::string pdb_short_unique_name = pdb_name;
+
+					//only use fa_rep and atr if we use atrrep or whole to score the whole system and pull how we fixed them
+					if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts)
+					{
+						pdb_name = pdb_name + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr);
+					}
+
+					//add delta (keeping in same order as I have in the past of atr and rep potentially being first)
+					pdb_name = pdb_name + "_delta_" + std::to_string(delta_score);
+
+					
+
+					
+
 
 					//adjust if using optional atr_rep post highresdock
 					if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ])
