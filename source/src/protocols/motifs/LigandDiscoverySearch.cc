@@ -342,7 +342,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	//option[ OptionKeys::motifs::output_motifs ];
 	//default true
 	//option[ OptionKeys::motifs::output_motifs_as_pdb ];
-	protocol::motifs::IdentifyLigandMotifs ilm;
+	IdentifyLigandMotifs ilm;
 
 	//iterate over all indices in working_positions_
 	//if the size of working_positions is 0, return -1 because we want at least 1 index to work with
@@ -1137,8 +1137,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 
 
-					fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
-					fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
+					//fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
+					//fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
 					//core::Real sc_constraint_check( working_pose_->energies().total_energies()[ coordinate_constraint ] );
 
 					//attempt to use movers to optimize placement a little more
