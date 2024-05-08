@@ -169,7 +169,7 @@ public:
 	// @brief function to hash out an input motif library into a standard map of motifCOPs
 	//inputs are initial motif library and map that is to be filled out
 	//map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
-	std::string hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string>,protocols::motifs::MotifCOPs> & mymap)
+	std::string hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string>,protocols::motifs::MotifCOPs> & mymap);
 
 private:
 
