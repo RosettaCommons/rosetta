@@ -1485,11 +1485,11 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 								//pull out the motif library that matches the current motif that we are on by atom names (if there is one)
 								//use map count function to determine if the key exists
-								if(mymap.count(key_tuple) > 0)
+								if(mymap.count(curkey_tuple) > 0)
 								{
 									//key exists
 									//pull out motif library at key address and then compare all motifs in the list against ligmotifcop to see if it resembles a real motif
-									protocols::motifs::MotifCOPs real_motifs = mymap[key_tuple];
+									protocols::motifs::MotifCOPs real_motifs = mymap[curkey_tuple];
 
 									//iterate over the library and compare
 									for ( auto realmotifcop : real_motifs )
