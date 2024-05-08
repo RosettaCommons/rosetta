@@ -1291,16 +1291,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					}
 					//check if whole_score is within cutoff, kill if not
 					//need to remove ligand from poses so that they can be recycled
+					//in theory, atr and rep should only improve, but this check helps make sure of that
 					if ( delta_score > score_cutoff || fa_atr > fa_atr_cutoff || fa_rep > fa_rep_cutoff ) {
 						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
 						++clashing_counter;
 						continue;
 					}
-
-					
-
-
 
 					//name the pdb  that could come from the pose
 					//current naming convention
@@ -1318,12 +1315,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					}
 
 					//add delta (keeping in same order as I have in the past of atr and rep potentially being first)
-					pdb_name = pdb_name + "_delta_" + std::to_string(delta_score);
-
-					
-
-					
-
+					pdb_name = pdb_name + "_delta_" + std::to_string(delta_score);		
 
 					//adjust if using optional atr_rep post highresdock
 					if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ])
@@ -1336,6 +1328,101 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					{
 						pdb_name = pdb_name + "_whole_" + std::to_string(whole_score);
 					}
+
+
+
+					//option to try to pull motifs from the passed placement and see what motifs are collected, how many there are, if motifs are made with any residues of interest, and if the motifs match any motifs in the motif library
+					if(option[ OptionKeys::motifs::collect_motifs_from_placed_ligand])
+					{
+						//create a new motif library to hold motifs
+						protocols::motifs::MotifLibrary placement_library;
+
+						//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
+						utility::vector1< Size > prot_pos_that_made_motifs;
+
+						//use ilm process_for_motifs to obtain motifs from the pose
+						ilm.process_for_motifs(*working_pose_, pdb_short_unique_name, placement_library, prot_pos_that_made_motifs);
+
+						//determine how many motifs were made and how many were made on significant residues
+						core::Size motifs_made = prot_pos_that_made_motifs.size();
+
+						//if minimum number of motifs made is not enough, kill placement
+						if(motifs_made < option[ OptionKeys::motifs::minimum_motifs_formed_cutoff])
+						{
+							minipose->delete_residue_slow(minipose->size());
+							working_pose_->delete_residue_slow(working_pose_->size());
+							++clashing_counter;
+							continue;
+						}
+
+						//check if there are motifs made for all mandatory residues
+						if(option[ OptionKeys::motifs::mandatory_residues_for_motifs].user())
+						{
+							//bool to help control loops to determine whether to kill the placed ligand
+							bool kill = false;
+							utility::vector1< Size > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs] ;
+							for ( core::Size sig_res_pos = 1; sig_res_pos < mandatory_residues_for_motifs.size(); ++sig_res_pos )
+							{
+								//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
+								kill = true;
+								for( core::Size motif_made = 1; motif_made < prot_pos_that_made_motifs.size(); ++motif_made )
+								{
+									if(prot_pos_that_made_motifs[motif_made] == mandatory_residues_for_motifs[sig_res_pos])
+									{
+										//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
+										kill = false;
+									}
+								}
+
+								//if kill is still true, we didn't get a motif for the mandatory residue, move forward with killing the ligand
+								if (kill)
+								{
+									break;
+								}
+							}
+							if(kill)
+							{
+								minipose->delete_residue_slow(minipose->size());
+								working_pose_->delete_residue_slow(working_pose_->size());
+								++clashing_counter;
+								continue;
+							}
+
+						}
+
+						//variable to track how many motifs hit a significant residue
+						core::Size significant_motifs_made = 0;
+
+						if(option[ OptionKeys::motifs::significant_residues_for_motifs].user())
+						{
+							utility::vector1< Size > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
+							for ( core::Size sig_res_pos = 1; sig_res_pos < significant_residues_for_motifs.size(); ++sig_res_pos )
+							{
+								for( core::Size motif_made = 1; motif_made < prot_pos_that_made_motifs.size(); ++motif_made )
+								{
+									if(prot_pos_that_made_motifs[motif_made] == significant_residues_for_motifs[sig_res_pos])
+									{
+										//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
+										++significant_motifs_made;
+									}
+								} 
+							}
+						}
+
+						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
+						if(significant_motifs_made < option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff])
+						{
+							minipose->delete_residue_slow(minipose->size());
+							working_pose_->delete_residue_slow(working_pose_->size());
+							++clashing_counter;
+							continue;
+						}
+
+						//check if motifs that were generated match real motifs (as inputted into this program as the motif list)
+						//also determine if the ratio of real generated motifs is above the expected cutoff
+
+					}
+
 
 					//after optional modifications, add ".pdb" to cap off name
 					pdb_name = pdb_name + ".pdb";
