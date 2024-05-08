@@ -1226,7 +1226,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					{
 						//whole_score_fxn_->score(*working_pose_);
 						//5/1/24 replacing score with the atr_rep function instead of whole
-						core::Real fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
+						fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
 
 						//check if after is worse than cutoff
 						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff ) {
