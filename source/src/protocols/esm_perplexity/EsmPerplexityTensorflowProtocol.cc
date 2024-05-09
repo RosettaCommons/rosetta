@@ -24,6 +24,8 @@
 #include <utility/file/file_sys_util.hh>
 
 // basic headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/execute.hh>
@@ -373,25 +375,26 @@ EsmPerplexityTensorflowProtocol::softmax(
 	for ( const auto& pair : logit_map ) {
 		core::Size selected_residue = pair.first;
 		utility::vector1< core::Real > logit_vec = pair.second;
-		// get maximum
-		core::Real max_val = std::numeric_limits<core::Real>::lowest();
-		for ( const auto& logit : logit_vec ) {
-			if ( logit > max_val ) {
-				max_val = logit;
-			}
+
+		core::Real max_val = *std::max_element(logit_vec.begin(), logit_vec.end());
+
+		for ( auto& logit : logit_vec ) {
+			logit -= max_val;
 		}
-		// calc sum of exponential values
+
 		core::Real sum_exp = 0.0;
-		for ( const auto& logit : logit_vec ) {
-			sum_exp += std::exp(logit - max_val);
+		for ( const auto& scaled_logit : logit_vec ) {
+			sum_exp += std::exp(scaled_logit);
 		}
+
 		utility::vector1< core::Real > softmax_vec;
-		// calc softmax of each value
-		for ( const auto& logit : logit_vec ) {
-			softmax_vec.push_back(std::exp(logit - max_val) / sum_exp);
+		for ( const auto& scaled_logit : logit_vec ) {
+			softmax_vec.push_back(std::exp(scaled_logit) / sum_exp);
 		}
-		softmax_map[ selected_residue ] = softmax_vec;
+
+		softmax_map[selected_residue] = softmax_vec;
 	}
+
 }
 
 /// @brief Downloads model from GitLab if the specified path does not exist or is missing crucial files
@@ -455,6 +458,21 @@ EsmPerplexityTensorflowProtocol::download_model_if_not_existing( std::string con
 		}
 	}
 }
+
+/// @brief Get the citation for ESM
+/*static*/
+basic::citation_manager::CitationCollectionBaseCOP
+EsmPerplexityTensorflowProtocol::get_ESM_neural_net_citation() {
+	using namespace basic::citation_manager;
+	CitationCollectionOP citation(
+		utility::pointer::make_shared< CitationCollection >(
+		"ESM", CitedModuleType::NeuralNetwork
+		)
+	);
+	citation->add_citation( CitationManager::get_instance()->get_citation_by_doi( "10.1126/science.ade2574" ) );
+	return citation;
+}
+
 
 } // esm_perplexity
 } // protocols

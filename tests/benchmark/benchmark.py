@@ -90,7 +90,7 @@ def setup_from_options(options):
             interpolation = ExtendedInterpolation()
         )
 
-        with open(options.config) as f: user_config.readfp(f)
+        with open(options.config) as f: user_config.read_file(f)
 
     else:
         print(f"\n\n>>> Config file `{options.config}` not found. You may want to manually copy `benchmark.template.ini` to `{options.config}` and edit the settings\n\n")
@@ -288,8 +288,9 @@ def run_test(setup):
 
         if state_override:
             log_prefix = \
-                f'WARNING: Previous test results does not have `.execution.results.json` file, so comparision with None was performed instead!\n' \
-                f'WARNING: Overriding calcualted test state `{res[_StateKey_]}` → `{_S_failed_}`...\n\n'
+                f'WARNING: Previous test results does not have `.execution.results.json` file, so comparison with None was performed instead!\n' \
+                f'WARNING: This can often be fixed by merging with the latest `main`.\n' \
+                f'WARNING: Overriding calculated test state `{res[_StateKey_]}` → `{_S_failed_}`...\n\n'
 
             res[_LogKey_] = log_prefix + res[_LogKey_]
             res[_StateKey_] = _S_failed_

@@ -15,8 +15,9 @@
 
 import os, json
 
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
+# A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-2]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 _api_version_ = '1.1'
 
@@ -135,7 +136,7 @@ def run(test, repository_root, working_dir, platform, config, hpc_driver=None, v
 
         mp_f19_tilt_angle     = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
         mp_f19_sequence_recovery    = 'numpy matplotlib==3.2',
-        mp_f19_ddG_of_mutation      = 'numpy matplotlib==3.2',
+        mp_f19_ddG_of_mutation      = 'numpy matplotlib==3.7', # Requires Python 3.8!
         mp_f19_decoy_discrimination = 'numpy matplotlib==3.2',
 
         mp_dock            = 'numpy matplotlib==3.2',

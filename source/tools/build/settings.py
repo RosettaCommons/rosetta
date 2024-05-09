@@ -247,9 +247,9 @@ used by the build.
         something like 3.2b1."""
         version = str.split( str.split( version_string, ' ')[0], '.')
         v_major = int(version[0])
-        v_minor = int(re.match('\d+', version[1]).group())
+        v_minor = int(re.match(r'\d+', version[1]).group())
         if len(version) >= 3:
-            v_revision = int(re.match('\d+', version[2]).group())
+            v_revision = int(re.match(r'\d+', version[2]).group())
         else:
             v_revision = 0
         return v_major, v_minor, v_revision
