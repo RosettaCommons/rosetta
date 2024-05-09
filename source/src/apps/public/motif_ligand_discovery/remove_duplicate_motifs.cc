@@ -132,11 +132,11 @@ remove_duplicate_motifs(
 
 		//create pointers to represent the residue and ligand
 		//core::conformation::ResidueOP protres = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( single_motif->restype_name1() ) );
-		
+
 		//bad calls for residue, need da new approach
 		//core::conformation::ResidueOP res = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( single_motif->restype_name2())  );
 		//core::conformation::ResidueOP res2 = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( single_motif->restype_name2())  );
-		
+
 		//core::conformation::ResidueOP ligand1;
 
 		//utility::vector1< core::Size > atoms;
@@ -153,18 +153,18 @@ remove_duplicate_motifs(
 
 		//single_motif->place_residue( *protres, *res );
 		bool broke( false );
-		
+
 		for ( auto motifcop : motif_library_no_duplicates ) {
 			if ( motifcop->restype_name1() != single_motif->restype_name1() ) continue;
 			if ( motifcop->restype_name2() != single_motif->restype_name2() ) continue;
-			if (motifcop->res1_atom1_name() != single_motif->res1_atom1_name()) continue;
-			if (motifcop->res1_atom2_name() != single_motif->res1_atom2_name()) continue;
-			if (motifcop->res1_atom3_name() != single_motif->res1_atom3_name()) continue;
-			if (motifcop->res2_atom1_name() != single_motif->res2_atom1_name()) continue;
-			if (motifcop->res2_atom2_name() != single_motif->res2_atom2_name()) continue;
-			if (motifcop->res2_atom3_name() != single_motif->res2_atom3_name()) continue;
+			if ( motifcop->res1_atom1_name() != single_motif->res1_atom1_name() ) continue;
+			if ( motifcop->res1_atom2_name() != single_motif->res1_atom2_name() ) continue;
+			if ( motifcop->res1_atom3_name() != single_motif->res1_atom3_name() ) continue;
+			if ( motifcop->res2_atom1_name() != single_motif->res2_atom1_name() ) continue;
+			if ( motifcop->res2_atom2_name() != single_motif->res2_atom2_name() ) continue;
+			if ( motifcop->res2_atom3_name() != single_motif->res2_atom3_name() ) continue;
 			//motifcop->place_residue( *protres, *res2 );
-			
+
 			/*
 			core::conformation::ResidueOP ligand2;
 
@@ -191,15 +191,13 @@ remove_duplicate_motifs(
 			//core::Real rmsdtest = 0.2;//core::scoring::automorphic_rmsd( *res, *res2, false );
 			if ( distance < dist_threshold && theta < angl_threshold ) {
 				std::cout << "Skipping motif with distance difference: " << distance << "  and angle difference: "  << theta << std::endl;
-				if(single_motif->has_remark())
-				{
+				if ( single_motif->has_remark() ) {
 					std::cout << "Skipped motif remark is: " << single_motif->remark() << std::endl;
 				}
-				if(motifcop->has_remark())
-				{
+				if ( motifcop->has_remark() ) {
 					std::cout << "Skipped motif matches motif with remark: " << motifcop->remark() << std::endl;
 				}
-				
+
 				broke = true;
 				break;
 			}
@@ -228,7 +226,7 @@ remove_duplicate_motifs(
 }
 
 
-	
+
 int
 main( int argc, char * argv [] )
 {
@@ -246,11 +244,9 @@ main( int argc, char * argv [] )
 			std::cout <<  "Removing duplicates." << std::endl;
 			remove_duplicate_motifs();
 			std::cout << "SUCCESSFUL COMPLETION" << std::endl;
-		}
-		else
-		{
+		} else {
 			std::cout << "Neither the list_motifs nor motif_filename flags were used, and so no motif list was provided." << std::endl;
-		}	
+		}
 	} catch (utility::excn::Exception const & e ) {
 		e.display();
 		return -1;
