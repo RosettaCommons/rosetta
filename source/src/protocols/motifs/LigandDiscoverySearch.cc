@@ -407,14 +407,21 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		Real dist_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ]  );
 		Real angl_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] );
 
-		//seed score functions
-		//create score functions that only have fa_atr, fa_rep, and fa_atr+fa_rep for initial score-based filtering
-		core::scoring::ScoreFunctionOP fa_rep_fxn_(new core::scoring::ScoreFunction());
-		core::scoring::ScoreFunctionOP fa_atr_fxn_(new core::scoring::ScoreFunction());
-		core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(new core::scoring::ScoreFunction());
-
 		//make whole score function based on ligand.wts for scoring whole system and use in highresdock
 		core::scoring::ScoreFunctionOP whole_score_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+
+		//build score functions that only have fa_atr, fa_rep, and fa_atr+fa_rep for initial score-based filtering like ligand.wts, and remove terms we don't want
+		//terms removed by setting their weights to 0
+		core::scoring::ScoreFunctionOP fa_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+		core::scoring::ScoreFunctionOP fa_atr_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+		core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));		
+
+		//for each weight in the whole score function, set the scoretype weight to 0
+		for ( auto my_scoretype : whole_score_fxn_->get_nonzero_weighted_scoretypes() ) {
+			fa_rep_fxn_->set_weight(my_scoretype,0);
+			fa_atr_fxn_->set_weight(my_scoretype,0);
+			fa_atr_rep_fxn_->set_weight(my_scoretype,0);
+		}
 
 		//set weight values for atr and rep based on values in ligand.wts
 		fa_rep_fxn_->set_weight(core::scoring::fa_rep, 0.8);
