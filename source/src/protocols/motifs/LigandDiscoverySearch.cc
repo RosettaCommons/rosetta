@@ -414,7 +414,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//terms removed by setting their weights to 0
 		core::scoring::ScoreFunctionOP fa_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 		core::scoring::ScoreFunctionOP fa_atr_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-		core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));		
+		core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
 		//for each weight in the whole score function, set the scoretype weight to 0
 		for ( auto my_scoretype : whole_score_fxn_->get_nonzero_weighted_scoretypes() ) {
@@ -980,7 +980,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						delta_score = interface_mapX_postdock["interface_delta_2"];
 					}
 
-					
+
 					if ( verbose_ >= 2 ) {
 						ms_tr << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
 					}
