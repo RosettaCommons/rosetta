@@ -992,9 +992,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					sc_ligand_area->all_atom_mode_ = true;
 					sc_ligand_area->minimize_ligand_ = 1;
 
-					// is this necessary?
-					core::pose::PDBInfoCOP pdb_info( working_pose_->pdb_info() );
-
 					//add ligand to pose residue type set if it is not already in the set
 					//program doesn't work if the ligand isn't added to the pose residue type sets
 					if ( ligand_added == false ) {
