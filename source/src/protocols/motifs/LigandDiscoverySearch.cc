@@ -1128,9 +1128,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
 						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
 						delta_score = interface_mapX_postdock["interface_delta_2"];
-					}
-					//5/1/24 replacing score with the atr_rep function instead of whole
-					else {
+					} else {
+						//5/1/24 replacing score with the atr_rep function instead of whole
 						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
 						delta_score = interface_mapX_postdock["interface_delta_2"];
 					}
@@ -1220,14 +1219,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
 						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
 						delta_score = interface_mapX_postdock["interface_delta_2"];
-					}
-					//5/1/24 replacing score with the atr_rep function instead of whole
-					else {
+					} else {
+						//5/1/24 replacing score with the atr_rep function instead of whole
 						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
 						delta_score = interface_mapX_postdock["interface_delta_2"];
 					}
 
-					
+
 					//delta_score = delta_score * -1;
 
 					//declaration of fa_atr_rep_score_after (may not be used)
