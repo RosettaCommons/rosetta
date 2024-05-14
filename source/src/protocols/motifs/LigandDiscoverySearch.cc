@@ -1118,12 +1118,22 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					working_pose_->constraint_set(sc_cst_set);
 
 					//get free energy of pose with placed ligand
-					std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
+					//std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
 					//5/1/24 replacing score with the atr_rep function instead of whole
 					//std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
 
-					core::Real delta_score = interface_mapX["interface_delta_2"];
+					core::Real delta_score = 0;
 
+					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
+					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
+						delta_score = interface_mapX_postdock["interface_delta_2"];
+					}
+					//5/1/24 replacing score with the atr_rep function instead of whole
+					else {
+						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
+						delta_score = interface_mapX_postdock["interface_delta_2"];
+					}
 
 
 					//fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
@@ -1191,8 +1201,11 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					protocols::ligand_docking::MoveMapBuilderOP my_movemapbuilder ( new protocols::ligand_docking::MoveMapBuilder(sc_interface, blank_interface, true));
 
 					//use movemapbuilder to make highresdocker
-					//protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, fa_atr_rep_fxn_, my_movemapbuilder) );
-					protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, whole_score_fxn_, my_movemapbuilder) );
+					protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, fa_atr_rep_fxn_, my_movemapbuilder) );
+					//switch HRD to use whole score function instead of atr_rep
+					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+						my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, whole_score_fxn_, my_movemapbuilder) );
+					}
 
 					//set highresdocker to not repack
 					my_HighResDocker->set_allow_repacking(false);
@@ -1201,11 +1214,20 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					my_HighResDocker->apply(*working_pose_);
 
 					//score pose after using highresdocker
-					std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
-					//5/1/24 replacing score with the atr_rep function instead of whole
-					//std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
+					//delta_score = 0;
 
-					delta_score = interface_mapX_postdock["interface_delta_2"];
+					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get new ddg
+					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
+						delta_score = interface_mapX_postdock["interface_delta_2"];
+					}
+					//5/1/24 replacing score with the atr_rep function instead of whole
+					else {
+						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
+						delta_score = interface_mapX_postdock["interface_delta_2"];
+					}
+
+					
 					//delta_score = delta_score * -1;
 
 					//declaration of fa_atr_rep_score_after (may not be used)
