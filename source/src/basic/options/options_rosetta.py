@@ -7182,6 +7182,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'ligand_motif_output_file_name', 'String', default = 'AllMattMotifs.motifs', desc = 'Name the file to which motifs will be outputted to, default of a local directory named AllMattMotifs.motifs. If file type extension not specified (identified as the last period encountered), will output to a file type ending in .motifs'),
 		Option( 'output_motifs_as_pdb', 'Boolean', default = 'true', desc = 'Output generated motifs as pdb files'),
 		Option( 'output_motifs', 'Boolean', default = 'true', desc = 'Output generated motifs as .motifs file and to a MotifLibrary'),
+		Option( 'highresdock_with_whole_score_fxn', 'Boolean', default = 'false', desc = 'Option to toggle between using the simplified fa_atr/rep score function or the whole ligand.wts function for highresdock in liganddiscoverysearch'),
 		Option( 'target_residues_sf', 'IntegerVector', desc = 'A vector of residue indices in the target receptor to use to define the region to evaluate the space filling capacity in the motif based ligand discovery' ),
 		Option( 'target_residues_contact', 'IntegerVector', desc = 'A vector of residue indices in the target receptor to use to test for protein-ligand contacts in the motif based ligand discovery' ),
 		Option( 'space_fill_cutoff_score', 'Real', desc = 'A real value intended to be between 0-1 that represents the minimum passable ratio for occupied cells in the space fill matrix' ),
