@@ -431,6 +431,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		fa_atr_rep_fxn_->set_weight(core::scoring::fa_atr, 0.8);
 		fa_atr_rep_fxn_->set_weight(core::scoring::fa_rep, 0.4);
 
+		//set coordinate_constraint to zero for the whole function (creates straing ddg scores otherwise)
+		whole_score_fxn_->set_weight(core::scoring::coordinate_constraint, 0);
+
 		//set up target_residues_sf_ and target_residues_contact_
 		//can interact with any of 3 integer_value vectors flags: in::target_residues, motifs::targer_residues_sf, and motifs::target_residues_contact
 		//target_residues_sf will only write into the target_residues_sf vector; target_residues_contact will only write into target_residues_contact_
