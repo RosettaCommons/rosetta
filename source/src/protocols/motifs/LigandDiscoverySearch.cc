@@ -231,11 +231,7 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	all_residues_ = all_residues;
 	working_positions_ = working_position;
 
-	//derive motif_library_for_select_residue_ from motif_library and residue in working_pose_ and index working_position_
-	//move this down to discover
-	//motif_library_for_select_residue_ = get_motif_sublibrary_by_aa(working_pose_->residue(working_position_).name3());
-
-	//set falue of verbose_ to the flag value; default is false (program will not be verbose)
+	//set value of verbose_ to the flag value; default is false (program will not be verbose)
 	verbose_ = option[ OptionKeys::motifs::verbose ]();
 
 }
@@ -374,7 +370,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			kill_bad_init = true;
 		}
 
-
 		std::string discovery_position_residue = working_pose_->residue(working_position_).name3();
 
 		//get motif sublibrary
@@ -412,57 +407,32 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		Real dist_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ]  );
 		Real angl_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] );
 
-		//seed score functions
-		//seed_score_functions();
-
-		core::scoring::ScoreFunctionOP fa_rep_fxn_(new core::scoring::ScoreFunction());
-		core::scoring::ScoreFunctionOP fa_atr_fxn_(new core::scoring::ScoreFunction());
-		core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(new core::scoring::ScoreFunction());
-
-		//core::scoring::ScoreFunctionOP contacts_fxn_(new core::scoring::ScoreFunction());
-		//core::scoring::ScoreFunctionOP contacts_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-
+		//make whole score function based on ligand.wts for scoring whole system and use in highresdock
 		core::scoring::ScoreFunctionOP whole_score_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-		core::scoring::ScoreFunctionOP whole_score_fxn_no_constraints_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
-		//fa_rep_fxn_ = new core::scoring::ScoreFunction();
-		fa_rep_fxn_->set_weight(core::scoring::fa_rep, 0.44);
+		//build score functions that only have fa_atr, fa_rep, and fa_atr+fa_rep for initial score-based filtering like ligand.wts, and remove terms we don't want
+		//terms removed by setting their weights to 0
+		core::scoring::ScoreFunctionOP fa_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+		core::scoring::ScoreFunctionOP fa_atr_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+		core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
-		//fa_atr_fxn_ = new core::scoring::ScoreFunction();
-		fa_atr_fxn_->set_weight(core::scoring::fa_atr, 0.44);
+		//for each weight in the whole score function, set the scoretype weight to 0
+		for ( auto my_scoretype : whole_score_fxn_->get_nonzero_weighted_scoretypes() ) {
+			fa_rep_fxn_->set_weight(my_scoretype,0);
+			fa_atr_fxn_->set_weight(my_scoretype,0);
+			fa_atr_rep_fxn_->set_weight(my_scoretype,0);
+		}
 
-		//fa_atr_rep_fxn_ = new core::scoring::ScoreFunction();
-		fa_atr_rep_fxn_->set_weight(core::scoring::fa_atr, 0.44);
-		fa_atr_rep_fxn_->set_weight(core::scoring::fa_rep, 0.44);
+		//set weight values for atr and rep based on values in ligand.wts
+		fa_rep_fxn_->set_weight(core::scoring::fa_rep, 0.8);
 
-		//contacts_fxn_ = new core::scoring::ScoreFunction();
-		//contacts_fxn_->set_weight(core::scoring::fa_atr, 0.44);
-		//contacts_fxn_->set_weight(core::scoring::hbond_sc, 1.3);
-		//potential fix from /protocols/hotspot_hashing/HotspotStubSet.cc
-		//core::scoring::methods::EnergyMethodOptions options( contacts_fxn_->energy_method_options() );
-		//options.hbond_options().use_hb_env_dep( basic::options::option[ basic::options::OptionKeys::hotspot::envhb]() );
-		//contacts_fxn_->set_energy_method_options( options );
+		fa_atr_fxn_->set_weight(core::scoring::fa_atr, 0.4);
 
-		//whole_score_fxn_ = ScoreFunctionFactory::create_score_function( "ligand.wts" );
-		whole_score_fxn_->set_weight(core::scoring::fa_intra_rep, 0.004);
-		whole_score_fxn_->set_weight(core::scoring::fa_elec, 0.42);
-		whole_score_fxn_->set_weight(core::scoring::hbond_bb_sc, 1.3);
-		whole_score_fxn_->set_weight(core::scoring::hbond_sc, 1.3);
-		whole_score_fxn_->set_weight(core::scoring::rama, 0.2);
-		whole_score_fxn_->set_weight(core::scoring::chainbreak, 1.0);
-		whole_score_fxn_->set_weight(core::scoring::coordinate_constraint, 1.0);
-		whole_score_fxn_->set_weight(core::scoring::atom_pair_constraint, 1.0);
-		whole_score_fxn_->set_weight(core::scoring::angle_constraint, 1.0);
-		whole_score_fxn_->set_weight(core::scoring::dihedral_constraint, 1.0);
-		whole_score_fxn_->set_weight(core::scoring::res_type_constraint, 1.0);
+		fa_atr_rep_fxn_->set_weight(core::scoring::fa_atr, 0.8);
+		fa_atr_rep_fxn_->set_weight(core::scoring::fa_rep, 0.4);
 
-		//whole_score_fxn_no_constraints_ = ScoreFunctionFactory::create_score_function( "ligand.wts" );
-		whole_score_fxn_no_constraints_->set_weight(core::scoring::fa_intra_rep, 0.004);
-		whole_score_fxn_no_constraints_->set_weight(core::scoring::fa_elec, 0.42);
-		whole_score_fxn_no_constraints_->set_weight(core::scoring::hbond_bb_sc, 1.3);
-		whole_score_fxn_no_constraints_->set_weight(core::scoring::hbond_sc, 1.3);
-		whole_score_fxn_no_constraints_->set_weight(core::scoring::rama, 0.2);
-		whole_score_fxn_no_constraints_->set_weight(core::scoring::coordinate_constraint, 0);
+		//set coordinate_constraint to zero for the whole function (creates straing ddg scores otherwise)
+		whole_score_fxn_->set_weight(core::scoring::coordinate_constraint, 0);
 
 		//set up target_residues_sf_ and target_residues_contact_
 		//can interact with any of 3 integer_value vectors flags: in::target_residues, motifs::targer_residues_sf, and motifs::target_residues_contact
@@ -483,27 +453,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			//target_residues_contact_ = option[ OptionKeys::in::target_residues ]();
 		}
 
-		//make a pose that only contains the target residues from target_residues_contact_ for later use
-		//only make it if there are residues in target_residues_contact_
-		//core::pose::PoseOP contacts_poseop(new pose::Pose);
-
-
-		/*
-		if(target_residues_contact_.size() > 0)
-		{
-		for (core::Size contact_res_index = 1; contact_res_index <= target_residues_contact_.size(); ++contact_res_index)
-		{
-		//minipose->append_residue_by_jump(working_pose_->residue(resi_pos), 1);
-		ms_tr << "Appeding residue " << working_pose_->residue(target_residues_contact_[contact_res_index]).name() << " at index " << contact_res_index << " to contacts pose." << std::endl;
-		contacts_poseop->append_residue_by_jump(working_pose_->residue(target_residues_contact_[contact_res_index]), 1);
-
-
-		}
-
-		core::io::pdb::dump_pdb( *contacts_poseop, "contacts_pose.pdb");
-		}
-		*/
-
 		core::Size x_shift = 0;
 		core::Size y_shift = 0;
 		core::Size z_shift = 0;
@@ -520,14 +469,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		int resolution_increase_factor = option[ OptionKeys::motifs::resolution_scale_factor ];
 
 		//declare variable set for space fill protein matrix
-		//core::Size x_shift_sf = 0;
-		//core::Size y_shift_sf = 0;
-		//core::Size z_shift_sf = 0;
-		//work with Size instead of int
-		//core::Size x_bound_sf = 0;
-		//core::Size y_bound_sf = 0;
-		//core::Size z_bound_sf = 0;
-
 		//create vectors to hold values that correspond to xyz values in the space fill matrix
 		//these probably shouldn't be xyzVector objects, since they don't directly correspond to xyz coordinates, but rather that they are values that correspond to xyz axes, scalars, and segments
 
@@ -542,10 +483,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 		//used to note the maximum values of points in the sub-area of the space fill vector
 		utility::vector1<core::Size>  sub_xyz_max_sf (3,0);
-
-		//value to hold the ratio of the unfilled area and sub area
-		//core::Real occupied_ratio = 0;
-		//core::Real sub_occupied_ratio = 0;
 
 		//create 2 vectors to hold occupied ratio scores (core::Real) and raw counts of occupied, unoccupied, and total cells (core::Size) for both the main area and sub area
 
@@ -581,7 +518,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//create the space fill representation matrix
 		//do even if no cutoff scores were made so that the information can be generated and returned anyway
 		create_protein_representation_matrix_space_fill(xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, matrix_data_counts);
-
 
 		//create a dummy mutableresiduetype that is empty (all atoms deleted) so we can use it for the expore_space_fill_matrix function
 		core::conformation::ResidueOP dummyligresOP = all_residues_[1];
@@ -633,11 +569,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//this will be used so that we can modify the original as we look at systems with ligands placed, and can revert to the original
 		utility::vector1<core::Size>  matrix_data_counts_empty = matrix_data_counts;
 
+		//all initial cutoffs are arbitrary and should be set with the flags
+		//leaving them as their current values should let pretty much anything pass
 		//seeding of rep and atr values with default cutoffs
-		core::Real fa_rep_cutoff = 100;
-		core::Real fa_atr_cutoff = -5;
+		core::Real fa_rep_cutoff = 10000;
+		core::Real fa_atr_cutoff = 10000;
+
 		//use for the fa_atr_rep only function
-		//probably need to set to a different value than 0
 		core::Real fa_atr_rep_cutoff = 10000;
 
 		//score cutoff for scoring with whole ligand.wts score function (optional to use)
@@ -682,13 +620,14 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		std::vector < std::tuple<core::Real, core::pose::Pose, std::string>> best_placements;
 		//dynamic cutoff to determine what pplacements to consider; should get more strict as we get placements
 		//get ddg cutoff
-		core::Real ddg_cutoff_value = 100000;
+		core::Real ddg_cutoff_value = 10000;
 		if ( option[ OptionKeys::motifs::ddg_cutoff ].user() ) {
 			ddg_cutoff_value = option[ OptionKeys::motifs::ddg_cutoff ];
 		}
 		core::Real score_cutoff = ddg_cutoff_value;
 
 		//determine how many output files to keep
+		//if the value is 0, all placements that pass all filters will be kept
 		core::Size best_pdbs_to_keep = 0;
 		if ( option[ OptionKeys::motifs::best_pdbs_to_keep ].user() ) {
 			best_pdbs_to_keep = option[ OptionKeys::motifs::best_pdbs_to_keep ];
@@ -741,8 +680,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				ms_tr << "Finding all atom trios for this ligand" << std::endl;
 			}
 			for ( core::Size atom_i = 1; atom_i <= ligresOP->natoms(); ++atom_i ) {
-
-				//utility::vector1< core::Size > atom_vector;
 				if ( ligresOP->atom_is_hydrogen(atom_i) ) { continue; }
 				// This is a for loop to iterate over each atom's connected atoms:
 				core::conformation::Residue::AtomIndices atom_i_connects(  ligresOP->bonded_neighbor( atom_i ) );
@@ -784,12 +721,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			core::pose::PoseOP minipose(new pose::Pose);
 
 			//now we have all trios, iterate through each trio and the motif sub-library
-			//ms_tr << "Looking through all atom trios" << std::endl;
 			if ( verbose_ >= 2 ) {
 				ms_tr << "Number of unique atom trios in this ligand are: " << ligand_atom_trios.size() << std::endl;
 			}
-
-			//core::Size ligand_nbr_atom_index = ligresOP->nbr_atom();
 
 			//iterate through each atom trio and try to use motifs to place the ligand
 			for ( core::Size i = 1; i <= ligand_atom_trios.size(); ++i ) {
@@ -825,7 +759,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							ms_tr << "On motif #" << motif_counter <<std::endl;
 						}
 					}
-					//compare the atoms in  the ligand side  of the motif to the atom trio; continue if not a match
+					//compare the atoms on the ligand side of the motif to the atom trio; continue if not a match
 					//no need to check inverse order of trio, will get checked later
 
 					//fixing error with comparison of signed and unsigned ints
@@ -850,14 +784,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//check if the placement clashes
 					has_clashing = ligand_clash_check(ligresOP, x_shift, y_shift, z_shift, x_bound_int, y_bound_int, z_bound_int);
-
-					//debugging code for clash checking
-					/*
-					std::string pdb_name_early = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_clashing_" + std::to_string(has_clashing) + ".pdb";
-					working_pose_->append_residue_by_jump(*ligresOP, 1);
-					core::io::pdb::dump_pdb(*working_pose_, pdb_name_early);
-					working_pose_->delete_residue_slow(working_pose_->size());
-					*/
 
 					//continue because we clash
 					if ( has_clashing == true ) {
@@ -896,8 +822,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							//call function to export, use "empty" as the string prefix
 							export_space_fill_matrix_as_C_H_O_N_pdb(current_space_fill_matrix, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
 								space_fill_scores, matrix_pdb_prefix, *dummylig_mrt);
-							//export_space_fill_matrix_as_C_H_O_N_pdb(current_space_fill_matrix, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
-							// sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, matrix_pdb_prefix);
 						}
 
 						//at end before check, reset matrix_data_counts so that it returns to the empty state
@@ -942,77 +866,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						}
 					}
 
-
-					//check for contacts of ligand against user-specified residues
-					//only access if the target_residues_contact flag was used
-					/*
-					if( target_residues_contact_.size() > 0 )
-					{
-
-					ms_tr << "ligres seqpos before appending to working pose: " << ligresOP->seqpos() << std::endl;
-
-					//add the ligand to workingpose
-					working_pose_->append_residue_by_jump(*ligresOP, 1);
-					//set its seqpos
-					ligresOP->seqpos(working_pose_->size());
-
-					//variables to track the contact scores for each residue
-
-					//iterate through each residue in the target residue list and determine the quality of contact (packing and hbond) against the residue
-					for(core::Size contact_residue_index = 1; contact_residue_index <= target_residues_contact_.size(); ++contact_residue_index)
-					{
-					ms_tr << target_residues_contact_[contact_residue_index] << ", " << working_pose_->residue( target_residues_contact_[contact_residue_index] ).name() << std::endl;
-
-					//get the hbond and packing scores of the ligand against the residue at the given index
-					//create an energy map
-					core::scoring::EnergyMap emap;
-					core::scoring::EnergyMap emap2;
-
-					//ms_tr << *contacts_fxn_ << std::endl;
-
-					ms_tr << "seqposes: " << working_pose_->residue( target_residues_contact_[contact_residue_index] ).seqpos() << " , " << ligresOP->seqpos() << std::endl;
-
-					//run context dependent and independent 2 body sidechain sidechain functions using the score function, and pull out the hbond_sc and fa_atr scores
-
-					//from what I can tell, the pose seems to be useless when running the eval functions (the pose gets passed down the chain of functions, and eventually isn't used)
-					ms_tr << "test1" << std::endl;
-					//contacts_fxn_->eval_ci_2b_sc_sc( working_pose_->residue( target_residues_contact_[contact_residue_index] ), *ligresOP, *working_pose_, emap );
-					//contacts_fxn_->eval_ci_2b_sc_sc( working_pose_->residue( target_residues_contact_[contact_residue_index] ), working_pose_->residue( working_pose_->size() ), *working_pose_, emap );
-					whole_score_fxn_->eval_ci_2b_sc_sc( working_pose_->residue( target_residues_contact_[contact_residue_index] ), working_pose_->residue( working_pose_->size() ), *working_pose_, emap );
-					ms_tr << "atr: " << emap [ core::scoring::fa_atr ] << " , hbond_sc: " << emap [ core::scoring::hbond_sc ] << std::endl;
-
-					//contacts_fxn_->eval_ci_2b_sc_sc( working_pose_->residue( target_residues_contact_[contact_residue_index] ),  working_pose_->residue( working_pose_->size() ), *working_pose_, emap );
-					whole_score_fxn_->eval_ci_2b_sc_sc( working_pose_->residue( target_residues_contact_[contact_residue_index] ),  working_pose_->residue( working_pose_->size() ), *working_pose_, emap );
-					//extract the values
-					//ms_tr << "test2" << std::endl;
-					ms_tr << "atr: " << emap [ core::scoring::fa_atr ] << " , hbond_sc: " << emap [ core::scoring::hbond_sc ] << std::endl;
-					//ms_tr << "test3" << std::endl;
-					//contacts_fxn_->eval_cd_2b_sc_sc( working_pose_->residue( contact_residue_index ), *ligresOP, *working_pose_, emap );
-					//contacts_fxn_->eval_ci_2b_sc_sc( working_pose_->residue( target_residues_contact_[contact_residue_index] ),  working_pose_->residue( working_pose_->size() ), *working_pose_, emap );
-					whole_score_fxn_->eval_ci_2b_sc_sc( working_pose_->residue( target_residues_contact_[contact_residue_index] ),  working_pose_->residue( working_pose_->size() ), *working_pose_, emap );
-					ms_tr << emap << std::endl;
-
-					//ms_tr << "test4" << std::endl;
-					ms_tr << "atr: " << emap [ core::scoring::fa_atr ] << " , hbond_sc: " << emap [ core::scoring::hbond_sc ] << std::endl << "===========" << std::endl;
-					//ms_tr << "test5" << std::endl;
-
-					//also try with a blank pose and see how it differs
-
-					//contacts_fxn_->eval_ci_2b_sc_sc( working_pose_->residue( target_residues_contact_[contact_residue_index] ), *ligresOP, *contacts_poseop, emap2 );
-					//extract the values
-					//ms_tr << "atr: " << emap [ core::scoring::fa_atr ] << " , hbond_sc: " << emap2 [ core::scoring::hbond_sc ] << std::endl;
-					//contacts_fxn_->eval_cd_2b_sc_sc( working_pose_->residue( contact_residue_index ), *ligresOP, *contacts_poseop, emap );
-					//ms_tr << "atr: " << emap [ core::scoring::fa_atr ] << " , hbond_sc: " << emap2 [ core::scoring::hbond_sc ] << std::endl;
-
-					}
-
-					//clear the ligand from the pose
-					working_pose_->delete_residue_slow(working_pose_->size());
-					}
-
-					*/
-
-					//create the minipose to use for early scoring if it does not exist already
+					//create the minipose to use for early scoring (atr, rep, atrrep) if it does not exist already
 					if ( minipose->size() == 0 ) {
 						working_pose_->append_residue_by_jump(*ligresOP, 1);
 
@@ -1077,17 +931,14 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					core::Real fa_atr = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_atr];
 
 					//run fa_atr check
-					//don't keep if fa_atr is greater than cutoff (notable values are -5 and -3.77)
+					//don't keep if fa_atr is greater than cutoff
 					if ( fa_atr > fa_atr_cutoff ) {
 						minipose->delete_residue_slow(minipose->size());
 						++clashing_counter;
 						continue;
 					}
 
-					//whole_score_fxn_->score(*working_pose_);
-					//5/1/24 replacing score with the atr_rep function instead of whole
-					//score minipose not pose
-					//core::Real fa_atr_rep_score_before = fa_atr_rep_fxn_->score(*working_pose_);
+					//score whole minipose with atr_rep function
 					core::Real fa_atr_rep_score_before = fa_atr_rep_fxn_->score(*minipose);
 
 					//check if worse than cutoff
@@ -1117,33 +968,28 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					working_pose_->constraint_set(sc_cst_set);
 
-					//get free energy of pose with placed ligand
-					//std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
-					//5/1/24 replacing score with the atr_rep function instead of whole
-					//std::map< std::string, core::Real > interface_mapX = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
-
+					//get free energy of pose with placed ligand before highresdock
+					//declaration of variable
 					core::Real delta_score = 0;
 
 					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
 					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+						//whole
 						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
 						delta_score = interface_mapX_postdock["interface_delta_2"];
 					} else {
-						//5/1/24 replacing score with the atr_rep function instead of whole
+						//atrrep
 						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
 						delta_score = interface_mapX_postdock["interface_delta_2"];
 					}
 
 
-					//fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
-					//fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
-					//core::Real sc_constraint_check( working_pose_->energies().total_energies()[ coordinate_constraint ] );
-
-					//attempt to use movers to optimize placement a little more
 					if ( verbose_ >= 2 ) {
-						//ms_tr << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
 						ms_tr << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
 					}
+
+					//attempt to use movers to optimize placement a little more
+					//begin setting up objects to make HighResDocker mover work
 
 					//make ligandareaop for use with the highresdocker
 					protocols::ligand_docking::LigandAreaOP sc_ligand_area(new protocols::ligand_docking::LigandArea());
@@ -1156,8 +1002,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					sc_ligand_area->all_atom_mode_ = true;
 					sc_ligand_area->minimize_ligand_ = 1;
 
-					core::pose::PDBInfoCOP pdb_info( working_pose_->pdb_info() );
-
 					//add ligand to pose residue type set if it is not already in the set
 					//program doesn't work if the ligand isn't added to the pose residue type sets
 					if ( ligand_added == false ) {
@@ -1165,9 +1009,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//code to add type set of imported ligand into pose
 						core::chemical::PoseResidueTypeSetOP rts( working_pose_->conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
-
-						//check if ligand is already in rts. if it is not, then add it. otherwise continue (if it is already in, trying to add again breaks things)
-						//core::chemical::MutableResidueTypeOP type_to_add( new core::chemical::MutableResidueType( pose->residue(pose->size()).type() ) );
 
 						//make a ResidueTypeSetCOP that will be pulled from the PoseResidueTypeSetOP
 						core::chemical::ResidueTypeSetCOP def_rts(rts->default_rts());
@@ -1200,11 +1041,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					protocols::ligand_docking::MoveMapBuilderOP my_movemapbuilder ( new protocols::ligand_docking::MoveMapBuilder(sc_interface, blank_interface, true));
 
 					//use movemapbuilder to make highresdocker; make 1 HRD for each score function
+					//first 2 values correspond to the number of mover cycles and to repack every Nth cycle
+					//we will move 3 times and do not want to repack (residues seem to move to unwanted positions)
 					protocols::ligand_docking::HighResDockerOP my_HighResDocker_atrrep( new protocols::ligand_docking::HighResDocker(3, 0, fa_atr_rep_fxn_, my_movemapbuilder) );
 					protocols::ligand_docking::HighResDockerOP my_HighResDocker_whole( new protocols::ligand_docking::HighResDocker(3, 0, whole_score_fxn_, my_movemapbuilder) );
 
 
-					//set highresdocker to not repack
+					//set highresdockers to not repack
 					my_HighResDocker_atrrep->set_allow_repacking(false);
 					my_HighResDocker_whole->set_allow_repacking(false);
 
@@ -1215,9 +1058,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						my_HighResDocker_whole->apply(*working_pose_);
 					}
 
-					//score pose after using highresdocker
-					//delta_score = 0;
-
 					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get new ddg
 					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
 						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
@@ -1227,9 +1067,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
 						delta_score = interface_mapX_postdock["interface_delta_2"];
 					}
-
-
-					//delta_score = delta_score * -1;
 
 					//declaration of fa_atr_rep_score_after (may not be used)
 					core::Real fa_atr_rep_score_after = 0;
@@ -1276,11 +1113,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
 					}
 
-
-					//sc_constraint_check = working_pose_->energies().total_energies()[ coordinate_constraint ] ;
-					//temporary removal of sc_constraint_check, since we may not want that now (at least at this point)
-					//sc_constraint_check = 0;
-
 					//only print post dock delta score if we did a score with the whole or atrrep function
 					if ( verbose_ >= 2 && (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts) ) {
 						//ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
@@ -1308,8 +1140,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//name the pdb  that could come from the pose
 					//current naming convention
-					//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_constr_" + std::to_string(sc_constraint_check) + ".pdb";
-					//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_atrrep_" + std::to_string(fa_atr_rep_score_after) + ".pdb";
 					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 
 					//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
@@ -1328,7 +1158,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						pdb_name = pdb_name + "_atrrep_" + std::to_string(fa_atr_rep_score_after);
 					}
 
-					//adjust file name if using ligand.tws
+					//adjust file name if using ligand.wts
 					if ( use_ligand_wts ) {
 						pdb_name = pdb_name + "_whole_" + std::to_string(whole_score);
 					}
@@ -1965,21 +1795,12 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		for ( core::Size x = x_min; x <= x_max; ++x ) {
 			for ( core::Size y = y_min; y <= y_max; ++y ) {
 				for ( core::Size z = z_min; z <= z_max; ++z ) {
-					//std::cout << atom_coordinates_float_and_lj_radius.size() << "," << xyzVec << "," << x << "," << y << "," << z << std::endl;
-					//std::cout << x_min << "," << x_max << "," << x_bound << std::endl;
-					//std::cout << y_min << "," << y_max << "," << y_bound << std::endl;
-					//std::cout << z_min << "," << z_max << "," << z_bound << std::endl;
-
 					//use distance formula to figure out if cell x,y,z is within the sphere projected by the atom point about its LJ radius
 					//get distance between x,y,z and the atom point
-					//std::cout << "Calculating distance" << std::endl;
 					core::Real atom_cell_distance = sqrt(((x - atom_coordinates_float_and_lj_radius[xyzVec][1]) * (x - atom_coordinates_float_and_lj_radius[xyzVec][1])) + ((y - atom_coordinates_float_and_lj_radius[xyzVec][2]) * (y - atom_coordinates_float_and_lj_radius[xyzVec][2])) + ((z - atom_coordinates_float_and_lj_radius[xyzVec][3]) * (z - atom_coordinates_float_and_lj_radius[xyzVec][3])));
-					//std::cout << "Distance calculated" << std::endl;
 					//if distance is less than the radius, then the point is occupied
 					if ( atom_cell_distance < atom_coordinates_float_and_lj_radius[xyzVec][4] ) {
-						//std::cout << "Occupied" << std::endl;
 						protein_representation_matrix[x][y][z] = 1;
-						//std::cout << "Cell marked" << std::endl;
 					}
 				}
 			}
@@ -1991,8 +1812,6 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 
 	core::Real occupied_cell_count = 0;
 	core::Real unoccupied_cell_count = 0;
-
-
 
 	for ( core::Size x = 1; x <= xyz_bound[1]; ++x ) {
 		for ( core::Size y = 1; y <= xyz_bound[2]; ++y ) {
@@ -2059,7 +1878,6 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		core::Real anchor_nbr_radius = working_pose_->residue(working_position_).nbr_radius();
 
 		//debugging: get coordinates of nbr atom and nbr radius
-		//ms_tr << "Raw coordinates of nbr atom and nbr radius: " << nbr_atom_xyz[0] << ", " << nbr_atom_xyz[1] << ", " << nbr_atom_xyz[2] << "; " << anchor_nbr_radius << std::endl;
 		if ( verbose_ >= 3 ) {
 			ms_tr << "Raw coordinates of nbr atom and nbr radius: " << nbr_atom_xyz.x() << ", " << nbr_atom_xyz.y() << ", " << nbr_atom_xyz.z() << "; " << anchor_nbr_radius << std::endl;
 		}
@@ -2120,47 +1938,10 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 			nbr_atom_xyz_int[1] *= resolution_increase_factor;
 			nbr_atom_xyz_int[2] *= resolution_increase_factor;
 
-
-
 			//create new xyzvector of the nbr atom xyz that is shifted and scaled
 			numeric::xyzVector<core::Size> nbr_atom_xyz = nbr_atom_xyz_int;
 
-			//get the nbr radius of the residue to help further project the area to account for the full reach of each residue
-			//core::Size this_res_nbr_radius = working_pose_->residue(target_residues_sf_[i]).nbr_radius();
-
-			//determine if any coordinates can be used to define a minima/maxima
-			//also overwrite initial 0 value
-			//I think I initially wrote this wrong, min should be nbr_atom_xyz - radius (not plus); max should be nbr_atom_xyz + radius (not minus)
-			/*
-			if(sub_xyz_min[1] > nbr_atom_xyz[0] + this_res_nbr_radius || sub_xyz_min[1] == 0)
-			{
-			sub_xyz_min[1] = nbr_atom_xyz[0] + this_res_nbr_radius;
-			}
-			if(sub_xyz_max[1] < nbr_atom_xyz[0] - this_res_nbr_radius || sub_xyz_max[1] == 0)
-			{
-			sub_xyz_max[1] = nbr_atom_xyz[0] - this_res_nbr_radius;
-			}
-
-			if(sub_xyz_min[2] > nbr_atom_xyz[1] + this_res_nbr_radius|| sub_xyz_min[2] == 0)
-			{
-			sub_xyz_min[2] = nbr_atom_xyz[1] + this_res_nbr_radius;
-			}
-			if(sub_xyz_max[2] < nbr_atom_xyz[1] - this_res_nbr_radius || sub_xyz_max[2] == 0)
-			{
-			sub_xyz_max[2] = nbr_atom_xyz[1] - this_res_nbr_radius;
-			}
-
-			if(sub_xyz_min[3] > nbr_atom_xyz[2] + this_res_nbr_radius || sub_xyz_min[3] == 0)
-			{
-			sub_xyz_min[3] = nbr_atom_xyz[2] + this_res_nbr_radius;
-			}
-			if(sub_xyz_max[3] < nbr_atom_xyz[2] - this_res_nbr_radius || sub_xyz_max[3] == 0)
-			{
-			sub_xyz_max[3] = nbr_atom_xyz[2] - this_res_nbr_radius;
-			}
-			*/
-
-			//it might be ok if the value is 0
+			// get min and max for x,y,z for subarea
 
 			//x
 			if ( nbr_atom_xyz[0] < sub_xyz_min[1] || sub_xyz_min[1] == 0 ) {
@@ -2217,10 +1998,8 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 			for ( core::Size coordinate = 1; coordinate <= binding_pocket_center_xyz.size(); ++coordinate ) {
 				//apply relevant xyz shift as long as the coordinate is between 1-3, otherwise throw a warning
 				if ( coordinate <= 3 ) {
-					//ms_tr << coordinate << " Pre: " << binding_pocket_center_xyz[coordinate] << std::endl;
 					binding_pocket_center_xyz[coordinate] += xyz_shift[coordinate];
 					binding_pocket_center_xyz[coordinate] *= resolution_increase_factor;
-					//ms_tr << coordinate << " Post: " << binding_pocket_center_xyz[coordinate] << std::endl;
 				} else {
 					if ( verbose_ >= 1 ) {
 						ms_tr << "You have inputted an excess value using the motifs::binding_pocket_center_sf flag. This is value #" << coordinate << " in the input vector with a value of: " << binding_pocket_center_xyz[coordinate] << ". Ignoring this bad input, and you should review the proper usage for this flag." << std::endl;
@@ -2232,11 +2011,6 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 				ms_tr << "You have only inputted " << binding_pocket_center_xyz.size() << " coordinates for the binding pocket center xyz coordinates. We need exactly 3 to work. We can't do anything with this, and will skip this method and will just use an area around the anchor residue." << std::endl;
 			}
 		}
-
-		//make sure that the coordinate is within the right boundaries (<0 or >corresponding xyz_bound value)
-		//if (binding_pocket_center_xyz[1] > xyz_bound[1] || )
-		//actually, maybe we don't have to do this. If the coordinate does fall outside the matrix, part of the final shape could still be inside. Either way, we could end up with a shape that is either partially or completely outside the matrix, and we can go with that shape.
-		//if the entire shape is outside the matrix, then we throw a warning that we can't use it
 
 		//get the sub min and max values
 		//need to test and make sure that potential underflow with Size data type doesn't mess things up
@@ -2272,9 +2046,6 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 				}
 
 				//set the first 3 values of the binding_pocket_dimensions_sf vector to binding_pocket_dimensions (and also apply the resolution factor)
-				//binding_pocket_dimensions[1] = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ][0] * resolution_increase_factor;
-				//binding_pocket_dimensions[2] = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ][1] * resolution_increase_factor;
-				//binding_pocket_dimensions[3] = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ][2] * resolution_increase_factor;
 				binding_pocket_dimensions = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ]();
 
 				//apply resolution factor to each dimension
@@ -2368,7 +2139,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 				} else {
 					++sub_unoccupied_cell_count;
 
-					////adjust the value to now be 2 to indicate that this is empty within the sub-area
+					//adjust the value to now be 2 to indicate that this is empty within the sub-area
 					protein_representation_matrix[x][y][z] = 2;
 				}
 				++sub_total_cells;
@@ -2544,8 +2315,6 @@ utility::vector1<utility::vector1<utility::vector1<core::Size>>> LigandDiscovery
 			z_max = xyz_bound[3];
 		}
 
-
-
 		//iterate over the xyz of this area
 		//iterate over each cell between xmin-max, ymin-max, zmin-max, a cube around the atom
 		for ( core::Size x = x_min; x <= x_max; ++x ) {
@@ -2626,9 +2395,6 @@ utility::vector1<utility::vector1<utility::vector1<core::Size>>> LigandDiscovery
 				}
 			}
 		}
-
-
-
 	}
 
 	if ( verbose_ >= 3 ) {
@@ -2659,20 +2425,7 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(utilit
 	//create a new mutableresiduetype to work on adding atoms to
 	//base it from the dummy mrt that had all of its atoms deleted
 	//make a new mrt so it isn't a deep copy (and we can always build off of the original empty one)
-	//core::chemical::MutableResidueType my_mrt2( *dummylig_mrt );
-	//core::chemical::MutableResidueTypeOP my_mrt( new core::chemical::MutableResidueType( my_mrt2 ) );
-	//core::chemical::MutableResidueTypeOP my_mrt( dummylig_mrt );
-	//core::chemical::MutableResidueTypeOP my_mrt( new core::chemical::MutableResidueType( dummylig_mrt ) );
 	core::chemical::MutableResidueType my_mrt( dummylig_mrt );
-	//ms_tr << my_mrt.all_atoms()[1] << " starting num atoms in dummy mrt is now: " <<  my_mrt.natoms() << std::endl;
-	//ms_tr << "Number of chi in residue is currently: " << my_mrt.nchi() << std::endl;
-
-	//counters for carbon, hydrogen, oxygen, and nitrogen so that we can assign unique names to each atom
-	//default to 0, and increment on each use
-	//core::Size c_count = 0;
-	//core::Size h_count = 0;
-	//core::Size o_count = 0;
-	//core::Size n_count = 0;
 
 	//declare strings to use for the atom name, type, and mm_type
 	std::string atom_name = "";
@@ -2788,145 +2541,12 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(utilit
 				//TEST THIS: looks like I can use MutableResidueType::set_ideal_xyz to set the xyz (and hopefully not have to deal with icoor); use function that takes in the atom name string (it just calls the overload the uses the vertex anyway)
 				my_mrt.set_ideal_xyz(atom_name, Vector(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
 
-				//old deprecated method, keeping in case I may need the logic
-				/*
-				//check if this location falls within the bounds of the sub-matrix
-				if(x >= sub_xyz_min[1] && x <= sub_xyz_max[1] && y >= sub_xyz_min[2] && y <= sub_xyz_max[2] && z >= sub_xyz_min[3] && z <= sub_xyz_max[3])
-				{
-
-				//if it falls within range, check to see if the cell value is true or false (to determine what atom to place)
-				if(space_fill_matrix[x][y][z])
-				{
-				//increment n counter
-				++n_count;
-
-				//set string values and coordinates
-				atom_name = "N" + std::to_string(n_count);
-				atom_name = base_10_to_base_62(total_atom_counter);
-				atom_type_name = "NH2O";
-				mm_atom_type_name = "N";
-
-				//if true (occupied), nitrogen
-				//make the atom
-				//for simplicity sake, charge is 0
-				my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
-
-				//derive the coordinates of the atom
-				//divide matrix coordinates by resolution scalar and then subtract corresponding shift
-				atom_xyz[1] = (static_cast<core::Real>(x)/resolution_increase_factor) - xyz_shift[1];
-				atom_xyz[2] = (static_cast<core::Real>(y)/resolution_increase_factor) - xyz_shift[2];
-				atom_xyz[3] = (static_cast<core::Real>(z)/resolution_increase_factor) - xyz_shift[3];
-
-				//adjust the coordinates of the atom in the mrt
-				//TEST THIS: looks like I can use MutableResidueType::set_ideal_xyz to set the xyz (and hopefully not have to deal with icoor); use function that takes in the atom name string (it just calls the overload the uses the vertex anyway)
-				my_mrt.set_ideal_xyz(atom_name, Vector(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
-				}
-				else
-				{
-				//currently having a continue statement, as it seems that even at 1x resolution, representing the negative space is too intensive
-				continue;
-				//if false, oxygen
-				//increment 0 counter
-				++o_count;
-
-				//set string values and coordinates
-				atom_name = "O" + std::to_string(o_count);
-				atom_name = base_10_to_base_62(total_atom_counter);
-				atom_type_name = "OH";
-				mm_atom_type_name = "O";
-
-				//if true (occupied), nitrogen
-				//make the atom
-				//for simplicity sake, charge is 0
-				my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
-
-				//derive the coordinates of the atom
-				//divide matrix coordinates by resolution scalar and then subtract corresponding shift
-				atom_xyz[1] = (static_cast<core::Real>(x)/resolution_increase_factor) - xyz_shift[1];
-				atom_xyz[2] = (static_cast<core::Real>(y)/resolution_increase_factor) - xyz_shift[2];
-				atom_xyz[3] = (static_cast<core::Real>(z)/resolution_increase_factor) - xyz_shift[3];
-
-				//adjust the coordinates of the atom in the mrt
-				//TEST THIS: looks like I can use MutableResidueType::set_ideal_xyz to set the xyz (and hopefully not have to deal with icoor); use function that takes in the atom name string (it just calls the overload the uses the vertex anyway)
-				my_mrt.set_ideal_xyz(atom_name, Vector(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
-				}
-				//ms_tr << my_mrt.all_atoms()[1] << " num atoms in dummy mrt is now: " <<  my_mrt.natoms() << std::endl;
-				}
-				//else, handle it as it exists withing the whole matrix, print as a hydrogen
-				else
-				{
-				//check if we want to print for the whole matrix or just the sub area
-				//use_empty_space_in_space_fill_pdb
-				if(option[ OptionKeys::motifs::use_whole_matrix_in_space_fill_pdb ]())
-				{
-				//check if cell is occupied or not
-				if(space_fill_matrix[x][y][z])
-				{
-				//increment h counter
-				++h_count;
-
-				//set string values and coordinates
-				atom_name = "H" + std::to_string(h_count);
-				atom_name = base_10_to_base_62(total_atom_counter);
-				atom_type_name = "Haro";
-				mm_atom_type_name = "H";
-
-				//if true (occupied), nitrogen
-				//make the atom
-				//for simplicity sake, charge is 0
-				my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
-
-				//derive the coordinates of the atom
-				//divide matrix coordinates by resolution scalar and then subtract corresponding shift
-				atom_xyz[1] = (static_cast<core::Real>(x)/resolution_increase_factor) - xyz_shift[1];
-				atom_xyz[2] = (static_cast<core::Real>(y)/resolution_increase_factor) - xyz_shift[2];
-				atom_xyz[3] = (static_cast<core::Real>(z)/resolution_increase_factor) - xyz_shift[3];
-
-				//adjust the coordinates of the atom in the mrt
-				//TEST THIS: looks like I can use MutableResidueType::set_ideal_xyz to set the xyz (and hopefully not have to deal with icoor); use function that takes in the atom name string (it just calls the overload the uses the vertex anyway)
-				my_mrt.set_ideal_xyz(atom_name, Vector(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
-				}
-				else
-				{
-				//currently having a continue statement, as it seems that even at 1x resolution, representing the negative space is too intensive
-				continue;
-				//if false, carbon
-				//increment 0 counter
-				++c_count;
-
-				//set string values and coordinates
-				atom_name = "C" + std::to_string(c_count);
-				atom_name = base_10_to_base_62(total_atom_counter);
-				atom_type_name = "aroC";
-				mm_atom_type_name = "C";
-
-				//if true (occupied), nitrogen
-				//make the atom
-				//for simplicity sake, charge is 0
-				my_mrt.add_atom(atom_name, atom_type_name, mm_atom_type_name, 0);
-
-				//derive the coordinates of the atom
-				//divide matrix coordinates by resolution scalar and then subtract corresponding shift
-				atom_xyz[1] = (static_cast<core::Real>(x)/resolution_increase_factor) - xyz_shift[1];
-				atom_xyz[2] = (static_cast<core::Real>(y)/resolution_increase_factor) - xyz_shift[2];
-				atom_xyz[3] = (static_cast<core::Real>(z)/resolution_increase_factor) - xyz_shift[3];
-
-				//adjust the coordinates of the atom in the mrt
-				//TEST THIS: looks like I can use MutableResidueType::set_ideal_xyz to set the xyz (and hopefully not have to deal with icoor); use function that takes in the atom name string (it just calls the overload the uses the vertex anyway)
-				my_mrt.set_ideal_xyz(atom_name, Vector(atom_xyz[1],atom_xyz[2],atom_xyz[3]) );
-				}
-				}
-				}
-				*/
-
 				//handle adding the icoor data for the atom
 				//skip if the atom name is "" (which will happen if you only look at the sub-matrix)
 
 				if ( atom_name != "" ) {
 					++atom_counter;
 					++total_atom_counter;
-
-					//ms_tr << atom_name << "," << atom_counter << "," << total_atom_counter << "," << atom_type_name << "," << mm_atom_type_name << std::endl;
 
 					//if atom counter is <= 3, add the atom name to the first_three_atoms vector
 					//atom count must be >3 so we know the first 3 atoms and can retroactively add icoor for those first 3 atoms
@@ -2935,12 +2555,11 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(utilit
 
 						//if the count is 3, we can retroactively add icoor data for the first 3 atoms now
 						if ( atom_counter == 3 ) {
-							//std::cout << "adding icoor for " << first_three_atoms[1] << std::endl;
+
 							my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
-							//std::cout << "adding icoor for " << first_three_atoms[2] << std::endl;
+
 							my_mrt.set_icoor(first_three_atoms[2],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
 							//flip order of stub2 and stub3 for 3rd atom (looking at some params files, it seems like they do this)
-							//std::cout << "adding icoor for " << first_three_atoms[3] << std::endl;
 							my_mrt.set_icoor(first_three_atoms[3],0,0,0,first_three_atoms[1],first_three_atoms[3],first_three_atoms[2],false);
 
 							//add bonds to connect these 3
@@ -2949,7 +2568,6 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(utilit
 						}
 					} else {
 						//add icoor data for later atoms, using the first 3 atoms as the same stub atoms each time
-						//std::cout << "adding icoor for " << atom_name << std::endl;
 						my_mrt.set_icoor(first_three_atoms[1],0,0,0,first_three_atoms[1],first_three_atoms[2],first_three_atoms[3],false);
 
 						//bond everything else to the 3rd atom and hope things dont get wonky
@@ -3061,24 +2679,19 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(utilit
 	//now assign internal coordina
 
 	//try to use assign_internal_coordinates to see if that helps fix icoor
-	//std::cout << "attempting to assign internal coordinates" << std::endl;
 	my_mrt.assign_internal_coordinates();
-	//std::cout << "assigned internal coordinates" << std::endl;
 
 	//convert my_mrt to a data type that can be added to a pose
 	//convert to residuetype
-	//std::cout << "making res type" << std::endl;
 	ResidueTypeCOP my_rt(ResidueType::make(my_mrt));
 	//ResidueTypeCOP my_rt(ResidueType::make(*my_mrt));
 	//ResidueTypeCOP my_rt(new core::chemical::ResidueType( *my_mrt ));
 	//convert to residue
-	//std::cout << "making resOP" << std::endl;
 	core::conformation::ResidueOP my_res( core::conformation::ResidueFactory::create_residue(*my_rt));
 
 
 
 	//append residue to pose
-	//std::cout << "appending to matrix" << std::endl;
 	matrix_pose.append_residue_by_jump( *my_res, 1 );
 
 	//export pose using custom name
@@ -3150,23 +2763,6 @@ void LigandDiscoverySearch::hash_motif_library_into_map(protocols::motifs::Motif
 		std::string motif_residue_name(motifcop->restype_name1());
 		//declare tuple key
 		std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string> key_tuple(motifcop->restype_name1(),motifcop->res1_atom1_name(),motifcop->res1_atom2_name(),motifcop->res1_atom3_name(),motifcop->res2_atom1_name(),motifcop->res2_atom2_name(),motifcop->res2_atom3_name());
-
-		//actually, I don't think we need to run the count. I think we can just do the push_back regardless of if the key already existed, since I think a new motifcops just gets made and we can push back straight away once it is declared at the key address
-		//leaving the commented count code here just in case I am wrong and do need it
-		//check if the tuple key is present in the map
-		//if key is present, push motif back to existing motifcop list
-		//if key is not present, create new motifcop list at key and add motif to new motifcop list
-		//if(mymap.count(key_tuple) > 0)
-		//{
-		//key exists
-		//push back motif into motifcops
-		// mymap[key_tuple].push_back(motifcop);
-		//}
-		//else
-		//{
-		//key does not exist
-		//declare mot
-		//}
 
 		//push back motif to motifcops at key address
 		mymap[key_tuple].push_back(motifcop);
