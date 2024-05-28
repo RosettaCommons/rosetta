@@ -28,10 +28,6 @@
 #include <iomanip>
 #include <iostream>
 
-// option key includes for tolerance flexibility in sin_cos_range
-#include <basic/options/option.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-
 #ifdef USEMPI
 //Exception for NaN in sin/cos
 #include <utility/excn/Exceptions.hh>
@@ -74,7 +70,7 @@ cot( T const & x )
 template< typename T >
 inline
 bool
-in_sin_cos_range( T const & x, T const & tol = T( basic::options::option[ basic::options::OptionKeys::run::sin_cos_range_tolerance ] ) )
+in_sin_cos_range( T const & x, T const & tol = T( .001 ) )
 {
 	assert( tol >= T( 0.0 ) );
 	return ( ( x >= -( T( 1.0 ) + tol ) ) && ( x <= T( 1.0 ) + tol ) );
@@ -95,7 +91,7 @@ in_sin_cos_range( T const & x, T const & tol = T( basic::options::option[ basic:
 template< typename T >
 inline
 T
-sin_cos_range( T const & x, T const & tol = T( basic::options::option[ basic::options::OptionKeys::run::sin_cos_range_tolerance ] ) )
+sin_cos_range( T const & x, T const & tol = T( .001 ) )
 {
 	using std::cout;
 	using std::cerr;
@@ -113,11 +109,6 @@ sin_cos_range( T const & x, T const & tol = T( basic::options::option[ basic::op
 	} else { // Out of range
 		cout << "sin_cos_range ERROR: " << setprecision( 8 ) << showpoint << x << " is outside of [-1,+1] sin and cos value legal range" << endl;
 		cerr << "sin_cos_range ERROR: " << setprecision( 8 ) << showpoint << x << " is outside of [-1,+1] sin and cos value legal range" << endl;
-		
-		// Blanket option use to allow all calculated values to pass, even if they are beyond the tolerance. Value must be set to true; false by default
-		if (basic::options::option[ basic::options::OptionKeys::run::keep_beyond_sin_cos_range ]) {
-			return ( x >= T( 0.0 ) ? T( 1.0 ) : T( -1.0 ) );
-		}
 #ifdef BOINC
 		// There are enough sufficiently weird machines on BOINC that
 		// the error was getting triggered fairly often (~5% of jumping runs).
