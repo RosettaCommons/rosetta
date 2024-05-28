@@ -1252,7 +1252,7 @@ Options = Option_Group( '',
 			desc="Tolerance value beyond normal range of sin/cos ([-1,+1]) to accommodate for rounding errors. Values between normal range and tolerance are set to corresponding range extrema.",
 			default='0.001'
 			),
-		Option( 'keep_beyond_sin_cos_range', 'Bool',
+		Option( 'keep_beyond_sin_cos_range', 'Boolean',
 			desc="Option to allow all calculated sin/cos values be accepted, regardless of how far they are beyond the normal range ([-1,+1]). Values outside of the range will be set to the corresponding range extrema.",
 			default='false'
 			),
