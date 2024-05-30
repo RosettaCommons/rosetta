@@ -953,8 +953,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 	static T const ONE( 1 );
 	static T const TWO( 2 );
 	
-	// using increased tolerance threshold of 0.05 (50x default of 0.001) to better tolerate accumulation of rounding errors
-	T const cos_theta = sin_cos_range( (( R.trace() - ONE ) / TWO), 0.05 );
+	T const cos_theta = sin_cos_range( (( R.trace() - ONE ) / TWO) );
 
 	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
 	if ( cos_theta > -ONE + tolerance && cos_theta < ONE - tolerance ) {
