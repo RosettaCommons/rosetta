@@ -61,12 +61,12 @@ date > start-time.ignore
 # fi
 # `which python3` -m pip install networkx mrcfile >> install_log.ignore 2>&1
 
-`which python3` %(minidir)s/src/apps/public/DRRAFTER/auto-DRRAFTER_setup_next_round.py -out_pref mini_example -curr_round R1 -nmodels 10 -rosetta_directory %(bin)s/ -rosetta_extension .%(binext)s -test  2>&1 \
+%(python3)s %(minidir)s/src/apps/public/DRRAFTER/auto-DRRAFTER_setup_next_round.py -out_pref mini_example -curr_round R1 -nmodels 10 -rosetta_directory %(bin)s/ -rosetta_extension .%(binext)s -test  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
 
-`which python3` %(minidir)s/src/apps/public/DRRAFTER/submit_jobs.py -out_pref mini_example -curr_round FINAL_R2 -njobs 2 -template_submission_script input_files/job_submission_template.sh -queue_command source 2>&1 \
+%(python3)s %(minidir)s/src/apps/public/DRRAFTER/submit_jobs.py -out_pref mini_example -curr_round FINAL_R2 -njobs 2 -template_submission_script input_files/job_submission_template.sh -queue_command source 2>&1 \
     | egrep -vf ../../ignore_list \
     >> log
 

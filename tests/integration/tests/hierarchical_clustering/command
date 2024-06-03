@@ -30,7 +30,7 @@ cd %(workdir)s
 
 [ -x %(bin)s/hierarchical_clustering.%(binext)s ] || exit 1
 
-#./letters_clustering_data.py > dm
+#%(python)s ./letters_clustering_data.py > dm
 %(bin)s/hierarchical_clustering.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST -clustering:n 3 2>&1 \
     | egrep -vf ../../ignore_list \
     > log_cluster_3
