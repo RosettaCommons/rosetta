@@ -21,8 +21,9 @@ except ModuleNotFoundError:
     from distutils import dir_util as dir_util_module
 
 
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+# A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 _api_version_ = '1.1'
 
@@ -223,10 +224,12 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     execute('Commiting new release...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{release_name}"'.format(**vars()))
 
     if not debug:
-        execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
-        execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
-        execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
-        execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./test/run.py --compiler={compiler} -j{jobs} --mute all'.format(**vars()))  # ignoring --extras={extras}
+        python_exe = local_python_install(platform, config).python # Will install a local python
+
+        execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
+        execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
+        execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
+        execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./test/run.py --compiler={compiler} -j{jobs} --mute all'.format(**vars()))  # ignoring --extras={extras}
 
     # We moving archive and pushing new revision to upstream only *after* all test runs passed
     shutil.move(archive, release_path+release_name+'.tar.bz2')
@@ -260,6 +263,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     release_name = 'rosetta.binary.{}.{}-{}'.format(platform['os'], config['branch'], config['revision'])
     archive = working_dir + '/' + release_name + '.tar.bz2'
 
+    python_exe = local_python_install(platform, config).python # Will install a local python
 
     if release_as_git_repository:
         # Creating git repository with source code, only for regular (not 'commits') branches
@@ -291,7 +295,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
         #execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
         convert_to_release(rosetta_dir, working_dir, config, git_repository_name, release_name, TR)
 
-        execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
+        execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
 
         # Creating tar.bz2 archive with sources
         with tarfile.open(archive, "w:bz2") as t: t.add(working_dir+'/'+git_repository_name, arcname=release_name)
@@ -308,9 +312,9 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
             execute('Trimming git history...', 'cd {working_dir}/{git_repository_name} && {git_truncate}'.format(**vars()))
 
         # Running extra test to make sure our release is good...
-        execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
-        execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
-        execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./test/run.py --compiler={compiler} -j{jobs} --mute all'.format(**vars()))  # ignoring --extras={extras}
+        execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
+        execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
+        execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./test/run.py --compiler={compiler} -j{jobs} --mute all'.format(**vars()))  # ignoring --extras={extras}
 
         # We moving archive and pushing new revision to upstream only *after* all test runs passed
         shutil.move(archive, release_path+release_name+'.tar.bz2')
@@ -336,7 +340,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
 
         convert_to_release(rosetta_dir, working_dir, config, git_repository_name, release_name, TR)
 
-        execute('Building release...', f'cd {working_dir}/{git_repository_name}/main/source && ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}')
+        execute('Building release...', f'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}')
 
         # Creating tar.bz2 archive with sources
         with tarfile.open(archive, "w:bz2") as t: t.add(working_dir+'/'+git_repository_name, arcname=release_name)
@@ -344,9 +348,9 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
         if not os.path.isdir(release_path): os.makedirs(release_path)
 
         # Running extra test to make sure our release is good...
-        execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
-        execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
-        execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./test/run.py --compiler={compiler} -j{jobs} --mute all'.format(**vars()))  # ignoring --extras={extras}
+        execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py cxx={compiler} -j{jobs}'.format(**vars()))  # ignoring extras={extras} because we only test unit test on standard build (not static or MPI etc)
+        execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./scons.py cxx={compiler} cat=test -j{jobs}'.format(**vars()))  # ignoring extras={extras}
+        execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && {python_exe} ./test/run.py --compiler={compiler} -j{jobs} --mute all'.format(**vars()))  # ignoring --extras={extras}
 
         shutil.rmtree(git_working_dir)
 

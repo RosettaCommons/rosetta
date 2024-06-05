@@ -647,15 +647,15 @@ CEREAL_REGISTER_TYPE( protocols::jd3::JobGenealogist )
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-protocols::jd3::compare_job_nodes::save( Archive & arc ) const {
-	arc( cereal::base_class< compare_job_nodes >( this ) );
+protocols::jd3::compare_job_nodes::save( Archive & ) const {
+	// No data currently, so this is a no-op.
 }
 
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-protocols::jd3::compare_job_nodes::load( Archive & arc ) {
-	arc( cereal::base_class< compare_job_nodes >( this ) );
+protocols::jd3::compare_job_nodes::load( Archive & ) {
+	// No data currently, so this is a no-op.
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::compare_job_nodes );

@@ -29,7 +29,7 @@
 cd %(workdir)s
 
 [ -x make_sequence_profile.py ] || exit 1
-./make_sequence_profile.py -m BLOSUM62 -p msoleft.pdb -w -1000.0 > make_seq_prof.log 2>&1
+%(python)s ./make_sequence_profile.py -m BLOSUM62 -p msoleft.pdb -w -1000.0 > make_seq_prof.log 2>&1
 
 [ -x %(bin)s/MSA_design.%(binext)s ] || exit 1
 %(bin)s/MSA_design.%(binext)s %(additional_flags)s @MSA.flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \

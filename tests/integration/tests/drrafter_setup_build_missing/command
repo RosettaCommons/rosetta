@@ -60,7 +60,7 @@ date > start-time.ignore
 # fi
 # `which python3` -m pip install networkx mrcfile >> install_log.ignore 2>&1
 
-`which python3` %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta fasta.txt -secstruct secstruct.txt -start_struct subset_2bh2_bound_full.pdb -map_file empty_2bh2_bound_full.5.00.mrc -map_reso 5.0 -residues_to_model C:844-848 -include_residues_around C:843 C:849 A:13 A:137 -job_name test 2>&1 \
+%(python3)s %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta fasta.txt -secstruct secstruct.txt -start_struct subset_2bh2_bound_full.pdb -map_file empty_2bh2_bound_full.5.00.mrc -map_reso 5.0 -residues_to_model C:844-848 -include_residues_around C:843 C:849 A:13 A:137 -job_name test 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

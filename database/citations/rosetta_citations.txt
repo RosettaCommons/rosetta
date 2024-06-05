@@ -1408,3 +1408,43 @@
         10.1101/2022.05.25.493516
     [END_DOI]
 [END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "" "Lin" "Z"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "" "Akin" "H"
+        "" "Rao" "R"
+        "" "Hie" "B"
+        "" "Zhu" "Z"
+        "" "Lu" "W"
+        "" "Smetanin" "N"
+        "" "Verkuil" "R"
+        "" "Kabeli" "O"
+        "" "Shmueli" "Y"
+        "" "DosSantosCosta" "A"
+        "" "Fazel-Zarandi" "M"
+        "" "Sercu" "T"
+        "" "Candido" "S"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "" "Rives" "A"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2023
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Evolutionary-scale prediction of atomic-level protein structure with a language model
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Science
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        379(6637):1123-1130
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1126/science.ade2574
+    [END_DOI]
+[END_CITATION]
+

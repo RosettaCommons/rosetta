@@ -12,7 +12,7 @@
 ## @brief  Benchmark script for testing how Rosetta can load PBD's from www.rcsb.org
 ## @author Sergey Lyskov
 
-import os, json, enum, imp, time, shutil
+import os, json, enum, time, shutil
 from collections import namedtuple, OrderedDict
 
 script_name = os.path.abspath(__file__)  # keep this line above imp.load_source(...) line below, beacuse later change value of __file__ variable
@@ -21,7 +21,9 @@ _api_version_ = '1.1'
 
 _number_of_jobs_ = 1024
 
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../../__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
+# A bit of Python magic here, what we trying to say is this: from ../../__init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-3]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 Job = namedtuple('Job', 'name pdbs path rosetta_dir command_line')  #  hpc_job_id
 #Job.__new__.__defaults__ = (None, )
