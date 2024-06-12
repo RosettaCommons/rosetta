@@ -2198,6 +2198,17 @@ settings = {
         },
     },
 
+    "clang, |cxx_ver:>=18|" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Wno-error=deprecated-declarations",
+		    "Wno-error=enum-constexpr-conversion",
+                ],
+            },
+        },
+    },
+
     # OSs #####################################################################
 
     "clang, linux" : {

@@ -81,6 +81,11 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
   endif()
 endif()
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 17)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=enum-constexpr-conversion -Wno-error=deprecated-declarations")
+endif()
+
+
 # if ( (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.0") )
 # else()
 #     add_compile_options(-Werror=non-virtual-dtor -Werror=delete-abstract-non-virtual-dtor) # -pedantic-errors -pedantic -Werror
