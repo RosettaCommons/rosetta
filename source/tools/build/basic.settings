@@ -2202,8 +2202,8 @@ settings = {
         "appends" : {
             "flags" : {
                 "warn" : [
-                    "Wno-deprecated-declarations",
-		    "Wno-enum-constexpr-conversion",
+                    "Wno-error=deprecated-declarations",
+		    "Wno-error=enum-constexpr-conversion",
                 ],
             },
         },
