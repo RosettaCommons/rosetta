@@ -35,7 +35,7 @@ tests = dict(
 
     #PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
 
-    header    = NT(command='./scons.py unit_test_platform_only ; cd src && python3 ./../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
+    header    = NT(command='{python} ./scons.py unit_test_platform_only ; cd src && python3 ./../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
     levels    = NT(command= ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) + ' && {activate} && cd src && python ./../../tools/python_cc_reader/library_levels.py', incremental=False),
 
     ui  = NT(command='cd src/ui && {python} update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} -r ../qt/qt.pro {qt_extras}&& make -j{jobs}', incremental=True),
