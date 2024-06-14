@@ -637,6 +637,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			ms_tr << "Starting to iterate through all ligands" << std::endl;
 		}
 
+		//create a copy of the working_pose_ that working_pose_ can be reset to after each placement attempt
+		core::pose::Pose original_pose(*working_pose_);
+
 		//hold the number of placements that pass all filters and could enter the top 100 placements
 		int passed_placement_counter = 0;
 
@@ -1081,6 +1084,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff ) {
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
+							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+							core::pose::PoseOP original_poseop(new pose::Pose(original_pose));
+							//assign the original_poseop to working_pose_
+							working_pose_ = original_poseop;
 							++clashing_counter;
 							continue;
 						}
@@ -1134,6 +1141,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					if ( delta_score > score_cutoff || fa_atr > fa_atr_cutoff || fa_rep > fa_rep_cutoff ) {
 						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
+						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+						core::pose::PoseOP original_poseop(new pose::Pose(original_pose));
+						//assign the original_poseop to working_pose_
+						working_pose_ = original_poseop;
 						++clashing_counter;
 						continue;
 					}
@@ -1193,6 +1204,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						if ( motifs_made < min_motifs_cutoff ) {
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
+							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+							core::pose::PoseOP original_poseop(new pose::Pose(original_pose));
+							//assign the original_poseop to working_pose_
+							working_pose_ = original_poseop;
 							++clashing_counter;
 							continue;
 						}
@@ -1225,6 +1240,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							if ( kill ) {
 								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
+								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+								core::pose::PoseOP original_poseop(new pose::Pose(original_pose));
+								//assign the original_poseop to working_pose_
+								working_pose_ = original_poseop;
 								++clashing_counter;
 								continue;
 							}
@@ -1269,6 +1288,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						if ( significant_motifs_made < min_sig_motifs_cutoff ) {
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
+							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+							core::pose::PoseOP original_poseop(new pose::Pose(original_pose));
+							//assign the original_poseop to working_pose_
+							working_pose_ = original_poseop;
 							++clashing_counter;
 							continue;
 						}
@@ -1358,6 +1381,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								//kill placement
 								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
+								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+								core::pose::PoseOP original_poseop(new pose::Pose(original_pose));
+								//assign the original_poseop to working_pose_
+								working_pose_ = original_poseop;
 								++clashing_counter;
 								continue;
 							}
@@ -1384,6 +1411,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//directly remove residue from end of pose
 						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
+						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+						core::pose::PoseOP original_poseop(new pose::Pose(original_pose));
+						//assign the original_poseop to working_pose_
+						working_pose_ = original_poseop;
 						++passing_counter;
 
 						//continue since we do not need to touch best_100_placements
@@ -1397,6 +1428,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					minipose->delete_residue_slow(minipose->size());
 
 					working_pose_->delete_residue_slow(working_pose_->size());
+					//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+					core::pose::PoseOP original_poseop(new pose::Pose(original_pose));
+					//assign the original_poseop to working_pose_
+					working_pose_ = original_poseop;
 
 					//add pose tuple, heapify if we want to only keep the top X placements (determined by using the best_pdbs_to_keep != 0)
 					//push pose into vector of passing placements
