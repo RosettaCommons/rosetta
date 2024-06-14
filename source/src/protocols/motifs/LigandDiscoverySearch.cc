@@ -1007,6 +1007,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//add ligand to pose residue type set if it is not already in the set
 					//program doesn't work if the ligand isn't added to the pose residue type sets
+					//also add it to the original pdb
 					if ( ligand_added == false ) {
 						ligand_added = true;
 
@@ -1024,6 +1025,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							rts->add_base_residue_type(lig_mrt);
 						}
 						working_pose_->conformation().reset_residue_type_set_for_conf(rts);
+						original_pose.conformation().reset_residue_type_set_for_conf(rts);
 					}
 
 					//add ligand_area to an op of ligandarea
