@@ -868,7 +868,7 @@ def main(args):
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
     parser.add_argument('--annotate-includes', action="store_true", help='Annotate includes in generated PyRosetta source files')
-    parser.add_argument('--trace', action="store_true", help='Binder will add trace output to to generated PyRosetta source files')
+    parser.add_argument('--trace', action="store_true", help='Binder will add trace output to the generated PyRosetta source files')
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
