@@ -24,10 +24,16 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
     "MinSizeRel" "RelWithDebInfo")
 endif()
+
 # if( CMAKE_BUILD_TYPE MATCHES "Debug" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo") # if( CMAKE_BUILD_TYPE IN_LIST "Debug" "RelWithDebInfo")
 #   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcmodel=large")
-#   add_compile_options(-mcmodel=large)
+#   #add_compile_options(-mcmodel=large)
+#   #add_compile_options(-mcmodel=large -Os)
+#   #add_link_options(-mcmodel=large)
+#   set(CMAKE_BUILD_TYPE MinSizeRel)
+#   add_compile_options(-g)
 # endif()
+
 string(TOUPPER "${CMAKE_BUILD_TYPE}" U_CMAKE_BUILD_TYPE)
 
 # Try to autodetect Python (can be overridden manually if needed)
