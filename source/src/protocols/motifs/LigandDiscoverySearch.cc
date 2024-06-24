@@ -1160,13 +1160,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 
 					//add comments to working_pose for print
-					//core::pose::add_comment(working_pose_, "", );
-					core::pose::add_comment(working_pose_, "Output prefix:", output_prefix);
-					core::pose::add_comment(working_pose_, "Anchor residue index:", std::to_string(working_position_));
-					core::pose::add_comment(working_pose_, "Anchor residue type:", discovery_position_residue);
-					core::pose::add_comment(working_pose_, "Ligand trio number:", std::to_string(i));
-					core::pose::add_comment(working_pose_, "Ligand name:", ligresOP->name());
-					core::pose::add_comment(working_pose_, "Placed motif remark", motifcop->remark());
+					//core::pose::add_comment(*working_pose_, "", );
+					core::pose::add_comment(*working_pose_, "Output prefix:", output_prefix);
+					core::pose::add_comment(*working_pose_, "Anchor residue index:", std::to_string(working_position_));
+					core::pose::add_comment(*working_pose_, "Anchor residue type:", discovery_position_residue);
+					core::pose::add_comment(*working_pose_, "Ligand trio number:", std::to_string(i));
+					core::pose::add_comment(*working_pose_, "Ligand name:", ligresOP->name());
+					core::pose::add_comment(*working_pose_, "Placed motif remark", motifcop->remark());
 
 					//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
 					std::string pdb_short_unique_name = pdb_name;
@@ -1174,24 +1174,24 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//only use fa_rep and atr if we use atrrep or whole to score the whole system and pull how we fixed them
 					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts ) {
 						pdb_name = pdb_name + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr);
-						core::pose::add_comment(working_pose_, "Ligand fa_atr:", std::to_string(fa_atr));
-						core::pose::add_comment(working_pose_, "Ligand fa_rep:", std::to_string(fa_rep));
+						core::pose::add_comment(*working_pose_, "Ligand fa_atr:", std::to_string(fa_atr));
+						core::pose::add_comment(*working_pose_, "Ligand fa_rep:", std::to_string(fa_rep));
 					}
 
 					//add delta (keeping in same order as I have in the past of atr and rep potentially being first)
 					pdb_name = pdb_name + "_delta_" + std::to_string(delta_score);
-					core::pose::add_comment(working_pose_, "Post-HighResDock system ddG:", std::to_string(delta_score));
+					core::pose::add_comment(*working_pose_, "Post-HighResDock system ddG:", std::to_string(delta_score));
 
 					//adjust if using optional atr_rep post highresdock
 					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
 						pdb_name = pdb_name + "_atrrep_" + std::to_string(fa_atr_rep_score_after);
-						core::pose::add_comment(working_pose_, "System fa_atr and fa_rep score:", std::to_string(fa_atr_rep_score_after));
+						core::pose::add_comment(*working_pose_, "System fa_atr and fa_rep score:", std::to_string(fa_atr_rep_score_after));
 					}
 
 					//adjust file name if using ligand.wts
 					if ( use_ligand_wts ) {
 						pdb_name = pdb_name + "_whole_" + std::to_string(whole_score);
-						core::pose::add_comment(working_pose_, "Whole system score:", std::to_string(whole_score));
+						core::pose::add_comment(*working_pose_, "Whole system score:", std::to_string(whole_score));
 					}
 
 
@@ -1233,7 +1233,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						}
 
 						pdb_name = pdb_name + "_motifs_" + std::to_string(motifs_made);
-						core::pose::add_comment(working_pose_, "Total motifs made:", std::to_string(motifs_made));
+						core::pose::add_comment(*working_pose_, "Total motifs made:", std::to_string(motifs_made));
 
 						//convert the motif library to motifCOPS
 						protocols::motifs::MotifCOPs placement_libraryCOPs = placement_library.library();
@@ -1243,7 +1243,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						core::Size placement_motif_counter = 0
 						for ( auto ligmotifcop : placement_libraryCOPs ) {
 
-							core::pose::add_comment(working_pose_, "Placement motif " + str::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
+							core::pose::add_comment(*working_pose_, "Placement motif " + str::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
 
 							++placement_motif_counter;
 						}
@@ -1323,8 +1323,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 							pdb_name = pdb_name + "_sigmotifs_" + std::to_string(significant_motifs_made);
 
-							core::pose::add_comment(working_pose_, "Motifs made against significant residues count:", std::to_string(significant_motifs_made));
-							core::pose::add_comment(working_pose_, "Motifs made against significant residues:", significant_residue_string);
+							core::pose::add_comment(*working_pose_, "Motifs made against significant residues count:", std::to_string(significant_motifs_made));
+							core::pose::add_comment(*working_pose_, "Motifs made against significant residues:", significant_residue_string);
 						}
 
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
@@ -1402,7 +1402,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 											std::string real_motif_match_info = "remark: " + realmotifcop->remark() + ", distance: " + std::to_string(motif_distance) + ", angle: " + std::to_string(motif_theta); 
 
 											//add comment about real motif match for placement motif
-											core::pose::add_comment(working_pose_, ligmotifcop->remark(), real_motif_match_info);
+											core::pose::add_comment(*working_pose_, ligmotifcop->remark(), real_motif_match_info);
 
 											//greedy algorithm, stop for current ligmotifcop when we hit the first match since we got what we wanted
 											break;
@@ -1416,7 +1416,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 										ms_tr << "No real motifs identified for motif: " << *ligmotifcop << std::endl;
 									}
 
-									core::pose::add_comment(working_pose_, ligmotifcop->remark(), "No real match");
+									core::pose::add_comment(*working_pose_, ligmotifcop->remark(), "No real match");
 								}
 							}
 
@@ -1442,8 +1442,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							//add real motif ratio to pdb name
 							pdb_name = pdb_name + "_realmotifratio_" + std::to_string(real_looking_motif_ratio);
 
-							core::pose::add_comment(working_pose_, "Real motif count:", std::to_string(motifs_that_look_real_real));
-							core::pose::add_comment(working_pose_, "Real motif ratio:", std::to_string(real_looking_motif_ratio));
+							core::pose::add_comment(*working_pose_, "Real motif count:", std::to_string(motifs_that_look_real_real));
+							core::pose::add_comment(*working_pose_, "Real motif ratio:", std::to_string(real_looking_motif_ratio));
 
 						}
 
