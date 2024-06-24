@@ -7202,6 +7202,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'minimum_significant_motifs_formed_cutoff', 'Integer', default = '0', desc = 'Minimum number of motifs from significant residues (defined by significant_residues_for_motifs) that are required for ligand to survive'),
 		Option( 'check_if_ligand_motifs_match_real', 'Boolean', default = 'false', desc = 'If collecting motifs from placed ligand, check if motifs are similar to existing ones in starting motif library'),
 		Option( 'minimum_ratio_of_real_motifs_from_ligand', 'Real', default = '0', desc = 'If checking that motifs from placed ligand match motifs in inputted library, ratio cutoff for how many must match real to keep ligand'),
+		Option( 'clean_pdb_name', 'Boolean', default = 'true', desc = 'Use a cleaner naming scheme for naming the pdbs that are produced by liganddiscoverysearch'),
 		Option( 'verbose', 'Integer', default = '1', desc = 'Verbosity control in the motifs namespace to control the verbosity output of programs that use it. Higher values indicate the level of verbosity (down to 0 being the bare bones; values unlikely to exceed 2 or 3)'),
 	), # -motifs
 
