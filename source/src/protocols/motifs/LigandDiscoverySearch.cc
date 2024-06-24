@@ -1243,7 +1243,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						core::Size placement_motif_counter = 0;
 						for ( auto ligmotifcop : placement_libraryCOPs ) {
 
-							core::pose::add_comment(*working_pose_, "Placement motif " + str::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
+							core::pose::add_comment(*working_pose_, "Placement motif " + std::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
 
 							++placement_motif_counter;
 						}
