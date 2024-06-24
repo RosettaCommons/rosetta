@@ -1240,7 +1240,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//iterate over the library of motifs created by the ligand placement to add a comment for each that is the motif's remark
 						//create a counter too to print out each unique motif
-						core::Size placement_motif_counter = 0
+						core::Size placement_motif_counter = 0;
 						for ( auto ligmotifcop : placement_libraryCOPs ) {
 
 							core::pose::add_comment(*working_pose_, "Placement motif " + str::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
