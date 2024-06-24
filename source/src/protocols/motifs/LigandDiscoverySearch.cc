@@ -1416,7 +1416,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 									}
 
 									//if no real match was found, note comment
+									if (real_match_found == false){
 									core::pose::add_comment(*working_pose_, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match");
+									}
 								} else {
 									//key (and real motif in our library) does not exist
 									//declare that this motif is not considered real
