@@ -53,6 +53,7 @@
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 #include <core/chemical/GlobalResidueTypeSet.hh>
 
@@ -647,7 +648,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		for ( core::Size tracker = 1; tracker <= all_residues_.size(); ++tracker ) {
 
 			//counter to count the placements for this ligand that get passed to a pdb (used in clean naming)
-			core::Size unique_placement_counter = 0
+			core::Size unique_placement_counter = 0;
 
 			bool ligand_added = false;
 
