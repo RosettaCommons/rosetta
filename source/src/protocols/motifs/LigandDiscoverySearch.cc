@@ -1175,8 +1175,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					core::pose::add_comment(*working_pose_, "Placement: Placed motif remark:", motifcop->remark());
 
 					//preceeding commas to account for the comment map keys
-					comment_table_header = ",ligand_name,ligand_atom_trio,source_pdb,anchor_residue_index,anchor_residue_type,placed_motif_remark,";
-					comment_table_data = "," + ligresOP->name() + "," + std::to_string(i) + "," + output_prefix + "," + std::to_string(working_position_) + "," + discovery_position_residue + "," + motifcop->remark() + ",";
+					comment_table_header = "ligand_name,ligand_atom_trio,source_pdb,anchor_residue_index,anchor_residue_type,placed_motif_remark,";
+					comment_table_data = ligresOP->name() + "," + std::to_string(i) + "," + output_prefix + "," + std::to_string(working_position_) + "," + discovery_position_residue + "," + motifcop->remark() + ",";
 
 					//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
 					std::string pdb_short_unique_name = pdb_name;
