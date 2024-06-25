@@ -1155,6 +1155,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						continue;
 					}
 
+					//declare strings to serve as a small simplified table of information to be added to the placement pdb comments that can be easily extracted for later analysis
+					//1 string will be a header line and the other will contain data that corresponds to the header
+					//data will be in a csv format for easier parsing
+					std::string comment_table_header = "";
+					std::string comment_table_data = "";
+
 					//name the pdb  that could come from the pose
 					//current naming convention
 					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
@@ -1166,7 +1172,11 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					core::pose::add_comment(*working_pose_, "Placement: Anchor residue type:", discovery_position_residue);
 					core::pose::add_comment(*working_pose_, "Placement: Ligand trio number:", std::to_string(i));
 					core::pose::add_comment(*working_pose_, "Placement: Ligand name:", ligresOP->name());
-					core::pose::add_comment(*working_pose_, "Placement: Placed motif remark", motifcop->remark());
+					core::pose::add_comment(*working_pose_, "Placement: Placed motif remark:", motifcop->remark());
+
+					//preceeding commas to account for the comment map keys
+					comment_table_header = ",ligand_name,ligand_atom_trio,source_pdb,anchor_residue_index,anchor_residue_type,placed_motif_remark,";
+					comment_table_data = "," + ligresOP->name() + "," + std::to_string(i) + "," + output_prefix + "," + std::to_string(working_position_) + "," + discovery_position_residue + "," + motifcop->remark() + ",";
 
 					//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
 					std::string pdb_short_unique_name = pdb_name;
@@ -1176,7 +1186,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						pdb_name = pdb_name + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr);
 						core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_atr:", std::to_string(fa_atr));
 						core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_rep:", std::to_string(fa_rep));
+						comment_table_data = comment_table_data + std::to_string(fa_atr) + "," + std::to_string(fa_rep) + ",";
 					}
+					else
+					{
+						//blank if we have no data, but keep placeholder to allow for easier mecshing of any data that did have the data
+						comment_table_data = comment_table_data +  ","  + ",";
+					}
+					comment_table_header = comment_table_header + "fa_atr,fa_rep,ddg,";
+					comment_table_data = comment_table_data + std::to_string(delta_score) + ","
 
 					//add delta (keeping in same order as I have in the past of atr and rep potentially being first)
 					pdb_name = pdb_name + "_delta_" + std::to_string(delta_score);
@@ -1186,15 +1204,28 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
 						pdb_name = pdb_name + "_atrrep_" + std::to_string(fa_atr_rep_score_after);
 						core::pose::add_comment(*working_pose_, "Scoring: System fa_atr and fa_rep score:", std::to_string(fa_atr_rep_score_after));
+
+						comment_table_data = comment_table_data + std::to_string(fa_atr_rep_score_after) + ",";
 					}
+					else
+					{
+						comment_table_data = comment_table_data + ",";
+					}
+
+					comment_table_header = comment_table_header + "fa_atr_rep,";
 
 					//adjust file name if using ligand.wts
 					if ( use_ligand_wts ) {
 						pdb_name = pdb_name + "_whole_" + std::to_string(whole_score);
 						core::pose::add_comment(*working_pose_, "Scoring: Whole system score:", std::to_string(whole_score));
+						comment_table_data = comment_table_data + std::to_string(whole_score) + ",";
+					}
+					else
+					{
+						comment_table_data = comment_table_data + ",";
 					}
 
-
+					comment_table_header = comment_table_header + "whole_score,";
 
 					//option to try to pull motifs from the passed placement and see what motifs are collected, how many there are, if motifs are made with any residues of interest, and if the motifs match any motifs in the motif library
 					if ( option[ OptionKeys::motifs::collect_motifs_from_placed_ligand] ) {
@@ -1234,6 +1265,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						pdb_name = pdb_name + "_motifs_" + std::to_string(motifs_made);
 						core::pose::add_comment(*working_pose_, "Placement motifs: Total motifs made:", std::to_string(motifs_made));
+
+						comment_table_data = comment_table_data + std::to_string(motifs_made) + ",";
 
 						//convert the motif library to motifCOPS
 						protocols::motifs::MotifCOPs placement_libraryCOPs = placement_library.library();
@@ -1325,6 +1358,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 							core::pose::add_comment(*working_pose_, "Placement motifs: Motifs made against significant residues count:", std::to_string(significant_motifs_made));
 							core::pose::add_comment(*working_pose_, "Placement motifs: Motifs made against significant residues:", significant_residue_string);
+
+							comment_table_data = comment_table_data + std::to_string(significant_motifs_made) + ",";
+						}
+						else
+						{
+							comment_table_data = comment_table_data + ",";
 						}
 
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
@@ -1454,11 +1493,25 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 							core::pose::add_comment(*working_pose_, "Placement motifs: Real motif count:", std::to_string(motifs_that_look_real_real));
 							core::pose::add_comment(*working_pose_, "Placement motifs: Real motif ratio:", std::to_string(real_looking_motif_ratio));
+							comment_table_data = comment_table_data + std::to_string(motifs_that_look_real_real) + "," + std::to_string(real_looking_motif_ratio) + ",";
 
+						}
+						else
+						{
+							comment_table_data = comment_table_data + "," + ",";
 						}
 
 					}
+					else
+					{
+						comment_table_data = comment_table_data + "," + "," + "," + ",";
+					}
 
+					comment_table_header = comment_table_header + "total_motif_count,significant_motif_count,real_motif_count,real_motif_ratio,";
+
+					//add comments for the table data
+					core::pose::add_comment(*working_pose_, "Table Header,", comment_table_header);
+					core::pose::add_comment(*working_pose_, "Table Values,", comment_table_data);
 
 					//after optional modifications, add ".pdb" to cap off name
 					pdb_name = pdb_name + ".pdb";
