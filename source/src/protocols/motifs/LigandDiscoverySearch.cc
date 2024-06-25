@@ -1509,10 +1509,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					comment_table_header = comment_table_header + "total_motif_count,significant_motif_count,real_motif_count,real_motif_ratio,";
 
-					//add comments for the table data
-					core::pose::add_comment(*working_pose_, "Table Header,", comment_table_header);
-					core::pose::add_comment(*working_pose_, "Table Values,", comment_table_data);
-
 					//after optional modifications, add ".pdb" to cap off name
 					pdb_name = pdb_name + ".pdb";
 
@@ -1521,6 +1517,14 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						pdb_name = output_prefix + "_" + ligresOP->name() + "_" + std::to_string(unique_placement_counter) + ".pdb";
 						++unique_placement_counter;
 					}
+
+					//include the file name in the table to help with potential accession
+					comment_table_data = "," + pdb_name + "," + comment_table_data;
+					comment_table_header = ",pdb_file_name," + comment_table_header;
+
+					//add comments for the table data
+					core::pose::add_comment(*working_pose_, "Table Header", comment_table_header);
+					core::pose::add_comment(*working_pose_, "Table Values", comment_table_data);
 
 					//if we are keeping all placements that are better than a given ddg cutoff, it is better to not inflate the best_100_placements vector since we only use it for sorting
 					//instead, just make the pdb and keep going
