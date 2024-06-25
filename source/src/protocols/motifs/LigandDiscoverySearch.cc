@@ -1194,7 +1194,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						comment_table_data = comment_table_data +  ","  + ",";
 					}
 					comment_table_header = comment_table_header + "fa_atr,fa_rep,ddg,";
-					comment_table_data = comment_table_data + std::to_string(delta_score) + ","
+					comment_table_data = comment_table_data + std::to_string(delta_score) + ",";
 
 					//add delta (keeping in same order as I have in the past of atr and rep potentially being first)
 					pdb_name = pdb_name + "_delta_" + std::to_string(delta_score);
