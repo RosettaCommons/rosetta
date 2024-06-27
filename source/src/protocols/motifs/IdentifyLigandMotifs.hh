@@ -46,6 +46,17 @@ public:
 		core::conformation::Residue const & ligres
 	);
 
+	// @brief main function, iterate over ligand (broken into adjacent 3 atom trios) and identify how they interact with nearby residues
+	//if not using the identify_ligand_motifs.cc app, you probably want to use this public function to use the ILM protocol in an app
+	//this lets you perform ILM searches on a pose that is generated in runtime
+	void
+	process_for_motifs(
+		core::pose::Pose & pose,
+		std::string & pdb_name,
+		protocols::motifs::MotifLibrary & motifs,
+		utility::vector1< core::Size > & prot_pos_that_made_motifs
+	);
+
 	// @brief returns the motif_library_ within the class, in case it is needed for additional usage beyond the scope of this protocol
 	protocols::motifs::MotifLibrary
 	get_motif_library();
@@ -97,14 +108,6 @@ private:
 		core::scoring::ScoreFunction & scorefxn
 	);
 
-	// @brief main function, iterate over ligand (broken into adjacent 3 atom trios) and identify how they interact with nearby residues
-	void
-	process_for_motifs(
-		core::pose::Pose & pose,
-		std::string & pdb_name,
-		protocols::motifs::MotifLibrary & motifs
-	);
-
 	// @brief function called in process_for_motifs() that collects any potential motifs between a ligand and amino acid residue, identified by index within passed pose; pdb_name is used for optional output of identified pdbs
 	void
 	ligand_to_residue_analysis(
@@ -114,7 +117,8 @@ private:
 		std::string & pdb_name,
 		protocols::motifs::MotifLibrary & motifs,
 		core::scoring::ScoreFunctionOP scorefxn,
-		utility::vector1< utility::vector1< core::Size > > & motif_indices_list
+		utility::vector1< utility::vector1< core::Size > > & motif_indices_list,
+		utility::vector1< core::Size > & prot_pos_that_made_motifs
 	);
 
 	// @brief string to control the directory that motif pdbs will be outputted to
