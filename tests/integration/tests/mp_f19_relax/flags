@@ -1,0 +1,6 @@
+-s decoy.54.pdb
+-mp:setup:spanfiles vatp.span
+-parser:protocol membrane_relax.xml
+-nstruct 1
+#############
+-constrain_relax_to_start_coords true # Needed to show error
