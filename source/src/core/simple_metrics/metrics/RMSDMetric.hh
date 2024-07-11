@@ -131,6 +131,7 @@ public:
 	set_run_superimpose( bool super );
 
 	///@brief Set what we will be calculating the RMSD on.
+        ///
 	/// By default RMSD is calcualted between all atoms other than hydrogens (all_heavy).
 	///
 	/// You can look up core/rms/rms_enum.hh for available options. Right now the available options are:
@@ -138,9 +139,10 @@ public:
 	/// rmsd_protein_bb_heavy_including_O: backbone heavy atoms N,CA,C,O 
 	/// rmsd_protein_bb_ca: CA (C-alpha)
 	/// rmsd_sc_heavy: side chain heavy atoms
-    /// rmsd_sc: all side chain atoms (including H)
+        /// rmsd_sc: all side chain atoms (including H)
 	/// rmsd_all_heavy: all heavy atoms
 	/// rmsd_all: all atoms
+        ///
 	/// Example: 
 	/// metric = rosetta.core.simple_metrics.metrics.RMSDMetric(pose_1)
 	/// metric.set_rmsd_type(rosetta.core.scoring.rmsd_protein_bb_heavy)
