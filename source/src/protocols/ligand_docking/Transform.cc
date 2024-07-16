@@ -27,6 +27,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/rms_util.hh>
 #include <core/conformation/UltraLightResidue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -236,6 +237,7 @@ void Transform::apply(core::pose::Pose & pose)
 	core::Size accepted_moves = 0;
 	core::Size rejected_moves = 0;
 	core::Size outside_grid_moves = 0;
+    core::Size rmsd_rejects = 0;
 
 	// core::pose::Pose best_pose(pose);
 
@@ -385,6 +387,7 @@ void Transform::apply(core::pose::Pose & pose)
 			if ( check_rmsd_ && !check_rmsd(original_ligand, ligand_residue) ) { //reject the new pose
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
+                rmsd_rejects++;
 			} else if ( probability < 1 && numeric::random::rg().uniform() >= probability ) {  //reject the new pose
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
@@ -431,6 +434,10 @@ void Transform::apply(core::pose::Pose & pose)
 			TR.Warning << "    and a box size of at least " << utility::Real2string(recommended_box_size( accept_ratio ),1) << " are recommended." << std::endl;
 		}
 	}
+    if ( rmsd_rejects > 0 ) {
+        core::Real rmsd_reject_ratio = (core::Real)rmsd_rejects / ( (core::Real)accepted_moves + (core::Real)rejected_moves );
+        TR << "Moves rejected for going beyond max RMSD (" << transform_info_.rmsd << "): " << rmsd_rejects << "  " << rmsd_reject_ratio << std::endl;
+    }
 
 	protocols::jd2::add_string_real_pair_to_current_job("Transform_accept_ratio", accept_ratio);
 
@@ -612,12 +619,9 @@ bool Transform::check_rmsd(core::conformation::UltraLightResidue const & start, 
 {
 	debug_assert(start.natoms() == current.natoms());
 
-	core::Real total_distance =0.0;
-	for ( core::Size atomno = 1; atomno <= start.natoms(); ++atomno ) {
-		total_distance += start[atomno].distance(current[atomno]);
-	}
+	core::Real rmsd = core::scoring::automorphic_rmsd( *start.residue(), *current.residue(), /*superimpose=*/false );
 
-	core::Real rmsd = sqrt(total_distance/start.natoms());
+    TR.Debug << "Current rmsd " << rmsd << ". Limit: " << transform_info_.rmsd << std::endl;
 
 	if ( rmsd <= transform_info_.rmsd ) {
 		return true;
