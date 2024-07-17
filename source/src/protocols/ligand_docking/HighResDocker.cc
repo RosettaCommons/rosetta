@@ -44,6 +44,7 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/rms_util.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -127,7 +128,9 @@ HighResDocker::HighResDocker(HighResDocker const & that):
 	num_cycles_(that.num_cycles_),
 	repack_every_Nth_(that.repack_every_Nth_),
 	score_fxn_(that.score_fxn_),
-	movemap_builder_(that.movemap_builder_)
+	movemap_builder_(that.movemap_builder_),
+    rmsd_max_(that.rmsd_max_),
+    check_rmsd_(that.check_rmsd_)
 {
 	initialize_from_options();
 }
@@ -185,6 +188,12 @@ HighResDocker::parse_my_tag(
 	if ( tag->hasOption("resfile") ) {
 		resfile_= tag->getOption<std::string>("resfile");
 	}
+
+    /// RMSD ///
+    if ( tag->hasOption("rmsd") ) {
+        check_rmsd_ = true;
+        rmsd_max_ = tag->getOption<core::Real>("rmsd");
+    }
 }
 
 
@@ -282,10 +291,25 @@ HighResDocker::apply(core::pose::Pose & pose) {
 	score_fxn_->score( pose ); // without this neither of the movers below were working
 	// I believe that this may have been related to adding constraints incorrectly at other places in my code.
 	// Rigid body exploration
-	utility::vector1<protocols::moves::MoverOP> rigid_body_movers= create_rigid_body_movers(pose);
+	utility::vector1<protocols::moves::MoverOP> rigid_body_movers = create_rigid_body_movers(pose);
 
+    core::Size ligand_index = 0;
+    for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
+        core::conformation::Residue const & residue( pose.residue(i) );
+        if ( residue.is_ligand() ) {
+            ligand_index = i;
+        }
+    }
+    core::conformation::Residue original_ligand(pose.residue(ligand_index));
+    TR.Debug << "Save residue number " << ligand_index << " as ligand." << std::endl;
+
+    core::Size rejected_rmsd_moves = 0;
 
 	for ( core::Size cycle = 1; cycle <= num_cycles_; ++cycle ) {
+
+        TR.Debug << "Start cycle " << cycle << ".";
+        if ( repack_every_Nth_ != 0 && cycle % repack_every_Nth_ == 1 ) TR.Debug << " Repacking!";
+        TR.Debug << std::endl;
 
 		core::pack::task::PackerTaskOP packer_task;
 
@@ -320,9 +344,21 @@ HighResDocker::apply(core::pose::Pose & pose) {
 			min_mover->apply(pose);
 		}
 
+        if ( check_rmsd_ ) {
+            core::Real rmsd = core::scoring::automorphic_rmsd( original_ligand, pose.residue(ligand_index), /*superimpose=*/false );
+            TR.Debug << "Current rmsd is " << rmsd << ". Max rmsd: " << rmsd_max_ << std::endl;
+            if (rmsd > rmsd_max_){
+                pose = monteCarlo->last_accepted_pose();
+                rejected_rmsd_moves++;
+            }
+        }
 		monteCarlo->boltzmann( pose );
 
 	}
+
+    if (check_rmsd_) {
+        TR << "Rejected " << rejected_rmsd_moves << " of " << num_cycles_ << " pose updates due to rmsd limitations." << std::endl;
+    }
 
 	// keep the best structure we found, not the current one
 	monteCarlo->show_scores();
@@ -628,7 +664,8 @@ void HighResDocker::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		+ XMLSchemaAttribute::required_attribute("movemap_builder", xs_string, "Name of a previously defined MoveMaoBuilder.")
 		+ XMLSchemaAttribute("resfile", xs_string, "Name (path to) the resfile.")
 		+ XMLSchemaAttribute("cycles", xsct_non_negative_integer, "Number of cycles to run.")
-		+ XMLSchemaAttribute("repack_every_Nth", xsct_non_negative_integer, "Perform side chain repacking every Nth cycle.");
+		+ XMLSchemaAttribute("repack_every_Nth", xsct_non_negative_integer, "Perform side chain repacking every Nth cycle.")
+        + XMLSchemaAttribute("rmsd", xsct_real, "Maximum RMSD to be sampled away from the starting position.");
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Randomly connects a fragment from the library to the growing ligand.", attlist );
 }
 
@@ -668,6 +705,17 @@ void HighResDocker::set_allow_repacking(bool input)
 void HighResDocker::set_all_residues(bool input)
 {
 	all_residues_ = input;
+}
+
+void HighResDocker::set_rmsd_limit(core::Real rmsd_limit)
+{
+    check_rmsd_ = true;
+    rmsd_max_ = rmsd_limit;
+}
+
+void HighResDocker::disable_rmsd_limit()
+{
+    check_rmsd_ = false;
 }
 
 } //namespace ligand_docking
