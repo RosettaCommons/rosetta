@@ -13,6 +13,7 @@ except:
     print("RDKit must be installed to run this script.  Please install RDKit (version 2022.09.5 preferred) into your python environment.")
     exit(1)
 
+#Argument parser for terminal input
 def parseArgs(argv):
     parser = argparse.ArgumentParser(description="This script uses RDKit and molfile_to_params_polymer.py to "
                                      "quickly parameterize a NCAA for use in Rosetta")
@@ -41,6 +42,7 @@ def parseArgs(argv):
                         help="If specified, no geometry optimization or conformer generation will occur. MUST be used with --dip.")
     return parser.parse_args()
 
+#Write atom assignments in molecule SDF for m2pp to read
 def generateInstructions(dipmol, nCbb):
     #This whole thing hinges on the assumption that the identified backbone atoms will be in the same order as the smiles string
     #If this is no longer the case, may God help us all
@@ -85,6 +87,7 @@ def generateInstructions(dipmol, nCbb):
     else:
         properties += " ALIPHATIC"
 
+    #Note: this doesn't work for cysteine because of the difference between R/S and L/R
     chirals = Chem.FindMolChiralCenters(dipmol)
     for c in chirals:
         if c[0] == backbone[3+nCbb]:
@@ -113,6 +116,7 @@ def generateInstructions(dipmol, nCbb):
     instructions += "M  END\n\n$$$$\n"
     return instructions
 
+#Attach dipeptide caps onto the NCAA
 def generateDip(ncaamol, nCbb):
     #Cap all N and find the results that look like capped backbone
     cbb = "C"*nCbb
@@ -171,6 +175,7 @@ def generateDip(ncaamol, nCbb):
     instructions = generateInstructions(dipmol, nCbb)
     return (dipmol, instructions)
 
+#Optimize geometry of NCAA
 def geomOptimize(mol, maxIter, mmff=False):
     AllChem.MMFFSanitizeMolecule(mol)
     Chem.AssignStereochemistryFrom3D(mol)
@@ -185,9 +190,10 @@ def geomOptimize(mol, maxIter, mmff=False):
         print("Error with RDKit geometry optimization, skipping optimization")
         return mol
 
+#Generate conformations of NCAA for rotamer library
 def rdkitConf(ncaamol, noext, topN, instructions, mmff):
     print("Generating RDKit Conformations...")
-    confs = AllChem.EmbedMultipleConfs(ncaamol, useRandomCoords=True, numConfs=int(10*topN), numThreads=0)
+    confs = AllChem.EmbedMultipleConfs(ncaamol, useRandomCoords=True, numConfs=int(10*topN), numThreads=0, useExpTorsionAnglePrefs=True)
     print("Aligning conformations...")
     AllChem.AlignMolConformers(ncaamol, confIds=confs)
     print("Scoring conformations...")
@@ -201,6 +207,7 @@ def rdkitConf(ncaamol, noext, topN, instructions, mmff):
         g.write(instructions)
     g.close()
 
+#Score all generated conformations and return the most favorable
 def scoreConf(mol, confids, instructions, mmff):
     #Rip off the dihedral caps (they interfere with the energy of the sidechain)
     lines = instructions.split("\n")
@@ -232,6 +239,7 @@ def scoreConf(mol, confids, instructions, mmff):
     scoreconfs.sort(key=lambda x: x[1])
     return scoreconfs
 
+#Convert between [0,360] angle and [-180,180] angle
 def negposang(ang,pos):
     if pos:
         if ang >=0.:
@@ -276,6 +284,7 @@ def dihedral(p):
     ang = np.degrees(np.arctan2(y, x))
     return negposang(ang, True)
     
+#Initialize trie for rotamer clusters
 def buildRotClusts(rotBins,depth):
     rotClusts = [None for i in range(len(rotBins[depth]))]
     if depth+1 != len(rotBins):
@@ -283,6 +292,7 @@ def buildRotClusts(rotBins,depth):
             rotClusts[i] = buildRotClusts(rotBins,depth+1)
     return rotClusts
 
+#Assign cluster to each chi bin, if a cluster is already there, merge it
 def placeClust(clust,rotClusts,rotBins,depth):
     dists = np.array([np.abs(clust[0][depth]-rb) for rb in rotBins[depth]])
     assignment = dists.argmin()
@@ -290,13 +300,14 @@ def placeClust(clust,rotClusts,rotBins,depth):
         if rotClusts[assignment] != None:
             newweight = clust[2]+rotClusts[assignment][2]
             newmean = clust[2]/newweight*clust[0]+rotClusts[assignment][2]/newweight*rotClusts[assignment][0]
-            newvar = clust[2]/newweight*clust[1]+rotClusts[assignment][2]/newweight*rotClusts[assignment][1]
-            rotClusts[assignment] = (newmean,newvar,newweight)
+            newstd = np.sqrt(clust[2]/newweight*clust[1]**2+rotClusts[assignment][2]/newweight*rotClusts[assignment][1]**2)
+            rotClusts[assignment] = (newmean,newstd,newweight)
         else:
             rotClusts[assignment] = clust
     else:
         placeClust(clust,rotClusts[assignment],rotBins,depth+1)
 
+#Given assigned clusters, retrieve information in preparation for writing
 def listBins(binList,rotClusts,rotBins,inds):
     for i in range(len(rotBins[len(inds)])):
         inds.append(i)
@@ -308,13 +319,62 @@ def listBins(binList,rotClusts,rotBins,inds):
                 binList.append([0.]+rotinds+rotmeans+rotsd)
             else:
                 rotmeans = [negposang(n, False) for n in rotClusts[i][0].tolist()] + [0. for n in range(len(inds),4)]
-                rotsd = np.sqrt(rotClusts[i][1]).tolist() + [0. for n in range(len(inds),4)]
+                rotsd = rotClusts[i][1].tolist() + [0. for n in range(len(inds),4)]
                 rotweight = rotClusts[i][2]
                 binList.append([rotweight]+rotinds+rotmeans+rotsd)
         else:
             listBins(binList,rotClusts[i],rotBins,inds)
         inds.pop()
 
+#Use SVD to superpose each dihedral center bond to face upward
+def standardizeChis(chis, rotamers):
+    reference = np.array([[0.,0.,0.],[0.,1.,0.]])
+    allxyz = np.empty((0,3*len(chis)))
+    for rot in rotamers:
+        stdxyz = np.empty((0,3))
+        for i in range(len(chis)):
+            chixyz = np.array([rot[atom] for atom in chis[i]])
+            chixyz -= chixyz[1,:]
+            cosangle = np.dot(chixyz[0,:], chixyz[2,:])/(np.linalg.norm(chixyz[0,:])*np.linalg.norm(chixyz[2,:]))
+            bottomdot = np.array([-np.sqrt(1-cosangle**2), cosangle, 0.])
+            ideal = np.vstack((bottomdot,reference))
+            U, S, Vt = np.linalg.svd(np.matmul((chixyz[:3,:]).T, ideal))
+            rotmat = np.matmul(Vt.T, U.T)
+            if np.linalg.det(rotmat) < 0.:
+                Vt[2,:] *= -1
+                rotmat = np.matmul(Vt.T, U.T)
+            rotxyz = np.matmul(rotmat, chixyz.T)
+            stdxyz = np.vstack((stdxyz, rotxyz[:,3]))
+        allxyz = np.vstack((allxyz, stdxyz.flatten()))
+    return allxyz
+
+#Turn a set of cartesian clusters into dihedral parameter space
+def makeDihedral(clusts):
+    #The right angle is completely arbitrary, they just have to define the first plane
+    ideal = np.array([[-1.,0.,0.],[0.,0.,0.],[0.,1.,0.]])
+    newclusts = []
+    for c in clusts:
+        dihmeans = []
+        dihstd = []
+        for i in range(int(c[0].shape[0]/3)):
+            point = c[0][i*3:i*3+3]
+            meanpos = np.vstack((ideal, point))
+            dihmeans.append(dihedral(meanpos))
+            #To calculate SDs, approximate circular path as linear and find where it intersects with the cartesian SD ellipse
+            a = np.sqrt(c[1][i*3]) #turn the variances into sds
+            b = np.sqrt(c[1][i*3+2])
+            m = -point[0]/point[2]
+            x = np.sqrt(a**2*b**2/(b**2+a**2*m**2))
+            z = m*x
+            stdpos = np.vstack((ideal, point+np.array([x,0.,z])))
+            dihstd.append(abs(dihedral(stdpos)-dihmeans[-1]))
+        newclusts.append((np.array(dihmeans), np.array(dihstd), c[2]))
+    print()
+    for c in newclusts:
+        print(c)
+    return newclusts
+
+#Given the rotamer conformation set, cluster the dihedrals in cartesian space and write a rotlib type file describing the clusters
 def fakeRotLib(pdbrot, params):
     #Read atomic positions from rotamer.pdb
     f = open(pdbrot)
@@ -343,28 +403,30 @@ def fakeRotLib(pdbrot, params):
     if len(chis) == 0:
         print("Rotlib can't be built, sidechain has no chi's")
         return
-
-    #Make the dihedral array, rows for each conformation, cols for each chi angle
-    dihedrals = np.array([[dihedral([rot[atom] for atom in chi]) for chi in chis] for rot in rotamers])
+    
+    #Extract relative xyz for each chi angle
+    allxyz = standardizeChis(chis, rotamers)
     #Rotlib format only accepts the first 4 chis :(
-    dihedrals = dihedrals[:,:4]
+    allxyz = allxyz[:,:12]
 
-    #Cluster the dihedrals
-    mm = BayesianGaussianMixture(n_components = min(10**dihedrals.shape[1], dihedrals.shape[0]),
+    #Cluster the relative xyzs
+    mm = BayesianGaussianMixture(n_components = min(10**len(chis), allxyz.shape[0]),
                                  n_init=3, max_iter=10000, covariance_type="diag", 
-                                 covariance_prior=[100. for i in range(dihedrals.shape[1])])
-    mm.fit(dihedrals)
+                                 covariance_prior=[1. for i in range(allxyz.shape[1])])
+    mm.fit(allxyz)
     clusts = [(mm.means_[i], mm.covariances_[i], mm.weights_[i]) for i in range(len(mm.means_)) if mm.weights_[i] > 0.005]
-
-    for c in clusts:
-        print(c)
-    #Cluster each chi individually into bins
+    
+    #Transform the clusters into dihedral space
+    clusts = makeDihedral(clusts)
+    
+    #Put each chi xyz individually into bins
     rotBins = []
-    for i in range(dihedrals.shape[1]):
-        binner = BayesianGaussianMixture(n_components=10, n_init=3, max_iter=10000)
-        binner.fit(dihedrals[:,i].reshape(-1,1))
-        rotBins.append(np.array([binner.means_[i] for i in range(len(binner.means_)) if binner.weights_[i] > 0.005]))
-    #print(rotBins)
+    for i in range(int(allxyz.shape[1]/3)):
+        binner = BayesianGaussianMixture(n_components=10, n_init=3, max_iter=10000, covariance_type="diag",covariance_prior=[10.,10.,10.])
+        binner.fit(allxyz[:,i*3:i*3+3])
+        rotc = [(binner.means_[i], binner.covariances_[i], binner.weights_[i]) for i in range(len(binner.means_)) if binner.weights_[i] > 0.005]
+        rotc = makeDihedral(rotc)
+        rotBins.append(np.concatenate([c[0] for c in rotc]))
     
     #Recursively build a trie (yes, a trie not a tree) storing each possible combination of chi bins
     rotClusts = buildRotClusts(rotBins,0)
