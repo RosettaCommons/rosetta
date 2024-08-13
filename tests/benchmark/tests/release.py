@@ -1016,25 +1016,19 @@ set -x
 
 echo "--- Build"
 echo "PWD: `pwd`"
-echo "Python: `which python` --> `python --version`"
-echo "PREFIX Python: `which ${{PREFIX}}/bin/python` --> `${{PREFIX}}/bin/python --version`"
+echo "PREFIX: ${{PREFIX}}"
 
 
 echo "-------------------------------- Installing Rosetta..."
 
-cp {rosetta_binaries_path}/*.so ${{PREFIX}}/bin/
+cp -r {payload_dir}/* ${{PREFIX}}/
 
-#cp -r {rosetta_dir}/database ${{PREFIX}}/rosetta_database
-
-#pushd {rosetta_binaries_path}
 
 #cat ../version.json
 
-# Run initial test to prebuild databases
-#${{PREFIX}}/bin/python -c 'import pyrosetta; pyrosetta.init(); pyrosetta.get_score_function()(pyrosetta.pose_from_sequence("TEST"))'
+# Run initial test to pre-build databases and minimal sanity check
+${{PREFIX}}/bin/score -s ${{PREFIX}}/database/sampling/rna/submotif/srl/GUA_GA_430d.pdb
 
-#${{PREFIX}}/bin/python setup.py install --single-version-externally-managed --record=record.txt > install.log
-#popd
 
 echo "-------------------------------- Installing Rosetta package... Done."
 '''
@@ -1078,9 +1072,25 @@ def native_libc_rosetta_conda_release(kind, rosetta_dir, working_dir, platform, 
             platform_prefix = line.split()[1]
     TR(f'Platform prefix: {platform_prefix!r}')
 
-    rosetta_binaries_path = f'{rosetta_dir}/source/build/src/{platform_prefix}'
+    extension = calculate_extension(platform, mode='release')
 
-    full_log += '\nRosetta binaries location: ' + rosetta_binaries_path + '\n'
+    full_log += '\nRosetta binaries platform prefix: ' + platform_prefix + '\n'
+
+    payload_dir = working_dir + '/payload';  os.makedirs(payload_dir)
+    payload_bin_dir = payload_dir + '/bin';  os.makedirs(payload_bin_dir)
+    payload_database_dir = payload_dir + '/database';  os.makedirs(payload_database_dir)
+
+    TR(f'Copying build results...')
+    for part in 'external src'.split():
+        prefix = f'{rosetta_dir}/source/build/{part}/{platform_prefix}/'
+        for f in os.listdir(prefix):
+            if os.path.isfile(prefix + f):
+                shutil.copy(prefix + f, f'{payload_bin_dir}/{f}')
+                if f.endswith('.'+extension): os.symlink(f, f'{payload_bin_dir}/' + f[:-1-len(extension)])
+                elif f.endswith(extension): os.symlink(f, f'{payload_bin_dir}/' + f.partition('.default')[0])
+
+    TR(f'Copying Rosetta database...')
+    dir_util_module.copy_tree(f'{rosetta_dir}/database', payload_database_dir, update=False)
 
     TR('Creating Rosetta package...')
 
@@ -1108,7 +1118,6 @@ def native_libc_rosetta_conda_release(kind, rosetta_dir, working_dir, platform, 
             description = 'The Rosetta software suite includes algorithms for computational modeling and analysis of protein structures. It has enabled notable scientific advances in computational biology, including de novo protein design, enzyme design, ligand docking, and structure prediction of biological macromolecules and macromolecular complexes.',
         ),
     )
-
 
     with open( recipe_dir + '/meta.yaml', 'w' ) as f: json.dump(recipe, f, sort_keys=True, indent=2)
 
@@ -1151,7 +1160,7 @@ def native_libc_rosetta_conda_release(kind, rosetta_dir, working_dir, platform, 
 
 
     if not debug:
-        for d in [conda.root, working_dir_release_path]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
+        for d in [conda.root, working_dir_release_path, payload_dir]: shutil.rmtree(d)  # removing packages to keep size of Benchmark database small
 
     with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
