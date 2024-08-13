@@ -1132,6 +1132,7 @@ def native_libc_rosetta_conda_release(kind, rosetta_dir, working_dir, platform, 
         os.makedirs(working_dir_release_path)
 
         conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir} --output-folder {working_dir_release_path}' # --channel conda-forge
+        if platform['os'] == 'm1': conda_build_command_line += ' --prefix-length 128'
         conda_package_output = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True)
 
         m = re_module.search(r"rosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE)
