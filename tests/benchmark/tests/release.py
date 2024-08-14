@@ -1027,7 +1027,7 @@ cp -r {payload_dir}/* ${{PREFIX}}/
 #cat ../version.json
 
 # Run initial test to pre-build databases and minimal sanity check
-${{PREFIX}}/bin/score -s ${{PREFIX}}/database/sampling/rna/submotif/srl/GUA_GA_430d.pdb
+${{PREFIX}}/bin/score -no_scorefile -s ${{PREFIX}}/database/sampling/rna/submotif/srl/GUA_GA_430d.pdb
 
 
 echo "-------------------------------- Installing Rosetta package... Done."
