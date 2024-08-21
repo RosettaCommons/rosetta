@@ -2272,6 +2272,11 @@ settings = {
                 "compile" : [ "march=native", "march=core2", ],
             },
         },
+        "appends" : {
+            "flags" : {
+                "link"   : [ "headerpad_max_install_names"],
+	    },
+	},
     },
 
 
