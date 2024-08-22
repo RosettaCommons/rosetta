@@ -736,7 +736,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
                             compressed_kwargs,
                             pyrosetta_init_kwargs,
                             *extra_args,
-                        )
+                        ), hash=False,
                     )
                     seq.add(clients[clients_index].submit(user_spawn_thread, *scatter, pure=False, resources=resource))
                     self.tasks_size += 1
