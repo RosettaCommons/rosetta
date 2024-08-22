@@ -187,6 +187,16 @@ Args:
         0.1 seconds seems reasonable. If each user-provided PyRosetta protocol is
         expected to run slowly, then >1 second seems reasonable.
         Default: 0.5
+    max_delay_time: A `float` or `int` object specifying the maximum number of seconds to 
+        sleep before returning the result(s) from each user-provided PyRosetta protocol
+        back to the client. If a dask worker returns the result(s) from a user-provided
+        PyRosetta protocol too quickly, the dask scheduler needs to first register that
+        the task is processing before it completes. In practice, in each user-provided
+        PyRosetta protocol the runtime is subtracted from `max_delay_time`, and the dask
+        worker sleeps for the remainder of the time, if any, before returning the result(s).
+        It's recommended to set this option to at least 1 second, but longer times may
+        be used as a safety throttle in cases of overwhelmed dask scheduler processes.
+        Default: 3.0
     save_all: A `bool` object specifying whether or not to save all of the returned
         or yielded `Pose` and `PackedPose` objects from all user-provided
         PyRosetta protocols. This option may be used for checkpointing trajectories.
@@ -524,6 +534,12 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
         validator=[_validate_float, attr.validators.instance_of((float, int))],
         converter=attr.converters.default_if_none(default=0.5),
     )
+    max_delay_time = attr.ib(
+        type=float,
+        default=3.0,
+        validator=[_validate_float, attr.validators.instance_of((float, int))],
+        converter=attr.converters.default_if_none(default=3.0),
+    )
     save_all = attr.ib(
         type=bool,
         default=False,
@@ -687,6 +703,7 @@ class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G
             self.logging_level,
             self.DATETIME_FORMAT,
             self.compression,
+            self.max_delay_time,
             client_residue_type_set,
         )
         seq = as_completed(
