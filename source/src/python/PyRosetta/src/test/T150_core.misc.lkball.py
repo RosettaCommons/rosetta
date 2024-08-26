@@ -10,7 +10,7 @@
 
 ## @file   T150_core.misc.lkball.py
 ## @brief  Tests for bindings in core::scoring::lkball namespaces
-## @author Sergey Lyskov
+## @author Jack Maguire and Sergey Lyskov
 
 from __future__ import print_function
 
