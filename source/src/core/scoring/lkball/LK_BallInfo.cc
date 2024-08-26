@@ -110,6 +110,12 @@ WaterBuilder::WaterBuilder(
 	runtime_assert( atom1 != atom2 && atom1 != atom3 && atom2 != atom3 );
 }
 
+bool WaterBuilder::operator==(WaterBuilder const&o) const
+{
+	return atom1_ == o.atom1_ && atom2_ == o.atom2_ && atom3_ == o.atom3_ && xyz_local_ == o.xyz_local_;
+}
+
+
 Vector
 WaterBuilder::build( conformation::Residue const & rsd ) const
 {
