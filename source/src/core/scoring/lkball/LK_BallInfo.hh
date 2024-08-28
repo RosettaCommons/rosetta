@@ -45,6 +45,11 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
+#ifdef PYROSETTA
+#include <utility/vector1.hh>
+#endif
+
+
 namespace core {
 namespace scoring {
 namespace lkball {
@@ -64,6 +69,7 @@ typedef utility::fixedsizearray1< Real, 2 > AtomWeights;
 /// @details  Stores the internal coordinates of an ideal water position
 class WaterBuilder {
 public:
+	WaterBuilder() = default;
 	WaterBuilder(
 		Vector const & water,
 		conformation::Residue const & rsd,
@@ -71,6 +77,8 @@ public:
 		Size const atom2,
 		Size const atom3
 	);
+
+	bool operator==(WaterBuilder const&) const;
 
 	Vector
 	build( conformation::Residue const & rsd ) const;
@@ -351,6 +359,11 @@ typedef utility::pointer::shared_ptr< LKB_RotamerSetInfo > LKB_RotamerSetInfoOP;
 #ifdef    SERIALIZATION
 CEREAL_FORCE_DYNAMIC_INIT( core_scoring_lkball_LK_BallInfo )
 #endif // SERIALIZATION
+
+#ifdef PYROSETTA
+template class utility::vector1< core::scoring::lkball::WaterBuilder >;
+#endif
+
 
 
 #endif
