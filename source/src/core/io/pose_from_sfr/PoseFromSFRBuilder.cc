@@ -1182,8 +1182,8 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 
 			residues.push_back( ii_rsd );
 			jump_connections.push_back( root_index );
-			if ( ii > 1 ) {
-				chain_endings.push_back( residues.size() -1 );
+			if ( residues.size() > 1 ) {
+				chain_endings.push_back( residues.size() - 1 );
 			}
 
 		} else { // Append residue to current chain dependent on bond length.
