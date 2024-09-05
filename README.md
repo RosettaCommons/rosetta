@@ -42,6 +42,27 @@ as a templated for the Rosetta installation on your local system.
 
 Questions about how to use Rosetta are best directed to the RosettaCommons forums <https://www.rosettacommons.org/forum>
 
+Installing using Conda
+----------------------
+Rosetta binaries is avaliable as Conda `rosetta` package in **RosettaCommons Conda Channel**. All binaries buit using `serialization` and `cxx11thread` extras. Currently RosettaCommons have two mirrors of this channel. To use them please edit `~/.condarc` and add snippets for either East or West mirrors:
+
+Example `~/.condarc` for WEST cost (if unsure use this mirror): 
+
+```
+channels: 
+- https://conda.rosettacommons.org
+- defaults
+```
+
+Example `~/.condarc` for EAST cost:
+
+```
+channels: 
+- https://conda.graylab.jhu.edu
+- defaults
+```
+
+
 Compiling Rosetta
 -----------------
 
