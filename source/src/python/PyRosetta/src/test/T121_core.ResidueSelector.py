@@ -139,7 +139,7 @@ class TestResidueSelectors(unittest.TestCase):
         # Case 1: Pass NotSelector to NotSelector
         selector_1 = NotResidueSelector(not_primary_selector)
         # Case 2: Pass AndSelector to NotSelector
-        selector_2 = NotResidueSelector(OrResidueSelector(not_primary_selector,TrueResidueSelector()))
+        selector_2 = NotResidueSelector(AndResidueSelector(not_primary_selector,TrueResidueSelector()))
         self.assertListEqual(selector_1.get_residues(pose), selector_2.get_residues(pose))
 
 if __name__ == "__main__":
