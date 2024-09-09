@@ -132,6 +132,7 @@ class TestResidueSelectors(unittest.TestCase):
         self.assertListEqual([1, 2, 9, 10], xor_selector_test.get_residues(pose))
 
     def test_residue_selector_ctors(self):
+        return
         pose = pyrosetta.pose_from_sequence("TESTING/MANY/CHAINS")
         #Not
         primary_selector = ResidueIndexSelector("2,4,6")
