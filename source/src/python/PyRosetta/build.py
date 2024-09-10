@@ -492,7 +492,7 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
 
     all_libs.sort(key=key, reverse=True)
 
-    if Options.skip_namespaces:
+    if Options.skip_namespaces >= 0:
         for l in all_libs[:]:
             if (5 - Options.skip_namespaces ) - int(key(l)[0]) < 0: all_libs.remove(l)
 
