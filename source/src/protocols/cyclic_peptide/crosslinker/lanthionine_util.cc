@@ -186,8 +186,7 @@ set_up_lanthionine_constraints(
 	core::chemical::ResidueType const & dalatype( pose.residue_type(dalares) );
 	core::chemical::ResidueType const & cystype( pose.residue_type(cysres) );
 
-	//The four atoms defining the lanthionine bond:
-	//TODO change this to six atoms
+	//The six atoms defining the lanthionine bond:
 	AtomID const atom_ao(
 		cystype.icoor(cystype.icoor(cystype.residue_connect_atom_index(cystype.n_possible_residue_connections())).stub_atom1().atomno()).stub_atom1().atomno(),
 		cysres );
@@ -609,6 +608,17 @@ set_up_lanthionine_constraints(
 		ConstraintCOP angleconst2( utility::pointer::make_shared< AngleConstraint >( atom_b, atom_c, atom_d, circharmfunc2b) );
 		pose.add_constraint (angleconst1);
 		pose.add_constraint (angleconst2);
+        //if methylanthionine, add additional constraints to ensure good geometry around the methyl extension
+        if ( pose.residue_type(dalares).base_name() == "DBR" || pose.residue_type(dalares).base_name() == "DDBR"  ||
+        pose.residue_type(dalares).base_name() == "DBS" || pose.residue_type(dalares).base_name() == "DDBS" ) {
+            AtomID const atom_cg(
+                    pose.residue_type(dalares).atom_index("CG"),
+                    dalares
+            );
+            //Adding an angle constraint for the CG-CB-S connection
+            ConstraintCOP angleconst3( utility::pointer::make_shared< AngleConstraint >( atom_cg, atom_b, atom_c, circharmfunc2a) );
+            pose.add_constraint (angleconst3);
+        }
 	}
 
 	TR << "Finished setting up constraints." << std::endl;
