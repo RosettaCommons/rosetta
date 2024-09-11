@@ -44,9 +44,10 @@ Questions about how to use Rosetta are best directed to the RosettaCommons forum
 
 Installing using Conda
 ----------------------
-Rosetta binaries is avaliable as Conda `rosetta` package in **RosettaCommons Conda Channel**. All binaries buit using `serialization` and `cxx11thread` extras. Currently RosettaCommons have two mirrors of this channel. To use them please edit `~/.condarc` and add snippets for either East or West mirrors:
 
-Example `~/.condarc` for WEST cost (if unsure use this mirror): 
+Rosetta binaries are avaliable as a `rosetta` Conda package in the **RosettaCommons Conda Channel**. All binaries are built using `serialization` and `cxx11thread` extras. Currently RosettaCommons has two mirrors of this channel. To use them please edit `~/.condarc` and add snippets for either East or West mirrors:
+
+Example `~/.condarc` for US WEST coast (if unsure use this mirror): 
 
 ```
 channels: 
@@ -54,7 +55,7 @@ channels:
 - defaults
 ```
 
-Example `~/.condarc` for EAST cost:
+Example `~/.condarc` for US EAST coast:
 
 ```
 channels: 
