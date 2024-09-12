@@ -618,6 +618,20 @@ set_up_lanthionine_constraints(
             //Adding an angle constraint for the CG-CB-S connection
             ConstraintCOP angleconst3( utility::pointer::make_shared< AngleConstraint >( atom_cg, atom_b, atom_c, circharmfunc2a) );
             pose.add_constraint (angleconst3);
+            //The S-CB-CB-CA dihedral is 122.4 degrees with wb97xd/6-311+g(d,p) geom opt
+            if ( pose.residue_type(dalares).base_name() == "DBS" || pose.residue_type(dalares).base_name() == "DDBS" ) {
+                FuncOP circharmfuncdih(utility::pointer::make_shared<CircularHarmonicFunc>(2.136, 0.14));
+                ConstraintCOP dihconst(
+                        utility::pointer::make_shared<DihedralConstraint>(atom_c, atom_b, atom_cg, atom_a,
+                                                                          circharmfuncdih));
+                pose.add_constraint(dihconst);
+            } else { //must be DBR
+                FuncOP circharmfuncdih(utility::pointer::make_shared<CircularHarmonicFunc>(-2.136, 0.14));
+                ConstraintCOP dihconst(
+                        utility::pointer::make_shared<DihedralConstraint>(atom_c, atom_b, atom_cg, atom_a,
+                                                                          circharmfuncdih));
+                pose.add_constraint(dihconst);
+            }
         }
 	}
 
