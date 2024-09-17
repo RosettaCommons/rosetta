@@ -243,8 +243,14 @@ main( int argc, char * argv [] )
 			//core::Size discovery_position = option[ OptionKeys::motifs::protein_discovery_locus ];
 			//now using a vector instead of a single core::Size value
 			//read as int and then convert to core::Size
-			utility::vector1<int> discovery_position_int = option[ OptionKeys::motifs::protein_discovery_locus ];
-			utility::vector1<core::Size> discovery_position = discovery_position_int;
+			//utility::vector1<int> discovery_position_int = option[ OptionKeys::motifs::protein_discovery_locus ];
+			utility::vector1<core::Size> discovery_position;
+
+			//iteratively append discovery positions to the discovery_position vector
+			for (i = 0; i < option[ OptionKeys::motifs::protein_discovery_locus ].size(); ++i)
+			{
+				discovery_position.push_back(option[ OptionKeys::motifs::protein_discovery_locus ][i]);
+			}
 
 			//declare LigandDiscoverySearch object
 			ms_tr << "Making LigandDiscoverySearch object" << std::endl;
