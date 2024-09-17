@@ -953,7 +953,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 	static T const ONE( 1 );
 	static T const TWO( 2 );
 	
-	T const cos_theta = sin_cos_range( (( R.trace() - ONE ) / TWO) );
+	T const cos_theta = sin_cos_range( ( R.trace() - ONE ) / TWO );
 
 	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
 	if ( cos_theta > -ONE + tolerance && cos_theta < ONE - tolerance ) {
