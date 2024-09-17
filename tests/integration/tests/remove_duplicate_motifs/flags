@@ -1,4 +1,3 @@
--parser:protocol /scratch/abgvg9/motif_library_work/training/pdbs/lite_enzdes.xml
 -out::overwrite true
 -motif_filename 5000_motifs.motifs
 -output_file 5000_motifs_duplicates_removed.motifs
