@@ -42,11 +42,10 @@
 //#include <protocols/dna/DnaInterfacePacker.hh>
 //#include <protocols/dna/DnaInterfaceFinder.hh>
 #include <protocols/motifs/motif_utils.hh>
-using namespace protocols::dna;
+
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-static basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 
 #include <core/import_pose/import_pose.hh> // Need since refactor
 
@@ -55,10 +54,10 @@ static basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 #include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
-using utility::vector1;
+
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-using utility::string_split;
+
 
 // c++ headers
 #include <fstream>
@@ -70,6 +69,10 @@ using utility::string_split;
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
+
+using namespace protocols::dna;
+using utility::vector1;
+using utility::string_split;
 
 using namespace core;
 using namespace basic;
@@ -83,6 +86,8 @@ using namespace scoring;
 //Functional duplicates are defined as motifs where all atom types match, and the distance and theta of the motifs are within a given cutoff
 //non-duplicate motifs are returned in an outputted motifs library
 
+//declare tracer
+static basic::Tracer ms_tr( "apps.public.remove_duplicate_motifs" );
 
 void
 remove_duplicate_motifs(
@@ -111,7 +116,7 @@ remove_duplicate_motifs(
 	protocols::motifs::MotifCOPs motifcops = motifs.library();
 
 	//print initial size of motif library that has been read in
-	std::cout << "Size of read in motif library is " << motifcops.size() << std::endl;
+	ms_tr << "Size of read in motif library is " << motifcops.size() << std::endl;
 	protocols::motifs::MotifCOPs motif_library;
 	motif_library = motifcops;
 
@@ -121,35 +126,8 @@ remove_duplicate_motifs(
 	//iterate through motif library to search for duplicates
 	for ( auto single_motif : motif_library ) {
 
-		// Making canonical Rosetta residues for placing as motifs and determining if motif already exists in library
-		// You need to use canonical residues in order to do an RMSD test, unless your test was only over the 6 motif atoms (and you used place_atoms instead of place_residue)
-		// The only reason to change this code would be if you really wanted a speed increase in the motif finding
-
-		//std::cout << "single_motif->restype_name1(): " << single_motif->restype_name1() << " | single_motif->restype_name2(): " << single_motif->restype_name2() << std::endl;
-
-		std::cout <<  "========================================" << std::endl;
-		std::cout << single_motif->print() <<std::endl;
-
-		//create pointers to represent the residue and ligand
-		//core::conformation::ResidueOP protres = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( single_motif->restype_name1() ) );
-
-		//bad calls for residue, need da new approach
-		//core::conformation::ResidueOP res = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( single_motif->restype_name2())  );
-		//core::conformation::ResidueOP res2 = core::conformation::ResidueFactory::create_residue( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( single_motif->restype_name2())  );
-
-		//core::conformation::ResidueOP ligand1;
-
-		//utility::vector1< core::Size > atoms;
-		//atoms.push_back(single_motif->res2_atom1_index());
-		//atoms.push_back(single_motif->res2_atom2_index());
-		//atoms.push_back(single_motif->res2_atom3_index());
-
-		//core::pose::PoseOP pose( new core::pose::Pose );
-		//core::import_pose::pose_from_file( *pose, OptionKeys::motifs::motif_filename , core::import_pose::PDB_file);
-		//core::conformation::ResidueOP protres( pose->residue(1) );
-		//core::conformation::ResidueOP ligand1( pose->residue(2) );
-
-		//single_motif->place_atoms( *protres, *ligand1, atoms, single_motif->res2_atom1_index(), single_motif->res2_atom2_index(), single_motif->res2_atom3_index() );
+		ms_tr <<  "========================================" << std::endl;
+		ms_tr << single_motif->print() <<std::endl;
 
 		//single_motif->place_residue( *protres, *res );
 		bool broke( false );
@@ -165,37 +143,26 @@ remove_duplicate_motifs(
 			if ( motifcop->res2_atom3_name() != single_motif->res2_atom3_name() ) continue;
 			//motifcop->place_residue( *protres, *res2 );
 
-			/*
-			core::conformation::ResidueOP ligand2;
-
-			utility::vector1< core::Size > atoms_test;
-			atoms_test.push_back(motifcop->res2_atom1_index());
-			atoms_test.push_back(motifcop->res2_atom2_index());
-			atoms_test.push_back(motifcop->res2_atom3_index());
-
-
-			single_motif->place_atoms( *protres, *ligand2, atoms_test, motifcop->res2_atom1_index(), motifcop->res2_atom2_index(), motifcop->res2_atom3_index() );
-			*/
 
 			core::Real distance = 0;
 			core::Real theta = 0;
 
 			jump_distance(single_motif->forward_jump(), motifcop->forward_jump(), distance, theta);
-			//std::cout << "Comparing to motif " << motifcop->remark() << std::endl;
-			//std::cout << "Distance: " << distance << std::endl;
-			//std::cout << "Theta: " << theta << std::endl;
+			//ms_tr << "Comparing to motif " << motifcop->remark() << std::endl;
+			//ms_tr << "Distance: " << distance << std::endl;
+			//ms_tr << "Theta: " << theta << std::endl;
 
 			Real dist_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ]  );
 			Real angl_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] );
 
 			//core::Real rmsdtest = 0.2;//core::scoring::automorphic_rmsd( *res, *res2, false );
 			if ( distance < dist_threshold && theta < angl_threshold ) {
-				std::cout << "Skipping motif with distance difference: " << distance << "  and angle difference: "  << theta << std::endl;
+				ms_tr << "Skipping motif with distance difference: " << distance << "  and angle difference: "  << theta << std::endl;
 				if ( single_motif->has_remark() ) {
-					std::cout << "Skipped motif remark is: " << single_motif->remark() << std::endl;
+					ms_tr << "Skipped motif remark is: " << single_motif->remark() << std::endl;
 				}
 				if ( motifcop->has_remark() ) {
-					std::cout << "Skipped motif matches motif with remark: " << motifcop->remark() << std::endl;
+					ms_tr << "Skipped motif matches motif with remark: " << motifcop->remark() << std::endl;
 				}
 
 				broke = true;
@@ -203,14 +170,14 @@ remove_duplicate_motifs(
 			}
 		}
 		if ( !broke ) {
-			std::cout << "Adding motif " << single_motif->remark() << std::endl;
+			ms_tr << "Adding motif " << single_motif->remark() << std::endl;
 			//final_contacts.push_back( contacts_strength_filter[ic] );
 			motif_library_no_duplicates.add_to_library( *single_motif );
 		}
 	}
 
 	//run through built motif_library_no_duplicates and write to a new motifs file
-	std::cout << "Adding motifs from a previously made library" << std::endl;
+	ms_tr << "Adding motifs from a previously made library" << std::endl;
 	std::string MotifLibraryFileName = "MotifLibrary.motifs";
 	if ( basic::options::option[ basic::options::OptionKeys::motifs::output_file ].user() ) {
 		MotifLibraryFileName = basic::options::option[ basic::options::OptionKeys::motifs::output_file ]();
@@ -222,7 +189,7 @@ remove_duplicate_motifs(
 		motif_output_file << *motifcop;
 		++final_motif_counter;
 	}
-	std::cout << "Final number of motifs when filtering for duplicates is: " << final_motif_counter << std::endl;
+	ms_tr << "Final number of motifs when filtering for duplicates is: " << final_motif_counter << std::endl;
 }
 
 
@@ -238,14 +205,14 @@ main( int argc, char * argv [] )
 
 		basic::prof_reset();
 
-		std::cout << "Getting input motif file." << std::endl;
+		ms_tr << "Getting input motif file." << std::endl;
 
 		if ( option[ OptionKeys::motifs::list_motifs ].user() || option[ OptionKeys::motifs::motif_filename ].user() ) {
-			std::cout <<  "Removing duplicates." << std::endl;
+			ms_tr <<  "Removing duplicates." << std::endl;
 			remove_duplicate_motifs();
-			std::cout << "SUCCESSFUL COMPLETION" << std::endl;
+			ms_tr << "SUCCESSFUL COMPLETION" << std::endl;
 		} else {
-			std::cout << "Neither the list_motifs nor motif_filename flags were used, and so no motif list was provided." << std::endl;
+			ms_tr << "Neither the list_motifs nor motif_filename flags were used, and so no motif list was provided." << std::endl;
 		}
 	} catch (utility::excn::Exception const & e ) {
 		e.display();
