@@ -247,7 +247,7 @@ main( int argc, char * argv [] )
 			utility::vector1<core::Size> discovery_position;
 
 			//iteratively append discovery positions to the discovery_position vector
-			for (i = 0; i < option[ OptionKeys::motifs::protein_discovery_locus ].size(); ++i)
+			for (core::Size i = 0; i < option[ OptionKeys::motifs::protein_discovery_locus ].size(); ++i)
 			{
 				discovery_position.push_back(option[ OptionKeys::motifs::protein_discovery_locus ][i]);
 			}
