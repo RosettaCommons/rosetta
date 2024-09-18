@@ -52,7 +52,7 @@ public:
 	void
 	process_for_motifs(
 		core::pose::Pose & pose,
-		std::string & pdb_name,
+		std::string const & pdb_name,
 		protocols::motifs::MotifLibrary & motifs,
 		utility::vector1< core::Size > & prot_pos_that_made_motifs
 	);
@@ -82,7 +82,7 @@ private:
 	output_single_motif_to_MotifLibrary(
 		core::pose::Pose & src_pose,
 		protocols::motifs::MotifLibrary & motifs,
-		std::string & pdb_name,
+		std::string const & pdb_name,
 		core::Size prot_pos,
 		core::Size lig_pos,
 		utility::vector1< core::Size > & lig_atoms,
@@ -117,7 +117,7 @@ private:
 		std::string & pdb_name,
 		protocols::motifs::MotifLibrary & motifs,
 		core::scoring::ScoreFunctionOP scorefxn,
-		utility::vector1< utility::vector1< core::Size > > & motif_indices_list,
+		utility::vector1< utility::vector1< core::Size > > const & motif_indices_list,
 		utility::vector1< core::Size > & prot_pos_that_made_motifs
 	);
 
