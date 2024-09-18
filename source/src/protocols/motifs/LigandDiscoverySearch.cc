@@ -332,14 +332,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	//create tracer to identify points of the run
 	static basic::Tracer ms_tr( "LigandDiscoverySearch_out", basic::t_info );
 
-	//initiate an IdentifyLigandMotifs object for potential use later in the script
-	//use the following flags to change behaviors of the ILM (especially what outputs you want)
-	//option[ OptionKeys::motifs::ligand_motif_output_directory_name ];
-	//option[ OptionKeys::motifs::ligand_motif_output_file_name ];
-	//default true
-	//option[ OptionKeys::motifs::output_motifs ];
-	//default true
-	//option[ OptionKeys::motifs::output_motifs_as_pdb ];
 	IdentifyLigandMotifs ilm;
 
 	//iterate over all indices in working_positions_
@@ -445,13 +437,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		if ( option[ OptionKeys::motifs::target_residues_sf ].user() ) {
 			target_residues_sf_ = option[ OptionKeys::motifs::target_residues_sf ]();
 		}
-		//if ( option[ OptionKeys::motifs::target_residues_contact ].user() ) {
-		// target_residues_contact_ = option[ OptionKeys::motifs::target_residues_contact ]();
-		//}
+
 		//read in target_residues and override
 		if ( option[ OptionKeys::in::target_residues ].user() ) {
 			target_residues_sf_ = option[ OptionKeys::in::target_residues ]();
-			//target_residues_contact_ = option[ OptionKeys::in::target_residues ]();
 		}
 
 		core::Size x_shift = 0;
@@ -1385,9 +1374,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							//use to derive a ratio (with potential for placement to be filtered with a cutoff)
 							core::Size motifs_that_look_real = 0;
 
-							//convert the motif library to motifCOPS
-							//protocols::motifs::MotifCOPs placement_libraryCOPs = placement_library.library();
-
 							//iterate over the library of motifs created by the ligand placement
 							for ( auto ligmotifcop : placement_libraryCOPs ) {
 								//derive tuple key
@@ -1599,7 +1585,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 			//assign the new cutoff once we hit 100 entries
 			if ( best_placements.size() >= best_pdbs_to_keep && best_pdbs_to_keep != 0 ) {
-				//score_cutoff = std::get<0>(best_100_placements[best_100_placements.size() - 1]);
 				score_cutoff = std::get<0>(best_placements[0]);
 				if ( verbose_ >= 2 ) {
 					ms_tr << "New score cutoff is: " << score_cutoff << std::endl;
@@ -1890,7 +1875,6 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 
 	//create 3D matrix to roughly represent 3D coordinate space of protein
 	//bad syntax, may just have to do  an iterative  fill
-	//utility::vector1<utility::vector1<utility::vector1<bool>>> protein_representation_matrix(x_bound, (y_bound, (z_bound, false)));
 
 	xyz_bound[1] *= resolution_increase_factor;
 	xyz_bound[2] *= resolution_increase_factor;
@@ -2845,8 +2829,7 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(utilit
 	//convert my_mrt to a data type that can be added to a pose
 	//convert to residuetype
 	ResidueTypeCOP my_rt(ResidueType::make(my_mrt));
-	//ResidueTypeCOP my_rt(ResidueType::make(*my_mrt));
-	//ResidueTypeCOP my_rt(new core::chemical::ResidueType( *my_mrt ));
+
 	//convert to residue
 	core::conformation::ResidueOP my_res( core::conformation::ResidueFactory::create_residue(*my_rt));
 
@@ -2916,14 +2899,14 @@ std::string LigandDiscoverySearch::base_10_to_base_62(core::Size starting_num)
 //inputs are initial motif library and map that is to be filled out
 //map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
 //
-void LigandDiscoverySearch::hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string>,protocols::motifs::MotifCOPs> & mymap)
+void LigandDiscoverySearch::hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap & mymap)
 {
 	//iterate over the input library
 	for ( auto motifcop : input_library ) {
 		//collect residue name from motifcop
 		std::string motif_residue_name(motifcop->restype_name1());
 		//declare tuple key
-		std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string> key_tuple(motifcop->restype_name1(),motifcop->res1_atom1_name(),motifcop->res1_atom2_name(),motifcop->res1_atom3_name(),motifcop->res2_atom1_name(),motifcop->res2_atom2_name(),motifcop->res2_atom3_name());
+		motif_atoms key_tuple(motifcop->restype_name1(),motifcop->res1_atom1_name(),motifcop->res1_atom2_name(),motifcop->res1_atom3_name(),motifcop->res2_atom1_name(),motifcop->res2_atom2_name(),motifcop->res2_atom3_name());
 
 		//push back motif to motifcops at key address
 		mymap[key_tuple].push_back(motifcop);
