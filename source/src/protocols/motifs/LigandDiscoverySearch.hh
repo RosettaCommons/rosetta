@@ -110,7 +110,6 @@ public:
 	~LigandDiscoverySearch();
 
 	// @brief parameterized constructor to load in motif library, pdb, and ligand library
-	//LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, core::Size working_position);
 	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position);
 
 	// @brief function to load in a library for the search protocol
@@ -189,8 +188,6 @@ private:
 
 	// @brief create protein_representation_matrix_space_fill_
 	//uses working_pose to make the matrix
-	//void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(core::Size & x_shift, core::Size & y_shift, core::Size & z_shift, core::Size & x_bound_int, core::Size & y_bound_int, core::Size & z_bound_int, int & resolution_increase_factor,
-	//core::Size & sub_x_min, core::Size & sub_x_max, core::Size & sub_y_min, core::Size & sub_y_max, core::Size & sub_z_min, core::Size & sub_z_max, core::Real & occupied_ratio, core::Real & sub_occupied_ratio)
 	//condensing arguments in function to use vectors to hold xyz trios
 	void create_protein_representation_matrix_space_fill(utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
 		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts);
@@ -234,9 +231,6 @@ private:
 
 	// @brief 1D vector to hold a list of residue indices to be considered in space fill function
 	utility::vector1<core::Size> target_residues_sf_;
-
-	// @brief 1D vector to hold a list of residue indices to be considered in residue-ligand contacts function
-	//utility::vector1<core::Size> target_residues_contact_;
 
 	// @brief a boolean value that controls the verbosity of text output while using the object
 	//default to be false, but can be made true by using the motifs::verbose flag; can also use set_verbose()
