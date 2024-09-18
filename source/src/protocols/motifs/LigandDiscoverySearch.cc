@@ -289,7 +289,7 @@ void LigandDiscoverySearch::set_working_pose(core::pose::PoseOP pose_from_PDB)
 void LigandDiscoverySearch::set_working_pose(core::pose::Pose pose_from_PDB)
 {
 	pose::Pose pose_helper = pose_from_PDB;
-	pose::PoseOP pose_pointer_helper(new pose::Pose(pose_helper.clone()));
+	pose::PoseOP pose_pointer_helper(pose_helper.clone());
 	working_pose_ = pose_pointer_helper;
 }
 
@@ -1091,7 +1091,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(new pose::Pose(original_pose.clone()));
+							core::pose::PoseOP original_poseop(original_pose.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;
@@ -1148,7 +1148,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
 						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-						core::pose::PoseOP original_poseop(new pose::Pose(original_pose.clone()));
+						core::pose::PoseOP original_poseop(original_pose.clone());
 						//assign the original_poseop to working_pose_
 						working_pose_ = original_poseop;
 						++clashing_counter;
@@ -1256,7 +1256,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(new pose::Pose(original_pose.clone()));
+							core::pose::PoseOP original_poseop(original_pose.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;
@@ -1308,7 +1308,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
 								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-								core::pose::PoseOP original_poseop(new pose::Pose(original_pose.clone()));
+								core::pose::PoseOP original_poseop(original_pose.clone());
 								//assign the original_poseop to working_pose_
 								working_pose_ = original_poseop;
 								++clashing_counter;
@@ -1371,7 +1371,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(new pose::Pose(original_pose.clone()));
+							core::pose::PoseOP original_poseop(original_pose.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;
@@ -1481,7 +1481,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
 								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-								core::pose::PoseOP original_poseop(new pose::Pose(original_pose.clone()));
+								core::pose::PoseOP original_poseop(original_pose.clone());
 								//assign the original_poseop to working_pose_
 								working_pose_ = original_poseop;
 								++clashing_counter;
@@ -1538,7 +1538,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
 						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-						core::pose::PoseOP original_poseop(new pose::Pose(original_pose.clone()));
+						core::pose::PoseOP original_poseop(original_pose.clone());
 						//assign the original_poseop to working_pose_
 						working_pose_ = original_poseop;
 						++passing_counter;
@@ -1555,7 +1555,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					working_pose_->delete_residue_slow(working_pose_->size());
 					//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-					core::pose::PoseOP original_poseop(new pose::Pose(original_pose.clone()));
+					core::pose::PoseOP original_poseop(original_pose.clone());
 					//assign the original_poseop to working_pose_
 					working_pose_ = original_poseop;
 
