@@ -104,6 +104,14 @@ class LigandDiscoverySearch
 public:
 
 	////////////////////////////////////////////////////////////////////////////
+	//typedefs to help clean up data types that are really convoluted, but not making them classes as reuse purpose may be limited
+
+	// @brief motif_atoms type, which is a tuple of strings that access motifcops objects
+	// This is to be used in the breaking down of a motif library into smaller motif libraries that can be accessed by the 6 atom types of atoms in the motif
+	//typedef std::map<std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string>, protocols::motifs::MotifCOPs> motif_library_map;
+	typedef std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string> motif_atoms;
+
+	////////////////////////////////////////////////////////////////////////////
 	//functions/constructors to set up protocol
 
 	// @brief destructor
@@ -169,7 +177,7 @@ public:
 	// @brief function to hash out an input motif library into a standard map of motifCOPs
 	//inputs are initial motif library and map that is to be filled out
 	//map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
-	void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string>,protocols::motifs::MotifCOPs> & mymap);
+	void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap);
 
 private:
 

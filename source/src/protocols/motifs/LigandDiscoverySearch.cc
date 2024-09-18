@@ -2899,14 +2899,14 @@ std::string LigandDiscoverySearch::base_10_to_base_62(core::Size starting_num)
 //inputs are initial motif library and map that is to be filled out
 //map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
 //
-void LigandDiscoverySearch::hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string>,protocols::motifs::MotifCOPs> & mymap)
+void LigandDiscoverySearch::hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap & mymap)
 {
 	//iterate over the input library
 	for ( auto motifcop : input_library ) {
 		//collect residue name from motifcop
 		std::string motif_residue_name(motifcop->restype_name1());
 		//declare tuple key
-		std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string> key_tuple(motifcop->restype_name1(),motifcop->res1_atom1_name(),motifcop->res1_atom2_name(),motifcop->res1_atom3_name(),motifcop->res2_atom1_name(),motifcop->res2_atom2_name(),motifcop->res2_atom3_name());
+		motif_atoms key_tuple(motifcop->restype_name1(),motifcop->res1_atom1_name(),motifcop->res1_atom2_name(),motifcop->res1_atom3_name(),motifcop->res2_atom1_name(),motifcop->res2_atom2_name(),motifcop->res2_atom3_name());
 
 		//push back motif to motifcops at key address
 		mymap[key_tuple].push_back(motifcop);
