@@ -432,7 +432,7 @@ void IdentifyLigandMotifs::get_atom_trios(
 void
 IdentifyLigandMotifs::process_for_motifs(
 	Pose & pose,
-	std::string & pdb_name,
+	std::string const & pdb_name,
 	protocols::motifs::MotifLibrary & motifs,
 	utility::vector1< Size > & prot_pos_that_made_motifs
 )
@@ -511,11 +511,11 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 	core::Size lig_pos,
 	core::Size prot_pos,
 	core::pose::Pose & pose,
-	std::string & pdb_name,
+	std::string const & pdb_name,
 	protocols::motifs::MotifLibrary & motifs,
 	core::scoring::ScoreFunctionOP scorefxn,
-	utility::vector1< utility::vector1< Size > > & motif_indices_list,
-	utility::vector1< Size > & prot_pos_that_made_motifs
+	utility::vector1< utility::vector1< Size > > const & motif_indices_list,
+	utility::vector1< Size >  & prot_pos_that_made_motifs
 )
 {
 	ResidueType const & prot_type( pose.residue_type( prot_pos ) );
