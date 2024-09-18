@@ -94,7 +94,7 @@ private:
 	void
 	output_single_motif_to_pdb(
 		core::pose::Pose & src_pose,
-		std::string & pdb_name,
+		std::string const & pdb_name,
 		core::Size prot_pos,
 		core::Size lig_pos,
 		utility::vector1< core::Size > & lig_atoms
@@ -114,7 +114,7 @@ private:
 		core::Size lig_pos,
 		core::Size prot_pos,
 		core::pose::Pose & pose,
-		std::string & pdb_name,
+		std::string const & pdb_name,
 		protocols::motifs::MotifLibrary & motifs,
 		core::scoring::ScoreFunctionOP scorefxn,
 		utility::vector1< utility::vector1< core::Size > > const & motif_indices_list,
