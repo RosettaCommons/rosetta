@@ -108,7 +108,6 @@ public:
 
 	// @brief motif_atoms type, which is a tuple of strings that access motifcops objects
 	// This is to be used in the breaking down of a motif library into smaller motif libraries that can be accessed by the 6 atom types of atoms in the motif
-	//typedef std::map<std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string>, protocols::motifs::MotifCOPs> motif_library_map;
 	typedef std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string> motif_atoms;
 
 	////////////////////////////////////////////////////////////////////////////
