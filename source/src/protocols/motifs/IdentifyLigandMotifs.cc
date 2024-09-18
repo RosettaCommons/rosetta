@@ -211,7 +211,7 @@ void
 IdentifyLigandMotifs::output_single_motif_to_MotifLibrary(
 	core::pose::Pose & src_pose,
 	protocols::motifs::MotifLibrary & motifs,
-	std::string & pdb_name,
+	std::string const & pdb_name,
 	core::Size prot_pos,
 	core::Size lig_pos,
 	utility::vector1< core::Size > & lig_atoms,
@@ -273,7 +273,7 @@ IdentifyLigandMotifs::output_single_motif_to_MotifLibrary(
 void
 IdentifyLigandMotifs::output_single_motif_to_pdb(
 	core::pose::Pose & src_pose,
-	std::string & pdb_name,
+	std::string const & pdb_name,
 	core::Size prot_pos,
 	core::Size lig_pos,
 	utility::vector1< core::Size > & lig_atoms
