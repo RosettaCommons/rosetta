@@ -211,7 +211,7 @@ private:
 	core::pose::Pose export_space_fill_matrix_as_C_H_O_N_pdb(utility::vector1<utility::vector1<utility::vector1<core::Size>>> space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
 		utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt);
 
-	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters represented by base_62_cipher_)
+	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters that are derived by utility::Binary_Util.hh::code_to_6bit())
 	//used in export_space_fill_matrix_as_C_H_O_N_pdb to assign a unique name to an atom (due to limitations in atom icoor data, an atom name can be no longer than 4 characters)
 	std::string base_10_to_base_62(core::Size starting_num);
 
