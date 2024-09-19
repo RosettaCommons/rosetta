@@ -242,12 +242,4 @@ private:
 	// @brief a boolean value that controls the verbosity of text output while using the object
 	//default to be false, but can be made true by using the motifs::verbose flag; can also use set_verbose()
 	int verbose_;
-
-	// @brief a vector to act as a cipher for the space fill matrix with naming atoms with a unique name
-	//due to there being a limit in an atom name only having up to 4 characters and ther ebeign potential for a full representation matrix to have 1e5-1e6 atoms, using a base62 system for unique names
-	//base 62 allows over 14 million unique names
-	//represented as alphanumeric characters 0-9,a-z,A-Z
-	utility::vector1<std::string> base_62_cipher_{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
-"o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-"U", "V", "W", "X", "Y", "Z", };
 };

@@ -132,6 +132,8 @@ using utility::string_split;
 
 #include <protocols/motifs/IdentifyLigandMotifs.hh>
 
+#include <utility/Binary_Util.hh>
+
 // Time profiling header
 #include <time.h>
 
@@ -2866,7 +2868,7 @@ std::string LigandDiscoverySearch::base_10_to_base_62(core::Size starting_num)
 	core::Size curr_num = starting_num;
 
 	while ( keep_processing )
-			{
+	{
 		//take the quotient of the current number by 62
 		core::Size quotient = curr_num / 62;
 
@@ -2875,13 +2877,15 @@ std::string LigandDiscoverySearch::base_10_to_base_62(core::Size starting_num)
 
 		//use the mod value to get the corresponding character from the cipher and append to the string
 		//character appends to the front of the string
-		base_62_number = base_62_cipher_[mod + 1] + base_62_number;
+		//base_62_number = base_62_cipher_[mod + 1] + base_62_number;
+		base_62_number = utility::Binary_Util::code_to_6bit(mod + 1) + base_62_number;
 
 		//if the quotient is under 62, get the number from the cipher, otherwise we have to repeat the processing operation
 		if ( quotient < 62 ) {
 			// use the quotient to add to the number, unless the quotient is 0 (no need to add a placeholder 0)
 			if ( quotient != 0 ) {
-				base_62_number = base_62_cipher_[quotient + 1] + base_62_number;
+				//base_62_number = base_62_cipher_[quotient + 1] + base_62_number;
+				base_62_number = utility::Binary_Util::code_to_6bit(quotient + 1) + base_62_number;
 			}
 
 			//we have now fully derived the base 62 number and can stop processing
