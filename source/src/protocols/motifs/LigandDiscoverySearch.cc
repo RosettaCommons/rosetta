@@ -2878,14 +2878,14 @@ std::string LigandDiscoverySearch::base_10_to_base_62(core::Size starting_num)
 		//use the mod value to get the corresponding character from the cipher and append to the string
 		//character appends to the front of the string
 		//base_62_number = base_62_cipher_[mod + 1] + base_62_number;
-		base_62_number = utility::Binary_Util::code_to_6bit(mod + 1) + base_62_number;
+		base_62_number = utility::code_to_6bit(mod + 1) + base_62_number;
 
 		//if the quotient is under 62, get the number from the cipher, otherwise we have to repeat the processing operation
 		if ( quotient < 62 ) {
 			// use the quotient to add to the number, unless the quotient is 0 (no need to add a placeholder 0)
 			if ( quotient != 0 ) {
 				//base_62_number = base_62_cipher_[quotient + 1] + base_62_number;
-				base_62_number = utility::Binary_Util::code_to_6bit(quotient + 1) + base_62_number;
+				base_62_number = utility::code_to_6bit(quotient + 1) + base_62_number;
 			}
 
 			//we have now fully derived the base 62 number and can stop processing
