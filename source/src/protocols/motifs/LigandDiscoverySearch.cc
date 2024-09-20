@@ -1600,11 +1600,11 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 		//create pdbs of best scoring poses for pdb
 
-		for ( core::Size best_pose_runner = 0; best_pose_runner < best_placements.size(); best_pose_runner++ ) {
+		for ( const auto & best_pose_runner : best_placements ) {
 			if ( verbose_ >= 2 ) {
-				ms_tr << "Making pdb file for: " << std::get<2>(best_placements[best_pose_runner]) << std::endl;
+				ms_tr << "Making pdb file for: " << std::get<2>(best_pose_runner) << std::endl;
 			}
-			core::io::pdb::dump_pdb( ( std::get<1>(best_placements[best_pose_runner])), std::get<2>(best_placements[best_pose_runner]));
+			core::io::pdb::dump_pdb( ( std::get<1>(best_pose_runner)), std::get<2>(best_pose_runner));
 		}
 
 		if ( verbose_ >= 2 ) {
@@ -2196,8 +2196,8 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 				binding_pocket_dimensions = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ]();
 
 				//apply resolution factor to each dimension
-				for ( const auto & dimension : binding_pocket_dimensions ) {
-					dimension *= resolution_increase_factor;
+				for ( core::Size dimension = 1; dimension <= binding_pocket_dimensions.size(); ++dimension ) {
+					binding_pocket_dimensions[dimension] *= resolution_increase_factor;
 				}
 
 			}
