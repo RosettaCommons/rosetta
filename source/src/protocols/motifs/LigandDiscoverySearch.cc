@@ -346,13 +346,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	}
 
 	//run discovery over each position in working_positions_
-	for ( core::Size position_counter = 1; position_counter <= working_positions_.size(); ++position_counter ) {
+	for (const auto & curr_position : working_positions_) {
 		if ( verbose_ >= 1 ) {
-			ms_tr << "Current anchor residue position: " << working_positions_[position_counter] << std::endl;
+			ms_tr << "Current anchor residue position: " << curr_position << std::endl;
 		}
 
 		//adjust working_position_ based on where we are in working_positions_
-		working_position_ = working_positions_[position_counter];
+		working_position_ = curr_position;
 
 		//determine whether to kill due to bad initialization
 		bool kill_bad_init = false;
