@@ -1776,7 +1776,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 //core::Size & sub_x_min, core::Size & sub_x_max, core::Size & sub_y_min, core::Size & sub_y_max, core::Size & sub_z_min, core::Size & sub_z_max, core::Real & occupied_ratio, core::Real & sub_occupied_ratio)
 //condensing arguments in function to use vectors to hold xyz trios
 void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-	utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts)
+	utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts, core::Size working_position)
 {
 	//values that can be seeded into the matrix with their meaning. Only 0-3 can be seeded using this function, and then space_fill_analysis can seed 4+
 	//note, 0 and 2 are only even numbers that are currently used for now
