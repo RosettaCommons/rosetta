@@ -251,25 +251,45 @@ void LigandDiscoverySearch::set_motif_library(protocols::motifs::MotifLibrary mo
 	motif_library_ = motif_library.library();
 }
 
-//function to define the residue index that we will use for applying motifs for ligand placements
-void LigandDiscoverySearch::set_working_position(core::Size working_position)
-{
-	working_position_ = working_position;
-}
-
-//return contents of working_position_
-core::Size LigandDiscoverySearch::get_working_position()
-{
-	return working_position_;
-}
-
 //function to define the vector of residue indices that we will use for applying motifs for ligand placements
 void LigandDiscoverySearch::set_working_positions(utility::vector1<core::Size> working_position)
 {
 	working_positions_ = working_position;
 }
 
+//overload of set_working_position to take in a single core::Size that is not in a vector, in case the user is only interesting in one position
+//This seems like a handy way to be more flexible and allow working on a single position that doesn't have to be put in a vector first
+void LigandDiscoverySearch::set_working_positions(core::Size working_position)
+{
+	//wipe previous contents of working_positions_
+	working_positions_.clear();
+
+	//push back the passed working_position
+	working_positions_.push_back(working_position);
+}
+
+//append additional positions to working_positions_ to the end of the vector
+void LigandDiscoverySearch::add_working_positions(utility::vector1<core::Size> working_positions)
+{
+
+	for (const auto & working_position : working_positions)
+	{
+		//push back the passed working_position
+		working_positions_.push_back(working_position);
+	}
+}
+
+//append additional position to working_positions_ to the end of the vector
+void LigandDiscoverySearch::add_working_positions(core::Size working_position)
+{
+
+	//push back the passed working_position
+	working_positions_.push_back(working_position);
+
+}
+
 //return contents of working_positions_
+//probably always safest to return as a vector, even if there could only be one entry
 utility::vector1<core::Size> LigandDiscoverySearch::get_working_positions()
 {
 	return working_positions_;
@@ -346,26 +366,23 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	}
 
 	//run discovery over each position in working_positions_
-	for (const auto & curr_position : working_positions_) {
+	for (const auto & working_position : working_positions_) {
 		if ( verbose_ >= 1 ) {
-			ms_tr << "Current anchor residue position: " << curr_position << std::endl;
+			ms_tr << "Current anchor residue position: " << working_position << std::endl;
 		}
-
-		//adjust working_position_ based on where we are in working_positions_
-		working_position_ = curr_position;
 
 		//determine whether to kill due to bad initialization
 		bool kill_bad_init = false;
 
 		//kill if working position is out of bounds
-		if ( working_position_ < 1 || working_position_ > working_pose_->size() ) {
+		if ( working_position < 1 || working_position > working_pose_->size() ) {
 			if ( verbose_ >= 1 ) {
-				ms_tr << "Working position of " << working_position_ << " is invalid as it is not a valid index to access a residue in your pose of size " << working_pose_->size() << std::endl;
+				ms_tr << "Working position of " << working_position << " is invalid as it is not a valid index to access a residue in your pose of size " << working_pose_->size() << std::endl;
 			}
 			kill_bad_init = true;
 		}
 
-		std::string discovery_position_residue = working_pose_->residue(working_position_).name3();
+		std::string discovery_position_residue = working_pose_->residue(working_position).name3();
 
 		//get motif sublibrary
 		motif_library_for_select_residue_ = get_motif_sublibrary_by_aa(discovery_position_residue);
@@ -385,9 +402,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			return -1;
 		}
 
-		//derive motif_library_for_select_residue_ from motif_library and residue in working_pose_ and index working_position_
+		//derive motif_library_for_select_residue_ from motif_library and residue in working_pose_ and index working_position
 
-		motif_library_for_select_residue_ = get_motif_sublibrary_by_aa(working_pose_->residue(working_position_).name3());
+		motif_library_for_select_residue_ = get_motif_sublibrary_by_aa(working_pose_->residue(working_position).name3());
 
 		//hash the motif library into a map of smaller motif lists based on the residue involved and 6 atom names/types
 		//define new map
@@ -775,7 +792,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					++pose_atom_check_counter;
 
 					//use motif code to place the residue based on the pose residue
-					motifcop->place_residue( working_pose_->residue(working_position_), *ligresOP, trip_atom_1, trip_atom_2, trip_atom_3 , true );
+					motifcop->place_residue( working_pose_->residue(working_position), *ligresOP, trip_atom_1, trip_atom_2, trip_atom_3 , true );
 
 					//bool to determine if placed residue clashes against the backbone
 					bool has_clashing = false;
@@ -815,8 +832,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//export the space fill matrix if selected
 						if ( option[ OptionKeys::motifs::output_space_fill_matrix_pdbs ] ) {
-							//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_constr_" + std::to_string(sc_constraint_check) + ".pdb";
-							std::string matrix_pdb_prefix = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
+							//std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark() + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr) + "_delta_" + std::to_string(delta_score) + "_constr_" + std::to_string(sc_constraint_check) + ".pdb";
+							std::string matrix_pdb_prefix = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 							//call function to export, use "empty" as the string prefix
 							export_space_fill_matrix_as_C_H_O_N_pdb(current_space_fill_matrix, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor,
 								space_fill_scores, matrix_pdb_prefix, *dummylig_mrt);
@@ -956,13 +973,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
 
 					core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_1, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position_ ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_1 ), fx1 ) ) );
+					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_1, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_1 ), fx1 ) ) );
 
 					core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_2, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position_ ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_2 ), fx2 ) ) );
+					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_2, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_2 ), fx2 ) ) );
 
 					core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_3, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position_ ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_3 ), fx3 ) ) );
+					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_3, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_3 ), fx3 ) ) );
 
 					working_pose_->constraint_set(sc_cst_set);
 
@@ -1154,12 +1171,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//name the pdb  that could come from the pose
 					//current naming convention
-					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position_) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
+					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 
 					//add comments to working_pose for print
 					//core::pose::add_comment(*working_pose_, "", );
 					core::pose::add_comment(*working_pose_, "Placement: Output prefix:", output_prefix);
-					core::pose::add_comment(*working_pose_, "Placement: Anchor residue index:", std::to_string(working_position_));
+					core::pose::add_comment(*working_pose_, "Placement: Anchor residue index:", std::to_string(working_position));
 					core::pose::add_comment(*working_pose_, "Placement: Anchor residue type:", discovery_position_residue);
 					core::pose::add_comment(*working_pose_, "Placement: Ligand trio number:", std::to_string(i));
 					core::pose::add_comment(*working_pose_, "Placement: Ligand name:", ligresOP->name());
@@ -1167,7 +1184,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//preceeding commas to account for the comment map keys
 					comment_table_header = "ligand_name,ligand_atom_trio,source_pdb,anchor_residue_index,anchor_residue_type,placed_motif_remark,";
-					comment_table_data = ligresOP->name() + "," + std::to_string(i) + "," + output_prefix + "," + std::to_string(working_position_) + "," + discovery_position_residue + "," + motifcop->remark() + ",";
+					comment_table_data = ligresOP->name() + "," + std::to_string(i) + "," + output_prefix + "," + std::to_string(working_position) + "," + discovery_position_residue + "," + motifcop->remark() + ",";
 
 					//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
 					std::string pdb_short_unique_name = pdb_name;
@@ -2019,10 +2036,10 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		}
 
 		//define nbr_atom_xyz vector as the xyz vector of the nbr atom of the xyz residue
-		numeric::xyzVector<int> nbr_atom_xyz = working_pose_->residue(working_position_).nbr_atom_xyz();
+		numeric::xyzVector<int> nbr_atom_xyz = working_pose_->residue(working_position).nbr_atom_xyz();
 
 		//get the nbr radius of the residue
-		core::Real anchor_nbr_radius = working_pose_->residue(working_position_).nbr_radius();
+		core::Real anchor_nbr_radius = working_pose_->residue(working_position).nbr_radius();
 
 		//debugging: get coordinates of nbr atom and nbr radius
 		if ( verbose_ >= 3 ) {
