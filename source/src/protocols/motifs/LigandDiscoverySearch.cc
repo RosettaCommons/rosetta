@@ -636,7 +636,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		int passed_placement_counter = 0;
 
 		//now we have the filtered motif library to work with, run through each  atom trio in each ligand and try to match it against all motifs for the residue
-		for ( core::Size tracker = 1; tracker <= all_residues_.size(); ++tracker ) {
+		for (const auto & tracker : all_residues_ ) {
 
 			//counter to count the placements for this ligand that get passed to a pdb (used in clean naming)
 			core::Size unique_placement_counter = 0;
@@ -645,7 +645,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 			//core::chemical::ResidueTypeCOP ligres(ref);
 			//convert ligres to be a ResidueOP type
-			core::conformation::ResidueOP ligresOP = all_residues_[tracker];
+			core::conformation::ResidueOP ligresOP = tracker;
 
 			if ( verbose_ >= 1 ) {
 				ms_tr << "On ligand " << ligresOP->name() << std::endl;
@@ -681,14 +681,14 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				if ( ligresOP->atom_is_hydrogen(atom_i) ) { continue; }
 				// This is a for loop to iterate over each atom's connected atoms:
 				core::conformation::Residue::AtomIndices atom_i_connects(  ligresOP->bonded_neighbor( atom_i ) );
-				for ( core::Size atom_j = 1; atom_j <= atom_i_connects.size(); ++ atom_j ) {
-					if ( ligresOP->atom_is_hydrogen(atom_i_connects[atom_j]) ) { continue; }
+				for ( const auto & atom_j :  atom_i_connects) {
+					if ( ligresOP->atom_is_hydrogen(atom_j) ) { continue; }
 					// This is the next for loop to find connects for the second atom, giving us the final atom number (atom k)
-					core::conformation::Residue::AtomIndices atom_j_connects(  ligresOP->bonded_neighbor( atom_i_connects[atom_j] ) );
-					for ( core::Size atom_k = 1; atom_k <= atom_j_connects.size(); ++ atom_k ) {
-						if ( ligresOP->atom_is_hydrogen(atom_j_connects[atom_k]) ) { continue; }
+					core::conformation::Residue::AtomIndices atom_j_connects(  ligresOP->bonded_neighbor( atom_j ) );
+					for ( const auto & atom_k :  atom_j_connects ) {
+						if ( ligresOP->atom_is_hydrogen(atom_k) ) { continue; }
 						chemical::AtomType atom_i_type(ligresOP->atom_type(atom_i));
-						if ( atom_i != atom_j_connects[atom_k] ) {
+						if ( atom_i != atom_k ) {
 
 							//make the 3 atom vector
 							utility::vector1< utility::vector1< core::Size > > cur_motif_indices;
@@ -698,12 +698,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							atom_i_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_i).atom_type_name() ) );
 
 							utility::vector1< core::Size > atom_j_vector;
-							atom_j_vector.push_back( atom_i_connects[atom_j] );
-							atom_j_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_i_connects[atom_j]).atom_type_name() ) );
+							atom_j_vector.push_back( atom_j );
+							atom_j_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_j).atom_type_name() ) );
 
 							utility::vector1< core::Size > atom_k_vector;
-							atom_k_vector.push_back( atom_j_connects[atom_k] );
-							atom_k_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_j_connects[atom_k]).atom_type_name() ) );
+							atom_k_vector.push_back( atom_k );
+							atom_k_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_k).atom_type_name() ) );
 
 							cur_motif_indices.push_back( atom_i_vector);
 							cur_motif_indices.push_back( atom_j_vector);
@@ -2070,10 +2070,10 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 
 		//run through the vector of indices and identify the coordinates of the nbr atom
 		//could technically check all atoms in each residue, but would be longer and nbr should get us a good enough estimate
-		for ( core::Size i = 1; i <= target_residues_sf_.size(); ++i ) {
+		for ( const auto & target_residue : target_residues_sf_ ) {
 			//get the scaled xyz coordinates of the residue's nbr atom and adjust the sub xyz minmax values
 			//have as int to account for negative coordinates (which we will convert to positive by shifting)
-			numeric::xyzVector<int> nbr_atom_xyz_int = working_pose_->residue(target_residues_sf_[i]).nbr_atom_xyz();
+			numeric::xyzVector<int> nbr_atom_xyz_int = working_pose_->residue(target_residue).nbr_atom_xyz();
 
 			//apply the xyz shift to each value (and do before applying the resolution increase factor)
 			nbr_atom_xyz_int[0] += xyz_shift[1];
@@ -2196,8 +2196,8 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 				binding_pocket_dimensions = option[ OptionKeys::motifs::binding_pocket_dimensions_sf ]();
 
 				//apply resolution factor to each dimension
-				for ( core::Size dimension = 1; dimension <= binding_pocket_dimensions.size(); ++dimension ) {
-					binding_pocket_dimensions[dimension] *= resolution_increase_factor;
+				for ( const auto & dimension : binding_pocket_dimensions ) {
+					dimension *= resolution_increase_factor;
 				}
 
 			}
