@@ -801,7 +801,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						utility::vector1<core::Real> space_fill_scores (2,0);
 
 						//run space fill analysis function, set to a vector
-						utility::vector1<utility::vector1<utility::vector1<core::Size>>> current_space_fill_matrix = space_fill_analysis(ligresOP, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, space_fill_scores, matrix_data_counts);
+						SpaceFillMatrix current_space_fill_matrix = space_fill_analysis(ligresOP, xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, space_fill_scores, matrix_data_counts);
 
 						//derive a differential score for the sub area between the placed and empty system
 						//only do anything if the user used the differencial cutoff score
@@ -1887,7 +1887,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	}
 
 	//make a matrix, and we will copy it over to the global one once we make it
-	utility::vector1<utility::vector1<utility::vector1<core::Size>>> protein_representation_matrix;
+	SpaceFillMatrix protein_representation_matrix;
 
 	for ( core::Size x = 1; x <= xyz_bound[1]; ++x ) {
 		//make a 2D  matrix
@@ -2369,7 +2369,7 @@ bool LigandDiscoverySearch::ligand_clash_check(core::conformation::ResidueOP lig
 //satisfaction is based on whether the ratio of occupied cells to unoccupied cells is >= a user-inputted threshold
 //returns space_fill_matrix_copy (the filled matrix with the ligand)
 
-utility::vector1<utility::vector1<utility::vector1<core::Size>>> LigandDiscoverySearch::space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
+SpaceFillMatrix LigandDiscoverySearch::space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
 	utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts)
 {
 	//values that can be seeded into the matrix with their meaning. Only 5,7,9,11 can be seeded using this function since we adjust values based on the ligand being present
@@ -2404,7 +2404,7 @@ utility::vector1<utility::vector1<utility::vector1<core::Size>>> LigandDiscovery
 	//make a temporary copy of protein_representation_matrix_space_fill_ so that we can adjust the boolean values (and make sure that we can properly mark occupied cells once as we check with the atoms)
 	//otherwise, we risk overcounting occupied cells (which also leads to underflow in the unoccupied cells)
 	//make sure it is not a deep copy
-	utility::vector1<utility::vector1<utility::vector1<core::Size>>> space_fill_matrix_copy = protein_representation_matrix_space_fill_;
+	SpaceFillMatrix space_fill_matrix_copy = protein_representation_matrix_space_fill_;
 
 
 	core::Size num_atoms_in_ligand = ligresOP->natoms();
@@ -2558,7 +2558,7 @@ utility::vector1<utility::vector1<utility::vector1<core::Size>>> LigandDiscovery
 // if printing the whole matrix and not just the sub-area, occupied cells are represented by hydrogens and unoccupied are represented by carbon
 //if desired, returns the pose created
 //highly recommended to only use this for debugging and small-scale purposes, as this method is extremely slow compared to the rest of the protocol
-pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(utility::vector1<utility::vector1<utility::vector1<core::Size>>> space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
+pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceFillMatrix space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
 	utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt)
 {
 	//create tracer to identify points of the run
