@@ -526,7 +526,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 		//create the space fill representation matrix
 		//do even if no cutoff scores were made so that the information can be generated and returned anyway
-		create_protein_representation_matrix_space_fill(xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, matrix_data_counts);
+		create_protein_representation_matrix_space_fill(xyz_shift_sf, xyz_bound_sf, resolution_increase_factor, sub_xyz_min_sf, sub_xyz_max_sf, occupied_ratios, matrix_data_counts, working_position);
 
 		//create a dummy mutableresiduetype that is empty (all atoms deleted) so we can use it for the expore_space_fill_matrix function
 		core::conformation::ResidueOP dummyligresOP = all_residues_[1];
