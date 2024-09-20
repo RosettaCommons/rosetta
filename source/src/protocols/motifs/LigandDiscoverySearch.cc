@@ -371,6 +371,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			ms_tr << "Current anchor residue position: " << working_position << std::endl;
 		}
 
+		//declare empty discovery_position_residue name that will be properly written in initialization
+		std::string discovery_position_residue = "";
+
 		//determine whether to kill due to bad initialization
 		bool kill_bad_init = false;
 
@@ -381,18 +384,23 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			}
 			kill_bad_init = true;
 		}
+		else
+		{
+			//inputs are good if you make it here
 
-		std::string discovery_position_residue = working_pose_->residue(working_position).name3();
+			//set discovery_position_residue
+			discovery_position_residue = working_pose_->residue(working_position).name3();
+		
+			//get motif sublibrary
+			motif_library_for_select_residue_ = get_motif_sublibrary_by_aa(discovery_position_residue);
 
-		//get motif sublibrary
-		motif_library_for_select_residue_ = get_motif_sublibrary_by_aa(discovery_position_residue);
+			if ( motif_library_for_select_residue_.size() == 0 ) {
 
-		if ( motif_library_for_select_residue_.size() == 0 ) {
-
-			if ( verbose_ >= 1 ) {
-				ms_tr << "We have no motifs to work with here. Exiting function." << std::endl;
+				if ( verbose_ >= 1 ) {
+					ms_tr << "We have no motifs to work with here. Exiting function." << std::endl;
+				}
+				kill_bad_init = true;
 			}
-			kill_bad_init = true;
 		}
 
 		if ( kill_bad_init == true ) {
