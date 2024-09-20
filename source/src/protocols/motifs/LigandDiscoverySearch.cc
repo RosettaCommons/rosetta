@@ -2369,7 +2369,7 @@ bool LigandDiscoverySearch::ligand_clash_check(core::conformation::ResidueOP lig
 //satisfaction is based on whether the ratio of occupied cells to unoccupied cells is >= a user-inputted threshold
 //returns space_fill_matrix_copy (the filled matrix with the ligand)
 
-SpaceFillMatrix LigandDiscoverySearch::space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
+LigandDiscoverySearch::SpaceFillMatrix LigandDiscoverySearch::space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
 	utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts)
 {
 	//values that can be seeded into the matrix with their meaning. Only 5,7,9,11 can be seeded using this function since we adjust values based on the ligand being present
