@@ -144,6 +144,9 @@ public:
 	// @brief parameterized constructor to load in motif library, pdb, and ligand library
 	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position);
 
+	// @brief parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
+	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position, core::Real distance_threshold, core::Real angle_threshold);
+
 	// @brief function to load in a library for the search protocol
 	void set_motif_library(protocols::motifs::MotifCOPs motif_library);
 
@@ -182,6 +185,12 @@ public:
 
 	// @brief function to get all ligand residues
 	utility::vector1<core::conformation::ResidueOP> get_all_residues();
+
+	// @brief function to set value of dist_threshold_
+	void set_distance_threshold(core::Size distance_threshold);
+
+	// @brief function to set value of angl_threshold_
+	void set_angl_threshold(core::Size angle_threshold);
 
 	// @brief function to set value of verbose_ at desire of user when using an LDS object
 	int get_verbose();
@@ -264,6 +273,16 @@ private:
 
 	// @brief 1D vector to hold a list of residue indices to be considered in space fill function
 	utility::vector1<core::Size> target_residues_sf_;
+
+	// @brief variable to represent the maximum distance between motifs collected off a placed ligand and motifs in motif_library_
+	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
+	// value can be set using motifs::duplicate_dist_cutoff flag or set_dist_threshold()
+	Real dist_threshold_;
+
+	// @brief variable to represent the maximum angle between motifs collected off a placed ligand and motifs in motif_library_
+	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
+	// value can be set using motifs::duplicate_dist_cutoff flag or set_angle_threshold()
+	Real angl_threshold_;
 
 	// @brief a boolean value that controls the verbosity of text output while using the object
 	//default to be false, but can be made true by using the motifs::verbose flag; can also use set_verbose()

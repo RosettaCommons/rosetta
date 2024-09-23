@@ -234,6 +234,30 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	all_residues_ = all_residues;
 	working_positions_ = working_position;
 
+	//set distance and angle thresholds if motif comparison is conducted
+	//I am choosing to not have values be included in the constructor arguments because these values may not necessarily even be used, they can be set in command line arguments, and there are setter functions that can be used after creating the object
+	//A constructor overload can be made to include these two as well
+	dist_threshold_ =  basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ];
+	angl_threshold_ = basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
+
+	//set value of verbose_ to the flag value; default is false (program will not be verbose)
+	verbose_ = option[ OptionKeys::motifs::verbose ]();
+
+}
+
+//parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
+LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position, core::Real distance_threshold, core::Real angle_threshold)
+{
+
+	working_pose_ = pose_from_PDB;
+	motif_library_ = motif_library;
+	all_residues_ = all_residues;
+	working_positions_ = working_position;
+
+	//set distance and angle thresholds if motif comparison is conducted
+	dist_threshold_ =  distance_threshold;
+	angl_threshold_ = angle_threshold;
+
 	//set value of verbose_ to the flag value; default is false (program will not be verbose)
 	verbose_ = option[ OptionKeys::motifs::verbose ]();
 
@@ -346,6 +370,18 @@ utility::vector1<core::conformation::ResidueOP> LigandDiscoverySearch::get_all_r
 	return all_residues_;
 }
 
+// @brief function to set value of dist_threshold_
+void LigandDiscoverySearch::set_distance_threshold(core::Size distance_threshold)
+{
+	dist_threshold_ = distance_threshold;
+}
+
+// @brief function to set value of angl_threshold_
+void LigandDiscoverySearch::set_angl_threshold(core::Size angle_threshold)
+{
+	angl_threshold_ = angle_threshold;
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -423,9 +459,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		}
 
 		//define cutoff thresholds for distance and angles for comparing motifs (default values are 1 and 0.4 respectively)
-		//distance cutoff of 0.8 and angle of 0.3 used in filtering of motif library that I (Ari Ginsparg) have used
-		Real dist_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ]  );
-		Real angl_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] );
+		Real dist_threshold = dist_threshold_;
+		Real angl_threshold = angl_threshold_;
 
 		//make whole score function based on ligand.wts for scoring whole system and use in highresdock
 		core::scoring::ScoreFunctionOP whole_score_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
