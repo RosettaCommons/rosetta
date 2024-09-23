@@ -277,12 +277,12 @@ private:
 	// @brief variable to represent the maximum distance between motifs collected off a placed ligand and motifs in motif_library_
 	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
 	// value can be set using motifs::duplicate_dist_cutoff flag or set_dist_threshold()
-	Real dist_threshold_;
+	core::Real dist_threshold_;
 
 	// @brief variable to represent the maximum angle between motifs collected off a placed ligand and motifs in motif_library_
 	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
 	// value can be set using motifs::duplicate_dist_cutoff flag or set_angle_threshold()
-	Real angl_threshold_;
+	core::Real angl_threshold_;
 
 	// @brief a boolean value that controls the verbosity of text output while using the object
 	//default to be false, but can be made true by using the motifs::verbose flag; can also use set_verbose()
