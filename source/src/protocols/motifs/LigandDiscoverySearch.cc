@@ -472,6 +472,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
 		//for each weight in the whole score function, set the scoretype weight to 0
+		//the purpose of this is to set up the non-weight parameters exactly the same way (and using the terms from the ligand.wts function)
+		//once terms are blanked to 0, terms of interest will be re-weighted as seen below
 		for ( auto my_scoretype : whole_score_fxn_->get_nonzero_weighted_scoretypes() ) {
 			fa_rep_fxn_->set_weight(my_scoretype,0);
 			fa_atr_fxn_->set_weight(my_scoretype,0);
