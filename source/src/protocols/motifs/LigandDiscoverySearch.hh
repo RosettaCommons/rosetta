@@ -192,12 +192,6 @@ public:
 	// @brief function to set value of angl_threshold_
 	void set_angl_threshold(core::Size angle_threshold);
 
-	// @brief function to set value of verbose_ at desire of user when using an LDS object
-	int get_verbose();
-
-	// @brief function to set value of verbose_ at desire of user when using an LDS object
-	void set_verbose(int verbosity);
-
 	////////////////////////////////////////////////////////////////////////////
 	//operation functions
 
@@ -283,8 +277,4 @@ private:
 	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
 	// value can be set using motifs::duplicate_dist_cutoff flag or set_angle_threshold()
 	core::Real angl_threshold_;
-
-	// @brief a boolean value that controls the verbosity of text output while using the object
-	//default to be false, but can be made true by using the motifs::verbose flag; can also use set_verbose()
-	int verbose_;
 };

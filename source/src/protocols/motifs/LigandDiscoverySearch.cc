@@ -240,9 +240,6 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	dist_threshold_ =  basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ];
 	angl_threshold_ = basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
 
-	//set value of verbose_ to the flag value; default is false (program will not be verbose)
-	verbose_ = option[ OptionKeys::motifs::verbose ]();
-
 }
 
 //parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
@@ -257,9 +254,6 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	//set distance and angle thresholds if motif comparison is conducted
 	dist_threshold_ =  distance_threshold;
 	angl_threshold_ = angle_threshold;
-
-	//set value of verbose_ to the flag value; default is false (program will not be verbose)
-	verbose_ = option[ OptionKeys::motifs::verbose ]();
 
 }
 
@@ -351,19 +345,6 @@ void LigandDiscoverySearch::set_all_residues(utility::vector1<core::conformation
 	all_residues_ = all_residues;
 }
 
-// @brief function to set value of verbose_ at desire of user when using an LDS object
-void LigandDiscoverySearch::set_verbose(int verbosity)
-{
-	verbose_ = verbosity;
-}
-
-
-// @brief function to get value of verbose_
-int LigandDiscoverySearch::get_verbose()
-{
-	return verbose_;
-}
-
 //function to get all ligand residues
 utility::vector1<core::conformation::ResidueOP> LigandDiscoverySearch::get_all_residues()
 {
@@ -388,6 +369,7 @@ void LigandDiscoverySearch::set_angl_threshold(core::Size angle_threshold)
 core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 {
 	//create tracer to identify points of the run
+	//This tracer uses the following tracer outpurs: standard (no extension), Debug, Warning, and Trace
 	static basic::Tracer ms_tr( "LigandDiscoverySearch_out", basic::t_info );
 
 	IdentifyLigandMotifs ilm;
@@ -395,17 +377,17 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	//iterate over all indices in working_positions_
 	//if the size of working_positions is 0, return -1 because we want at least 1 index to work with
 	if ( working_positions_.size() == 0 ) {
-		if ( verbose_ >= 1 ) {
-			ms_tr << "Length of working_positions_ vector is 0 and we have no positions to work with, killing the attempt now." << std::endl;
-		}
+
+		ms_tr.Warning << "Length of working_positions_ vector is 0 and we have no positions to work with, killing the attempt now." << std::endl;
+
 		return -1;
 	}
 
 	//run discovery over each position in working_positions_
 	for (const auto & working_position : working_positions_) {
-		if ( verbose_ >= 1 ) {
-			ms_tr << "Current anchor residue position: " << working_position << std::endl;
-		}
+
+		ms_tr << "Current anchor residue position: " << working_position << std::endl;
+
 
 		//declare empty discovery_position_residue name that will be properly written in initialization
 		std::string discovery_position_residue = "";
@@ -415,9 +397,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 		//kill if working position is out of bounds
 		if ( working_position < 1 || working_position > working_pose_->size() ) {
-			if ( verbose_ >= 1 ) {
-				ms_tr << "Working position of " << working_position << " is invalid as it is not a valid index to access a residue in your pose of size " << working_pose_->size() << std::endl;
-			}
+
+			ms_tr.Warning << "Working position of " << working_position << " is invalid as it is not a valid index to access a residue in your pose of size " << working_pose_->size() << std::endl;
+
 			kill_bad_init = true;
 		}
 		else
@@ -431,18 +413,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			motif_library_for_select_residue_ = get_motif_sublibrary_by_aa(discovery_position_residue);
 
 			if ( motif_library_for_select_residue_.size() == 0 ) {
-
-				if ( verbose_ >= 1 ) {
-					ms_tr << "We have no motifs to work with here. Exiting function." << std::endl;
-				}
+				ms_tr.Warning << "We have no motifs to work with here. Exiting function." << std::endl;
 				kill_bad_init = true;
 			}
 		}
 
 		if ( kill_bad_init == true ) {
-			if ( verbose_ >= 1 ) {
-				ms_tr << "We have at least 1 bad initial input, killing the attempt now." << std::endl;
-			}
+
+			ms_tr.Warning << "We have at least 1 bad initial input, killing the attempt now." << std::endl;
+
 			return -1;
 		}
 
@@ -585,30 +564,29 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		while ( dummylig_mrt->natoms() > 0 )
 				{
 			//debug print of the first atom in the list of verticies and number of atoms
-			if ( verbose_ >= 3 ) {
-				ms_tr << "Number of atoms in dummy mrt is now: " <<  dummylig_mrt->natoms() << std::endl;
-			}
+
+			ms_tr.Trace << "Number of atoms in dummy mrt is now: " <<  dummylig_mrt->natoms() << std::endl;
+
 			//pop the first atom in the list of vertices
 			dummylig_mrt->delete_atom(dummylig_mrt->all_atoms()[1]);
 		}
 
-		if ( verbose_ >= 3 ) {
-			ms_tr << "Number of atoms in dummy mrt is now: " <<  dummylig_mrt->natoms() << std::endl;
-		}
+
+		ms_tr.Trace << "Number of atoms in dummy mrt is now: " <<  dummylig_mrt->natoms() << std::endl;
+
 		//delete all chis in the dummy ligand
 		//probably easiest to use delete_terminal_chi
 		while ( dummylig_mrt->nchi() > 0 )
 				{
-			if ( verbose_ >= 3 ) {
-				ms_tr << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
-			}
+
+					ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
 
 			//delete the terminal chi
 			dummylig_mrt->delete_terminal_chi();
 		}
-		if ( verbose_ >= 3 ) {
-			ms_tr << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
-		}
+
+		ms_tr.Trace << "Number of chi in residue is currently: " << dummylig_mrt->nchi() << std::endl;
+
 
 		//create a pdb of the space fill matrix if the flag selects for it
 		if ( option[ OptionKeys::motifs::output_space_fill_matrix_pdbs ] ) {
@@ -636,23 +614,23 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		core::Real whole_fxn_cutoff = 10000;
 
 		if ( option[ OptionKeys::motifs::fa_rep_cutoff ].user() ) {
-			if ( verbose_ >= 2 ) {
-				ms_tr << "Using user-inputted fa_rep cutoff of: "  << option[ OptionKeys::motifs::fa_rep_cutoff ] << std::endl;
-			}
+			
+			ms_tr.Debug << "Using user-inputted fa_rep cutoff of: "  << option[ OptionKeys::motifs::fa_rep_cutoff ] << std::endl;
+			
 			fa_rep_cutoff = option[ OptionKeys::motifs::fa_rep_cutoff ];
 		}
 
 		if ( option[ OptionKeys::motifs::fa_atr_cutoff ].user() ) {
-			if ( verbose_ >= 2 ) {
-				ms_tr << "Using user-inputted fa_atr cutoff of: "  << option[ OptionKeys::motifs::fa_atr_cutoff ] << std::endl;
-			}
+			
+			ms_tr.Debug << "Using user-inputted fa_atr cutoff of: "  << option[ OptionKeys::motifs::fa_atr_cutoff ] << std::endl;
+			
 			fa_atr_cutoff = option[ OptionKeys::motifs::fa_atr_cutoff ];
 		}
 
 		if ( option[ OptionKeys::motifs::fa_atr_rep_cutoff ].user() ) {
-			if ( verbose_ >= 2 ) {
-				ms_tr << "Using user-inputted fa_atr_rep cutoff of: "  << option[ OptionKeys::motifs::fa_atr_rep_cutoff ] << std::endl;
-			}
+			
+			ms_tr.Debug << "Using user-inputted fa_atr_rep cutoff of: "  << option[ OptionKeys::motifs::fa_atr_rep_cutoff ] << std::endl;
+			
 			fa_atr_rep_cutoff = option[ OptionKeys::motifs::fa_atr_rep_cutoff ];
 		}
 
@@ -661,9 +639,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		bool use_ligand_wts = option[ OptionKeys::motifs::score_with_ligand_wts_function ];
 
 		if ( option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ].user() && use_ligand_wts ) {
-			if ( verbose_ >= 2 ) {
-				ms_tr << "Using user-inputted fa_atr cutoff of: "  << option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ] << std::endl;
-			}
+			
+			ms_tr.Debug << "Using user-inputted fa_atr cutoff of: "  << option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ] << std::endl;
+			
 			whole_fxn_cutoff = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
 		}
 
@@ -687,9 +665,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			best_pdbs_to_keep = option[ OptionKeys::motifs::best_pdbs_to_keep ];
 		}
 
-		if ( verbose_ >= 1 ) {
-			ms_tr << "Starting to iterate through all ligands" << std::endl;
-		}
+
+		ms_tr << "Starting to iterate through all ligands" << std::endl;		
 
 		//create a copy of the working_pose_ that working_pose_ can be reset to after each placement attempt
 		core::pose::Pose original_pose(*working_pose_);
@@ -709,15 +686,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			//convert ligres to be a ResidueOP type
 			core::conformation::ResidueOP ligresOP = tracker;
 
-			if ( verbose_ >= 1 ) {
-				ms_tr << "On ligand " << ligresOP->name() << std::endl;
-			}
+
+			ms_tr << "On ligand " << ligresOP->name() << std::endl;			
 
 			const core::Real lig_nbr_radius = ligresOP->nbr_radius();
-
-			if ( verbose_ >= 3 ) {
-				ms_tr << "NBR_RADIUS of ligand is: " << lig_nbr_radius << std::endl;
-			}
+			
+			ms_tr.Debug << "NBR_RADIUS of ligand is: " << lig_nbr_radius << std::endl;			
 
 			int ligand_passing_counter  = 0;
 			int ligand_clashing_counter = 0;
@@ -736,9 +710,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			utility::vector1<utility::vector1< utility::vector1< core::Size > >> ligand_atom_trios;
 
 			//find all atom trios (that do not contain hydrogen) in the ligand
-			if ( verbose_ >= 2 ) {
-				ms_tr << "Finding all atom trios for this ligand" << std::endl;
-			}
+			
+			ms_tr.Trace << "Finding all atom trios for this ligand" << std::endl;
+			
 			for ( core::Size atom_i = 1; atom_i <= ligresOP->natoms(); ++atom_i ) {
 				if ( ligresOP->atom_is_hydrogen(atom_i) ) { continue; }
 				// This is a for loop to iterate over each atom's connected atoms:
@@ -781,19 +755,19 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			core::pose::PoseOP minipose(new pose::Pose);
 
 			//now we have all trios, iterate through each trio and the motif sub-library
-			if ( verbose_ >= 2 ) {
-				ms_tr << "Number of unique atom trios in this ligand are: " << ligand_atom_trios.size() << std::endl;
-			}
+			
+			ms_tr.Debug << "Number of unique atom trios in this ligand are: " << ligand_atom_trios.size() << std::endl;
+			
 
 			//iterate through each atom trio and try to use motifs to place the ligand
 			for ( core::Size i = 1; i <= ligand_atom_trios.size(); ++i ) {
 
-				if ( verbose_ >= 2 ) {
-					ms_tr << "On trio # " << i << std::endl;
-				}
-				if ( verbose_ >= 3 ) {
-					ms_tr << "Trio is " << ligresOP->atom_name(ligand_atom_trios[i][1][1]) << " " << ligresOP->atom_name(ligand_atom_trios[i][2][1]) << " " << ligresOP->atom_name(ligand_atom_trios[i][3][1]) << std::endl;
-				}
+				
+				ms_tr.Trace << "On trio # " << i << std::endl;
+				
+				
+				ms_tr.Debug << "Trio is " << ligresOP->atom_name(ligand_atom_trios[i][1][1]) << " " << ligresOP->atom_name(ligand_atom_trios[i][2][1]) << " " << ligresOP->atom_name(ligand_atom_trios[i][3][1]) << std::endl;
+				
 				core::Size  trip_atom_1(ligand_atom_trios[i][1][1]);
 				core::Size  trip_atom_2(ligand_atom_trios[i][2][1]);
 				core::Size  trip_atom_3(ligand_atom_trios[i][3][1]);
@@ -804,21 +778,20 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 				//run through the motif sublibrary and attempt to pair the ligand trio to the target residue based  on existing motifs
 				//iterate through motif sublibrary
-				if ( verbose_ >= 3 ) {
-					ms_tr << "Looking through all motifs against this trio" << std::endl;
-					ms_tr << "#motifs = " << motif_library_for_select_residue_.size() << std::endl;
-				}
+				
+				ms_tr.Debug << "Looking through all motifs against this trio" << std::endl;
+				ms_tr.Debug << "#motifs = " << motif_library_for_select_residue_.size() << std::endl;
+				
 
 				int motif_counter = 0;
 
 				for ( auto motifcop : motif_library_for_select_residue_ ) {
 					++motif_counter;
 
-					if ( verbose_ >= 3 ) {
-						if ( motif_counter % 10000 == 0 ) {
-							ms_tr << "On motif #" << motif_counter <<std::endl;
-						}
+					if ( motif_counter % 10000 == 0 ) {
+						ms_tr.Trace << "On motif #" << motif_counter <<std::endl;
 					}
+					
 					//compare the atoms on the ligand side of the motif to the atom trio; continue if not a match
 					//no need to check inverse order of trio, will get checked later
 
@@ -891,37 +864,37 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//either the whole system score or the sub area score need to pass (one can fail)
 						if ( (space_fill_scores[1] >= score_cutoffs_sf[1] and option[ OptionKeys::motifs::space_fill_cutoff_score ].user()) || (space_fill_scores[2] >= score_cutoffs_sf[2] and option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user()) || (fill_differential >= score_cutoffs_sf[3] and option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user()) ) {
 							//print out where any scores passed
-							if ( verbose_ >= 3 ) {
-								if ( space_fill_scores[1] >= score_cutoffs_sf[1] and option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
-									ms_tr << space_fill_scores[1] << " : whole system, passed" << std::endl;
-								} else if ( option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
-									ms_tr << space_fill_scores[1] << " : whole system, failed" << std::endl;
-								}
 
-								if ( space_fill_scores[2] >= score_cutoffs_sf[2] and option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
-									ms_tr << space_fill_scores[2] << " : sub-area, passed" << std::endl;
-								} else if ( option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
-									ms_tr << space_fill_scores[2] << " : sub-area, failed" << std::endl;
-								}
-
-								if ( fill_differential >= score_cutoffs_sf[3] and option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
-									ms_tr << fill_differential << " : sub-area differential, passed" << std::endl;
-								} else if ( option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
-									ms_tr << fill_differential << " : sub-area differential, failed" << std::endl;
-								}
+							if ( space_fill_scores[1] >= score_cutoffs_sf[1] and option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
+								ms_tr.Debug << space_fill_scores[1] << " : whole system, passed" << std::endl;
+							} else if ( option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
+								ms_tr.Debug << space_fill_scores[1] << " : whole system, failed" << std::endl;
 							}
+
+							if ( space_fill_scores[2] >= score_cutoffs_sf[2] and option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
+								ms_tr.Debug << space_fill_scores[2] << " : sub-area, passed" << std::endl;
+							} else if ( option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
+								ms_tr.Debug << space_fill_scores[2] << " : sub-area, failed" << std::endl;
+							}
+
+							if ( fill_differential >= score_cutoffs_sf[3] and option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
+								ms_tr.Debug << fill_differential << " : sub-area differential, passed" << std::endl;
+							} else if ( option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
+								ms_tr.Debug << fill_differential << " : sub-area differential, failed" << std::endl;
+							}
+
 						} else {
 							//print for any failed scores
-							if ( verbose_ >= 3 ) {
+							
 								if ( option[ OptionKeys::motifs::space_fill_cutoff_score ].user() ) {
-									ms_tr << space_fill_scores[1] << " : whole system, failed and killing palcement attempt" << std::endl;
+									ms_tr.Debug << space_fill_scores[1] << " : whole system, failed and killing palcement attempt" << std::endl;
 								}
 								if ( option[ OptionKeys::motifs::space_fill_cutoff_score_sub ].user() ) {
-									ms_tr << space_fill_scores[2] << " : sub-area, failed and killing placement attempt" << std::endl;
+									ms_tr.Debug << space_fill_scores[2] << " : sub-area, failed and killing placement attempt" << std::endl;
 								} else if ( option[ OptionKeys::motifs::space_fill_cutoff_differential_score_sub ].user() ) {
-									ms_tr << fill_differential << " : sub-area differential, failed" << std::endl;
+									ms_tr.Debug << fill_differential << " : sub-area differential, failed" << std::endl;
 								}
-							}
+							
 							continue;
 						}
 					}
@@ -941,17 +914,17 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							if ( working_pose_->residue(working_pose_->size()).nbr_atom_xyz().distance(working_pose_->residue(resi_pos).nbr_atom_xyz()) < (working_pose_->residue(working_pose_->size()).nbr_radius() + working_pose_->residue(resi_pos).nbr_radius()) ) {
 								//append residue to minipose
 								minipose->append_residue_by_jump(working_pose_->residue(resi_pos), 1);
-								if ( verbose_ >= 3 ) {
-									ms_tr << resi_pos << ", ";
-								}
+								
+								ms_tr.Debug << resi_pos << ", ";
+								
 							}
 						}
 
 						//append ligand to minipose
 						minipose->append_residue_by_jump(working_pose_->residue(working_pose_->size()), 1);
-						if ( verbose_ >= 2 ) {
-							ms_tr << "Made minipose of size " << minipose->size() << std::endl;
-						}
+						
+						ms_tr.Debug << "Made minipose of size " << minipose->size() << std::endl;
+						
 
 						//hard wipe minipose and then move to next placement if minipose only has the ligand in it
 						if ( minipose->size() == 1 ) {
@@ -1044,9 +1017,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					}
 
 
-					if ( verbose_ >= 2 ) {
-						ms_tr << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
-					}
+					
+					ms_tr.Debug << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
+					
 
 					//attempt to use movers to optimize placement a little more
 					//begin setting up objects to make HighResDocker mover work
@@ -1171,28 +1144,28 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						}
 
 						//print the score
-						if ( verbose_ >= 2 ) {
-							ms_tr << "ligand.wts score function score: " << whole_score << std::endl;
-						}
+						
+						ms_tr.Debug << "ligand.wts score function score: " << whole_score << std::endl;
+						
 						//reset atr and rep values based on score of whole pose
 						fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
 						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
 					}
 
 					//only print post dock delta score if we did a score with the whole or atrrep function
-					if ( verbose_ >= 2 && (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts) ) {
+					if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts ) {
 						//ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
 
-						ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep;
+						ms_tr.Debug << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep;
 
 						//with atr_rep
 						if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
-							ms_tr << ", fa_atr_rep after = " << fa_atr_rep_score_after;
+							ms_tr.Debug << ", fa_atr_rep after = " << fa_atr_rep_score_after;
 						} else if ( use_ligand_wts ) {
 							//without atr_rep
-							ms_tr << ", whole = " << whole_score;
+							ms_tr.Debug << ", whole = " << whole_score;
 						}
-						ms_tr << std::endl;
+						ms_tr.Debug << std::endl;
 					}
 					//check if whole_score is within cutoff, kill if not
 					//need to remove ligand from poses so that they can be recycled
@@ -1300,9 +1273,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						core::Size min_motifs_cutoff = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
 						core::Size min_sig_motifs_cutoff = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
 
-						if ( verbose_ >= 2 ) {
-							ms_tr << "Ligand placement created " << motifs_made << " total motifs" << std::endl;
-						}
+						ms_tr.Debug << "Ligand placement created " << motifs_made << " total motifs" << std::endl;						
 
 						//if minimum number of motifs made is not enough, kill placement
 						if ( motifs_made < min_motifs_cutoff ) {
@@ -1351,9 +1322,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 								//if kill is still true, we didn't get a motif for the mandatory residue, move forward with killing the ligand
 								if ( kill ) {
-									if ( verbose_ >= 3 ) {
-										ms_tr << "Not motifs made for residue index " << sig_res_pos << std::endl;
-									}
+									
+									ms_tr.Debug << "Not motifs made for residue index " << sig_res_pos << std::endl;
+									
 									break;
 								}
 							}
@@ -1368,9 +1339,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								continue;
 							}
 
-							if ( verbose_ >= 2 ) {
-								ms_tr << "Made motifs for all mandatory residues" << std::endl;
-							}
+							
+							ms_tr.Trace << "Made motifs for all mandatory residues" << std::endl;
+							
 
 						}
 
@@ -1378,9 +1349,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						core::Size significant_motifs_made = 0;
 
 						if ( option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
-							if ( verbose_ >= 2 ) {
-								ms_tr << "Ligand placement created motifs against significant residues: ";
-							}
+							
+							ms_tr.Trace << "Ligand placement created motifs against significant residues: ";
+							
 
 							//build a string that holds the significant indices that had a motif form against it
 							std::string significant_residue_string = "";
@@ -1392,20 +1363,16 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 										//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
 										++significant_motifs_made;
 
-										if ( verbose_ >= 2 ) {
-											ms_tr << prot_pos_that_made_motifs[motif_made] << ",";
-											significant_residue_string += std::to_string(prot_pos_that_made_motifs[motif_made]) + ",";
-										}
-
+										ms_tr.Debug << prot_pos_that_made_motifs[motif_made] << ",";
 										significant_residue_string += std::to_string(prot_pos_that_made_motifs[motif_made]) + ",";
 									}
 								}
 							}
 
-							if ( verbose_ >= 2 ) {
-								ms_tr << std::endl;
-								ms_tr << "Ligand placement created " << significant_motifs_made << " motifs for significant residues" << std::endl;
-							}
+							
+							ms_tr.Debug << std::endl;
+							ms_tr.Debug << "Ligand placement created " << significant_motifs_made << " motifs for significant residues" << std::endl;
+							
 
 							pdb_name = pdb_name + "_sigmotifs_" + std::to_string(significant_motifs_made);
 
@@ -1470,23 +1437,23 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 										core::Real motif_theta = 0;
 
 										jump_distance(ligmotifcop->forward_jump(), realmotifcop->forward_jump(), motif_distance, motif_theta);
-										if ( verbose_ >= 4 ) {
-											ms_tr << "Comparing to motif " << realmotifcop->remark() << std::endl;
-											ms_tr << "Distance: " << motif_distance << std::endl;
-											ms_tr << "Theta: " << motif_theta << std::endl;
-										}
+										
+										ms_tr.Debug << "Comparing to motif " << realmotifcop->remark() << std::endl;
+										ms_tr.Debug << "Distance: " << motif_distance << std::endl;
+										ms_tr.Debug << "Theta: " << motif_theta << std::endl;
+										
 
 										if ( motif_distance < dist_threshold && motif_theta < angl_threshold ) {
 											//note that the motif matches a real one
-											if ( verbose_ >= 2 ) {
-												ms_tr << "Current motif matches real motif with distance: " << motif_distance << "  and angle difference: "  << motif_theta << std::endl;
-												if ( ligmotifcop->has_remark() ) {
-													ms_tr << "Ligand remark is: " << ligmotifcop->remark() << std::endl;
-												}
-												if ( realmotifcop->has_remark() ) {
-													ms_tr << "Real motif remark is: " << realmotifcop->remark() << std::endl;
-												}
+											
+											ms_tr.Debug << "Current motif matches real motif with distance: " << motif_distance << "  and angle difference: "  << motif_theta << std::endl;
+											if ( ligmotifcop->has_remark() ) {
+												ms_tr.Debug << "Ligand remark is: " << ligmotifcop->remark() << std::endl;
 											}
+											if ( realmotifcop->has_remark() ) {
+												ms_tr.Debug << "Real motif remark is: " << realmotifcop->remark() << std::endl;
+											}
+											
 
 											//increment real counter
 											++motifs_that_look_real;
@@ -1511,9 +1478,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								} else {
 									//key (and real motif in our library) does not exist
 									//declare that this motif is not considered real
-									if ( verbose_ >= 3 ) {
-										ms_tr << "No real motifs identified for motif: " << *ligmotifcop << std::endl;
-									}
+									
+									ms_tr.Debug << "No real motifs identified for motif: " << *ligmotifcop << std::endl;									
 
 									core::pose::add_comment(*working_pose_, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match");
 								}
@@ -1579,9 +1545,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//if we are keeping all placements that are better than a given ddg cutoff, it is better to not inflate the best_100_placements vector since we only use it for sorting
 					//instead, just make the pdb and keep going
 					if ( best_pdbs_to_keep == 0 ) {
-						if ( verbose_ >= 2 ) {
-							ms_tr << "Making pdb file for: " << pdb_name << std::endl;
-						}
+						
+						ms_tr.Debug << "Making pdb file for: " << pdb_name << std::endl;
+						
 						core::io::pdb::dump_pdb(*working_pose_, pdb_name);
 
 						//directly remove residue from end of pose
@@ -1625,34 +1591,34 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 				}
 
-				if ( verbose_ >= 2 ) {
-					ms_tr << "# passing cases for this trio = " << passing_counter << std::endl;
-					ms_tr << "# clashing cases for this trio = " << clashing_counter << std::endl;
-					ms_tr << "# post motif filter cases for this trio = " << pose_atom_check_counter << std::endl;
-				}
+				
+				ms_tr.Debug << "# passing cases for this trio = " << passing_counter << std::endl;
+				ms_tr.Debug << "# clashing cases for this trio = " << clashing_counter << std::endl;
+				ms_tr.Debug << "# post motif filter cases for this trio = " << pose_atom_check_counter << std::endl;
+				
 
 				ligand_passing_counter += passing_counter;
 				ligand_clashing_counter += clashing_counter;
 
-				if ( verbose_ >= 2 ) {
-					ms_tr << "Total cases for trio: " << passing_counter + clashing_counter << std::endl;
-				}
+				
+				ms_tr.Debug << "Total cases for trio: " << passing_counter + clashing_counter << std::endl;
+				
 
 			}//end of trio loop
 
-			if ( verbose_ >= 1 ) {
-				ms_tr << "Done iterating all trios, moving to next ligand" << std::endl;
-				ms_tr << "Total passing attempts for ligand is " << ligand_passing_counter << std::endl;
-				ms_tr << "Total clashing attempts for ligand is " << ligand_clashing_counter << std::endl;
-			}
+			
+			ms_tr << "Done iterating all trios, moving to next ligand" << std::endl;
+			ms_tr << "Total passing attempts for ligand is " << ligand_passing_counter << std::endl;
+			ms_tr << "Total clashing attempts for ligand is " << ligand_clashing_counter << std::endl;
+			
 
 
 			//assign the new cutoff once we hit 100 entries
 			if ( best_placements.size() >= best_pdbs_to_keep && best_pdbs_to_keep != 0 ) {
 				score_cutoff = std::get<0>(best_placements[0]);
-				if ( verbose_ >= 2 ) {
-					ms_tr << "New score cutoff is: " << score_cutoff << std::endl;
-				}
+				
+				ms_tr.Debug << "New score cutoff is: " << score_cutoff << std::endl;
+				
 			}
 		}
 		//sort passing_placements if keeping only a specified amount
@@ -1663,15 +1629,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//create pdbs of best scoring poses for pdb
 
 		for ( const auto & best_pose_runner : best_placements ) {
-			if ( verbose_ >= 2 ) {
-				ms_tr << "Making pdb file for: " << std::get<2>(best_pose_runner) << std::endl;
-			}
+			
+			ms_tr.Debug << "Making pdb file for: " << std::get<2>(best_pose_runner) << std::endl;
+			
 			core::io::pdb::dump_pdb( ( std::get<1>(best_pose_runner)), std::get<2>(best_pose_runner));
 		}
 
-		if ( verbose_ >= 2 ) {
-			ms_tr << "Number of placements that passed all filters: " << passed_placement_counter << std::endl;
-		}
+		
+		ms_tr.Debug << "Number of placements that passed all filters: " << passed_placement_counter << std::endl;
+		
 	}
 	return 1;
 }
@@ -1698,9 +1664,9 @@ protocols::motifs::MotifCOPs LigandDiscoverySearch::get_motif_sublibrary_by_aa(s
 	//assign motif_holder contents to motif_library_for_select_residue_
 	motif_library_for_select_residue_ = motif_holder;
 
-	if ( verbose_ >= 2 ) {
-		ms_tr << "Created motif sub-library for residue " << residue_name << " with " << motif_library_for_select_residue_.size() << " motifs in it." << std::endl;
-	}
+	
+	ms_tr.Debug << "Created motif sub-library for residue " << residue_name << " with " << motif_library_for_select_residue_.size() << " motifs in it." << std::endl;
+	
 
 	return motif_holder;
 }
@@ -1788,9 +1754,9 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 	}
 
 	//create 3D matrix to roughly represent 3D coordinate space of protein
-	if ( verbose_ >= 2 ) {
-		ms_tr << "Creating protein clash coordinate matrix. Dimensions of matrix are " << x_bound << "," << y_bound << "," << z_bound << std::endl;
-	}
+	
+	ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << x_bound << "," << y_bound << "," << z_bound << std::endl;
+	
 
 	for ( core::Size x = 1; x <= x_bound; ++x ) {
 		//make a 2D  matrix
@@ -1944,9 +1910,9 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	xyz_bound[2] *= resolution_increase_factor;
 	xyz_bound[3] *= resolution_increase_factor;
 
-	if ( verbose_ >= 2 ) {
-		ms_tr << "Creating space fill matrix. Dimensions of matrix are " << xyz_bound[1] << "," << xyz_bound[2] << "," << xyz_bound[3] << std::endl;
-	}
+	
+	ms_tr.Debug << "Creating space fill matrix. Dimensions of matrix are " << xyz_bound[1] << "," << xyz_bound[2] << "," << xyz_bound[3] << std::endl;
+
 
 	//make a matrix, and we will copy it over to the global one once we make it
 	SpaceFillMatrix protein_representation_matrix;
@@ -2036,12 +2002,12 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 
 	occupied_ratios[1] = occupied_cell_count / total_cells;
 
-	if ( verbose_ >= 2 ) {
-		ms_tr << "Total: " << total_cells << std::endl;
-		ms_tr << "Occupied: " << occupied_cell_count << std::endl;
-		ms_tr << "Unoccupied: " << unoccupied_cell_count << std::endl;
-		ms_tr << "Occupied-Total Ratio: " << occupied_ratios[1] << std::endl;
-	}
+	
+	ms_tr.Debug << "Total: " << total_cells << std::endl;
+	ms_tr.Debug << "Occupied: " << occupied_cell_count << std::endl;
+	ms_tr.Debug << "Unoccupied: " << unoccupied_cell_count << std::endl;
+	ms_tr.Debug << "Occupied-Total Ratio: " << occupied_ratios[1] << std::endl;
+	
 
 	//write values to matrix_data_counts
 	matrix_data_counts[1] = occupied_cell_count;
@@ -2076,9 +2042,9 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	//default of only looking at area about anchor residue; probably not the best method if you actually care about using this method
 	if ( target_residues_sf_.size() == 0 && using_binding_pocket_center_sf == false ) {
 
-		if ( verbose_ >= 2 ) {
-			ms_tr << "Defining sub-area only by anchor residue." << std::endl;
-		}
+		
+		ms_tr.Trace << "Defining sub-area only by anchor residue." << std::endl;
+		
 
 		//define nbr_atom_xyz vector as the xyz vector of the nbr atom of the xyz residue
 		numeric::xyzVector<int> nbr_atom_xyz = working_pose_->residue(working_position).nbr_atom_xyz();
@@ -2087,18 +2053,18 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		core::Real anchor_nbr_radius = working_pose_->residue(working_position).nbr_radius();
 
 		//debugging: get coordinates of nbr atom and nbr radius
-		if ( verbose_ >= 3 ) {
-			ms_tr << "Raw coordinates of nbr atom and nbr radius: " << nbr_atom_xyz.x() << ", " << nbr_atom_xyz.y() << ", " << nbr_atom_xyz.z() << "; " << anchor_nbr_radius << std::endl;
-		}
+		
+		ms_tr.Debug << "Raw coordinates of nbr atom and nbr radius: " << nbr_atom_xyz.x() << ", " << nbr_atom_xyz.y() << ", " << nbr_atom_xyz.z() << "; " << anchor_nbr_radius << std::endl;
+		
 
 		//apply the xyz shift
 		nbr_atom_xyz[0] += static_cast<int>(xyz_shift[1]);
 		nbr_atom_xyz[1] += static_cast<int>(xyz_shift[2]);
 		nbr_atom_xyz[2] += static_cast<int>(xyz_shift[3]);
 
-		if ( verbose_ >= 3 ) {
-			ms_tr << "Shifted not scaled coordinates of nbr atom and nbr radius: " << nbr_atom_xyz[0] << ", " << nbr_atom_xyz[1] << ", " << nbr_atom_xyz[2] << "; " << anchor_nbr_radius << std::endl;
-		}
+		
+		ms_tr.Debug << "Shifted not scaled coordinates of nbr atom and nbr radius: " << nbr_atom_xyz[0] << ", " << nbr_atom_xyz[1] << ", " << nbr_atom_xyz[2] << "; " << anchor_nbr_radius << std::endl;
+		
 		//translate NBR radius length to define the sub-area to investigate
 		nbr_atom_xyz[0] *= resolution_increase_factor;
 		nbr_atom_xyz[1] *= resolution_increase_factor;
@@ -2116,19 +2082,18 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 
 
 		//debugging: get coordinates of nbr atom and nbr radius
-		if ( verbose_ >= 3 ) {
-			ms_tr << "xyz shifts and resolution factor: " << xyz_shift[1] << ", " << xyz_shift[2] << ", " << xyz_shift[3] <<  "; " << resolution_increase_factor << std::endl;
-			ms_tr << "Shifted and scaled coordinates of nbr atom and nbr radius: " << nbr_atom_xyz[0] << ", " << nbr_atom_xyz[1] << ", " << nbr_atom_xyz[2] << "; " << anchor_nbr_radius << std::endl;
-			ms_tr << "Min and Max xyz: " << sub_xyz_min[1] << ", " << sub_xyz_min[2] << ", " << sub_xyz_min[3] << "; " << sub_xyz_max[1] << ", " << sub_xyz_max[2] << ", " << sub_xyz_max[3] << " " << std::endl;
-		}
+		
+		ms_tr.Debug << "xyz shifts and resolution factor: " << xyz_shift[1] << ", " << xyz_shift[2] << ", " << xyz_shift[3] <<  "; " << resolution_increase_factor << std::endl;
+		ms_tr.Debug << "Shifted and scaled coordinates of nbr atom and nbr radius: " << nbr_atom_xyz[0] << ", " << nbr_atom_xyz[1] << ", " << nbr_atom_xyz[2] << "; " << anchor_nbr_radius << std::endl;
+		ms_tr.Debug << "Min and Max xyz: " << sub_xyz_min[1] << ", " << sub_xyz_min[2] << ", " << sub_xyz_min[3] << "; " << sub_xyz_max[1] << ", " << sub_xyz_max[2] << ", " << sub_xyz_max[3] << " " << std::endl;
+		
 
 	} else if ( target_residues_sf_.size() > 0 ) {
 		//
 		//define subsection if the vector of residues is listed
 		//if target_residues_sf and binding_pocket_center_sf flags are used, the cube/sphere area will be defined by the min and max values from both. This can help make sure that specific residue regions are covered (could turn the cube into a rectangular prism and sphere into an elipsoid)
-		if ( verbose_ >= 2 ) {
-			ms_tr << "Defining sub-area by inputted residues using motifs::target_residues_sf flag." << std::endl;
-		}
+		ms_tr.Trace << "Defining sub-area by inputted residues using motifs::target_residues_sf flag." << std::endl;
+		
 
 		//run through the vector of indices and identify the coordinates of the nbr atom
 		//could technically check all atoms in each residue, but would be longer and nbr should get us a good enough estimate
@@ -2210,15 +2175,15 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 					binding_pocket_center_xyz[coordinate] += xyz_shift[coordinate];
 					binding_pocket_center_xyz[coordinate] *= resolution_increase_factor;
 				} else {
-					if ( verbose_ >= 1 ) {
-						ms_tr << "You have inputted an excess value using the motifs::binding_pocket_center_sf flag. This is value #" << coordinate << " in the input vector with a value of: " << binding_pocket_center_xyz[coordinate] << ". Ignoring this bad input, and you should review the proper usage for this flag." << std::endl;
-					}
+					
+					ms_tr.Warning << "You have inputted an excess value using the motifs::binding_pocket_center_sf flag. This is value #" << coordinate << " in the input vector with a value of: " << binding_pocket_center_xyz[coordinate] << ". Ignoring this bad input, and you should review the proper usage for this flag." << std::endl;
+					
 				}
 			}
 		} else {
-			if ( verbose_ >= 1 ) {
-				ms_tr << "You have only inputted " << binding_pocket_center_xyz.size() << " coordinates for the binding pocket center xyz coordinates. We need exactly 3 to work. We can't do anything with this, and will skip this method and will just use an area around the anchor residue." << std::endl;
-			}
+			
+			ms_tr.Warning << "You have only inputted " << binding_pocket_center_xyz.size() << " coordinates for the binding pocket center xyz coordinates. We need exactly 3 to work. We can't do anything with this, and will skip this method and will just use an area around the anchor residue." << std::endl;
+			
 		}
 
 		//get the sub min and max values
@@ -2235,23 +2200,22 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		binding_pocket_dimensions.push_back(radius_real);
 		binding_pocket_dimensions.push_back(radius_real);
 		binding_pocket_dimensions.push_back(radius_real);
-		if ( verbose_ >= 1 ) {
-			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] << std::endl;
-		}
+
+		ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] << std::endl;
+		
 
 		//overwrite if we used binding_pocket_dimensions_sf flag (which can use a different value in x,y,z)
 		if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].user() ) {
 			//make sure dimensions vector is valid
 			//can not use if fewer than 3 values (do not use), warn if there are more than 3
 			if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size()<3 ) {
-				if ( verbose_ >= 1 ) {
-					ms_tr << "Input vector for binding_pocket_dimensions_sf is too small with only " << option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() << " entries. We will default to using binding_pocket_radius_sf." << std::endl;
-				}
+			ms_tr.Warning << "Input vector for binding_pocket_dimensions_sf is too small with only " << option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() << " entries. We will default to using binding_pocket_radius_sf." << std::endl;
+				
 			} else {
 				if ( option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size()>3 ) {
-					if ( verbose_ >= 1 ) {
-						ms_tr << "Input vector for binding_pocket_dimensions_sf has more than 3 entries with having " << option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() << " entries. We will only use the first 3 values." << std::endl;
-					}
+					
+					ms_tr.Warning << "Input vector for binding_pocket_dimensions_sf has more than 3 entries with having " << option[ OptionKeys::motifs::binding_pocket_dimensions_sf ].size() << " entries. We will only use the first 3 values." << std::endl;
+					
 				}
 
 				//set the first 3 values of the binding_pocket_dimensions_sf vector to binding_pocket_dimensions (and also apply the resolution factor)
@@ -2266,9 +2230,9 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 
 		}
 
-		if ( verbose_ >= 1 ) {
-			ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] << std::endl;
-		}
+
+		ms_tr << "binding_pocket_dimensions: " << binding_pocket_dimensions[1] << "," << binding_pocket_dimensions[2] << "," << binding_pocket_dimensions[3] << std::endl;
+		
 
 		//apply the radius
 		//make sure that we don't underflow for any values, and set the value to 1 if we would
@@ -2333,9 +2297,9 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 		sub_xyz_max[3] = xyz_bound[3];
 	}
 
-	if ( verbose_ >= 1 ) {
-		ms_tr << "Sub-region stats without placed region, bound by adjusted coordinates: x(" << sub_xyz_min[1] << "->" << sub_xyz_max[1] << ") y(" << sub_xyz_min[2] << "->" << sub_xyz_max[2] << ") z(" << sub_xyz_min[3] << "->" << sub_xyz_max[3] << ")" << std::endl;
-	}
+	
+	ms_tr << "Sub-region stats without placed region, bound by adjusted coordinates: x(" << sub_xyz_min[1] << "->" << sub_xyz_max[1] << ") y(" << sub_xyz_min[2] << "->" << sub_xyz_max[2] << ") z(" << sub_xyz_min[3] << "->" << sub_xyz_max[3] << ")" << std::endl;
+	
 	//run through the boundaries and determine the space fill ratio of the sub-area
 	for ( core::Size x = sub_xyz_min[1]; x <= sub_xyz_max[1]; ++x ) {
 		for ( core::Size y = sub_xyz_min[2]; y <= sub_xyz_max[2]; ++y ) {
@@ -2361,12 +2325,12 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 
 	//output information on sub-region
 
-	if ( verbose_ >= 2 ) {
-		ms_tr << "Total: " << sub_total_cells << std::endl;
-		ms_tr << "Occupied: " << sub_occupied_cell_count << std::endl;
-		ms_tr << "Unoccupied: " << sub_unoccupied_cell_count << std::endl;
-		ms_tr << "Occupied-Total Ratio: " << occupied_ratios[2] << std::endl;
-	}
+	
+	ms_tr.Debug << "Total: " << sub_total_cells << std::endl;
+	ms_tr.Debug << "Occupied: " << sub_occupied_cell_count << std::endl;
+	ms_tr.Debug << "Unoccupied: " << sub_unoccupied_cell_count << std::endl;
+	ms_tr.Debug << "Occupied-Total Ratio: " << occupied_ratios[2] << std::endl;
+	
 
 	matrix_data_counts[4] = sub_occupied_cell_count;
 	matrix_data_counts[5] = sub_unoccupied_cell_count;
@@ -2456,9 +2420,8 @@ LigandDiscoverySearch::SpaceFillMatrix LigandDiscoverySearch::space_fill_analysi
 
 	//debugging
 	//print out what matrix data counts looks like before and after modification
-	if ( verbose_ >= 3 ) {
-		ms_tr << "matrix_data_counts: " << matrix_data_counts[1] << ", " << matrix_data_counts[2] << ", " << matrix_data_counts[3] << ", " << matrix_data_counts[4] << ", " << matrix_data_counts[5] << ", " << matrix_data_counts[6] << std::endl;
-	}
+	
+	ms_tr.Debug << "matrix_data_counts: " << matrix_data_counts[1] << ", " << matrix_data_counts[2] << ", " << matrix_data_counts[3] << ", " << matrix_data_counts[4] << ", " << matrix_data_counts[5] << ", " << matrix_data_counts[6] << std::endl;
 
 	//iterate through all atoms in the placed ligand, and update the count of occupied cells in the space fill matrix, going atom by atom
 	//We will not edit the matrix, and will instead just update the count if a cells occupied by an atom in the ligand is not already occupied by an atom of the protein system
@@ -2606,9 +2569,9 @@ LigandDiscoverySearch::SpaceFillMatrix LigandDiscoverySearch::space_fill_analysi
 		}
 	}
 
-	if ( verbose_ >= 3 ) {
-		ms_tr << "matrix_data_counts: " << matrix_data_counts[1] << ", " << matrix_data_counts[2] << ", " << matrix_data_counts[3] << ", " << matrix_data_counts[4] << ", " << matrix_data_counts[5] << ", " << matrix_data_counts[6] << std::endl;
-	}
+	
+	ms_tr.Debug << "matrix_data_counts: " << matrix_data_counts[1] << ", " << matrix_data_counts[2] << ", " << matrix_data_counts[3] << ", " << matrix_data_counts[4] << ", " << matrix_data_counts[5] << ", " << matrix_data_counts[6] << std::endl;
+	
 	//derive space fill scores for whole and sub areas
 	occupied_ratios[1] = static_cast<core::Real>(matrix_data_counts[1])/static_cast<core::Real>(matrix_data_counts[3]);
 	occupied_ratios[2] = static_cast<core::Real>(matrix_data_counts[4])/static_cast<core::Real>(matrix_data_counts[6]);
@@ -2627,9 +2590,9 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceF
 	static basic::Tracer ms_tr( "LigandDiscoverySearch_export_space_fill_matrix_as_C_H_O_N_pdb", basic::t_info );
 
 	std::string matrix_pdb_name = pdb_name_prefix + "_WholeRatio_" + std::to_string(occupied_ratios[1]) + "_SubRatio_" + std::to_string(occupied_ratios[2]) + ".pdb";
-	if ( verbose_ >= 2 ) {
-		ms_tr << "Preparing to make visualization pose for " << matrix_pdb_name << std::endl;
-	}
+	
+	ms_tr.Trace << "Preparing to make visualization pose for " << matrix_pdb_name << std::endl;
+	
 
 	//create a new mutableresiduetype to work on adding atoms to
 	//base it from the dummy mrt that had all of its atoms deleted
@@ -2826,16 +2789,16 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceF
 		}
 	}
 
-	if ( verbose_ >= 3 ) {
-		ms_tr << "Made all atoms for this matrix" << std::endl;
-	}
+	
+	ms_tr.Trace << "Made all atoms for this matrix" << std::endl;
+	
 
 	//handle rare case where the my_mrt that reaches this point only has 1-2 atoms and would have no icoor data
 	//if no atoms, move to dumping the pdb
 	if ( my_mrt.natoms() == 0 ) {
-		if ( verbose_ >= 2 ) {
-			ms_tr << "Making viualization pdb " << matrix_pdb_name << std::endl;
-		}
+		
+		ms_tr.Trace << "Making viualization pdb " << matrix_pdb_name << std::endl;
+		
 		matrix_pose.dump_pdb(matrix_pdb_name);
 
 		return matrix_pose;
@@ -2906,9 +2869,9 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceF
 	//custom name based on prefix (i.e. motif used, "empty", etc.), occupied ratios
 
 
-	if ( verbose_ >= 2 ) {
-		ms_tr << "Making viualization pdb " << matrix_pdb_name << std::endl;
-	}
+	
+	ms_tr.Trace << "Making viualization pdb " << matrix_pdb_name << std::endl;
+	
 	matrix_pose.dump_pdb(matrix_pdb_name);
 
 	return matrix_pose;
