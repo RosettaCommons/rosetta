@@ -985,12 +985,17 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//declare pdb name and pdb comment data strings, which will be used in scoring and motif functions
 					std::string comment_table_header = "";
 					std::string comment_table_data = "";
-					str::string pdb_name = "";
+					std::string pdb_name = "";
 					std::string pdb_short_unique_name = "";
+
+					//declare delta_score, since this variable needs to be passed down in case we are only keeping the top X systems by free energy
+					//get free energy of pose with placed ligand before highresdock
+					//declaration of variable
+					core::Real delta_score = 10000;
 
 					//score the ligand in the minipose and working_pose_
 					//if score_placed_ligand returns true, we are good to move on, otherwise continue to next placement due to bad scoring at at least one point
-					if(score_placed_ligand(minipose, original_pose, pdb_name, pdb_short_unique_name, comment_table_header, comment_table_data))
+					if(score_placed_ligand(minipose, original_pose, pdb_name, pdb_short_unique_name, comment_table_header, comment_table_data, delta_score, clashing_counter))
 					{
 						continue;
 					}
@@ -1386,7 +1391,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 // @brief scoring operation to evaluate if a placed ligand has a good enough fa_atr, fa_rep, and ddg
 //placement is optimized using a highresdocker object, and fa_atr, fa_rep, and ddg can be scored again for a second round of scoring
-bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, std::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data)
+bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, std::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data, core::Real & delta_score, core::Size & clashing_counter)
 {
 	//make a tracer
 	static basic::Tracer ms_tr( "LigandDiscoverySearch.score_placed_ligand", basic::t_info );
@@ -1446,10 +1451,6 @@ bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, c
 	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_3, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_3 ), fx3 ) ) );
 
 	working_pose_->constraint_set(sc_cst_set);
-
-	//get free energy of pose with placed ligand before highresdock
-	//declaration of variable
-	core::Real delta_score = 0;
 
 	//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
 	if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
