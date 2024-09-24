@@ -240,6 +240,12 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	dist_threshold_ =  basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ];
 	angl_threshold_ = basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
 
+	//initially seed score class score functions
+	whole_score_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	fa_atr_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	fa_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	fa_atr_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+
 }
 
 //parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
@@ -254,6 +260,12 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	//set distance and angle thresholds if motif comparison is conducted
 	dist_threshold_ =  distance_threshold;
 	angl_threshold_ = angle_threshold;
+
+	//initially seed score class score functions
+	whole_score_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	fa_atr_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	fa_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	fa_atr_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
 }
 
@@ -460,6 +472,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] ) {
 			hash_motif_library_into_map(motif_library_,mymap);
 		}
+
+		ms_tr.Trace << "Setting up score functions." << std::endl;
+		setup_score_functions();
 
 		//define cutoff thresholds for distance and angles for comparing motifs (default values are 1 and 0.4 respectively)
 		Real dist_threshold = dist_threshold_;
