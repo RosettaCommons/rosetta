@@ -246,12 +246,14 @@ main( int argc, char * argv [] )
 			//utility::vector1<int> discovery_position_int = option[ OptionKeys::motifs::protein_discovery_locus ];
 			utility::vector1<core::Size> discovery_position;
 
-			ms_tr << "Discovery residue indices: " << option[ OptionKeys::motifs::protein_discovery_locus ] << std::endl;
+			utility::vector1<core::Size> discovery_positions_int = option[ OptionKeys::motifs::protein_discovery_locus ]();
+
+			ms_tr << "Discovery residue indices: " << discovery_positions_int << std::endl;
 
 			//iteratively append discovery positions to the discovery_position vector
-			for (core::Size i = 0; i < option[ OptionKeys::motifs::protein_discovery_locus ].size(); ++i)
+			for (const auto & position : discovery_positions_int)
 			{
-				discovery_position.push_back(option[ OptionKeys::motifs::protein_discovery_locus ][i]);
+				discovery_position.push_back(position);
 			}
 
 			//declare LigandDiscoverySearch object
