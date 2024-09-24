@@ -400,7 +400,7 @@ void LigandDiscoverySearch::setup_score_functions()
 }
 
 // @brief function to push all adjacent atom indices if inputted ligand residue (pointer) into a 3D core::Size vector (atom_trios typedef) 
-atom_trios LigandDiscoverySearch::derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP)
+atom_trios LigandDiscoverySearch::derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP, const core::chemical::AtomTypeSetCOP atset)
 {
 	atom_trios ligand_atom_trios;
 
@@ -456,7 +456,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	//This tracer uses the following tracer outpurs: standard (no extension), Debug, Warning, and Trace
 	static basic::Tracer ms_tr( "LigandDiscoverySearch_out", basic::t_info );
 
+	//create identifyligandmotifs object for use with deriving motifs from placed ligands
 	IdentifyLigandMotifs ilm;
+
+	// Make an atomtypeset to get atomtype integers for use in derive_adjacent_atoms_of_ligand
+	core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+
 
 	//iterate over all indices in working_positions_
 	//if the size of working_positions is 0, return -1 because we want at least 1 index to work with
@@ -703,7 +708,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			whole_fxn_cutoff = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
 		}
 
-
 		//create vector to hold the top X placements
 		comparator comparator_v = comparator();
 		//this gets used unless the value for the number of best placements to collect is 0 (in which all are collected)
@@ -722,7 +726,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		if ( option[ OptionKeys::motifs::best_pdbs_to_keep ].user() ) {
 			best_pdbs_to_keep = option[ OptionKeys::motifs::best_pdbs_to_keep ];
 		}
-
 
 		ms_tr << "Starting to iterate through all ligands" << std::endl;		
 
@@ -756,16 +759,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			//derive a mutable residue type, used in high res docker
 			core::chemical::MutableResidueTypeOP lig_mrt( new core::chemical::MutableResidueType( ligresOP->type() ) );
 
-			// This is to make an atomtypeset to get atomtype integers
-			core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
-
 			//3D vector to hold data of all connected atom trios
 			//contents of vector are as follows:
 			//ligand_atom_trios[trio identifier: 1-#trios][atom identifier within trio: 1-3][trio atom metadata]
 			//metadata consists of index (position 1) and numerical atom_type_index (position 2)
 
 			ms_tr.Trace << "Finding all atom trios for this ligand" << std::endl;
-			atom_trios ligand_atom_trios = derive_adjacent_atoms_of_ligand(ligresOP);
+			atom_trios ligand_atom_trios = derive_adjacent_atoms_of_ligand(ligresOP, atset);
 
 			//mini pose to represent a smaller region of the protein near the binding pocket for early energy calculations
 			core::pose::PoseOP minipose(new pose::Pose);
@@ -798,7 +798,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				ms_tr.Debug << "Looking through all motifs against this trio" << std::endl;
 				ms_tr.Debug << "#motifs = " << motif_library_for_select_residue_.size() << std::endl;
 				
-
 				int motif_counter = 0;
 
 				for ( auto motifcop : motif_library_for_select_residue_ ) {

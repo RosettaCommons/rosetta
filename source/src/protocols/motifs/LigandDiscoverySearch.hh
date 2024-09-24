@@ -210,7 +210,8 @@ public:
 	protocols::motifs::MotifCOPs get_motif_sublibrary_by_aa(std::string residue_name);
 
 	// @brief function to push all adjacent atom indices if inputted ligand residue (pointer) into a 3D core::Size vector (atom_trios typedef) 
-	atom_trios derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP);
+	//this in theory could be useful beyond the scope the discover function, so I will leave this as public
+	atom_trios derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP, const core::chemical::AtomTypeSetCOP atset);
 
 private:
 
@@ -248,10 +249,6 @@ private:
 	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters that are derived by utility::Binary_Util.hh::code_to_6bit())
 	//used in export_space_fill_matrix_as_C_H_O_N_pdb to assign a unique name to an atom (due to limitations in atom icoor data, an atom name can be no longer than 4 characters)
 	std::string base_10_to_base_62(core::Size starting_num);
-
-	// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
-	// This previously just was code in discover(), but it is better to compartmentalize for readability
-	void setup_score_functions();
 
 	// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
 	// This previously just was code in discover(), but it is better to compartmentalize for readability
