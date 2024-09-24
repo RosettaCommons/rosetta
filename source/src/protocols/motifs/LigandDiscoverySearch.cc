@@ -419,8 +419,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		return -1;
 	}
 
-	ms_tr.Debug << "All working positions: " << working_positions_ << std::endl;
-
 	//run discovery over each position in working_positions_
 	for (const auto & working_position : working_positions_) {
 
