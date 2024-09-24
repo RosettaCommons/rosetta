@@ -264,6 +264,10 @@ private:
 	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
 	bool make_minipose(core::pose::PoseOP & minipose, const core::conformation::ResidueOP ligresOP);
 
+	// @brief scoring operation to evaluate if a placed ligand has a good enough fa_atr, fa_rep, and ddg
+	//placement is optimized using a highresdocker object, and fa_atr, fa_rep, and ddg can be scored again for a second round of scoring
+	bool score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, str::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data);
+
 	//class variables
 
 	// @brief receptor pose to work with
