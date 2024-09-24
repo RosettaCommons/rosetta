@@ -264,10 +264,6 @@ private:
 	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
 	bool make_minipose(core::pose::PoseOP & minipose, const core::conformation::ResidueOP ligresOP);
 
-	// @brief scoring operation to evaluate if a placed ligand has a good enough fa_atr, fa_rep, and ddg
-	//placement is optimized using a highresdocker object, and fa_atr, fa_rep, and ddg can be scored again for a second round of scoring
-	bool score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, std::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data, core::Real & delta_score, core::Size & clashing_counter);
-
 	//class variables
 
 	// @brief receptor pose to work with
@@ -311,22 +307,4 @@ private:
 
 	// @brief modified ligand.wts function that only contains fa_atr and fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
 	core::scoring::ScoreFunctionOP fa_atr_rep_fxn_;
-
-	// @brief score cutoff for fa_atr
-	core::Real fa_atr_cutoff_;
-
-	// @brief score cutoff for fa_rep
-	core::Real fa_rep_cutoff_;
-
-	// @brief score cutoff for fa_atr_rep
-	core::Real fa_atr_rep_cutoff_;
-
-	// @brief score cutoff for whole score function score
-	core::Real whole_fxn_cutoff_;
-
-	// @brief bool to indicate whether to use the whole ligand.wts score function when scorign placements (faster, but potentially less powerful if not using whole function when scoring)
-	bool use_ligand_wts_;
-
-	// @brief score cutoff for ddg
-	core::Real ddg_cutoff_;
 };
