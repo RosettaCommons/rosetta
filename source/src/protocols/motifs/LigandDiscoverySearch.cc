@@ -399,6 +399,109 @@ void LigandDiscoverySearch::setup_score_functions()
 	whole_score_fxn_->set_weight(core::scoring::coordinate_constraint, 0);
 }
 
+// @brief function to push all adjacent atom indices if inputted ligand residue (pointer) into a 3D core::Size vector (atom_trios typedef) 
+LigandDiscoverySearch::atom_trios LigandDiscoverySearch::derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP, const core::chemical::AtomTypeSetCOP atset)
+{
+	atom_trios ligand_atom_trios;
+
+	//find all atom trios (that do not contain hydrogen) in the ligand
+	for ( core::Size atom_i = 1; atom_i <= ligresOP->natoms(); ++atom_i ) {
+		if ( ligresOP->atom_is_hydrogen(atom_i) ) { continue; }
+		// This is a for loop to iterate over each atom's connected atoms:
+		core::conformation::Residue::AtomIndices atom_i_connects(  ligresOP->bonded_neighbor( atom_i ) );
+		for ( const auto & atom_j :  atom_i_connects) {
+			if ( ligresOP->atom_is_hydrogen(atom_j) ) { continue; }
+			// This is the next for loop to find connects for the second atom, giving us the final atom number (atom k)
+			core::conformation::Residue::AtomIndices atom_j_connects(  ligresOP->bonded_neighbor( atom_j ) );
+			for ( const auto & atom_k :  atom_j_connects ) {
+				if ( ligresOP->atom_is_hydrogen(atom_k) ) { continue; }
+				chemical::AtomType atom_i_type(ligresOP->atom_type(atom_i));
+				if ( atom_i != atom_k ) {
+
+					//make the 3 atom vector
+					utility::vector1< utility::vector1< core::Size > > cur_motif_indices;
+
+					utility::vector1< core::Size > atom_i_vector;
+					atom_i_vector.push_back( atom_i );
+					atom_i_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_i).atom_type_name() ) );
+
+					utility::vector1< core::Size > atom_j_vector;
+					atom_j_vector.push_back( atom_j );
+					atom_j_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_j).atom_type_name() ) );
+
+					utility::vector1< core::Size > atom_k_vector;
+					atom_k_vector.push_back( atom_k );
+					atom_k_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_k).atom_type_name() ) );
+
+					cur_motif_indices.push_back( atom_i_vector);
+					cur_motif_indices.push_back( atom_j_vector);
+					cur_motif_indices.push_back( atom_k_vector);
+
+					ligand_atom_trios.push_back(cur_motif_indices);
+				}
+			}
+		}
+	}
+
+	return ligand_atom_trios;
+
+}
+
+
+// @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
+//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
+bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose)
+{
+	//make a tracer
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.make_minipose", basic::t_info );
+
+	working_pose_->append_residue_by_jump(*ligresOP, 1);
+
+	ms_tr.Debug << "Builting Minipose made of residue indices: ";
+
+	for ( core::Size resi_pos = 1; resi_pos < working_pose_->size(); ++resi_pos ) {
+		//code breaks if unmatched disulfide  bonds form, just place all  residues that can have the disulfide type
+		if ( working_pose_->residue(resi_pos).has_variant_type(core::chemical::DISULFIDE) ) {
+			continue;
+		}
+
+		//code to try to make minipose even smaller to the point of only near residues
+		//only consider adding residues that are within a distance equal to the sum of the nbr radius of the ligand (located at index pose.size) and residue being investigated
+		if ( working_pose_->residue(working_pose_->size()).nbr_atom_xyz().distance(working_pose_->residue(resi_pos).nbr_atom_xyz()) < (working_pose_->residue(working_pose_->size()).nbr_radius() + working_pose_->residue(resi_pos).nbr_radius()) ) {
+			//append residue to minipose
+			minipose->append_residue_by_jump(working_pose_->residue(resi_pos), 1);
+			
+			ms_tr.Debug << resi_pos << ", ";
+			
+		}
+	}
+
+	ms_tr.Debug << std::endl;
+
+	//append ligand to minipose
+	minipose->append_residue_by_jump(working_pose_->residue(working_pose_->size()), 1);
+
+	ms_tr.Debug << "Made minipose of size " << minipose->size() << std::endl;
+
+
+	//hard wipe minipose and then move to next placement if minipose only has the ligand in it
+	if ( minipose->size() == 1 ) {
+		core::pose::PoseOP filler(new pose::Pose);
+		minipose = filler;
+		//wipe ligand from working pose since we are not investigating this placement
+		working_pose_->delete_residue_slow(working_pose_->size());
+		//return false so discover() knows to continue to the next placement, becase the current is bad
+		return false;
+	}
+
+	//dump the minipose for debugging
+	core::io::pdb::dump_pdb( *minipose, "minipose.pdb");
+	//delete ligand so we can reuse minipose and wipe from working pose
+	minipose->delete_residue_slow(minipose->size());
+	working_pose_->delete_residue_slow(working_pose_->size());
+	return true;
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -406,9 +509,14 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 {
 	//create tracer to identify points of the run
 	//This tracer uses the following tracer outpurs: standard (no extension), Debug, Warning, and Trace
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_out", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.discover", basic::t_info );
 
+	//create identifyligandmotifs object for use with deriving motifs from placed ligands
 	IdentifyLigandMotifs ilm;
+
+	// Make an atomtypeset to get atomtype integers for use in derive_adjacent_atoms_of_ligand
+	core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+
 
 	//iterate over all indices in working_positions_
 	//if the size of working_positions is 0, return -1 because we want at least 1 index to work with
@@ -418,8 +526,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 		return -1;
 	}
-
-	ms_tr.Debug << "All working positions: " << working_positions_ << std::endl;
 
 	//run discovery over each position in working_positions_
 	for (const auto & working_position : working_positions_) {
@@ -657,7 +763,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			whole_fxn_cutoff = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
 		}
 
-
 		//create vector to hold the top X placements
 		comparator comparator_v = comparator();
 		//this gets used unless the value for the number of best placements to collect is 0 (in which all are collected)
@@ -676,7 +781,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		if ( option[ OptionKeys::motifs::best_pdbs_to_keep ].user() ) {
 			best_pdbs_to_keep = option[ OptionKeys::motifs::best_pdbs_to_keep ];
 		}
-
 
 		ms_tr << "Starting to iterate through all ligands" << std::endl;		
 
@@ -698,7 +802,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			//convert ligres to be a ResidueOP type
 			core::conformation::ResidueOP ligresOP = tracker;
 
-
 			ms_tr << "On ligand " << ligresOP->name() << std::endl;			
 
 			const core::Real lig_nbr_radius = ligresOP->nbr_radius();
@@ -711,57 +814,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			//derive a mutable residue type, used in high res docker
 			core::chemical::MutableResidueTypeOP lig_mrt( new core::chemical::MutableResidueType( ligresOP->type() ) );
 
-			// This is to make an atomtypeset to get atomtype integers
-			core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
-
 			//3D vector to hold data of all connected atom trios
 			//contents of vector are as follows:
 			//ligand_atom_trios[trio identifier: 1-#trios][atom identifier within trio: 1-3][trio atom metadata]
 			//metadata consists of index (position 1) and numerical atom_type_index (position 2)
 
-			utility::vector1<utility::vector1< utility::vector1< core::Size > >> ligand_atom_trios;
-
-			//find all atom trios (that do not contain hydrogen) in the ligand
-			
 			ms_tr.Trace << "Finding all atom trios for this ligand" << std::endl;
-			
-			for ( core::Size atom_i = 1; atom_i <= ligresOP->natoms(); ++atom_i ) {
-				if ( ligresOP->atom_is_hydrogen(atom_i) ) { continue; }
-				// This is a for loop to iterate over each atom's connected atoms:
-				core::conformation::Residue::AtomIndices atom_i_connects(  ligresOP->bonded_neighbor( atom_i ) );
-				for ( const auto & atom_j :  atom_i_connects) {
-					if ( ligresOP->atom_is_hydrogen(atom_j) ) { continue; }
-					// This is the next for loop to find connects for the second atom, giving us the final atom number (atom k)
-					core::conformation::Residue::AtomIndices atom_j_connects(  ligresOP->bonded_neighbor( atom_j ) );
-					for ( const auto & atom_k :  atom_j_connects ) {
-						if ( ligresOP->atom_is_hydrogen(atom_k) ) { continue; }
-						chemical::AtomType atom_i_type(ligresOP->atom_type(atom_i));
-						if ( atom_i != atom_k ) {
-
-							//make the 3 atom vector
-							utility::vector1< utility::vector1< core::Size > > cur_motif_indices;
-
-							utility::vector1< core::Size > atom_i_vector;
-							atom_i_vector.push_back( atom_i );
-							atom_i_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_i).atom_type_name() ) );
-
-							utility::vector1< core::Size > atom_j_vector;
-							atom_j_vector.push_back( atom_j );
-							atom_j_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_j).atom_type_name() ) );
-
-							utility::vector1< core::Size > atom_k_vector;
-							atom_k_vector.push_back( atom_k );
-							atom_k_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_k).atom_type_name() ) );
-
-							cur_motif_indices.push_back( atom_i_vector);
-							cur_motif_indices.push_back( atom_j_vector);
-							cur_motif_indices.push_back( atom_k_vector);
-
-							ligand_atom_trios.push_back(cur_motif_indices);
-						}
-					}
-				}
-			}
+			atom_trios ligand_atom_trios = derive_adjacent_atoms_of_ligand(ligresOP, atset);
 
 			//mini pose to represent a smaller region of the protein near the binding pocket for early energy calculations
 			core::pose::PoseOP minipose(new pose::Pose);
@@ -794,7 +853,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				ms_tr.Debug << "Looking through all motifs against this trio" << std::endl;
 				ms_tr.Debug << "#motifs = " << motif_library_for_select_residue_.size() << std::endl;
 				
-
 				int motif_counter = 0;
 
 				for ( auto motifcop : motif_library_for_select_residue_ ) {
@@ -913,45 +971,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//create the minipose to use for early scoring (atr, rep, atrrep) if it does not exist already
 					if ( minipose->size() == 0 ) {
-						working_pose_->append_residue_by_jump(*ligresOP, 1);
-
-						for ( core::Size resi_pos = 1; resi_pos < working_pose_->size(); ++resi_pos ) {
-							//code breaks if unmatched disulfide  bonds form, just place all  residues that can have the disulfide type
-							if ( working_pose_->residue(resi_pos).has_variant_type(core::chemical::DISULFIDE) ) {
-								continue;
-							}
-
-							//code to try to make minipose even smaller to the point of only near residues
-							//only consider adding residues that are within a distance equal to the sum of the nbr radius of the ligand (located at index pose.size) and residue being investigated
-							if ( working_pose_->residue(working_pose_->size()).nbr_atom_xyz().distance(working_pose_->residue(resi_pos).nbr_atom_xyz()) < (working_pose_->residue(working_pose_->size()).nbr_radius() + working_pose_->residue(resi_pos).nbr_radius()) ) {
-								//append residue to minipose
-								minipose->append_residue_by_jump(working_pose_->residue(resi_pos), 1);
-								
-								ms_tr.Debug << resi_pos << ", ";
-								
-							}
-						}
-
-						//append ligand to minipose
-						minipose->append_residue_by_jump(working_pose_->residue(working_pose_->size()), 1);
-						
-						ms_tr.Debug << "Made minipose of size " << minipose->size() << std::endl;
-						
-
-						//hard wipe minipose and then move to next placement if minipose only has the ligand in it
-						if ( minipose->size() == 1 ) {
-							core::pose::PoseOP filler(new pose::Pose);
-							minipose = filler;
-							//wipe ligand from working pose since we are not investigating this placement
-							working_pose_->delete_residue_slow(working_pose_->size());
+						//try to make the minipose if it is currently empty
+						//if the function returns false, that means that the minipose is bad and has no residues beyond the ligand; we want to continue if this is the case and the next placement will attempt
+						if (make_minipose(minipose) == false)
+						{
 							continue;
 						}
-
-						//dump the minipose for debugging
-						core::io::pdb::dump_pdb( *minipose, "minipose.pdb");
-						//delete ligand so we can reuse minipose and wipe from working pose
-						minipose->delete_residue_slow(minipose->size());
-						working_pose_->delete_residue_slow(working_pose_->size());
 					}
 
 					//append ligand to minipose for early scoring
@@ -1658,7 +1683,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 //function may have use outside discover, so public can use it
 protocols::motifs::MotifCOPs LigandDiscoverySearch::get_motif_sublibrary_by_aa(std::string residue_name)
 {
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_get_motif_sublibrary_by_aa", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.get_motif_sublibrary_by_aa", basic::t_info );
 
 	//create temporary motifcops object to hold
 	protocols::motifs::MotifCOPs motif_holder;
@@ -1689,7 +1714,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 {
 
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_create_protein_matrix", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.create_protein_representation_matrix", basic::t_info );
 
 	//run through all atoms to derive a range of dimensions to contain the protein in a 3D  space
 	//since we can't have negative indices, we need to normalize the coordinate values so that everything is positive
@@ -1819,7 +1844,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	*/
 
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_create_protein_matrix_space_fill", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.create_protein_matrix_space_fill", basic::t_info );
 
 	int smallest_x = 1;
 	int smallest_y = 1;
@@ -2428,7 +2453,7 @@ LigandDiscoverySearch::SpaceFillMatrix LigandDiscoverySearch::space_fill_analysi
 	*/
 
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_space_fill_analysis", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.space_fill_analysis", basic::t_info );
 
 	//debugging
 	//print out what matrix data counts looks like before and after modification
@@ -2599,7 +2624,7 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceF
 	utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt)
 {
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_export_space_fill_matrix_as_C_H_O_N_pdb", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.export_space_fill_matrix_as_C_H_O_N_pdb", basic::t_info );
 
 	std::string matrix_pdb_name = pdb_name_prefix + "_WholeRatio_" + std::to_string(occupied_ratios[1]) + "_SubRatio_" + std::to_string(occupied_ratios[2]) + ".pdb";
 	

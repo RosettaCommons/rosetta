@@ -135,6 +135,11 @@ public:
 
 	typedef utility::vector1<utility::vector1<utility::vector1<bool>>> ClashMatrix;
 
+	// @brief 3D matrix of core::Size values to represent trios of a central atom and 2 adjacent atoms
+	// this is used to identify atom trios to iterate over for motifs to potentially align against on the ligand side of the motif
+	// this is functionally the same as the SpaceFillMatrix typedef, however this secondary typedef seems useful in avoiding using an object type whose name does not make sense in the given context
+	typedef utility::vector1<utility::vector1<utility::vector1<core::Size>>> atom_trios;
+
 	////////////////////////////////////////////////////////////////////////////
 	//functions/constructors to set up protocol
 
@@ -204,10 +209,9 @@ public:
 	//function may have use outside discover, so public can use it
 	protocols::motifs::MotifCOPs get_motif_sublibrary_by_aa(std::string residue_name);
 
-	// @brief function to hash out an input motif library into a standard map of motifCOPs
-	//inputs are initial motif library and map that is to be filled out
-	//map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
-	void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap);
+	// @brief function to push all adjacent atom indices if inputted ligand residue (pointer) into a 3D core::Size vector (atom_trios typedef) 
+	//this in theory could be useful beyond the scope the discover function, so I will leave this as public
+	atom_trios derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP, const core::chemical::AtomTypeSetCOP atset);
 
 private:
 
@@ -249,6 +253,16 @@ private:
 	// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
 	// This previously just was code in discover(), but it is better to compartmentalize for readability
 	void setup_score_functions();
+
+	// @brief function to hash out an input motif library into a standard map of motifCOPs
+	//inputs are initial motif library and map that is to be filled out
+	//map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
+	//
+	void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap);
+
+	// @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
+	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
+	bool make_minipose(core::pose::PoseOP & minipose);
 
 	//class variables
 
