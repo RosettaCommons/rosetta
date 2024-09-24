@@ -104,11 +104,36 @@ class LigandDiscoverySearch
 public:
 
 	////////////////////////////////////////////////////////////////////////////
-	//typedefs to help clean up data types that are really convoluted, but not making them classes as reuse purpose may be limited
+	//typedefs to help clean up data types that are really lengthy/convoluted, but not making them classes as reuse purpose may be limited and these are probably pretty specific usages
 
 	// @brief motif_atoms type, which is a tuple of strings that access motifcops objects
 	// This is to be used in the breaking down of a motif library into smaller motif libraries that can be accessed by the 6 atom types of atoms in the motif
 	typedef std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string> motif_atoms;
+
+	// @brief 3D matrix cubic representation of a protein as a vector of core::Size (unsigned ints); dubbed as a "protein space fill matrix"
+	// resolution of the matrix may be more refined than one cubic angstrom if using the motifs::resolution_scale_factor flag
+	// unsigned int values are used to denote status of each index within the vector as follows:
+	/*
+	0 = empty and out of sub area, carbon, black
+	1 = protein and out of sub area, fluorine, icy blue
+	2 = empty and in sub area, oxygen, red
+	3 = protein and in sub area, nitrogen, blue
+	4 = do not use, keep even for unoccupied space
+	5 = ligand and out of sub area, sulphur, yellow
+	6 = do not use, keep even for unoccupied space
+	7 = ligand and in sub area, chlorine, green
+	8 = do not use, keep even for unoccupied space
+	9 = ligand and protein out of sub area, phosphorous, orange
+	10 = do not use, keep even for unoccupied space
+	11 = ligand and protein in sub area, iodine, purple
+	*/
+	typedef utility::vector1<utility::vector1<utility::vector1<core::Size>>> SpaceFillMatrix;
+
+	// @brief 3D matrix cubic representation of a protein as a vector of bools; dubbed as a "clash matrix"
+	// resolution of the matrix is 1 cubic angstrom per index
+	// True values indicate that an atom of the protein receptor occupied the index, false indicates empty
+
+	typedef utility::vector1<utility::vector1<utility::vector1<bool>>> ClashMatrix;
 
 	////////////////////////////////////////////////////////////////////////////
 	//functions/constructors to set up protocol
@@ -119,6 +144,9 @@ public:
 	// @brief parameterized constructor to load in motif library, pdb, and ligand library
 	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position);
 
+	// @brief parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
+	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position, core::Real distance_threshold, core::Real angle_threshold);
+
 	// @brief function to load in a library for the search protocol
 	void set_motif_library(protocols::motifs::MotifCOPs motif_library);
 
@@ -128,14 +156,17 @@ public:
 	// @brief return contents of motif_library_
 	protocols::motifs::MotifCOPs get_motif_library();
 
-	// @brief function to define the residue index that we will use for applying motifs for ligand placements
-	void set_working_position(core::Size working_position);
-
-	// @brief return contents of working_position_
-	core::Size get_working_position();
-
 	// @brief function to define the vector of residue indices that we will use for applying motifs for ligand placements
 	void set_working_positions(utility::vector1<core::Size> working_position);
+
+	// @brief overload function to define the vector of residue indices that we will use for applying motifs for ligand placements; takes single core::Size
+	void set_working_positions(core::Size working_position);
+
+	// @brief function to append an additional vector of working position indices to the existing working_positions_ vector
+	void add_working_positions(utility::vector1<core::Size> working_positions);
+
+	// @brief function to append an additional single working position index to the existing working_positions_ vector
+	void add_working_positions(core::Size working_positions);
 
 	// @brief return contents of working_positions_
 	utility::vector1<core::Size>  get_working_positions();
@@ -155,11 +186,11 @@ public:
 	// @brief function to get all ligand residues
 	utility::vector1<core::conformation::ResidueOP> get_all_residues();
 
-	// @brief function to set value of verbose_ at desire of user when using an LDS object
-	int get_verbose();
+	// @brief function to set value of dist_threshold_
+	void set_distance_threshold(core::Size distance_threshold);
 
-	// @brief function to set value of verbose_ at desire of user when using an LDS object
-	void set_verbose(int verbosity);
+	// @brief function to set value of angl_threshold_
+	void set_angl_threshold(core::Size angle_threshold);
 
 	////////////////////////////////////////////////////////////////////////////
 	//operation functions
@@ -197,23 +228,27 @@ private:
 	//uses working_pose to make the matrix
 	//condensing arguments in function to use vectors to hold xyz trios
 	void create_protein_representation_matrix_space_fill(utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
-		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts);
+		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts, core::Size working_position);
 
 	// @brief function to run a clash check of the placed ligand against the protein target
 	bool ligand_clash_check(core::conformation::ResidueOP ligresOP, core::Size x_shift, core::Size y_shift, core::Size z_shift, int x_bound_int, int y_bound_int, int z_bound_int);
 
 	// @brief function to determine if the placed ligand is satisfactory at filling the binding pocket in question
-	utility::vector1<utility::vector1<utility::vector1<core::Size>>> space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
+	SpaceFillMatrix space_fill_analysis(core::conformation::ResidueOP ligresOP, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
 		utility::vector1<core::Size> & sub_xyz_min, utility::vector1<core::Size> & sub_xyz_max, utility::vector1<core::Real> & occupied_ratios, utility::vector1<core::Size> & matrix_data_counts);
 
 	// @brief debugging function to export a space fill matrix as a pdb. Occupied cells are represented as a nitrogen and unoccupied cells are represented as an oxygen (considering making one for a clash matrix too)
 	// if printing the whole matrix and not just the sub-area, occupied cells are represented by hydrogens and unoccupied are represented by carbon
-	core::pose::Pose export_space_fill_matrix_as_C_H_O_N_pdb(utility::vector1<utility::vector1<utility::vector1<core::Size>>> space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
+	core::pose::Pose export_space_fill_matrix_as_C_H_O_N_pdb(SpaceFillMatrix space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
 		utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt);
 
-	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters represented by base_62_cipher_)
+	// @brief function to be used to convert a base 10 number to base 62 (as a string with characters that are derived by utility::Binary_Util.hh::code_to_6bit())
 	//used in export_space_fill_matrix_as_C_H_O_N_pdb to assign a unique name to an atom (due to limitations in atom icoor data, an atom name can be no longer than 4 characters)
 	std::string base_10_to_base_62(core::Size starting_num);
+
+	// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
+	// This previously just was code in discover(), but it is better to compartmentalize for readability
+	void setup_score_functions();
 
 	//class variables
 
@@ -225,21 +260,37 @@ private:
 	protocols::motifs::MotifCOPs motif_library_for_select_residue_;
 	// @brief ligand library
 	utility::vector1<core::conformation::ResidueOP> all_residues_;
-	// @brief residue index of protein pdb to attempt to place ligands off of
-	core::Size working_position_;
 	// @brief vector to hold list of all indices to investigate/use as anchor residues, used to set value of working_position_
 	utility::vector1<core::Size> working_positions_;
 
 	// @brief 3D matrix to represent voxelized copy of atoms in pose, used in clash check of placement for quick ruling out of bad placements
-	utility::vector1<utility::vector1<utility::vector1<bool>>> protein_representation_matrix_;
+	ClashMatrix protein_representation_matrix_;
 
 	// @brief 3D matrix to represent voxelized copy of atoms in pose in a more geometrically-accurate means than protein_representation_matrix_, used in checking space fill analysis (of binding pocket)
-	utility::vector1<utility::vector1<utility::vector1<core::Size>>> protein_representation_matrix_space_fill_;
+	SpaceFillMatrix protein_representation_matrix_space_fill_;
 
 	// @brief 1D vector to hold a list of residue indices to be considered in space fill function
 	utility::vector1<core::Size> target_residues_sf_;
 
-	// @brief a boolean value that controls the verbosity of text output while using the object
-	//default to be false, but can be made true by using the motifs::verbose flag; can also use set_verbose()
-	int verbose_;
+	// @brief variable to represent the maximum distance between motifs collected off a placed ligand and motifs in motif_library_
+	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
+	// value can be set using motifs::duplicate_dist_cutoff flag or set_dist_threshold()
+	core::Real dist_threshold_;
+
+	// @brief variable to represent the maximum angle between motifs collected off a placed ligand and motifs in motif_library_
+	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
+	// value can be set using motifs::duplicate_dist_cutoff flag or set_angle_threshold()
+	core::Real angl_threshold_;
+
+	// @brief whole ligand.wts score function to be used with scoring placed ligand poses that pass upstream filters
+	core::scoring::ScoreFunctionOP whole_score_fxn_;
+
+	// @brief modified ligand.wts function that only contains fa_atr as a weighted term. Used in quicker preliminary filtering before running whole score function
+	core::scoring::ScoreFunctionOP fa_atr_fxn_;
+
+	// @brief modified ligand.wts function that only contains fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
+	core::scoring::ScoreFunctionOP fa_rep_fxn_;
+
+	// @brief modified ligand.wts function that only contains fa_atr and fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
+	core::scoring::ScoreFunctionOP fa_atr_rep_fxn_;
 };
