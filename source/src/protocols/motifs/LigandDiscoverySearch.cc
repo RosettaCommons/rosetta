@@ -450,7 +450,7 @@ LigandDiscoverySearch::atom_trios LigandDiscoverySearch::derive_adjacent_atoms_o
 
 // @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
 //if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
-bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose)
+bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose, const core::conformation::ResidueOP ligresOP)
 {
 	//make a tracer
 	static basic::Tracer ms_tr( "LigandDiscoverySearch.make_minipose", basic::t_info );
@@ -973,7 +973,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					if ( minipose->size() == 0 ) {
 						//try to make the minipose if it is currently empty
 						//if the function returns false, that means that the minipose is bad and has no residues beyond the ligand; we want to continue if this is the case and the next placement will attempt
-						if (make_minipose(minipose) == false)
+						if (make_minipose(minipose, ligresOP) == false)
 						{
 							continue;
 						}
