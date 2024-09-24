@@ -447,6 +447,61 @@ LigandDiscoverySearch::atom_trios LigandDiscoverySearch::derive_adjacent_atoms_o
 
 }
 
+
+// @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
+//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
+bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose)
+{
+	//make a tracer
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.make_minipose", basic::t_info );
+
+	working_pose_->append_residue_by_jump(*ligresOP, 1);
+
+	ms_tr.Debug << "Builting Minipose made of residue indices: ";
+
+	for ( core::Size resi_pos = 1; resi_pos < working_pose_->size(); ++resi_pos ) {
+		//code breaks if unmatched disulfide  bonds form, just place all  residues that can have the disulfide type
+		if ( working_pose_->residue(resi_pos).has_variant_type(core::chemical::DISULFIDE) ) {
+			continue;
+		}
+
+		//code to try to make minipose even smaller to the point of only near residues
+		//only consider adding residues that are within a distance equal to the sum of the nbr radius of the ligand (located at index pose.size) and residue being investigated
+		if ( working_pose_->residue(working_pose_->size()).nbr_atom_xyz().distance(working_pose_->residue(resi_pos).nbr_atom_xyz()) < (working_pose_->residue(working_pose_->size()).nbr_radius() + working_pose_->residue(resi_pos).nbr_radius()) ) {
+			//append residue to minipose
+			minipose->append_residue_by_jump(working_pose_->residue(resi_pos), 1);
+			
+			ms_tr.Debug << resi_pos << ", ";
+			
+		}
+	}
+
+	ms_tr.Debug << std::endl;
+
+	//append ligand to minipose
+	minipose->append_residue_by_jump(working_pose_->residue(working_pose_->size()), 1);
+
+	ms_tr.Debug << "Made minipose of size " << minipose->size() << std::endl;
+
+
+	//hard wipe minipose and then move to next placement if minipose only has the ligand in it
+	if ( minipose->size() == 1 ) {
+		core::pose::PoseOP filler(new pose::Pose);
+		minipose = filler;
+		//wipe ligand from working pose since we are not investigating this placement
+		working_pose_->delete_residue_slow(working_pose_->size());
+		//return false so discover() knows to continue to the next placement, becase the current is bad
+		return false;
+	}
+
+	//dump the minipose for debugging
+	core::io::pdb::dump_pdb( *minipose, "minipose.pdb");
+	//delete ligand so we can reuse minipose and wipe from working pose
+	minipose->delete_residue_slow(minipose->size());
+	working_pose_->delete_residue_slow(working_pose_->size());
+	return true;
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -916,45 +971,12 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//create the minipose to use for early scoring (atr, rep, atrrep) if it does not exist already
 					if ( minipose->size() == 0 ) {
-						working_pose_->append_residue_by_jump(*ligresOP, 1);
-
-						for ( core::Size resi_pos = 1; resi_pos < working_pose_->size(); ++resi_pos ) {
-							//code breaks if unmatched disulfide  bonds form, just place all  residues that can have the disulfide type
-							if ( working_pose_->residue(resi_pos).has_variant_type(core::chemical::DISULFIDE) ) {
-								continue;
-							}
-
-							//code to try to make minipose even smaller to the point of only near residues
-							//only consider adding residues that are within a distance equal to the sum of the nbr radius of the ligand (located at index pose.size) and residue being investigated
-							if ( working_pose_->residue(working_pose_->size()).nbr_atom_xyz().distance(working_pose_->residue(resi_pos).nbr_atom_xyz()) < (working_pose_->residue(working_pose_->size()).nbr_radius() + working_pose_->residue(resi_pos).nbr_radius()) ) {
-								//append residue to minipose
-								minipose->append_residue_by_jump(working_pose_->residue(resi_pos), 1);
-								
-								ms_tr.Debug << resi_pos << ", ";
-								
-							}
-						}
-
-						//append ligand to minipose
-						minipose->append_residue_by_jump(working_pose_->residue(working_pose_->size()), 1);
-						
-						ms_tr.Debug << "Made minipose of size " << minipose->size() << std::endl;
-						
-
-						//hard wipe minipose and then move to next placement if minipose only has the ligand in it
-						if ( minipose->size() == 1 ) {
-							core::pose::PoseOP filler(new pose::Pose);
-							minipose = filler;
-							//wipe ligand from working pose since we are not investigating this placement
-							working_pose_->delete_residue_slow(working_pose_->size());
+						//try to make the minipose if it is currently empty
+						//if the function returns false, that means that the minipose is bad and has no residues beyond the ligand; we want to continue if this is the case and the next placement will attempt
+						if (make_minipose(minipose) == false)
+						{
 							continue;
 						}
-
-						//dump the minipose for debugging
-						core::io::pdb::dump_pdb( *minipose, "minipose.pdb");
-						//delete ligand so we can reuse minipose and wipe from working pose
-						minipose->delete_residue_slow(minipose->size());
-						working_pose_->delete_residue_slow(working_pose_->size());
 					}
 
 					//append ligand to minipose for early scoring

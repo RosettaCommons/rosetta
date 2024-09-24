@@ -260,6 +260,10 @@ private:
 	//
 	void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap);
 
+	// @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
+	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
+	bool make_minipose(core::pose::PoseOP & minipose);
+
 	//class variables
 
 	// @brief receptor pose to work with
