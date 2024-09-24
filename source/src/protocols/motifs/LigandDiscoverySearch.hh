@@ -284,14 +284,14 @@ private:
 	core::Real angl_threshold_;
 
 	// @brief whole ligand.wts score function to be used with scoring placed ligand poses that pass upstream filters
-	core::scoring::ScoreFunctionOP whole_score_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	core::scoring::ScoreFunctionOP whole_score_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
 	// @brief modified ligand.wts function that only contains fa_atr as a weighted term. Used in quicker preliminary filtering before running whole score function
-	core::scoring::ScoreFunctionOP fa_atr_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	core::scoring::ScoreFunctionOP fa_atr_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
 	// @brief modified ligand.wts function that only contains fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
-	core::scoring::ScoreFunctionOP fa_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	core::scoring::ScoreFunctionOP fa_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
 	// @brief modified ligand.wts function that only contains fa_atr and fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
-	core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 };
