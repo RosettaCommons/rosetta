@@ -246,6 +246,10 @@ private:
 	//used in export_space_fill_matrix_as_C_H_O_N_pdb to assign a unique name to an atom (due to limitations in atom icoor data, an atom name can be no longer than 4 characters)
 	std::string base_10_to_base_62(core::Size starting_num);
 
+	// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
+	// This previously just was code in discover(), but it is better to compartmentalize for readability
+	void setup_score_functions();
+
 	//class variables
 
 	// @brief receptor pose to work with
@@ -277,4 +281,16 @@ private:
 	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
 	// value can be set using motifs::duplicate_dist_cutoff flag or set_angle_threshold()
 	core::Real angl_threshold_;
+
+	// @brief whole ligand.wts score function to be used with scoring placed ligand poses that pass upstream filters
+	core::scoring::ScoreFunctionOP whole_score_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+
+	// @brief modified ligand.wts function that only contains fa_atr as a weighted term. Used in quicker preliminary filtering before running whole score function
+	core::scoring::ScoreFunctionOP fa_atr_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+
+	// @brief modified ligand.wts function that only contains fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
+	core::scoring::ScoreFunctionOP fa_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+
+	// @brief modified ligand.wts function that only contains fa_atr and fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
+	core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 };

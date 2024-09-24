@@ -363,6 +363,30 @@ void LigandDiscoverySearch::set_angl_threshold(core::Size angle_threshold)
 	angl_threshold_ = angle_threshold;
 }
 
+// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
+void LigandDiscoverySearch::setup_score_functions()
+{
+	//for each weight in the whole score function, set the scoretype weight to 0
+	//the purpose of this is to set up the non-weight parameters exactly the same way (and using the terms from the ligand.wts function)
+	//once terms are blanked to 0, terms of interest will be re-weighted as seen below
+	for ( auto my_scoretype : whole_score_fxn_->get_nonzero_weighted_scoretypes() ) {
+		fa_rep_fxn_->set_weight(my_scoretype,0);
+		fa_atr_fxn_->set_weight(my_scoretype,0);
+		fa_atr_rep_fxn_->set_weight(my_scoretype,0);
+	}
+
+	//set weight values for atr and rep based on values in ligand.wts
+	fa_rep_fxn_->set_weight(core::scoring::fa_rep, 0.8);
+
+	fa_atr_fxn_->set_weight(core::scoring::fa_atr, 0.4);
+
+	fa_atr_rep_fxn_->set_weight(core::scoring::fa_atr, 0.8);
+	fa_atr_rep_fxn_->set_weight(core::scoring::fa_rep, 0.4);
+
+	//set coordinate_constraint to zero for the whole function (creates strange ddg scores otherwise)
+	whole_score_fxn_->set_weight(core::scoring::coordinate_constraint, 0);
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -440,35 +464,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//define cutoff thresholds for distance and angles for comparing motifs (default values are 1 and 0.4 respectively)
 		Real dist_threshold = dist_threshold_;
 		Real angl_threshold = angl_threshold_;
-
-		//make whole score function based on ligand.wts for scoring whole system and use in highresdock
-		core::scoring::ScoreFunctionOP whole_score_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-
-		//build score functions that only have fa_atr, fa_rep, and fa_atr+fa_rep for initial score-based filtering like ligand.wts, and remove terms we don't want
-		//terms removed by setting their weights to 0
-		core::scoring::ScoreFunctionOP fa_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-		core::scoring::ScoreFunctionOP fa_atr_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-		core::scoring::ScoreFunctionOP fa_atr_rep_fxn_(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-
-		//for each weight in the whole score function, set the scoretype weight to 0
-		//the purpose of this is to set up the non-weight parameters exactly the same way (and using the terms from the ligand.wts function)
-		//once terms are blanked to 0, terms of interest will be re-weighted as seen below
-		for ( auto my_scoretype : whole_score_fxn_->get_nonzero_weighted_scoretypes() ) {
-			fa_rep_fxn_->set_weight(my_scoretype,0);
-			fa_atr_fxn_->set_weight(my_scoretype,0);
-			fa_atr_rep_fxn_->set_weight(my_scoretype,0);
-		}
-
-		//set weight values for atr and rep based on values in ligand.wts
-		fa_rep_fxn_->set_weight(core::scoring::fa_rep, 0.8);
-
-		fa_atr_fxn_->set_weight(core::scoring::fa_atr, 0.4);
-
-		fa_atr_rep_fxn_->set_weight(core::scoring::fa_atr, 0.8);
-		fa_atr_rep_fxn_->set_weight(core::scoring::fa_rep, 0.4);
-
-		//set coordinate_constraint to zero for the whole function (creates straing ddg scores otherwise)
-		whole_score_fxn_->set_weight(core::scoring::coordinate_constraint, 0);
 
 		//set up target_residues_sf_ and target_residues_contact_
 		//can interact with any of 3 integer_value vectors flags: in::target_residues, motifs::targer_residues_sf, and motifs::target_residues_contact
