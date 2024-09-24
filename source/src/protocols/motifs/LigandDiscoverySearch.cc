@@ -399,6 +399,54 @@ void LigandDiscoverySearch::setup_score_functions()
 	whole_score_fxn_->set_weight(core::scoring::coordinate_constraint, 0);
 }
 
+// @brief function to push all adjacent atom indices if inputted ligand residue (pointer) into a 3D core::Size vector (atom_trios typedef) 
+atom_trios LigandDiscoverySearch::derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP)
+{
+	atom_trios ligand_atom_trios;
+
+	//find all atom trios (that do not contain hydrogen) in the ligand
+	for ( core::Size atom_i = 1; atom_i <= ligresOP->natoms(); ++atom_i ) {
+		if ( ligresOP->atom_is_hydrogen(atom_i) ) { continue; }
+		// This is a for loop to iterate over each atom's connected atoms:
+		core::conformation::Residue::AtomIndices atom_i_connects(  ligresOP->bonded_neighbor( atom_i ) );
+		for ( const auto & atom_j :  atom_i_connects) {
+			if ( ligresOP->atom_is_hydrogen(atom_j) ) { continue; }
+			// This is the next for loop to find connects for the second atom, giving us the final atom number (atom k)
+			core::conformation::Residue::AtomIndices atom_j_connects(  ligresOP->bonded_neighbor( atom_j ) );
+			for ( const auto & atom_k :  atom_j_connects ) {
+				if ( ligresOP->atom_is_hydrogen(atom_k) ) { continue; }
+				chemical::AtomType atom_i_type(ligresOP->atom_type(atom_i));
+				if ( atom_i != atom_k ) {
+
+					//make the 3 atom vector
+					utility::vector1< utility::vector1< core::Size > > cur_motif_indices;
+
+					utility::vector1< core::Size > atom_i_vector;
+					atom_i_vector.push_back( atom_i );
+					atom_i_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_i).atom_type_name() ) );
+
+					utility::vector1< core::Size > atom_j_vector;
+					atom_j_vector.push_back( atom_j );
+					atom_j_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_j).atom_type_name() ) );
+
+					utility::vector1< core::Size > atom_k_vector;
+					atom_k_vector.push_back( atom_k );
+					atom_k_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_k).atom_type_name() ) );
+
+					cur_motif_indices.push_back( atom_i_vector);
+					cur_motif_indices.push_back( atom_j_vector);
+					cur_motif_indices.push_back( atom_k_vector);
+
+					ligand_atom_trios.push_back(cur_motif_indices);
+				}
+			}
+		}
+	}
+
+	return ligand_atom_trios;
+
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -696,7 +744,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			//convert ligres to be a ResidueOP type
 			core::conformation::ResidueOP ligresOP = tracker;
 
-
 			ms_tr << "On ligand " << ligresOP->name() << std::endl;			
 
 			const core::Real lig_nbr_radius = ligresOP->nbr_radius();
@@ -717,49 +764,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			//ligand_atom_trios[trio identifier: 1-#trios][atom identifier within trio: 1-3][trio atom metadata]
 			//metadata consists of index (position 1) and numerical atom_type_index (position 2)
 
-			utility::vector1<utility::vector1< utility::vector1< core::Size > >> ligand_atom_trios;
-
-			//find all atom trios (that do not contain hydrogen) in the ligand
-			
 			ms_tr.Trace << "Finding all atom trios for this ligand" << std::endl;
-			
-			for ( core::Size atom_i = 1; atom_i <= ligresOP->natoms(); ++atom_i ) {
-				if ( ligresOP->atom_is_hydrogen(atom_i) ) { continue; }
-				// This is a for loop to iterate over each atom's connected atoms:
-				core::conformation::Residue::AtomIndices atom_i_connects(  ligresOP->bonded_neighbor( atom_i ) );
-				for ( const auto & atom_j :  atom_i_connects) {
-					if ( ligresOP->atom_is_hydrogen(atom_j) ) { continue; }
-					// This is the next for loop to find connects for the second atom, giving us the final atom number (atom k)
-					core::conformation::Residue::AtomIndices atom_j_connects(  ligresOP->bonded_neighbor( atom_j ) );
-					for ( const auto & atom_k :  atom_j_connects ) {
-						if ( ligresOP->atom_is_hydrogen(atom_k) ) { continue; }
-						chemical::AtomType atom_i_type(ligresOP->atom_type(atom_i));
-						if ( atom_i != atom_k ) {
-
-							//make the 3 atom vector
-							utility::vector1< utility::vector1< core::Size > > cur_motif_indices;
-
-							utility::vector1< core::Size > atom_i_vector;
-							atom_i_vector.push_back( atom_i );
-							atom_i_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_i).atom_type_name() ) );
-
-							utility::vector1< core::Size > atom_j_vector;
-							atom_j_vector.push_back( atom_j );
-							atom_j_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_j).atom_type_name() ) );
-
-							utility::vector1< core::Size > atom_k_vector;
-							atom_k_vector.push_back( atom_k );
-							atom_k_vector.push_back( atset->atom_type_index( ligresOP->atom_type(atom_k).atom_type_name() ) );
-
-							cur_motif_indices.push_back( atom_i_vector);
-							cur_motif_indices.push_back( atom_j_vector);
-							cur_motif_indices.push_back( atom_k_vector);
-
-							ligand_atom_trios.push_back(cur_motif_indices);
-						}
-					}
-				}
-			}
+			atom_trios ligand_atom_trios = derive_adjacent_atoms_of_ligand(ligresOP);
 
 			//mini pose to represent a smaller region of the protein near the binding pocket for early energy calculations
 			core::pose::PoseOP minipose(new pose::Pose);
