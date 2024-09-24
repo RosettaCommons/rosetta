@@ -1386,7 +1386,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 // @brief scoring operation to evaluate if a placed ligand has a good enough fa_atr, fa_rep, and ddg
 //placement is optimized using a highresdocker object, and fa_atr, fa_rep, and ddg can be scored again for a second round of scoring
-bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, str::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data)
+bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, std::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data)
 {
 	//make a tracer
 	static basic::Tracer ms_tr( "LigandDiscoverySearch.score_placed_ligand", basic::t_info );
