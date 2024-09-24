@@ -262,7 +262,7 @@ private:
 
 	// @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
 	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
-	bool make_minipose(core::pose::PoseOP & minipose);
+	bool make_minipose(core::pose::PoseOP & minipose, const core::conformation::ResidueOP ligresOP);
 
 	//class variables
 
