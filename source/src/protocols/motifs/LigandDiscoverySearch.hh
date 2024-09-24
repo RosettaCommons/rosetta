@@ -307,4 +307,22 @@ private:
 
 	// @brief modified ligand.wts function that only contains fa_atr and fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
 	core::scoring::ScoreFunctionOP fa_atr_rep_fxn_;
+
+	// @brief score cutoff for fa_atr
+	core::Real fa_atr_cutoff_;
+
+	// @brief score cutoff for fa_rep
+	core::Real fa_rep_cutoff_;
+
+	// @brief score cutoff for fa_atr_rep
+	core::Real fa_atr_rep_cutoff_;
+
+	// @brief score cutoff for whole score function score
+	core::Real whole_fxn_cutoff_;
+
+	// @brief bool to indicate whether to use the whole ligand.wts score function when scorign placements (faster, but potentially less powerful if not using whole function when scoring)
+	bool use_ligand_wts_;
+
+	// @brief score cutoff for ddg
+	core::Real ddg_cutoff_;
 };
