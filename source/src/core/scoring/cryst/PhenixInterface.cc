@@ -17,6 +17,34 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
+// RENATO
+#include <iostream>
+#include <fstream>
+#include <core/scoring/cryst/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/chains_util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmData.hh>
+#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/util.hh>
+#include <core/conformation/ResidueFactory.hh>
+
+#include <core/scoring/symmetry/SymmetricEnergies.hh>
+#include <core/scoring/ScoreFunction.hh>
+
+#include <core/scoring/Energies.hh>
+
+#include <core/chemical/ResidueTypeSet.hh>
+
 
 
 #include <basic/Tracer.hh>
