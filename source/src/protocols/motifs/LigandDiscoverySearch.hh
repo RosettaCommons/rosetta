@@ -253,6 +253,12 @@ private:
 	// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
 	// This previously just was code in discover(), but it is better to compartmentalize for readability
 	void setup_score_functions();
+	
+	// @brief function to hash out an input motif library into a standard map of motifCOPs
+	//inputs are initial motif library and map that is to be filled out
+	//map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
+	//
+	void LigandDiscoverySearch::hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap)
 
 	//class variables
 
