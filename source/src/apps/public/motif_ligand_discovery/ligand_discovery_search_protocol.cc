@@ -248,8 +248,6 @@ main( int argc, char * argv [] )
 
 			utility::vector1<core::Size> discovery_positions_int = option[ OptionKeys::motifs::protein_discovery_locus ]();
 
-			ms_tr << "Discovery residue indices: " << discovery_positions_int << std::endl;
-
 			//iteratively append discovery positions to the discovery_position vector
 			for (const auto & position : discovery_positions_int)
 			{
