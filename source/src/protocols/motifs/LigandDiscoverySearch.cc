@@ -982,9 +982,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//append ligand to minipose for early scoring
 					minipose->append_residue_by_jump(*ligresOP, 1);
 
+					//declare pdb name and pdb comment data strings, which will be used in scoring and motif functions
+					std::string comment_table_header = "";
+					std::string comment_table_data = "";
+					str::string pdb_name = "";
+					std::string pdb_short_unique_name = "";
+
 					//score the ligand in the minipose and working_pose_
 					//if score_placed_ligand returns true, we are good to move on, otherwise continue to next placement due to bad scoring at at least one point
-					if(score_placed_ligand(minipose, original_pose))
+					if(score_placed_ligand(minipose, original_pose, pdb_name, pdb_short_unique_name, comment_table_header, comment_table_data))
 					{
 						continue;
 					}
@@ -1380,7 +1386,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 // @brief scoring operation to evaluate if a placed ligand has a good enough fa_atr, fa_rep, and ddg
 //placement is optimized using a highresdocker object, and fa_atr, fa_rep, and ddg can be scored again for a second round of scoring
-bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose)
+bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, str::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data)
 {
 	//make a tracer
 	static basic::Tracer ms_tr( "LigandDiscoverySearch.score_placed_ligand", basic::t_info );
@@ -1624,12 +1630,12 @@ bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, c
 	//declare strings to serve as a small simplified table of information to be added to the placement pdb comments that can be easily extracted for later analysis
 	//1 string will be a header line and the other will contain data that corresponds to the header
 	//data will be in a csv format for easier parsing
-	std::string comment_table_header = "";
-	std::string comment_table_data = "";
+	comment_table_header = "";
+	comment_table_data = "";
 
 	//name the pdb  that could come from the pose
 	//current naming convention
-	std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
+	pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
 
 	//add comments to working_pose for print
 	//core::pose::add_comment(*working_pose_, "", );
@@ -1645,7 +1651,7 @@ bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, c
 	comment_table_data = ligresOP->name() + "," + std::to_string(i) + "," + output_prefix + "," + std::to_string(working_position) + "," + discovery_position_residue + "," + motifcop->remark() + ",";
 
 	//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
-	std::string pdb_short_unique_name = pdb_name;
+	pdb_short_unique_name = pdb_name;
 
 	//only use fa_rep and atr if we use atrrep or whole to score the whole system and pull how we fixed them
 	if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts_ ) {
