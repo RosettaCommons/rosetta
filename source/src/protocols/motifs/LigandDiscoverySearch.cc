@@ -241,10 +241,10 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	angl_threshold_ = basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
 
 	//initially seed score class score functions
-	whole_score_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-	fa_atr_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-	fa_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-	fa_atr_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
 
 }
 
@@ -262,10 +262,10 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	angl_threshold_ = angle_threshold;
 
 	//initially seed score class score functions
-	whole_score_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-	fa_atr_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-	fa_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
-	fa_atr_rep_fxn_(core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" ));
+	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
 
 }
 
