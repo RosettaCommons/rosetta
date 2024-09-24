@@ -454,7 +454,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 {
 	//create tracer to identify points of the run
 	//This tracer uses the following tracer outpurs: standard (no extension), Debug, Warning, and Trace
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_out", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.discover", basic::t_info );
 
 	//create identifyligandmotifs object for use with deriving motifs from placed ligands
 	IdentifyLigandMotifs ilm;
@@ -1661,7 +1661,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 //function may have use outside discover, so public can use it
 protocols::motifs::MotifCOPs LigandDiscoverySearch::get_motif_sublibrary_by_aa(std::string residue_name)
 {
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_get_motif_sublibrary_by_aa", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.get_motif_sublibrary_by_aa", basic::t_info );
 
 	//create temporary motifcops object to hold
 	protocols::motifs::MotifCOPs motif_holder;
@@ -1692,7 +1692,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 {
 
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_create_protein_matrix", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.create_protein_representation_matrix", basic::t_info );
 
 	//run through all atoms to derive a range of dimensions to contain the protein in a 3D  space
 	//since we can't have negative indices, we need to normalize the coordinate values so that everything is positive
@@ -1822,7 +1822,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	*/
 
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_create_protein_matrix_space_fill", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.create_protein_matrix_space_fill", basic::t_info );
 
 	int smallest_x = 1;
 	int smallest_y = 1;
@@ -2431,7 +2431,7 @@ LigandDiscoverySearch::SpaceFillMatrix LigandDiscoverySearch::space_fill_analysi
 	*/
 
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_space_fill_analysis", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.space_fill_analysis", basic::t_info );
 
 	//debugging
 	//print out what matrix data counts looks like before and after modification
@@ -2602,7 +2602,7 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceF
 	utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt)
 {
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "LigandDiscoverySearch_export_space_fill_matrix_as_C_H_O_N_pdb", basic::t_info );
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.export_space_fill_matrix_as_C_H_O_N_pdb", basic::t_info );
 
 	std::string matrix_pdb_name = pdb_name_prefix + "_WholeRatio_" + std::to_string(occupied_ratios[1]) + "_SubRatio_" + std::to_string(occupied_ratios[2]) + ".pdb";
 	
