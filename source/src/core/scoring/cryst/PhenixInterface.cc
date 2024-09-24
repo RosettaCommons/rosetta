@@ -17,7 +17,6 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-// RENATO
 #include <iostream>
 #include <fstream>
 #include <core/scoring/cryst/util.hh>
