@@ -558,7 +558,7 @@ bool LigandDiscoverySearch::score_minipose(const core::pose::PoseOP & minipose, 
 }
 
 // @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
-void LigandDiscoverySearch::add_constraints_to_working_pose(core::Size trip_atom_1, core::Size trip_atom_2, core::Size trip_atom_3, core::Size working_position)
+void LigandDiscoverySearch::add_constraints_to_working_pose(const core::Size trip_atom_1, const core::Size trip_atom_2, const core::Size trip_atom_3, const core::Size working_position, const core::conformation::ResidueOP ligresOP)
 {
 	//create constraints for ligand wiggling to add to the pose
 	constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
@@ -573,6 +573,16 @@ void LigandDiscoverySearch::add_constraints_to_working_pose(core::Size trip_atom
 	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_3, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_3 ), fx3 ) ) );
 
 	working_pose_->constraint_set(sc_cst_set);
+}
+
+// @brief this function takes in a selected scorefunctionOP and gets the ddg of the selected poseOP (ideally with a placed ligand), and returns the ddg
+core::Real LigandDiscoverySearch::get_pose_ddg(core::scoring::ScoreFunctionOP score_fxn, core::pose::PoseOP & my_pose)
+{
+	//use the passed score function to get interface deltas on the working_pose
+	std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *my_pose, score_fxn, "");
+	
+	//return the ddg, which is interface_delta_2 in the interface map
+	return interface_mapX_postdock["interface_delta_2"];
 }
 
 //main function to run ligand discovery operations
@@ -1026,21 +1036,19 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					working_pose_->append_residue_by_jump(*ligresOP, working_pose_->size(), "", "", true);
 
 					//apply constraint set to working_pose_
-					add_constraints_to_working_pose(trip_atom_1, trip_atom_2, trip_atom_3, working_position);
+					add_constraints_to_working_pose(trip_atom_1, trip_atom_2, trip_atom_3, working_position, ligresOP);
 
 					//get free energy of pose with placed ligand before highresdock
 					//declaration of variable
-					core::Real delta_score = 0;
+					core::Real delta_score = 10000;
 
 					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
 					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
 						//whole
-						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
-						delta_score = interface_mapX_postdock["interface_delta_2"];
+						delta_score = get_pose_ddg(whole_score_fxn_, working_pose_);
 					} else {
 						//atrrep
-						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
-						delta_score = interface_mapX_postdock["interface_delta_2"];
+						delta_score = get_pose_ddg(fa_atr_rep_fxn_, working_pose_);
 					}
 
 
@@ -1122,12 +1130,11 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get new ddg
 					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
-						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
-						delta_score = interface_mapX_postdock["interface_delta_2"];
+						//whole
+						delta_score = get_pose_ddg(whole_score_fxn_, working_pose_);
 					} else {
-						//5/1/24 replacing score with the atr_rep function instead of whole
-						std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
-						delta_score = interface_mapX_postdock["interface_delta_2"];
+						//atrrep
+						delta_score = get_pose_ddg(fa_atr_rep_fxn_, working_pose_);
 					}
 
 					//declaration of fa_atr_rep_score_after (may not be used)

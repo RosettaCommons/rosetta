@@ -210,6 +210,10 @@ public:
 	//this in theory could be useful beyond the scope the discover function, so I will leave this as public
 	atom_trios derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP, const core::chemical::AtomTypeSetCOP atset);
 
+	// @brief this function takes in a selected scorefunctionOP and gets the ddg of the selected poseOP (ideally with a placed ligand), and returns the ddg
+	// making this a public function, as the usage of this is seems broad enough that it could be used outside discover()
+	core::Real LigandDiscoverySearch::get_pose_ddg(core::scoring::ScoreFunctionOP score_fxn, core::pose::PoseOP & my_pose)
+
 private:
 
 	// @brief default constructor
@@ -266,7 +270,7 @@ private:
 	bool score_minipose(const core::pose::PoseOP & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before);
 
 	// @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
-	void add_constraints_to_working_pose(core::Size trip_atom_1, core::Size trip_atom_2, core::Size trip_atom_3, core::Size working_position);
+	void add_constraints_to_working_pose(const core::Size trip_atom_1, const core::Size trip_atom_2, const core::Size trip_atom_3, const core::Size working_position, const core::conformation::ResidueOP ligresOP);
 
 	//class variables
 
