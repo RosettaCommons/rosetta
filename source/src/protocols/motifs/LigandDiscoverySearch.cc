@@ -557,6 +557,24 @@ bool LigandDiscoverySearch::score_minipose(const core::pose::PoseOP & minipose, 
 	return true;
 }
 
+// @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
+void LigandDiscoverySearch::add_constraints_to_working_pose(core::Size trip_atom_1, core::Size trip_atom_2, core::Size trip_atom_3)
+{
+	//create constraints for ligand wiggling to add to the pose
+	constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
+
+	core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_1, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_1 ), fx1 ) ) );
+
+	core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_2, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_2 ), fx2 ) ) );
+
+	core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_3, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_3 ), fx3 ) ) );
+
+	working_pose_->constraint_set(sc_cst_set);
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -839,9 +857,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				
 				ms_tr.Debug << "Trio is " << ligresOP->atom_name(ligand_atom_trios[i][1][1]) << " " << ligresOP->atom_name(ligand_atom_trios[i][2][1]) << " " << ligresOP->atom_name(ligand_atom_trios[i][3][1]) << std::endl;
 				
-				core::Size  trip_atom_1(ligand_atom_trios[i][1][1]);
-				core::Size  trip_atom_2(ligand_atom_trios[i][2][1]);
-				core::Size  trip_atom_3(ligand_atom_trios[i][3][1]);
+				core::Size trip_atom_1(ligand_atom_trios[i][1][1]);
+				core::Size trip_atom_2(ligand_atom_trios[i][2][1]);
+				core::Size trip_atom_3(ligand_atom_trios[i][3][1]);
 
 				int clashing_counter = 0;
 				int passing_counter = 0;
@@ -997,6 +1015,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//if false, the placement can be killed
 					if ( !minipose_scoring)
 					{
+						++clashing_counter;
 						continue;
 					}
 
@@ -1006,19 +1025,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//using version of append to put it in a new chain
 					working_pose_->append_residue_by_jump(*ligresOP, working_pose_->size(), "", "", true);
 
-					//create constraints for ligand wiggling to add to the pose
-					constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
-
-					core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_1, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_1 ), fx1 ) ) );
-
-					core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_2, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_2 ), fx2 ) ) );
-
-					core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-					sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_3, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_3 ), fx3 ) ) );
-
-					working_pose_->constraint_set(sc_cst_set);
+					//apply constraint set to working_pose_
+					add_constraints_to_working_pose(trip_atom_1, trip_atom_2, trip_atom_3);
 
 					//get free energy of pose with placed ligand before highresdock
 					//declaration of variable
