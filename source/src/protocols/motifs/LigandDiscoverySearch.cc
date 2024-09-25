@@ -234,39 +234,63 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	all_residues_ = all_residues;
 	working_positions_ = working_position;
 
-	//set distance and angle thresholds if motif comparison is conducted
-	//I am choosing to not have values be included in the constructor arguments because these values may not necessarily even be used, they can be set in command line arguments, and there are setter functions that can be used after creating the object
-	//A constructor overload can be made to include these two as well
-	dist_threshold_ =  basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ];
-	angl_threshold_ = basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
+	seed_cutoff_values();
 
-	//initially seed score class score functions
-	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	seed_score_functions();
+
+
 
 }
 
-//parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
-LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position, core::Real distance_threshold, core::Real angle_threshold)
+// @brief function to set values for the score functions
+void LigandDiscoverySearch::seed_score_functions()
 {
-
-	working_pose_ = pose_from_PDB;
-	motif_library_ = motif_library;
-	all_residues_ = all_residues;
-	working_positions_ = working_position;
-
-	//set distance and angle thresholds if motif comparison is conducted
-	dist_threshold_ =  distance_threshold;
-	angl_threshold_ = angle_threshold;
-
 	//initially seed score class score functions
 	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
 	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
 	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
 	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+}
 
+
+// @brief this function is to be called by the constructor(s) to seed initial values to cutoffs that are used for scoring/evaluating metrics of placed ligands in discover() and the functions it calls
+void LigandDiscoverySearch::seed_cutoff_values()
+{
+	//make tracer for debugging
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.seed_cutoff_values", basic::t_info );
+
+	//score function cutoffs
+	ms_tr.Debug << "Using fa_rep cutoff of: "  << option[ OptionKeys::motifs::fa_rep_cutoff ] << std::endl;
+	core::Real fa_rep_cutoff_ = option[ OptionKeys::motifs::fa_rep_cutoff ];
+
+	ms_tr.Debug << "Using fa_atr cutoff of: "  << option[ OptionKeys::motifs::fa_atr_cutoff ] << std::endl;
+	core::Real fa_atr_cutoff_ = option[ OptionKeys::motifs::fa_atr_cutoff ];
+
+	ms_tr.Debug << "Using fa_atr_rep cutoff of: "  << option[ OptionKeys::motifs::fa_atr_rep_cutoff ] << std::endl;
+	core::Real fa_atr_rep_cutoff_ = option[ OptionKeys::motifs::fa_atr_rep_cutoff ];
+
+	ms_tr.Debug << "Using whole score function cutoff of: "  << option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ] << std::endl;
+	core::Real whole_fxn_cutoff_ = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
+
+	ms_tr.Debug << "Using ddg cutoff of: "  << option[ OptionKeys::motifs::ddg_cutoff ] << std::endl;
+	core::Real ddg_cutoff_ = option[ OptionKeys::motifs::ddg_cutoff ];
+
+	//placement motifs cutoffs
+	ms_tr.Debug << "Using minimum motifs-like interactions cutoff of: "  << option[ OptionKeys::motifs::minimum_motifs_formed_cutoff] << std::endl;
+	core::Size min_motifs_cutoff_ = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
+
+	ms_tr.Debug << "Using minimum motifs-like interactions on significant residues cutoff of: "  << option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff] << std::endl;
+	core::Size min_sig_motifs_cutoff_ = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
+
+	ms_tr.Debug << "Using minimum real motifs interactions ratio cutoff of: "  << option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand] << std::endl;
+	core::Real real_motif_ratio_cutoff_ = option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand];
+
+	//placement motif metric cutoffs
+	ms_tr.Debug << "Using maximum placement motif to real motif RMSD distance: "  << option[ OptionKeys::motifs::duplicate_dist_cutoff] << std::endl;
+	dist_threshold_ =  option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ];
+
+	ms_tr.Debug << "Using maximum placement motif to real motif angle distance: "  << option[ OptionKeys::motifs::duplicate_angle_cutoff] << std::endl;
+	angl_threshold_ = option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
 }
 
 //function to load in a library for the search protocol

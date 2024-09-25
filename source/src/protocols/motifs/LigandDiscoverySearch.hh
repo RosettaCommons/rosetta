@@ -149,9 +149,6 @@ public:
 	// @brief parameterized constructor to load in motif library, pdb, and ligand library
 	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position);
 
-	// @brief parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
-	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position, core::Real distance_threshold, core::Real angle_threshold);
-
 	// @brief function to load in a library for the search protocol
 	void set_motif_library(protocols::motifs::MotifCOPs motif_library);
 
@@ -220,9 +217,12 @@ private:
 	//should only use parameterized constructor
 	LigandDiscoverySearch();
 
-	// @brief functions to be called in discover() function
+	// @brief functions to be called in constructor
 	//function to set values for the score functions
-	//void seed_score_functions();
+	void seed_score_functions();
+
+	// @brief this function is to be called by the constructor(s) to seed initial values to cutoffs that are used for scoring/evaluating metrics of placed ligands in discover() and the functions it calls
+	void seed_cutoff_values();
 
 	// @brief create protein_representation_matrix_
 	//uses working_pose to make the matrix
@@ -295,6 +295,31 @@ private:
 	// used in discovery when checking if motifs collected off of the placed ligand are considered "real" in that they resemble a motif from the input library
 	// value can be set using motifs::duplicate_dist_cutoff flag or set_angle_threshold()
 	core::Real angl_threshold_;
+
+	// @brief variable to be used as a cutoff to define the maximum allowed fa_rep score for a placement to be considered
+	core::Real fa_rep_cutoff_;
+	
+	// @brief variable to be used as a cutoff to define the maximum allowed fa_atr score for a placement to be considered
+	core::Real fa_atr_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the maximum allowed combined fa_atr and fa_rep score for a placement to be considered
+	core::Real fa_atr_rep_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the maximum allowed score from the whole score function for a placement to be considered
+	core::Real whole_fxn_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the maximum allowed ddg score for a placement to be considered
+	core::Real ddg_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the minimum number of motif-like contacts that a placed ligand has to be considered
+	core::Size min_motifs_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the minimum number of motif-like contacts that a placed ligand has against residues noted as significant to be considered
+	core::Size min_sig_motifs_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the minimum number of motif-like contacts that a placed ligand has that are considered "real"
+	//real is defined as the motif being within the distance and angle threshold of a motif with the same residue/atoms from the input motif library
+	core::Real real_motif_ratio_cutoff_;
 
 	// @brief whole ligand.wts score function to be used with scoring placed ligand poses that pass upstream filters
 	core::scoring::ScoreFunctionOP whole_score_fxn_;
