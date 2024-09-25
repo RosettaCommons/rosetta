@@ -1050,25 +1050,11 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//atrrep
 						delta_score = get_pose_ddg(fa_atr_rep_fxn_, working_pose_);
 					}
-
-
 					
 					ms_tr.Debug << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
 					
-
 					//attempt to use movers to optimize placement a little more
 					//begin setting up objects to make HighResDocker mover work
-
-					//make ligandareaop for use with the highresdocker
-					protocols::ligand_docking::LigandAreaOP sc_ligand_area(new protocols::ligand_docking::LigandArea());
-					//adjust values for the LigandArea object (doesn't look like there is a constructor for it, but it has free access to variables)
-					//using values from integration test for 7cpa ligand docking from xml file when applicable
-
-					sc_ligand_area->chain_ = '^';
-					sc_ligand_area->cutoff_ = 1;
-					sc_ligand_area->add_nbr_radius_ = true;
-					sc_ligand_area->all_atom_mode_ = true;
-					sc_ligand_area->minimize_ligand_ = 1;
 
 					//add ligand to pose residue type set if it is not already in the set
 					//program doesn't work if the ligand isn't added to the pose residue type sets
@@ -1092,6 +1078,17 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						working_pose_->conformation().reset_residue_type_set_for_conf(rts);
 						original_pose.conformation().reset_residue_type_set_for_conf(rts);
 					}
+
+					//make ligandareaop for use with the highresdocker
+					protocols::ligand_docking::LigandAreaOP sc_ligand_area(new protocols::ligand_docking::LigandArea());
+					//adjust values for the LigandArea object (doesn't look like there is a constructor for it, but it has free access to variables)
+					//using values from integration test for 7cpa ligand docking from xml file when applicable
+
+					sc_ligand_area->chain_ = '^';
+					sc_ligand_area->cutoff_ = 1;
+					sc_ligand_area->add_nbr_radius_ = true;
+					sc_ligand_area->all_atom_mode_ = true;
+					sc_ligand_area->minimize_ligand_ = 1;
 
 					//add ligand_area to an op of ligandarea
 					utility::vector1<protocols::ligand_docking::LigandAreaOP> ligand_areas;
