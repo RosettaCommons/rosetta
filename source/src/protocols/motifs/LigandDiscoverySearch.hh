@@ -17,6 +17,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
