@@ -519,6 +519,44 @@ bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose, const c
 	return true;
 }
 
+// @brief function to score the minipose iteratively on fa_rep, fa_atr, and fa_atr+fa_rep
+//this is performed iteratively in order to more quickly filter on select criteria with more and quicker filtering happening at earlier steps
+//returns a boolean based on whether the minipose score was good enough at all steps or not (false means it failed, and the placement will be killed)
+bool LigandDiscoverySearch::score_minipose(const core::Pose::pose & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before)
+{
+	fa_rep_fxn_->score(*minipose);
+
+	//high fa_rep means clashing, want low fa_rep
+	fa_rep = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_rep];
+
+	//check if fa_rep is good
+	//positive score is bad
+	//best scores are negative and closest to 0
+	if ( fa_rep > fa_rep_cutoff_ ) {
+		return false;
+	}
+
+	fa_atr_fxn_->score(*minipose);
+
+	fa_atr = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_atr];
+
+	//run fa_atr check
+	//don't keep if fa_atr is greater than cutoff
+	if ( fa_atr > fa_atr_cutoff_ ) {
+		return false;
+	}
+
+	//score whole minipose with atr_rep function
+	fa_atr_rep_score_before = fa_atr_rep_fxn_->score(*minipose);
+
+	//check if worse than cutoff
+	if ( fa_atr_rep_score_before > fa_atr_rep_cutoff_ ) {
+		return false;
+	}
+
+	return true;
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -944,39 +982,21 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//append ligand to minipose for early scoring
 					minipose->append_residue_by_jump(*ligresOP, 1);
 
-					fa_rep_fxn_->score(*minipose);
+					//set up values to be passed into score_minipose and used downstream
+					core::Real fa_rep;
+					core::Real fa_atr;
+					core::Real fa_atr_rep_score_before;
 
-					//high fa_rep means clashing, want low fa_rep
-					core::Real fa_rep = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_rep];
+					//score the minipose and set the value to a bool
+					bool minipose_scoring = score_minipose(minipose,fa_rep,fa_atr,fa_atr_rep_score_before);
 
-					//check if fa_rep is good
-					//positive score is bad
-					//best scores are negative and closest to 0
-					if ( fa_rep > fa_rep_cutoff_ ) {
-						minipose->delete_residue_slow(minipose->size());
-						++clashing_counter;
-						continue;
-					}
+					//delete the last residue off minipose (the ligand), since we no longer need it and can recycle the minipose for further iterations
+					minipose->delete_residue_slow(minipose->size());
 
-					fa_atr_fxn_->score(*minipose);
-
-					core::Real fa_atr = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_atr];
-
-					//run fa_atr check
-					//don't keep if fa_atr is greater than cutoff
-					if ( fa_atr > fa_atr_cutoff_ ) {
-						minipose->delete_residue_slow(minipose->size());
-						++clashing_counter;
-						continue;
-					}
-
-					//score whole minipose with atr_rep function
-					core::Real fa_atr_rep_score_before = fa_atr_rep_fxn_->score(*minipose);
-
-					//check if worse than cutoff
-					if ( fa_atr_rep_score_before > fa_atr_rep_cutoff_ ) {
-						minipose->delete_residue_slow(minipose->size());
-						++clashing_counter;
+					//if the value is true, the minipose passes initial scoring
+					//if false, the placement can be killed
+					if ( !minipose_scoring)
+					{
 						continue;
 					}
 
@@ -1113,7 +1133,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//check if after is worse than cutoff
 						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff_ ) {
-							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
 							core::pose::PoseOP original_poseop(original_pose.clone());
@@ -1137,8 +1156,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//check if the score is below the cutoff, kill if higher
 						if ( whole_score > whole_fxn_cutoff_ ) {
-							minipose->delete_residue_slow(minipose->size());
-							++clashing_counter;
+							//reset the working pose because its whole score was not good enough
+							working_pose_->delete_residue_slow(working_pose_->size());
+							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+							core::pose::PoseOP original_poseop(original_pose.clone());
+							//assign the original_poseop to working_pose_
+							working_pose_ = original_poseop;
+							++clashing_counter;							
 							continue;
 						}
 
@@ -1170,7 +1194,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//need to remove ligand from poses so that they can be recycled
 					//in theory, atr and rep should only improve, but this check helps make sure of that
 					if ( delta_score > ddg_cutoff_ || fa_atr > fa_atr_cutoff_ || fa_rep > fa_rep_cutoff_ ) {
-						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
 						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
 						core::pose::PoseOP original_poseop(original_pose.clone());
@@ -1273,7 +1296,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//if minimum number of motifs made is not enough, kill placement
 						if ( motifs_made < min_motifs_cutoff_ ) {
-							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
 							core::pose::PoseOP original_poseop(original_pose.clone());
@@ -1325,7 +1347,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								}
 							}
 							if ( kill ) {
-								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
 								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
 								core::pose::PoseOP original_poseop(original_pose.clone());
@@ -1384,7 +1405,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
 						if ( significant_motifs_made < min_sig_motifs_cutoff_ ) {
-							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
 							core::pose::PoseOP original_poseop(original_pose.clone());
@@ -1490,7 +1510,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							//determine if real ratio is greater than cutoff: minimum_ratio_of_real_motifs_from_ligand
 							if ( real_looking_motif_ratio < real_motif_ratio_cutoff_ ) {
 								//kill placement
-								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
 								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
 								core::pose::PoseOP original_poseop(original_pose.clone());
@@ -1547,7 +1566,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						core::io::pdb::dump_pdb(*working_pose_, pdb_name);
 
 						//directly remove residue from end of pose
-						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
 						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
 						core::pose::PoseOP original_poseop(original_pose.clone());
@@ -1563,8 +1581,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					std::tuple<core::Real, core::pose::Pose, std::string> pose_tuple(delta_score, *working_pose_, pdb_name);
 
 					//directly remove residue from end of pose
-					minipose->delete_residue_slow(minipose->size());
-
 					working_pose_->delete_residue_slow(working_pose_->size());
 					//create new poseop of the original pose (to wipe any highresdock changes) to the pose
 					core::pose::PoseOP original_poseop(original_pose.clone());
