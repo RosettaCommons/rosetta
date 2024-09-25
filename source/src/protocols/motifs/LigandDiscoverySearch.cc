@@ -1616,13 +1616,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				
 
 			}//end of trio loop
-
 			
 			ms_tr << "Done iterating all trios, moving to next ligand" << std::endl;
 			ms_tr << "Total passing attempts for ligand is " << ligand_passing_counter << std::endl;
 			ms_tr << "Total clashing attempts for ligand is " << ligand_clashing_counter << std::endl;
-			
-
 
 			//assign the new cutoff once we hit 100 entries
 			if ( best_placements.size() >= best_pdbs_to_keep && best_pdbs_to_keep != 0 ) {
