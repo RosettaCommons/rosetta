@@ -641,7 +641,7 @@ protocols::ligand_docking::HighResDockerOP LigandDiscoverySearch::make_HighResDo
 	//use movemapbuilder to make highresdocker; make 1 HRD for each score function
 	//first 2 values correspond to the number of mover cycles and to repack every Nth cycle
 	//we will move 3 times and do not want to repack (residues seem to move to unwanted positions)
-	protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, score_fxn, my_movemapbuilder) );
+	protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, my_fxn, my_movemapbuilder) );
 
 	//set highresdockers to not repack
 	my_HighResDocker->set_allow_repacking(false);
