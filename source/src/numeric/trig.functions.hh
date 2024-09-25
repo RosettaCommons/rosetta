@@ -120,7 +120,7 @@ sin_cos_range( T const & x, T const & tol = T( .001 ) )
 		std::string const warning( "NANs occured in sin_cos_range!" );
 		throw ( CREATE_EXCEPTION(utility::excn::Exception,  warning ) );
 #endif
-		
+
 		//more substantial change that allows any out of bounds calculation to still pass, but will warn that there was a significant accumulation of rounding error that is beyond the tolerance
 		return ( x >= T( 0.0 ) ? T( 1.0 ) : T( -1.0 ) );
 

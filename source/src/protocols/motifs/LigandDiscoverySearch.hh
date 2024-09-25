@@ -206,7 +206,7 @@ public:
 	//function may have use outside discover, so public can use it
 	protocols::motifs::MotifCOPs get_motif_sublibrary_by_aa(std::string residue_name);
 
-	// @brief function to push all adjacent atom indices if inputted ligand residue (pointer) into a 3D core::Size vector (atom_trios typedef) 
+	// @brief function to push all adjacent atom indices if inputted ligand residue (pointer) into a 3D core::Size vector (atom_trios typedef)
 	//this in theory could be useful beyond the scope the discover function, so I will leave this as public
 	atom_trios derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP, const core::chemical::AtomTypeSetCOP atset);
 
@@ -322,7 +322,7 @@ private:
 
 	// @brief variable to be used as a cutoff to define the maximum allowed fa_rep score for a placement to be considered
 	core::Real fa_rep_cutoff_;
-	
+
 	// @brief variable to be used as a cutoff to define the maximum allowed fa_atr score for a placement to be considered
 	core::Real fa_atr_cutoff_;
 
