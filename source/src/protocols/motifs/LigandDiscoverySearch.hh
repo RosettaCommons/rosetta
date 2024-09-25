@@ -212,7 +212,7 @@ public:
 
 	// @brief this function takes in a selected scorefunctionOP and gets the ddg of the selected poseOP (ideally with a placed ligand), and returns the ddg
 	// making this a public function, as the usage of this is seems broad enough that it could be used outside discover()
-	core::Real LigandDiscoverySearch::get_pose_ddg(core::scoring::ScoreFunctionOP score_fxn, core::pose::PoseOP & my_pose)
+	core::Real LigandDiscoverySearch::get_pose_ddg(core::scoring::ScoreFunctionOP score_fxn, core::pose::PoseOP & my_pose);
 
 private:
 
