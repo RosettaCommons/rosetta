@@ -228,45 +228,56 @@ LigandDiscoverySearch::~LigandDiscoverySearch() = default;
 //parameterized constructor to load in motif library, pdb, and ligand library
 LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position)
 {
-
 	working_pose_ = pose_from_PDB;
 	motif_library_ = motif_library;
 	all_residues_ = all_residues;
 	working_positions_ = working_position;
 
-	//set distance and angle thresholds if motif comparison is conducted
-	//I am choosing to not have values be included in the constructor arguments because these values may not necessarily even be used, they can be set in command line arguments, and there are setter functions that can be used after creating the object
-	//A constructor overload can be made to include these two as well
-	dist_threshold_ =  basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ];
-	angl_threshold_ = basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
+	//seed cutoff values
+	seed_cutoff_values();
 
-	//initially seed score class score functions
-	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-
+	//set up score functions
+	setup_score_functions();
 }
 
-//parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
-LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position, core::Real distance_threshold, core::Real angle_threshold)
+// @brief this function is to be called by the constructor(s) to seed initial values to cutoffs that are used for scoring/evaluating metrics of placed ligands in discover() and the functions it calls
+void LigandDiscoverySearch::seed_cutoff_values()
 {
+	//make tracer for debugging
+	static basic::Tracer ms_tr( "LigandDiscoverySearch.seed_cutoff_values", basic::t_info );
 
-	working_pose_ = pose_from_PDB;
-	motif_library_ = motif_library;
-	all_residues_ = all_residues;
-	working_positions_ = working_position;
+	//score function cutoffs
+	ms_tr.Debug << "Using fa_rep cutoff of: "  << option[ OptionKeys::motifs::fa_rep_cutoff ] << std::endl;
+	fa_rep_cutoff_ = option[ OptionKeys::motifs::fa_rep_cutoff ];
 
-	//set distance and angle thresholds if motif comparison is conducted
-	dist_threshold_ =  distance_threshold;
-	angl_threshold_ = angle_threshold;
+	ms_tr.Debug << "Using fa_atr cutoff of: "  << option[ OptionKeys::motifs::fa_atr_cutoff ] << std::endl;
+	fa_atr_cutoff_ = option[ OptionKeys::motifs::fa_atr_cutoff ];
 
-	//initially seed score class score functions
-	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	ms_tr.Debug << "Using fa_atr_rep cutoff of: "  << option[ OptionKeys::motifs::fa_atr_rep_cutoff ] << std::endl;
+	fa_atr_rep_cutoff_ = option[ OptionKeys::motifs::fa_atr_rep_cutoff ];
 
+	ms_tr.Debug << "Using whole score function cutoff of: "  << option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ] << std::endl;
+	whole_fxn_cutoff_ = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
+
+	ms_tr.Debug << "Using ddg cutoff of: "  << option[ OptionKeys::motifs::ddg_cutoff ] << std::endl;
+	ddg_cutoff_ = option[ OptionKeys::motifs::ddg_cutoff ];
+
+	//placement motifs cutoffs
+	ms_tr.Debug << "Using minimum motifs-like interactions cutoff of: "  << option[ OptionKeys::motifs::minimum_motifs_formed_cutoff] << std::endl;
+	min_motifs_cutoff_ = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
+
+	ms_tr.Debug << "Using minimum motifs-like interactions on significant residues cutoff of: "  << option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff] << std::endl;
+	min_sig_motifs_cutoff_ = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
+
+	ms_tr.Debug << "Using minimum real motifs interactions ratio cutoff of: "  << option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand] << std::endl;
+	real_motif_ratio_cutoff_ = option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand];
+
+	//placement motif metric cutoffs
+	ms_tr.Debug << "Using maximum placement motif to real motif RMSD distance: "  << option[ OptionKeys::motifs::duplicate_dist_cutoff] << std::endl;
+	dist_threshold_ =  option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ];
+
+	ms_tr.Debug << "Using maximum placement motif to real motif angle distance: "  << option[ OptionKeys::motifs::duplicate_angle_cutoff] << std::endl;
+	angl_threshold_ = option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
 }
 
 //function to load in a library for the search protocol
@@ -378,6 +389,12 @@ void LigandDiscoverySearch::set_angl_threshold(core::Size angle_threshold)
 // @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
 void LigandDiscoverySearch::setup_score_functions()
 {
+	//initially seed score class score functions
+	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+
 	//for each weight in the whole score function, set the scoretype weight to 0
 	//the purpose of this is to set up the non-weight parameters exactly the same way (and using the terms from the ligand.wts function)
 	//once terms are blanked to 0, terms of interest will be re-weighted as seen below
@@ -502,6 +519,142 @@ bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose, const c
 	return true;
 }
 
+// @brief function to score the minipose iteratively on fa_rep, fa_atr, and fa_atr+fa_rep
+//this is performed iteratively in order to more quickly filter on select criteria with more and quicker filtering happening at earlier steps
+//returns a boolean based on whether the minipose score was good enough at all steps or not (false means it failed, and the placement will be killed)
+bool LigandDiscoverySearch::score_minipose(const core::pose::PoseOP & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before)
+{
+	fa_rep_fxn_->score(*minipose);
+
+	//high fa_rep means clashing, want low fa_rep
+	fa_rep = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_rep];
+
+	//check if fa_rep is good
+	//positive score is bad
+	//best scores are negative and closest to 0
+	if ( fa_rep > fa_rep_cutoff_ ) {
+		return false;
+	}
+
+	fa_atr_fxn_->score(*minipose);
+
+	fa_atr = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_atr];
+
+	//run fa_atr check
+	//don't keep if fa_atr is greater than cutoff
+	if ( fa_atr > fa_atr_cutoff_ ) {
+		return false;
+	}
+
+	//score whole minipose with atr_rep function
+	fa_atr_rep_score_before = fa_atr_rep_fxn_->score(*minipose);
+
+	//check if worse than cutoff
+	if ( fa_atr_rep_score_before > fa_atr_rep_cutoff_ ) {
+		return false;
+	}
+
+	return true;
+}
+
+// @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
+void LigandDiscoverySearch::add_constraints_to_working_pose(const core::Size trip_atom_1, const core::Size trip_atom_2, const core::Size trip_atom_3, const core::Size working_position, const core::conformation::ResidueOP ligresOP)
+{
+	//create constraints for ligand wiggling to add to the pose
+	constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
+
+	core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_1, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_1 ), fx1 ) ) );
+
+	core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_2, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_2 ), fx2 ) ) );
+
+	core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_3, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_3 ), fx3 ) ) );
+
+	working_pose_->constraint_set(sc_cst_set);
+}
+
+// @brief this function takes in a selected scorefunctionOP and gets the ddg of the selected poseOP (ideally with a placed ligand), and returns the ddg
+core::Real LigandDiscoverySearch::get_pose_ddg(core::scoring::ScoreFunctionOP score_fxn, core::pose::PoseOP & my_pose)
+{
+	//use the passed score function to get interface deltas on the working_pose
+	std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *my_pose, score_fxn, "");
+	
+	//return the ddg, which is interface_delta_2 in the interface map
+	return interface_mapX_postdock["interface_delta_2"];
+}
+
+// @brief This function adds a ligand mutableresiduetypeOP to the residue type set for working_pose and original_pose. This occurs on the first instance of this ligand passing enough filters to be used in highresdock
+// the ligand is added to both so that the ligand can be a part of the original_pose for future iterations of placement attempts for the ligand, as well as the working_pose for immediate use
+void LigandDiscoverySearch::add_ligand_to_pose_residuetypeset(const core::chemical::MutableResidueTypeOP lig_mrt)
+{
+	//code to add type set of imported ligand into pose
+	core::chemical::PoseResidueTypeSetOP rts( working_pose_->conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
+
+	//make a ResidueTypeSetCOP that will be pulled from the PoseResidueTypeSetOP
+	core::chemical::ResidueTypeSetCOP def_rts(rts->default_rts());
+
+	//use the name_mapOP function to get a residue type pointer based on the name of the ligand (could be either a nullptr or a pointer to the type)
+	//should be a nullptr if it isn't in the set
+	core::chemical::ResidueTypeCOP lig_rt(def_rts->name_mapOP(working_pose_->residue(working_pose_->size()).name()));
+
+	//add the ligand to the residue type set if lig_rt is a nullpointer (which it should be)
+	if ( lig_rt == nullptr ) {
+		rts->add_base_residue_type(lig_mrt);
+	}
+
+	//reset the residue type sets for the working_pose_ and the original_pose_ so that they are updated to have the new ligand
+	working_pose_->conformation().reset_residue_type_set_for_conf(rts);
+	original_pose_.conformation().reset_residue_type_set_for_conf(rts);
+}
+
+// @brief This function creates a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement. The function takes in a score function OP to use in the HRD
+protocols::ligand_docking::HighResDockerOP LigandDiscoverySearch::make_HighResDockOP_for_discovery(const core::scoring::ScoreFunctionOP my_fxn)
+{
+	//make ligandareaop for use with the highresdocker
+	protocols::ligand_docking::LigandAreaOP sc_ligand_area(new protocols::ligand_docking::LigandArea());
+	//adjust values for the LigandArea object (doesn't look like there is a constructor for it, but it has free access to variables)
+	//using values from integration test for 7cpa ligand docking from xml file when applicable
+
+	sc_ligand_area->chain_ = '^';
+	sc_ligand_area->cutoff_ = 1;
+	sc_ligand_area->add_nbr_radius_ = true;
+	sc_ligand_area->all_atom_mode_ = true;
+	sc_ligand_area->minimize_ligand_ = 1;
+
+	//add ligand_area to an op of ligandarea
+	utility::vector1<protocols::ligand_docking::LigandAreaOP> ligand_areas;
+	ligand_areas.push_back(sc_ligand_area);
+
+	//set up interfaces and movemaps for the highresdocker
+	//make interfacebuilder
+	protocols::ligand_docking::InterfaceBuilderOP sc_interface(new protocols::ligand_docking::InterfaceBuilder(ligand_areas));
+
+	//make a blank interfacebuilder since the movemapbuilder needs 2
+	protocols::ligand_docking::InterfaceBuilderOP blank_interface(new protocols::ligand_docking::InterfaceBuilder());
+
+	//create movemapbuilderOP
+	//we will minimize waters (boolean)
+	protocols::ligand_docking::MoveMapBuilderOP my_movemapbuilder ( new protocols::ligand_docking::MoveMapBuilder(sc_interface, blank_interface, true));
+
+	//use movemapbuilder to make highresdocker; make 1 HRD for each score function
+	//first 2 values correspond to the number of mover cycles and to repack every Nth cycle
+	//we will move 3 times and do not want to repack (residues seem to move to unwanted positions)
+	protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, score_fxn, my_movemapbuilder) );
+
+	//set highresdockers to not repack
+	my_HighResDocker->set_allow_repacking(false);
+
+	return my_HighResDocker;
+}
+
+// @brief This function uses a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement
+void LigandDiscoverySearch::run_HighResDock_on_working_pose(const protocols::ligand_docking::HighResDockerOP my_HighResDocker)
+{
+	my_HighResDocker->apply(*working_pose_);
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -517,6 +670,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	// Make an atomtypeset to get atomtype integers for use in derive_adjacent_atoms_of_ligand
 	core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 
+	//declare the highresdockerop
+	protocols::ligand_docking::HighResDockerOP my_HighResDocker;
+
+	//create the highresdocker object using either the whole score function or fa_atr_rep
+	if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+		my_HighResDocker = make_HighResDockOP_for_discovery(whole_score_fxn_);
+	} else {
+		my_HighResDocker = make_HighResDockOP_for_discovery(fa_atr_rep_fxn_);
+	}
 
 	//iterate over all indices in working_positions_
 	//if the size of working_positions is 0, return -1 because we want at least 1 index to work with
@@ -580,13 +742,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] ) {
 			hash_motif_library_into_map(motif_library_,mymap);
 		}
-
-		ms_tr.Trace << "Setting up score functions." << std::endl;
-		setup_score_functions();
-
-		//define cutoff thresholds for distance and angles for comparing motifs (default values are 1 and 0.4 respectively)
-		Real dist_threshold = dist_threshold_;
-		Real angl_threshold = angl_threshold_;
 
 		//set up target_residues_sf_ and target_residues_contact_
 		//can interact with any of 3 integer_value vectors flags: in::target_residues, motifs::targer_residues_sf, and motifs::target_residues_contact
@@ -719,56 +874,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//this will be used so that we can modify the original as we look at systems with ligands placed, and can revert to the original
 		utility::vector1<core::Size>  matrix_data_counts_empty = matrix_data_counts;
 
-		//all initial cutoffs are arbitrary and should be set with the flags
-		//leaving them as their current values should let pretty much anything pass
-		//seeding of rep and atr values with default cutoffs
-		fa_rep_cutoff_ = 10000;
-		fa_atr_cutoff_ = 10000;
-
-		//use for the fa_atr_rep only function
-		fa_atr_rep_cutoff_ = 10000;
-
-		//score cutoff for scoring with whole ligand.wts score function (optional to use)
-		whole_fxn_cutoff_ = 10000;
-
-		if ( option[ OptionKeys::motifs::fa_rep_cutoff ].user() ) {
-			
-			ms_tr.Debug << "Using user-inputted fa_rep cutoff of: "  << option[ OptionKeys::motifs::fa_rep_cutoff ] << std::endl;
-			
-			fa_rep_cutoff_ = option[ OptionKeys::motifs::fa_rep_cutoff ];
-		}
-
-		if ( option[ OptionKeys::motifs::fa_atr_cutoff ].user() ) {
-			
-			ms_tr.Debug << "Using user-inputted fa_atr cutoff of: "  << option[ OptionKeys::motifs::fa_atr_cutoff ] << std::endl;
-			
-			fa_atr_cutoff_ = option[ OptionKeys::motifs::fa_atr_cutoff ];
-		}
-
-		if ( option[ OptionKeys::motifs::fa_atr_rep_cutoff ].user() ) {
-			
-			ms_tr.Debug << "Using user-inputted fa_atr_rep cutoff of: "  << option[ OptionKeys::motifs::fa_atr_rep_cutoff ] << std::endl;
-			
-			fa_atr_rep_cutoff_ = option[ OptionKeys::motifs::fa_atr_rep_cutoff ];
-		}
-
-
 		//for whole ligand.wts function, determine also if we want to use the function for scoring at all
-		use_ligand_wts_ = option[ OptionKeys::motifs::score_with_ligand_wts_function ];
+		bool use_ligand_wts = option[ OptionKeys::motifs::score_with_ligand_wts_function ];
 
-		if ( option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ].user() && use_ligand_wts_ ) {
-			
-			ms_tr.Debug << "Using user-inputted fa_atr cutoff of: "  << option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ] << std::endl;
-			
-			whole_fxn_cutoff_ = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
-		}
-
-		//dynamic cutoff to determine what pplacements to consider; should get more strict as we get placements
-		//get ddg cutoff
-		ddg_cutoff_ = 10000;
-		if ( option[ OptionKeys::motifs::ddg_cutoff ].user() ) {
-			ddg_cutoff_ = option[ OptionKeys::motifs::ddg_cutoff ];
-		}
+		//create vector to hold the top X placements
+		comparator comparator_v = comparator();
+		//this gets used unless the value for the number of best placements to collect is 0 (in which all are collected)
+		std::vector < std::tuple<core::Real, core::pose::Pose, std::string>> best_placements;
 
 		//determine how many output files to keep
 		//if the value is 0, all placements that pass all filters will be kept
@@ -777,15 +889,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			best_pdbs_to_keep = option[ OptionKeys::motifs::best_pdbs_to_keep ];
 		}
 
-		//create vector to hold the top X placements
-		comparator comparator_v = comparator();
-		//this gets used unless the value for the number of best placements to collect is 0 (in which all are collected)
-		std::vector < std::tuple<core::Real, core::pose::Pose, std::string>> best_placements;
-
 		ms_tr << "Starting to iterate through all ligands" << std::endl;		
 
-		//create a copy of the working_pose_ that working_pose_ can be reset to after each placement attempt
-		core::pose::Pose original_pose(*working_pose_);
+		//create a clone of the working_pose_ that working_pose_ can be reset to after each placement attempt
+		original_pose_ = *((*working_pose_).clone());
 
 		//hold the number of placements that pass all filters and could enter the top 100 placements
 		int passed_placement_counter = 0;
@@ -839,9 +946,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 				
 				ms_tr.Debug << "Trio is " << ligresOP->atom_name(ligand_atom_trios[i][1][1]) << " " << ligresOP->atom_name(ligand_atom_trios[i][2][1]) << " " << ligresOP->atom_name(ligand_atom_trios[i][3][1]) << std::endl;
 				
-				core::Size  trip_atom_1(ligand_atom_trios[i][1][1]);
-				core::Size  trip_atom_2(ligand_atom_trios[i][2][1]);
-				core::Size  trip_atom_3(ligand_atom_trios[i][3][1]);
+				core::Size trip_atom_1(ligand_atom_trios[i][1][1]);
+				core::Size trip_atom_2(ligand_atom_trios[i][2][1]);
+				core::Size trip_atom_3(ligand_atom_trios[i][3][1]);
 
 				int clashing_counter = 0;
 				int passing_counter = 0;
@@ -982,23 +1089,226 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//append ligand to minipose for early scoring
 					minipose->append_residue_by_jump(*ligresOP, 1);
 
-					//declare pdb name and pdb comment data strings, which will be used in scoring and motif functions
-					std::string comment_table_header = "";
-					std::string comment_table_data = "";
-					std::string pdb_name = "";
-					std::string pdb_short_unique_name = "";
+					//set up values to be passed into score_minipose and used downstream
+					core::Real fa_rep;
+					core::Real fa_atr;
+					core::Real fa_atr_rep_score_before;
 
-					//declare delta_score, since this variable needs to be passed down in case we are only keeping the top X systems by free energy
+					//score the minipose and set the value to a bool
+					bool minipose_scoring = score_minipose(minipose,fa_rep,fa_atr,fa_atr_rep_score_before);
+
+					//delete the last residue off minipose (the ligand), since we no longer need it and can recycle the minipose for further iterations
+					minipose->delete_residue_slow(minipose->size());
+
+					//if the value is true, the minipose passes initial scoring
+					//if false, the placement can be killed
+					if ( !minipose_scoring)
+					{
+						++clashing_counter;
+						continue;
+					}
+
+					++passed_placement_counter;
+
+					//append ligand to working pose
+					//using version of append to put it in a new chain
+					working_pose_->append_residue_by_jump(*ligresOP, working_pose_->size(), "", "", true);
+
+					//apply constraint set to working_pose_
+					add_constraints_to_working_pose(trip_atom_1, trip_atom_2, trip_atom_3, working_position, ligresOP);
+
 					//get free energy of pose with placed ligand before highresdock
 					//declaration of variable
 					core::Real delta_score = 10000;
 
-					//score the ligand in the minipose and working_pose_
-					//if score_placed_ligand returns true, we are good to move on, otherwise continue to next placement due to bad scoring at at least one point
-					if(score_placed_ligand(minipose, original_pose, pdb_name, pdb_short_unique_name, comment_table_header, comment_table_data, delta_score, clashing_counter))
-					{
+					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
+					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+						//whole
+						delta_score = get_pose_ddg(whole_score_fxn_, working_pose_);
+					} else {
+						//atrrep
+						delta_score = get_pose_ddg(fa_atr_rep_fxn_, working_pose_);
+					}
+					
+					ms_tr.Debug << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
+					
+					//attempt to use movers to optimize placement a little more
+					//begin setting up objects to make HighResDocker mover work
+
+					//add ligand to pose residue type set if it is not already in the set
+					//program doesn't work if the ligand isn't added to the pose residue type sets
+					//also add it to the original pdb
+					if ( ligand_added == false ) {
+						ligand_added = true;
+
+						//add the ligand mrt to the working and original poses
+						add_ligand_to_pose_residuetypeset(lig_mrt);
+					}
+
+					//apply the highresdocker to working_pose
+					run_HighResDock_on_working_pose(my_HighResDocker);
+
+					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
+					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+						//whole
+						delta_score = get_pose_ddg(whole_score_fxn_, working_pose_);
+					} else {
+						//atrrep
+						delta_score = get_pose_ddg(fa_atr_rep_fxn_, working_pose_);
+					}
+
+					//declaration of fa_atr_rep_score_after (may not be used)
+					core::Real fa_atr_rep_score_after = 0;
+					//optional check of fa_atr_rep after running highresdock
+					//post_highresdock_fa_atr_rep_score
+					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
+						//whole_score_fxn_->score(*working_pose_);
+						//5/1/24 replacing score with the atr_rep function instead of whole
+						fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
+
+						//check if after is worse than cutoff
+						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff_ ) {
+							working_pose_->delete_residue_slow(working_pose_->size());
+							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+							core::pose::PoseOP original_poseop(original_pose_.clone());
+							//assign the original_poseop to working_pose_
+							working_pose_ = original_poseop;
+							++clashing_counter;
+							continue;
+						}
+
+						//reset atr and rep values based on score of whole pose
+						fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
+						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
+					}
+
+					core::Real whole_score = 0;
+
+					//run optional check of using ligand.wts score function as additional cutoff before attempting to keep
+					if ( use_ligand_wts ) {
+						// score the function with the whole ligand.tws function
+						whole_score = whole_score_fxn_->score(*working_pose_);
+
+						//check if the score is below the cutoff, kill if higher
+						if ( whole_score > whole_fxn_cutoff_ ) {
+							//reset the working pose because its whole score was not good enough
+							working_pose_->delete_residue_slow(working_pose_->size());
+							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+							core::pose::PoseOP original_poseop(original_pose_.clone());
+							//assign the original_poseop to working_pose_
+							working_pose_ = original_poseop;
+							++clashing_counter;							
+							continue;
+						}
+
+						//print the score
+						
+						ms_tr.Debug << "ligand.wts score function score: " << whole_score << std::endl;
+						
+						//reset atr and rep values based on score of whole pose
+						fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
+						fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
+					}
+
+					//only print post dock delta score if we did a score with the whole or atrrep function
+					if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts ) {
+						//ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
+
+						ms_tr.Debug << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep;
+
+						//with atr_rep
+						if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
+							ms_tr.Debug << ", fa_atr_rep after = " << fa_atr_rep_score_after;
+						} else if ( use_ligand_wts ) {
+							//without atr_rep
+							ms_tr.Debug << ", whole = " << whole_score;
+						}
+						ms_tr.Debug << std::endl;
+					}
+					//check if whole_score is within cutoff, kill if not
+					//need to remove ligand from poses so that they can be recycled
+					//in theory, atr and rep should only improve, but this check helps make sure of that
+					if ( delta_score > ddg_cutoff_ || fa_atr > fa_atr_cutoff_ || fa_rep > fa_rep_cutoff_ ) {
+						working_pose_->delete_residue_slow(working_pose_->size());
+						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
+						core::pose::PoseOP original_poseop(original_pose_.clone());
+						//assign the original_poseop to working_pose_
+						working_pose_ = original_poseop;
+						++clashing_counter;
 						continue;
 					}
+
+					//declare strings to serve as a small simplified table of information to be added to the placement pdb comments that can be easily extracted for later analysis
+					//1 string will be a header line and the other will contain data that corresponds to the header
+					//data will be in a csv format for easier parsing
+					std::string comment_table_header = "";
+					std::string comment_table_data = "";
+
+					//name the pdb  that could come from the pose
+					//current naming convention
+					std::string pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
+
+					//add comments to working_pose for print
+					//core::pose::add_comment(*working_pose_, "", );
+					core::pose::add_comment(*working_pose_, "Placement: Output prefix:", output_prefix);
+					core::pose::add_comment(*working_pose_, "Placement: Anchor residue index:", std::to_string(working_position));
+					core::pose::add_comment(*working_pose_, "Placement: Anchor residue type:", discovery_position_residue);
+					core::pose::add_comment(*working_pose_, "Placement: Ligand trio number:", std::to_string(i));
+					core::pose::add_comment(*working_pose_, "Placement: Ligand name:", ligresOP->name());
+					core::pose::add_comment(*working_pose_, "Placement: Placed motif remark:", motifcop->remark());
+
+					//preceeding commas to account for the comment map keys
+					comment_table_header = "ligand_name,ligand_atom_trio,source_pdb,anchor_residue_index,anchor_residue_type,placed_motif_remark,";
+					comment_table_data = ligresOP->name() + "," + std::to_string(i) + "," + output_prefix + "," + std::to_string(working_position) + "," + discovery_position_residue + "," + motifcop->remark() + ",";
+
+					//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
+					std::string pdb_short_unique_name = pdb_name;
+
+					//only use fa_rep and atr if we use atrrep or whole to score the whole system and pull how we fixed them
+					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts ) {
+						pdb_name = pdb_name + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr);
+						core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_atr:", std::to_string(fa_atr));
+						core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_rep:", std::to_string(fa_rep));
+						comment_table_data = comment_table_data + std::to_string(fa_atr) + "," + std::to_string(fa_rep) + ",";
+					}
+					else
+					{
+						//blank if we have no data, but keep placeholder to allow for easier mecshing of any data that did have the data
+						comment_table_data = comment_table_data +  ","  + ",";
+					}
+					comment_table_header = comment_table_header + "fa_atr,fa_rep,ddg,";
+					comment_table_data = comment_table_data + std::to_string(delta_score) + ",";
+
+					//add delta (keeping in same order as I have in the past of atr and rep potentially being first)
+					pdb_name = pdb_name + "_delta_" + std::to_string(delta_score);
+					core::pose::add_comment(*working_pose_, "Scoring: Post-HighResDock system ddG:", std::to_string(delta_score));
+
+					//adjust if using optional atr_rep post highresdock
+					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
+						pdb_name = pdb_name + "_atrrep_" + std::to_string(fa_atr_rep_score_after);
+						core::pose::add_comment(*working_pose_, "Scoring: System fa_atr and fa_rep score:", std::to_string(fa_atr_rep_score_after));
+
+						comment_table_data = comment_table_data + std::to_string(fa_atr_rep_score_after) + ",";
+					}
+					else
+					{
+						comment_table_data = comment_table_data + ",";
+					}
+
+					comment_table_header = comment_table_header + "fa_atr_rep,";
+
+					//adjust file name if using ligand.wts
+					if ( use_ligand_wts ) {
+						pdb_name = pdb_name + "_whole_" + std::to_string(whole_score);
+						core::pose::add_comment(*working_pose_, "Scoring: Whole system score:", std::to_string(whole_score));
+						comment_table_data = comment_table_data + std::to_string(whole_score) + ",";
+					}
+					else
+					{
+						comment_table_data = comment_table_data + ",";
+					}
+
+					comment_table_header = comment_table_header + "whole_score,";
 
 					//option to try to pull motifs from the passed placement and see what motifs are collected, how many there are, if motifs are made with any residues of interest, and if the motifs match any motifs in the motif library
 					if ( option[ OptionKeys::motifs::collect_motifs_from_placed_ligand] ) {
@@ -1017,17 +1327,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//determine how many motifs were made and how many were made on significant residues
 						core::Size motifs_made = prot_pos_that_made_motifs.size();
 
-						core::Size min_motifs_cutoff = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
-						core::Size min_sig_motifs_cutoff = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
-
 						ms_tr.Debug << "Ligand placement created " << motifs_made << " total motifs" << std::endl;						
 
 						//if minimum number of motifs made is not enough, kill placement
-						if ( motifs_made < min_motifs_cutoff ) {
-							minipose->delete_residue_slow(minipose->size());
+						if ( motifs_made < min_motifs_cutoff_ ) {
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose.clone());
+							core::pose::PoseOP original_poseop(original_pose_.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;
@@ -1076,10 +1382,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								}
 							}
 							if ( kill ) {
-								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
 								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-								core::pose::PoseOP original_poseop(original_pose.clone());
+								core::pose::PoseOP original_poseop(original_pose_.clone());
 								//assign the original_poseop to working_pose_
 								working_pose_ = original_poseop;
 								++clashing_counter;
@@ -1134,11 +1439,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						}
 
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
-						if ( significant_motifs_made < min_sig_motifs_cutoff ) {
-							minipose->delete_residue_slow(minipose->size());
+						if ( significant_motifs_made < min_sig_motifs_cutoff_ ) {
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose.clone());
+							core::pose::PoseOP original_poseop(original_pose_.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;
@@ -1190,7 +1494,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 										ms_tr.Debug << "Theta: " << motif_theta << std::endl;
 										
 
-										if ( motif_distance < dist_threshold && motif_theta < angl_threshold ) {
+										if ( motif_distance < dist_threshold_ && motif_theta < angl_threshold_ ) {
 											//note that the motif matches a real one
 											
 											ms_tr.Debug << "Current motif matches real motif with distance: " << motif_distance << "  and angle difference: "  << motif_theta << std::endl;
@@ -1239,12 +1543,11 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							core::Real real_looking_motif_ratio = motifs_that_look_real_real/motifs_made_real;
 
 							//determine if real ratio is greater than cutoff: minimum_ratio_of_real_motifs_from_ligand
-							if ( real_looking_motif_ratio < option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand] ) {
+							if ( real_looking_motif_ratio < real_motif_ratio_cutoff_ ) {
 								//kill placement
-								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
 								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-								core::pose::PoseOP original_poseop(original_pose.clone());
+								core::pose::PoseOP original_poseop(original_pose_.clone());
 								//assign the original_poseop to working_pose_
 								working_pose_ = original_poseop;
 								++clashing_counter;
@@ -1298,10 +1601,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						core::io::pdb::dump_pdb(*working_pose_, pdb_name);
 
 						//directly remove residue from end of pose
-						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
 						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-						core::pose::PoseOP original_poseop(original_pose.clone());
+						core::pose::PoseOP original_poseop(original_pose_.clone());
 						//assign the original_poseop to working_pose_
 						working_pose_ = original_poseop;
 						++passing_counter;
@@ -1314,11 +1616,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					std::tuple<core::Real, core::pose::Pose, std::string> pose_tuple(delta_score, *working_pose_, pdb_name);
 
 					//directly remove residue from end of pose
-					minipose->delete_residue_slow(minipose->size());
-
 					working_pose_->delete_residue_slow(working_pose_->size());
 					//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-					core::pose::PoseOP original_poseop(original_pose.clone());
+					core::pose::PoseOP original_poseop(original_pose_.clone());
 					//assign the original_poseop to working_pose_
 					working_pose_ = original_poseop;
 
@@ -1364,7 +1664,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 			if ( best_placements.size() >= best_pdbs_to_keep && best_pdbs_to_keep != 0 ) {
 				ddg_cutoff_ = std::get<0>(best_placements[0]);
 				
-				ms_tr.Debug << "New ddg score cutoff is: " << ddg_cutoff_ << std::endl;
+				ms_tr.Debug << "New ddg cutoff is: " << ddg_cutoff_ << std::endl;
 				
 			}
 		}
@@ -1387,321 +1687,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		
 	}
 	return 1;
-}
-
-// @brief scoring operation to evaluate if a placed ligand has a good enough fa_atr, fa_rep, and ddg
-//placement is optimized using a highresdocker object, and fa_atr, fa_rep, and ddg can be scored again for a second round of scoring
-bool LigandDiscoverySearch::score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, std::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data, core::Real & delta_score, core::Size & clashing_counter)
-{
-	//make a tracer
-	static basic::Tracer ms_tr( "LigandDiscoverySearch.score_placed_ligand", basic::t_info );
-
-	fa_rep_fxn_->score(*minipose);
-
-	//high fa_rep means clashing, want low fa_rep
-	core::Real fa_rep = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_rep];
-
-	//check if fa_rep is good
-	//positive score is bad
-	//best scores are negative and closest to 0
-	if ( fa_rep > fa_rep_cutoff_ ) {
-		minipose->delete_residue_slow(minipose->size());
-		++clashing_counter;
-		return false;
-	}
-
-	fa_atr_fxn_->score(*minipose);
-
-	core::Real fa_atr = minipose->energies().residue_total_energies(minipose->size())[core::scoring::fa_atr];
-
-	//run fa_atr check
-	//don't keep if fa_atr is greater than cutoff
-	if ( fa_atr > fa_atr_cutoff_ ) {
-		minipose->delete_residue_slow(minipose->size());
-		++clashing_counter;
-		return false;
-	}
-
-	//score whole minipose with atr_rep function
-	core::Real fa_atr_rep_score_before = fa_atr_rep_fxn_->score(*minipose);
-
-	//check if worse than cutoff
-	if ( fa_atr_rep_score_before > fa_atr_rep_cutoff_ ) {
-		minipose->delete_residue_slow(minipose->size());
-		++clashing_counter;
-		return false;
-	}
-
-	++passed_placement_counter;
-
-	//append ligand to working pose
-	//using version of append to put it in a new chain
-	working_pose_->append_residue_by_jump(*ligresOP, working_pose_->size(), "", "", true);
-
-	//create constraints for ligand wiggling to add to the pose
-	constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
-
-	core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_1, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_1 ), fx1 ) ) );
-
-	core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_2, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_2 ), fx2 ) ) );
-
-	core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-	sc_cst_set->add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >( core::id::AtomID( trip_atom_3, working_pose_->size() ), core::id::AtomID( working_pose_->residue( working_position ).atom_index( "CA" ), 1 ), ligresOP->xyz( trip_atom_3 ), fx3 ) ) );
-
-	working_pose_->constraint_set(sc_cst_set);
-
-	//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
-	if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
-		//whole
-		std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
-		delta_score = interface_mapX_postdock["interface_delta_2"];
-	} else {
-		//atrrep
-		std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
-		delta_score = interface_mapX_postdock["interface_delta_2"];
-	}
-
-
-	
-	ms_tr.Debug << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
-	
-
-	//attempt to use movers to optimize placement a little more
-	//begin setting up objects to make HighResDocker mover work
-
-	//make ligandareaop for use with the highresdocker
-	protocols::ligand_docking::LigandAreaOP sc_ligand_area(new protocols::ligand_docking::LigandArea());
-	//adjust values for the LigandArea object (doesn't look like there is a constructor for it, but it has free access to variables)
-	//using values from integration test for 7cpa ligand docking from xml file when applicable
-
-	sc_ligand_area->chain_ = '^';
-	sc_ligand_area->cutoff_ = 1;
-	sc_ligand_area->add_nbr_radius_ = true;
-	sc_ligand_area->all_atom_mode_ = true;
-	sc_ligand_area->minimize_ligand_ = 1;
-
-	//add ligand to pose residue type set if it is not already in the set
-	//program doesn't work if the ligand isn't added to the pose residue type sets
-	//also add it to the original pdb
-	if ( ligand_added == false ) {
-		ligand_added = true;
-
-		//code to add type set of imported ligand into pose
-		core::chemical::PoseResidueTypeSetOP rts( working_pose_->conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
-
-		//make a ResidueTypeSetCOP that will be pulled from the PoseResidueTypeSetOP
-		core::chemical::ResidueTypeSetCOP def_rts(rts->default_rts());
-
-		//use the name_mapOP function to get a residue type pointer based on the name of the ligand (could be either a nullptr or a pointer to the type)
-		//should be a nullptr if it isn't in the set
-		core::chemical::ResidueTypeCOP lig_rt(def_rts->name_mapOP(working_pose_->residue(working_pose_->size()).name()));
-
-		if ( lig_rt == nullptr ) {
-			rts->add_base_residue_type(lig_mrt);
-		}
-		working_pose_->conformation().reset_residue_type_set_for_conf(rts);
-		original_pose.conformation().reset_residue_type_set_for_conf(rts);
-	}
-
-	//add ligand_area to an op of ligandarea
-	utility::vector1<protocols::ligand_docking::LigandAreaOP> ligand_areas;
-	ligand_areas.push_back(sc_ligand_area);
-
-	//set up interfaces and movemaps for the highresdocker
-
-	//make interfacebuilder
-	protocols::ligand_docking::InterfaceBuilderOP sc_interface(new protocols::ligand_docking::InterfaceBuilder(ligand_areas));
-
-	//make a blank interfacebuilder since the movemapbuilder needs 2
-	protocols::ligand_docking::InterfaceBuilderOP blank_interface(new protocols::ligand_docking::InterfaceBuilder());
-
-
-	//create movemapbuilderOP
-	//we will minimize waters (boolean)
-	protocols::ligand_docking::MoveMapBuilderOP my_movemapbuilder ( new protocols::ligand_docking::MoveMapBuilder(sc_interface, blank_interface, true));
-
-	//use movemapbuilder to make highresdocker; make 1 HRD for each score function
-	//first 2 values correspond to the number of mover cycles and to repack every Nth cycle
-	//we will move 3 times and do not want to repack (residues seem to move to unwanted positions)
-	protocols::ligand_docking::HighResDockerOP my_HighResDocker_atrrep( new protocols::ligand_docking::HighResDocker(3, 0, fa_atr_rep_fxn_, my_movemapbuilder) );
-	protocols::ligand_docking::HighResDockerOP my_HighResDocker_whole( new protocols::ligand_docking::HighResDocker(3, 0, whole_score_fxn_, my_movemapbuilder) );
-
-
-	//set highresdockers to not repack
-	my_HighResDocker_atrrep->set_allow_repacking(false);
-	my_HighResDocker_whole->set_allow_repacking(false);
-
-	//apply with highresdocker for desired score function
-	if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
-		my_HighResDocker_atrrep->apply(*working_pose_);
-	} else {
-		my_HighResDocker_whole->apply(*working_pose_);
-	}
-
-	//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get new ddg
-	if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
-		std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, whole_score_fxn_, "");
-		delta_score = interface_mapX_postdock["interface_delta_2"];
-	} else {
-		//5/1/24 replacing score with the atr_rep function instead of whole
-		std::map< std::string, core::Real > interface_mapX_postdock = protocols::ligand_docking::get_interface_deltas('2', *working_pose_, fa_atr_rep_fxn_, "");
-		delta_score = interface_mapX_postdock["interface_delta_2"];
-	}
-
-	//declaration of fa_atr_rep_score_after (may not be used)
-	core::Real fa_atr_rep_score_after = 0;
-	//optional check of fa_atr_rep after running highresdock
-	//post_highresdock_fa_atr_rep_score
-	if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
-		//whole_score_fxn_->score(*working_pose_);
-		//5/1/24 replacing score with the atr_rep function instead of whole
-		fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
-
-		//check if after is worse than cutoff
-		if ( fa_atr_rep_score_after > fa_atr_rep_cutoff_ ) {
-			minipose->delete_residue_slow(minipose->size());
-			working_pose_->delete_residue_slow(working_pose_->size());
-			//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-			core::pose::PoseOP original_poseop(original_pose.clone());
-			//assign the original_poseop to working_pose_
-			working_pose_ = original_poseop;
-			++clashing_counter;
-			return false;
-		}
-
-		//reset atr and rep values based on score of whole pose
-		fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
-		fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
-	}
-
-	core::Real whole_score = 0;
-
-	//run optional check of using ligand.wts score function as additional cutoff before attempting to keep
-	if ( use_ligand_wts_ ) {
-		// score the function with the whole ligand.tws function
-		whole_score = whole_score_fxn_->score(*working_pose_);
-
-		//check if the score is below the cutoff, kill if higher
-		if ( whole_score > whole_fxn_cutoff_ ) {
-			minipose->delete_residue_slow(minipose->size());
-			++clashing_counter;
-			return false;
-		}
-
-		//print the score
-		
-		ms_tr.Debug << "ligand.wts score function score: " << whole_score << std::endl;
-		
-		//reset atr and rep values based on score of whole pose
-		fa_rep = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_rep];
-		fa_atr = working_pose_->energies().residue_total_energies(working_pose_->size())[core::scoring::fa_atr];
-	}
-
-	//only print post dock delta score if we did a score with the whole or atrrep function
-	if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts_ ) {
-		//ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
-
-		ms_tr.Debug << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep;
-
-		//with atr_rep
-		if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
-			ms_tr.Debug << ", fa_atr_rep after = " << fa_atr_rep_score_after;
-		} else if ( use_ligand_wts_ ) {
-			//without atr_rep
-			ms_tr.Debug << ", whole = " << whole_score;
-		}
-		ms_tr.Debug << std::endl;
-	}
-	//check if whole_score is within cutoff, kill if not
-	//need to remove ligand from poses so that they can be recycled
-	//in theory, atr and rep should only improve, but this check helps make sure of that
-	if ( delta_score > ddg_cutoff_ || fa_atr > fa_atr_cutoff_ || fa_rep > fa_rep_cutoff_ ) {
-		minipose->delete_residue_slow(minipose->size());
-		working_pose_->delete_residue_slow(working_pose_->size());
-		//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-		core::pose::PoseOP original_poseop(original_pose.clone());
-		//assign the original_poseop to working_pose_
-		working_pose_ = original_poseop;
-		++clashing_counter;
-		return false;
-	}
-
-	//declare strings to serve as a small simplified table of information to be added to the placement pdb comments that can be easily extracted for later analysis
-	//1 string will be a header line and the other will contain data that corresponds to the header
-	//data will be in a csv format for easier parsing
-	comment_table_header = "";
-	comment_table_data = "";
-
-	//name the pdb  that could come from the pose
-	//current naming convention
-	pdb_name = output_prefix + "_ResPos_" + std::to_string(working_position) + "_ResID_" + discovery_position_residue + "_Trio" + std::to_string(i) + "_" + ligresOP->name() + "_motif_" + motifcop->remark();
-
-	//add comments to working_pose for print
-	//core::pose::add_comment(*working_pose_, "", );
-	core::pose::add_comment(*working_pose_, "Placement: Output prefix:", output_prefix);
-	core::pose::add_comment(*working_pose_, "Placement: Anchor residue index:", std::to_string(working_position));
-	core::pose::add_comment(*working_pose_, "Placement: Anchor residue type:", discovery_position_residue);
-	core::pose::add_comment(*working_pose_, "Placement: Ligand trio number:", std::to_string(i));
-	core::pose::add_comment(*working_pose_, "Placement: Ligand name:", ligresOP->name());
-	core::pose::add_comment(*working_pose_, "Placement: Placed motif remark:", motifcop->remark());
-
-	//preceeding commas to account for the comment map keys
-	comment_table_header = "ligand_name,ligand_atom_trio,source_pdb,anchor_residue_index,anchor_residue_type,placed_motif_remark,";
-	comment_table_data = ligresOP->name() + "," + std::to_string(i) + "," + output_prefix + "," + std::to_string(working_position) + "," + discovery_position_residue + "," + motifcop->remark() + ",";
-
-	//make a string that is the pdb name up to the motif that is used for motif collection of the placement (if that is used)
-	pdb_short_unique_name = pdb_name;
-
-	//only use fa_rep and atr if we use atrrep or whole to score the whole system and pull how we fixed them
-	if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts_ ) {
-		pdb_name = pdb_name + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr);
-		core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_atr:", std::to_string(fa_atr));
-		core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_rep:", std::to_string(fa_rep));
-		comment_table_data = comment_table_data + std::to_string(fa_atr) + "," + std::to_string(fa_rep) + ",";
-	}
-	else
-	{
-		//blank if we have no data, but keep placeholder to allow for easier mecshing of any data that did have the data
-		comment_table_data = comment_table_data +  ","  + ",";
-	}
-	comment_table_header = comment_table_header + "fa_atr,fa_rep,ddg,";
-	comment_table_data = comment_table_data + std::to_string(delta_score) + ",";
-
-	//add delta (keeping in same order as I have in the past of atr and rep potentially being first)
-	pdb_name = pdb_name + "_delta_" + std::to_string(delta_score);
-	core::pose::add_comment(*working_pose_, "Scoring: Post-HighResDock system ddG:", std::to_string(delta_score));
-
-	//adjust if using optional atr_rep post highresdock
-	if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
-		pdb_name = pdb_name + "_atrrep_" + std::to_string(fa_atr_rep_score_after);
-		core::pose::add_comment(*working_pose_, "Scoring: System fa_atr and fa_rep score:", std::to_string(fa_atr_rep_score_after));
-
-		comment_table_data = comment_table_data + std::to_string(fa_atr_rep_score_after) + ",";
-	}
-	else
-	{
-		comment_table_data = comment_table_data + ",";
-	}
-
-	comment_table_header = comment_table_header + "fa_atr_rep,";
-
-	//adjust file name if using ligand.wts
-	if ( use_ligand_wts_ ) {
-		pdb_name = pdb_name + "_whole_" + std::to_string(whole_score);
-		core::pose::add_comment(*working_pose_, "Scoring: Whole system score:", std::to_string(whole_score));
-		comment_table_data = comment_table_data + std::to_string(whole_score) + ",";
-	}
-	else
-	{
-		comment_table_data = comment_table_data + ",";
-	}
-
-	comment_table_header = comment_table_header + "whole_score,";
-
-	//return true if we made it to the end, this placement passes
-	return true;
 }
 
 //function to get a sub-library of motifs from the main library, based on the residue being used (only get for select residue)

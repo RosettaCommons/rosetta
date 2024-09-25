@@ -149,9 +149,6 @@ public:
 	// @brief parameterized constructor to load in motif library, pdb, and ligand library
 	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position);
 
-	// @brief parameterized constructor to load in motif library, pdb, ligand library, and cutoffs for distance and angle threshold for optional real motif comparison
-	LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position, core::Real distance_threshold, core::Real angle_threshold);
-
 	// @brief function to load in a library for the search protocol
 	void set_motif_library(protocols::motifs::MotifCOPs motif_library);
 
@@ -213,6 +210,10 @@ public:
 	//this in theory could be useful beyond the scope the discover function, so I will leave this as public
 	atom_trios derive_adjacent_atoms_of_ligand(const core::conformation::ResidueOP ligresOP, const core::chemical::AtomTypeSetCOP atset);
 
+	// @brief this function takes in a selected scorefunctionOP and gets the ddg of the selected poseOP (ideally with a placed ligand), and returns the ddg
+	// making this a public function, as the usage of this is seems broad enough that it could be used outside discover()
+	core::Real get_pose_ddg(core::scoring::ScoreFunctionOP score_fxn, core::pose::PoseOP & my_pose);
+
 private:
 
 	// @brief default constructor
@@ -220,9 +221,8 @@ private:
 	//should only use parameterized constructor
 	LigandDiscoverySearch();
 
-	// @brief functions to be called in discover() function
-	//function to set values for the score functions
-	//void seed_score_functions();
+	// @brief this function is to be called by the constructor(s) to seed initial values to cutoffs that are used for scoring/evaluating metrics of placed ligands in discover() and the functions it calls
+	void seed_cutoff_values();
 
 	// @brief create protein_representation_matrix_
 	//uses working_pose to make the matrix
@@ -264,14 +264,31 @@ private:
 	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
 	bool make_minipose(core::pose::PoseOP & minipose, const core::conformation::ResidueOP ligresOP);
 
-	// @brief scoring operation to evaluate if a placed ligand has a good enough fa_atr, fa_rep, and ddg
-	//placement is optimized using a highresdocker object, and fa_atr, fa_rep, and ddg can be scored again for a second round of scoring
-	bool score_placed_ligand(core::pose::PoseOP & minipose, core::pose::Pose original_pose, std::string & pdb_name, std::string & pdb_short_unique_name, std::string & comment_table_header, std::string & comment_table_data, core::Real & delta_score, core::Size & clashing_counter);
+	// @brief function to score the minipose iteratively on fa_rep, fa_atr, and fa_atr+fa_rep
+	//this is performed iteratively in order to more quickly filter on select criteria with more and quicker filtering happening at earlier steps
+	//returns a boolean based on whether the minipose score was good enough at all steps or not (false means it failed, and the placement will be killed)
+	bool score_minipose(const core::pose::PoseOP & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before);
+
+	// @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
+	void add_constraints_to_working_pose(const core::Size trip_atom_1, const core::Size trip_atom_2, const core::Size trip_atom_3, const core::Size working_position, const core::conformation::ResidueOP ligresOP);
+
+	// @brief This function adds a ligand mutableresiduetypeOP to the residue type set for working_pose and original_pose. This occurs on the first instance of this ligand passing enough filters to be used in highresdock
+	// the ligand is added to both so that the ligand can be a part of the original_pose for future iterations of placement attempts for the ligand, as well as the working_pose for immediate use
+	void add_ligand_to_pose_residuetypeset(const core::chemical::MutableResidueTypeOP lig_mrt);
+
+	// @brief This function creates a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement. The function takes in a score function OP to use in the HRD
+	protocols::ligand_docking::HighResDockerOP make_HighResDockOP_for_discovery(const core::scoring::ScoreFunctionOP my_fxn);
+
+	// @brief This function uses a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement
+	void run_HighResDock_on_working_pose(const protocols::ligand_docking::HighResDockerOP my_HighResDocker);
 
 	//class variables
 
 	// @brief receptor pose to work with
 	core::pose::PoseOP working_pose_;
+	// @brief original copy of working_pose_, which is used as a copy that working_pose_ can be reverted to after being modified through operations like the highresdock
+	// input ligands will be added to the original_pose_ residue type set
+	core::pose::Pose original_pose_;
 	// @brief motif library (all motifs for all residues)
 	protocols::motifs::MotifCOPs motif_library_;
 	// @brief motifs library for select residue
@@ -300,6 +317,31 @@ private:
 	// value can be set using motifs::duplicate_dist_cutoff flag or set_angle_threshold()
 	core::Real angl_threshold_;
 
+	// @brief variable to be used as a cutoff to define the maximum allowed fa_rep score for a placement to be considered
+	core::Real fa_rep_cutoff_;
+	
+	// @brief variable to be used as a cutoff to define the maximum allowed fa_atr score for a placement to be considered
+	core::Real fa_atr_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the maximum allowed combined fa_atr and fa_rep score for a placement to be considered
+	core::Real fa_atr_rep_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the maximum allowed score from the whole score function for a placement to be considered
+	core::Real whole_fxn_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the maximum allowed ddg score for a placement to be considered
+	core::Real ddg_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the minimum number of motif-like contacts that a placed ligand has to be considered
+	core::Size min_motifs_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the minimum number of motif-like contacts that a placed ligand has against residues noted as significant to be considered
+	core::Size min_sig_motifs_cutoff_;
+
+	// @brief variable to be used as a cutoff to define the minimum number of motif-like contacts that a placed ligand has that are considered "real"
+	//real is defined as the motif being within the distance and angle threshold of a motif with the same residue/atoms from the input motif library
+	core::Real real_motif_ratio_cutoff_;
+
 	// @brief whole ligand.wts score function to be used with scoring placed ligand poses that pass upstream filters
 	core::scoring::ScoreFunctionOP whole_score_fxn_;
 
@@ -311,22 +353,4 @@ private:
 
 	// @brief modified ligand.wts function that only contains fa_atr and fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
 	core::scoring::ScoreFunctionOP fa_atr_rep_fxn_;
-
-	// @brief score cutoff for fa_atr
-	core::Real fa_atr_cutoff_;
-
-	// @brief score cutoff for fa_rep
-	core::Real fa_rep_cutoff_;
-
-	// @brief score cutoff for fa_atr_rep
-	core::Real fa_atr_rep_cutoff_;
-
-	// @brief score cutoff for whole score function score
-	core::Real whole_fxn_cutoff_;
-
-	// @brief bool to indicate whether to use the whole ligand.wts score function when scorign placements (faster, but potentially less powerful if not using whole function when scoring)
-	bool use_ligand_wts_;
-
-	// @brief score cutoff for ddg
-	core::Real ddg_cutoff_;
 };
