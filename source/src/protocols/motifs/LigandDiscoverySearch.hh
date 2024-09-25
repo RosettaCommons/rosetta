@@ -272,10 +272,17 @@ private:
 	// @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
 	void add_constraints_to_working_pose(const core::Size trip_atom_1, const core::Size trip_atom_2, const core::Size trip_atom_3, const core::Size working_position, const core::conformation::ResidueOP ligresOP);
 
+	// @brief This function adds a ligand mutableresiduetypeOP to the residue type set for working_pose and original_pose. This occurs on the first instance of this ligand passing enough filters to be used in highresdock
+	// the ligand is added to both so that the ligand can be a part of the original_pose for future iterations of placement attempts for the ligand, as well as the working_pose for immediate use
+	void add_ligand_to_pose_residuetypeset(const core::chemical::MutableResidueTypeOP lig_mrt);
+
 	//class variables
 
 	// @brief receptor pose to work with
 	core::pose::PoseOP working_pose_;
+	// @brief original copy of working_pose_, which is used as a copy that working_pose_ can be reverted to after being modified through operations like the highresdock
+	// input ligands will be added to the original_pose_ residue type set
+	core::pose::Pose original_pose_;
 	// @brief motif library (all motifs for all residues)
 	protocols::motifs::MotifCOPs motif_library_;
 	// @brief motifs library for select residue

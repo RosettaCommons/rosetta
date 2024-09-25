@@ -585,6 +585,30 @@ core::Real LigandDiscoverySearch::get_pose_ddg(core::scoring::ScoreFunctionOP sc
 	return interface_mapX_postdock["interface_delta_2"];
 }
 
+// @brief This function adds a ligand mutableresiduetypeOP to the residue type set for working_pose and original_pose. This occurs on the first instance of this ligand passing enough filters to be used in highresdock
+// the ligand is added to both so that the ligand can be a part of the original_pose for future iterations of placement attempts for the ligand, as well as the working_pose for immediate use
+void LigandDiscoverySearch::add_ligand_to_pose_residuetypeset(const core::chemical::MutableResidueTypeOP lig_mrt)
+{
+	//code to add type set of imported ligand into pose
+	core::chemical::PoseResidueTypeSetOP rts( working_pose_->conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
+
+	//make a ResidueTypeSetCOP that will be pulled from the PoseResidueTypeSetOP
+	core::chemical::ResidueTypeSetCOP def_rts(rts->default_rts());
+
+	//use the name_mapOP function to get a residue type pointer based on the name of the ligand (could be either a nullptr or a pointer to the type)
+	//should be a nullptr if it isn't in the set
+	core::chemical::ResidueTypeCOP lig_rt(def_rts->name_mapOP(working_pose_->residue(working_pose_->size()).name()));
+
+	//add the ligand to the residue type set if lig_rt is a nullpointer (which it should be)
+	if ( lig_rt == nullptr ) {
+		rts->add_base_residue_type(lig_mrt);
+	}
+
+	//reset the residue type sets for the working_pose_ and the original_pose_ so that they are updated to have the new ligand
+	working_pose_->conformation().reset_residue_type_set_for_conf(rts);
+	original_pose_.conformation().reset_residue_type_set_for_conf(rts);
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -813,7 +837,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		ms_tr << "Starting to iterate through all ligands" << std::endl;		
 
 		//create a copy of the working_pose_ that working_pose_ can be reset to after each placement attempt
-		core::pose::Pose original_pose(*working_pose_);
+		original_pose_(*working_pose_);
 
 		//hold the number of placements that pass all filters and could enter the top 100 placements
 		int passed_placement_counter = 0;
@@ -1062,21 +1086,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					if ( ligand_added == false ) {
 						ligand_added = true;
 
-						//code to add type set of imported ligand into pose
-						core::chemical::PoseResidueTypeSetOP rts( working_pose_->conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
-
-						//make a ResidueTypeSetCOP that will be pulled from the PoseResidueTypeSetOP
-						core::chemical::ResidueTypeSetCOP def_rts(rts->default_rts());
-
-						//use the name_mapOP function to get a residue type pointer based on the name of the ligand (could be either a nullptr or a pointer to the type)
-						//should be a nullptr if it isn't in the set
-						core::chemical::ResidueTypeCOP lig_rt(def_rts->name_mapOP(working_pose_->residue(working_pose_->size()).name()));
-
-						if ( lig_rt == nullptr ) {
-							rts->add_base_residue_type(lig_mrt);
-						}
-						working_pose_->conformation().reset_residue_type_set_for_conf(rts);
-						original_pose.conformation().reset_residue_type_set_for_conf(rts);
+						//add the ligand mrt to the working and original poses
+						add_ligand_to_pose_residuetypeset(lig_mrt);
 					}
 
 					//make ligandareaop for use with the highresdocker
@@ -1147,7 +1158,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff_ ) {
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose.clone());
+							core::pose::PoseOP original_poseop(original_pose_.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;
@@ -1171,7 +1182,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							//reset the working pose because its whole score was not good enough
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose.clone());
+							core::pose::PoseOP original_poseop(original_pose_.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;							
@@ -1208,7 +1219,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					if ( delta_score > ddg_cutoff_ || fa_atr > fa_atr_cutoff_ || fa_rep > fa_rep_cutoff_ ) {
 						working_pose_->delete_residue_slow(working_pose_->size());
 						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-						core::pose::PoseOP original_poseop(original_pose.clone());
+						core::pose::PoseOP original_poseop(original_pose_.clone());
 						//assign the original_poseop to working_pose_
 						working_pose_ = original_poseop;
 						++clashing_counter;
@@ -1310,7 +1321,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						if ( motifs_made < min_motifs_cutoff_ ) {
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose.clone());
+							core::pose::PoseOP original_poseop(original_pose_.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;
@@ -1361,7 +1372,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							if ( kill ) {
 								working_pose_->delete_residue_slow(working_pose_->size());
 								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-								core::pose::PoseOP original_poseop(original_pose.clone());
+								core::pose::PoseOP original_poseop(original_pose_.clone());
 								//assign the original_poseop to working_pose_
 								working_pose_ = original_poseop;
 								++clashing_counter;
@@ -1419,7 +1430,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						if ( significant_motifs_made < min_sig_motifs_cutoff_ ) {
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose.clone());
+							core::pose::PoseOP original_poseop(original_pose_.clone());
 							//assign the original_poseop to working_pose_
 							working_pose_ = original_poseop;
 							++clashing_counter;
@@ -1524,7 +1535,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								//kill placement
 								working_pose_->delete_residue_slow(working_pose_->size());
 								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-								core::pose::PoseOP original_poseop(original_pose.clone());
+								core::pose::PoseOP original_poseop(original_pose_.clone());
 								//assign the original_poseop to working_pose_
 								working_pose_ = original_poseop;
 								++clashing_counter;
@@ -1580,7 +1591,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//directly remove residue from end of pose
 						working_pose_->delete_residue_slow(working_pose_->size());
 						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-						core::pose::PoseOP original_poseop(original_pose.clone());
+						core::pose::PoseOP original_poseop(original_pose_.clone());
 						//assign the original_poseop to working_pose_
 						working_pose_ = original_poseop;
 						++passing_counter;
@@ -1595,7 +1606,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//directly remove residue from end of pose
 					working_pose_->delete_residue_slow(working_pose_->size());
 					//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-					core::pose::PoseOP original_poseop(original_pose.clone());
+					core::pose::PoseOP original_poseop(original_pose_.clone());
 					//assign the original_poseop to working_pose_
 					working_pose_ = original_poseop;
 
