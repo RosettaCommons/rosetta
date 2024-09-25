@@ -217,10 +217,6 @@ private:
 	//should only use parameterized constructor
 	LigandDiscoverySearch();
 
-	// @brief functions to be called in constructor
-	//function to set values for the score functions
-	void seed_score_functions();
-
 	// @brief this function is to be called by the constructor(s) to seed initial values to cutoffs that are used for scoring/evaluating metrics of placed ligands in discover() and the functions it calls
 	void seed_cutoff_values();
 
