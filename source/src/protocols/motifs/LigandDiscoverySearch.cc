@@ -558,7 +558,7 @@ bool LigandDiscoverySearch::score_minipose(const core::pose::PoseOP & minipose, 
 }
 
 // @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
-void LigandDiscoverySearch::add_constraints_to_working_pose(core::Size trip_atom_1, core::Size trip_atom_2, core::Size trip_atom_3)
+void LigandDiscoverySearch::add_constraints_to_working_pose(core::Size trip_atom_1, core::Size trip_atom_2, core::Size trip_atom_3, core::Size working_position)
 {
 	//create constraints for ligand wiggling to add to the pose
 	constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
@@ -1026,7 +1026,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					working_pose_->append_residue_by_jump(*ligresOP, working_pose_->size(), "", "", true);
 
 					//apply constraint set to working_pose_
-					add_constraints_to_working_pose(trip_atom_1, trip_atom_2, trip_atom_3);
+					add_constraints_to_working_pose(trip_atom_1, trip_atom_2, trip_atom_3, working_position);
 
 					//get free energy of pose with placed ligand before highresdock
 					//declaration of variable

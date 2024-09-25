@@ -266,7 +266,7 @@ private:
 	bool score_minipose(const core::pose::PoseOP & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before);
 
 	// @brief create a constraint set on the 3 ligand motif atoms (the last residue in working_pose_) to reduce their movement before applying a highresdock
-	void add_constraints_to_working_pose(core::Size trip_atom_1, core::Size trip_atom_2, core::Size trip_atom_3);
+	void add_constraints_to_working_pose(core::Size trip_atom_1, core::Size trip_atom_2, core::Size trip_atom_3, core::Size working_position);
 
 	//class variables
 
