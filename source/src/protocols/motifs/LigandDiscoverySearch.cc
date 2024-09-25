@@ -584,10 +584,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		ms_tr.Trace << "Setting up score functions." << std::endl;
 		setup_score_functions();
 
-		//define cutoff thresholds for distance and angles for comparing motifs (default values are 1 and 0.4 respectively)
-		Real dist_threshold = dist_threshold_;
-		Real angl_threshold = angl_threshold_;
-
 		//set up target_residues_sf_ and target_residues_contact_
 		//can interact with any of 3 integer_value vectors flags: in::target_residues, motifs::targer_residues_sf, and motifs::target_residues_contact
 		//target_residues_sf will only write into the target_residues_sf vector; target_residues_contact will only write into target_residues_contact_
@@ -1480,7 +1476,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 										ms_tr.Debug << "Theta: " << motif_theta << std::endl;
 										
 
-										if ( motif_distance < dist_threshold && motif_theta < angl_threshold ) {
+										if ( motif_distance < dist_threshold_ && motif_theta < angl_threshold_ ) {
 											//note that the motif matches a real one
 											
 											ms_tr.Debug << "Current motif matches real motif with distance: " << motif_distance << "  and angle difference: "  << motif_theta << std::endl;
