@@ -522,7 +522,7 @@ bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose, const c
 // @brief function to score the minipose iteratively on fa_rep, fa_atr, and fa_atr+fa_rep
 //this is performed iteratively in order to more quickly filter on select criteria with more and quicker filtering happening at earlier steps
 //returns a boolean based on whether the minipose score was good enough at all steps or not (false means it failed, and the placement will be killed)
-bool LigandDiscoverySearch::score_minipose(const core::Pose::pose & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before)
+bool LigandDiscoverySearch::score_minipose(const core::pose::PoseOP & minipose, core::Real & fa_rep, core::Real & fa_atr, core::Real & fa_atr_rep_score_before)
 {
 	fa_rep_fxn_->score(*minipose);
 
