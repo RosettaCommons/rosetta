@@ -609,6 +609,52 @@ void LigandDiscoverySearch::add_ligand_to_pose_residuetypeset(const core::chemic
 	original_pose_.conformation().reset_residue_type_set_for_conf(rts);
 }
 
+// @brief This function creates a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement. The function takes in a score function OP to use in the HRD
+protocols::ligand_docking::HighResDockerOP LigandDiscoverySearch::make_HighResDockOP_for_discovery(const core::scoring::ScoreFunctionOP my_fxn)
+{
+	//make ligandareaop for use with the highresdocker
+	protocols::ligand_docking::LigandAreaOP sc_ligand_area(new protocols::ligand_docking::LigandArea());
+	//adjust values for the LigandArea object (doesn't look like there is a constructor for it, but it has free access to variables)
+	//using values from integration test for 7cpa ligand docking from xml file when applicable
+
+	sc_ligand_area->chain_ = '^';
+	sc_ligand_area->cutoff_ = 1;
+	sc_ligand_area->add_nbr_radius_ = true;
+	sc_ligand_area->all_atom_mode_ = true;
+	sc_ligand_area->minimize_ligand_ = 1;
+
+	//add ligand_area to an op of ligandarea
+	utility::vector1<protocols::ligand_docking::LigandAreaOP> ligand_areas;
+	ligand_areas.push_back(sc_ligand_area);
+
+	//set up interfaces and movemaps for the highresdocker
+	//make interfacebuilder
+	protocols::ligand_docking::InterfaceBuilderOP sc_interface(new protocols::ligand_docking::InterfaceBuilder(ligand_areas));
+
+	//make a blank interfacebuilder since the movemapbuilder needs 2
+	protocols::ligand_docking::InterfaceBuilderOP blank_interface(new protocols::ligand_docking::InterfaceBuilder());
+
+	//create movemapbuilderOP
+	//we will minimize waters (boolean)
+	protocols::ligand_docking::MoveMapBuilderOP my_movemapbuilder ( new protocols::ligand_docking::MoveMapBuilder(sc_interface, blank_interface, true));
+
+	//use movemapbuilder to make highresdocker; make 1 HRD for each score function
+	//first 2 values correspond to the number of mover cycles and to repack every Nth cycle
+	//we will move 3 times and do not want to repack (residues seem to move to unwanted positions)
+	protocols::ligand_docking::HighResDockerOP my_HighResDocker( new protocols::ligand_docking::HighResDocker(3, 0, score_fxn, my_movemapbuilder) );
+
+	//set highresdockers to not repack
+	my_HighResDocker->set_allow_repacking(false);
+
+	return my_HighResDocker;
+}
+
+// @brief This function uses a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement
+void LigandDiscoverySearch::run_HighResDock_on_working_pose(const protocols::ligand_docking::HighResDockerOP my_HighResDocker)
+{
+	my_HighResDocker->apply(*working_pose_);
+}
+
 //main function to run ligand discovery operations
 //needs to have values set for working_pose_, motif_library_, and all_residues_
 //parameter is a string to be a prefix name to use for outputted file names
@@ -624,6 +670,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	// Make an atomtypeset to get atomtype integers for use in derive_adjacent_atoms_of_ligand
 	core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 
+	//declare the highresdockerop
+	protocols::ligand_docking::HighResDockerOP my_HighResDocker;
+
+	//create the highresdocker object using either the whole score function or fa_atr_rep
+	if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+		my_HighResDocker = make_HighResDockOP_for_discovery(whole_score_fxn_);
+	} else {
+		my_HighResDocker = make_HighResDockOP_for_discovery(fa_atr_rep_fxn_);
+	}
 
 	//iterate over all indices in working_positions_
 	//if the size of working_positions is 0, return -1 because we want at least 1 index to work with
@@ -1090,53 +1145,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						add_ligand_to_pose_residuetypeset(lig_mrt);
 					}
 
-					//make ligandareaop for use with the highresdocker
-					protocols::ligand_docking::LigandAreaOP sc_ligand_area(new protocols::ligand_docking::LigandArea());
-					//adjust values for the LigandArea object (doesn't look like there is a constructor for it, but it has free access to variables)
-					//using values from integration test for 7cpa ligand docking from xml file when applicable
+					//apply the highresdocker to working_pose
+					run_HighResDock_on_working_pose(my_HighResDocker);
 
-					sc_ligand_area->chain_ = '^';
-					sc_ligand_area->cutoff_ = 1;
-					sc_ligand_area->add_nbr_radius_ = true;
-					sc_ligand_area->all_atom_mode_ = true;
-					sc_ligand_area->minimize_ligand_ = 1;
-
-					//add ligand_area to an op of ligandarea
-					utility::vector1<protocols::ligand_docking::LigandAreaOP> ligand_areas;
-					ligand_areas.push_back(sc_ligand_area);
-
-					//set up interfaces and movemaps for the highresdocker
-
-					//make interfacebuilder
-					protocols::ligand_docking::InterfaceBuilderOP sc_interface(new protocols::ligand_docking::InterfaceBuilder(ligand_areas));
-
-					//make a blank interfacebuilder since the movemapbuilder needs 2
-					protocols::ligand_docking::InterfaceBuilderOP blank_interface(new protocols::ligand_docking::InterfaceBuilder());
-
-
-					//create movemapbuilderOP
-					//we will minimize waters (boolean)
-					protocols::ligand_docking::MoveMapBuilderOP my_movemapbuilder ( new protocols::ligand_docking::MoveMapBuilder(sc_interface, blank_interface, true));
-
-					//use movemapbuilder to make highresdocker; make 1 HRD for each score function
-					//first 2 values correspond to the number of mover cycles and to repack every Nth cycle
-					//we will move 3 times and do not want to repack (residues seem to move to unwanted positions)
-					protocols::ligand_docking::HighResDockerOP my_HighResDocker_atrrep( new protocols::ligand_docking::HighResDocker(3, 0, fa_atr_rep_fxn_, my_movemapbuilder) );
-					protocols::ligand_docking::HighResDockerOP my_HighResDocker_whole( new protocols::ligand_docking::HighResDocker(3, 0, whole_score_fxn_, my_movemapbuilder) );
-
-
-					//set highresdockers to not repack
-					my_HighResDocker_atrrep->set_allow_repacking(false);
-					my_HighResDocker_whole->set_allow_repacking(false);
-
-					//apply with highresdocker for desired score function
-					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
-						my_HighResDocker_atrrep->apply(*working_pose_);
-					} else {
-						my_HighResDocker_whole->apply(*working_pose_);
-					}
-
-					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get new ddg
+					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
 					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
 						//whole
 						delta_score = get_pose_ddg(whole_score_fxn_, working_pose_);

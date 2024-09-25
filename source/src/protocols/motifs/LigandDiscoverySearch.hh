@@ -276,6 +276,12 @@ private:
 	// the ligand is added to both so that the ligand can be a part of the original_pose for future iterations of placement attempts for the ligand, as well as the working_pose for immediate use
 	void add_ligand_to_pose_residuetypeset(const core::chemical::MutableResidueTypeOP lig_mrt);
 
+	// @brief This function creates a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement. The function takes in a score function OP to use in the HRD
+	protocols::ligand_docking::HighResDockerOP make_HighResDockOP_for_discovery(const core::scoring::ScoreFunctionOP my_fxn);
+
+	// @brief This function uses a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement
+	void run_HighResDock_on_working_pose(const protocols::ligand_docking::HighResDockerOP my_HighResDocker);
+
 	//class variables
 
 	// @brief receptor pose to work with
