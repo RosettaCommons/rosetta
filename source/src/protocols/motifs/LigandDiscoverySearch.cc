@@ -837,7 +837,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		ms_tr << "Starting to iterate through all ligands" << std::endl;		
 
 		//create a clone of the working_pose_ that working_pose_ can be reset to after each placement attempt
-		original_pose_ = (*working_pose_)->clone();
+		original_pose_ = *((*working_pose_).clone());
 
 		//hold the number of placements that pass all filters and could enter the top 100 placements
 		int passed_placement_counter = 0;
