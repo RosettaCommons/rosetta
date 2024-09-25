@@ -228,18 +228,16 @@ LigandDiscoverySearch::~LigandDiscoverySearch() = default;
 //parameterized constructor to load in motif library, pdb, and ligand library
 LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, protocols::motifs::MotifCOPs motif_library, utility::vector1<core::conformation::ResidueOP> all_residues, utility::vector1<core::Size> working_position)
 {
-
 	working_pose_ = pose_from_PDB;
 	motif_library_ = motif_library;
 	all_residues_ = all_residues;
 	working_positions_ = working_position;
 
+	//seed cutoff values
 	seed_cutoff_values();
 
+	//seed score functions, more will be performed on the functions in discover()
 	seed_score_functions();
-
-
-
 }
 
 // @brief function to set values for the score functions
@@ -261,29 +259,29 @@ void LigandDiscoverySearch::seed_cutoff_values()
 
 	//score function cutoffs
 	ms_tr.Debug << "Using fa_rep cutoff of: "  << option[ OptionKeys::motifs::fa_rep_cutoff ] << std::endl;
-	core::Real fa_rep_cutoff_ = option[ OptionKeys::motifs::fa_rep_cutoff ];
+	fa_rep_cutoff_ = option[ OptionKeys::motifs::fa_rep_cutoff ];
 
 	ms_tr.Debug << "Using fa_atr cutoff of: "  << option[ OptionKeys::motifs::fa_atr_cutoff ] << std::endl;
-	core::Real fa_atr_cutoff_ = option[ OptionKeys::motifs::fa_atr_cutoff ];
+	fa_atr_cutoff_ = option[ OptionKeys::motifs::fa_atr_cutoff ];
 
 	ms_tr.Debug << "Using fa_atr_rep cutoff of: "  << option[ OptionKeys::motifs::fa_atr_rep_cutoff ] << std::endl;
-	core::Real fa_atr_rep_cutoff_ = option[ OptionKeys::motifs::fa_atr_rep_cutoff ];
+	fa_atr_rep_cutoff_ = option[ OptionKeys::motifs::fa_atr_rep_cutoff ];
 
 	ms_tr.Debug << "Using whole score function cutoff of: "  << option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ] << std::endl;
-	core::Real whole_fxn_cutoff_ = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
+	whole_fxn_cutoff_ = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
 
 	ms_tr.Debug << "Using ddg cutoff of: "  << option[ OptionKeys::motifs::ddg_cutoff ] << std::endl;
-	core::Real ddg_cutoff_ = option[ OptionKeys::motifs::ddg_cutoff ];
+	ddg_cutoff_ = option[ OptionKeys::motifs::ddg_cutoff ];
 
 	//placement motifs cutoffs
 	ms_tr.Debug << "Using minimum motifs-like interactions cutoff of: "  << option[ OptionKeys::motifs::minimum_motifs_formed_cutoff] << std::endl;
-	core::Size min_motifs_cutoff_ = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
+	min_motifs_cutoff_ = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
 
 	ms_tr.Debug << "Using minimum motifs-like interactions on significant residues cutoff of: "  << option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff] << std::endl;
-	core::Size min_sig_motifs_cutoff_ = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
+	min_sig_motifs_cutoff_ = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
 
 	ms_tr.Debug << "Using minimum real motifs interactions ratio cutoff of: "  << option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand] << std::endl;
-	core::Real real_motif_ratio_cutoff_ = option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand];
+	real_motif_ratio_cutoff_ = option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand];
 
 	//placement motif metric cutoffs
 	ms_tr.Debug << "Using maximum placement motif to real motif RMSD distance: "  << option[ OptionKeys::motifs::duplicate_dist_cutoff] << std::endl;
@@ -739,61 +737,13 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		//this will be used so that we can modify the original as we look at systems with ligands placed, and can revert to the original
 		utility::vector1<core::Size>  matrix_data_counts_empty = matrix_data_counts;
 
-		//all initial cutoffs are arbitrary and should be set with the flags
-		//leaving them as their current values should let pretty much anything pass
-		//seeding of rep and atr values with default cutoffs
-		core::Real fa_rep_cutoff = 10000;
-		core::Real fa_atr_cutoff = 10000;
-
-		//use for the fa_atr_rep only function
-		core::Real fa_atr_rep_cutoff = 10000;
-
-		//score cutoff for scoring with whole ligand.wts score function (optional to use)
-		core::Real whole_fxn_cutoff = 10000;
-
-		if ( option[ OptionKeys::motifs::fa_rep_cutoff ].user() ) {
-			
-			ms_tr.Debug << "Using user-inputted fa_rep cutoff of: "  << option[ OptionKeys::motifs::fa_rep_cutoff ] << std::endl;
-			
-			fa_rep_cutoff = option[ OptionKeys::motifs::fa_rep_cutoff ];
-		}
-
-		if ( option[ OptionKeys::motifs::fa_atr_cutoff ].user() ) {
-			
-			ms_tr.Debug << "Using user-inputted fa_atr cutoff of: "  << option[ OptionKeys::motifs::fa_atr_cutoff ] << std::endl;
-			
-			fa_atr_cutoff = option[ OptionKeys::motifs::fa_atr_cutoff ];
-		}
-
-		if ( option[ OptionKeys::motifs::fa_atr_rep_cutoff ].user() ) {
-			
-			ms_tr.Debug << "Using user-inputted fa_atr_rep cutoff of: "  << option[ OptionKeys::motifs::fa_atr_rep_cutoff ] << std::endl;
-			
-			fa_atr_rep_cutoff = option[ OptionKeys::motifs::fa_atr_rep_cutoff ];
-		}
-
-
 		//for whole ligand.wts function, determine also if we want to use the function for scoring at all
 		bool use_ligand_wts = option[ OptionKeys::motifs::score_with_ligand_wts_function ];
-
-		if ( option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ].user() && use_ligand_wts ) {
-			
-			ms_tr.Debug << "Using user-inputted fa_atr cutoff of: "  << option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ] << std::endl;
-			
-			whole_fxn_cutoff = option[ OptionKeys::motifs::ligand_wts_fxn_cutoff ];
-		}
 
 		//create vector to hold the top X placements
 		comparator comparator_v = comparator();
 		//this gets used unless the value for the number of best placements to collect is 0 (in which all are collected)
 		std::vector < std::tuple<core::Real, core::pose::Pose, std::string>> best_placements;
-		//dynamic cutoff to determine what pplacements to consider; should get more strict as we get placements
-		//get ddg cutoff
-		core::Real ddg_cutoff_value = 10000;
-		if ( option[ OptionKeys::motifs::ddg_cutoff ].user() ) {
-			ddg_cutoff_value = option[ OptionKeys::motifs::ddg_cutoff ];
-		}
-		core::Real score_cutoff = ddg_cutoff_value;
 
 		//determine how many output files to keep
 		//if the value is 0, all placements that pass all filters will be kept
@@ -1010,7 +960,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//check if fa_rep is good
 					//positive score is bad
 					//best scores are negative and closest to 0
-					if ( fa_rep > fa_rep_cutoff ) {
+					if ( fa_rep > fa_rep_cutoff_ ) {
 						minipose->delete_residue_slow(minipose->size());
 						++clashing_counter;
 						continue;
@@ -1022,7 +972,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//run fa_atr check
 					//don't keep if fa_atr is greater than cutoff
-					if ( fa_atr > fa_atr_cutoff ) {
+					if ( fa_atr > fa_atr_cutoff_ ) {
 						minipose->delete_residue_slow(minipose->size());
 						++clashing_counter;
 						continue;
@@ -1032,7 +982,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					core::Real fa_atr_rep_score_before = fa_atr_rep_fxn_->score(*minipose);
 
 					//check if worse than cutoff
-					if ( fa_atr_rep_score_before > fa_atr_rep_cutoff ) {
+					if ( fa_atr_rep_score_before > fa_atr_rep_cutoff_ ) {
 						minipose->delete_residue_slow(minipose->size());
 						++clashing_counter;
 						continue;
@@ -1170,7 +1120,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
 
 						//check if after is worse than cutoff
-						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff ) {
+						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff_ ) {
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
@@ -1194,7 +1144,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						whole_score = whole_score_fxn_->score(*working_pose_);
 
 						//check if the score is below the cutoff, kill if higher
-						if ( whole_score > whole_fxn_cutoff ) {
+						if ( whole_score > whole_fxn_cutoff_ ) {
 							minipose->delete_residue_slow(minipose->size());
 							++clashing_counter;
 							continue;
@@ -1227,7 +1177,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//check if whole_score is within cutoff, kill if not
 					//need to remove ligand from poses so that they can be recycled
 					//in theory, atr and rep should only improve, but this check helps make sure of that
-					if ( delta_score > score_cutoff || fa_atr > fa_atr_cutoff || fa_rep > fa_rep_cutoff ) {
+					if ( delta_score > ddg_cutoff_ || fa_atr > fa_atr_cutoff_ || fa_rep > fa_rep_cutoff_ ) {
 						minipose->delete_residue_slow(minipose->size());
 						working_pose_->delete_residue_slow(working_pose_->size());
 						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
@@ -1327,13 +1277,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//determine how many motifs were made and how many were made on significant residues
 						core::Size motifs_made = prot_pos_that_made_motifs.size();
 
-						core::Size min_motifs_cutoff = option[ OptionKeys::motifs::minimum_motifs_formed_cutoff];
-						core::Size min_sig_motifs_cutoff = option[ OptionKeys::motifs::minimum_significant_motifs_formed_cutoff];
-
 						ms_tr.Debug << "Ligand placement created " << motifs_made << " total motifs" << std::endl;						
 
 						//if minimum number of motifs made is not enough, kill placement
-						if ( motifs_made < min_motifs_cutoff ) {
+						if ( motifs_made < min_motifs_cutoff_ ) {
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
@@ -1444,7 +1391,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						}
 
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
-						if ( significant_motifs_made < min_sig_motifs_cutoff ) {
+						if ( significant_motifs_made < min_sig_motifs_cutoff_ ) {
 							minipose->delete_residue_slow(minipose->size());
 							working_pose_->delete_residue_slow(working_pose_->size());
 							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
@@ -1549,7 +1496,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 							core::Real real_looking_motif_ratio = motifs_that_look_real_real/motifs_made_real;
 
 							//determine if real ratio is greater than cutoff: minimum_ratio_of_real_motifs_from_ligand
-							if ( real_looking_motif_ratio < option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand] ) {
+							if ( real_looking_motif_ratio < real_motif_ratio_cutoff_ ) {
 								//kill placement
 								minipose->delete_residue_slow(minipose->size());
 								working_pose_->delete_residue_slow(working_pose_->size());
@@ -1672,9 +1619,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 			//assign the new cutoff once we hit 100 entries
 			if ( best_placements.size() >= best_pdbs_to_keep && best_pdbs_to_keep != 0 ) {
-				score_cutoff = std::get<0>(best_placements[0]);
+				ddg_cutoff_ = std::get<0>(best_placements[0]);
 				
-				ms_tr.Debug << "New score cutoff is: " << score_cutoff << std::endl;
+				ms_tr.Debug << "New ddg cutoff is: " << ddg_cutoff_ << std::endl;
 				
 			}
 		}
