@@ -876,6 +876,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 		//for whole ligand.wts function, determine also if we want to use the function for scoring at all
 		bool use_ligand_wts = option[ OptionKeys::motifs::score_with_ligand_wts_function ];
+		bool use_atr_rep = option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ];
 
 		//create vector to hold the top X placements
 		comparator comparator_v = comparator();
@@ -1157,22 +1158,20 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						delta_score = get_pose_ddg(fa_atr_rep_fxn_, working_pose_);
 					}
 
+					//this section up until collecting motifs off the placed ligand I do not think makes sense to put into its own function
+					//My reasoning is that this could be made into 2 small specific scoring functions, which seems like extra work
+					//The creation of the PDB comments uses a lot of upstream variables that would be a pain to pass into a function, so it may be better to just leave it inline in discover()
+
 					//declaration of fa_atr_rep_score_after (may not be used)
 					core::Real fa_atr_rep_score_after = 0;
 					//optional check of fa_atr_rep after running highresdock
 					//post_highresdock_fa_atr_rep_score
-					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
-						//whole_score_fxn_->score(*working_pose_);
-						//5/1/24 replacing score with the atr_rep function instead of whole
+					if ( use_atr_rep ) {
 						fa_atr_rep_score_after = fa_atr_rep_fxn_->score(*working_pose_);
 
 						//check if after is worse than cutoff
 						if ( fa_atr_rep_score_after > fa_atr_rep_cutoff_ ) {
-							working_pose_->delete_residue_slow(working_pose_->size());
-							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose_.clone());
-							//assign the original_poseop to working_pose_
-							working_pose_ = original_poseop;
+							reset_working_pose();
 							++clashing_counter;
 							continue;
 						}
@@ -1191,12 +1190,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//check if the score is below the cutoff, kill if higher
 						if ( whole_score > whole_fxn_cutoff_ ) {
-							//reset the working pose because its whole score was not good enough
-							working_pose_->delete_residue_slow(working_pose_->size());
-							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose_.clone());
-							//assign the original_poseop to working_pose_
-							working_pose_ = original_poseop;
+							reset_working_pose();
 							++clashing_counter;							
 							continue;
 						}
@@ -1211,15 +1205,16 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					}
 
 					//only print post dock delta score if we did a score with the whole or atrrep function
-					if (option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts ) {
+					if (use_atr_rep || use_ligand_wts ) {
 						//ms_tr << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", coordinate_constraint = " << sc_constraint_check << std::endl;
 
 						ms_tr.Debug << "Post-dock delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep;
 
 						//with atr_rep
-						if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
+						if ( use_atr_rep ) {
 							ms_tr.Debug << ", fa_atr_rep after = " << fa_atr_rep_score_after;
-						} else if ( use_ligand_wts ) {
+						}
+						if ( use_ligand_wts ) {
 							//without atr_rep
 							ms_tr.Debug << ", whole = " << whole_score;
 						}
@@ -1229,11 +1224,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//need to remove ligand from poses so that they can be recycled
 					//in theory, atr and rep should only improve, but this check helps make sure of that
 					if ( delta_score > ddg_cutoff_ || fa_atr > fa_atr_cutoff_ || fa_rep > fa_rep_cutoff_ ) {
-						working_pose_->delete_residue_slow(working_pose_->size());
-						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-						core::pose::PoseOP original_poseop(original_pose_.clone());
-						//assign the original_poseop to working_pose_
-						working_pose_ = original_poseop;
+						reset_working_pose();
 						++clashing_counter;
 						continue;
 					}
@@ -1265,7 +1256,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					std::string pdb_short_unique_name = pdb_name;
 
 					//only use fa_rep and atr if we use atrrep or whole to score the whole system and pull how we fixed them
-					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] || use_ligand_wts ) {
+					if ( use_atr_rep || use_ligand_wts ) {
 						pdb_name = pdb_name + "_rep_" + std::to_string(fa_rep) + "_atr_" + std::to_string(fa_atr);
 						core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_atr:", std::to_string(fa_atr));
 						core::pose::add_comment(*working_pose_, "Scoring: Ligand fa_rep:", std::to_string(fa_rep));
@@ -1284,7 +1275,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					core::pose::add_comment(*working_pose_, "Scoring: Post-HighResDock system ddG:", std::to_string(delta_score));
 
 					//adjust if using optional atr_rep post highresdock
-					if ( option[ OptionKeys::motifs::post_highresdock_fa_atr_rep_score ] ) {
+					if ( use_atr_rep ) {
 						pdb_name = pdb_name + "_atrrep_" + std::to_string(fa_atr_rep_score_after);
 						core::pose::add_comment(*working_pose_, "Scoring: System fa_atr and fa_rep score:", std::to_string(fa_atr_rep_score_after));
 
@@ -1331,11 +1322,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//if minimum number of motifs made is not enough, kill placement
 						if ( motifs_made < min_motifs_cutoff_ ) {
-							working_pose_->delete_residue_slow(working_pose_->size());
-							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose_.clone());
-							//assign the original_poseop to working_pose_
-							working_pose_ = original_poseop;
+							reset_working_pose();
 							++clashing_counter;
 							continue;
 						}
@@ -1382,11 +1369,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 								}
 							}
 							if ( kill ) {
-								working_pose_->delete_residue_slow(working_pose_->size());
-								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-								core::pose::PoseOP original_poseop(original_pose_.clone());
-								//assign the original_poseop to working_pose_
-								working_pose_ = original_poseop;
+								reset_working_pose();
 								++clashing_counter;
 								continue;
 							}
@@ -1440,11 +1423,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
 						if ( significant_motifs_made < min_sig_motifs_cutoff_ ) {
-							working_pose_->delete_residue_slow(working_pose_->size());
-							//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-							core::pose::PoseOP original_poseop(original_pose_.clone());
-							//assign the original_poseop to working_pose_
-							working_pose_ = original_poseop;
+							reset_working_pose();
 							++clashing_counter;
 							continue;
 						}
@@ -1544,12 +1523,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 							//determine if real ratio is greater than cutoff: minimum_ratio_of_real_motifs_from_ligand
 							if ( real_looking_motif_ratio < real_motif_ratio_cutoff_ ) {
-								//kill placement
-								working_pose_->delete_residue_slow(working_pose_->size());
-								//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-								core::pose::PoseOP original_poseop(original_pose_.clone());
-								//assign the original_poseop to working_pose_
-								working_pose_ = original_poseop;
+								reset_working_pose();
 								++clashing_counter;
 								continue;
 							}
@@ -1600,12 +1574,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						
 						core::io::pdb::dump_pdb(*working_pose_, pdb_name);
 
-						//directly remove residue from end of pose
-						working_pose_->delete_residue_slow(working_pose_->size());
-						//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-						core::pose::PoseOP original_poseop(original_pose_.clone());
-						//assign the original_poseop to working_pose_
-						working_pose_ = original_poseop;
+						reset_working_pose();
 						++passing_counter;
 
 						//continue since we do not need to touch best_100_placements
@@ -1615,12 +1584,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//if we are keeping a set number of placements, then we need to append to a list that will be sorted
 					std::tuple<core::Real, core::pose::Pose, std::string> pose_tuple(delta_score, *working_pose_, pdb_name);
 
-					//directly remove residue from end of pose
-					working_pose_->delete_residue_slow(working_pose_->size());
-					//create new poseop of the original pose (to wipe any highresdock changes) to the pose
-					core::pose::PoseOP original_poseop(original_pose_.clone());
-					//assign the original_poseop to working_pose_
-					working_pose_ = original_poseop;
+					reset_working_pose();
 
 					//add pose tuple, heapify if we want to only keep the top X placements (determined by using the best_pdbs_to_keep != 0)
 					//push pose into vector of passing placements
@@ -1687,6 +1651,15 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		
 	}
 	return 1;
+}
+
+// @brief A function to reset the working_pose_ back to its original state, as found in original_pose
+//to call this function the least amount of times (and minimize wasted time/resources), this function is only to be called right before a placement is culled before a continue statement after working_pose_ had a ligand added to it
+void LigandDiscoverySearch::reset_working_pose()
+{
+	core::pose::PoseOP original_poseop(original_pose_.clone());
+	//assign the original_poseop to working_pose_
+	working_pose_ = original_poseop;
 }
 
 //function to get a sub-library of motifs from the main library, based on the residue being used (only get for select residue)
