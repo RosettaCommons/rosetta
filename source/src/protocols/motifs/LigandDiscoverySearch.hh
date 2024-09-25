@@ -282,6 +282,9 @@ private:
 	// @brief This function uses a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement
 	void run_HighResDock_on_working_pose(const protocols::ligand_docking::HighResDockerOP my_HighResDocker);
 
+	// @brief A function to reset the working_pose_ back to its original state, as found in original_pose
+	void reset_working_pose();
+
 	//class variables
 
 	// @brief receptor pose to work with
