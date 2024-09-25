@@ -236,20 +236,9 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 	//seed cutoff values
 	seed_cutoff_values();
 
-	//seed score functions, more will be performed on the functions in discover()
-	seed_score_functions();
+	//set up score functions
+	setup_score_functions();
 }
-
-// @brief function to set values for the score functions
-void LigandDiscoverySearch::seed_score_functions()
-{
-	//initially seed score class score functions
-	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
-}
-
 
 // @brief this function is to be called by the constructor(s) to seed initial values to cutoffs that are used for scoring/evaluating metrics of placed ligands in discover() and the functions it calls
 void LigandDiscoverySearch::seed_cutoff_values()
@@ -400,6 +389,12 @@ void LigandDiscoverySearch::set_angl_threshold(core::Size angle_threshold)
 // @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
 void LigandDiscoverySearch::setup_score_functions()
 {
+	//initially seed score class score functions
+	whole_score_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_atr_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+	fa_atr_rep_fxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "ligand.wts" );
+
 	//for each weight in the whole score function, set the scoretype weight to 0
 	//the purpose of this is to set up the non-weight parameters exactly the same way (and using the terms from the ligand.wts function)
 	//once terms are blanked to 0, terms of interest will be re-weighted as seen below
@@ -602,9 +597,6 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 		if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] ) {
 			hash_motif_library_into_map(motif_library_,mymap);
 		}
-
-		ms_tr.Trace << "Setting up score functions." << std::endl;
-		setup_score_functions();
 
 		//set up target_residues_sf_ and target_residues_contact_
 		//can interact with any of 3 integer_value vectors flags: in::target_residues, motifs::targer_residues_sf, and motifs::target_residues_contact
