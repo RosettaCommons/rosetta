@@ -29,6 +29,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
@@ -168,6 +169,16 @@ NotResidueSelectorCreator::keyname() const {
 void
 NotResidueSelectorCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {
 	NotResidueSelector::provide_xml_schema( xsd );
+}
+
+std::string
+NotResidueSelector::debug_string() const {
+	std::string retval = "<" + get_name() + " >\n";
+	for ( auto const & substring: utility::split_by_newlines( selector_->debug_string() ) ) {
+		retval += "\t" + substring + "\n";
+	}
+	retval += "</" + get_name() + " >\n";
+	return retval;
 }
 
 

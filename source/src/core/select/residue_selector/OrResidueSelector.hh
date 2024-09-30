@@ -83,6 +83,9 @@ public:
 	*/
 	void apply_or_to_subset(ResidueSubset const & newSubset, ResidueSubset & existingSubset) const;
 
+	std::string
+	debug_string() const override;
+
 public: //Functions needed for the citation manager
 
 	/// @brief Provide the citation.

@@ -82,6 +82,12 @@ public:
 	utility::vector1< core::Size >
 	selection_positions( core::pose::Pose const & pose ) const;
 
+	/// @brief Provide a string representation of the ResidueSelector
+	/// This is intended mainly for debugging, and may not contain all the information about the selector
+	virtual
+	std::string
+	debug_string() const;
+
 public: //Functions needed for the citation manager
 
 	/// @brief Provide citations to the passed CitationCollectionList

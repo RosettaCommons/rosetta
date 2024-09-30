@@ -169,6 +169,18 @@ std::string OrResidueSelector::class_name() {
 	return "Or";
 }
 
+std::string
+OrResidueSelector::debug_string() const {
+	std::string retval = "<" + get_name() + " >\n";
+	for ( auto const & selector: selectors_ ) {
+		for ( auto const & substring: utility::split_by_newlines( selector->debug_string() ) ) {
+			retval += "\t" + substring + "\n";
+		}
+	}
+	retval += "</" + get_name() + " >\n";
+	return retval;
+}
+
 void
 OrResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;

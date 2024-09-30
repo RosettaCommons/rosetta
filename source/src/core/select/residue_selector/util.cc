@@ -437,6 +437,9 @@ get_residue_selector( std::string const & selector_name, basic::datacache::DataM
 			TR << "Attempting to parse selector logic" << std::endl;
 			SelectorLogicParser parser;
 			selector =  parser.parse_string_to_residue_selector( data, selector_name );
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "Parsed inline selector logic as:\n" << selector->debug_string() << std::endl;
+			}
 		}
 	} catch ( utility::excn::Exception & e ) {
 		std::stringstream error_msg;
