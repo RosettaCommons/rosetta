@@ -29,7 +29,7 @@ import logging
 logger = logging.getLogger("pyrosetta.rosetta")
 
 import pyrosetta.logging_support as logging_support
-# this try/except black should be removed after the decorator module
+# this try/except block should be removed after the decorator module
 # is installed on the test server.
 try:
     from pyrosetta.distributed.utility.log import LoggingContext
