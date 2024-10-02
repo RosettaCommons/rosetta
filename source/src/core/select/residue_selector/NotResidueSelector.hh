@@ -74,6 +74,9 @@ public:
 	*/
 	void set_residue_selector(ResidueSelectorCOP selector);
 
+	std::string
+	debug_string() const override;
+
 public: //Functions needed for the citation manager
 
 	/// @brief Provide the citation.

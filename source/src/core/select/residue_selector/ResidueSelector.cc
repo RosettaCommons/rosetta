@@ -53,6 +53,11 @@ ResidueSelector::selection_positions( core::pose::Pose const & pose ) const {
 	return residue_selector::selection_positions( apply( pose ) );
 }
 
+std::string
+ResidueSelector::debug_string() const {
+	return "<" + get_name() + " />\n";
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
