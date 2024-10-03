@@ -734,7 +734,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 		//hash the motif library into a map of smaller motif lists based on the residue involved and 6 atom names/types
 		//define new map
-		protocols::motifs::motif_atoms mymap;
+		std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap;
 		//only hash if we use the flag check_if_ligand_motifs_match_real, since this is currently the only thing we use it for
 		if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] ) {
 			protocols::motifs::hash_motif_library_into_map(motif_library_,mymap);
