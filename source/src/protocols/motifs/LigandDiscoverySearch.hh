@@ -107,10 +107,6 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	//typedefs to help clean up data types that are really lengthy/convoluted, but not making them classes as reuse purpose may be limited and these are probably pretty specific usages
 
-	// @brief motif_atoms type, which is a tuple of strings that access motifcops objects
-	// This is to be used in the breaking down of a motif library into smaller motif libraries that can be accessed by the 6 atom types of atoms in the motif
-	typedef std::tuple<std::string, std::string, std::string, std::string, std::string, std::string, std::string> motif_atoms;
-
 	// @brief 3D matrix cubic representation of a protein as a vector of core::Size (unsigned ints); dubbed as a "protein space fill matrix"
 	// resolution of the matrix may be more refined than one cubic angstrom if using the motifs::resolution_scale_factor flag
 	// unsigned int values are used to denote status of each index within the vector as follows:
@@ -254,12 +250,6 @@ private:
 	// @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
 	// This previously just was code in discover(), but it is better to compartmentalize for readability
 	void setup_score_functions();
-
-	// @brief function to hash out an input motif library into a standard map of motifCOPs
-	//inputs are initial motif library and map that is to be filled out
-	//map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
-	//
-	void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap);
 
 	// @brief function used to make a minipose (focused pose around placed ligand to get quicker scoring of metrics like fa_atr and fa_rep)
 	//if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
