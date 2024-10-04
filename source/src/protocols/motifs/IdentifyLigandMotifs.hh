@@ -73,7 +73,7 @@ public:
 	// 3. Checks if motifs were made for residues where at least one motif is wanted to be found (with a total collected for the number of residues of interest that got a motif)
 	// 4. Checks if the motifs collected are comparable to another list of motifs (i.e. used to see if motifs match a motif library that was collected from the Protein Data Bank)
 	// Data is written to the pose in comments
-	utility::vector1< core::Real > evaluate_motifs_of_pose(core::pose::PoseOP & working_pose, const std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap)
+	utility::vector1< core::Real > evaluate_motifs_of_pose(core::pose::PoseOP & working_pose, const std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap);
 
 private:
 	//protected:
