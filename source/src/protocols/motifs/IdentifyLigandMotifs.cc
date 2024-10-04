@@ -757,7 +757,13 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	process_for_motifs(working_pose_copy, pdb_name, placement_library, prot_pos_that_made_motifs_size);
 
 	//convert the prot_pos vector from size to int (easier to use int because this interacts with values from vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but this is a seemingly equivalent workaround)
-	utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
+	//utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
+	utility::vector1< int > prot_pos_that_made_motifs;
+	for  ( auto motif_made : prot_pos_that_made_motifs_size ){
+		prot_pos_that_made_motifs.push_back(motif_made);
+	}
+
+	
 
 	//temporary inclusion to get information on prot_pos_that_made_motifs and prot_pos_that_made_motifs_size, as these seem to the the source of the issue
 	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
