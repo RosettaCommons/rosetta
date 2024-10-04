@@ -759,12 +759,12 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//convert the prot_pos vector from size to int (easier to use int because this interacts with values from vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but this is a seemingly equivalent workaround)
 	utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
 
+	return placement_motifs_data;
+
 	//determine how many motifs were made and how many were made on significant residues
 	placement_motifs_data[0] = prot_pos_that_made_motifs.size();
 
 	ms_tr.Debug << "Ligand placement created " << placement_motifs_data[0] << " total motifs" << std::endl;
-
-	return placement_motifs_data;
 
 	core::pose::add_comment(*working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[0]));
 
