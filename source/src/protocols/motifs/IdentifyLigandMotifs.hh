@@ -74,7 +74,7 @@ public:
 	// 4. Checks if the motifs collected are comparable to another list of motifs (i.e. used to see if motifs match a motif library that was collected from the Protein Data Bank)
 	// Data is written to the pose in comments
 	//mymap is not declared as const because the [] operator is used on it, and apparently you can't [] on a constant map
-	utility::vector1< core::Real > evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> & mymap, std::string const & pdb_name);
+	utility::vector1< core::Real > evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap, std::string const & pdb_name);
 
 private:
 	//protected:
