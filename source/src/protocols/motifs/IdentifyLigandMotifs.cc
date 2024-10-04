@@ -759,6 +759,22 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//convert the prot_pos vector from size to int (easier to use int because this interacts with values from vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but this is a seemingly equivalent workaround)
 	utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
 
+	//temporary inclusion to get information on prot_pos_that_made_motifs and prot_pos_that_made_motifs_size, as these seem to the the source of the issue
+	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
+	ms_tr.Debug << "Prot_pos_that_made_motifs_size size:" << prot_pos_that_made_motifs_size.size() << std::endl;
+	ms_tr.Debug << "Prot_pos_that_made_motifs_size entries:" << std::endl;
+	for  ( auto motif_made : prot_pos_that_made_motifs_size ){
+		ms_tr.Debug << motif_made << ",";
+	}
+	ms_tr.Debug << std::endl;
+	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs:" << std::endl;
+	ms_tr.Debug << "prot_pos_that_made_motifs size:" << prot_pos_that_made_motifs.size() << std::endl;
+	ms_tr.Debug << "prot_pos_that_made_motifs entries:" << std::endl;
+	for  ( auto motif_made : prot_pos_that_made_motifs ){
+		ms_tr.Debug << motif_made << ",";
+	}
+	ms_tr.Debug << std::endl;
+
 	//determine how many motifs were made and how many were made on significant residues
 	placement_motifs_data[0] = prot_pos_that_made_motifs.size();
 
