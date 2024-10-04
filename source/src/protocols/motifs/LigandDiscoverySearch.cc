@@ -1284,7 +1284,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						//run evaluate_motifs_of_pose from the ilm, which returns a vector with data on motifs from the placed ligand
 						//comments are written to the pose, so we do not have to do that in this function now
-						placement_motifs_data = ilm.evaluate_motifs_of_pose(working_pose_, mymap);
+						placement_motifs_data = ilm.evaluate_motifs_of_pose(working_pose_, mymap, pdb_short_unique_name);
 
 						//run checks with cutoffs
 						//if minimum number of motifs made is not enough, kill placement
