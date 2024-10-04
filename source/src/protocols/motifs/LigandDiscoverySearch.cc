@@ -1274,6 +1274,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//option to try to pull motifs from the passed placement and see what motifs are collected, how many there are, if motifs are made with any residues of interest, and if the motifs match any motifs in the motif library
 					if ( option[ OptionKeys::motifs::collect_motifs_from_placed_ligand] ) {
 						
+						ms_tr.Trace << "Preparing to collect motif data from placed ligand." << std::endl;
+
 						//make a vector that holds the following data in its indices as follows:
 						//0 - total motifs made
 						//1 - effectively a bool; 0 indicates that at least one pre-selected residue did not get a motif, 1 indicates that all did
@@ -1285,6 +1287,10 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//run evaluate_motifs_of_pose from the ilm, which returns a vector with data on motifs from the placed ligand
 						//comments are written to the pose, so we do not have to do that in this function now
 						placement_motifs_data = ilm.evaluate_motifs_of_pose(working_pose_, mymap, pdb_short_unique_name);
+
+						ms_tr.Trace << "Collected motif data from placed ligand." << std::endl;
+
+						ms_tr.Debug << "Contents of placement_motifs_data vector: " << placement_motifs_data[0] << "," << placement_motifs_data[1] << "," << placement_motifs_data[2] << "," << placement_motifs_data[3] << "," << placement_motifs_data[4] << "," <<std::endl;
 
 						//run checks with cutoffs
 						//if minimum number of motifs made is not enough, kill placement
