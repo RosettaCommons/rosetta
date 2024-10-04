@@ -753,8 +753,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//clone a non-pointer of working_pose_ to pass into process_for_motifs, this may resolve the pointer issue that seems to occur when I pass the PoseOP working_pose into process_for_motifs
 	core::pose::Pose working_pose_copy = *((*working_pose).clone());
 
-	return placement_motifs_data;
-
 	//use ilm process_for_motifs to obtain motifs from the pose
 	process_for_motifs(working_pose_copy, pdb_name, placement_library, prot_pos_that_made_motifs_size);
 
