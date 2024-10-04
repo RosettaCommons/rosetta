@@ -731,7 +731,7 @@ IdentifyLigandMotifs::write_motifs_to_disk()
 // 4. Checks if the motifs collected are comparable to another list of motifs (i.e. used to see if motifs match a motif library that was collected from the Protein Data Bank)
 // Data is written to the pose in comments
 // At least for now, it does not seem necessary to pass along the motifs that were collected from the input pose, so we won't do that (but the functionality is possible and should be as easy as throwing in a motiflibrary into the arguments that is passed by reference)
-utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(core::pose::PoseOP & working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> & mymap, std::string const & pdb_name)
+utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> & mymap, std::string const & pdb_name)
 {
 	//create tracer to identify points of the run
 	static basic::Tracer ms_tr( "IdentifyLigandMotifs.evaluate_motifs_of_pose", basic::t_info );
