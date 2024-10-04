@@ -166,7 +166,7 @@ using utility::vector1;
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "apps.pilot.ligand_motifs", basic::t_info );
+static basic::Tracer TR( "IdentifyLigandMotifs", basic::t_info );
 
 //default constructor
 IdentifyLigandMotifs::IdentifyLigandMotifs()
@@ -766,6 +766,14 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//convert the motif library to motifCOPS
 	protocols::motifs::MotifCOPs placement_libraryCOPs = placement_library.library();
 
+	ms_tr.Debug << "Motifs made: " << std::endl;
+
+	for  ( auto motif_made : prot_pos_that_made_motifs ){
+		ms_tr.Debug << motif_made << ",";
+	}
+
+	ms_tr.Debug << std::endl;
+
 	//iterate over the library of motifs created by the ligand placement to add a comment for each that is the motif's remark
 	//create a counter too to print out each unique motif
 	core::Size placement_motif_counter = 0;
@@ -774,6 +782,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		core::pose::add_comment(*working_pose, "Placement motifs: Placement motif " + std::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
 
 		++placement_motif_counter;
+
+		ms_tr.Debug << ligmotifcop->remark() << std::endl;
 	}
 
 	//set placement_motifs_data[1] to 1 to set default state that all mandatory residues did get a motif former against it
@@ -788,7 +798,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 			//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
 			kill = true;
 			for ( auto motif_made : prot_pos_that_made_motifs ) {
-				if ( prot_pos_that_made_motifs[motif_made] == sig_res_pos ) {
+				if ( motif_made == sig_res_pos ) {
 					//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
 					kill = false;
 				}
