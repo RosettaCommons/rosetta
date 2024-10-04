@@ -271,13 +271,6 @@ void LigandDiscoverySearch::seed_cutoff_values()
 
 	ms_tr.Debug << "Using minimum real motifs interactions ratio cutoff of: "  << option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand] << std::endl;
 	real_motif_ratio_cutoff_ = option[ OptionKeys::motifs::minimum_ratio_of_real_motifs_from_ligand];
-
-	//placement motif metric cutoffs
-	ms_tr.Debug << "Using maximum placement motif to real motif RMSD distance: "  << option[ OptionKeys::motifs::duplicate_dist_cutoff] << std::endl;
-	dist_threshold_ =  option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ];
-
-	ms_tr.Debug << "Using maximum placement motif to real motif angle distance: "  << option[ OptionKeys::motifs::duplicate_angle_cutoff] << std::endl;
-	angl_threshold_ = option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ];
 }
 
 //function to load in a library for the search protocol
@@ -371,18 +364,6 @@ void LigandDiscoverySearch::set_all_residues(utility::vector1<core::conformation
 utility::vector1<core::conformation::ResidueOP> LigandDiscoverySearch::get_all_residues()
 {
 	return all_residues_;
-}
-
-// @brief function to set value of dist_threshold_
-void LigandDiscoverySearch::set_distance_threshold(core::Size distance_threshold)
-{
-	dist_threshold_ = distance_threshold;
-}
-
-// @brief function to set value of angl_threshold_
-void LigandDiscoverySearch::set_angl_threshold(core::Size angle_threshold)
-{
-	angl_threshold_ = angle_threshold;
 }
 
 // @brief prepare score functions for usage in discovery function. Called within discover() and not in a constructor. This probably shouldn't be messed with, so it is kept private
@@ -1292,239 +1273,49 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//option to try to pull motifs from the passed placement and see what motifs are collected, how many there are, if motifs are made with any residues of interest, and if the motifs match any motifs in the motif library
 					if ( option[ OptionKeys::motifs::collect_motifs_from_placed_ligand] ) {
-						//create a new motif library to hold motifs
-						protocols::motifs::MotifLibrary placement_library;
+						
+						//make a vector that holds the following data in its indices as follows:
+						//0 - total motifs made
+						//1 - effectively a bool; 0 indicates that at least one pre-selected residue did not get a motif, 1 indicates that all did
+						//2 - total motifs made against significant residues
+						//3 - motifs that are considered close enough to at least one motif in the compare_library (considered real)
+						//4 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
+						utility::vector1< core::Size > placement_motifs_data;
 
-						//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
-						utility::vector1< Size > prot_pos_that_made_motifs_size;
+						//run evaluate_motifs_of_pose from the ilm, which returns a vector with data on motifs from the placed ligand
+						//comments are written to the pose, so we do not have to do that in this function now
+						placement_motifs_data = ilm.evaluate_motifs_of_pose(working_pose_, mymap);
 
-						//use ilm process_for_motifs to obtain motifs from the pose
-						ilm.process_for_motifs(*working_pose_, pdb_short_unique_name, placement_library, prot_pos_that_made_motifs_size);
-
-						//convery the prot_pos vector from size to int (easier to use int because this interacts with vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but that is extra work)
-						utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
-
-						//determine how many motifs were made and how many were made on significant residues
-						core::Size motifs_made = prot_pos_that_made_motifs.size();
-
-						ms_tr.Debug << "Ligand placement created " << motifs_made << " total motifs" << std::endl;
-
+						//run checks with cutoffs
 						//if minimum number of motifs made is not enough, kill placement
-						if ( motifs_made < min_motifs_cutoff_ ) {
+						//if at least one mandatory residue did not get a motif, kill
+						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
+						//determine if real ratio is greater than cutoff: minimum_ratio_of_real_motifs_from_ligand
+						if ( placement_motifs_data[0] < min_motifs_cutoff_ || placement_motifs_data[1] == 0 || placement_motifs_data[2] < min_sig_motifs_cutoff_ || placement_motifs_data[4] < real_motif_ratio_cutoff_ ) {
 							reset_working_pose();
 							++clashing_counter;
 							continue;
 						}
 
-						pdb_name = pdb_name + "_motifs_" + std::to_string(motifs_made);
-						core::pose::add_comment(*working_pose_, "Placement motifs: Total motifs made:", std::to_string(motifs_made));
-
-						comment_table_data = comment_table_data + std::to_string(motifs_made) + ",";
-
-						//convert the motif library to motifCOPS
-						protocols::motifs::MotifCOPs placement_libraryCOPs = placement_library.library();
-
-						//iterate over the library of motifs created by the ligand placement to add a comment for each that is the motif's remark
-						//create a counter too to print out each unique motif
-						core::Size placement_motif_counter = 0;
-						for ( auto ligmotifcop : placement_libraryCOPs ) {
-
-							core::pose::add_comment(*working_pose_, "Placement motifs: Placement motif " + std::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
-
-							++placement_motif_counter;
-						}
-
-						//check if there are motifs made for all mandatory residues
-						if ( option[ OptionKeys::motifs::mandatory_residues_for_motifs].user() ) {
-							//bool to help control loops to determine whether to kill the placed ligand
-							bool kill = false;
-							utility::vector1< int > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs] ;
-							for ( core::Size sig_res_pos = 1; sig_res_pos < mandatory_residues_for_motifs.size(); ++sig_res_pos ) {
-								//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
-								kill = true;
-								for ( core::Size motif_made = 1; motif_made < prot_pos_that_made_motifs.size(); ++motif_made ) {
-									if ( prot_pos_that_made_motifs[motif_made] == mandatory_residues_for_motifs[sig_res_pos] ) {
-										//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
-										kill = false;
-									}
-								}
-
-								//if kill is still true, we didn't get a motif for the mandatory residue, move forward with killing the ligand
-								if ( kill ) {
-
-									ms_tr.Debug << "Not motifs made for residue index " << sig_res_pos << std::endl;
-
-									break;
-								}
-							}
-							if ( kill ) {
-								reset_working_pose();
-								++clashing_counter;
-								continue;
-							}
-
-
-							ms_tr.Trace << "Made motifs for all mandatory residues" << std::endl;
-
-
-						}
-
-						//variable to track how many motifs hit a significant residue
-						core::Size significant_motifs_made = 0;
+						//work on building pdb name string if we passed and building the comment table strings
+						pdb_name = pdb_name + "_motifs_" + std::to_string(placement_motifs_data[0]);
+						comment_table_data = comment_table_data + std::to_string(placement_motifs_data[0]) + ",";
 
 						if ( option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
-
-							ms_tr.Trace << "Ligand placement created motifs against significant residues: ";
-
-
-							//build a string that holds the significant indices that had a motif form against it
-							std::string significant_residue_string = "";
-
-							utility::vector1< int > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
-							for ( core::Size sig_res_pos = 1; sig_res_pos < significant_residues_for_motifs.size(); ++sig_res_pos ) {
-								for ( core::Size motif_made = 1; motif_made < prot_pos_that_made_motifs.size(); ++motif_made ) {
-									if ( prot_pos_that_made_motifs[motif_made] == significant_residues_for_motifs[sig_res_pos] ) {
-										//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
-										++significant_motifs_made;
-
-										ms_tr.Debug << prot_pos_that_made_motifs[motif_made] << ",";
-										significant_residue_string += std::to_string(prot_pos_that_made_motifs[motif_made]) + ",";
-									}
-								}
-							}
-
-
-							ms_tr.Debug << std::endl;
-							ms_tr.Debug << "Ligand placement created " << significant_motifs_made << " motifs for significant residues" << std::endl;
-
-
-							pdb_name = pdb_name + "_sigmotifs_" + std::to_string(significant_motifs_made);
-
-							core::pose::add_comment(*working_pose_, "Placement motifs: Motifs made against significant residues count:", std::to_string(significant_motifs_made));
-							core::pose::add_comment(*working_pose_, "Placement motifs: Motifs made against significant residues:", significant_residue_string);
-
-							comment_table_data = comment_table_data + std::to_string(significant_motifs_made) + ",";
-						} else {
-							comment_table_data = comment_table_data + ",";
+							pdb_name = pdb_name + "_sigmotifs_" + std::to_string(placement_motifs_data[2]);
+							comment_table_data = comment_table_data + std::to_string(placement_motifs_data[2]) + ",";
 						}
+						comment_table_data = comment_table_data + ",";
 
-						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
-						if ( significant_motifs_made < min_sig_motifs_cutoff_ ) {
-							reset_working_pose();
-							++clashing_counter;
-							continue;
-						}
-
-						//check if motifs that were generated match real motifs (as inputted into this program as the motif list)
-						//also determine if the ratio of real generated motifs is above the expected cutoff
 						if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] ) {
-							//counter to count the number of motifs generated by the placement that are close enough to a real motif we have
-							//use to derive a ratio (with potential for placement to be filtered with a cutoff)
-							core::Size motifs_that_look_real = 0;
-
-							//iterate over the library of motifs created by the ligand placement
-							for ( auto ligmotifcop : placement_libraryCOPs ) {
-								//derive tuple key
-								protocols::motifs::motif_atoms curkey_tuple(ligmotifcop->restype_name1(),ligmotifcop->res1_atom1_name(),ligmotifcop->res1_atom2_name(),ligmotifcop->res1_atom3_name(),ligmotifcop->res2_atom1_name(),ligmotifcop->res2_atom2_name(),ligmotifcop->res2_atom3_name());
-
-								//pull out the motif library that matches the current motif that we are on by atom names (if there is one)
-								//use map count function to determine if the key exists
-								if ( mymap.count(curkey_tuple) > 0 ) {
-									//key exists
-									//pull out motif library at key address and then compare all motifs in the list against ligmotifcop to see if it resembles a real motif
-									protocols::motifs::MotifCOPs real_motifs = mymap[curkey_tuple];
-
-									//create a bool that determines if we found a real match for the motif or not
-									bool real_match_found = false;
-
-									//iterate over the library and compare
-									for ( auto realmotifcop : real_motifs ) {
-										//compare code based on remove_duplicate_motifs
-										//difference is that we are not deleting any motifs, instead if we get a match hit, we will call out ligand-derived motif real
-										//secondary confirm that the motifs match (there is no good reason why we should hit a continue off of this if the map is formed right)
-										if ( ligmotifcop->restype_name1() != realmotifcop->restype_name1() ) continue;
-										if ( ligmotifcop->res1_atom1_name() != realmotifcop->res1_atom1_name() ) continue;
-										if ( ligmotifcop->res1_atom2_name() != realmotifcop->res1_atom2_name() ) continue;
-										if ( ligmotifcop->res1_atom3_name() != realmotifcop->res1_atom3_name() ) continue;
-										if ( ligmotifcop->res2_atom1_name() != realmotifcop->res2_atom1_name() ) continue;
-										if ( ligmotifcop->res2_atom2_name() != realmotifcop->res2_atom2_name() ) continue;
-										if ( ligmotifcop->res2_atom3_name() != realmotifcop->res2_atom3_name() ) continue;
-
-										core::Real motif_distance = 0;
-										core::Real motif_theta = 0;
-
-										jump_distance(ligmotifcop->forward_jump(), realmotifcop->forward_jump(), motif_distance, motif_theta);
-
-										ms_tr.Debug << "Comparing to motif " << realmotifcop->remark() << std::endl;
-										ms_tr.Debug << "Distance: " << motif_distance << std::endl;
-										ms_tr.Debug << "Theta: " << motif_theta << std::endl;
-
-
-										if ( motif_distance < dist_threshold_ && motif_theta < angl_threshold_ ) {
-											//note that the motif matches a real one
-
-											ms_tr.Debug << "Current motif matches real motif with distance: " << motif_distance << "  and angle difference: "  << motif_theta << std::endl;
-											if ( ligmotifcop->has_remark() ) {
-												ms_tr.Debug << "Ligand remark is: " << ligmotifcop->remark() << std::endl;
-											}
-											if ( realmotifcop->has_remark() ) {
-												ms_tr.Debug << "Real motif remark is: " << realmotifcop->remark() << std::endl;
-											}
-
-
-											//increment real counter
-											++motifs_that_look_real;
-
-											std::string real_motif_match_info = "remark: " + realmotifcop->remark() + ", distance: " + std::to_string(motif_distance) + ", angle: " + std::to_string(motif_theta);
-
-											//add comment about real motif match for placement motif
-											core::pose::add_comment(*working_pose_, "Placement motifs: Real motif check - " + ligmotifcop->remark(), real_motif_match_info);
-
-											real_match_found = true;
-
-											//greedy algorithm, stop for current ligmotifcop when we hit the first match since we got what we wanted
-											break;
-										}
-
-									}
-
-									//if no real match was found, note comment
-									if ( real_match_found == false ) {
-										core::pose::add_comment(*working_pose_, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match");
-									}
-								} else {
-									//key (and real motif in our library) does not exist
-									//declare that this motif is not considered real
-
-									ms_tr.Debug << "No real motifs identified for motif: " << *ligmotifcop << std::endl;
-
-									core::pose::add_comment(*working_pose_, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match");
-								}
-							}
-
-							//determine the ratio of ligand motifs that match real ones
-							//convert numerator an denominator to real to ensure we have no floating point issues
-							core::Real motifs_that_look_real_real = motifs_that_look_real;
-							core::Real motifs_made_real = motifs_made;
-							core::Real real_looking_motif_ratio = motifs_that_look_real_real/motifs_made_real;
-
-							//determine if real ratio is greater than cutoff: minimum_ratio_of_real_motifs_from_ligand
-							if ( real_looking_motif_ratio < real_motif_ratio_cutoff_ ) {
-								reset_working_pose();
-								++clashing_counter;
-								continue;
-							}
-
 							//add real motif ratio to pdb name
-							pdb_name = pdb_name + "_realmotifratio_" + std::to_string(real_looking_motif_ratio);
-
-							core::pose::add_comment(*working_pose_, "Placement motifs: Real motif count:", std::to_string(motifs_that_look_real_real));
-							core::pose::add_comment(*working_pose_, "Placement motifs: Real motif ratio:", std::to_string(real_looking_motif_ratio));
-							comment_table_data = comment_table_data + std::to_string(motifs_that_look_real_real) + "," + std::to_string(real_looking_motif_ratio) + ",";
-
-						} else {
-							comment_table_data = comment_table_data + "," + ",";
+							pdb_name = pdb_name + "_realmotifratio_" + std::to_string(placement_motifs_data[4]);
+							comment_table_data = comment_table_data + std::to_string(placement_motifs_data[3]) + "," + std::to_string(placement_motifs_data[4]) + ",";
 						}
+						comment_table_data = comment_table_data + ",,";
+
+						//after optional modifications, add ".pdb" to cap off name
+						pdb_name = pdb_name + ".pdb";
 
 					} else {
 						comment_table_data = comment_table_data + "," + "," + "," + ",";
