@@ -38,6 +38,7 @@
 #include <core/scoring/Energies.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/ScoreType.hh>
@@ -799,8 +800,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 				ms_tr.Debug << "Not motifs made for residue index " << sig_res_pos << std::endl;
 				ms_tr.Debug << "Exiting evaluate_motifs_of_pose() call and returning that at least one mandatory residue did not get a motif." << std::endl;
 				
-				//set evaluate_motifs_of_pose[1] to 0
-				evaluate_motifs_of_pose[1] = 0;
+				//set placement_motifs_data[1] to 0
+				placement_motifs_data[1] = 0;
 
 				return placement_motifs_data;
 			}
@@ -821,8 +822,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		for ( auto sig_res_pos : significant_residues_for_motifs ){
 			for ( auto motif_made : prot_pos_that_made_motifs ) {
 				if ( motif_made == sig_res_pos ) {
-					//tick up the counter for significant motifs made (evaluate_motifs_of_pose[2]) if there is a match in the residue index for the motif and a significant residue
-					++evaluate_motifs_of_pose[2];
+					//tick up the counter for significant motifs made (placement_motifs_data[2]) if there is a match in the residue index for the motif and a significant residue
+					++placement_motifs_data[2];
 
 					ms_tr.Debug << motif_made << ",";
 					significant_residue_string += std::to_string(motif_made) + ",";
@@ -831,9 +832,9 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		}
 
 		ms_tr.Debug << std::endl;
-		ms_tr.Debug << "Ligand placement created " << evaluate_motifs_of_pose[2] << " motifs for significant residues" << std::endl;
+		ms_tr.Debug << "Ligand placement created " << placement_motifs_data[2] << " motifs for significant residues" << std::endl;
 
-		core::pose::add_comment(*working_pose, "Placement motifs: Motifs made against significant residues count:", std::to_string(evaluate_motifs_of_pose[2]));
+		core::pose::add_comment(*working_pose, "Placement motifs: Motifs made against significant residues count:", std::to_string(placement_motifs_data[2]));
 		core::pose::add_comment(*working_pose, "Placement motifs: Motifs made against significant residues:", significant_residue_string);
 	}
 
@@ -896,7 +897,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 
 						//increment real counter
-						++evaluate_motifs_of_pose[3];
+						++placement_motifs_data[3];
 
 						std::string real_motif_match_info = "remark: " + realmotifcop->remark() + ", distance: " + std::to_string(motif_distance) + ", angle: " + std::to_string(motif_theta);
 
@@ -926,7 +927,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		}
 
 		//determine the ratio of ligand motifs that match real ones
-		core::Real evaluate_motifs_of_pose[4] = evaluate_motifs_of_pose[3]/evaluate_motifs_of_pose[0];
+		placement_motifs_data[4] = placement_motifs_data[3]/placement_motifs_data[0];
 
 		core::pose::add_comment(*working_pose, "Placement motifs: Real motif count:", std::to_string(motifs_that_look_real_real));
 		core::pose::add_comment(*working_pose, "Placement motifs: Real motif ratio:", std::to_string(real_looking_motif_ratio));
