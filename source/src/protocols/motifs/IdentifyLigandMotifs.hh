@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/motifs/Motif.fwd.hh>
+#include <protocols/motifs/motif_utils.hh>
 
 class IdentifyLigandMotifs
 {
