@@ -750,6 +750,9 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
 	utility::vector1< core::Size > prot_pos_that_made_motifs_size;
 
+	//temporary return to see if we break here
+	return placement_motifs_data;
+
 	//use ilm process_for_motifs to obtain motifs from the pose
 	process_for_motifs(*working_pose, pdb_name, placement_library, prot_pos_that_made_motifs_size);
 
@@ -760,9 +763,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	placement_motifs_data[0] = prot_pos_that_made_motifs.size();
 
 	ms_tr.Debug << "Ligand placement created " << placement_motifs_data[0] << " total motifs" << std::endl;
-
-	//temporary return to see if we break here
-	return placement_motifs_data;
 
 	core::pose::add_comment(*working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[0]));
 
