@@ -813,6 +813,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 				//set placement_motifs_data[1] to 0
 				placement_motifs_data[1] = 0;
 
+				ms_tr.Debug << "About to exit evaluate_motifs_of_pose() from failing to find a mandatory motif." << std::endl;
 				return placement_motifs_data;
 			}
 		}
@@ -942,6 +943,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		core::pose::add_comment(*working_pose, "Placement motifs: Real motif count:", std::to_string(placement_motifs_data[3]));
 		core::pose::add_comment(*working_pose, "Placement motifs: Real motif ratio:", std::to_string(placement_motifs_data[4]));
 	} 
+
+	ms_tr.Debug << "About to exit evaluate_motifs_of_pose() from successful pass through function." << std::endl;
 
 	//return placement motifs data at the end
 	return placement_motifs_data;
