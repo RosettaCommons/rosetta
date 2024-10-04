@@ -931,8 +931,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 		core::pose::add_comment(*working_pose, "Placement motifs: Real motif count:", std::to_string(placement_motifs_data[3]));
 		core::pose::add_comment(*working_pose, "Placement motifs: Real motif ratio:", std::to_string(placement_motifs_data[4]));
-
-		//return placement motifs data at the end
-		return placement_motifs_data;
 	} 
+
+	//return placement motifs data at the end
+	return placement_motifs_data;
 }
