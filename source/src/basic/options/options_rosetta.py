@@ -8793,6 +8793,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'inv_kin_lig_loop_design_filename', 'String', desc='input filename to be used for inv_kin_lig_loop_design' ),
 	),
 
+
+	# peisenhuth pilot app options
+	Option_Group( 'ligand_evolution',
+		Option( 'options', 'String', desc='Path to the options file' ),
+    ), #-end peisenhuth pilot apps
+
 	Option_Group( 'peptide_deriver',
 		Option( 'pep_lengths', 'IntegerVector', desc = 'Length(s) of derived peptides', default = [ '10' ] ),
 		Option( 'skip_zero_isc', 'Boolean', desc = 'Makes derivation go faster by skipping peptides with 0 interface score', default = 'true' ),

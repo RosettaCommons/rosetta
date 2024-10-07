@@ -23,8 +23,9 @@ INCLUDE(../build/build.post.cmake)
 #INCLUDE( ../build/apps/rosetta_scripts.cmake )
 
 ############ Top level binaries
-INCLUDE( ../build/apps.all.cmake )
-INCLUDE( ../build/pilot_apps.all.cmake )
+#INCLUDE( ../build/apps.all.cmake )
+#INCLUDE( ../build/pilot_apps.all.cmake )
+INCLUDE( ../build/apps/enamine_ligand_evolution.cmake )
 
 ############ Unit Tests
 INCLUDE(../build/build.test.cmake)
