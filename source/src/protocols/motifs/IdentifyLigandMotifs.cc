@@ -519,6 +519,10 @@ IdentifyLigandMotifs::process_for_motifs(
 	TR << "Prot_pos_that_made_motifs_size size:" << prot_pos_that_made_motifs.size() << std::endl;
 	TR << "Prot_pos_that_made_motifs_size entries:" << std::endl;
 	for  ( auto motif_made : prot_pos_that_made_motifs ){
+		if (motif_made < 0) {  // Example of checking for invalid values
+	        TR << "Invalid motif found: " << motif_made << std::endl;
+	        break;
+	    }
 		TR << motif_made << ",";
 	}
 
