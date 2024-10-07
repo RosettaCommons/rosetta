@@ -529,7 +529,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 )
 {
 	ResidueType const & prot_type( pose.residue_type( prot_pos ) );
-	if (  !prot_type.is_protein() ) return;
+	if (  !prot_type.is_protein() ) return false;
 	if ( pose.residue( prot_pos ).name3() == "GLY" ) return false;
 
 	// map will automatically sort the "contacts" with the lowest total_score at the front of map
