@@ -356,9 +356,9 @@ void IdentifyLigandMotifs::get_atom_trios(
 			break;
 		}
 
-		TR << "in atom iterate block, atom num is " << atom_i <<   std::endl;
+		TR.Trace << "in atom iterate block, atom num is " << atom_i <<   std::endl;
 		std::string const atom_name = ligres.atom_name(atom_i);
-		TR << "atom name is " << atom_name <<  std::endl;
+		TR.Debug << "atom name is " << atom_name <<  std::endl;
 
 		// This is a for loop to iterate over each atom's connected atoms:
 		//core::conformation::Residue::AtomIndices atom_i_connects(  ligres.bonded_neighbor( atom_i ) );
@@ -368,7 +368,7 @@ void IdentifyLigandMotifs::get_atom_trios(
 			if ( ligres.atom_type(atom_j).is_hydrogen() ) {
 				break;
 			}
-			TR << "ATOM j: " << atom_j << " Name: " << ligres.atom_name(atom_j) << std::endl;
+			TR.Debug << "ATOM j: " << atom_j << " Name: " << ligres.atom_name(atom_j) << std::endl;
 
 			// This is the next for loop to find connects for the second atom, giving us the final atom number (atom k)
 			//core::conformation::Residue::AtomIndices atom_j_connects(  ligres.bonded_neighbor( atom_i_connects[atom_j] ) );
@@ -377,7 +377,7 @@ void IdentifyLigandMotifs::get_atom_trios(
 				if ( ligres.atom_type(atom_k).is_hydrogen() ) {
 					break;
 				}
-				TR << "ATOM k: " << atom_k << " Name: " << ligres.atom_name(atom_k) << std::endl;
+				TR.Debug << "ATOM k: " << atom_k << " Name: " << ligres.atom_name(atom_k) << std::endl;
 
 				chemical::AtomType const & atom_i_type(ligres.atom_type(atom_i));
 				std::string atom_i_name = atom_i_type.atom_type_name();
@@ -386,9 +386,9 @@ void IdentifyLigandMotifs::get_atom_trios(
 				chemical::AtomType const & atom_k_type(ligres.atom_type(atom_k));
 				std::string atom_k_name = atom_k_type.atom_type_name();
 
-				TR << "Connected triplet is: " << atom_i << ", type is " << atom_i_name  << "; ";
-				TR << atom_j << ", type is " << atom_j_name << "; " ;
-				TR << atom_k << ", type is " << atom_k_name << " " << std::endl;
+				TR.Debug << "Connected triplet is: " << atom_i << ", type is " << atom_i_name  << "; ";
+				TR.Debug << atom_j << ", type is " << atom_j_name << "; " ;
+				TR.Debug << atom_k << ", type is " << atom_k_name << " " << std::endl;
 				if ( atom_i != atom_k ) {
 
 					//make the 3 atom vector
@@ -397,9 +397,9 @@ void IdentifyLigandMotifs::get_atom_trios(
 					cur_motif_indices.push_back( atom_j );
 					cur_motif_indices.push_back( atom_k );
 
-					TR << "atom_i: " << atom_i << std::endl;
-					TR << "atom_i to atom_j: " << atom_j << std::endl;
-					TR << "atom_j to atom_k: " << atom_k << std::endl;
+					TR.Debug << "atom_i: " << atom_i << std::endl;
+					TR.Debug << "atom_i to atom_j: " << atom_j << std::endl;
+					TR.Debug << "atom_j to atom_k: " << atom_k << std::endl;
 
 					//check if current index is a duplicate
 
@@ -461,7 +461,7 @@ IdentifyLigandMotifs::process_for_motifs(
 		// .is_ligand() comes from  src/core/chemical/ResidueType.cc (I think)
 		//look at ligands only
 		if (  !lig_type.is_ligand() ) continue;
-		TR << "in ligand splitter block, found my ligand, lig_pos is " << lig_pos << std::endl;
+		TR.Trace << "in ligand splitter block, found my ligand, lig_pos is " << lig_pos << std::endl;
 
 		// This is to make a ligres object once we find our ligand
 		conformation::Residue const & ligres( pose.residue( lig_pos ) );
@@ -475,7 +475,7 @@ IdentifyLigandMotifs::process_for_motifs(
 
 		//continue if we have 2 or fewer non-virtual atoms
 		if ( num_non_virt_heavy_atoms < 3 ) {
-			TR << "Ignoring ligand " << ligres.name() << " that has " << num_non_virt_heavy_atoms << " heavy and non-virtual atoms. It has " << num_virt_atoms << " virtual atoms and " << ligres.nheavyatoms() << " heavy atoms." << std::endl;
+			TR.Debug << "Ignoring ligand " << ligres.name() << " that has " << num_non_virt_heavy_atoms << " heavy and non-virtual atoms. It has " << num_virt_atoms << " virtual atoms and " << ligres.nheavyatoms() << " heavy atoms." << std::endl;
 			continue;
 		}
 
@@ -487,8 +487,8 @@ IdentifyLigandMotifs::process_for_motifs(
 
 		get_atom_trios(motif_indices_list, all_motif_indices, ligres);
 
-		TR << "Total 3 atoms in pruned indices list is: " << motif_indices_list.size()  << std::endl;
-		TR << "Total 3 atoms in unpruned indices list is: " << all_motif_indices.size()  << std::endl;
+		TR.Debug << "Total 3 atoms in pruned indices list is: " << motif_indices_list.size()  << std::endl;
+		TR.Debug << "Total 3 atoms in unpruned indices list is: " << all_motif_indices.size()  << std::endl;
 
 		////////////////////////////
 		////////////////////////////
@@ -508,20 +508,9 @@ IdentifyLigandMotifs::process_for_motifs(
 		//Here we're going to check to see what's in motif_indices_list
 		for ( core::Size motif_position = 1; motif_position <= motif_indices_list.size(); ++ motif_position ) {
 			utility::vector1< Size > cur_trip ( motif_indices_list[motif_position] );
-			TR << "Motif index contains: " << cur_trip[1] << "-" << cur_trip[2] << "-" << cur_trip[3] << std::endl;
+			TR.Debug << "Motif index contains: " << cur_trip[1] << "-" << cur_trip[2] << "-" << cur_trip[3] << std::endl;
 		}
 	}
-
-	TR << "At end of process_for_motifs" << std::endl;
-
-	//temporary inclusion to get information on prot_pos_that_made_motifs and prot_pos_that_made_motifs_size, as these seem to the the source of the issue
-	TR << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
-	TR << "Prot_pos_that_made_motifs_size size:" << prot_pos_that_made_motifs.size() << std::endl;
-	TR << "Prot_pos_that_made_motifs_size entries:" << std::endl;
-	for  ( core::Size i = 1; i <= prot_pos_that_made_motifs.size(); i++ ){
-		TR << prot_pos_that_made_motifs[i] << ",";
-	}
-	TR << std::endl;
 
 	return prot_pos_that_made_motifs;
 }
@@ -575,7 +564,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 		//TR << "In pack_score statement" << std::endl;
 
 		contacts[total_score] = lig_pos;
-		TR << "Residue " << prot_pos << " passed energy cut with pack score: " << pack_score << ", hbond score: " << hb_score << ", for a total score of: " << total_score << std::endl;
+		TR.Debug << "Residue " << prot_pos << " passed energy cut with pack score: " << pack_score << ", hbond score: " << hb_score << ", for a total score of: " << total_score << std::endl;
 
 		for ( core::Size motif_position = 1; motif_position <= motif_indices_list.size(); ++ motif_position ) { //for each 3 atom triplet from ligand
 			bool resi_trip_match( false );
@@ -601,14 +590,14 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 							}
 						}
 					} else {
-						TR << "illegal value of cur_trip[cur_trip_pos]" << std::endl;
+						TR.Debug << "illegal value of cur_trip[cur_trip_pos]" << std::endl;
 					}
 				}
 			}
 
 			//skip motif if closest distance is beyond 5.0 (won't be good for much)
 			if ( closest_distance == 5.0 ) {
-				TR << "Skipping motif whose closest atom-atom distance is no closer than 5.0 angstroms" << std::endl;
+				TR.Debug << "Skipping motif whose closest atom-atom distance is no closer than 5.0 angstroms" << std::endl;
 				continue;
 			}
 
@@ -641,13 +630,13 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 		///////////////////
 		///////////////////
 
-		TR << "Top triplets contains " << top_triplets.size() << " items." << std::endl << "Top triplets are: " ;
+		TR.Debug << "Top triplets contains " << top_triplets.size() << " items." << std::endl << "Top triplets are: " ;
 		for ( core::Size top_trip_pos = 1; top_trip_pos <= top_triplets.size(); ++ top_trip_pos ) {
 			Size this_triplet_number(top_triplets[top_trip_pos]);
 			utility::vector1< Size > this_triplet( motif_indices_list[this_triplet_number] );
-			TR << "Size of top_triplets:  " << top_triplets.size() << std::endl;
-			TR << "Size of this_triplet:  " << this_triplet.size() << std::endl;
-			TR <<  this_triplet_number << ": " << this_triplet[1] << "-" << this_triplet[2] << "-" <<  this_triplet[3]  << std::endl;
+			TR.Debug << "Size of top_triplets:  " << top_triplets.size() << std::endl;
+			TR.Debug << "Size of this_triplet:  " << this_triplet.size() << std::endl;
+			TR.Debug <<  this_triplet_number << ": " << this_triplet[1] << "-" << this_triplet[2] << "-" <<  this_triplet[3]  << std::endl;
 
 			//output motifs to library and .motifs file
 			if ( output_motifs_ ) {
@@ -687,7 +676,6 @@ IdentifyLigandMotifs::process_file_list()
 	ScoreFunction scorefxn;
 
 	//core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-
 
 	scorefxn.set_weight( fa_atr, 1.00 );
 	scorefxn.set_weight( fa_rep, 1.00 );
@@ -769,15 +757,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
 	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(working_pose_copy, pdb_name, motif_library_);
 
-	//temporary inclusion to get information on prot_pos_that_made_motifs and prot_pos_that_made_motifs_size, as these seem to the the source of the issue
-	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
-	ms_tr.Debug << "Prot_pos_that_made_motifs_size size:" << prot_pos_that_made_motifs_size.size() << std::endl;
-	ms_tr.Debug << "Prot_pos_that_made_motifs_size entries:" << std::endl;
-	for  ( core::Size i = 1; i <= prot_pos_that_made_motifs_size.size(); i++ ){
-		TR << prot_pos_that_made_motifs_size[i] << ",";
-	}
-	TR << std::endl;
-
 	//convert the prot_pos vector from size to int (easier to use int because this interacts with values from vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but this is a seemingly equivalent workaround)
 	//utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
 	utility::vector1< int > prot_pos_that_made_motifs;
@@ -788,14 +767,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		prot_pos_that_made_motifs.push_back(prot_pos_that_made_motifs_size[i]);
 	}
 
-
-	ms_tr.Debug << std::endl;
-	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs:" << std::endl;
-	ms_tr.Debug << "prot_pos_that_made_motifs size:" << prot_pos_that_made_motifs.size() << std::endl;
-	ms_tr.Debug << "prot_pos_that_made_motifs entries:" << std::endl;
-	//for  ( auto motif_made : prot_pos_that_made_motifs ){
-	//	ms_tr.Debug << motif_made << ",";
-	//}
 	ms_tr.Debug << std::endl;
 
 	//determine how many motifs were made and how many were made on significant residues
