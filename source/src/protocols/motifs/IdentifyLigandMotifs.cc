@@ -505,6 +505,8 @@ IdentifyLigandMotifs::process_for_motifs(
 			TR << "Motif index contains: " << cur_trip[1] << "-" << cur_trip[2] << "-" << cur_trip[3] << std::endl;
 		}
 	}
+
+	TR << "At end of process_for_motifs" << std::endl;
 }
 
 void
@@ -775,7 +777,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	for  ( auto motif_made : prot_pos_that_made_motifs_size ){
 		prot_pos_that_made_motifs.push_back(motif_made);
 	}
-	
+
 	ms_tr.Debug << std::endl;
 	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs:" << std::endl;
 	ms_tr.Debug << "prot_pos_that_made_motifs size:" << prot_pos_that_made_motifs.size() << std::endl;
