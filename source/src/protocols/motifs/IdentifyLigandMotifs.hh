@@ -120,7 +120,8 @@ private:
 	);
 
 	// @brief function called in process_for_motifs() that collects any potential motifs between a ligand and amino acid residue, identified by index within passed pose; pdb_name is used for optional output of identified pdbs
-	void
+	//returns true if a motif was identified, returns false otherwise
+	bool
 	ligand_to_residue_analysis(
 		core::Size lig_pos,
 		core::Size prot_pos,
@@ -128,8 +129,7 @@ private:
 		std::string const & pdb_name,
 		protocols::motifs::MotifLibrary & motifs,
 		core::scoring::ScoreFunctionOP scorefxn,
-		utility::vector1< utility::vector1< core::Size > > const & motif_indices_list,
-		utility::vector1< core::Size > & prot_pos_that_made_motifs
+		utility::vector1< utility::vector1< core::Size > > const & motif_indices_list
 	);
 
 	// @brief string to control the directory that motif pdbs will be outputted to

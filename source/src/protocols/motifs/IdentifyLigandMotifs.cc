@@ -497,7 +497,11 @@ IdentifyLigandMotifs::process_for_motifs(
 		for ( core::Size prot_pos = 1 ; prot_pos <= nres ; ++prot_pos ) {
 
 			//break motif identification into its own function for better readability
-			ligand_to_residue_analysis(lig_pos, prot_pos, pose, pdb_name, motifs, scorefxn, motif_indices_list, prot_pos_that_made_motifs);
+			bool motif_found = ligand_to_residue_analysis(lig_pos, prot_pos, pose, pdb_name, motifs, scorefxn, motif_indices_list);
+			if(motif_found)
+			{
+				prot_pos_that_made_motifs.push_back(prot_pos);
+			}
 
 		}
 
@@ -513,7 +517,7 @@ IdentifyLigandMotifs::process_for_motifs(
 	TR << "At end of process_for_motifs" << std::endl;
 }
 
-void
+bool
 IdentifyLigandMotifs::ligand_to_residue_analysis(
 	core::Size lig_pos,
 	core::Size prot_pos,
@@ -521,8 +525,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 	std::string const & pdb_name,
 	protocols::motifs::MotifLibrary & motifs,
 	core::scoring::ScoreFunctionOP scorefxn,
-	utility::vector1< utility::vector1< Size > > const & motif_indices_list,
-	utility::vector1< Size >  & prot_pos_that_made_motifs
+	utility::vector1< utility::vector1< Size > > const & motif_indices_list
 )
 {
 	ResidueType const & prot_type( pose.residue_type( prot_pos ) );
@@ -637,10 +640,6 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 			TR << "Size of this_triplet:  " << this_triplet.size() << std::endl;
 			TR <<  this_triplet_number << ": " << this_triplet[1] << "-" << this_triplet[2] << "-" <<  this_triplet[3]  << std::endl;
 
-			//if we got a motif worth keeping, record the index of the residue that made it in prot_pos_that_made_motifs
-			TR <<  "Pushing pack protein position: "  << prot_pos << std::endl;
-			prot_pos_that_made_motifs.push_back(prot_pos);
-
 			//output motifs to library and .motifs file
 			if ( output_motifs_ ) {
 				output_single_motif_to_MotifLibrary( pose, motifs, pdb_name, prot_pos, lig_pos, this_triplet, pack_score, hb_score );
@@ -651,7 +650,11 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 			}
 
 		}
+
+		return true;
 	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
