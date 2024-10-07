@@ -829,10 +829,10 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		//bool to help control loops to determine whether to kill the placed ligand
 		bool kill = false;
 		utility::vector1< int > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs];
-		for  ( core::Size sig_res_pos = 0; i < mandatory_residues_for_motifs.size(); ++sig_res_pos ){
+		for  ( core::Size sig_res_pos = 0; sig_res_pos < mandatory_residues_for_motifs.size(); ++sig_res_pos ){
 			//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
 			kill = true;
-			for  ( core::Size motif_made = 0; i < prot_pos_that_made_motifs.size(); ++motif_made ){
+			for  ( core::Size motif_made = 0; motif_made < prot_pos_that_made_motifs.size(); ++motif_made ){
 				if ( prot_pos_that_made_motifs[motif_made] == mandatory_residues_for_motifs[sig_res_pos] ) {
 					//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
 					kill = false;
@@ -865,8 +865,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		std::string significant_residue_string = "";
 
 		utility::vector1< int > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
-		for  ( core::Size sig_res_pos = 0; i < significant_residues_for_motifs.size(); ++sig_res_pos ){
-			for  ( core::Size motif_made = 0; i < prot_pos_that_made_motifs.size(); ++motif_made ){
+		for  ( core::Size sig_res_pos = 0; sig_res_pos < significant_residues_for_motifs.size(); ++sig_res_pos ){
+			for  ( core::Size motif_made = 0; motif_made < prot_pos_that_made_motifs.size(); ++motif_made ){
 				if ( prot_pos_that_made_motifs[motif_made] == significant_residues_for_motifs[sig_res_pos] ) {
 					//tick up the counter for significant motifs made (placement_motifs_data[2]) if there is a match in the residue index for the motif and a significant residue
 					++placement_motifs_data[2];
