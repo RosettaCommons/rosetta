@@ -530,7 +530,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 {
 	ResidueType const & prot_type( pose.residue_type( prot_pos ) );
 	if (  !prot_type.is_protein() ) return;
-	if ( pose.residue( prot_pos ).name3() == "GLY" ) return;
+	if ( pose.residue( prot_pos ).name3() == "GLY" ) return false;
 
 	// map will automatically sort the "contacts" with the lowest total_score at the front of map
 	std::map< Real, Size > contacts;
@@ -539,7 +539,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 	ResidueType const & lig_type( pose.residue_type( lig_pos ) );
 
 	if (  !lig_type.is_ligand() ) {
-		return;
+		return false;
 	}
 
 	//skip if distance between residue and ligand nbr atoms is greater than 1.5 times the sum of their nbr radii
@@ -549,7 +549,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 	core::Real test_val = 1.5 * (lig_nbr_radius + res_nbr_radius);
 	core::Real lig_res_nbr_distance = pose.residue( prot_pos ).nbr_atom_xyz().distance(pose.residue( lig_pos ).nbr_atom_xyz());
 	if ( lig_res_nbr_distance > test_val ) {
-		return;
+		return false;
 	}
 
 
