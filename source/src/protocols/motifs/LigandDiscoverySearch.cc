@@ -1297,26 +1297,26 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//if at least one mandatory residue did not get a motif, kill
 						//if the number of significant motifs made is greater than or equal to the cutoff, keep the placement, otherwise kill
 						//determine if real ratio is greater than cutoff: minimum_ratio_of_real_motifs_from_ligand
-						if ( placement_motifs_data[0] < min_motifs_cutoff_ || placement_motifs_data[1] == 0 || placement_motifs_data[2] < min_sig_motifs_cutoff_ || placement_motifs_data[4] < real_motif_ratio_cutoff_ ) {
+						if ( placement_motifs_data[1] < min_motifs_cutoff_ || placement_motifs_data[2] == 0 || placement_motifs_data[3] < min_sig_motifs_cutoff_ || placement_motifs_data[5] < real_motif_ratio_cutoff_ ) {
 							reset_working_pose();
 							++clashing_counter;
 							continue;
 						}
 
 						//work on building pdb name string if we passed and building the comment table strings
-						pdb_name = pdb_name + "_motifs_" + std::to_string(placement_motifs_data[0]);
-						comment_table_data = comment_table_data + std::to_string(placement_motifs_data[0]) + ",";
+						pdb_name = pdb_name + "_motifs_" + std::to_string(placement_motifs_data[1]);
+						comment_table_data = comment_table_data + std::to_string(placement_motifs_data[1]) + ",";
 
 						if ( option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
-							pdb_name = pdb_name + "_sigmotifs_" + std::to_string(placement_motifs_data[2]);
-							comment_table_data = comment_table_data + std::to_string(placement_motifs_data[2]) + ",";
+							pdb_name = pdb_name + "_sigmotifs_" + std::to_string(placement_motifs_data[3]);
+							comment_table_data = comment_table_data + std::to_string(placement_motifs_data[3]) + ",";
 						}
 						comment_table_data = comment_table_data + ",";
 
 						if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] ) {
 							//add real motif ratio to pdb name
-							pdb_name = pdb_name + "_realmotifratio_" + std::to_string(placement_motifs_data[4]);
-							comment_table_data = comment_table_data + std::to_string(placement_motifs_data[3]) + "," + std::to_string(placement_motifs_data[4]) + ",";
+							pdb_name = pdb_name + "_realmotifratio_" + std::to_string(placement_motifs_data[5]);
+							comment_table_data = comment_table_data + std::to_string(placement_motifs_data[4]) + "," + std::to_string(placement_motifs_data[5]) + ",";
 						}
 						comment_table_data = comment_table_data + ",,";
 
