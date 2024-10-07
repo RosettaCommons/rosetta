@@ -673,27 +673,6 @@ IdentifyLigandMotifs::process_file_list()
 	//using namespace basic::options::OptionKeys;
 	using namespace optimization;
 
-	ScoreFunction scorefxn;
-
-	//core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
-
-	scorefxn.set_weight( fa_atr, 1.00 );
-	scorefxn.set_weight( fa_rep, 1.00 );
-	scorefxn.set_weight( fa_sol, 1.00 );
-	scorefxn.set_weight( fa_dun, 1.00 );
-	scorefxn.set_weight( fa_pair, 1.00 );
-	scorefxn.set_weight( p_aa_pp, 1.00 );
-	scorefxn.set_weight( hbond_bb_sc, 1.0 );
-	scorefxn.set_weight( hbond_sc, 1.0 );
-
-
-	//removing this since we may not necessarily use -s or -l for file inputs. Instead, going to use a custome string input (which also allows for increased customization)
-	//utility::vector1< std::string > pdb_files( start_files() );
-
-	//Here is where I create the MotifLibrary object which I populate with the motifs
-	//will feed this created library into the global variable at the end of the protocol
-	//protocols::motifs::MotifLibrary motifs;
-
 	//new code for pose input (using Rocco's recommendation for using src/core/import_pose/pose_stream/MetaPoseInputStream.hh)
 	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
 
