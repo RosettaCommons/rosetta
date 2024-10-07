@@ -506,8 +506,8 @@ IdentifyLigandMotifs::process_for_motifs(
 		}
 
 		//Here we're going to check to see what's in motif_indices_list
-		for ( core::Size motif_position = 1; motif_position <= motif_indices_list.size(); ++ motif_position ) {
-			utility::vector1< Size > cur_trip ( motif_indices_list[motif_position] );
+		for (auto motif_position : motif_indices_list ) {
+			utility::vector1< Size > cur_trip ( motif_position );
 			TR.Debug << "Motif index contains: " << cur_trip[1] << "-" << cur_trip[2] << "-" << cur_trip[3] << std::endl;
 		}
 	}
@@ -566,20 +566,20 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 		contacts[total_score] = lig_pos;
 		TR.Debug << "Residue " << prot_pos << " passed energy cut with pack score: " << pack_score << ", hbond score: " << hb_score << ", for a total score of: " << total_score << std::endl;
 
-		for ( core::Size motif_position = 1; motif_position <= motif_indices_list.size(); ++ motif_position ) { //for each 3 atom triplet from ligand
+		for ( auto motif_position : motif_indices_list ) { //for each 3 atom triplet from ligand
 			bool resi_trip_match( false );
 
-			utility::vector1< Size > cur_trip ( motif_indices_list[motif_position] );
+			utility::vector1< Size > cur_trip ( motif_position );
 
 			Real closest_distance(5.0);
 
-			for ( core::Size cur_trip_pos = 1; cur_trip_pos <= cur_trip.size(); ++ cur_trip_pos ) {   //for each atom in ligand triplet
+			for ( auto cur_trip_pos : cur_trip ) {   //for each atom in ligand triplet
 				for ( core::Size residue_atom_number = 1; residue_atom_number <= pose.residue( prot_pos ).nheavyatoms(); ++ residue_atom_number ) {   //for each atom in current residue
 
 
-					if ( cur_trip[cur_trip_pos] <= pose.residue( lig_pos ).natoms() ) {
+					if ( cur_trip_pos <= pose.residue( lig_pos ).natoms() ) {
 						//This is the potentially broken line
-						Real atom_atom_distance( pose.residue( lig_pos ).xyz( cur_trip[cur_trip_pos]  ).distance( pose.residue( prot_pos ).xyz( residue_atom_number ) ) );
+						Real atom_atom_distance( pose.residue( lig_pos ).xyz( cur_trip_pos  ).distance( pose.residue( prot_pos ).xyz( residue_atom_number ) ) );
 
 
 						if ( atom_atom_distance < 4.0 ) {
@@ -590,7 +590,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 							}
 						}
 					} else {
-						TR.Debug << "illegal value of cur_trip[cur_trip_pos]" << std::endl;
+						TR.Debug << "illegal value of cur_trip_pos" << std::endl;
 					}
 				}
 			}
@@ -631,8 +631,8 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 		///////////////////
 
 		TR.Debug << "Top triplets contains " << top_triplets.size() << " items." << std::endl << "Top triplets are: " ;
-		for ( core::Size top_trip_pos = 1; top_trip_pos <= top_triplets.size(); ++ top_trip_pos ) {
-			Size this_triplet_number(top_triplets[top_trip_pos]);
+		for ( auto top_trip_pos : top_triplets; ) {
+			Size this_triplet_number(top_trip_pos);
 			utility::vector1< Size > this_triplet( motif_indices_list[this_triplet_number] );
 			TR.Debug << "Size of top_triplets:  " << top_triplets.size() << std::endl;
 			TR.Debug << "Size of this_triplet:  " << this_triplet.size() << std::endl;
@@ -758,20 +758,13 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(working_pose_copy, pdb_name, motif_library_);
 
 	//convert the prot_pos vector from size to int (easier to use int because this interacts with values from vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but this is a seemingly equivalent workaround)
-	//utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
 	utility::vector1< int > prot_pos_that_made_motifs;
-	//for  ( auto motif_made : prot_pos_that_made_motifs_size ){
-	//	prot_pos_that_made_motifs.push_back(motif_made);
-	//}
-	for  ( core::Size i = 1; i <= prot_pos_that_made_motifs_size.size(); i++ ){
-		prot_pos_that_made_motifs.push_back(prot_pos_that_made_motifs_size[i]);
+	for  ( auto motif_made : prot_pos_that_made_motifs_size ){
+		prot_pos_that_made_motifs.push_back(motif_made);
 	}
-
-	ms_tr.Debug << std::endl;
 
 	//determine how many motifs were made and how many were made on significant residues
 	placement_motifs_data[1] = prot_pos_that_made_motifs.size();
-
 
 	ms_tr.Debug << "Ligand placement created " << placement_motifs_data[1] << " total motifs" << std::endl;
 
@@ -800,11 +793,11 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		//bool to help control loops to determine whether to kill the placed ligand
 		bool kill = false;
 		utility::vector1< int > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs];
-		for  ( core::Size sig_res_pos = 1; sig_res_pos <= mandatory_residues_for_motifs.size(); ++sig_res_pos ){
+		for  ( auto sig_res_pos = 1 : mandatory_residues_for_motifs ){
 			//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
 			kill = true;
-			for  ( core::Size motif_made = 1; motif_made <= prot_pos_that_made_motifs.size(); ++motif_made ){
-				if ( prot_pos_that_made_motifs[motif_made] == mandatory_residues_for_motifs[sig_res_pos] ) {
+			for  ( auto motif_made : prot_pos_that_made_motifs ){
+				if ( motif_made == sig_res_pos ) {
 					//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
 					kill = false;
 				}
@@ -836,9 +829,9 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		std::string significant_residue_string = "";
 
 		utility::vector1< int > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
-		for  ( core::Size sig_res_pos = 1; sig_res_pos <= significant_residues_for_motifs.size(); ++sig_res_pos ){
-			for  ( core::Size motif_made = 1; motif_made <= prot_pos_that_made_motifs.size(); ++motif_made ){
-				if ( prot_pos_that_made_motifs[motif_made] == significant_residues_for_motifs[sig_res_pos] ) {
+		for  ( auto sig_res_pos : significant_residues_for_motifs ){
+			for  (auto motif_made : prot_pos_that_made_motifs ){
+				if ( motif_made == sig_res_pos ) {
 					//tick up the counter for significant motifs made (placement_motifs_data[2]) if there is a match in the residue index for the motif and a significant residue
 					++placement_motifs_data[3];
 
