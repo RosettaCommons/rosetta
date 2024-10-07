@@ -801,7 +801,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//determine how many motifs were made and how many were made on significant residues
 	placement_motifs_data[0] = prot_pos_that_made_motifs.size();
 
-	return placement_motifs_data;
 
 	ms_tr.Debug << "Ligand placement created " << placement_motifs_data[0] << " total motifs" << std::endl;
 
@@ -810,13 +809,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//convert the motif library to motifCOPS
 	protocols::motifs::MotifCOPs placement_libraryCOPs = motif_library_.library();
 
-	ms_tr.Debug << "Motifs made: " << std::endl;
-
-	for  ( auto motif_made : prot_pos_that_made_motifs ){
-		ms_tr.Debug << motif_made << ",";
-	}
-
-	ms_tr.Debug << std::endl;
 
 	//iterate over the library of motifs created by the ligand placement to add a comment for each that is the motif's remark
 	//create a counter too to print out each unique motif
