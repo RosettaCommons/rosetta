@@ -629,9 +629,10 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 			utility::vector1< Size > this_triplet( motif_indices_list[this_triplet_number] );
 			TR << "Size of top_triplets:  " << top_triplets.size() << std::endl;
 			TR << "Size of this_triplet:  " << this_triplet.size() << std::endl;
-			TR <<  this_triplet_number << ": " << this_triplet[1] << "-" << this_triplet[2] << "-" <<  this_triplet[3]  ;
+			TR <<  this_triplet_number << ": " << this_triplet[1] << "-" << this_triplet[2] << "-" <<  this_triplet[3]  << std::endl;
 
 			//if we got a motif worth keeping, record the index of the residue that made it in prot_pos_that_made_motifs
+			TR <<  "Pushing pack protein position: "  << prot_pos << std::endl;
 			prot_pos_that_made_motifs.push_back(prot_pos);
 
 			//output motifs to library and .motifs file
