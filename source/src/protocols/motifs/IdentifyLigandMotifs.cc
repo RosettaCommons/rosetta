@@ -513,6 +513,15 @@ IdentifyLigandMotifs::process_for_motifs(
 	}
 
 	TR << "At end of process_for_motifs" << std::endl;
+
+	//temporary inclusion to get information on prot_pos_that_made_motifs and prot_pos_that_made_motifs_size, as these seem to the the source of the issue
+	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
+	ms_tr.Debug << "Prot_pos_that_made_motifs_size size:" << prot_pos_that_made_motifs.size() << std::endl;
+	ms_tr.Debug << "Prot_pos_that_made_motifs_size entries:" << std::endl;
+	for  ( auto motif_made : prot_pos_that_made_motifs ){
+		ms_tr.Debug << motif_made << ",";
+	}
+
 	return prot_pos_that_made_motifs;
 }
 
