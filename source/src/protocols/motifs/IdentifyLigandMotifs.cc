@@ -773,16 +773,21 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
 	ms_tr.Debug << "Prot_pos_that_made_motifs_size size:" << prot_pos_that_made_motifs_size.size() << std::endl;
 	ms_tr.Debug << "Prot_pos_that_made_motifs_size entries:" << std::endl;
-	for  ( auto motif_made : prot_pos_that_made_motifs_size ){
-		ms_tr.Debug << motif_made << ",";
+	for  ( core::Size i = 0; i < prot_pos_that_made_motifs_size.size(); i++ ){
+		TR << prot_pos_that_made_motifs_size[i] << ",";
 	}
+	TR << std::endl;
 
 	//convert the prot_pos vector from size to int (easier to use int because this interacts with values from vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but this is a seemingly equivalent workaround)
 	//utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
 	utility::vector1< int > prot_pos_that_made_motifs;
-	for  ( auto motif_made : prot_pos_that_made_motifs_size ){
-		prot_pos_that_made_motifs.push_back(motif_made);
+	//for  ( auto motif_made : prot_pos_that_made_motifs_size ){
+	//	prot_pos_that_made_motifs.push_back(motif_made);
+	//}
+	for  ( core::Size i = 0; i < prot_pos_that_made_motifs_size.size(); i++ ){
+		prot_pos_that_made_motifs.push_back(prot_pos_that_made_motifs_size[i]);
 	}
+
 
 	ms_tr.Debug << std::endl;
 	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs:" << std::endl;
