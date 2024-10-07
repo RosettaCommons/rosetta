@@ -512,9 +512,8 @@ IdentifyLigandMotifs::process_for_motifs(
 		}
 	}
 
-
-	return prot_pos_that_made_motifs;
 	TR << "At end of process_for_motifs" << std::endl;
+	return prot_pos_that_made_motifs;
 }
 
 bool
