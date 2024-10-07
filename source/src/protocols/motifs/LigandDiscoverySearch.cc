@@ -1285,7 +1285,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						utility::vector1< core::Size > placement_motifs_data;
 
 						//clone a non-pointer of working_pose_ to pass into evaluate_motifs_of_pose
-						core::pose::Pose working_pose_copy = *((*working_pose).clone());
+						core::pose::Pose working_pose_copy = *((*working_pose_).clone());
 
 						//run evaluate_motifs_of_pose from the ilm, which returns a vector with data on motifs from the placed ligand
 						//comments are written to the pose, so we do not have to do that in this function now
