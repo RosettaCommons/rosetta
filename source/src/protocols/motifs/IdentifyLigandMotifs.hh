@@ -50,12 +50,12 @@ public:
 	// @brief main function, iterate over ligand (broken into adjacent 3 atom trios) and identify how they interact with nearby residues
 	//if not using the identify_ligand_motifs.cc app, you probably want to use this public function to use the ILM protocol in an app
 	//this lets you perform ILM searches on a pose that is generated in runtime
-	void
+	//returns a vector that contains the indices of residues that generated motifs
+	utility::vector1< core::Size >
 	process_for_motifs(
 		core::pose::Pose & pose,
 		std::string const & pdb_name,
-		protocols::motifs::MotifLibrary & motifs,
-		utility::vector1< core::Size > & prot_pos_that_made_motifs
+		protocols::motifs::MotifLibrary & motifs
 	);
 
 	// @brief returns the motif_library_ within the class, in case it is needed for additional usage beyond the scope of this protocol

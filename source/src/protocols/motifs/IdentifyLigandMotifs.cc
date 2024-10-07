@@ -430,14 +430,16 @@ void IdentifyLigandMotifs::get_atom_trios(
 }
 
 //main function, iterate over ligand (broken into adjacent 3 atom trios) and identify how they interact with nearby residues
-void
+utility::vector1< Size >
 IdentifyLigandMotifs::process_for_motifs(
 	Pose & pose,
 	std::string const & pdb_name,
-	protocols::motifs::MotifLibrary & motifs,
-	utility::vector1< Size > & prot_pos_that_made_motifs
+	protocols::motifs::MotifLibrary & motifs
 )
 {
+
+	//declare new empty vector that will hold the indices for residues where motifs were made
+	utility::vector1< core::Size > prot_pos_that_made_motifs;
 
 	core::scoring::ScoreFunctionOP scorefxn(ScoreFunctionFactory::create_score_function( "ligand.wts" ));
 
@@ -506,6 +508,8 @@ IdentifyLigandMotifs::process_for_motifs(
 		}
 	}
 
+
+	return prot_pos_that_made_motifs;
 	TR << "At end of process_for_motifs" << std::endl;
 }
 
@@ -707,8 +711,7 @@ IdentifyLigandMotifs::process_file_list()
 		//derive a pdb name to use
 		std::string pdb_name = input.get_last_pose_descriptor_string();
 		//run process_for_motifs
-		utility::vector1< Size > prot_pos_that_made_motifs;
-		process_for_motifs( pose, pdb_name, motif_library_ , prot_pos_that_made_motifs);
+		process_for_motifs( pose, pdb_name, motif_library_ );
 	}
 }
 
@@ -750,14 +753,14 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//4 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
 	utility::vector1< core::Size > placement_motifs_data (4,0);
 
-	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
-	utility::vector1< core::Size > prot_pos_that_made_motifs_size;
+	
 
 	//clone a non-pointer of working_pose_ to pass into process_for_motifs, this may resolve the pointer issue that seems to occur when I pass the PoseOP working_pose into process_for_motifs
 	core::pose::Pose working_pose_copy = *((*working_pose).clone());
 
 	//use ilm process_for_motifs to obtain motifs from the pose
-	process_for_motifs(working_pose_copy, pdb_name, placement_library, prot_pos_that_made_motifs_size);
+	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
+	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(working_pose_copy, pdb_name, placement_library);
 
 
 
