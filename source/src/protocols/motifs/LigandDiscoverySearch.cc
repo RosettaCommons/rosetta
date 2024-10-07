@@ -1284,15 +1284,9 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//4 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
 						utility::vector1< core::Size > placement_motifs_data;
 
-						//clone a non-pointer of working_pose_ to pass into evaluate_motifs_of_pose
-						core::pose::Pose working_pose_copy = *((*working_pose_).clone());
-
 						//run evaluate_motifs_of_pose from the ilm, which returns a vector with data on motifs from the placed ligand
 						//comments are written to the pose, so we do not have to do that in this function now
-						placement_motifs_data = ilm.evaluate_motifs_of_pose(working_pose_copy, mymap, pdb_short_unique_name);
-
-						//write processed pose back into working_pose_
-						working_pose_ = working_pose_copy.clone();
+						placement_motifs_data = ilm.evaluate_motifs_of_pose(working_pose_, mymap, pdb_short_unique_name);
 
 						ms_tr.Trace << "Collected motif data from placed ligand." << std::endl;
 

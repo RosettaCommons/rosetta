@@ -731,7 +731,7 @@ IdentifyLigandMotifs::write_motifs_to_disk()
 // 4. Checks if the motifs collected are comparable to another list of motifs (i.e. used to see if motifs match a motif library that was collected from the Protein Data Bank)
 // Data is written to the pose in comments
 // At least for now, it does not seem necessary to pass along the motifs that were collected from the input pose, so we won't do that (but the functionality is possible and should be as easy as throwing in a motiflibrary into the arguments that is passed by reference)
-utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(core::pose::Pose & working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap, std::string const & pdb_name)
+utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap, std::string const & pdb_name)
 {
 	//create tracer to identify points of the run
 	static basic::Tracer ms_tr( "IdentifyLigandMotifs.evaluate_motifs_of_pose", basic::t_info );
@@ -750,8 +750,11 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
 	utility::vector1< core::Size > prot_pos_that_made_motifs_size;
 
+	//clone a non-pointer of working_pose_ to pass into process_for_motifs, this may resolve the pointer issue that seems to occur when I pass the PoseOP working_pose into process_for_motifs
+	core::pose::Pose working_pose_copy = *((*working_pose).clone());
+
 	//use ilm process_for_motifs to obtain motifs from the pose
-	process_for_motifs(working_pose, pdb_name, placement_library, prot_pos_that_made_motifs_size);
+	process_for_motifs(working_pose_copy, pdb_name, placement_library, prot_pos_that_made_motifs_size);
 
 	//convert the prot_pos vector from size to int (easier to use int because this interacts with values from vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but this is a seemingly equivalent workaround)
 	//utility::vector1< int > prot_pos_that_made_motifs = prot_pos_that_made_motifs_size;
@@ -785,7 +788,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 	ms_tr.Debug << "Ligand placement created " << placement_motifs_data[0] << " total motifs" << std::endl;
 
-	core::pose::add_comment(working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[0]));
+	core::pose::add_comment(*working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[0]));
 
 	//convert the motif library to motifCOPS
 	protocols::motifs::MotifCOPs placement_libraryCOPs = placement_library.library();
@@ -803,7 +806,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	core::Size placement_motif_counter = 0;
 	for ( auto ligmotifcop : placement_libraryCOPs ) {
 
-		core::pose::add_comment(working_pose, "Placement motifs: Placement motif " + std::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
+		core::pose::add_comment(*working_pose, "Placement motifs: Placement motif " + std::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
 
 		++placement_motif_counter;
 
@@ -869,8 +872,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		ms_tr.Debug << std::endl;
 		ms_tr.Debug << "Ligand placement created " << placement_motifs_data[2] << " motifs for significant residues" << std::endl;
 
-		core::pose::add_comment(working_pose, "Placement motifs: Motifs made against significant residues count:", std::to_string(placement_motifs_data[2]));
-		core::pose::add_comment(working_pose, "Placement motifs: Motifs made against significant residues:", significant_residue_string);
+		core::pose::add_comment(*working_pose, "Placement motifs: Motifs made against significant residues count:", std::to_string(placement_motifs_data[2]));
+		core::pose::add_comment(*working_pose, "Placement motifs: Motifs made against significant residues:", significant_residue_string);
 	}
 
 	//check if motifs that were generated match real motifs (as inputted into this program as the motif list)
@@ -937,7 +940,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 						std::string real_motif_match_info = "remark: " + realmotifcop->remark() + ", distance: " + std::to_string(motif_distance) + ", angle: " + std::to_string(motif_theta);
 
 						//add comment about real motif match for placement motif
-						core::pose::add_comment(working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), real_motif_match_info);
+						core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), real_motif_match_info);
 
 						real_match_found = true;
 
@@ -949,7 +952,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 				//if no real match was found, note comment
 				if ( real_match_found == false ) {
-					core::pose::add_comment(working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match, library had no motifs that were close enough");
+					core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match, library had no motifs that were close enough");
 				}
 			} else {
 				//key (and real motif in our library) does not exist
@@ -957,15 +960,15 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 				ms_tr.Debug << "No real motifs identified for motif: " << *ligmotifcop << std::endl;
 
-				core::pose::add_comment(working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match, library had no motifs with matching atoms");
+				core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match, library had no motifs with matching atoms");
 			}
 		}
 
 		//determine the ratio of ligand motifs that match real ones
 		placement_motifs_data[4] = placement_motifs_data[3]/placement_motifs_data[0];
 
-		core::pose::add_comment(working_pose, "Placement motifs: Real motif count:", std::to_string(placement_motifs_data[3]));
-		core::pose::add_comment(working_pose, "Placement motifs: Real motif ratio:", std::to_string(placement_motifs_data[4]));
+		core::pose::add_comment(*working_pose, "Placement motifs: Real motif count:", std::to_string(placement_motifs_data[3]));
+		core::pose::add_comment(*working_pose, "Placement motifs: Real motif ratio:", std::to_string(placement_motifs_data[4]));
 	} 
 
 	ms_tr.Debug << "About to exit evaluate_motifs_of_pose() from successful pass through function." << std::endl;
