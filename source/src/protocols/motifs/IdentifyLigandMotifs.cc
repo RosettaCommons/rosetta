@@ -518,7 +518,7 @@ IdentifyLigandMotifs::process_for_motifs(
 	TR << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
 	TR << "Prot_pos_that_made_motifs_size size:" << prot_pos_that_made_motifs.size() << std::endl;
 	TR << "Prot_pos_that_made_motifs_size entries:" << std::endl;
-	for  ( core::Size i = 0; i < prot_pos_that_made_motifs.size(); i++ ){
+	for  ( core::Size i = 1; i <= prot_pos_that_made_motifs.size(); i++ ){
 		TR << prot_pos_that_made_motifs[i] << ",";
 	}
 	TR << std::endl;
@@ -755,12 +755,12 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	static basic::Tracer ms_tr( "IdentifyLigandMotifs.evaluate_motifs_of_pose", basic::t_info );
 
 	//make a vector that holds the following data in its indices as follows:
-	//0 - total motifs made
-	//1 - effectively a bool; 0 indicates that at least one pre-selected residue did not get a motif, 1 indicates that all did
-	//2 - total motifs made against significant residues
-	//3 - motifs that are considered close enough to at least one motif in the compare_library (considered real)
-	//4 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
-	utility::vector1< core::Size > placement_motifs_data (4,0);
+	//1 - total motifs made
+	//2 - effectively a bool; 0 indicates that at least one pre-selected residue did not get a motif, 1 indicates that all did
+	//3 - total motifs made against significant residues
+	//4 - motifs that are considered close enough to at least one motif in the compare_library (considered real)
+	//5 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
+	utility::vector1< core::Size > placement_motifs_data (5,0);
 
 	//clone a non-pointer of working_pose_ to pass into process_for_motifs, this may resolve the pointer issue that seems to occur when I pass the PoseOP working_pose into process_for_motifs
 	core::pose::Pose working_pose_copy = *((*working_pose).clone());
@@ -773,7 +773,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
 	ms_tr.Debug << "Prot_pos_that_made_motifs_size size:" << prot_pos_that_made_motifs_size.size() << std::endl;
 	ms_tr.Debug << "Prot_pos_that_made_motifs_size entries:" << std::endl;
-	for  ( core::Size i = 0; i < prot_pos_that_made_motifs_size.size(); i++ ){
+	for  ( core::Size i = 1; i <= prot_pos_that_made_motifs_size.size(); i++ ){
 		TR << prot_pos_that_made_motifs_size[i] << ",";
 	}
 	TR << std::endl;
@@ -784,7 +784,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//for  ( auto motif_made : prot_pos_that_made_motifs_size ){
 	//	prot_pos_that_made_motifs.push_back(motif_made);
 	//}
-	for  ( core::Size i = 0; i < prot_pos_that_made_motifs_size.size(); i++ ){
+	for  ( core::Size i = 1; i <= prot_pos_that_made_motifs_size.size(); i++ ){
 		prot_pos_that_made_motifs.push_back(prot_pos_that_made_motifs_size[i]);
 	}
 
@@ -799,12 +799,12 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	ms_tr.Debug << std::endl;
 
 	//determine how many motifs were made and how many were made on significant residues
-	placement_motifs_data[0] = prot_pos_that_made_motifs.size();
+	placement_motifs_data[1] = prot_pos_that_made_motifs.size();
 
 
-	ms_tr.Debug << "Ligand placement created " << placement_motifs_data[0] << " total motifs" << std::endl;
+	ms_tr.Debug << "Ligand placement created " << placement_motifs_data[1] << " total motifs" << std::endl;
 
-	core::pose::add_comment(*working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[0]));
+	core::pose::add_comment(*working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[1]));
 
 	//convert the motif library to motifCOPS
 	protocols::motifs::MotifCOPs placement_libraryCOPs = motif_library_.library();
@@ -821,18 +821,18 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		ms_tr.Debug << ligmotifcop->remark() << std::endl;
 	}
 
-	//set placement_motifs_data[1] to 1 to set default state that all mandatory residues did get a motif former against it
-	placement_motifs_data[1] = 1;
+	//set placement_motifs_data[2] to 1 to set default state that all mandatory residues did get a motif former against it
+	placement_motifs_data[2] = 1;
 
 	//check if there are motifs made for all mandatory residues
 	if ( option[ OptionKeys::motifs::mandatory_residues_for_motifs].user() ) {
 		//bool to help control loops to determine whether to kill the placed ligand
 		bool kill = false;
 		utility::vector1< int > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs];
-		for  ( core::Size sig_res_pos = 0; sig_res_pos < mandatory_residues_for_motifs.size(); ++sig_res_pos ){
+		for  ( core::Size sig_res_pos = 1; sig_res_pos <= mandatory_residues_for_motifs.size(); ++sig_res_pos ){
 			//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
 			kill = true;
-			for  ( core::Size motif_made = 0; motif_made < prot_pos_that_made_motifs.size(); ++motif_made ){
+			for  ( core::Size motif_made = 1; motif_made <= prot_pos_that_made_motifs.size(); ++motif_made ){
 				if ( prot_pos_that_made_motifs[motif_made] == mandatory_residues_for_motifs[sig_res_pos] ) {
 					//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
 					kill = false;
@@ -845,8 +845,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 				ms_tr.Debug << "Not motifs made for residue index " << sig_res_pos << std::endl;
 				ms_tr.Debug << "Exiting evaluate_motifs_of_pose() call and returning that at least one mandatory residue did not get a motif." << std::endl;
 				
-				//set placement_motifs_data[1] to 0
-				placement_motifs_data[1] = 0;
+				//set placement_motifs_data[2] to 0
+				placement_motifs_data[2] = 0;
 
 				ms_tr.Debug << "About to exit evaluate_motifs_of_pose() from failing to find a mandatory motif." << std::endl;
 				return placement_motifs_data;
@@ -865,11 +865,11 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		std::string significant_residue_string = "";
 
 		utility::vector1< int > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
-		for  ( core::Size sig_res_pos = 0; sig_res_pos < significant_residues_for_motifs.size(); ++sig_res_pos ){
-			for  ( core::Size motif_made = 0; motif_made < prot_pos_that_made_motifs.size(); ++motif_made ){
+		for  ( core::Size sig_res_pos = 1; sig_res_pos <= significant_residues_for_motifs.size(); ++sig_res_pos ){
+			for  ( core::Size motif_made = 1; motif_made <= prot_pos_that_made_motifs.size(); ++motif_made ){
 				if ( prot_pos_that_made_motifs[motif_made] == significant_residues_for_motifs[sig_res_pos] ) {
 					//tick up the counter for significant motifs made (placement_motifs_data[2]) if there is a match in the residue index for the motif and a significant residue
-					++placement_motifs_data[2];
+					++placement_motifs_data[3];
 
 					ms_tr.Debug << motif_made << ",";
 					significant_residue_string += std::to_string(motif_made) + ",";
@@ -878,9 +878,9 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		}
 
 		ms_tr.Debug << std::endl;
-		ms_tr.Debug << "Ligand placement created " << placement_motifs_data[2] << " motifs for significant residues" << std::endl;
+		ms_tr.Debug << "Ligand placement created " << placement_motifs_data[3] << " motifs for significant residues" << std::endl;
 
-		core::pose::add_comment(*working_pose, "Placement motifs: Motifs made against significant residues count:", std::to_string(placement_motifs_data[2]));
+		core::pose::add_comment(*working_pose, "Placement motifs: Motifs made against significant residues count:", std::to_string(placement_motifs_data[3]));
 		core::pose::add_comment(*working_pose, "Placement motifs: Motifs made against significant residues:", significant_residue_string);
 	}
 
@@ -889,7 +889,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	if ( option[ OptionKeys::motifs::check_if_ligand_motifs_match_real] ) {
 		//counter to count the number of motifs generated by the placement that are close enough to a real motif we have
 		//use to derive a ratio (with potential for placement to be filtered with a cutoff)
-		placement_motifs_data[3] = 0;
+		placement_motifs_data[4] = 0;
 
 		//iterate over the library of motifs created by the ligand placement
 		for ( auto ligmotifcop : placement_libraryCOPs ) {
@@ -943,7 +943,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 
 						//increment real counter
-						++placement_motifs_data[3];
+						++placement_motifs_data[4];
 
 						std::string real_motif_match_info = "remark: " + realmotifcop->remark() + ", distance: " + std::to_string(motif_distance) + ", angle: " + std::to_string(motif_theta);
 
@@ -973,10 +973,10 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		}
 
 		//determine the ratio of ligand motifs that match real ones
-		placement_motifs_data[4] = placement_motifs_data[3]/placement_motifs_data[0];
+		placement_motifs_data[5] = placement_motifs_data[4]/placement_motifs_data[1];
 
-		core::pose::add_comment(*working_pose, "Placement motifs: Real motif count:", std::to_string(placement_motifs_data[3]));
-		core::pose::add_comment(*working_pose, "Placement motifs: Real motif ratio:", std::to_string(placement_motifs_data[4]));
+		core::pose::add_comment(*working_pose, "Placement motifs: Real motif count:", std::to_string(placement_motifs_data[4]));
+		core::pose::add_comment(*working_pose, "Placement motifs: Real motif ratio:", std::to_string(placement_motifs_data[5]));
 	} 
 
 	ms_tr.Debug << "About to exit evaluate_motifs_of_pose() from successful pass through function." << std::endl;
