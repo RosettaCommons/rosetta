@@ -744,9 +744,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//create tracer to identify points of the run
 	static basic::Tracer ms_tr( "IdentifyLigandMotifs.evaluate_motifs_of_pose", basic::t_info );
 
-	//create a new motif library to hold motifs
-	protocols::motifs::MotifLibrary placement_library;
-
 	//make a vector that holds the following data in its indices as follows:
 	//0 - total motifs made
 	//1 - effectively a bool; 0 indicates that at least one pre-selected residue did not get a motif, 1 indicates that all did
@@ -755,18 +752,12 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//4 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
 	utility::vector1< core::Size > placement_motifs_data (4,0);
 
-	
-
 	//clone a non-pointer of working_pose_ to pass into process_for_motifs, this may resolve the pointer issue that seems to occur when I pass the PoseOP working_pose into process_for_motifs
 	core::pose::Pose working_pose_copy = *((*working_pose).clone());
 
 	//use ilm process_for_motifs to obtain motifs from the pose
 	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
-	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(working_pose_copy, pdb_name, placement_library);
-
-
-
-	
+	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(working_pose_copy, pdb_name, motif_library_);
 
 	//temporary inclusion to get information on prot_pos_that_made_motifs and prot_pos_that_made_motifs_size, as these seem to the the source of the issue
 	ms_tr.Debug << "Printing data from prot_pos_that_made_motifs_size:" << std::endl;
@@ -802,7 +793,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	core::pose::add_comment(*working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[0]));
 
 	//convert the motif library to motifCOPS
-	protocols::motifs::MotifCOPs placement_libraryCOPs = placement_library.library();
+	protocols::motifs::MotifCOPs placement_libraryCOPs = motif_library_.library();
 
 	ms_tr.Debug << "Motifs made: " << std::endl;
 
