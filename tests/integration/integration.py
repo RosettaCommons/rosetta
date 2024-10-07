@@ -6,19 +6,20 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 #
-# For help, run with -h.  Requires Python 2.4+, like the unit tests.
+# For help, run with -h.  Requires Python 3.5+, like the unit tests.
 # Author: Sergey Lyskov
 # Author: Jared Adof-Bryfogle (demo extension)
 from __future__ import print_function
 
 import sys
-if not hasattr(sys, "version_info") or sys.version_info < (2,4):
-    raise ValueError("Script requires Python 2.4 or higher!")
+if not hasattr(sys, "version_info") or sys.version_info < (3,5):
+    raise ValueError("Script requires Python 3.5 or higher!")
 
 import os, shutil, threading, subprocess, signal, time, re, random, datetime, copy, traceback
 import io
 import json
 import glob
+import importlib
 from os import path
 from optparse import OptionParser, IndentedHelpFormatter
 
@@ -265,7 +266,7 @@ EXAMPLES For Running Demos/Tutorials
 
     parser.add_option("--suffix",
       default=None,
-      help="Specify `command` suffix. When used only tests that have `command.<suffix>` is run. Default is None: run only plain test (command)",
+      help="Specify `command` suffix. When used only tests that have `command.<suffix>` is run, with corresponding extras build. Default is None: run only plain test (command)",
     )
 
     parser.add_option("--mpi-tests",
@@ -357,8 +358,6 @@ EXAMPLES For Running Demos/Tutorials
 
     globalparams = generateIntegrationTestGlobalSubstitutionParameters()
     print("Python: `"  + globalparams.get("python","")  +"`")
-    print("Python2: `" + globalparams.get("python2","") +"`")
-    print("Python3: `" + globalparams.get("python3","") +"`")
     print("\n")
 
     #All tests are in a subdirectory.  We set these up here.
@@ -707,7 +706,7 @@ def setup_demo_command_file(demo_subdir):
     OUTFILE.write("cd %(workdir)s\n\n")
 
     for exe in sorted(set(rosetta_binaries)):
-        chars = "~!@#$%^&*()`+=[]{}\|;:',<.>?" #People do some wierd stuff.
+        chars = r"~!@#$%^&*()`+=[]{}\|;:',<.>?" #People do some wierd stuff.
         for c in chars:
             exe = exe.replace(c, "")
 
@@ -1008,13 +1007,20 @@ def get_binext():
     if Options.extras:
         extras = Options.extras
     elif Options.suffix:
-        extras =  dict(mpi='mpi', tensorflow='tensorflow', thread='cxx11thread')[Options.suffix]
+        # Use .get() to default to whatever the suffix is for the compiler tag
+        # Only need to list those which differ
+        extras =  dict(thread='cxx11thread',).get( Options.suffix, Options.suffix )
     else :
         extras='default'
 
     binext = extras.replace(',', '')+"."+platform+compiler+mode
     return binext, dict(locals())
 
+def check_for_module(module_name):
+    try:
+        importlib.import_module(module_name)
+    except ModuleNotFoundError:
+        print("WARNING: Python", sys.executable, "does not have module", module_name, "which may cause some tests to show errors.")
 
 def verify_python_version(executable, version):
     command_line = "{executable} -c 'import sys; sys.exit(sys.version_info[0] != {version})'".format(**vars())
@@ -1023,31 +1029,13 @@ def verify_python_version(executable, version):
 def generateIntegrationTestGlobalSubstitutionParameters():
     # Variables that may be referenced in the cmd string:
     python = sys.executable
-    if sys.version_info[0] == 2:
-        python2 = sys.executable
-        python3 = execute("Find python3","which python3",return_="stdout",print_output=False,verbose=False).strip()
-    elif sys.version_info[0] == 3:
-        python3 = sys.executable
-        python2 = execute("Find python2","which python2",return_="stdout",print_output=False,verbose=False).strip()
-        if python2 == "":
-            # On the Mac test servers, there isn't a `python2`, but the regular `python` should be python2
-            # however if we inside Python virtual environemnt then `which python2` migh give nothing so we will look for python2.7
-            python2 = execute("Find python (assume python2.7)", "which python2.7",return_="stdout",print_output=False,verbose=False).strip()
-    else:
-        print("ERROR: Unrecognized Python version!")
-        sys.exit(-1)
+    #verify_python_version(python, 3) # Will do -- we check at the top
+    python3 = sys.executable
+    # No python2!
 
-    if python2 == "":
-        print("ERROR: Unable to find Python2 executable -- some integration tests may fail on that basis alone.")
-        python2 = "PYTHON2_NOT_FOUND"
-    else:
-        verify_python_version(python2, 2)
-
-    if python3 == "":
-        print("ERROR: Unable to find Python3 executable -- some integration tests may fail on that basis alone.")
-        python3 = "PYTHON3_NOT_FOUND"
-    else:
-        verify_python_version(python3, 3)
+    # Check if the current entry has all the modules needed to run tests
+    for module in ["scipy","pubmed_lookup","networkx","mrcfile"]:
+        check_for_module(module)
 
     minidir = Options.mini_home
     database = Options.database
@@ -1647,7 +1635,7 @@ class Queue:
             if unfinished <= 0:
                 if unfinished < 0:
                     raise ValueError('task_done() called too many times')
-                self.all_tasks_done.notifyAll()
+                self.all_tasks_done.notify_all()
             self.unfinished_tasks = unfinished
         finally:
             self.all_tasks_done.release()

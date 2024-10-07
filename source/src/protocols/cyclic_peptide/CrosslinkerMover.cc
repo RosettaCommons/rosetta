@@ -27,6 +27,7 @@
 #include <protocols/cyclic_peptide/crosslinker/TrigonalPyramidalMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/SquarePlanarMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/SquarePyramidalMetal_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/Lanthionine_Helper.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -119,6 +120,8 @@ CrosslinkerMover::get_crosslinker_name(
 		return "TMA";
 	case CrossLinker::thioether :
 		return "thioether";
+	case CrossLinker::lanthionine :
+		return "lanthionine";
 	case CrossLinker::tetrahedral_metal :
 		return "tetrahedral_metal";
 	case CrossLinker::octahedral_metal :
@@ -215,7 +218,7 @@ CrosslinkerMover::provide_xml_schema(
 	using namespace utility::tag;
 
 	XMLSchemaRestriction linker_names_allowed;
-	std::string const linker_possibles("TBMB|1_4_BBMB|TMA|thioether|tetrahedral_metal|octahedral_metal|trigonal_planar_metal|trigonal_pyramidal_metal|square_planar_metal|square_pyramidal_metal");
+	std::string const linker_possibles("TBMB|1_4_BBMB|TMA|lanthionine|thioether|tetrahedral_metal|octahedral_metal|trigonal_planar_metal|trigonal_pyramidal_metal|square_planar_metal|square_pyramidal_metal");
 	linker_names_allowed.name("linker_names_allowed");
 	linker_names_allowed.base_type( xs_string );
 	linker_names_allowed.add_restriction( xsr_pattern, linker_possibles + "(," + linker_possibles + ")+" );
@@ -496,6 +499,8 @@ CrosslinkerMover::crosslinkermover_helper_from_type() const {
 		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TMA_Helper >();
 	case CrossLinker::thioether :
 		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::Thioether_Helper >();
+	case CrossLinker::lanthionine :
+		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::Lanthionine_Helper >();
 	case CrossLinker::tetrahedral_metal :
 		return utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper >( metal_type() );
 	case CrossLinker::octahedral_metal :

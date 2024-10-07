@@ -142,13 +142,13 @@ private: //Data
 	/// @brief An optional residue selector to limit the returned probabilities to a selection
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_ = nullptr;
 
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
 	/// @brief Fill the return_map with the probabilities from the softmax_map for all amino acids
 	/// @param[in] softmax_map The map containing all probabilities or logits
 	/// @param[in] return_map The map that will be returned by the calculate function, will be filled with probabilities/logits by this function
 	static void fill_return_map(const std::map<core::Size, utility::vector1<core::Real>> &softmax_map,
 		std::map<core::Size, std::map<core::chemical::AA, core::Real>> &return_map);
-#endif // USE_PYTORCH
+#endif // USE_TORCH
 	/// @brief Get the sequence of the selection
 	static std::string get_selection_sequence(std::string const &pose_sequence,
 		std::map<core::Size, utility::vector1<core::Real>> const &position_map) ;

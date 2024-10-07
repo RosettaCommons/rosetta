@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, shutil, codecs, urllib.request, imp, subprocess, json, hashlib  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, subprocess, json, hashlib  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
@@ -340,8 +340,10 @@ def platform_to_pretty_string(platform):
     ''' Take platform as json object and return normalized human-readable string '''
     return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.python'+platform['python'] if 'python' in platform else ''))
 
+
 def setup_for_compile(rosetta_dir):
     execute('Updating options, ResidueTypes and version info...', f'cd {rosetta_dir}/source && ' + ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) )
+
 
 def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=False, verbose=False):
     ''' Compile Rosetta binaries on a given platform return (res, output, build_command_line) '''
@@ -472,6 +474,8 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     if 'cxx11thread'   in platform['extras']: extra += ' --multi-threaded'
     if 'serialization' in platform['extras']: extra += ' --serialization'
+    if 'torch' in platform['extras']: extra += ' --torch'
+    if 'tensorflow' in platform['extras']: extra += ' --tensorflow'
 
     if version: extra += " --version '{version}'".format(**vars())
 
@@ -935,9 +939,13 @@ def generate_version_information(rosetta_dir, **kwargs):
     This is a light wrapper around the generate_version_information() function in Rosetta/main/source/version.py -- see there for the interface definition.
     '''
 
-    version = imp.load_source('version', rosetta_dir + '/source/version.py')
-    return version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
+    import importlib.util
 
+    spec = importlib.util.spec_from_file_location('rosetta_source_version', rosetta_dir + '/source/version.py' )
+    rosetta_source_version = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rosetta_source_version)
+
+    return rosetta_source_version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
 
 
 def _get_path_to_conda_root(platform, config):
@@ -974,7 +982,7 @@ def _get_path_to_conda_root(platform, config):
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     packages = ['conda-build anaconda-client conda-verify',]
 
-    signature = f'url: {url}\nversion: {version}\channels: {channels}\npackages: {packages}\n'
+    signature = f'url: {url}\nversion: {version}\nchannels: {channels}\npackages: {packages}\n'
 
     root = calculate_unique_prefix_path(platform, config) + '/conda'
 
@@ -1109,8 +1117,9 @@ def convert_submodule_urls_from_ssh_to_https(repository_root):
     with open(f'{repository_root}/.gitmodules', 'w') as f:
         f.write(
             m
-            .replace('url = git@github.com:', 'url = https://github.com/')
-            .replace('url = ../../../',       'url = https://github.com/RosettaCommons/')
-            .replace('url = ../../',          'url = https://github.com/RosettaCommons/')
-            .replace('url = ../',             'url = https://github.com/RosettaCommons/')
+            .replace('url = git@github.com:',       'url = https://github.com/')
+            .replace('url = ../../RosettaCommons/', 'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../../',             'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../',                'url = https://github.com/RosettaCommons/')
+            .replace('url = ../',                   'url = https://github.com/RosettaCommons/')
         )

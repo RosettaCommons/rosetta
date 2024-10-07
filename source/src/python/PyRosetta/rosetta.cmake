@@ -24,10 +24,16 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
     "MinSizeRel" "RelWithDebInfo")
 endif()
+
 # if( CMAKE_BUILD_TYPE MATCHES "Debug" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo") # if( CMAKE_BUILD_TYPE IN_LIST "Debug" "RelWithDebInfo")
 #   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcmodel=large")
-#   add_compile_options(-mcmodel=large)
+#   #add_compile_options(-mcmodel=large)
+#   #add_compile_options(-mcmodel=large -Os)
+#   #add_link_options(-mcmodel=large)
+#   set(CMAKE_BUILD_TYPE MinSizeRel)
+#   add_compile_options(-g)
 # endif()
+
 string(TOUPPER "${CMAKE_BUILD_TYPE}" U_CMAKE_BUILD_TYPE)
 
 # Try to autodetect Python (can be overridden manually if needed)
@@ -81,6 +87,11 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
   endif()
 endif()
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 17)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=enum-constexpr-conversion -Wno-error=deprecated-declarations")
+endif()
+
+
 # if ( (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.0") )
 # else()
 #     add_compile_options(-Werror=non-virtual-dtor -Werror=delete-abstract-non-virtual-dtor) # -pedantic-errors -pedantic -Werror
@@ -130,6 +141,15 @@ endif()
 add_library(rosetta SHARED
 #%__PyRosetta_sources__%#
 )
+
+target_compile_options(rosetta PRIVATE
+  #%__PyRosetta_compile_options__%#
+)
+
+target_link_libraries(rosetta
+  #%__PyRosetta_target_link_libraries__%#
+)
+
 
 target_link_libraries(rosetta #%__Rosetta_libraries__%#  ${ZLIB_LIBRARIES} )
 

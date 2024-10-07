@@ -112,9 +112,9 @@ MIFSTProbabilitiesMetric::parse_my_tag(
 		set_feature_selector( core::select::residue_selector::parse_residue_selector( tag, datamap, "feature_selector"));
 	}
 
-#ifndef USE_PYTORCH
+#ifndef USE_TORCH
 	utility_exit_with_message( "To use the MIFSTProbabilitiesMetric you need to compile Rosetta with extras=pytorch!" );
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 }
 
 void
@@ -138,7 +138,7 @@ MIFSTProbabilitiesMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 std::map< core::Size, std::map< core::chemical::AA, core::Real > >
 MIFSTProbabilitiesMetric::calculate(const core::pose::Pose & pose) const {
 
-#ifndef USE_PYTORCH
+#ifndef USE_TORCH
 	(void)pose; // avert error: unused parameter
 	utility_exit_with_message( "To use the MIFSTProbabilitiesMetric you need to compile Rosetta with extras=pytorch!" );
 #else
@@ -157,7 +157,7 @@ MIFSTProbabilitiesMetric::calculate(const core::pose::Pose & pose) const {
 
     return values;
 
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 }
 /// @brief Set the residue selector that we'll be using.
 /// @details Passing nullptr results in no residue selector being used.
@@ -197,9 +197,9 @@ MIFSTProbabilitiesMetric::provide_citation_info( basic::citation_manager::Citati
 		"Wrote the MIFSTProbabilitiesMetric."
 		)
 	);
-#ifdef USE_PYTORCH
+#ifdef USE_TORCH
     citations.add( MIFST::get_MIFST_neural_net_citation() );
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 }
 
 void

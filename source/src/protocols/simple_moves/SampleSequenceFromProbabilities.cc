@@ -92,18 +92,30 @@ SampleSequenceFromProbabilities::apply( core::pose::Pose& pose ){
 	std::string modified_sequence = construct_modified_sequence(pose, mutations );
 	TR << " Done!" << std::endl;
 
-	// Call SimpleThreadingMover with sampled sequence
-	TR << "Threading sequence onto pose..." << std::endl;
-	SimpleThreadingMoverOP threader( utility::pointer::make_shared< SimpleThreadingMover >( modified_sequence, 1 ) );
-	threader->set_pack_neighbors( true );
-	// disable packing if specified by user
-	if ( !packing_ ) {
-		threader->set_pack_rounds(0);
+	// Check if the sequence is unmutated (only hyphens)
+	bool is_unmutated = true;
+	for ( std::size_t i = 0; i < modified_sequence.length(); i += 4 ) {
+		if ( i >= modified_sequence.length() || modified_sequence[i] != '-' ) {
+			is_unmutated = false;
+			break;
+		}
 	}
-	threader->set_sequence_mode( "threeletter" );
-	threader->apply( pose );
-	TR.Info << " Done!" << std::endl;
 
+	// Call SimpleThreadingMover with sampled sequence if mutated
+	if ( !is_unmutated ) {
+		TR << "Threading sequence onto pose..." << std::endl;
+		SimpleThreadingMoverOP threader(utility::pointer::make_shared<SimpleThreadingMover>(modified_sequence, 1));
+		threader->set_pack_neighbors(true);
+		// disable packing if specified by user
+		if ( !packing_ ) {
+			threader->set_pack_rounds(0);
+		}
+		threader->set_sequence_mode("threeletter");
+		threader->apply(pose);
+		TR.Info << " Done!" << std::endl;
+	} else {
+		TR.Warning << "No mutations match the thresholds set. Skipping SimpleThreadingMover." << std::endl;
+	}
 }
 
 void
@@ -312,7 +324,7 @@ SampleSequenceFromProbabilities::provide_citation_info(basic::citation_manager::
 
 std::vector<core::Size>
 SampleSequenceFromProbabilities::sample_positions(
-	std::map<core::Size, std::map<core::chemical::AA, core::Real>> const & probabilities,
+	std::map<core::Size, std::map<core::chemical::AA, core::Real>> & probabilities,
 	core::pose::Pose const & pose
 ) const {
 	using namespace core::chemical;
@@ -403,7 +415,7 @@ SampleSequenceFromProbabilities::is_aa_allowed_by_task( core::pack::task::Residu
 
 utility::vector1<std::pair<core::Size, core::Real>>
 SampleSequenceFromProbabilities::calculate_position_diffs(
-	std::map<core::Size, std::map<core::chemical::AA, core::Real>> const & probabilities,
+	std::map<core::Size, std::map<core::chemical::AA, core::Real>> & probabilities,
 	core::pose::Pose const& pose
 ) const {
 	using namespace core::chemical;
@@ -417,7 +429,7 @@ SampleSequenceFromProbabilities::calculate_position_diffs(
 	utility::vector1<std::pair<core::Size, core::Real>> position_diffs; // Contains pairs of position and their max_diff
 	for ( auto & pos_and_probs : probabilities ) {
 		core::Size position = pos_and_probs.first;
-		std::map<core::chemical::AA, core::Real> const & aa_probs = pos_and_probs.second;
+		std::map<core::chemical::AA, core::Real> & aa_probs = pos_and_probs.second;
 
 		// get the probability of the amino acid currently present in the pose at that position
 		AA current_aa = pose.residue(position).aa();
@@ -431,7 +443,7 @@ SampleSequenceFromProbabilities::calculate_position_diffs(
 		}
 
 		core::Real max_prob = 0.0;
-		for ( auto aa_and_prob : aa_probs ) {
+		for ( auto & aa_and_prob : aa_probs ) {
 			core::chemical::AA aa = aa_and_prob.first;
 			core::Real prob = aa_and_prob.second;
 

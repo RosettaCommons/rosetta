@@ -18,9 +18,9 @@ import glob, shutil
 import plistlib
 import time
 
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
-
+# A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 _api_version_ = '1.1'
 
@@ -459,7 +459,7 @@ def run_cppcheck_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
 
 def run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    ''' Check if branch diff against master is beutified
+    ''' Check if branch diff against main is beautified
     '''
     jobs = config['cpu_count']
 
@@ -499,15 +499,14 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
                 br = br[0]
                 if br.startswith('origin/'):
                     br = br[len('origin/'):]
-                    #if br != 'master': branches.add(br)
                     branches.add(br)
                 #if br != 'HEAD': branches.add(br)
 
-        if 'master' in branches: branches = set( ['master'] )
+        if 'main' in branches: branches = set( ['main'] )
 
         commit = execute('Getting current commit sha1...', 'cd {} && git rev-parse HEAD'.format(rosetta_dir), return_='output')
         if len(branches) != 1:
-            state, output = _S_failed_, 'Could not figure out which branch to beautify, commit {} belong to following branches (expecting exactly one origin/<branch> or origin/master to be present):\n{}\nAborting...\n'.format(commit, o)
+            state, output = _S_failed_, 'Could not figure out which branch to beautify, commit {} belong to following branches (expecting exactly one origin/<branch> or origin/main to be present):\n{}\nAborting...\n'.format(commit, o)
 
         else:
             branch = branches.pop()
@@ -515,7 +514,7 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
             output += execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch} && git submodule update && git branch --set-upstream-to=origin/{branch} {branch}'.format(rosetta_dir, branch=branch), return_='output', add_message_and_command_line_to_output=True)
 
-            if branch == 'master': res, o = execute('Beautifying...', 'cd {}/source && python3 ../tools/python_cc_reader/beautify_rosetta.py --overwrite -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
+            if branch == 'main': res, o = execute('Beautifying...', 'cd {}/source && python3 ../tools/python_cc_reader/beautify_rosetta.py --overwrite -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
             else: res, o = execute('Beautifying...', 'cd {}/source && python3 ../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
 
             if res:
@@ -540,44 +539,49 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
                 state =_S_passed_
 
 
-
     return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }
 
 
 def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     jobs = config['cpu_count']
 
-    # These are the Rosetta-originated modules which we're likely interested in tracking the most recent submodule master
+    # These are the Rosetta-originated modules which we're likely interested in tracking the most recent submodule main branch
     # This doesn't include those repos (e.g. external code repos) where we're pinning things to a particular revision for a long time.
-    submodules_to_check = [
-        'demos',
-        'documentation',
-        'PyRosetta.notebooks',
-        'pyrosetta_scripts',
-        'rosetta_scripts_scripts',
-        'tools',
-        'tests/scientific/data',
-        'database/additional_protocol_data',
-        'source/external/pybind11',
-        'source/src/python/PyRosetta/binder',
-    ]
+    # The value is the "main" branch for each.
+    submodules_to_check = {
+        'demos':'main',
+        'documentation':'master',
+        'PyRosetta.notebooks':'master',
+        'pyrosetta_scripts':'main',
+        'rosetta_scripts_scripts':'main',
+        'tools':'main',
+        'tests/scientific/data':'main',
+        'database/additional_protocol_data':'main',
+        'database/protocol_data/tensorflow_graphs/tensorflow_graph_repo_submodule':'main',
+        'source/external/pybind11':'master',
+        'source/src/python/PyRosetta/binder':'master',
+    }
 
     retval = {_StateKey_ : _S_script_failed_,  _ResultsKey_ : {},  _LogKey_ : '' }
 
     if not os.path.exists(f'{rosetta_dir}/.git'):
-        retval[_LogKey_] = "Main is not a git repo -- can't test submodules."
+        retval[_LogKey_] = "Rosetta is not a git repo -- can't test submodules."
         return retval
 
-    res, main_sha1 = execute('Getting current main SHA1...', f'cd {rosetta_dir} && git rev-parse HEAD', return_='tuple')
-    if res: retval[_LogKey_] = "Error getting SHA1: " + main_sha1; return retval
-    main_sha1 = main_sha1.strip()
+    # Git sync to make sure the URLs are up-to-date with the current .gitmodules
+    res, error_msg = execute('Synchronizing submodules...', f'cd {rosetta_dir} && git submodule sync', return_='tuple')
+    if res: retval[_LogKey_] = "Error syncing submodules: " + error_msg; return retval
 
-    res, merge_base = execute('Getting master merge-base...', f'cd {rosetta_dir} && git merge-base origin/master HEAD', return_='tuple')
+    res, rosetta_sha1 = execute('Getting current rosetta SHA1...', f'cd {rosetta_dir} && git rev-parse HEAD', return_='tuple')
+    if res: retval[_LogKey_] = "Error getting SHA1: " + rosetta_sha1; return retval
+    rosetta_sha1 = rosetta_sha1.strip()
+
+    res, merge_base = execute('Getting merge-base with the rosetta main branch...', f'cd {rosetta_dir} && git merge-base origin/main HEAD', return_='tuple')
     if res: retval[_LogKey_] = "Error getting mergebase: " + merge_base; return retval
     merge_base = merge_base.strip()
 
-    if main_sha1 == merge_base:
-        # We're doing the check of master - make sure we don't regress w/r/t both sides
+    if rosetta_sha1 == merge_base:
+        # We're doing the check of main - make sure we don't regress w/r/t both sides
         res, parents = execute("Getting current commit's parents...", f'cd {rosetta_dir} && git rev-list --parents -n 1 HEAD', return_='tuple')
         if res: retval[_LogKey_] = "Error getting parents: " + parents; return retval
         to_check = parents.split()[1:] # First entry is the current commit.
@@ -585,7 +589,7 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
         to_check = [ merge_base ]
 
     submodule_states = {}
-    for submodule in submodules_to_check:
+    for submodule, primary_branch in submodules_to_check.items():
         submodule_status = {_StateKey_ : _S_script_failed_, _LogKey_ : '' }
         retval[_ResultsKey_][ submodule ] = submodule_status
         submodule_states[submodule] = "ERROR WHEN RUNNING"
@@ -602,13 +606,16 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
 
         ################
         # If we regress against any of the parent commits to_check, we have an issue.
-        # (Test against the common anscestors of current commit and master)
+        # (Test against the common anscestors of current commit and main branch)
         regression = False
         for check_sha1 in to_check:
             res, prev_sha1 = execute("Getting parent submodule commit ...", f'cd {rosetta_dir} && git ls-tree {check_sha1} {submodule}', return_='tuple')
-            if res: submodule_statu[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in {check_sha1}: " + prev_sha1; break
+            if res: submodule_status[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in {check_sha1}: " + prev_sha1; break
             if len(prev_sha1.strip()) == 0: continue # No submodule on this branch
             prev_sha1 = prev_sha1.split()[2] # format `mode commit SHA1 name`
+
+            if current_sha1 == prev_sha1:
+                continue # No regression because it's the same
 
             res, base = execute("Checking for regression...",f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {prev_sha1}', return_='tuple')
             if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and {prev_sha1} in submodule {submodule}: " + base; break
@@ -620,46 +627,65 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
 
         if regression:
             submodule_status[_StateKey_] = _S_script_failed_ # We want the magenta
-            submodule_status[_LogKey_] = f"Submodule {submodule} is being reset to state that *removes* commits which were previously in master"
+            submodule_status[_LogKey_] = f"Submodule {submodule} is being reset to state that *removes* commits which were previously in Rosetta"
             submodule_states[submodule] = "INTRODUCES A SUBMODULE REGRESSION"
             continue
 
         #############
-        # Test to see if we're include all of the commits in the submodule which the most recent version of main's master has
-        # (Test against the most recent version of main's master)
+        # Test to see if we're include all of the commits in the submodule which the most recent version of rosetta's main branch has
+        # (Test against the most recent version of rosetta's main branch)
 
-        res, master_sha1 = execute("Getting master's submodule commit...", f'cd {rosetta_dir} && git ls-tree origin/master {submodule}', return_='tuple')
-        if res: submodule_status[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in master: " + master_sha1; continue
-        #if len(master_sha1.strip()) == 0: continue # No submodule for master??
-        master_sha1 = master_sha1.split()[2] # format `mode commit SHA1 name`
+        res, main_sha1 = execute("Getting main branch's submodule commit...", f'cd {rosetta_dir} && git ls-tree origin/main {submodule}', return_='tuple')
+        if res: submodule_status[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in main: " + main_sha1; continue
+        #if len(main_sha1.strip()) == 0: continue # No submodule for main??
+        main_sha1 = main_sha1.split()[2] # format `mode commit SHA1 name`
 
-        res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {master_sha1}', return_='tuple')
-        if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and main's master's version ({master_sha1}) in submodule {submodule}: " + base; continue
-        base = base.strip()
+        if main_sha1 != current_sha1:
+            res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {main_sha1}', return_='tuple')
+            if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and rosetta's main branch's version ({main_sha1}) in submodule {submodule}: " + base; continue
+            base = base.strip()
 
-        # We want to trigger if there's a divergence between this and the most recent master
-        # (This is different from before, which was checking for regression regarding the divergence point of main and master.)
-        if base != master_sha1 and base != current_sha1: # We have a submodule which isn't up-to-date with main's master
-            submodule_states[submodule] = "NEEDS MERGE"
-            submodule_status[_StateKey_] = _S_failed_
-            submodule_status[_LogKey_] = f"Submodule {submodule} has commits which diverge with the version in main's master's {submodule}. You need to merge the submodule versions."
-            continue
+            # We want to trigger if there's a divergence between this and the most recent main
+            # (This is different from before, which was checking for regression regarding the divergence point of main and main.)
+            if base != main_sha1 and base != current_sha1: # We have a submodule which isn't up-to-date with main's main
+                submodule_states[submodule] = "NEEDS MERGE"
+                submodule_status[_StateKey_] = _S_failed_
+                submodule_status[_LogKey_] = f"Submodule {submodule} has commits which diverge with the version in Rosetta's main branch's {submodule}. You need to merge the submodule versions."
+                continue
 
         #############
-        # Test to see if we're lagging behind the submodule's master
-        # (Test against the submodule's master)
+        # Test to see if we're lagging behind the submodule's primary branch
+        # (Test against the submodule's main)
 
-        res, submaster_sha1 = execute("Getting submodule master...", f'cd {rosetta_dir}/{submodule} && git rev-parse origin/master', return_='tuple')
-        if res: retval[_LogKey_] = f"Error getting SHA1 for master branch of submodule {submodule}: " + submaster_sha1; return retval
-        submaster_sha1 = submaster_sha1.strip()
+        # Try to pull in the most up-to-date info about the repo's primary branch (but don't wait too long on errors.)
+        fetch_error, fetch_msg = execute('Updating submodule...', f'cd {rosetta_dir}/{submodule} && timeout --signal KILL 30s git fetch', return_='tuple')
+        # This is only an error if we can't otherwise get the primary branch info
 
-        res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {submaster_sha1}', return_='tuple')
-        if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and submodule's master ({submaster_sha1}) in submodule {submodule}: " + base; continue
-        base = base.strip()
+        res, submain_sha1 = execute("Getting submodule primary branch...", f'cd {rosetta_dir}/{submodule} && git rev-parse origin/{primary_branch}', return_='tuple')
+        if res:
+            if fetch_error:
+                submodule_states[submodule] = "Issue updating to get primary branch."
+                submodule_status[_StateKey_] = _S_passed_
+                submodule_status[_LogKey_] = "Error message: " + fetch_msg
+                continue
+            else:
+                submodule_states[submodule] = "NO PRIMARY BRANCH TO TEST!"
+                submodule_status[_StateKey_] = _S_failed_
+                submodule_status[_LogKey_] = "Error message: " + submain_sha1
+                continue
 
-        if base != submaster_sha1:
-            submodule_states[submodule] = "is not up-to-date with submodule master"
-            # This is not an error, just an info message
+        submain_sha1 = submain_sha1.strip()
+
+        if current_sha1 != submain_sha1:
+            res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {submain_sha1}', return_='tuple')
+            if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and submodule's primary branch head ({submain_sha1}) in submodule {submodule}: " + base; continue
+            base = base.strip()
+
+            if base != submain_sha1:
+                submodule_states[submodule] = f"is not up-to-date with submodule primary branch of `{primary_branch}`"
+                # This is not an error, just an info message
+            else:
+                submodule_states[submodule] = 'okay'
         else:
             submodule_states[submodule] = 'okay'
 

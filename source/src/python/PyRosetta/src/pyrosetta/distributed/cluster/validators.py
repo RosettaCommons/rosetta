@@ -15,6 +15,7 @@ from typing import (
     AbstractSet,
     Any,
     Callable,
+    Dict,
     Iterable,
     List,
     NoReturn,
@@ -23,7 +24,69 @@ from typing import (
 )
 
 
-def _validate_dirs(self, attribute: str, value: Any) -> None:
+def _validate_clients_indices(
+        clients_indices: Any, _protocols: List[Callable[..., Any]], _clients_dict_keys: List[int],
+    ) -> Optional[NoReturn]:
+    """Validate the `clients_indices` keyword argument parameter."""
+    if clients_indices is not None:
+        if not isinstance(clients_indices, (tuple, list)):
+            raise ValueError(
+                "The `clients_indices` keyword argument parameter must be of type `list` or `tuple`.\n"
+                + f"Received: {type(clients_indices)}\n"
+            )
+        for i in clients_indices:
+            if not isinstance(i, int):
+                raise ValueError(
+                    "Each item of the `clients_indices` keyword argument parameter must be of type `int`.\n"
+                    + f"Received: {type(i)}\n"
+                )
+        if len(clients_indices) != len(_protocols):
+            raise ValueError(
+                "The `clients_indices` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
+                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
+                + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
+            )
+        if not all(x in _clients_dict_keys for x in set(clients_indices)):
+            raise ValueError(
+                "Each item of the `clients_indices` keyword argument parameter must correspond to an index passed to the `PyRosettaCluster(clients=...)` class attribute.\n"
+                + f"Available clients indices based on the `PyRosettaCluster(clients=...)` class attribute: {_clients_dict_keys}\n"
+                + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
+            )
+        for i in _clients_dict_keys:
+            if clients_indices.count(i) == 0:
+                logging.warning(
+                    f"The `Client` object at index {i} of the `PyRosettaCluster(clients=...)` class attribute will not be used in the simulation "
+                    + "because it was not added as an index in the `PyRosettaCluster().distribute(clients_indices=...)` keyword argument parameter!\n"
+                    + f"Available clients indices based on the `PyRosettaCluster(clients=...)` class attribute: {_clients_dict_keys}\n"
+                    + f"Received `PyRosettaCluster().distribute(clients_indices=...)`: {clients_indices}\n"
+                    + "Continuing with the simulation.\n"
+                )
+
+
+def _validate_resources(resources: Any, _protocols: List[Callable[..., Any]]) -> Optional[NoReturn]:
+    """Validate the `resources` keyword argument parameter."""
+    if resources is not None:
+        if not isinstance(resources, (tuple, list)):
+            raise ValueError(
+                "The `resources` keyword argument parameter must be of type `list` or `tuple`.\n"
+                + f"Received: {type(resources)}\n"
+            )
+        for obj in resources:
+            if not isinstance(obj, (dict, type(None))):
+                raise ValueError(
+                    "Each item of the `resources` keyword argument parameter must be of type `dict` or `NoneType`.\n"
+                    + f"Received: {type(obj)}\n"
+                )
+        if len(resources) != len(_protocols):
+            raise ValueError(
+                "The `resources` keyword argument parameter must have the same length as the number of user-defined PyRosetta protocols!\n"
+                + f"Received `PyRosettaCluster().distribute(protocols=...)`: {_protocols}\n"
+                + f"Received `PyRosettaCluster().distribute(resources=...)`: {resources}\n"
+            )
+        
+
+    
+def _validate_dirs(self, attribute: str, value: Any) -> Optional[NoReturn]:
     """Validate the output, logging, and decoy directories."""
 
     output_dir = os.path.abspath(self.output_path)
@@ -49,6 +112,15 @@ def _validate_int(self, attribute: str, value: int) -> Optional[NoReturn]:
     if value < 1:
         raise ValueError(
             f"`{attribute}` must be a positive integer greater than or equal to 1."
+        )
+    
+
+def _validate_min_len(self, attribute: str, value: Optional[List[Any]]) -> Optional[NoReturn]:
+    """Optionally validate that iterables have at least one object."""
+
+    if value is not None and len(value) < 1:
+        raise ValueError(
+            f"`{attribute}` must have at least one item if not `None`."
         )
 
 
@@ -98,18 +170,18 @@ def _validate_protocols_seeds_decoy_ids(
 
 def _validate_residue_type_sets(
     _target_residue_type_set: Optional[AbstractSet[str]] = None,
-    _master_residue_type_set: Optional[AbstractSet[str]] = None,
+    _client_residue_type_set: Optional[AbstractSet[str]] = None,
 ) -> Optional[NoReturn]:
     """
     Validate that the compute instance (distributed worker) ResidueType set equals
-    master instance (local host) ResidueType set.
+    client instance (local host) ResidueType set.
     """
 
-    if _target_residue_type_set != _master_residue_type_set:
+    if _target_residue_type_set != _client_residue_type_set:
         _msg = (
             "Error! The compute instance (distributed worker) ResidueType set does not equal "
-            + "the master instance (local host) ResidueType set! Please ensure that the "
-            + "compute instance (distributed worker) and master instance (local host) have "
+            + "the client instance (local host) ResidueType set! Please ensure that the "
+            + "compute instance (distributed worker) and client instance (local host) have "
             + "initialized PyRosetta with identical '-extra_res_fa' and '-extra_res_cen' options."
         )
         logging.error(_msg)

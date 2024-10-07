@@ -105,7 +105,7 @@ ProteinMPNNMover::parse_my_tag(
 
 void
 ProteinMPNNMover::apply( core::pose::Pose & pose ) {
-#ifndef USE_PYTORCH
+#ifndef USE_TORCH
 	(void)pose; // avert error: unused parameter
 	utility_exit_with_message( "ProteinMPNNMover is disabled in this build of Rosetta. To use ProteinMPNN you must compile Rosetta with extras=pytorch. After compiling with PyTorch, make sure you run a version of Rosetta with 'pytorch' in the name (rosetta_scripts.pytorch.linuxgccrelease, for example)." );
 #else
@@ -232,7 +232,7 @@ ProteinMPNNMover::apply( core::pose::Pose & pose ) {
 	threader->apply( pose );
 
 	TR << "Complete" << std::endl;
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 }
 
 protocols::moves::MoverOP
@@ -279,7 +279,7 @@ ProteinMPNNMover::residue_selectors_to_indices(
 
 void
 ProteinMPNNMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
-#ifndef USE_PYTORCH
+#ifndef USE_TORCH
 	(void)citations; // avert error: unused parameter
 #else
 	using namespace basic::citation_manager;
@@ -288,7 +288,7 @@ ProteinMPNNMover::provide_citation_info(basic::citation_manager::CitationCollect
 
 	protocols::simple_moves::SimpleThreadingMover threader;
 	threader.provide_citation_info(citations);
-#endif //USE_PYTORCH
+#endif //USE_TORCH
 }
 
 ////////////// Creator /////////

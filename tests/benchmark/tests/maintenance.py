@@ -14,8 +14,9 @@
 
 import os, os.path, json, shutil, stat, glob
 
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+# A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 _api_version_ = '1.1'
 
@@ -41,7 +42,7 @@ def find_branches(rosetta_dir):
         if br.startswith('origin/'):
             branches.add( br[len('origin/'):] )
 
-    if 'master' in branches: branches = set( ['master'] )
+    if 'main' in branches: branches = set( ['main'] )
     return branches
 
 def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
