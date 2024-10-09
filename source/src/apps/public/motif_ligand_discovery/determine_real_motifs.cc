@@ -30,8 +30,6 @@
 
 #include <basic/Tracer.hh>
 
-#include <numeric/xyzVector.hh>
-
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
@@ -40,6 +38,8 @@
 #include <algorithm>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
+#include <utility/vector1.hh>
+
 
 // Time profiling header
 #include <time.h>
