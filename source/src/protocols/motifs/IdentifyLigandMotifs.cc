@@ -566,6 +566,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 		contacts[total_score] = lig_pos;
 		TR.Debug << "Residue " << prot_pos << " passed energy cut with pack score: " << pack_score << ", hbond score: " << hb_score << ", for a total score of: " << total_score << std::endl;
 
+		//not iterating over range because we want the index that we call to be set later in the call for: "distance_sorter[closest_distance] = motif_position;"
 		for ( core::Size motif_position = 1; motif_position <= motif_indices_list.size(); ++ motif_position ) { //for each 3 atom triplet from ligand
 			bool resi_trip_match( false );
 
