@@ -632,7 +632,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 		///////////////////
 
 		TR.Debug << "Top triplets contains " << top_triplets.size() << " items." << std::endl << "Top triplets are: " ;
-		for ( auto top_trip_pos : top_triplets; ) {
+		for ( auto top_trip_pos : top_triplets ) {
 			Size this_triplet_number(top_trip_pos);
 			utility::vector1< Size > this_triplet( motif_indices_list[this_triplet_number] );
 			TR.Debug << "Size of top_triplets:  " << top_triplets.size() << std::endl;
