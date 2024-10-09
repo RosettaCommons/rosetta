@@ -112,7 +112,7 @@ main( int argc, char * argv [] )
 
 		//hash the library by residue and atoms
 		std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> hashed_real_library;
-		protocols::motifs::hash_motif_library_into_map(real_motifs,hashed_real_library);
+		protocols::motifs::hash_motif_library_into_map(real_motifcops,hashed_real_library);
 		
 		//create and use IdentifyLigandMotifs
 		IdentifyLigandMotifs ilm;
