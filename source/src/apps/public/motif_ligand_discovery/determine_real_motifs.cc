@@ -30,6 +30,8 @@
 
 #include <basic/Tracer.hh>
 
+#include <numeric/xyzVector.hh>
+
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
