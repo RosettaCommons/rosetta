@@ -22,7 +22,7 @@
 
 #include <protocols/motifs/IdentifyLigandMotifs.fwd.hh>
 #include <protocols/motifs/IdentifyLigandMotifs.hh>
-
+#include <protocols/motifs/Motif.hh>
 #include <protocols/motifs/MotifLibrary.hh>
 #include <protocols/motifs/motif_utils.hh>
 
@@ -30,6 +30,10 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/import_pose/import_pose.hh> // Need since refactor
+
+#include <basic/options/option.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -39,6 +43,7 @@
 #include <algorithm>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
+#include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/vector1.hh>
 
 // Time profiling header
