@@ -11,7 +11,7 @@
 /// @brief
 
 // libRosetta headers
-//#include <core/options/option.hh>
+#include <core/options/option.hh>
 
 #include <sstream>
 #include <string>
@@ -27,6 +27,8 @@
 
 #include <core/io/pdb/pdb_writer.hh> // pose_from_pdb
 #include <core/pose/Pose.hh>
+
+#include <basic/Tracer.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -46,8 +48,9 @@ using namespace pose;
 //using namespace chemical;
 using namespace scoring;
 //using namespace optimization;
-
-
+using namespace basic;
+using namespace options;
+using namespace OptionKeys;
 
 int
 main( int argc, char * argv [] )
@@ -55,8 +58,7 @@ main( int argc, char * argv [] )
 	try {
 		static basic::Tracer ms_tr( "determine_real_motifs", basic::t_info );
 
-		using namespace options;
-		using namespace OptionKeys;
+
 
 		devel::init( argc, argv ); // reading options--name should be more descriptive
 
