@@ -72,10 +72,8 @@ using namespace protocols::dna;
 #include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
-using utility::vector1;
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-using utility::string_split;
 
 // c++ headers
 #include <fstream>
@@ -136,6 +134,8 @@ using namespace chemical;
 using namespace pack;
 using namespace task;
 using namespace scoring;
+using utility::string_split;
+using utility::vector1;
 
 ////////////////////////////////////////////////////////////////////////////////
 

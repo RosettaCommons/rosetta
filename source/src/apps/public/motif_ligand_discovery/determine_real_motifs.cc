@@ -53,6 +53,9 @@ using namespace basic;
 using namespace options;
 using namespace OptionKeys;
 
+using utility::string_split;
+using utility::vector1;
+
 int
 main( int argc, char * argv [] )
 {
