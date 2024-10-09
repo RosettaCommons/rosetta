@@ -40,7 +40,6 @@
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 
-
 // Time profiling header
 #include <time.h>
 
