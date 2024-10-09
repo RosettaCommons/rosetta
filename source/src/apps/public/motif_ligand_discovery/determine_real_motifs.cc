@@ -18,6 +18,7 @@
 
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
 
 #include <protocols/motifs/IdentifyLigandMotifs.fwd.hh>
 #include <protocols/motifs/IdentifyLigandMotifs.hh>
