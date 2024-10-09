@@ -11,7 +11,7 @@
 /// @brief
 
 // libRosetta headers
-#include <core/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <sstream>
 #include <string>
