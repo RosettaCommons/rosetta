@@ -670,7 +670,7 @@ public:
                 	core::Size resid = 4;
                 	core::conformation::Residue const & r = pose.residue(resid);
                 	core::chemical::Patch patch;
-			patch.read_file( "core/chemical/bad_astom_ordering.patch" );
+			patch.read_file( "core/chemical/bad_atom_ordering.patch" );
                 	utility::vector1< core::chemical::VariantType > types;
                 	patch.types( types );
 		        auto mutable_type = patch.apply( r.type() );
