@@ -735,11 +735,33 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//clone a non-pointer of working_pose_ to pass into process_for_motifs, this may resolve the pointer issue that seems to occur when I pass the PoseOP working_pose into process_for_motifs
 	core::pose::Pose working_pose_copy = *((*working_pose).clone());
 
+	// make a new motif_library to use, and add the motifs to motif_library_ after we get the motifs
+	protocols::motifs::MotifLibrary pose_motif_library;
+
 	ms_tr.Debug << "Number of motifs in motif_library_ before process_for_motifs: " << motif_library_.nmotifs() << std::endl;
 
 	//use ilm process_for_motifs to obtain motifs from the pose
 	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
-	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(working_pose_copy, pdb_name, motif_library_);
+	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(working_pose_copy, pdb_name, pose_motif_library);
+
+	//add all motifs in pose_motif_library to motif_library_
+	//convert the motif library to motifCOPS
+	protocols::motifs::MotifCOPs placement_libraryCOPs = pose_motif_library.library();
+
+
+	//iterate over the library of motifs created by the ligand placement to add a comment for each that is the motif's remark
+	//create a counter too to print out each unique motif
+	core::Size placement_motif_counter = 0;
+	for ( auto ligmotifcop : placement_libraryCOPs ) {
+
+		core::pose::add_comment(*working_pose, "Placement motifs: Placement motif " + std::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
+
+		++placement_motif_counter;
+
+		ms_tr.Debug << ligmotifcop->remark() << std::endl;
+
+		motif_library_.add_to_library(*ligmotifcop)
+	}
 
 	ms_tr.Debug << "Number of motifs in motif_library_ after process_for_motifs: " << motif_library_.nmotifs() << std::endl;
 
@@ -756,20 +778,9 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 	core::pose::add_comment(*working_pose, "Placement motifs: Total motifs made:", std::to_string(placement_motifs_data[1]));
 
-	//convert the motif library to motifCOPS
-	protocols::motifs::MotifCOPs placement_libraryCOPs = motif_library_.library();
 
-	//iterate over the library of motifs created by the ligand placement to add a comment for each that is the motif's remark
-	//create a counter too to print out each unique motif
-	core::Size placement_motif_counter = 0;
-	for ( auto ligmotifcop : placement_libraryCOPs ) {
 
-		core::pose::add_comment(*working_pose, "Placement motifs: Placement motif " + std::to_string(placement_motif_counter) + ":", ligmotifcop->remark());
 
-		++placement_motif_counter;
-
-		ms_tr.Debug << ligmotifcop->remark() << std::endl;
-	}
 
 	//set placement_motifs_data[2] to 1 to set default state that all mandatory residues did get a motif former against it
 	placement_motifs_data[2] = 1;
@@ -844,16 +855,17 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 			protocols::motifs::motif_atoms curkey_tuple(ligmotifcop->restype_name1(),ligmotifcop->res1_atom1_name(),ligmotifcop->res1_atom2_name(),ligmotifcop->res1_atom3_name(),ligmotifcop->res2_atom1_name(),ligmotifcop->res2_atom2_name(),ligmotifcop->res2_atom3_name());
 
 			//count the number of motifs in the real library that have the same residue and all 6 atom types
-			core::Size real_library_section_count = mymap.count(curkey_tuple);
-
-			ms_tr.Debug << "For motif " << ligmotifcop->remark() << " there are " << real_library_section_count << " motifs in the real library to match against" << std::endl;
+			core::Size real_library_section_has_motifs = mymap.count(curkey_tuple);
 
 			//pull out the motif library that matches the current motif that we are on by atom names (if there is one)
 			//use map count function to determine if the key exists
-			if ( real_library_section_count > 0 ) {
+			if ( real_library_section_has_motifs > 0 ) {
+				
 				//key exists
 				//pull out motif library at key address and then compare all motifs in the list against ligmotifcop to see if it resembles a real motif
 				protocols::motifs::MotifCOPs real_motifs = mymap[curkey_tuple];
+
+				ms_tr.Debug << "For motif " << ligmotifcop->remark() << " there are " << real_motifs.size() << " motifs in the real library to match against" << std::endl;
 
 				//create a bool that determines if we found a real match for the motif or not
 				bool real_match_found = false;
