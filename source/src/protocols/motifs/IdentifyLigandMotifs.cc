@@ -730,7 +730,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//3 - total motifs made against significant residues
 	//4 - motifs that are considered close enough to at least one motif in the compare_library (considered real)
 	//5 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
-	utility::vector1< core::Size > placement_motifs_data (5,0);
+	utility::vector1< core::Real > placement_motifs_data (5,0);
 
 	//clone a non-pointer of working_pose_ to pass into process_for_motifs, this may resolve the pointer issue that seems to occur when I pass the PoseOP working_pose into process_for_motifs
 	core::pose::Pose working_pose_copy = *((*working_pose).clone());
