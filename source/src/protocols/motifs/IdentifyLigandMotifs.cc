@@ -179,10 +179,10 @@ IdentifyLigandMotifs::IdentifyLigandMotifs()
 	//default true
 	output_motifs_as_pdb_ = option[ OptionKeys::motifs::output_motifs_as_pdb ];
 
-	TR << "motif_pdb_output_path_: " << motif_pdb_output_path_ << std::endl;
-	TR << "motif_file_output_: " << motif_file_output_ << std::endl;
-	TR << "output_motifs_: " << output_motifs_ << std::endl;
-	TR << "output_motifs_as_pdb_: " << output_motifs_as_pdb_ << std::endl;
+	TR.Debug << "motif_pdb_output_path_: " << motif_pdb_output_path_ << std::endl;
+	TR.Debug << "motif_file_output_: " << motif_file_output_ << std::endl;
+	TR.Debug << "output_motifs_: " << output_motifs_ << std::endl;
+	TR.Debug << "output_motifs_as_pdb_: " << output_motifs_as_pdb_ << std::endl;
 }
 
 //destructor

@@ -121,6 +121,7 @@ main( int argc, char * argv [] )
 		for ( Filenames::const_iterator filename( pdbnames.begin() ); filename != pdbnames.end(); ++filename ) {
 
 			if ( !utility::file::file_exists( *filename ) ) {
+				ms_tr << "WARNING! " << filename << " does not exist!" << std::endl;
 				continue;
 			}
 
