@@ -574,7 +574,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 
 			Real closest_distance(5.0);
 
-			for ( auto cur_trip_pos : cur_trip ) {   //for each atom in ligand triplet
+			for ( core::Size cur_trip_pos = 1; cur_trip_pos <= cur_trip.size(); ++ cur_trip_pos ) {   //for each atom in ligand triplet
 				for ( core::Size residue_atom_number = 1; residue_atom_number <= pose.residue( prot_pos ).nheavyatoms(); ++ residue_atom_number ) {   //for each atom in current residue
 
 
