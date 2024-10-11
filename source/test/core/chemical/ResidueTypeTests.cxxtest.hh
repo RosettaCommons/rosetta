@@ -663,25 +663,16 @@ public:
 	}
 
 	void test_bad_atom_ordering(){
-		bool reached_the_expected_point = false;
-		try{
-			core::pose::Pose pose;
-        	        core::pose::make_pose_from_sequence( pose, "TESTMYIDEAPLEASE", "fa_standard" );
-                	core::Size resid = 4;
-                	core::conformation::Residue const & r = pose.residue(resid);
-                	core::chemical::Patch patch;
-			patch.read_file( "core/chemical/bad_atom_ordering.patch" );
-                	utility::vector1< core::chemical::VariantType > types;
-                	patch.types( types );
-		        auto mutable_type = patch.apply( r.type() );
-			reached_the_expected_point = true;
-                        auto res_type = core::chemical::ResidueType::make( *mutable_type );
-			TS_ASSERT(false); // the previous line should have thrown an error
-                        auto new_residue = core::conformation::ResidueFactory::create_residue( *res_type, r, pose.conformation() );
-                        pose.replace_residue( resid, *new_residue, false );
-		}
-		catch(...){}
-		TS_ASSERT( reached_the_expected_point );
+		core::pose::Pose pose;
+                core::pose::make_pose_from_sequence( pose, "TESTMYIDEAPLEASE", "fa_standard" );
+               	core::Size const resid = 4;
+               	core::conformation::Residue const & r = pose.residue(resid);
+               	core::chemical::Patch patch;
+		patch.read_file( "core/chemical/bad_atom_ordering.patch" );
+               	utility::vector1< core::chemical::VariantType > types;
+               	patch.types( types );
+	        auto mutable_type = patch.apply( r.type() );
+                TS_ASSERT_THROWS_ANYTHING( auto res_type = core::chemical::ResidueType::make( *mutable_type ); )
 	}
 
 };
