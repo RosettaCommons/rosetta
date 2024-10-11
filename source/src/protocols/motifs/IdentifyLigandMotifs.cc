@@ -872,6 +872,11 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 				//iterate over the library and compare
 				for ( auto realmotifcop : real_motifs ) {
+
+					ms_tr.Debug << "lgnd: " << ligmotifcop->restype_name1() << "," << ligmotifcop->res1_atom1_name() << "," << ligmotifcop->res1_atom2_name() << "," << ligmotifcop->res1_atom3_name() << "," << ligmotifcop->res2_atom1_name() << "," << ligmotifcop->res2_atom2_name() << "," << ligmotifcop->res2_atom3_name() << std::endl;
+					ms_tr.Debug << "real: " << realmotifcop->restype_name1() << "," << realmotifcop->res1_atom1_name() << "," << realmotifcop->res1_atom2_name() << "," << realmotifcop->res1_atom3_name() << "," << realmotifcop->res2_atom1_name() << "," << realmotifcop->res2_atom2_name() << "," << realmotifcop->res2_atom3_name() << std::endl;
+
+
 					//compare code based on remove_duplicate_motifs
 					//difference is that we are not deleting any motifs, instead if we get a match hit, we will call out ligand-derived motif real
 					//secondary confirm that the motifs match (there is no good reason why we should hit a continue off of this if the map is formed right)
@@ -922,10 +927,10 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 				}
 
-				ms_tr.Debug << "Value of real_match_found is: " << real_match_found << std::endl;
-
 				//if no real match was found, note comment
 				if ( real_match_found == false ) {
+					ms_tr.Debug << "No real motif matches identified for motif: " << *ligmotifcop << std::endl;
+
 					core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match, library had no motifs that were close enough");
 				}
 			} else {
