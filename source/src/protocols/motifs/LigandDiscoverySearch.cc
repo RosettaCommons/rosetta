@@ -1277,11 +1277,11 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						ms_tr.Trace << "Preparing to collect motif data from placed ligand." << std::endl;
 
 						//make a vector that holds the following data in its indices as follows:
-						//0 - total motifs made
-						//1 - effectively a bool; 0 indicates that at least one pre-selected residue did not get a motif, 1 indicates that all did
-						//2 - total motifs made against significant residues
-						//3 - motifs that are considered close enough to at least one motif in the compare_library (considered real)
-						//4 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
+						//1 - total motifs made
+						//2 - effectively a bool; 0 indicates that at least one pre-selected residue did not get a motif, 1 indicates that all did
+						//3 - total motifs made against significant residues
+						//4 - motifs that are considered close enough to at least one motif in the compare_library (considered real)
+						//5 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
 						utility::vector1< core::Size > placement_motifs_data;
 
 						//run evaluate_motifs_of_pose from the ilm, which returns a vector with data on motifs from the placed ligand
@@ -1290,7 +1290,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 						ms_tr.Trace << "Collected motif data from placed ligand." << std::endl;
 
-						ms_tr.Debug << "Contents of placement_motifs_data vector: " << placement_motifs_data[0] << "," << placement_motifs_data[1] << "," << placement_motifs_data[2] << "," << placement_motifs_data[3] << "," << placement_motifs_data[4] << "," <<std::endl;
+						ms_tr.Debug << "Contents of placement_motifs_data vector: " << placement_motifs_data[1] << "," << placement_motifs_data[2] << "," << placement_motifs_data[3] << "," << placement_motifs_data[4] << "," << placement_motifs_data[5] << "," <<std::endl;
 
 						//run checks with cutoffs
 						//if minimum number of motifs made is not enough, kill placement
