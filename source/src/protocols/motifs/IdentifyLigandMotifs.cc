@@ -922,6 +922,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 				}
 
+				ms_tr.Debug << "Value of real_match_found is: " << real_match_found << std::endl;
+
 				//if no real match was found, note comment
 				if ( real_match_found == false ) {
 					core::pose::add_comment(*working_pose, "Placement motifs: Real motif check - " + ligmotifcop->remark(), "No real match, library had no motifs that were close enough");
