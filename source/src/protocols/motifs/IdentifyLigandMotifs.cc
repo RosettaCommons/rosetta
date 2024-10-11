@@ -839,9 +839,14 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 			//derive tuple key
 			protocols::motifs::motif_atoms curkey_tuple(ligmotifcop->restype_name1(),ligmotifcop->res1_atom1_name(),ligmotifcop->res1_atom2_name(),ligmotifcop->res1_atom3_name(),ligmotifcop->res2_atom1_name(),ligmotifcop->res2_atom2_name(),ligmotifcop->res2_atom3_name());
 
+			//count the number of motifs in the real library that have the same residue and all 6 atom types
+			core::Size real_library_section_count = mymap.count(curkey_tuple);
+
+			ms_tr.Debug << "For motif " << ligmotifcop->remark() << " there are " << real_library_section_count << " motifs in the real library to match against" << std::endl;
+
 			//pull out the motif library that matches the current motif that we are on by atom names (if there is one)
 			//use map count function to determine if the key exists
-			if ( mymap.count(curkey_tuple) > 0 ) {
+			if ( real_library_section_count > 0 ) {
 				//key exists
 				//pull out motif library at key address and then compare all motifs in the list against ligmotifcop to see if it resembles a real motif
 				protocols::motifs::MotifCOPs real_motifs = mymap[curkey_tuple];
