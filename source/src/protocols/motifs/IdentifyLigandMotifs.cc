@@ -722,6 +722,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	//create tracer to identify points of the run
 	static basic::Tracer ms_tr( "IdentifyLigandMotifs.evaluate_motifs_of_pose", basic::t_info );
 
+	ms_tr.Trace << "Beginning evaluate_motifs_of_pose" << std::endl;
+
 	//make a vector that holds the following data in its indices as follows:
 	//1 - total motifs made
 	//2 - effectively a bool; 0 indicates that at least one pre-selected residue did not get a motif, 1 indicates that all did

@@ -129,6 +129,8 @@ main( int argc, char * argv [] )
 			//strip path and file type
 			std::string pdbprefix( string_split( string_split( *filename, '/' ).back(), '.' ).front() );
 
+			ms_tr << "On file " << *filename << " with pdb prefix of " << pdbprefix << std::endl;
+
 			//import pose from pdb
 			pose::Pose pose_pointer_helper;
 			core::import_pose::pose_from_file( pose_pointer_helper, *filename , core::import_pose::PDB_file);
