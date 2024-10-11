@@ -1282,7 +1282,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 						//3 - total motifs made against significant residues
 						//4 - motifs that are considered close enough to at least one motif in the compare_library (considered real)
 						//5 - ratio of motifs that are considered close enough compared to the total number of motifs that are collected (real motif ratio)
-						utility::vector1< core::Size > placement_motifs_data;
+						utility::vector1< core::Real > placement_motifs_data;
 
 						//run evaluate_motifs_of_pose from the ilm, which returns a vector with data on motifs from the placed ligand
 						//comments are written to the pose, so we do not have to do that in this function now
