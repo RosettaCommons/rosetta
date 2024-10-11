@@ -760,7 +760,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 		ms_tr.Debug << ligmotifcop->remark() << std::endl;
 
-		motif_library_.add_to_library(*ligmotifcop)
+		motif_library_.add_to_library(*ligmotifcop);
 	}
 
 	ms_tr.Debug << "Number of motifs in motif_library_ after process_for_motifs: " << motif_library_.nmotifs() << std::endl;
