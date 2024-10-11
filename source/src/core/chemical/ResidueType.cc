@@ -62,6 +62,7 @@
 
 // C++ headers
 #include <algorithm>
+#include <sstream>      // std::stringstream
 
 #ifdef    SERIALIZATION
 #include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
@@ -1150,6 +1151,16 @@ ResidueType::setup_atom_ordering( MutableResidueType const & mrt )
 		first_sidechain_hydrogen_ = attached_H_begin_[n_backbone_heavyatoms_+1];
 	}
 
+	if ( atom_order.size() != natoms_  ) {
+		std::stringstream ss;
+		ss << "atom_order.size() = " << atom_order.size() << '\n';
+		ss << "natoms_ = " << natoms_ << '\n';
+		ss << "This mismatch is expected to give a segfault down the line. The mismatch can be caused by:\n";
+		ss << " - Using an invalid patch that has heavy/virtual atoms downstream of hydrogens.\n";
+		ss << " - Maybe other reasons? Add them here if you find more please!";
+		utility_exit_with_message( ss.str() );
+	}
+	
 	return atom_order;
 }
 
