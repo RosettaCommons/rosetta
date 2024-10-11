@@ -804,9 +804,6 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 	if ( option[ OptionKeys::motifs::significant_residues_for_motifs].user() ) {
 
-		ms_tr.Trace << "Ligand placement created motifs against significant residues: ";
-
-
 		//build a string that holds the significant indices that had a motif form against it
 		std::string significant_residue_string = "";
 
