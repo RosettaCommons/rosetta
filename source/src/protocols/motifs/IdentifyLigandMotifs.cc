@@ -580,7 +580,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 
 					if ( cur_trip_pos <= pose.residue( lig_pos ).natoms() ) {
 						//This is the potentially broken line
-						Real atom_atom_distance( pose.residue( lig_pos ).xyz( cur_trip_pos  ).distance( pose.residue( prot_pos ).xyz( residue_atom_number ) ) );
+						Real atom_atom_distance( pose.residue( lig_pos ).xyz( cur_trip[cur_trip_pos]  ).distance( pose.residue( prot_pos ).xyz( residue_atom_number ) ) );
 
 
 						if ( atom_atom_distance < 4.0 ) {
@@ -591,7 +591,7 @@ IdentifyLigandMotifs::ligand_to_residue_analysis(
 							}
 						}
 					} else {
-						TR.Debug << "illegal value of cur_trip_pos" << std::endl;
+						TR.Debug << "illegal value of cur_trip[cur_trip_pos]" << std::endl;
 					}
 				}
 			}
