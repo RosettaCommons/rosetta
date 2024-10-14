@@ -470,6 +470,9 @@ def run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driv
 
     if res:
         state, output = _S_failed_, 'Some of the source code looks ugly!!! Script test_all_files_already_beautiful.py output:\n' + o
+        res_diff, diff = execute('Generating patch file for changes', 'cd {}/source && git --no-pager diff --no-color'.format(rosetta_dir), return_="tuple")
+        with open(working_dir+'/full_diff.patch', 'w') as f: f.write(diff)
+        output += "\n\nSee full_diff.patch in the `Test files` for the full list of changes\n"
     else:
         state = _S_passed_
 
