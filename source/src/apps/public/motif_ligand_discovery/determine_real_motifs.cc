@@ -139,8 +139,8 @@ main( int argc, char * argv [] )
 			//run evaluate_motifs_of_pose() on the pose
 			ilm.evaluate_motifs_of_pose(pose, hashed_real_library, pdbprefix);
 
-			//dump the pose to a pdb file
-			core::io::pdb::dump_pdb(*pose, pdbprefix + ".pdb");
+			//dump the pose to a pdb file and append _real_motif_data to the name so that the original is not overwriten
+			core::io::pdb::dump_pdb(*pose, pdbprefix + "_real_motif_data.pdb");
 		}
 
 	} catch (utility::excn::Exception const & e ) {
