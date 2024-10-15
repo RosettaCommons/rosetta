@@ -1273,7 +1273,7 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 
 					//option to try to pull motifs from the passed placement and see what motifs are collected, how many there are, if motifs are made with any residues of interest, and if the motifs match any motifs in the motif library
 					if ( option[ OptionKeys::motifs::collect_motifs_from_placed_ligand] ) {
-						
+
 						ms_tr.Trace << "Preparing to collect motif data from placed ligand." << std::endl;
 
 						//make a vector that holds the following data in its indices as follows:

@@ -498,15 +498,14 @@ IdentifyLigandMotifs::process_for_motifs(
 
 			//break motif identification into its own function for better readability
 			bool motif_found = ligand_to_residue_analysis(lig_pos, prot_pos, pose, pdb_name, motifs, scorefxn, motif_indices_list);
-			if(motif_found)
-			{
+			if ( motif_found ) {
 				prot_pos_that_made_motifs.push_back(prot_pos);
 			}
 
 		}
 
 		//Here we're going to check to see what's in motif_indices_list
-		for (auto motif_position : motif_indices_list ) {
+		for ( auto motif_position : motif_indices_list ) {
 			utility::vector1< Size > cur_trip ( motif_position );
 			TR.Debug << "Motif index contains: " << cur_trip[1] << "-" << cur_trip[2] << "-" << cur_trip[3] << std::endl;
 		}
@@ -767,7 +766,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 	//convert the prot_pos vector from size to int (easier to use int because this interacts with values from vectors that are pulled from args that don't seem to be able to be pulled as size; I can convert those to size, but this is a seemingly equivalent workaround)
 	utility::vector1< int > prot_pos_that_made_motifs;
-	for  ( auto motif_made : prot_pos_that_made_motifs_size ){
+	for  ( auto motif_made : prot_pos_that_made_motifs_size ) {
 		prot_pos_that_made_motifs.push_back(motif_made);
 	}
 
@@ -790,10 +789,10 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		//bool to help control loops to determine whether to kill the placed ligand
 		bool kill = false;
 		utility::vector1< int > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs];
-		for  ( auto sig_res_pos : mandatory_residues_for_motifs ){
+		for  ( auto sig_res_pos : mandatory_residues_for_motifs ) {
 			//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
 			kill = true;
-			for  ( auto motif_made : prot_pos_that_made_motifs ){
+			for  ( auto motif_made : prot_pos_that_made_motifs ) {
 				if ( motif_made == sig_res_pos ) {
 					//tick up the counter for significant motifs made if there is a match in the residue index for the motif and a significant residue
 					kill = false;
@@ -805,7 +804,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 				ms_tr.Debug << "Not motifs made for residue index " << sig_res_pos << std::endl;
 				ms_tr.Debug << "Exiting evaluate_motifs_of_pose() call and returning that at least one mandatory residue did not get a motif." << std::endl;
-				
+
 				//set placement_motifs_data[2] to 0
 				placement_motifs_data[2] = 0;
 
@@ -823,8 +822,8 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		std::string significant_residue_string = "";
 
 		utility::vector1< int > significant_residues_for_motifs = option[ OptionKeys::motifs::significant_residues_for_motifs] ;
-		for  ( auto sig_res_pos : significant_residues_for_motifs ){
-			for  (auto motif_made : prot_pos_that_made_motifs ){
+		for  ( auto sig_res_pos : significant_residues_for_motifs ) {
+			for  ( auto motif_made : prot_pos_that_made_motifs ) {
 				if ( motif_made == sig_res_pos ) {
 					//tick up the counter for significant motifs made (placement_motifs_data[2]) if there is a match in the residue index for the motif and a significant residue
 					++placement_motifs_data[3];
@@ -862,7 +861,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 			//pull out the motif library that matches the current motif that we are on by atom names (if there is one)
 			//use map count function to determine if the key exists
 			if ( real_library_section_has_motifs > 0 ) {
-				
+
 				//key exists
 				//pull out motif library at key address and then compare all motifs in the list against ligmotifcop to see if it resembles a real motif
 				protocols::motifs::MotifCOPs real_motifs = mymap[curkey_tuple];
@@ -950,7 +949,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 		core::pose::add_comment(*working_pose, "Placement motifs: Real motif count:", std::to_string(placement_motifs_data[4]));
 		core::pose::add_comment(*working_pose, "Placement motifs: Real motif ratio:", std::to_string(placement_motifs_data[5]));
-	} 
+	}
 
 	ms_tr.Debug << "About to exit evaluate_motifs_of_pose() from successful pass through function." << std::endl;
 
