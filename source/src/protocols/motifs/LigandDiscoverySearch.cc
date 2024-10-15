@@ -2598,6 +2598,9 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceF
 
 		matrix_pose.dump_pdb(matrix_pdb_name);
 
+		//add a comment to the working_pose about the name of the corresponding matrix
+		core::pose::add_comment(*working_pose_, "Corresponding space fill matrix file:", matrix_pdb_name);
+
 		return matrix_pose;
 	} else if ( my_mrt.natoms() == 1 ) {
 		//if only 1 atom, make 2 "copies" (atom in the same position as original) of the atom and assign icoor data
@@ -2670,6 +2673,9 @@ pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceF
 	ms_tr.Trace << "Making viualization pdb " << matrix_pdb_name << std::endl;
 
 	matrix_pose.dump_pdb(matrix_pdb_name);
+
+	//add a comment to the working_pose about the name of the corresponding matrix
+	core::pose::add_comment(*working_pose_, "Corresponding space fill matrix file:", matrix_pdb_name);
 
 	return matrix_pose;
 }

@@ -17,13 +17,7 @@
 #constrain coordinates
 -constrain_relax_to_start_coords
 
-#optional flags for demonstrative purposes of extra features of app: 
-
-#collecting motifs from good-placed ligands
--collect_motifs_from_placed_ligand true
-#define important residues in the binding pocket that we want to see motifs collected against
-#protocol notes which residues get motifs found against them
--significant_residues_for_motifs 447,450,419,134,86,423,451,85,62
+#optional flags for demonstrative purposes of extra features of app:
 
 #space fill method
 #define cube-shaped binding pocket about coordinate (coordinate corresponds to within 4s0v.pdb, shifts with script)
@@ -33,7 +27,27 @@
 -space_fill_cutoff_differential_score_sub 0.15
 
 #optional export of space fill matrices to PDB (only recommended for debugging and tuning cutoffs for binding pocket)
+#Including in this test, since it can help show off the feature and troubleshoot if this test breaks
 -output_space_fill_matrix_pdbs true
 
-#verbosity; using second-least verbose level
--motifs:verbose 2
+#placement motifs collection
+-collect_motifs_from_placed_ligand true
+
+#motifs against residues of interest
+-significant_residues_for_motifs 447,450,419,134,86,423,451,85,62
+-minimum_motifs_formed_cutoff 6
+-minimum_significant_motifs_formed_cutoff 1
+
+#mandatory at least 1 real motif
+-minimum_ratio_of_real_motifs_from_ligand 0.01
+
+#must form a motif with ASN423
+-mandatory_residues_for_motifs 423
+
+#check real motifs
+-check_if_ligand_motifs_match_real true
+-duplicate_dist_cutoff 1.2
+-duplicate_angle_cutoff 0.45
+
+#do not output generated ligand motifs as pdbs
+-output_motifs_as_pdb false
