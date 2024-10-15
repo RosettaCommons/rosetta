@@ -790,7 +790,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 		//bool to help control loops to determine whether to kill the placed ligand
 		bool kill = false;
 		utility::vector1< int > mandatory_residues_for_motifs = option[ OptionKeys::motifs::mandatory_residues_for_motifs];
-		for  ( auto sig_res_pos = 1 : mandatory_residues_for_motifs ){
+		for  ( auto sig_res_pos : mandatory_residues_for_motifs ){
 			//kill unless we get a match of a motif made having the same residue index as the current residue in the mandatory list
 			kill = true;
 			for  ( auto motif_made : prot_pos_that_made_motifs ){
