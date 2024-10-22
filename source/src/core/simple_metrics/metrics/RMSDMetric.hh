@@ -32,12 +32,12 @@ namespace core {
 namespace simple_metrics {
 namespace metrics {
 
-///@brief A metric to calculate the RMSD between two poses. 
+///@brief A metric to calculate the RMSD between two poses.
 /// Please note that by default it doesn't align poses. You need to set set_run_superimpose() to True for performing alignment.
 /// You Can set a subset of residues to calculate via ResidueSelector.
 ///
-/// By default RMSD is calcualted between all atoms other than hydrogens (all_heavy). This can be changed via **set_rmsd_type**  
-/// 
+/// By default RMSD is calcualted between all atoms other than hydrogens (all_heavy). This can be changed via **set_rmsd_type**
+///
 /// @details We match all corresponding atoms and do not fail if a residue does not match up.
 ///
 class RMSDMetric : public core::simple_metrics::RealMetric{
@@ -131,19 +131,19 @@ public:
 	set_run_superimpose( bool super );
 
 	///@brief Set what we will be calculating the RMSD on.
-        ///
+	///
 	/// By default RMSD is calcualted between all atoms other than hydrogens (all_heavy).
 	///
 	/// You can look up core/rms/rms_enum.hh for available options. Right now the available options are:
-	/// rmsd_protein_bb_heavy: backbone heavy atoms N,CA,C 
-	/// rmsd_protein_bb_heavy_including_O: backbone heavy atoms N,CA,C,O 
+	/// rmsd_protein_bb_heavy: backbone heavy atoms N,CA,C
+	/// rmsd_protein_bb_heavy_including_O: backbone heavy atoms N,CA,C,O
 	/// rmsd_protein_bb_ca: CA (C-alpha)
 	/// rmsd_sc_heavy: side chain heavy atoms
-        /// rmsd_sc: all side chain atoms (including H)
+	/// rmsd_sc: all side chain atoms (including H)
 	/// rmsd_all_heavy: all heavy atoms
 	/// rmsd_all: all atoms
-        ///
-	/// Example: 
+	///
+	/// Example:
 	/// metric = rosetta.core.simple_metrics.metrics.RMSDMetric(pose_1)
 	/// metric.set_rmsd_type(rosetta.core.scoring.rmsd_protein_bb_heavy)
 	/// metric.set_run_superimpose(True)
