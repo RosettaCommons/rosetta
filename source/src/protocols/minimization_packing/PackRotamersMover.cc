@@ -125,6 +125,20 @@ PackRotamersMover::PackRotamersMover( std::string const & type_name ) :
 // constructors with arguments
 PackRotamersMover::PackRotamersMover(
 	ScoreFunctionCOP scorefxn,
+	TaskFactoryCOP task_factory,
+	core::Size nloop
+) :
+	protocols::moves::Mover("PackRotamersMover"),
+	scorefxn_(std::move( scorefxn )),
+	task_(/* 0 */),
+	nloop_( nloop ),
+	task_factory_( task_factory ),
+	rotamer_sets_( nullptr ),
+	ig_(/* 0 */)
+{}
+
+PackRotamersMover::PackRotamersMover(
+	ScoreFunctionCOP scorefxn,
 	PackerTaskCOP task,
 	core::Size nloop
 ) :
