@@ -21,30 +21,30 @@
 // numeric headers
 #include <numeric/random/WeightedReservoirSampler.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    /// @brief Selects only the best scored individuals
-    class RouletteSelector : public Selector {
-    public:
+/// @brief Selects only the best scored individuals
+class RouletteSelector : public Selector {
+public:
 
-        /// @brief Returns the indices of the size selected individuals from population with a roulette wheel selection
-        utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const override;
+	/// @brief Returns the indices of the size selected individuals from population with a roulette wheel selection
+	utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const override;
 
-        /// @brief Return the name of this selector
-        std::string const& name() const override;
+	/// @brief Return the name of this selector
+	std::string const& name() const override;
 
-        /// @brief Switch whether positive fitness should be considered or not. If they are considered, this changes the proportions of all other fitness a bit!
-        void consider_positive( bool consider_positive );
+	/// @brief Switch whether positive fitness should be considered or not. If they are considered, this changes the proportions of all other fitness a bit!
+	void consider_positive( bool consider_positive );
 
-    private:
+private:
 
-        std::string name_ = "RouletteSelector";
+	std::string name_ = "RouletteSelector";
 
-        /// @brief Switch whether positive fitness should be considered or not. If they are considered, this changes the proportions of all other fitness a bit!
-        bool consider_positive_ = true;
+	/// @brief Switch whether positive fitness should be considered or not. If they are considered, this changes the proportions of all other fitness a bit!
+	bool consider_positive_ = true;
 
-    };
+};
 
 }
 }

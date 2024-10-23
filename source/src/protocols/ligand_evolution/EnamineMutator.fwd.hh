@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class EnamineMutator;
+class EnamineMutator;
 
-    typedef utility::pointer::shared_ptr< EnamineMutator > EnamineMutatorOP;
-    typedef utility::pointer::shared_ptr< EnamineMutator const > EnamineMutatorCOP;
+typedef utility::pointer::shared_ptr< EnamineMutator > EnamineMutatorOP;
+typedef utility::pointer::shared_ptr< EnamineMutator const > EnamineMutatorCOP;
 
 }
 }

@@ -30,27 +30,27 @@ using namespace protocols::ligand_evolution;
 
 int main( int argc, char* argv[] ) {
 
-    int rank = 0;
-    int size = 1;
+	int rank = 0;
+	int size = 1;
 #ifdef USEMPI
     MPI_Init (&argc, &argv);
     MPI_Comm_rank (MPI_COMM_WORLD, &rank);
     MPI_Comm_size( MPI_COMM_WORLD, &size );
 #endif
 
-    devel::init (argc, argv);
+	devel::init (argc, argv);
 
-    EvolutionManager manager( rank );
+	EvolutionManager manager( rank );
 
-    manager.init();
-    manager.run( size );
+	manager.init();
+	manager.run( size );
 
-    
+
 #ifdef USEMPI
     MPI_Barrier( MPI_COMM_WORLD );
     MPI_Finalize();
 #endif
 
-    return 0;
+	return 0;
 }
 

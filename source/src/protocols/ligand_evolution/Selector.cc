@@ -18,9 +18,9 @@
 namespace protocols {
 namespace ligand_evolution {
 
-    Selector::Selector() = default;
+Selector::Selector() = default;
 
-    Selector::~Selector() = default;
+Selector::~Selector() = default;
 
 }
 }

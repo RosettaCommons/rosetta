@@ -18,24 +18,24 @@
 #include <protocols/ligand_evolution/IdentityFactory.fwd.hh>
 #include <protocols/ligand_evolution/OffspringFactory.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    /// @brief Take a single individual, and returns a desired number of point mutated individuals based on the input one
-    class IdentityFactory : public OffspringFactory {
-    public:
+/// @brief Take a single individual, and returns a desired number of point mutated individuals based on the input one
+class IdentityFactory : public OffspringFactory {
+public:
 
-        /// @brief Simply copies and returns all individuals. N_offspring won't be used here
-        utility::vector1< Individual > apply( utility::vector1< Individual > const& parents, core::Size ) const override;
+	/// @brief Simply copies and returns all individuals. N_offspring won't be used here
+	utility::vector1< Individual > apply( utility::vector1< Individual > const& parents, core::Size ) const override;
 
-        /// @brief Returns the name of this mutator
-        std::string const& name() const override;
+	/// @brief Returns the name of this mutator
+	std::string const& name() const override;
 
-    private:
+private:
 
-        std::string name_ = "IdentityFactory";
+	std::string name_ = "IdentityFactory";
 
-    };
+};
 
 }
 }

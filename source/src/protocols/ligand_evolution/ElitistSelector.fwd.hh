@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class ElitistSelector;
+class ElitistSelector;
 
-    typedef utility::pointer::shared_ptr< ElitistSelector > ElitistSelectorOP;
-    typedef utility::pointer::shared_ptr< ElitistSelector const > ElitistSelectorCOP;
+typedef utility::pointer::shared_ptr< ElitistSelector > ElitistSelectorOP;
+typedef utility::pointer::shared_ptr< ElitistSelector const > ElitistSelectorCOP;
 
 }
 }

@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class RouletteSelector;
+class RouletteSelector;
 
-    typedef utility::pointer::shared_ptr< RouletteSelector > RouletteSelectorOP;
-    typedef utility::pointer::shared_ptr< RouletteSelector const > RouletteSelectorCOP;
+typedef utility::pointer::shared_ptr< RouletteSelector > RouletteSelectorOP;
+typedef utility::pointer::shared_ptr< RouletteSelector const > RouletteSelectorCOP;
 
 }
 }

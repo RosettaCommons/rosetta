@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class Population;
+class Population;
 
-    typedef utility::pointer::shared_ptr< Population > PopulationOP;
-    typedef utility::pointer::shared_ptr< Population const > PopulationCOP;
+typedef utility::pointer::shared_ptr< Population > PopulationOP;
+typedef utility::pointer::shared_ptr< Population const > PopulationCOP;
 
 }
 }

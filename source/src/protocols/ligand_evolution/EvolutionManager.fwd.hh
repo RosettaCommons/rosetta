@@ -18,15 +18,15 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-    namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-        class EvolutionManager;
+class EvolutionManager;
 
-        typedef utility::pointer::shared_ptr< EvolutionManager > EvolutionManagerOP;
-        typedef utility::pointer::shared_ptr< EvolutionManager const > EvolutionManagerCOP;
+typedef utility::pointer::shared_ptr< EvolutionManager > EvolutionManagerOP;
+typedef utility::pointer::shared_ptr< EvolutionManager const > EvolutionManagerCOP;
 
-    }
+}
 }
 
 #endif

@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class IdentityFactory;
+class IdentityFactory;
 
-    typedef utility::pointer::shared_ptr< IdentityFactory > IdentityFactoryOP;
-    typedef utility::pointer::shared_ptr< IdentityFactory const > IdentityFactoryCOP;
+typedef utility::pointer::shared_ptr< IdentityFactory > IdentityFactoryOP;
+typedef utility::pointer::shared_ptr< IdentityFactory const > IdentityFactoryCOP;
 
 }
 }

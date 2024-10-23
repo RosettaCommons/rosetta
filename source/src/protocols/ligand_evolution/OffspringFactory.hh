@@ -24,21 +24,21 @@
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    /// @brief: An abstract class to give an interface for producing offspring from individuals
-    /// @details comming soon.
-    class OffspringFactory : public utility::VirtualBase {
-    public:
+/// @brief: An abstract class to give an interface for producing offspring from individuals
+/// @details comming soon.
+class OffspringFactory : public utility::VirtualBase {
+public:
 
-        /// @brief Virtual function to wrap offspring production. Allows for input of any number of individuals and returns n offsprings
-        virtual utility::vector1< Individual > apply( utility::vector1< Individual > const& parents, core::Size n_offspring ) const = 0;
+	/// @brief Virtual function to wrap offspring production. Allows for input of any number of individuals and returns n offsprings
+	virtual utility::vector1< Individual > apply( utility::vector1< Individual > const& parents, core::Size n_offspring ) const = 0;
 
-        /// @brief Returns the name of this factory
-        virtual std::string const& name() const = 0;
+	/// @brief Returns the name of this factory
+	virtual std::string const& name() const = 0;
 
-    };
+};
 
 
 }

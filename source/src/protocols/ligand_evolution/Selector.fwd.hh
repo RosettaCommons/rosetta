@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class Selector;
+class Selector;
 
-    typedef utility::pointer::shared_ptr< Selector > SelectorOP;
-    typedef utility::pointer::shared_ptr< Selector const > SelectorCOP;
+typedef utility::pointer::shared_ptr< Selector > SelectorOP;
+typedef utility::pointer::shared_ptr< Selector const > SelectorCOP;
 
 }
 }

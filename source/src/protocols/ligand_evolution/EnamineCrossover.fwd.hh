@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class EnamineCrossover;
+class EnamineCrossover;
 
-    typedef utility::pointer::shared_ptr< EnamineCrossover > EnamineCrossoverOP;
-    typedef utility::pointer::shared_ptr< EnamineCrossover const > EnamineCrossoverCOP;
+typedef utility::pointer::shared_ptr< EnamineCrossover > EnamineCrossoverOP;
+typedef utility::pointer::shared_ptr< EnamineCrossover const > EnamineCrossoverCOP;
 
 }
 }

@@ -22,86 +22,86 @@
 static basic::Tracer TR( "protocols.ligand_evolution.RouletteSelector" );
 
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    utility::vector1< Individual > RouletteSelector::apply( Population& population, core::Size size, bool remove ) const {
+utility::vector1< Individual > RouletteSelector::apply( Population& population, core::Size size, bool remove ) const {
 
-        if( population.size() < size ) {
-            TR.Error << "Can't create a subset of size " << size << " from a population of size " << population.size() << std::endl;
-            utility_exit_with_message( "Population is to small for the desired subset size" );
-        }
+	if ( population.size() < size ) {
+		TR.Error << "Can't create a subset of size " << size << " from a population of size " << population.size() << std::endl;
+		utility_exit_with_message( "Population is to small for the desired subset size" );
+	}
 
-        // Sorting is save to be called frequent due to internal logic checks in population
-        population.sort();
+	// Sorting is save to be called frequent due to internal logic checks in population
+	population.sort();
 
-        // since scores can be positive and negative and I try to minimize instead of optimize I need to do two transformation steps
-        // 1) score -= lowest_score to base all of them on 0
-        // 2) score = highest_score - score to give the lowest score the highest weight
-        // This transformation is not optimal since it changes the relative proportions, but I accept that
-        core::Real lowest_score = 1000000;
-        core::Real highest_score = -1000000;
-        if( consider_positive_ ) {
-            for( Individual const& individual : population.individuals ()) {
-                core::Real score = individual.score ();
-                if( score < lowest_score ) {
-                    lowest_score = score;
-                }
-                if( score > highest_score ) {
-                    highest_score = score;
-                }
-            }
-            TR.Debug << "Found lowest " << lowest_score << " and highest score " << highest_score << std::endl;
-        }
+	// since scores can be positive and negative and I try to minimize instead of optimize I need to do two transformation steps
+	// 1) score -= lowest_score to base all of them on 0
+	// 2) score = highest_score - score to give the lowest score the highest weight
+	// This transformation is not optimal since it changes the relative proportions, but I accept that
+	core::Real lowest_score = 1000000;
+	core::Real highest_score = -1000000;
+	if ( consider_positive_ ) {
+		for ( Individual const& individual : population.individuals () ) {
+			core::Real score = individual.score ();
+			if ( score < lowest_score ) {
+				lowest_score = score;
+			}
+			if ( score > highest_score ) {
+				highest_score = score;
+			}
+		}
+		TR.Debug << "Found lowest " << lowest_score << " and highest score " << highest_score << std::endl;
+	}
 
-        numeric::random::WeightedReservoirSampler< core::Size > reservoir( size );
+	numeric::random::WeightedReservoirSampler< core::Size > reservoir( size );
 
-        TR.Debug << "Created weights [";
+	TR.Debug << "Created weights [";
 
-        for( core::Size ii( 1 ); ii <= population.size(); ++ii ) {
-            core::Real weight;
-            if( consider_positive_ ) {
-                // using positive and negative weights together with the lowest value getting the highest weight
-                weight = ( highest_score - lowest_score ) - ( population.individual( ii ).score() - lowest_score );
-                if( weight == 0 ) {
-                    // this ensures inclusion
-                    weight += 0.00000000001;
-                }
-            } else {
-                weight = -1.0 * population.individual( ii ).score();
-            }
-            reservoir.consider_sample( ii, weight );
-            TR.Debug << weight << " (from " << population.individual( ii ).score() << " ), ";
-        }
+	for ( core::Size ii( 1 ); ii <= population.size(); ++ii ) {
+		core::Real weight;
+		if ( consider_positive_ ) {
+			// using positive and negative weights together with the lowest value getting the highest weight
+			weight = ( highest_score - lowest_score ) - ( population.individual( ii ).score() - lowest_score );
+			if ( weight == 0 ) {
+				// this ensures inclusion
+				weight += 0.00000000001;
+			}
+		} else {
+			weight = -1.0 * population.individual( ii ).score();
+		}
+		reservoir.consider_sample( ii, weight );
+		TR.Debug << weight << " (from " << population.individual( ii ).score() << " ), ";
+	}
 
-        TR.Debug << "]" << std::endl;
+	TR.Debug << "]" << std::endl;
 
-        utility::vector1< core::Size > selected_indices;
-        reservoir.samples( &selected_indices );
+	utility::vector1< core::Size > selected_indices;
+	reservoir.samples( &selected_indices );
 
-        TR.Debug << name() << " selected " << selected_indices << std::endl;
+	TR.Debug << name() << " selected " << selected_indices << std::endl;
 
-        if( selected_indices.size() < size ) {
-            TR.Warning << "Only " << selected_indices.size() << " individuals were selected but " << size << " are required. This can cause undesired behavior." << std::endl;
-            if( !consider_positive_ ) {
-                TR.Warning << "Positive scoring individuals are not considered. This is the likely source for the problem above." << std::endl;
-            }
-        }
+	if ( selected_indices.size() < size ) {
+		TR.Warning << "Only " << selected_indices.size() << " individuals were selected but " << size << " are required. This can cause undesired behavior." << std::endl;
+		if ( !consider_positive_ ) {
+			TR.Warning << "Positive scoring individuals are not considered. This is the likely source for the problem above." << std::endl;
+		}
+	}
 
-        if( remove ) {
-            return population.remove_individuals( selected_indices );
-        } else {
-            return population.individuals( selected_indices );
-        }
-    }
+	if ( remove ) {
+		return population.remove_individuals( selected_indices );
+	} else {
+		return population.individuals( selected_indices );
+	}
+}
 
-    std::string const& RouletteSelector::name() const {
-        return name_;
-    }
+std::string const& RouletteSelector::name() const {
+	return name_;
+}
 
-    void RouletteSelector::consider_positive( bool consider_positive ) {
-        consider_positive_ = consider_positive;
-    }
+void RouletteSelector::consider_positive( bool consider_positive ) {
+	consider_positive_ = consider_positive;
+}
 
 }
 }

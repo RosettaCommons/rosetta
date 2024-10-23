@@ -23,36 +23,36 @@
 // package headers
 #include <protocols/ligand_evolution/EnamineFragmentLibrary.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    /// @brief Takes two individuals and produces a set amount of offspring using a crossover.
-    class EnamineCrossover : public OffspringFactory {
-    public:
+/// @brief Takes two individuals and produces a set amount of offspring using a crossover.
+class EnamineCrossover : public OffspringFactory {
+public:
 
-        explicit EnamineCrossover(  EnamineFragmentLibrary const& library );
+	explicit EnamineCrossover(  EnamineFragmentLibrary const& library );
 
-        /// @brief Selects randomly two parents to create offspring until n_offspring is available
-        /// @detail One random parent donates the reaction and both donate minimum one reagent. If they come from different reactions, the alien reagent is mapped to the most similar
-        ///         counterpart.
-        utility::vector1< Individual > apply( utility::vector1< Individual > const& parents, core::Size n_offspring ) const override;
+	/// @brief Selects randomly two parents to create offspring until n_offspring is available
+	/// @detail One random parent donates the reaction and both donate minimum one reagent. If they come from different reactions, the alien reagent is mapped to the most similar
+	///         counterpart.
+	utility::vector1< Individual > apply( utility::vector1< Individual > const& parents, core::Size n_offspring ) const override;
 
-        /// @brief Returns the name of this factory
-        std::string const& name() const override;
+	/// @brief Returns the name of this factory
+	std::string const& name() const override;
 
-    private:
+private:
 
-        /// @brief Crosses two individuals into one offspring
-        Individual cross( Individual const& reaction_parent, Individual const& other_parent ) const;
+	/// @brief Crosses two individuals into one offspring
+	Individual cross( Individual const& reaction_parent, Individual const& other_parent ) const;
 
-    private:
+private:
 
-        /// @brief Since this function regularly produces offspring and consults a %FragmentLibrary for this, it keeps ownership to one
-        EnamineFragmentLibrary const& library_;
+	/// @brief Since this function regularly produces offspring and consults a %FragmentLibrary for this, it keeps ownership to one
+	EnamineFragmentLibrary const& library_;
 
-        std::string name_ = "EnamineCrossover";
+	std::string name_ = "EnamineCrossover";
 
-    };
+};
 
 }
 }

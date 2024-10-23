@@ -20,38 +20,38 @@
 // package headers
 #include <protocols/ligand_evolution/Selector.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    /// @brief Selects only the best scored individuals
-    class TournamentSelector : public Selector {
-    public:
+/// @brief Selects only the best scored individuals
+class TournamentSelector : public Selector {
+public:
 
-        TournamentSelector( core::Size tournament_size, core::Real probability );
+	TournamentSelector( core::Size tournament_size, core::Real probability );
 
-        /// @brief Returns the indices of the n_select tournament winning individuals in population.
-        utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const override;
+	/// @brief Returns the indices of the n_select tournament winning individuals in population.
+	utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const override;
 
-        /// @brief Return the name of this selector
-        std::string const& name() const override;
+	/// @brief Return the name of this selector
+	std::string const& name() const override;
 
-        /// @brief Sets the size for each tournament
-        void set_tournament_size( core::Size size );
+	/// @brief Sets the size for each tournament
+	void set_tournament_size( core::Size size );
 
-        /// @brief Sets the probability that the tournament winner accepts
-        void set_probability( core::Real probability );
+	/// @brief Sets the probability that the tournament winner accepts
+	void set_probability( core::Real probability );
 
-    private:
+private:
 
-        std::string name_ = "TournamentSelector";
+	std::string name_ = "TournamentSelector";
 
-        /// @brief How many individuals will be randomly selected to participate in the tournament
-        core::Size tournament_size_ = 6;
+	/// @brief How many individuals will be randomly selected to participate in the tournament
+	core::Size tournament_size_ = 6;
 
-        /// @brief At which probability will an individual be selected, starting with the tournament winner
-        core::Real probability_ = 1;
+	/// @brief At which probability will an individual be selected, starting with the tournament winner
+	core::Real probability_ = 1;
 
-    };
+};
 
 }
 }

@@ -18,20 +18,20 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-    namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-        class WorkManager;
+class WorkManager;
 
-        typedef utility::pointer::shared_ptr< WorkManager > WorkManagerOP;
-        typedef utility::pointer::shared_ptr< WorkManager const > WorkManagerCOP;
+typedef utility::pointer::shared_ptr< WorkManager > WorkManagerOP;
+typedef utility::pointer::shared_ptr< WorkManager const > WorkManagerCOP;
 
-        class Worker;
+class Worker;
 
-        typedef utility::pointer::shared_ptr< Worker > WorkerOP;
-        typedef utility::pointer::shared_ptr< Worker const > WorkerCOP;
+typedef utility::pointer::shared_ptr< Worker > WorkerOP;
+typedef utility::pointer::shared_ptr< Worker const > WorkerCOP;
 
-    }
+}
 }
 
 #endif

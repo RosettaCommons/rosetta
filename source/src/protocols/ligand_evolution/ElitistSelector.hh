@@ -18,24 +18,24 @@
 #include <protocols/ligand_evolution/ElitistSelector.fwd.hh>
 #include <protocols/ligand_evolution/Selector.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    /// @brief Selects only the best scored individuals
-    class ElitistSelector : public Selector {
-    public:
+/// @brief Selects only the best scored individuals
+class ElitistSelector : public Selector {
+public:
 
-        /// @brief Returns the indices of the size fittest individuals in population.
-        utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const override;
+	/// @brief Returns the indices of the size fittest individuals in population.
+	utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const override;
 
-        /// @brief Return the name of this selector
-        std::string const& name() const override;
+	/// @brief Return the name of this selector
+	std::string const& name() const override;
 
-    private:
+private:
 
-        std::string name_ = "ElitistSelector";
+	std::string name_ = "ElitistSelector";
 
-    };
+};
 
 }
 }

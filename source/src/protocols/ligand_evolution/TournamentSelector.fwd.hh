@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class TournamentSelector;
+class TournamentSelector;
 
-    typedef utility::pointer::shared_ptr< TournamentSelector > TournamentSelectorOP;
-    typedef utility::pointer::shared_ptr< TournamentSelector const > TournamentSelectorCOP;
+typedef utility::pointer::shared_ptr< TournamentSelector > TournamentSelectorOP;
+typedef utility::pointer::shared_ptr< TournamentSelector const > TournamentSelectorCOP;
 
 }
 }

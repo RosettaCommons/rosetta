@@ -22,67 +22,67 @@ static basic::Tracer TR( "protocols.ligand_evolution.Individual" );
 namespace protocols {
 namespace ligand_evolution {
 
-    Individual::Individual( const LigandIdentifier& identifier, utility::vector1< core::Size > const& parent_ids, std::string const& type_of_birth )
-    :
-    identifier_( identifier ),
-    parent_ids_( parent_ids ),
-    type_of_birth_( type_of_birth )
-    {}
+Individual::Individual( const LigandIdentifier& identifier, utility::vector1< core::Size > const& parent_ids, std::string const& type_of_birth )
+:
+	identifier_( identifier ),
+	parent_ids_( parent_ids ),
+	type_of_birth_( type_of_birth )
+{}
 
-    Individual::~Individual() = default;
+Individual::~Individual() = default;
 
-    core::Real Individual::score( std::string const& name ) const {
-        if( !is_scored_ ) { utility_exit_with_message( "Tried to access score but Individual is unscored." ); }
-        return score_terms_.at( name );
-    }
+core::Real Individual::score( std::string const& name ) const {
+	if ( !is_scored_ ) { utility_exit_with_message( "Tried to access score but Individual is unscored." ); }
+	return score_terms_.at( name );
+}
 
-    void Individual::score( std::string const& name, core::Real score ) {
-        score_terms_[ name ] = score;
-    }
+void Individual::score( std::string const& name, core::Real score ) {
+	score_terms_[ name ] = score;
+}
 
-    core::Real Individual::score() const {
-        if( !is_scored_ ) { utility_exit_with_message( "Tried to access score but Individual is unscored." ); }
-        return score_;
-    }
+core::Real Individual::score() const {
+	if ( !is_scored_ ) { utility_exit_with_message( "Tried to access score but Individual is unscored." ); }
+	return score_;
+}
 
-    void Individual::score( core::Real score ) {
-        is_scored_ = true;
-        score_ = score;
-    }
+void Individual::score( core::Real score ) {
+	is_scored_ = true;
+	score_ = score;
+}
 
-    bool Individual::is_scored() const {
-        return is_scored_;
-    }
+bool Individual::is_scored() const {
+	return is_scored_;
+}
 
-    LigandIdentifier const& Individual::identifier() const {
-        return identifier_;
-    }
+LigandIdentifier const& Individual::identifier() const {
+	return identifier_;
+}
 
-    bool Individual::id( core::Size id ) {
-        if( id_ == 0 ) {
-            id_ = id;
-            return true;
-        } else {
-            TR.Debug << "Prohibited overwrite of id:" << id_ << " to id:" << id << std::endl;
-            return false;
-        }
-    }
+bool Individual::id( core::Size id ) {
+	if ( id_ == 0 ) {
+		id_ = id;
+		return true;
+	} else {
+		TR.Debug << "Prohibited overwrite of id:" << id_ << " to id:" << id << std::endl;
+		return false;
+	}
+}
 
-    core::Size Individual::id() const {
-        return id_;
-    }
+core::Size Individual::id() const {
+	return id_;
+}
 
-    std::map< std::string, core::Real > const& Individual::score_terms() const {
-        return score_terms_;
-    }
+std::map< std::string, core::Real > const& Individual::score_terms() const {
+	return score_terms_;
+}
 
-    utility::vector1< core::Size > const& Individual::parents() const {
-        return parent_ids_;
-    }
+utility::vector1< core::Size > const& Individual::parents() const {
+	return parent_ids_;
+}
 
-    std::string const& Individual::type_of_birth() const {
-        return type_of_birth_;
-    }
+std::string const& Individual::type_of_birth() const {
+	return type_of_birth_;
+}
 
 }
 }

@@ -20,29 +20,29 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class EnamineFragmentLibrary;
+class EnamineFragmentLibrary;
 
-    typedef utility::pointer::shared_ptr< EnamineFragmentLibrary > EnamineFragmentLibraryOP;
-    typedef utility::pointer::shared_ptr< EnamineFragmentLibrary const > EnamineFragmentLibraryCOP;
+typedef utility::pointer::shared_ptr< EnamineFragmentLibrary > EnamineFragmentLibraryOP;
+typedef utility::pointer::shared_ptr< EnamineFragmentLibrary const > EnamineFragmentLibraryCOP;
 
-    class EnamineReagent;
+class EnamineReagent;
 
-    typedef utility::pointer::shared_ptr< EnamineReagent > EnamineReagentOP;
-    typedef utility::pointer::shared_ptr< EnamineReagent const > EnamineReagentCOP;
+typedef utility::pointer::shared_ptr< EnamineReagent > EnamineReagentOP;
+typedef utility::pointer::shared_ptr< EnamineReagent const > EnamineReagentCOP;
 
-    class EnamineReaction;
+class EnamineReaction;
 
-    typedef utility::pointer::shared_ptr< EnamineReaction > EnamineReactionOP;
-    typedef utility::pointer::shared_ptr< EnamineReaction const > EnamineReactionCOP;
+typedef utility::pointer::shared_ptr< EnamineReaction > EnamineReactionOP;
+typedef utility::pointer::shared_ptr< EnamineReaction const > EnamineReactionCOP;
 
-    /// @brief LigandIdentifiers are a vector of ints which should encode all information needed by the FragmentLibrary to create a new ligand
-    typedef utility::vector1< core::Size > LigandIdentifier;
+/// @brief LigandIdentifiers are a vector of ints which should encode all information needed by the FragmentLibrary to create a new ligand
+typedef utility::vector1< core::Size > LigandIdentifier;
 
-    /// @brief ReagentSimilarityList is a list of reagent ids combined with a similarity score, mainly used for fragment searches
-    typedef utility::vector1< std::pair< core::Size, core::Real > > ReagentSimilarityList;
+/// @brief ReagentSimilarityList is a list of reagent ids combined with a similarity score, mainly used for fragment searches
+typedef utility::vector1< std::pair< core::Size, core::Real > > ReagentSimilarityList;
 
 }
 }

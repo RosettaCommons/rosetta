@@ -18,13 +18,13 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class Individual;
+class Individual;
 
-    typedef utility::pointer::shared_ptr< Individual > IndividualOP;
-    typedef utility::pointer::shared_ptr< Individual const > IndividualCOP;
+typedef utility::pointer::shared_ptr< Individual > IndividualOP;
+typedef utility::pointer::shared_ptr< Individual const > IndividualCOP;
 
 }
 }

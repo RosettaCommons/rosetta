@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class OffspringFactory;
+class OffspringFactory;
 
-    typedef utility::pointer::shared_ptr< OffspringFactory > OffspringFactoryOP;
-    typedef utility::pointer::shared_ptr< OffspringFactory const > OffspringFactoryCOP;
+typedef utility::pointer::shared_ptr< OffspringFactory > OffspringFactoryOP;
+typedef utility::pointer::shared_ptr< OffspringFactory const > OffspringFactoryCOP;
 
 }
 }

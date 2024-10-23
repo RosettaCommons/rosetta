@@ -32,79 +32,79 @@
 namespace protocols {
 namespace ligand_evolution {
 
-    /// @brief The EvolutionManager combines all required resources for the evolutionary ligand optimization and handles them as needed.
-    class EvolutionManager {
-    public:
+/// @brief The EvolutionManager combines all required resources for the evolutionary ligand optimization and handles them as needed.
+class EvolutionManager {
+public:
 
-        /// @brief If rank is different than 0 a mpi system is expected
-        explicit EvolutionManager( int rank );
+	/// @brief If rank is different than 0 a mpi system is expected
+	explicit EvolutionManager( int rank );
 
-        /// @brief Main function that handles evolutionary optimization
-        void run( int mpi_size = 1 );
+	/// @brief Main function that handles evolutionary optimization
+	void run( int mpi_size = 1 );
 
-        void init();
+	void init();
 
-        /// @brief Prints scores of all individuals
-        std::string print_scores() const;
+	/// @brief Prints scores of all individuals
+	std::string print_scores() const;
 
-    private:
+private:
 
-        /// @brief Scores the entire population
-        void score();
+	/// @brief Scores the entire population
+	void score();
 
-        void init_mpi();
+	void init_mpi();
 
-        /// @brief Calculates the current quantiles
-        void calculate_quantiles();
+	/// @brief Calculates the current quantiles
+	void calculate_quantiles();
 
-        /// @brief Saves information about the population and its history to disk. For debugging and benchmarking purposes
-        void write_population_information() const;
+	/// @brief Saves information about the population and its history to disk. For debugging and benchmarking purposes
+	void write_population_information() const;
 
-    private:
+private:
 
-        /// @brief Defines after how many generations optimization will stop
-        core::Size max_generations_;
+	/// @brief Defines after how many generations optimization will stop
+	core::Size max_generations_;
 
-        /// @brief Contains and manages all evolutionary information for all ligands
-        Population population_;
+	/// @brief Contains and manages all evolutionary information for all ligands
+	Population population_;
 
-        /// @brief Manages the scoring of ligands as well as keeping track of scores
-        ScorerOP scorer_ = nullptr;
+	/// @brief Manages the scoring of ligands as well as keeping track of scores
+	ScorerOP scorer_ = nullptr;
 
-        /// @brief Handles mpi communication to distribute the scoring work
-        WorkManagerOP work_manager_ = nullptr;
+	/// @brief Handles mpi communication to distribute the scoring work
+	WorkManagerOP work_manager_ = nullptr;
 
-        /// @brief Holds all molecular information about the protein and the ligands
-        EnamineFragmentLibrary library_;
+	/// @brief Holds all molecular information about the protein and the ligands
+	EnamineFragmentLibrary library_;
 
-        /// @brief The selector which will be applied to advance the generation
-        core::Size main_selector_;
+	/// @brief The selector which will be applied to advance the generation
+	core::Size main_selector_;
 
-        /// @brief Holds all selectors
-        utility::vector1< SelectorOP > selectors_;
+	/// @brief Holds all selectors
+	utility::vector1< SelectorOP > selectors_;
 
-        /// @brief Maps selector names to indices in selector list
-        std::map< std::string, core::Size > selector_map_;
+	/// @brief Maps selector names to indices in selector list
+	std::map< std::string, core::Size > selector_map_;
 
-        /// @brief Holds all offspring factories
-        utility::vector1< OffspringFactoryOP > factories_;
+	/// @brief Holds all offspring factories
+	utility::vector1< OffspringFactoryOP > factories_;
 
-        /// @brief Maps factory names to indices in factory list
-        std::map< std::string, core::Size > factory_map_;
+	/// @brief Maps factory names to indices in factory list
+	std::map< std::string, core::Size > factory_map_;
 
-        /// @brief Holds arrays of size 5, defining index of selector, index of factory, selection size, offspring size, if parent will be kept in pool
-        /// @details Factories will be called in order of this array
-        utility::vector1< utility::vector1< core::Size > > offspring_options_;
+	/// @brief Holds arrays of size 5, defining index of selector, index of factory, selection size, offspring size, if parent will be kept in pool
+	/// @details Factories will be called in order of this array
+	utility::vector1< utility::vector1< core::Size > > offspring_options_;
 
-        int rank_ = 0;
+	int rank_ = 0;
 
-        /// @brief Stores statistical information about score distribution within the population
-        utility::vector1< core::Real > quantiles = { 9999.9, 9999.9, 9999.9, 9999.9 };
+	/// @brief Stores statistical information about score distribution within the population
+	utility::vector1< core::Real > quantiles = { 9999.9, 9999.9, 9999.9, 9999.9 };
 
-        /// @brief Used to distinguish between scoring of external molecules and internal enamine optimization
-        core::Size external_scoring_;
+	/// @brief Used to distinguish between scoring of external molecules and internal enamine optimization
+	core::Size external_scoring_;
 
-    };
+};
 
 }
 }

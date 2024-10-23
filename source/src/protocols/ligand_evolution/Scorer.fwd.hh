@@ -17,13 +17,13 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    class Scorer;
+class Scorer;
 
-    typedef utility::pointer::shared_ptr< Scorer > ScorerOP;
-    typedef utility::pointer::shared_ptr< Scorer const > ScorerCOP;
+typedef utility::pointer::shared_ptr< Scorer > ScorerOP;
+typedef utility::pointer::shared_ptr< Scorer const > ScorerCOP;
 
 }
 }

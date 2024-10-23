@@ -24,24 +24,24 @@
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    /// @brief: An abstract class to give an interface for subset selection of %Population
-    /// @details comming soon.
-    class Selector : public utility::VirtualBase {
-    public:
+/// @brief: An abstract class to give an interface for subset selection of %Population
+/// @details comming soon.
+class Selector : public utility::VirtualBase {
+public:
 
-        Selector();
-        ~Selector();
+	Selector();
+	~Selector();
 
-        /// @brief Applies the specified rules to create a list of indices of selected individuals
-        virtual utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const = 0;
+	/// @brief Applies the specified rules to create a list of indices of selected individuals
+	virtual utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const = 0;
 
-        /// @brief Return the name of this selector
-        virtual std::string const& name() const = 0;
+	/// @brief Return the name of this selector
+	virtual std::string const& name() const = 0;
 
-    };
+};
 
 
 }

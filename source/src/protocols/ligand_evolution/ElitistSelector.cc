@@ -20,33 +20,33 @@
 static basic::Tracer TR( "protocols.ligand_evolution.ElitistSelector" );
 
 
-namespace protocols{
-namespace ligand_evolution{
+namespace protocols {
+namespace ligand_evolution {
 
-    utility::vector1< Individual > ElitistSelector::apply( Population& population, core::Size size, bool remove ) const {
-        if( population.size() < size ) {
-            TR.Error << "Can't create a subset of size " << size << " from a population of size " << population.size() << std::endl;
-            utility_exit_with_message( "Population is to small for the desired subset size" );
-        }
+utility::vector1< Individual > ElitistSelector::apply( Population& population, core::Size size, bool remove ) const {
+	if ( population.size() < size ) {
+		TR.Error << "Can't create a subset of size " << size << " from a population of size " << population.size() << std::endl;
+		utility_exit_with_message( "Population is to small for the desired subset size" );
+	}
 
-        // Since the population is sorted we just need to create an array of ascending indices
-        utility::vector1< core::Size > indices;
-        for( core::Size ii( 1 ); ii <= size; ++ii ) {
-            indices.push_back( ii );
-        }
+	// Since the population is sorted we just need to create an array of ascending indices
+	utility::vector1< core::Size > indices;
+	for ( core::Size ii( 1 ); ii <= size; ++ii ) {
+		indices.push_back( ii );
+	}
 
-        population.sort();
+	population.sort();
 
-        if( remove ) {
-            return population.remove_individuals( indices );
-        } else {
-            return population.individuals( indices );
-        }
-    }
+	if ( remove ) {
+		return population.remove_individuals( indices );
+	} else {
+		return population.individuals( indices );
+	}
+}
 
-    std::string const& ElitistSelector::name() const {
-        return name_;
-    }
+std::string const& ElitistSelector::name() const {
+	return name_;
+}
 
 }
 }
