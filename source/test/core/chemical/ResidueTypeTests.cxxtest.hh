@@ -664,15 +664,15 @@ public:
 
 	void test_bad_atom_ordering(){
 		core::pose::Pose pose;
-                core::pose::make_pose_from_sequence( pose, "TESTMYIDEAPLEASE", "fa_standard" );
-               	core::Size const resid = 4;
-               	core::conformation::Residue const & r = pose.residue(resid);
-               	core::chemical::Patch patch;
+		core::pose::make_pose_from_sequence( pose, "TESTMYIDEAPLEASE", "fa_standard" );
+		core::Size const resid = 4;
+		core::conformation::Residue const & r = pose.residue(resid);
+		core::chemical::Patch patch;
 		patch.read_file( "core/chemical/bad_atom_ordering.patch" );
-               	utility::vector1< core::chemical::VariantType > types;
-               	patch.types( types );
-	        auto mutable_type = patch.apply( r.type() );
-                TS_ASSERT_THROWS_ANYTHING( auto res_type = core::chemical::ResidueType::make( *mutable_type ); )
+		utility::vector1< core::chemical::VariantType > types;
+		patch.types( types );
+		auto mutable_type = patch.apply( r.type() );
+		TS_ASSERT_THROWS_ANYTHING( auto res_type = core::chemical::ResidueType::make( *mutable_type ); )
 	}
 
 };
