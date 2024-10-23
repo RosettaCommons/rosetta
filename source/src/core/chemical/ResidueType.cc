@@ -1160,7 +1160,7 @@ ResidueType::setup_atom_ordering( MutableResidueType const & mrt )
 		ss << " - Maybe other reasons? Add them here if you find more please!";
 		utility_exit_with_message( ss.str() );
 	}
-	
+
 	return atom_order;
 }
 
