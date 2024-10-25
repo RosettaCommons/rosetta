@@ -56,6 +56,7 @@ sources = {
 		"minimize_ppi",
 		"mutate",
 		"packstat",
+		"revold",
 		"relax",
 		"remodel",
 		"restype_converter",

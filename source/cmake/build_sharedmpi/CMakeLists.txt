@@ -39,7 +39,7 @@ INCLUDE( ../build/build.post.cmake )
 # I removed the two includes to only compile my app
 #INCLUDE( ../build/apps.all.cmake )
 #INCLUDE( ../build/pilot_apps.all.cmake )
-INCLUDE( ../build/apps/enamine_ligand_evolution.cmake )
+INCLUDE( ../build/apps/revold.cmake )
 
 
 INCLUDE( ../build/install.cmake )

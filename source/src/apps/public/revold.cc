@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   apps/pilot/peisenhuth/LigandEvolution.cc
+/// @file   apps/revold.cc
 /// @brief  An mpi compatible evolutionary algorithm for ligand design
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
@@ -23,7 +23,7 @@
 #include <mpi.h>
 #endif
 
-static basic::Tracer TR( "apps.pilot.peisenhuth.LigandEvolution" ); // NOLINT(cert-err58-cpp)
+static basic::Tracer TR( "apps.revold" ); // NOLINT(cert-err58-cpp)
 
 using namespace protocols::ligand_evolution;
 
