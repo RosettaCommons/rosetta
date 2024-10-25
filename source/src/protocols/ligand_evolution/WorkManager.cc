@@ -228,6 +228,7 @@ namespace ligand_evolution {
             terminate();
         }
 
+        // todo switch to std uniq pointers to get rid of mem mgmt
         delete[] raw_scores_;
         delete[] raw_ligand_;
         delete[] raw_ligand_smiles_;
@@ -334,6 +335,7 @@ namespace ligand_evolution {
         }
 
         // add padding to always send fixed size smiles
+        // todo add error checking for smiles padding
         ligand_smiles_ = utility::pad_right( ligand_smiles_, 1000, ' ' );
 
         MPI_Send( raw_ligand_, int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD );

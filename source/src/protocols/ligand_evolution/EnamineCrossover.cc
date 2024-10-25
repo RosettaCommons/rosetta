@@ -60,6 +60,7 @@ utility::vector1< Individual > EnamineCrossover::apply( utility::vector1< Indivi
 		TR.Warning << "Expected " << n_offspring << " offspring but got " << parents.size() << " parents. Not all of them will be used." << std::endl;
 	}
 
+    // todo turn it into a list of indices to manipulate
 	utility::vector1< Individual > local_parents( parents );
 	std::random_shuffle( local_parents.begin(), local_parents.end() );
 	core::Size current_index = 1;

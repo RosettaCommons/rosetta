@@ -185,7 +185,7 @@ bool Scorer::next_step( core::Size save_n_scores ) {
 	current_ligand_.clear();
 	current_ligand_smiles_.clear();
 	basic_pose_ = nullptr;
-	best_pose_ = core::pose::PoseOP( new core::pose::Pose );
+	best_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 	return true;
 }
 

@@ -52,6 +52,7 @@ EnamineFragmentLibrary::EnamineFragmentLibrary() = default;
 
 EnamineFragmentLibrary::~EnamineFragmentLibrary(){
 	for ( auto & fp : fingerprints_ ) {
+        // todo switch to std uniq pointer
 		delete fp.second;
 	}
 }
@@ -119,6 +120,7 @@ void EnamineFragmentLibrary::load_reactions( std::string const& reaction_file_pa
 
 	while ( getline( reaction_file, line ) ) {
 
+        // todo catch empty file
 		utility::vector1< std::string > split_line( utility::split_whitespace( line ) );
 		// skip empty lines
 		if ( split_line.empty() ) { continue; }
@@ -419,6 +421,7 @@ core::pose::PoseOP EnamineFragmentLibrary::create_pose( core::conformation::Resi
 
 	ligand_pose->append_residue_by_jump( ligand, 1, "", "", true );
 
+    // todo this can be shortened, since append does put the ligand always at the last pos
 	core::Size ligand_position = 0;
 	for ( core::Size ii( 1 ); ii <= pdb_info->nres(); ++ii ) {
 		if ( pdb_info->chain( ii ) != original_chain ) {
@@ -542,6 +545,7 @@ void EnamineFragmentLibrary::load_smiles( std::string const& path_to_data ) {
 	TR << "Loaded " << smiles_.size() << " molecules to test." << std::endl;
 }
 
+// todo rename to something more straight forward
 core::Size EnamineFragmentLibrary::smiles_to_score() const {
 	return smiles_.size();
 }

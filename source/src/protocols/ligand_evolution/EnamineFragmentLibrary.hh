@@ -151,6 +151,7 @@ private:
 	utility::vector1< EnamineReactionOP > reactions_;
 
 	/// @brief Stores the original pose to dock all ligands in
+	// todo change all poses being part of a class to pose owning pointers
 	core::pose::Pose pose_;
 
 	/// @brief Weighted sampler for random unbiased selection

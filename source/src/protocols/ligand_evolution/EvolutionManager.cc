@@ -86,6 +86,7 @@ void EvolutionManager::init() {
 	// ------------------------------------------------------------
 	// library setup
 	// ------------------------------------------------------------
+    // TODO switch to posestream to make it more universal -> MetaPoseInputStream
 	utility::vector1<std::string> filenames = basic::options::option[basic::options::OptionKeys::in::file::s].value();
 	if ( filenames.empty() ) {
 		TR.Error << "No pdb provided. Please use the -in::file::s option" << std::endl;
@@ -132,6 +133,7 @@ void EvolutionManager::init() {
 	// ------------------------------------------------------------
 	// Mover setup
 	// ------------------------------------------------------------
+    // TODO create a rosetta script xml within my option xml, parse that and retrieve the protocol mover
 	for ( const std::string& mover_name : evoopt->get_mover_protocol() ) {
 		const std::string& mover_type = evoopt->get_mover_type( mover_name );
 		if ( mover_type == "start_from" ) {
@@ -200,6 +202,7 @@ void EvolutionManager::init() {
 	}
 
 	// These setups are not needed for external scoring runs, only evolutionary optimization
+    // TODO make sure input format is the same as the outputted format
 	if ( external_scoring_ == 0 ) {
 		if ( rank_ == 0 ) {
 
@@ -275,8 +278,10 @@ void EvolutionManager::init() {
 			// ------------------------------------------------------------
 			// Population setup
 			// ------------------------------------------------------------
+            // TODO here and in general, create init functions for all options and pass them the options object - makes cleaner code and moves logic into context
 			population_.set_supported_size(evoopt->get_population_supported_size());
 			for ( const std::pair<const std::string, std::map<std::string, core::Size> > &init_opt: evoopt->get_pop_init_options() ) {
+                // TODO change from west const to east const everywhere
 				const std::string &init_type = init_opt.first;
 				const std::map<std::string, core::Size> &type_options = init_opt.second;
 				if ( init_type == "random" ) {
@@ -307,6 +312,7 @@ void EvolutionManager::init() {
 		// ------------------------------------------------------------
 		// MPI setup
 		// ------------------------------------------------------------
+        // TODO rename to something init workmanager
 		init_mpi();
 	} // if external_scoring_==0
 }
@@ -408,18 +414,20 @@ void EvolutionManager::run( int mpi_size ) {
 				TR << std::endl;
 				TR << "******************************************************************************" << std::endl;
 				scorer_->save_results();
+                // TODO add headers to output file to make it a bit more accessible
 				write_population_information();
 
 			} // for loop
 		} // if rank == 0
 #ifdef USEMPI
-            else {
-                work_manager_->work_loop();
-            }
+        else {
+            work_manager_->work_loop();
+        }
 
-            work_manager_->clean_up();
+        work_manager_->clean_up();
 #endif
 	} else {    // if external scoring run
+        // todo turn into a separate function which gets called at the beginning of run and returned - makes it clearer what the main protocol is
 		core::Size smiles_to_score = library_.smiles_to_score() / mpi_size;
 		for ( core::Size ii( 1 + smiles_to_score * rank_ ); ii <= smiles_to_score * ( rank_ + 1 ); ++ii ) {
 			try {
