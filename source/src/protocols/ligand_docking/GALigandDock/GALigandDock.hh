@@ -59,15 +59,7 @@ enum OptHMode {
 struct StructInfo {
 	core::io::silent::SilentStructOP str;
 	core::scoring::constraints::ConstraintSetOP cst;
-	core::Real rms, E, dH, ligandscore, recscore, complexscore, lig_dens, native_hbond_ratio, hbond_count, pocket_cc, atom_type_match;
-	core::Size ranking_prerelax;
-	std::string ligandname;
-};
-
-struct DensStructInfo {
-	core::io::silent::SilentStructOP str;
-	core::scoring::constraints::ConstraintSetOP cst;
-	core::Real rms, E, ligandscore, recscore, lig_dens, native_hbond_ratio, hbond_count, pocket_cc, atom_type_match;
+	core::Real rms, E, dH, ligandscore, recscore, complexscore;
 	core::Size ranking_prerelax;
 	std::string ligandname;
 };
@@ -80,11 +72,6 @@ public:
 class StructInfoCompdH {
 public:
 	bool operator() ( StructInfo &a, StructInfo &b ) {  return (a.dH > b.dH); }
-};
-
-class DensStructInfoComp {
-public:
-	bool operator() ( DensStructInfo &a, DensStructInfo &b ) {  return (a.E > b.E); }
 };
 
 /// @brief helper class to manage multiple outputs
