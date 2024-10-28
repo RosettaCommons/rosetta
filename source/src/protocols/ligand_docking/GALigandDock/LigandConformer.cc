@@ -122,7 +122,7 @@ LigandConformer::initialize(
 	}
 	update_conf( pose );
 
-	// get ligand chi dependence... this is a stupid way, should have a better way ...
+	// get ligand chi dependence for alternative crossover
         core::conformation::Residue ligand( pose->residue( ligids[1] ) );
         core::Size nligchi( ligand.nchi());
         ligandchi_downstream_.resize( nligchi );
@@ -886,7 +886,7 @@ mutate(LigandConformer const &l ) {
 	return retval;
 }
 
-// mutation
+// alternative mutation for ligands with many torsions
 LigandConformer
 mutate_ft( LigandConformer const &l, bool single_mutation ) {
 	using namespace ObjexxFCL::format;
@@ -1048,6 +1048,7 @@ crossover(LigandConformer const &l1, LigandConformer const &l2) {
 	return retval;
 }
 
+// alternative crossover for ligands with many torsions. Keeps chis constant upstream of selected chi
 LigandConformer
 crossover_ft(LigandConformer const &l1, LigandConformer const &l2 ){
         // pick (randomly) one to be "parent"
