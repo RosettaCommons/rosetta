@@ -40,10 +40,7 @@ sources = {
 		#"design_tight_clusters", # /* Amelie Stein, documentation see comments in file */
 	],
 	"pilot/amuenks" : [
-		"find_ligand_local_res",
-		"calculate_per_atom_density",
-		"density_correlation_at_levels",
-		"calculate_ligand_pocket_charge",
+		#"find_ligand_local_res",
 	],
 	"pilot/ameya" : [
 		"mixedMC", # /* Ameya Harmalkar, documentation see comments in file */
