@@ -372,6 +372,8 @@ public:
 	void set_sample_ring_conformers( bool const setting ) { sample_ring_conformers_ = setting; }
 	bool sample_ring_conformers() const { return sample_ring_conformers_; }
 
+	//Creates a skeleton from unmodelled regions of density for ligand docking
+	//Advanced: useful for ligands with many torsions
         void 
 	select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real radius, core::Real skeleton_threshold_const = 2.5, core::Size neighborhood_size = 27 );
 	void

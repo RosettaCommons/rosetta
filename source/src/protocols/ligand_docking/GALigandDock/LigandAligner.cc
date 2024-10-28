@@ -1665,13 +1665,12 @@ LigandAligner::estimate_nstruct_sample(
 	return nsample;
 }
 
+//density detection with multiple skeletons. Useful for ligands with many torsions
 void
 LigandAligner::advanced_select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real radius, core::Real skeleton_threshold_const, core::Size neighborhood_size, core::Size pool_size ) {
 
 	ObjexxFCL::FArray3D< float > const & densdata = core::scoring::electron_density::getDensityMap().get_data();
 	
-	//points_to_search_.clear();
-
 	//calculate center of mass for ligand; probably a Rosetta function that does this
 	core::conformation::Residue const &lig( pose.residue( ligid ) );
 	core::Vector lig_com( 0.0 );
@@ -1709,12 +1708,11 @@ LigandAligner::advanced_select_points( core::pose::Pose const & pose, core::Size
 	TR.Debug << "Voxel volume: " << voxel_volume << std::endl;
 	
 	for ( core::Size i=1; i<=point_score_pairs.size(); i++ ) {
-		//bool hasneighbor = false;
 		numeric::xyzVector< core::Real > x_idx = point_score_pairs[i].first;
 		numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
 		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );	
 			
-		//sanity check; outputs all points in PDB format
+		//outputs all points in PDB format
 		TR.Debug << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << point_score_pairs[i].second << std::endl;
 		
 		//finds points that are not occupied and saves them to search
@@ -1722,17 +1720,18 @@ LigandAligner::advanced_select_points( core::pose::Pose const & pose, core::Size
 			points_to_erode.push_back( point_score_pairs[i] );
 		}
 		
-		//if ( points_to_search_.size() >= topNtrans_ ) break; //I have no idea what this does. A remnant from the code I ripped off
 	}
 
-	//sanity check; prints points before erosion could go inside debug condition
-	for ( core::Size i = 1; i <= points_to_erode.size(); i++ ) {
-		numeric::xyzVector< core::Real > x_idx = points_to_erode[i].first;
-		numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
-		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );		
-		
-		TR.Debug << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
-		
+	//prints points before erosion could go inside debug condition
+	if ( TR.Debug.visible() ) {
+		for ( core::Size i = 1; i <= points_to_erode.size(); i++ ) {
+			numeric::xyzVector< core::Real > x_idx = points_to_erode[i].first;
+			numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
+			core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );		
+			
+			TR.Debug << "HETATM" << std::setw(5) << utility::to_string(i) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(i) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
+			
+		}
 	}
 
 	std::sort( points_to_erode.begin(), points_to_erode.end(), PointScoreComparator());
@@ -1749,10 +1748,12 @@ LigandAligner::advanced_select_points( core::pose::Pose const & pose, core::Size
                 }
         }
 
+	//scores networks as bases or satellites
+	//Bases are used as cores for skeletons
+	//Satellines may or may not be added to bases
 	utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > bases;
 	utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > satellites;
 	utility::vector1 < core::Real > base_scores;
-	//utility::vector1 < core::Real > satellite_scores;
         for ( core::Size inetwork = 1; inetwork <= networks.size(); ++inetwork ) {
                 TR.Debug << "Network " << inetwork << ":" << std::endl;
                 if ( is_base_blob( networks[inetwork], lig ) ) {
@@ -1842,33 +1843,12 @@ LigandAligner::advanced_select_points( core::pose::Pose const & pose, core::Size
 			if ( numeric::random::rg().uniform() < p_satellite ) {
 				base_blob.insert( base_blob.end(), satellites[isatellite].begin(), satellites[isatellite].end() );
 			}	
-			/*for ( core ::Size ipoint = 1; ipoint <= satellites[isatellite].size(); ++ipoint ) {
-				numeric::xyzVector < core::Real > point_to_print = satellites[isatellite][ipoint].first;
-				numeric::xyzVector< core::Real > x_cart(point_to_print[0],point_to_print[1],point_to_print[2]);
-				core::scoring::electron_density::getDensityMap().idx2cart( point_to_print, x_cart );
-
-				//prints out networks
-				TR << "HETATM" << std::setw(5) << utility::to_string(ipoint) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(ipoint) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
-			}*/
 		}
 
 		blobs_for_erosion.push_back( base_blob );
 	}
 
-	/*for ( core::Size i = 1; i <= 10; ++i ) {
-		utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > blobs = blobs_for_erosion[i];
-
-		TR << "Printing blob number " << i << " before erosion" << std::endl;
-		for ( core ::Size ipoint = 1; ipoint <= blobs.size(); ++ipoint ) {
-			numeric::xyzVector < core::Real > point_to_print = blobs[ipoint].first;
-			numeric::xyzVector< core::Real > x_cart(point_to_print[0],point_to_print[1],point_to_print[2]);
-			core::scoring::electron_density::getDensityMap().idx2cart( point_to_print, x_cart );
-
-			//prints out networks
-			TR << "HETATM" << std::setw(5) << utility::to_string(ipoint) << " " <<  std::setw(4) << std::left << "O1" << " " <<  std::setw(3) << std::right << "ALA" << " A" << std::setw(4) << utility::to_string(ipoint) << "    " << std::setw(8) << x_cart[0] << std::setw(8) << x_cart[1] << std::setw(8) << x_cart[2] << std::setw(6) << "1.00" << std::setw(6) << std::fixed << std::setprecision(2) << "20.00" << std::endl;
-		}
-	}*/
-
+	//Erodes blobs into a skeleton
 	for ( core::Size iblob = 1; iblob <= blobs_for_erosion.size(); ++iblob ) {
 		utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points = erode_points( blobs_for_erosion[iblob], neighborhood_size );
 
@@ -2348,7 +2328,7 @@ LigandAligner::find_network ( numeric::xyzVector< core::Real > start_point, util
 	
 	numeric::xyzVector< core::Real > start_point_cart(start_point[0],start_point[1],start_point[2]);
         core::scoring::electron_density::getDensityMap().idx2cart( start_point, start_point_cart );
-	TR << distance_cutoff << std::endl;
+	TR.Debug << distance_cutoff << std::endl;
 	for ( core::Size ipoint = 1; ipoint <= eroded_points.size(); ++ipoint ) {
 
 		numeric::xyzVector < core::Real > point_to_compare = eroded_points[ipoint].first;
