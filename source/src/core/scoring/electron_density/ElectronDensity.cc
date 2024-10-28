@@ -2657,8 +2657,8 @@ ElectronDensity::matchAtomFast(
 	idxX = periodic_mod(fracX, fastgrid, fastorigin);
 
 	core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
-	//core::Real W = sig_j.a(  ) / 6.0;
-	score += /*W*/score_i;
+	core::Real W = sig_j.a(  ) / 6.0;
+	score += W*score_i;
 
 	return score;
 }
