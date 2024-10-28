@@ -343,6 +343,8 @@ private:
 		bool simple=true
 	) const;
 
+	//calculates the fraction of matching atom types for two residues
+	//useful for similarity of pseudo-symmetiric lipids
 	core::Real
 	match_by_atomtype(
         	core::conformation::Residue const & rsd1,

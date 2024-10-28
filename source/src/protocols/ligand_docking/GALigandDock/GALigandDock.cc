@@ -83,6 +83,7 @@
 
 #include <basic/options/option.hh> // HACK
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
@@ -598,7 +599,7 @@ GALigandDock::apply( pose::Pose & pose )
 			        
 				if ( local_res_ == 0.0 ) {
 					local_res_ = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
-					TR << "No local resolution provided. Using the global resolution"
+					TR << "No local resolution provided. Using the global resolution" << std::endl;
 				}
 
 				core::Real expected_dens = 0.4535172 - 0.0190373 * local_res_ + 0.5542869 * pose_cc  -0.0006722 * nheavyatoms;
