@@ -1,2 +1,2 @@
-master:andy.watkins2@gmail.com
+main:andy.watkins2@gmail.com
 scientific:andy.watkins2@gmail.com

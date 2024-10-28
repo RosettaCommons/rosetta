@@ -420,7 +420,7 @@ def parse_instance_kwargs(obj: Any) -> NoReturn:
 @parse_instance_kwargs.register(dict)
 def _parse_dict(obj: Dict[Any, Any]) -> Dict[Any, Any]:
     for k in obj.keys():
-        if k in ["client", "input_packed_pose"]:
+        if k in ["client", "clients", "input_packed_pose"]:
             raise NotImplementedError(
                 f"The parameter '{k}' must be passed directly to reproduce(), "
                 + "not as a member of the 'instance_kwargs' dictionary."

@@ -27,17 +27,17 @@
 sources = {
     # GABI GET RID OF THIS
 	"pilot/reggiano" : [
-		"density_res_zscores",
+		#"density_res_zscores",
 	],
 	# A ######################################################################
 	"pilot/aginsparg" : [
 		#"holes_identifier",
-		"space_fill_analysis",
+		#"space_fill_analysis",
 		#"ligand_discovery_search_protocol",
 	],
 	"pilot/amelie" : [
-		"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */
-		"design_tight_clusters", # /* Amelie Stein, documentation see comments in file */
+		#"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */
+		#"design_tight_clusters", # /* Amelie Stein, documentation see comments in file */
 	],
 	"pilot/amuenks" : [
 		"find_ligand_local_res",
@@ -54,19 +54,19 @@ sources = {
 		#"SymDock",	 # /* Ingemar Andre,Documentation Location,Demo Location */
 	],
 	"pilot/andrew" : [
-		"domain_assembly_jd2",
-		"interface_ddg_bind",
+		#"domain_assembly_jd2",
+		#"interface_ddg_bind",
 		#"optest",
-		"measure_catalytic_geometry",
+		#"measure_catalytic_geometry",
 		"measure_lcaa_neighbor_radii",
-		"mmt_msd",
+		#"mmt_msd",
 		"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
-		"analyze_rtmin_failures",
+		#"analyze_rtmin_failures",
 		"zn_match_symmdock", #Note: used for scorefunction version tests; no itest needed
 		"sweep_respair_energies",
 		"find_buns",
-		"fixbb_jd3",
-		"relax_jd3",
+		#"fixbb_jd3",
+		#"relax_jd3",
 		#"test_ik_match",
 	],
 	"pilot/aroop" : [
@@ -86,7 +86,7 @@ sources = {
 	],
 	"pilot/awatkins" : [
 		#"aggregate_coarse_rna_vdw",
-		"aramid_folding",
+		#"aramid_folding",
 		#"a3b_hbs_creator",
 		#"a3b_hbs_dock_design",
 		#"a3b_test",
@@ -98,7 +98,7 @@ sources = {
 		#"cov_test",
 		#"diversify_conotoxin",
 		#"get_dihedral_b3aa",
-		"hal_rna_denovo",
+		#"hal_rna_denovo",
 		#"indel",
 		#"macrocycle_sampling",
 		#"make_a3b_bundle",
@@ -108,7 +108,7 @@ sources = {
 		#"peptoid_hbs",
 		"polyaramid_test",
 		#"pose_iteration",
-		"sec_struct_finder",
+		#"sec_struct_finder",
 		"test_d_l_readin",
 		#"test_metapatch",
 		#"trial_rna_mutants",
@@ -133,13 +133,13 @@ sources = {
 		#"compare_rms_byres"
 	],
 	"pilot/bazzoli" : [
-		"bou-min-ubo-nrg-jump",
-		"cnl_env_lost_hbs",
-		"lig_low_sasa",
-		"lig_polar_sat",
-		"list_cnl_ngbs",
-		"nrg_res_set",
-		"sel_hbonds",
+		#"bou-min-ubo-nrg-jump",
+		#"cnl_env_lost_hbs",
+		#"lig_low_sasa",
+		#"lig_polar_sat",
+		#"list_cnl_ngbs",
+		#"nrg_res_set",
+		#"sel_hbonds",
 	],
 	"pilot/bcorreia" : [
 		#"iterative_design", # /* Correia,Documentation Location,Demo Location */
@@ -154,21 +154,21 @@ sources = {
 		#"Zinc2_HomodimerDesign", #integration test: zinc_homodimer_design.  Application moved to public/design
 	],
 	"pilot/ben" : [
-		"VIP_app",
+		#"VIP_app",
 	],
  	"pilot/biokhar" : [
-		"karen_compare_different_proteins",
-		"karen_pocket_compare",
-		"karen_pocket_save",
-		"karen_compare_pocket_rmsd",
+		#"karen_compare_different_proteins",
+		#"karen_pocket_compare",
+		#"karen_pocket_save",
+		#"karen_compare_pocket_rmsd",
  	],
 	"pilot/blivens" : [
 		#"convert", # /* Spencer Bliven,Documentation Location,Demo Location */
 		#"disulfide_scorer", # /* Spencer Bliven,Documentation Location,Demo Location */
 	],
 	"pilot/boon" : [
-		"test", # /* a pilot app */
-		"pilot", # /* a pilot app */
+		#"test", # /* a pilot app */
+		#"pilot", # /* a pilot app */
 	],
         "pilot/brownbp1" : [
                 #"test_bcl", # /* pilot app for basic BCL-Rosetta integration */
@@ -192,7 +192,7 @@ sources = {
 		#"outputAbego",
 		#"outputSasa",
 		#"repeat_dock",
-		"calc_ssm_energies_with_structure_profile",
+		#"calc_ssm_energies_with_structure_profile",
 		#"outputRama",
 		#"cluster_alns",
 		#"identify_homolog_inaccuracies",
@@ -206,13 +206,13 @@ sources = {
     		"basic_glycan_sampler",
 		#"glycan_clash_check",
 		#"glycan_info",
-		"test_glycan_trees",
+		#"test_glycan_trees",
 	],
 	"pilot/chen" : [
 		"simple_dna_regression_test", # /* ???,Documentation Location,Demo Location */
 	],
 	"pilot/chrisk" : [
-		"hbscan",
+		#"hbscan",
 	],
 	"pilot/chu" : [
 		#"zinc_stat", # /* Chu Wang,Documentation Location,Demo Location */
@@ -223,17 +223,17 @@ sources = {
 		#"dssp",
 		#"extend",
 		#"fragment_agreement",
-		"fragment_rmsd",
+		#"fragment_rmsd",
 		#"gdtha",
 		#"helix_rotate",
 		#"jumping",
 		#"kcluster",
 		#"maxsub",
-		"medal",
-		"medal_exchange",
+		#"medal",
+		#"medal_exchange",
 		#"rmsd_partial_thread",
 		#"sheet_translate",
-		"star_abinitio",
+		#"star_abinitio",
 		#"windowed_rama",
 		#"windowed_rmsd",
 	],
@@ -255,19 +255,19 @@ sources = {
 		#"LoopExtend" # /* Dan Mandell,Documentation Location,Demo Location */
 	],
 	"pilot/danpf" : [
-		"mmtf2pdb",
-		"mmtfs2mmtf",
+		#"mmtf2pdb",
+		#"mmtfs2mmtf",
 	],
 	"pilot/dekim" : [
-		"score_nonlocal_frags",
-		"convert_to_centroid",
-		"extended_chain",
-		"strand_pairings",
-		"decoy_features",
+		#"score_nonlocal_frags",
+		#"convert_to_centroid",
+		#"extended_chain",
+		#"strand_pairings",
+		#"decoy_features",
 	],
 	"pilot/delucasl" : [
 		#"roc_test",
-		"roc_optimizer",
+		#"roc_optimizer",
 		#"RotamerDump",
 		#"process_mdl",
         "params_tester",
@@ -325,7 +325,7 @@ sources = {
 		#"rotamer_prediction_benchmark", # /* Doug Renfrew,Documentation Location,Demo Location */
 		#"simple_relax", # /* Doug Renfrew,Documentation Location,Demo Location */
 		#"score_min_rtmin_test",
-		"test_chain_sequence",
+		#"test_chain_sequence",
 	],
 	"pilot/dwkulp" : [
 		#"flexibleLoopDesign",
@@ -336,26 +336,26 @@ sources = {
 
 	# F ######################################################################
 	"pilot/fcchou" : [
-		"thermal_sampler_alpha",
+		#"thermal_sampler_alpha",
 	],
 	"pilot/firas" : [
 		#"check_burial", # /* Firas,Documentation Location,Demo Location */
 	],
 	"pilot/flo" : [
-		"EnzdesFixBB", # /* Florian Richter,/doc/apps/public/enzyme_design.dox,/test/integration/tests/enzdes/*/
+		#"EnzdesFixBB", # /* Florian Richter,/doc/apps/public/enzyme_design.dox,/test/integration/tests/enzdes/*/
 		#"SecondaryMatcher", # /* Florian Richter, this application will be removed when the real matcher comes online, probably around july 2009*/
 	],
 	"pilot/frank" : [
-		"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"pdb_gen_cryst", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"calc_ssm_energies", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"perturb_structure", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"fasol_perres", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"dock_pdb_into_density",
+		#"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"pdb_gen_cryst", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"calc_ssm_energies", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"perturb_structure", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"fasol_perres", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"dock_pdb_into_density",
 		#"cryst_gen", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"dsrna_grow", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"dsrna_grow", # /* Frank Dimaio,Documentation Location,Demo Location */
 	],
 	"pilot/frankdt" : [
 		#"segment_file_generator", # /* Minnie Langlois, Documentation Location, Demo Locatoin */
@@ -363,12 +363,12 @@ sources = {
 
 	# G ######################################################################
 	"pilot/georgkuenze" : [
-		"spinlabel_activity",
+		#"spinlabel_activity",
 		#"score_with_para_nmr_data_jd2",
 		#"ligand_transform_with_pcs",
 	],
 	"pilot/gideonla" : [
-		"CutOutDomain", # /* Grant,Documentation Location,Demo Location */
+		#"CutOutDomain", # /* Grant,Documentation Location,Demo Location */
 
 	],
 	"pilot/grant" : [
@@ -384,38 +384,38 @@ sources = {
 	],
 
 	"pilot/guangfeng" : [
-		"cryst_hbonds", # small molecule xtal dock hbonds reporter
-		"align_substructure", # align small molecule substructure
-		"ligand_docking_hbonds",
+		#"cryst_hbonds", # small molecule xtal dock hbonds reporter
+		#"align_substructure", # align small molecule substructure
+		#"ligand_docking_hbonds",
 	],
 	# H ######################################################################
-		"pilot/habib" : [
-		"david_find_contacts",
-		"david_find_surface_residues",
-		"david_find_complex_contacts",
-		"david_fill_gaps",
-		"david_find_pocket_stabilizing_mutations",
-		"david_open_pocket",
-		"david_pocket_align_and_save",
-		"david_pocket_compare",
-		"david_pocket2PDB",
-		"david_recompute_score_and_rmsd",
-		"david_align_and_recompute_score_and_rmsd",
-		"david_align_append_and_recompute_score_and_rmsd",
-		"david_find_best_pocket",
-		"david_find_exemplar",
-		"david_find_pocket_exemplar",
-		"david_find_best_contact_pocket",
-		"david_rotation_experiment",
-		"david_extract_domain",
-		"david_extract_dinucleotide_musashi_reference",
+	"pilot/habib" : [
+		#"david_find_contacts",
+		#"david_find_surface_residues",
+		#"david_find_complex_contacts",
+		#"david_fill_gaps",
+		#"david_find_pocket_stabilizing_mutations",
+		#"david_open_pocket",
+		#"david_pocket_align_and_save",
+		#"david_pocket_compare",
+		#"david_pocket2PDB",
+		#"david_recompute_score_and_rmsd",
+		#"david_align_and_recompute_score_and_rmsd",
+		#"david_align_append_and_recompute_score_and_rmsd",
+		#"david_find_best_pocket",
+		#"david_find_exemplar",
+		#"david_find_pocket_exemplar",
+		#"david_find_best_contact_pocket",
+		#"david_rotation_experiment",
+		#"david_extract_domain",
+		#"david_extract_dinucleotide_musashi_reference",
 		#"david_darc_multirun",
 	],
 
 	"pilot/hpark" : [
 		#"test_sampling",
      	        #"gen_tripeptide",
-		"mpi_refinement",
+		#"mpi_refinement",
 		#"serial_refinement"
 	],
 
@@ -423,15 +423,15 @@ sources = {
 	"pilot/ian" : [
 		#"ligdock_confidence", # /* Ian Davis,Documentation Location,Demo Location */
 		#"cluster_ligand_poses", # /* Ian Davis,Documentation Location,Demo Location */
-		"select_best_unique_ligand_poses_jd1", # /* Ian Davis,Documentation Location,Demo Location */
+		#"select_best_unique_ligand_poses_jd1", # /* Ian Davis,Documentation Location,Demo Location */
 	],
 
 	# J ######################################################################
         "pilot/jackmaguire" : [
-                "benchmark_k_medoids",
+                #"benchmark_k_medoids",
                 "tensorflow_manager_multirun_test",
                 "tensorflow_manager_multi_input_test",
-                "measure_sequence_similarity_to_native",
+                #"measure_sequence_similarity_to_native",
                 "tensorflow_manager_test1",
                 "tensorflow_test2",
                 "test_rosetta_thread_manager_preallocation",
@@ -450,10 +450,10 @@ sources = {
 		#"test_grafting",
 		],
 	"pilot/james" : [
-		"analyze_casp9",
-		"per_residue_features",
-		"jdock",
-		"superdev",
+		#"analyze_casp9",
+		#"per_residue_features",
+		#"jdock",
+		#"superdev",
 		#"make_artificial_centroids",
 		#"frag_hack",
 		#"zafer_frag_rmsd",
@@ -482,7 +482,7 @@ sources = {
 		#"jidealize",
 		#"boost_hacks",
 		#"exhaustive_align",
-		"jcluster",
+		#"jcluster",
 		#"ca_build",
 		#"silent_cst_quality",
 		#"prof_search",
@@ -497,9 +497,9 @@ sources = {
 		#"filter_sequences",
 		#"min_cst",
 		#"dp_align",
-		"distances",
-		"angles",
-		"cst_quality",
+		#"distances",
+		#"angles",
+		#"cst_quality",
 		#"constraints_matrix",
 		#"score_silent_cst",
 		#"constraints_viewer",
@@ -520,8 +520,8 @@ sources = {
 		#"jd2memtest",
 	],
 	"pilot/jeliazkov" : [
-		"calc_irms_despite_mismatch",
-		"calc_cdr_rmsd",
+		#"calc_irms_despite_mismatch",
+		#"calc_cdr_rmsd",
 	],
 	"pilot/jianqing" : [
 		#"antibody_assemble_CDRs",
@@ -535,29 +535,29 @@ sources = {
 		#"use_asn_motifs",
 	],
 	"pilot/jjgray" : [
-		"antibody_metrics", # /* Jeff Gray,Documentation Location,Demo Location */
+		#"antibody_metrics", # /* Jeff Gray,Documentation Location,Demo Location */
 	],
 	"pilot/jkleman" : [
 		#"mp_parameters", # /* Checking parameters */
 		#"input_from_cmd", # /* read input files */
-		"add_membrane",
+		#"add_membrane",
 		"interface_statistics",
-		"mpdocking",
+		#"mpdocking",
 		"mpdocking_setup",
 		"mp_find_interface",
 #		"mp_find_interface_test",
-		"mpfolding",
+		#"mpfolding",
 #		"mpframework_test",
 #		"mpframework_test1",
 #		"mpframework_test2",
 		"mp_quick_relax",
-		"mp_qrtest",
-		"mp_relax_partners_separately",
+		#"mp_qrtest",
+		#"mp_relax_partners_separately",
 		"per_residue_sc_sasa",
 		"range_relax",
-		"simple_rotamer_recovery",
-		"spanfile_from_pdb",
-		"transform_into_membrane",
+		#"simple_rotamer_recovery",
+		#"spanfile_from_pdb",
+		#"transform_into_membrane",
 	],
 	"pilot/johnk" : [
 		#"chet_trp_to_gly",
@@ -580,7 +580,7 @@ sources = {
 		#"nadeem_compensatory_mutation",
 	],
 	"pilot/josh" : [
-		"motif_loop_build",
+		#"motif_loop_build",
 	],
 	"pilot/jstev" : [
 		#"collect_features",
@@ -598,15 +598,15 @@ sources = {
 		#"oop_dimer_rama_calc",
 		"ld_converter",
 		#"scaffold_matcher",
-		"cmaes_test",
+		#"cmaes_test",
 		"cmaes_minimizer_test",
 	],
 	"pilot/kalngyk" : [
 		#"calibur" - Moved to public,
 	],
 	"pilot/kenjung" : [
-		"loophash_createfiltereddb",
-		"FastGap",
+		#"loophash_createfiltereddb",
+		#"FastGap",
 		#"fragpdb",
 		#"symfragrm",
 		#"sixdtreeTEST",
@@ -620,14 +620,14 @@ sources = {
 		#"khXtal_water_bunsat",
 	],
 	"pilot/kkappel" : [
-		"analyze_docked_RNA_motifs",
-		"calculate_distances",
-		"check_frag_rmsd",
-		"check_rnp_coarse",
-		"get_rmsd",
-		"score_rnp",
-		"score_rnp_lowres",
-		"setup_coord_csts",
+		#"analyze_docked_RNA_motifs",
+		#"calculate_distances",
+		#"check_frag_rmsd",
+		#"check_rnp_coarse",
+		#"get_rmsd",
+		#"score_rnp",
+		#"score_rnp_lowres",
+		#"setup_coord_csts",
 	],
 	"pilot/krishna" : [
 		#"pH_neighbor_pack",
@@ -638,13 +638,13 @@ sources = {
 
 	# L ######################################################################
 	"pilot/labonte" : [
-		"debug_labontes_current_work",
+		#"debug_labontes_current_work",
 #		"design_glycans",
 		"glycomutagenesis",
-		"load_crazy_sugars",
-		"test_glycan_linkages",
-		"test_ResidueProperties",
-		"test_sugar_torsion_getters_and_setters",
+		#"load_crazy_sugars",
+		#"test_glycan_linkages",
+		#"test_ResidueProperties",
+		#"test_sugar_torsion_getters_and_setters",
 	],
 	"pilot/lemmon" : [
 		#"undirected_graph"
@@ -654,7 +654,7 @@ sources = {
 		#"SymmAbrelax",
 	],
 	"pilot/lior" : [
-		"feature_schema_generator"
+		#"feature_schema_generator"
 	],
 	"pilot/liz" : [
 		#"test_scmcmover",
@@ -672,7 +672,7 @@ sources = {
 	"pilot/maprahamian" : [
 		"burial_measure_centroid",
 		#"per_residue_solvent_exposure",
-		"score_test",
+		#"score_test",
 	],
 	"pilot/mdsmith" : [
 		#"ligand_motifs",
@@ -681,10 +681,10 @@ sources = {
 	"pilot/membrane" : [
 		"load_membrane_pose",
 #		"membrane_ddG",
-		"membrane_relax",
+		#"membrane_relax",
 #		"membrane_docking",
-		"membrane_symdocking",
-		"view_membrane_protein",
+		#"membrane_symdocking",
+		#"view_membrane_protein",
 		#"trial_symdocking",
 	],
 	"pilot/mike" : [
@@ -738,22 +738,22 @@ sources = {
 	],
 	"pilot/nmarze" : [
 		#"packing_angle",
-		"motif_dock",
+		#"motif_dock",
 	],
 	"pilot/nobuyasu" : [
 		#"flxbb", # /* Nobuyasu,Documentation Location,Demo Location */
-		"foldptn", # /* Nobuyasu,Documentation Location,Demo Location */
+		#"foldptn", # /* Nobuyasu,Documentation Location,Demo Location */
 		#"local_rmsd", # /* Nobuyasu,Documentation Location,Demo Location */
 		#"ncontact", # /* Nobuyasu,Documentation Location,Demo Location */
-		"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
-		"rama", # /* Nobuyasu,Documentation Location,Demo Location */
+		#"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
+		#"rama", # /* Nobuyasu,Documentation Location,Demo Location */
 	],
 
 	# O ######################################################################
 	"pilot/olli" : [
 		"cloud_app",
-		"FragsToAtomDist",
-		"r_play_with_etables",
+		#"FragsToAtomDist",
+		#"r_play_with_etables",
 		#"r_build_hotspot_loops",
 		#"r_abrelax",
 		#"r_fake_noe",
@@ -764,16 +764,16 @@ sources = {
 		#"r_min_check",
 		#"r_convert_frags",
 		"r_broker", # /* Oliver Lange,Documentation Location,Demo Location */
-		"r_trjconv", # /* Oliver Lange,Documentation Location,Demo Location */
-		"r_frag_quality", #Note: used for measuring fragment quality; no itest needed
-		"r_cst_tool", # /* Oliver Lange,Documentation Location,Demo Location */
-		"r_score_rdc", # /* Oliver Lange,Documentation Location,Demo Location */
+		#"r_trjconv", # /* Oliver Lange,Documentation Location,Demo Location */
+		#"r_frag_quality", #Note: used for measuring fragment quality; no itest needed
+		#"r_cst_tool", # /* Oliver Lange,Documentation Location,Demo Location */
+		#"r_score_rdc", # /* Oliver Lange,Documentation Location,Demo Location */
 		#"r_score", # /* Oliver Lange,Documentation Location,Demo Location */
 		#"r_count_neighbours", # /* Oliver Lange,Documentation Location,Demo Location */
 		#"r_rmsf", # /* Oliver Lange,Documentation Location,Demo Location */
 		#"test_assert_speed",
-		"r_dock_tempered",
-		"r_tempered_sidechains",
+		#"r_dock_tempered",
+		#"r_tempered_sidechains",
 	],
 	"pilot/olungu" : [
 		#"sasa_interface",
@@ -786,13 +786,13 @@ sources = {
 
 	# P ######################################################################
 	"pilot/pacheco" : [
-	"design_glycans",
+		"design_glycans",
 	],
 	"pilot/phil" : [
 		"test1", # /* Phil Bradley,Documentation Location,Demo Location */
-	        "repeat_demo", # app to demo setting up a tandem repeat pose for connected chain folding
+	        #"repeat_demo", # app to demo setting up a tandem repeat pose for connected chain folding
 		#"dna_spec_test", # /* Phil Bradley,Documentation Location,Demo Location */
-		"analyze_dna", # /* Phil Bradley,Documentation Location,Demo Location */
+		#"analyze_dna", # /* Phil Bradley,Documentation Location,Demo Location */
 		#"dimer_relax", # /* Phil Bradley,Documentation Location,Demo Location */
 		#"dna_design_test", # /* Phil Bradley,Documentation Location,Demo Location */
 		#"dna_relax", # /* Phil Bradley,Documentation Location,Demo Location */
@@ -815,32 +815,32 @@ sources = {
 		 #"test_virtuals"
 	],
 	"pilot/ragul" : [
-		"ragul_darc_minimize",
-		"ragul_get_ligand_sasa",
-		"ragul_rosetta_dump_pdb",
-		"sarah_get_pharmacophores",
-		"ragul_find_all_hbonds",
-		"ragul_calculate_ligand_rmsd",
-		"get_rna_pharmacophore",
-		"get_rna_pharmacophore_with_water",
-		"get_rna_ring_sasa",
-		"ragul_get_ligand_hbonds",
-		"get_pharmacophore_without_bound_rna",
-		"gen_rna_pharmacophore",
+		#"ragul_darc_minimize",
+		#"ragul_get_ligand_sasa",
+		#"ragul_rosetta_dump_pdb",
+		#"sarah_get_pharmacophores",
+		#"ragul_find_all_hbonds",
+		#"ragul_calculate_ligand_rmsd",
+		#"get_rna_pharmacophore",
+		#"get_rna_pharmacophore_with_water",
+		#"get_rna_ring_sasa",
+		#"ragul_get_ligand_hbonds",
+		#"get_pharmacophore_without_bound_rna",
+		#"gen_rna_pharmacophore",
 		#"ragul_test_darc",
-		"ragul_get_molecular_surface",
-		"ragul_get_connolly_surface",
-		"cstmin",
-		"ragul_calculate_residue_rmsd",
-		"ragul_get_aa_code",
-		"ragul_analyze_tcr_interface",
+		#"ragul_get_molecular_surface",
+		#"ragul_get_connolly_surface",
+		#"cstmin",
+		#"ragul_calculate_residue_rmsd",
+		#"ragul_get_aa_code",
+		#"ragul_analyze_tcr_interface",
 	],
 	"pilot/ralford" : [
-		"version_mpscorefxn",
+		"version_mpscorefxn", # Needed for the scorefunction versioning tests
 		"enumerate_rotamers",
-		"mp_rsd_energies",
-		"color_by_lipid_type", 
-		"find_optimal_hydrophobic_thk",
+		#"mp_rsd_energies",
+		"color_by_lipid_type",
+		#"find_optimal_hydrophobic_thk",
 	],
 	"pilot/rayyrw" : [
 		#"replonly",
@@ -854,16 +854,16 @@ sources = {
         	#"cal_nonoverlap_scores",
 	],
 	"pilot/rhiju" : [
-		"rna_test",
+		#"rna_test",
 		#"rna_assemble_test",
-		"mg_lores_pdbstats",
-		"mg_hires_pdbstats",
-		"dna_test",
+		#"mg_lores_pdbstats",
+		#"mg_hires_pdbstats",
+		#"dna_test",
 	        "screen_phosphates",
 	        "rb_entropy", #hey I've added a demo do not delete.
 		"read_tensor", # Needed for the database_md5 integration test
-	        "homolog_finder_farna",
-	        "pack_polar_hydrogens",
+	        #"homolog_finder_farna",
+	        #"pack_polar_hydrogens",
 	        #"rna_protein_test",
 		#"pdbstats_test"
 	],
@@ -874,11 +874,11 @@ sources = {
 	"pilot/rmoretti" : [
 		#"bcl_type_check", # internal, never intended for release
 		#"bootstrap_bcl_types", # internal, never intended for release
-		"crash_report_test",
+		#"crash_report_test",
 		#"molfile_read_test", # internal, never intended for release
-		"extract_atomtree_diffs_jd1", # /* Old, jd1 version of extract_atomtree_diffs, in case someone really needs it.*/
-		"ligand_rpkmin_jd1", # /* Old, jd1 version of ligand_rpkmin, in case someone really needs it. */
-		"ligand_dock_jd1", # /* Old, jd1 version of ligand_dock, in case someone really needs it. */
+		#"extract_atomtree_diffs_jd1", # /* Old, jd1 version of extract_atomtree_diffs, in case someone really needs it.*/
+		#"ligand_rpkmin_jd1", # /* Old, jd1 version of ligand_rpkmin, in case someone really needs it. */
+		#"ligand_dock_jd1", # /* Old, jd1 version of ligand_dock, in case someone really needs it. */
 	],
 	"pilot/ronj" : [
 		#"surface_optE_parallel",
@@ -891,9 +891,9 @@ sources = {
 		#"report_cavities_for_plugin",
 	],
 	"pilot/rpache" : [
-		"generate_matcher_constraints",
-		"calibrate_pdb_via_sidechain_optimization",
-		"score_protein_ligand_interactions",
+		#"generate_matcher_constraints",
+		#"calibrate_pdb_via_sidechain_optimization",
+		#"score_protein_ligand_interactions",
 	],
 	"pilot/rvernon" : [
 		#"calc_pair_stats", # /* Rob Vernon,Documentation Location,Demo Location */
@@ -924,14 +924,14 @@ sources = {
 		#"struct_frag",
 	],
 	"pilot/shilei" : [
-		"lowresdock_patchdock_hotspot_cst",
-		"cluster_hotspot_docking",
-		"score_hotspot_cst",
-		"compute_Irmsd",
-		"tmalign_cluster",
-		"bb_cluster",
+		#"lowresdock_patchdock_hotspot_cst",
+		#"cluster_hotspot_docking",
+		#"score_hotspot_cst",
+		#"compute_Irmsd",
+		#"tmalign_cluster",
+		#"bb_cluster",
 	#	"docking_inputpatchdock_mpi",
-		"read_pose_jump_orientation_repack",
+		#"read_pose_jump_orientation_repack",
 		#"match_disulfide_to_scaffold",
 		#"docking_parallel",
 		#"complex_interface_optimize",
@@ -940,8 +940,8 @@ sources = {
 		#"antibody",
 		#"ColorsDemo",
 		#"PyMOLDemo",
-		'hal',
-		'hal-demo',
+		#'hal',
+		#'hal-demo',
 	],
 	"pilot/sevya" : [
 		#"msd",
@@ -953,12 +953,12 @@ sources = {
 		"ChemXRW/PDB_diagnostic",
 	],
 	"pilot/sthyme" : [
-		"dna_motifs_collector",
+		#"dna_motifs_collector",
 		"motif_dna_packer_design",
 		#"pdb2motiffile",
 	],
 	"pilot/stranges" : [
-		"buried_polar_finder",
+		#"buried_polar_finder",
 		"min_pack_min",
 	],
 
@@ -982,7 +982,7 @@ sources = {
 		#"test_bbmc",
 		#"test_cen_rot",
 		#"fa_to_cenrot_score",
-		"cenrot_jd2",
+		#"cenrot_jd2",
 		#"cartesian_ddg",
 		#"general_pair_counting",
 		#"pairwise_fa_energy",
@@ -1069,9 +1069,9 @@ sources = {
 		#"gpu_score",
 		#"gpu_speedtest",
 		#"gpu_test",
-		"holes",
+		#"holes",
 		#"holes2_training_data",
-		"holes_daball_input",
+		#"holes_daball_input",
 		#"holes_pbpdb",
 		#"holes_training_data",
 		#"isct_test",
@@ -1106,7 +1106,7 @@ sources = {
 		#"test_leerichards",
 		#"test_string",
 		#"test_sucker_energy",
-		"test_surf_vol",
+		#"test_surf_vol",
 		#"ward_design",
 		#"willmatch_2d6_bhe",
 		#"willmatch_chorismate",
@@ -1119,9 +1119,9 @@ sources = {
         ],
 	
 	 "pilot/woodsh" : [
-		"mp_transition_bfactor",
-		"set_radius",
-		"mp_optimize_geometry_params",
+		#"mp_transition_bfactor",
+		#"set_radius",
+		#"mp_optimize_geometry_params",
 
 	],
 
@@ -1139,17 +1139,17 @@ sources = {
 		"mucintypeglycosylation",
 	],
 	"pilot/vmullig" : [
-		"cycpep_analysis",
+		#"cycpep_analysis",
 		"fit_helixparams",
 		"make_mainchain_potential",
-		"plot_scoreterm",
+		#"plot_scoreterm",
 		#"simple_cycpep_predict",
-		"symmetrize_old_ramamap",
-		"symmetrize_rotlib",
-		"symmetrize_3d_ramamap",
+		#"symmetrize_old_ramamap",
+		#"symmetrize_rotlib",
+		#"symmetrize_3d_ramamap",
 		"tensorflow_test1",
 		"test_multithreaded_ig_correctness",
-		"test_multithreaded_packing_performance",
+		#"test_multithreaded_packing_performance",
 		"test_rosetta_thread_manager_advanced_API",
 		"test_rosetta_thread_manager_basic_API",
 		"test_tensorflow_graph_convolutional_nn",
@@ -1160,14 +1160,14 @@ sources = {
 
 	# Z ######################################################################
 	"pilot/zhezhang" : [
-		"extract_CA_coords",
+		#"extract_CA_coords",
 	],
 	"pilot/zibochen" : [
-		"pad_helices",
+		#"pad_helices",
 	],
 	"pilot/shirst" : [
-		"TestTopologySampler",
-		"LoophashFilter"
+		#"TestTopologySampler",
+		#"LoophashFilter"
 	],
 
 

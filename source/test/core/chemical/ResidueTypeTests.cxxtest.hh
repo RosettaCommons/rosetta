@@ -93,6 +93,7 @@ void add_atom(
 	rsd.add_atom( name, type, mm_type, charge);
 
 	TS_ASSERT_EQUALS(rsd.natoms(), natoms);
+	TS_ASSERT_EQUALS(rsd.nheavyatoms(), nheavyatoms);
 }
 
 void add_bond(core::chemical::MutableResidueType & rsd, std::string const& a1, std::string const& a2){

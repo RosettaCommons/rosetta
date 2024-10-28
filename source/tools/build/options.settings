@@ -190,9 +190,9 @@ options = {
 	# BCL
 	"bcl",
 
-	# PyTorch
-	"pytorch",
-	"pytorch_gpu",
+	# LibTorch
+	"torch",
+	"torch_gpu",
     ],
 
 

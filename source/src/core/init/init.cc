@@ -1028,6 +1028,7 @@ init_source_revision(){
 		if ( utility::Version::package() != "devel" ) TR << " " << utility::Version::package();
 		if ( utility::Version::revision() != "None" ) TR << " r" << utility::Version::revision();
 		TR << " " << utility::Version::version() << " " << utility::Version::commit() << " " << utility::Version::url() << " " << utility::Version::date() << std::endl;
+		TR << "Rosetta extras: " << utility::Version::extras() << std::endl;
 	}
 }
 
@@ -1276,6 +1277,15 @@ void init(int argc, char * argv [])
 
 	//Tracers control output to std::cout and std::cerr
 	init_tracers();
+
+#ifndef PYROSETTA
+	// We want to print this in pretty much all cases (though silence it if we're completely muted.
+	if ( TR.Error.visible() ) {
+		std::cout << "********  (C) Copyright Rosetta Commons Member Institutions.  ***************" << std::endl;
+		std::cout << "* Use of Rosetta for commercial purposes may require purchase of a license. *" << std::endl;
+		std::cout << "********  See LICENSE.md or email license@uw.edu for more details. **********" << std::endl;
+	}
+#endif
 
 	//Read flag config file (common options/custom setup)
 	check_load_fconfig();

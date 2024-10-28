@@ -4,4 +4,4 @@
 # receive email notifications when this test fail
 #
 # lines that start with ‘#’ symbol treated as comments and ignored
-master:tlinsky@uw.edu
+main:tlinsky@uw.edu
