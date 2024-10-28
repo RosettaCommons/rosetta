@@ -192,7 +192,8 @@ public:
 		ObjexxFCL::FArray3D< core::Real > &mask,
 		core::Real forceB = -1.0,
 		core::Real B_upper_limit = 600,
-		core::Real force_mask = -1.0 );
+		core::Real force_mask = -1.0,
+	       	bool forcemask_is_rho_value = false);
 
 	/// @brief Real-space correlation
 	core::Real
@@ -228,7 +229,8 @@ public:
 		core::pose::Pose const &pose,
 		core::conformation::symmetry::SymmetryInfoCOP symmInfo=nullptr,
 		bool bfactors=false,
-		bool cacheCCs=false
+		bool cacheCCs=false,
+		bool no_foreground=false
 	);
 
 	/// @brief Match a residue's conformation to the density map.

@@ -103,6 +103,9 @@ public:
 	calculate_ligand_density_correlation( int resid, core::conformation::Residue const &rsd, core::pose::Pose const &pose);//, core::Size gene_number);
 
 	core::Real
+	calculate_density_penalty( core::Size nres, core::conformation::Residue const &lig, core::pose::Pose const &pose, core::Real unpenalized_density );
+	
+	core::Real
 	calculate_pose_density_correlation( core::pose::Pose const &pose );
 
 	core::Real

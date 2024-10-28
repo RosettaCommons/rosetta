@@ -1069,8 +1069,8 @@ GridScorer::score_init( LigandConformer const &lig, bool soft, core::Real init_d
 	sfxn_1b_->set_weight( core::scoring::elec_dens_fast, init_dens_weight );
 	sfxn_1b_soft_->set_weight( core::scoring::elec_dens_fast, init_dens_weight );
 
-	lig.to_pose( ref_pose_ );
-	core::Real gridscore = score( *ref_pose_, lig, soft );
+	//lig.to_pose( ref_pose_ );
+	core::Real gridscore = score( lig, soft );
 
 	sfxn_1b_->set_weight( core::scoring::elec_dens_fast, sfxn_->get_weight( core::scoring::elec_dens_fast ) );
 	sfxn_1b_soft_->set_weight( core::scoring::elec_dens_fast, sfxn_->get_weight( core::scoring::elec_dens_fast ) );
@@ -1110,6 +1110,21 @@ GridScorer::calculate_ligand_density_correlation( int resid,
 	core::pose::Pose const &pose
 ) {
 	return core::scoring::electron_density::getDensityMap().matchRes( resid, rsd, pose, nullptr, false);
+}
+
+core::Real
+GridScorer::calculate_density_penalty( core::Size nres, core::conformation::Residue const &lig, core::pose::Pose const &pose, core::Real unpenalized_density ) {
+
+	//calculatet the delta between fg+bg and bg density correlations	
+	core::Real bg_density_cc = core::scoring::electron_density::getDensityMap().matchRes( nres, lig, pose, nullptr, false, false, true );
+	core::Real density_delta = unpenalized_density - bg_density_cc;
+	core::Real penalty = 0.0;
+
+	if ( density_delta < 0.15 ) {
+		penalty = 0.15 - (2.0/3.0)*density_delta;
+	}
+	
+	return penalty;
 }
 
 core::Real

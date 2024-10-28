@@ -61,10 +61,16 @@ public:
 	friend LigandConformer
 	mutate(LigandConformer const &l );
 
+	friend LigandConformer
+        mutate_ft(LigandConformer const &l, bool single_mutation );
+
 	// crossover
 	friend LigandConformer
 	crossover(LigandConformer const &l1, LigandConformer const &l2);
 
+	friend LigandConformer
+	crossover_ft(LigandConformer const &l1, LigandConformer const &l2);
+	
 	// distance without equivalent atom substitution
 	friend core::Real
 	distance_fast( LigandConformer &gene1, LigandConformer &gene2 );
@@ -353,6 +359,7 @@ private:
 	utility::vector1< core::Real > ligandnus_;    // ring torsions
 	utility::vector1< core::Real > ligandtaus_; // ring angles
 
+	utility::vector1< utility::vector1< core::Size > > ligandchi_downstream_;
 
 	// radius of gyration of ligand
 	core::Real rg_;
@@ -385,9 +392,15 @@ typedef utility::vector1< LigandConformer > LigandConformers;
 LigandConformer
 mutate(LigandConformer const &l );
 
+LigandConformer
+mutate_ft( LigandConformer const &l, bool single_mutation );
+
 // crossover
 LigandConformer
 crossover(LigandConformer const &l1, LigandConformer const &l2);
+
+LigandConformer
+crossover_ft(LigandConformer const &l1, LigandConformer const &l2);
 
 core::Real
 distance_fast( LigandConformer &gene1, LigandConformer &gene2 ); // non-const because of sync check
