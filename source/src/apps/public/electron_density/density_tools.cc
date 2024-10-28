@@ -204,7 +204,6 @@ find_unexplained_density(
 	poseCoords const & pose
 ) {
         double Nin=0.0, Rin=0.0, R2in=0.0;
-        //double Nout=0.0, Rout=0.0, R2out=0.0;
 
         for ( int z=1; z<=(int)dens_data.u3(); ++z ) {
                 for ( int y=1; y<=(int)dens_data.u2(); ++y ) {
@@ -216,21 +215,13 @@ find_unexplained_density(
                                         Rin += dens_i;
                                         R2in += dens_i*dens_i;
                                 }
-                                //else {
-                                //      Nout += 1.0;
-                                //      Rout += dens_i;
-                                //      R2out += dens_i*dens_i;
-                                //}
                         }
                 }
         }
         double mask_mean = (float)(Rin/Nin);
-        //double nonmask_mean = (float)(Rout/Nout);
         double mask_stdev = (float)std::sqrt(R2in/Nin - mask_mean*mask_mean);
-        //double nonmask_stdev = (float)std::sqrt(R2out/Nout - nonmask_mean*nonmask_mean);
 
         TR << "mask density = " << mask_mean << " +/- " << mask_stdev << std::endl;
-        //TR << "nonmask density = " << nonmask_mean << " +/- " << nonmask_stdev << std::endl;
 
         ObjexxFCL::FArray3D< int > regions(dens_data.u1(),dens_data.u2(),dens_data.u3(), 0);
 
@@ -242,8 +233,8 @@ find_unexplained_density(
                                 float dens_i = dens_data(x,y,z);
                                 if (!masked_i) {
                                         float Zin = (dens_i-mask_mean)/mask_stdev;
-                                        //float Zout = (dens_i-nonmask_mean)/nonmask_stdev;
-                                        if (Zin > 0.5) {//zscore_cutoff) {//0.5) {
+                                        
+					if (Zin > 0.5) {//zscore_cutoff) {//0.5) {
                                                 regions(x,y,z) = -1;
                                         }
                                 }
@@ -296,6 +287,7 @@ find_unexplained_density(
 
         int nregions=currlabel-1, nregions_prune=0;
 	
+	//Searches for voxels in a ligand-like pocket
 	TR << "Detecting buried voxels" << std::endl;
 	TR << "Pose size: " << pose.size() << std::endl;
 	utility::vector1<core::Real> nsurface(nregions, 0.0);
@@ -326,12 +318,8 @@ find_unexplained_density(
 						numeric::xyzVector<core::Real> Xi;
 						core::scoring::electron_density::getDensityMap().idx2cart( x_idx, Xi );
 					
-						//TR << "Looping through pose" << std::endl;
 						bool is_buried = false;
 						for ( core::Size iatm = 1; iatm <= pose.size(); iatm++ ) {
-							//core::conformation::Residue resi = pose.residue(ires);
-							//if ( ires == 4 ) TR << "residue 4" << std::endl;
-							//for ( core::Size iatm = 1; iatm <= resi.nheavyatoms(); ++iatm ) {
 							poseCoord atom = pose[iatm];
 							core::Real x_diff = Xi[0] - atom.x_[0];
 							core::Real y_diff = Xi[1] - atom.x_[1];
@@ -341,11 +329,9 @@ find_unexplained_density(
 							if ( distance < 4.0 ) {
 								is_buried = true;
 							}
-							//}
 						}
 					
 						if ( is_buried ) nburied[regions(x,y,z)]++;	
-						//TR << "Region 14 " << Xi[0] << "," << Xi[1] << "," << Xi[2] << std::endl;
 					}
 				}	
 			}
@@ -359,13 +345,9 @@ find_unexplained_density(
                 for ( int y=1; y<=regions.u2(); ++y ) {
                         for ( int x=1; x<=regions.u1(); ++x ) {
                                 if (regions(x,y,z)!=0.0) {
-                                        //TR << "regions(x,y,z): " << regions(x,y,z) << std::endl;
-					//TR << "linked[regions(x,y,z)]: " << *(linked[regions(x,y,z)].begin()) << std::endl;
 					regions(x,y,z) = *(linked[regions(x,y,z)].begin());
                                         npoints[regions(x,y,z)]++;
-					//TR << "npoints[regions(x,y,z)]: " << npoints[regions(x,y,z)] << std::endl;
                                         centroids[regions(x,y,z)] += numeric::xyzVector<core::Real>(x,y,z);
-					//TR << "centroids[regions(x,y,z)]: " << centroids[regions(x,y,z)] << std::endl;
                                 }
                         }
                 }
@@ -378,9 +360,9 @@ find_unexplained_density(
                         nregions_prune++;
                         points.push_back( centroids[i] / npoints[i] );
                         scores.push_back( npoints[i] );
-			TR << "Blob " << i << " N buried: " << nburied[i] << std::endl;
-			TR << "Blob " << i << " N surface: " << nsurface[i] << std::endl;
-			TR << "Blob " << i << " buried percentage: " << nburied[i]/nsurface[i] << std::endl;
+			TR.Debug << "Blob " << i << " N buried: " << nburied[i] << std::endl;
+			TR.Debug << "Blob " << i << " N surface: " << nsurface[i] << std::endl;
+			TR.Debug << "Blob " << i << " buried percentage: " << nburied[i]/nsurface[i] << std::endl;
                 	buried_scores.push_back( nburied[i]/nsurface[i] );
 		}
         }
@@ -493,9 +475,7 @@ densityTools()
                 core::Real zscore_cutoff = option[ denstools::zscore_cutoff ]();
                 
 		core::scoring::electron_density::getDensityMap().set_data(rhoO);
-                core::scoring::electron_density::getDensityMap().writeMRC( "rhoO.mrc" );
 		core::scoring::electron_density::getDensityMap().set_data(rhoMask);
-                core::scoring::electron_density::getDensityMap().writeMRC( "rhoMask.mrc" );
 		find_unexplained_density( rhoO, rhoMask, points, size_scores, buried_scores, zscore_cutoff, pose );
 
 		std::string outpath( basic::options::option[ out::path::all ]().path() );
