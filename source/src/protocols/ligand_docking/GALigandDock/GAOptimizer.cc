@@ -49,9 +49,9 @@ GAOptimizer::~GAOptimizer(){}
 // main GA optimization loop
 void
 GAOptimizer::run( LigandConformers & genes ) {
-	//if ( TR.Debug.visible() ) {
-	show_status( genes, "input pool (scored with soft_rep)" );
-	//}
+	if ( TR.Debug.visible() ) {
+		show_status( genes, "input pool (scored with soft_rep)" );
+	}
 
 	LigandConformers genes_new;
 	for ( core::Size i=1; i<=protocol_.size(); ++i ) {
@@ -88,9 +88,9 @@ GAOptimizer::run( LigandConformers & genes ) {
 		if ( i==1 || changed ) {
 			initialize_rotamer_set_and_scores( genes[1] );
 			optimize_generation( genes, stage_i.ramp_schedule ); // optimize with new smoothing factor
-			//if ( TR.Debug.visible() ) {
-			show_status( genes, "rescored pool at start of stage "+utility::to_string( i ) );
-			//}
+			if ( TR.Debug.visible() ) {
+				show_status( genes, "rescored pool at start of stage "+utility::to_string( i ) );
+			}
 
 			std::chrono::duration<core::Real> pack_time, min_time;
 			scorefxn_->report_and_reset_timers( pack_time, min_time );
@@ -105,14 +105,14 @@ GAOptimizer::run( LigandConformers & genes ) {
 			next_generation( genes, genes_new, stage_i.pool, stage_i.pmut );
 
 			optimize_generation( genes_new, stage_i.ramp_schedule );
-			//if ( TR.Debug.visible() ) {
-			show_status( genes_new, "generated in stage "+std::to_string(i)+" iter "+std::to_string(j) );
-			//}
+			if ( TR.Debug.visible() ) {
+				show_status( genes_new, "generated in stage "+std::to_string(i)+" iter "+std::to_string(j) );
+			}
 
 			update_pool( genes, genes_new, stage_i.pool, stage_i.rmsthreshold );
-			//if ( TR.Debug.visible() ) {
-			show_status( genes, "pool after stage "+std::to_string(i)+" iter "+std::to_string(j) );
-			//}
+			if ( TR.Debug.visible() ) {
+				show_status( genes, "pool after stage "+std::to_string(i)+" iter "+std::to_string(j) );
+			}
 
 			std::chrono::duration<core::Real> pack_time, min_time;
 			scorefxn_->report_and_reset_timers( pack_time, min_time );
@@ -144,7 +144,7 @@ GAOptimizer::show_status(
 	for ( core::Size i = 1; i <= genes.size(); ++i ) {
 		LigandConformer &gene = genes[i];
 
-		statuslog += "I/score: " + I(3,int(i)) +" " + F(8,3,gene.score()) + " " + F(8,3,gene.density_score());
+		statuslog += "I/score: " + I(3,int(i)) +" " + F(8,3,gene.score());
 		std::pair< core::Real, core::Real > internal_d;
 		if ( nativegene_.defined() && calculate_native_rmsd ) {
 
@@ -164,30 +164,30 @@ GAOptimizer::show_status(
 		statuslog += " "+genes[i].generation_tag()+"\n";
 		//statuslog += " "+genes[i].to_string()+"\n";
 	}
-	TR << statuslog << std::endl;
+	TR.Debug << statuslog << std::endl;
 
 	if ( verbose ) {
 		core::scoring::ScoreFunctionOP sfxn = scorefxn_->get_sfxn();
 
-		TR << "DETAIL: \nSCORE:   score  ";
+		TR.Debug << "DETAIL: \nSCORE:   score  ";
 		sfxn->show_line_headers( TR );
-		TR << "    rmsd interfaceSC description\n";
+		TR.Debug << "    rmsd interfaceSC description\n";
 
 		for ( core::Size i = 1; i <= genes.size(); ++i ) {
 			// skip if too high energy; hard-coded cutoff
 			if ( genes[i].score() - Emin > 20.0 ) continue;
 
-			TR << "SCORE: ";
+			TR.Debug << "SCORE: ";
 			core::pose::PoseOP pose( new core::pose::Pose() );
 			genes[i].to_pose( pose );
 			sfxn->score( *pose );
 			sfxn->show_line( TR, *pose );
 
 			std::string gene_index( comment+"_"+I(4,4,i) );
-			TR << " " << F(8,3,genes[i].rms()) << " " << F(8,3,0.0) //F(8,3,score_holo-score_apo)
+			TR.Debug << " " << F(8,3,genes[i].rms()) << " " << F(8,3,0.0) //F(8,3,score_holo-score_apo)
 				<< " " << gene_index << "\n";
 		}
-		TR << std::endl;
+		TR.Debug << std::endl;
 	}
 }
 
@@ -205,8 +205,6 @@ GAOptimizer::optimize_generation( LigandConformers & genes, utility::vector1<cor
 		}
 
 		genes[i].score( score );
-		core::Real density_score = scorefxn_->density_score( genes[i] );
-		genes[i].density_score( density_score );
 	}
 }
 
