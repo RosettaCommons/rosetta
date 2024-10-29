@@ -696,8 +696,8 @@ GALigandDock::apply( pose::Pose & pose )
 				++i;
 			}
 			//pose = *temporary_outputs.pop();
-			pose = *remaining_outputs_.pop();
 		}
+		pose = *remaining_outputs_.pop();
 	}
 
 
