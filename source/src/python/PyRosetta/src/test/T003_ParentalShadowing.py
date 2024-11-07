@@ -54,8 +54,8 @@ def signatures_conflict( sig1, sig2, only_enforce_distinct_parents=True ):
     for i in range(len(sig1)):
         class1 = sig1[i]
         class2 = sig2[i]
-        check12 = issubclass( class1, class2 )
-        check21 = issubclass( class2, class1 )
+        check12 = issubclass( class1, class2 ) and class1 is not bool
+        check21 = issubclass( class2, class1 ) and class2 is not bool
         if not (check12 or check21):
             # if neither class clashes with the other one, these two signatures are safe
             return False
