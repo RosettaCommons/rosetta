@@ -157,6 +157,6 @@ def test_module( D ):
         else:
             print( "skipping type", type_str, "for", dname )
 
-for module in [core, numeric, protocols, basic]
+for module in [core, numeric, protocols, basic]:
     test_module( module )
 assert not global_is_bad.bad
