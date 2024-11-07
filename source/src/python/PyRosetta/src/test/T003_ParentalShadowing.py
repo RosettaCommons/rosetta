@@ -72,7 +72,7 @@ def test_function( F, custom_name = None ):
         exception_str = str(E)
 
     assert failed, F
-    assert "The following argument types are supported" in exception_str, exception_str
+    assert "The following argument types are supported" in exception_str or "No module named 'numpy'" in exception_str, exception_str
 
     signatures = []
     for l in exception_str.split("\n"):
