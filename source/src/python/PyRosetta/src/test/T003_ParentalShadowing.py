@@ -16,6 +16,10 @@ def verbose():
 class IsBad():
     def __init__(self):
         self.bad = False
+        self.count = 0
+    def register(self):
+        self.bad = True
+        self.count += 1
 
 global_is_bad = IsBad()
 
@@ -109,7 +113,7 @@ def test_function( F, custom_name = None ):
         for j in range(i+1,len(signatures)):
             if signatures_conflict( signatures[i], signatures[j] ):
                 print( f"CONFLICT `{custom_name}` --- `{signatures[i]}` --- `{signatures[j]}`" )
-                global_is_bad.bad = True
+                global_is_bad.register()
 
 def test_class( C ):
     # 1. test __init__
@@ -162,4 +166,5 @@ def test_module( D ):
 
 for module in [core, numeric, protocols, basic]:
     test_module( module )
-assert not global_is_bad.bad
+if global_is_bad.bad:
+    raise Exception(f"Found {global_is_bad.count} shadowing instances")
