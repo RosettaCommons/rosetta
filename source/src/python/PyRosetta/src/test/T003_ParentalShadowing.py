@@ -150,7 +150,7 @@ def test_module( D ):
         type_str = str( type( dattr ) )
         if type_str == "<class 'pybind11_builtins.pybind11_type'>":
             if dname.endswith( "Creator" ):
-                print( "skipping creator type", dname )
+                if verbose(): print( "skipping creator type", dname )
             else:
                 test_class( dattr )
         elif type_str == "<class 'builtin_function_or_method'>":
@@ -158,7 +158,7 @@ def test_module( D ):
         elif type_str == "<class 'module'>":
             test_module( dattr )
         else:
-            print( "skipping type", type_str, "for", dname )
+            if verbose(): print( "skipping type", type_str, "for", dname )
 
 for module in [core, numeric, protocols, basic]:
     test_module( module )
