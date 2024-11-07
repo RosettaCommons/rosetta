@@ -88,7 +88,7 @@ def test_function( F, custom_name = None ):
             if verbose(): print( "Skipping incompletely bound signature", l )
             continue
 
-        if "Tuple[" in l or "Callable[" in l:
+        if "Tuple[" in l or "Callable[" in l or "tuple[" in l:
             if verbose(): print( "Skipping complicated signature (for now?)", l )
             continue
 
