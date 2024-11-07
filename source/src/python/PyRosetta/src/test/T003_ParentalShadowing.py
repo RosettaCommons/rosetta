@@ -142,7 +142,7 @@ def test_class( C ):
             exit( 0 ) #testing to see if this is possible
             test_module( cattr )
         else:
-            print( "skipping type", type_str, "for", cname, "in", C )
+            if verbose(): print( "skipping type", type_str, "for", cname, "in", C )
 
 def test_module( D ):
     for dname in dir(D):
