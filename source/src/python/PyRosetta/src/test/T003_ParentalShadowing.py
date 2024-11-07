@@ -10,6 +10,9 @@
 import pyrosetta
 from pyrosetta.rosetta import core, numeric, protocols, basic
 
+def verbose():
+    return False
+
 class IsBad():
     def __init__(self):
         self.bad = False
@@ -77,23 +80,23 @@ def test_function( F, custom_name = None ):
         #if "->" not in l: continue
 
         if "*" in l:
-            print( "Skipping weird signature", l )
+            if verbose(): print( "Skipping weird signature", l )
             # like     2. pyrosetta.rosetta.core.chemical.MutableChiRecord(atm_vec: pyrosetta.rosetta.utility.vector1_void_*)
             continue
 
         if "::" in l:
-            print( "Skipping incompletely bound signature", l )
+            if verbose(): print( "Skipping incompletely bound signature", l )
             continue
 
         if "Tuple[" in l or "Callable[" in l:
-            print( "Skipping complicated signature (for now?)", l )
+            if verbose(): print( "Skipping complicated signature (for now?)", l )
             continue
 
         try:
             sig = extract_class_signature_from_overload_line( l )
         except Exception as e:
             if str(e).startswith("name '") and str(e).endswith("' is not defined"):
-                print( "Skipping incompletely bound signature", l, ":", str(e) )
+                if verbose(): print( "Skipping incompletely bound signature", l, ":", str(e) )
                 continue
             print( "ERROR" )
             print( l )
@@ -114,7 +117,7 @@ def test_class( C ):
         test_function( C )
     except AssertionError as E:
         if "No constructor defined" in str(E):
-            print( "No constructor defined for", C )
+            if verbose(): print( "No constructor defined for", C )
             pass
         else:
             raise E
