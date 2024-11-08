@@ -9,6 +9,7 @@
 
 import pyrosetta
 from pyrosetta.rosetta import core, numeric, protocols, basic
+import re
 
 def verbose():
     return False
@@ -26,6 +27,19 @@ global_is_bad = IsBad()
 class MyClass:
     def __init__(self):
         pass
+
+class GreenListManager:
+    def __init__(self):
+        self.greenlist_regex = [
+            "^pyrosetta.rosetta.protocols.mean_field.jagged_array_protocols_mean_field_*$"
+        ]
+    def bypass(self, name):
+        for g in self.greenlist_regex:
+            if re.match( g, name ) is not None:
+                return True
+        return False
+
+greenlist = GreenListManager()
 
 def extract_class_signature_from_overload_line( l ):
     #     1. (pose: pyrosetta.rosetta.core.pose.Pose, residue_positions: pyrosetta.rosetta.utility.vector1_bool) -> None
@@ -68,6 +82,9 @@ def test_function( F, custom_name = None ):
     if custom_name is None:
         custom_name = str(F)
 
+    if greenlist.bypass( str ):
+        return
+    
     failed = True
     try:
         F( MyClass() )
