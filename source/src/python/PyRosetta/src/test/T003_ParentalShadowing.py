@@ -30,11 +30,15 @@ class MyClass:
 
 class GreenListManager:
     def __init__(self):
+        # Only add things here that are overloaded in a way that results in specification, not divergent behavior
         self.greenlist_regex = [
             "<class 'pyrosetta.rosetta.protocols.mean_field.jagged_array_*",
             "<class 'pyrosetta.rosetta.protocols.mean_field.*",
             "<class 'pyrosetta.rosetta.protocols.hbnet.HBNetScore'>$",
-            "<class 'pyrosetta.rosetta.core.chemical.PoseResidueTypeSet'>$"
+            "<class 'pyrosetta.rosetta.core.chemical.PoseResidueTypeSet'>$",
+            "<class 'pyrosetta.rosetta.protocols.multistage_rosetta_scripts.cluster.metrics.*",
+            "<class 'pyrosetta.rosetta.protocols.evaluation.SingleValuePoseEvaluator*",
+            "<class 'pyrosetta.rosetta.core.pack.dunbrack.DunbrackRotamer_*",
         ]
     def bypass(self, name):
         for g in self.greenlist_regex:
