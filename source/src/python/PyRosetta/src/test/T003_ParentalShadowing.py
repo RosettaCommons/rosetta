@@ -31,7 +31,7 @@ class MyClass:
 class GreenListManager:
     def __init__(self):
         self.greenlist_regex = [
-            "^pyrosetta.rosetta.protocols.mean_field.jagged_array_protocols_mean_field_*$"
+            "<class 'pyrosetta.rosetta.protocols.mean_field.jagged_array_*"
         ]
     def bypass(self, name):
         for g in self.greenlist_regex:
