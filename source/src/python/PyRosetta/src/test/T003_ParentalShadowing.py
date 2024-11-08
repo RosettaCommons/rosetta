@@ -82,7 +82,7 @@ def test_function( F, custom_name = None ):
     if custom_name is None:
         custom_name = str(F)
 
-    if greenlist.bypass( str ):
+    if greenlist.bypass( custom_name ):
         return
     
     failed = True
