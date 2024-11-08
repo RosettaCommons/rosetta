@@ -494,7 +494,7 @@ SimulateCryoMover::three_fine_projections_from_xyz(
 
 	ObjexxFCL::FArray3D< float > three_projections;
 	three_projections.dimension( extents_[0], extents_[0], 3, 0.0 );
-	core::Real sigma = resolution / M_PI; // TODO hardcoded
+	core::Real sigma = resolution / numeric::constants::d::pi; // TODO hardcoded
 	int rx2 = std::ceil( 4 / pixel_size );
 
 	for ( core::Size i = 1; i <= all_x.size(); ++i ) {
@@ -502,7 +502,7 @@ SimulateCryoMover::three_fine_projections_from_xyz(
 			for ( int k = -rx2; k <= rx2; k = k+pixel_size ) {
 
 				core::Real const distance = std::sqrt(std::pow(j,2) + std::pow(k,2));
-				core::Real const gauss_f = 1 / (2*M_PI*sigma) * exp(-pow( distance/sigma, 2) );
+				core::Real const gauss_f = 1 / (2*numeric::constants::d::pi*sigma) * exp(-pow( distance/sigma, 2) );
 
 				if ( option[ atom_gauss_random_multiplier ].user() ) {
 					core::Real mp = 0.0;
@@ -515,21 +515,21 @@ SimulateCryoMover::three_fine_projections_from_xyz(
 					}
 					// randomly pick a rotation around 360
 					// 'randomly' pick a distance around
-					core::Real r_ang = rg.uniform() * M_PI * 2;
+					core::Real r_ang = rg.uniform() * numeric::constants::d::pi * 2;
 					core::Real dis = rg.uniform() * mp;
 					core::Real ichange = cos(r_ang)*dis;
 					core::Real jchange = sin(r_ang)*dis;
 					if ( three_projections.contains(std::floor(all_x[i]+ichange+j), std::floor(all_y[i]+jchange+k), 1)  ) {
 						three_projections(std::floor(all_x[i]+ichange+j), std::floor(all_y[i]+jchange+k), 1) += gauss_f;
 					} else TR.Warning << "Attempted to access out of range FArray3d" << std::endl;
-					r_ang = rg.uniform()*M_PI*2;
+					r_ang = rg.uniform()*numeric::constants::d::pi*2;
 					dis = rg.uniform()*mp;
 					ichange = cos(r_ang)*dis;
 					jchange = sin(r_ang)*dis;
 					if ( three_projections.contains(std::floor(all_x[i]+ichange+j), std::floor(all_z[i]+jchange+k), 2)  ) {
 						three_projections(std::floor(all_x[i]+ichange+j), std::floor(all_z[i]+jchange+k), 2) += gauss_f;
 					} else TR.Warning << "Attempted to access out of range FArray3d" << std::endl;
-					r_ang = rg.uniform()*M_PI*2;
+					r_ang = rg.uniform()*numeric::constants::d::pi*2;
 					dis = rg.uniform()*mp;
 					ichange = cos(r_ang)*dis;
 					jchange = sin(r_ang)*dis;

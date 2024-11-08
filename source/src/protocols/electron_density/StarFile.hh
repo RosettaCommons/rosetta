@@ -105,6 +105,10 @@ private:
 	utility::vector1< std::map< std::string, std::unique_ptr<StarOptions> > > all_image_info_;
 	utility::vector1< std::string > set_values_;
 public:
+	
+	StarFile( StarFile const & ) = delete;
+        StarFile & operator=( StarFile const & ) = delete;
+
 	template< typename F > void
 	set(core::Size i, std::string option_name, F val_in ) {
 		if ( i > all_image_info_.size() ) throw std::runtime_error("set StarFile out of range");
