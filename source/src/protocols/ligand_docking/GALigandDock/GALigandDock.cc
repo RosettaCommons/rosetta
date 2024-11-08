@@ -680,7 +680,7 @@ GALigandDock::apply( pose::Pose & pose )
 			while ( temporary_outputs.has_data() ) {
 				pose = *temporary_outputs.pop();
 
-				core::Real score, rms, ligscore, recscore, lig_dens, penalized_density, complexscore;
+				core::Real score, rms, ligscore, recscore, lig_dens, complexscore;
 				std::string ligandname;
 				score = (*scfxn_relax_)(pose);
 				core::pose::getPoseExtraScore( pose, "ligscore", ligscore );
@@ -902,10 +902,6 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		core::pose::Pose tmp_native_pose = *pose_native_;
 		tmp_native_pose.energies().clear();
 		tmp_native_pose.data().clear();
-		core::Real tmp_score = (*scfxn_relax_)(tmp_native_pose);
-
-		core::Real ligscore = calculate_free_ligand_score( tmp_native_pose, gene_initial.ligand_ids() );
-		core::Real recscore = calculate_free_receptor_score( tmp_native_pose, gene_initial.ligand_ids(), gene_initial.moving_scs(), true );
 
 		core::Real lig_dens = 0.0;
 		lig_dens = gridscore->calculate_ligand_density_correlation( lig_resno, tmp_native_pose.residue( lig_resno ), tmp_native_pose );
@@ -918,9 +914,6 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		//do this to output number of hydrogen bonds (hbond_info.second) to compare to docked pose
 		//TODO: change to count bonds in hbond map so code less confusing
 		hbond_info = compare_hbonds_to_native( native_hbond_map, native_hbond_map );
-
-		core::Real rms = core::scoring::automorphic_rmsd(
-			pose_native_->residue( lig_resno ), tmp_native_pose.residue( lig_resno ), false );
 
 		core::pose::setPoseExtraScore( tmp_native_pose, "native_hbond_ratio", hbond_info.first );
 		core::pose::setPoseExtraScore( tmp_native_pose, "hbond_count", hbond_info.second );

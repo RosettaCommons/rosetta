@@ -200,7 +200,6 @@ find_unexplained_density(
         utility::vector1< numeric::xyzVector<core::Real> > &points,
         utility::vector1< core::Real > &scores,
         utility::vector1< core::Real > &buried_scores,
-	core::Real zscore_cutoff,
 	poseCoords const & pose
 ) {
         double Nin=0.0, Rin=0.0, R2in=0.0;
@@ -472,11 +471,10 @@ densityTools()
         if (ligand_finder) {
                 utility::vector1< numeric::xyzVector<core::Real> > points;
                 utility::vector1< core::Real > size_scores, buried_scores;
-                core::Real zscore_cutoff = option[ denstools::zscore_cutoff ]();
                 
 		core::scoring::electron_density::getDensityMap().set_data(rhoO);
 		core::scoring::electron_density::getDensityMap().set_data(rhoMask);
-		find_unexplained_density( rhoO, rhoMask, points, size_scores, buried_scores, zscore_cutoff, pose );
+		find_unexplained_density( rhoO, rhoMask, points, size_scores, buried_scores, pose );
 
 		std::string outpath( basic::options::option[ out::path::all ]().path() );
                 std::ofstream ofs (outpath+"/ligands.pdb", std::ofstream::out);

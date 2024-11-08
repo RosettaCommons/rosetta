@@ -659,8 +659,6 @@ SimulateCryoMover::set_bfactors( core::pose::Pose pose ) {
                         search = option[dupe_chains]().find(chain);
                 }
                 for ( core::Size atm_num = 1; atm_num <= rsd.natoms(); ++atm_num ) {
-                        core::conformation::Atom const & atm( rsd.atom(atm_num) );
-
 			core::Real bfactor = pose.pdb_info()->temperature( res_num, atm_num );
 			bfactors.push_back(pose.pdb_info()->temperature( res_num, atm_num ));
 			

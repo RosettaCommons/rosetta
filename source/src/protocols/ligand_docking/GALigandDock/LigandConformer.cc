@@ -150,14 +150,6 @@ LigandConformer::initialize(
                 }
         }
 
-	for ( core::Size ichi = 1; ichi <= ligandchi_downstream_.size(); ++ichi ) {
-		utility::vector1 <core::Size > downstream_chis = ligandchi_downstream_[ichi];
-		utility::vector1< core::Size > const &chiatms = ligand.chi_atoms( ichi );
-		for ( core::Size jchi = 1; jchi <= downstream_chis.size(); ++jchi ) {
-			utility::vector1< core::Size > const &jchiatms = ligand.chi_atoms( downstream_chis[jchi] );
-		}
-	}
-
 	core::pose::PoseOP ref_pose_ligand ( new core::pose::Pose );
 	for ( core::Size i=1; i<=ligids.size(); ++i ) {
 		if ( i==1 ) {
