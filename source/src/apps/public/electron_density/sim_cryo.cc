@@ -52,7 +52,6 @@
 #include <core/types.hh>
 
 // apps
-#include <protocols/electron_density/StarFile.hh>
 #include <protocols/electron_density/PerlinNoise.hh>
 
 // std c++ headers
@@ -179,8 +178,7 @@ public:
 		int, int);
 
 	void
-	writeStarFile( std::string,
-		utility::vector1< protocols::electron_density::StarFile > &);
+	writeStarFile( std::string filename );
 
 	void
 	normalize_projections( ObjexxFCL::FArray3D< float > & );
@@ -694,6 +692,28 @@ SimulateCryoMover::set_bfactors( core::pose::Pose pose ) {
 	scatter_factors_ = scatter_factors;
 }
 
+void
+SimulateCryoMover::writeStarFile( std::string filename ) {
+	std::ofstream out_star( filename.c_str() );
+	out_star << "data_\nloop_\n";
+	out_star << "_rlnAmplitudeContrast\n";
+	out_star << "_rlnDefocusAngle\n";
+	out_star << "_rlnDefocusU\n";
+	out_star << "_rlnDefocusV\n";
+	out_star << "_rlnDetectorPixelSize\n";
+	out_star << "_rlnImageName\n";
+	out_star << "_rlnMagnification\n";
+	out_star << "_rlnPixelSize\n";
+	out_star << "_rlnSphericalAberration\n";
+	out_star << "_rlnVoltage\n";
+	for ( core::Size i = 1; i <= num_rotations_to_project_from_; ++i ) {
+		for ( core::Size j = 1; j <= 3; ++j ) {
+			std::string particle_name = std::to_string( 3*(i-1) + j) + "@" + filename.substr(0, filename.find(".star")) + ".mrcs";
+			out_star << "0.1 0 0 0 5 " << particle_name << " 5 " << pixel_size_ << " 0 200 " << std::endl;
+		}
+	}
+}
+
 /* Generate images in mrcs format and save them
 *
 * @param pose that we will Rotate and take pictures of
@@ -709,7 +729,6 @@ SimulateCryoMover::apply( core::pose::Pose pose ) {
 	numeric::UniformRotationSampler urs( 3 ); // 3 degree rotation step
 	numeric::xyzVector< core::Real > no_trans_vector = { 0, 0, 0 };
 	numeric::xyzMatrix< core::Real > rot_matrix;
-	utility::vector1< protocols::electron_density::StarFile > starfile_information;
 	core::Size urs_size = urs.nrots();
 
 	TR << "Before B factors" << std::endl;
@@ -718,7 +737,6 @@ SimulateCryoMover::apply( core::pose::Pose pose ) {
 		set_bfactors( pose );
 	}
 
-	protocols::electron_density::StarFile s;
 	for ( core::Size i = 1; i <= num_rotations_to_project_from_; ++i ) {
 		if ( i % 100 == 0 ) TR << "At: " << i << std::endl;
 
@@ -745,23 +763,12 @@ SimulateCryoMover::apply( core::pose::Pose pose ) {
 		// TODO: just copy add the same starfile 3 times, since these will all have similar options
 		for ( core::Size j = 1; j <= 3; ++j ) {
 			append_to_density( three_fine_projections, density, (i-1)*3 + j, j);
-			s.append_one();
-			s.set(s.size(),"rlnImageName", (std::string)(utility::to_string((i-1)*3 + j) + "@" + out_base_name + ".mrcs"));
-			s.set(s.size(),"rlnDetectorPixelSize", (float)5);
-			s.set(s.size(),"rlnMagnification", (float)5);
-			s.set(s.size(),"rlnPixelSize", (float)pixel_size_);
-			s.set(s.size(),"rlnVoltage", (float)200);
-			s.set(s.size(),"rlnAmplitudeContrast", (float)0.1);
-			s.set(s.size(),"rlnDefocusU", (float)0.0);
-			s.set(s.size(),"rlnDefocusV", (float)0.0);
-			s.set(s.size(),"rlnDefocusAngle", (float)0.0);
-			s.set(s.size(),"rlnSphericalAberration", (float)0.0);
 		}
 		// pose.dump_pdb(utility::to_string(i) + ".pdb");
 	}
 	image_stack_ = core::scoring::electron_density::ElectronDensity(density);
 	image_stack_.writeMRC(out_base_name + ".mrcs");
-	s.writeStarFile(out_base_name + ".star");
+	writeStarFile(out_base_name + ".star");
 }
 
 void
