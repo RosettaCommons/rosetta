@@ -236,8 +236,7 @@ GAOptimizer::next_generation(
 		if ( ( numeric::random::rg().uniform() <= pmut ) || (npoolin == 1) ) {
 			if ( !altcrossover_ ) {
 				newgene = mutate( newgene );
-			}
-			else {
+			} else {
 				newgene = mutate_ft( newgene, single_mutation_ );
 			}
 			move = "mutate";
@@ -251,8 +250,7 @@ GAOptimizer::next_generation(
 
 			if ( altcrossover_ ) {
 				newgene = crossover_ft (newgene, genes[ipartner] );
-			}
-			else {
+			} else {
 				newgene = crossover( newgene, genes[ipartner] );
 			}
 

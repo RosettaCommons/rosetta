@@ -123,32 +123,32 @@ LigandConformer::initialize(
 	update_conf( pose );
 
 	// get ligand chi dependence for alternative crossover
-        core::conformation::Residue ligand( pose->residue( ligids[1] ) );
-        core::Size nligchi( ligand.nchi());
-        ligandchi_downstream_.resize( nligchi );
+	core::conformation::Residue ligand( pose->residue( ligids[1] ) );
+	core::Size nligchi( ligand.nchi());
+	ligandchi_downstream_.resize( nligchi );
 
-        utility::vector1< core::Size > atmindex_defining_chi( nligchi, 0 );
+	utility::vector1< core::Size > atmindex_defining_chi( nligchi, 0 );
 
-        for ( core::Size ichi = 1; ichi <= nligchi; ++ichi ) {
-                utility::vector1< core::Size > const &chiatms = ligand.chi_atoms( ichi );
-                atmindex_defining_chi[ichi] = (ligand.atom_base(chiatms[2]) == chiatms[3])? chiatms[1] : chiatms[4];
-        }
+	for ( core::Size ichi = 1; ichi <= nligchi; ++ichi ) {
+		utility::vector1< core::Size > const &chiatms = ligand.chi_atoms( ichi );
+		atmindex_defining_chi[ichi] = (ligand.atom_base(chiatms[2]) == chiatms[3])? chiatms[1] : chiatms[4];
+	}
 
-        // WARNING! This assumes nbr atom is atom tree root.
-        // THIS IS NOT NECESSARILY TRUE!
-        // if not true this will hang
-        for ( core::Size ichi = 1; ichi <= nligchi; ++ichi ) {
-                core::Size iatm( atmindex_defining_chi[ichi] );
-                core::Size ibase( ligand.atom_base(iatm) );
-                while ( ibase != ligand.nbr_atom() ) { // recurrsive until reaches to nbr atom
-                        if ( atmindex_defining_chi.contains(iatm) ) {
-                                core::Size chi_parent_of_ichi = atmindex_defining_chi.index_of(iatm);
-                                if ( chi_parent_of_ichi != ichi ) ligandchi_downstream_[chi_parent_of_ichi].push_back( ichi );
-                        }
-                        iatm = ibase;
-                        ibase = ligand.atom_base(iatm);
-                }
-        }
+	// WARNING! This assumes nbr atom is atom tree root.
+	// THIS IS NOT NECESSARILY TRUE!
+	// if not true this will hang
+	for ( core::Size ichi = 1; ichi <= nligchi; ++ichi ) {
+		core::Size iatm( atmindex_defining_chi[ichi] );
+		core::Size ibase( ligand.atom_base(iatm) );
+		while ( ibase != ligand.nbr_atom() ) { // recurrsive until reaches to nbr atom
+			if ( atmindex_defining_chi.contains(iatm) ) {
+				core::Size chi_parent_of_ichi = atmindex_defining_chi.index_of(iatm);
+				if ( chi_parent_of_ichi != ichi ) ligandchi_downstream_[chi_parent_of_ichi].push_back( ichi );
+			}
+			iatm = ibase;
+			ibase = ligand.atom_base(iatm);
+		}
+	}
 
 	core::pose::PoseOP ref_pose_ligand ( new core::pose::Pose );
 	for ( core::Size i=1; i<=ligids.size(); ++i ) {
@@ -927,14 +927,11 @@ mutate_ft( LigandConformer const &l, bool single_mutation ) {
 				}
 				retval.ligandchis_[j] = angle_j;
 				tag += "c"+utility::to_string(j)+" ";
-			}
-		
-
-			else {
+			} else {
 				core::Size nligchi = l.ligandchis_.size();
 				core::Size ichi_to_mutate( numeric::random::rg().random_range(1,nligchi) );
 				utility::vector1< core::Size > const &chis_down = l.ligandchi_downstream_[ichi_to_mutate];
-				
+
 				core::Real angleDel = l.ligchimutWidth_*(1.0 - 2.0*numeric::random::rg().uniform());
 				retval.ligandchis_[ichi_to_mutate] = l.ligandchis_[ichi_to_mutate] + angleDel;
 				tag += "c"+utility::to_string(ichi_to_mutate)+" ";
@@ -1043,33 +1040,33 @@ crossover(LigandConformer const &l1, LigandConformer const &l2) {
 // alternative crossover for ligands with many torsions. Keeps chis constant upstream of selected chi
 LigandConformer
 crossover_ft(LigandConformer const &l1, LigandConformer const &l2 ){
-        // pick (randomly) one to be "parent"
-        //fd let's give every pose a shot to be parent
-        bool l1_is_parent = true; // (numeric::random::rg().uniform() <= 0.5 );
-        LigandConformer const &l_parent = l1_is_parent? l1 : l2;
-        LigandConformer const &l_child = l1_is_parent? l2 : l1;
+	// pick (randomly) one to be "parent"
+	//fd let's give every pose a shot to be parent
+	bool l1_is_parent = true; // (numeric::random::rg().uniform() <= 0.5 );
+	LigandConformer const &l_parent = l1_is_parent? l1 : l2;
+	LigandConformer const &l_child = l1_is_parent? l2 : l1;
 
-        LigandConformer retval(l_parent);
-        std::string tag;
-        if ( l1_is_parent ) tag = "parent1 ";
-        else tag = "parent2 ";
+	LigandConformer retval(l_parent);
+	std::string tag;
+	if ( l1_is_parent ) tag = "parent1 ";
+	else tag = "parent2 ";
 
-        // pick ONE chi and set all downstream to l_child
-        core::Size nligchi = l1.ligandchis_.size();
-        core::Size ichi_to_cross( numeric::random::rg().random_range(1,nligchi) );
-        utility::vector1< core::Size > const &chis_down = l1.ligandchi_downstream_[ichi_to_cross];
-        retval.ligandchis_[ichi_to_cross] = l_child.ligandchis_[ichi_to_cross];
-        tag += "flip:c"+utility::to_string(ichi_to_cross)+" ";
-        for ( core::Size j = 1; j <= chis_down.size(); ++j ) {
-                core::Size jchi = chis_down[j];
-                tag += "down:c"+utility::to_string(jchi)+" ";
-                retval.ligandchis_[jchi] = l_child.ligandchis_[jchi];
-        }
+	// pick ONE chi and set all downstream to l_child
+	core::Size nligchi = l1.ligandchis_.size();
+	core::Size ichi_to_cross( numeric::random::rg().random_range(1,nligchi) );
+	utility::vector1< core::Size > const &chis_down = l1.ligandchi_downstream_[ichi_to_cross];
+	retval.ligandchis_[ichi_to_cross] = l_child.ligandchis_[ichi_to_cross];
+	tag += "flip:c"+utility::to_string(ichi_to_cross)+" ";
+	for ( core::Size j = 1; j <= chis_down.size(); ++j ) {
+		core::Size jchi = chis_down[j];
+		tag += "down:c"+utility::to_string(jchi)+" ";
+		retval.ligandchis_[jchi] = l_child.ligandchis_[jchi];
+	}
 
-        retval.set_generation_tag( tag );
-        retval.ligandxyz_synced_ = false;
+	retval.set_generation_tag( tag );
+	retval.ligandxyz_synced_ = false;
 
-        return retval;
+	return retval;
 }
 
 core::Real

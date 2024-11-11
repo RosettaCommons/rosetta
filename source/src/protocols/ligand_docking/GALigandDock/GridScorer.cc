@@ -1115,7 +1115,7 @@ GridScorer::calculate_ligand_density_correlation( int resid,
 core::Real
 GridScorer::calculate_density_penalty( core::Size nres, core::conformation::Residue const &lig, core::pose::Pose const &pose, core::Real unpenalized_density ) {
 
-	//calculatet the delta between fg+bg and bg density correlations	
+	//calculatet the delta between fg+bg and bg density correlations
 	core::Real bg_density_cc = core::scoring::electron_density::getDensityMap().matchRes( nres, lig, pose, nullptr, false, false, true );
 	core::Real density_delta = unpenalized_density - bg_density_cc;
 	core::Real penalty = 0.0;
@@ -1123,7 +1123,7 @@ GridScorer::calculate_density_penalty( core::Size nres, core::conformation::Resi
 	if ( density_delta < 0.15 ) {
 		penalty = 0.15 - (2.0/3.0)*density_delta;
 	}
-	
+
 	return penalty;
 }
 

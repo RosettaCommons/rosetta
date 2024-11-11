@@ -347,10 +347,10 @@ private:
 	//useful for similarity of pseudo-symmetiric lipids
 	core::Real
 	match_by_atomtype(
-        	core::conformation::Residue const & rsd1,
-        	core::conformation::Residue const & rsd2
+		core::conformation::Residue const & rsd1,
+		core::conformation::Residue const & rsd2
 	);
-	
+
 	std::pair < core::Real, core::Real >
 	compare_hbonds_to_native( HbondMap const& native_hbond_map,
 		HbondMap const& lig_hbond_map
@@ -494,7 +494,7 @@ private:
 	core::Size neighborhood_size_; //size of neighborhood to search during erosion
 	core::Real skeleton_radius_;
 	std::string method_for_radius_;
-	bool advanced_map_erosion_;	
+	bool advanced_map_erosion_;
 	bool print_initial_pool_;
 	bool altcrossover_;
 	bool single_mutation_;

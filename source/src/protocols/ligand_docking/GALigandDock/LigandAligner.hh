@@ -374,7 +374,7 @@ public:
 
 	//Creates a skeleton from unmodelled regions of density for ligand docking
 	//Advanced: useful for ligands with many torsions
-        void 
+	void
 	select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real radius, core::Real skeleton_threshold_const = 2.5, core::Size neighborhood_size = 27 );
 	void
 	advanced_select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real radius, core::Real skeleton_threshold_const, core::Size neighborhood_size, core::Size pool_size );

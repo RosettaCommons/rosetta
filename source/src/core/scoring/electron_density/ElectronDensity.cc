@@ -1570,7 +1570,7 @@ ElectronDensity::calcRhoC(
 	core::Real fixed_mask_B /* = -1 */,
 	core::Real B_upper_limit /* = 600 */,
 	core::Real force_mask /*=-1*/,
-       	bool forcemask_is_rho_value /*=false*/ // if forcemask provided, is it a distance or a rho value?
+	bool forcemask_is_rho_value /*=false*/ // if forcemask provided, is it a distance or a rho value?
 ) {
 
 	// get rho_c
@@ -1585,7 +1585,7 @@ ElectronDensity::calcRhoC(
 	}
 
 	core::Real denscut_mask = 1e-4;
-	if (forcemask_is_rho_value && force_mask > 0) {
+	if ( forcemask_is_rho_value && force_mask > 0 ) {
 		denscut_mask = force_mask;
 	}
 
@@ -2461,13 +2461,12 @@ core::Real ElectronDensity::matchRes(
 	/// 2 COMPUTE SUMMARY STATISTICS
 	core::Real sumC_i=0.0, sumO_i=0.0, sumCO_i=0.0, vol_i=0.0, CC_i=0.0;
 	core::Real sumO2_i=0.0, sumC2_i=0.0, varC_i=0.0, varO_i=0.0;
-	
+
 	for ( int x=0; x<bbox_dims[0]*bbox_dims[1]*bbox_dims[2]; ++x ) {
 		// fetch this point
 		if ( no_foreground ) {
 			clc_x = rho_calc_bg[x];
-		}
-		else {
+		} else {
 			clc_x = rho_calc_bg[x] + rho_calc_fg[x];
 		}
 		obs_x = rho_obs[x];
@@ -2507,8 +2506,7 @@ core::Real ElectronDensity::matchRes(
 				const int x(rho_dx_pt_ij[n]);
 				if ( no_foreground ) {
 					clc_x = rho_calc_bg[x];
-				}
-				else {
+				} else {
 					clc_x = rho_calc_bg[x] + rho_calc_fg[x];
 				}
 				obs_x = rho_obs[x];

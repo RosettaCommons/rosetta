@@ -195,128 +195,128 @@ readPDBcoords(std::string filename, poseCoords &atmlist) {
 
 void
 find_unexplained_density(
-        ObjexxFCL::FArray3D< float > const & dens_data,
-        ObjexxFCL::FArray3D< double > const & mask_data,
-        utility::vector1< numeric::xyzVector<core::Real> > &points,
-        utility::vector1< core::Real > &scores,
-        utility::vector1< core::Real > &buried_scores,
+	ObjexxFCL::FArray3D< float > const & dens_data,
+	ObjexxFCL::FArray3D< double > const & mask_data,
+	utility::vector1< numeric::xyzVector<core::Real> > &points,
+	utility::vector1< core::Real > &scores,
+	utility::vector1< core::Real > &buried_scores,
 	poseCoords const & pose
 ) {
-        double Nin=0.0, Rin=0.0, R2in=0.0;
+	double Nin=0.0, Rin=0.0, R2in=0.0;
 
-        for ( int z=1; z<=(int)dens_data.u3(); ++z ) {
-                for ( int y=1; y<=(int)dens_data.u2(); ++y ) {
-                        for ( int x=1; x<=(int)dens_data.u1(); ++x ) {
-                                bool masked_i = mask_data(x,y,z)>0.9;
-                                float dens_i = dens_data(x,y,z);
-                                if (masked_i) {
-                                        Nin += 1.0;
-                                        Rin += dens_i;
-                                        R2in += dens_i*dens_i;
-                                }
-                        }
-                }
-        }
-        double mask_mean = (float)(Rin/Nin);
-        double mask_stdev = (float)std::sqrt(R2in/Nin - mask_mean*mask_mean);
+	for ( int z=1; z<=(int)dens_data.u3(); ++z ) {
+		for ( int y=1; y<=(int)dens_data.u2(); ++y ) {
+			for ( int x=1; x<=(int)dens_data.u1(); ++x ) {
+				bool masked_i = mask_data(x,y,z)>0.9;
+				float dens_i = dens_data(x,y,z);
+				if ( masked_i ) {
+					Nin += 1.0;
+					Rin += dens_i;
+					R2in += dens_i*dens_i;
+				}
+			}
+		}
+	}
+	double mask_mean = (float)(Rin/Nin);
+	double mask_stdev = (float)std::sqrt(R2in/Nin - mask_mean*mask_mean);
 
-        TR << "mask density = " << mask_mean << " +/- " << mask_stdev << std::endl;
+	TR << "mask density = " << mask_mean << " +/- " << mask_stdev << std::endl;
 
-        ObjexxFCL::FArray3D< int > regions(dens_data.u1(),dens_data.u2(),dens_data.u3(), 0);
+	ObjexxFCL::FArray3D< int > regions(dens_data.u1(),dens_data.u2(),dens_data.u3(), 0);
 
-        // detect peaks
-        for ( int z=1; z<=(int)dens_data.u3(); ++z ) {
-                for ( int y=1; y<=(int)dens_data.u2(); ++y ) {
-                        for ( int x=1; x<=(int)dens_data.u1(); ++x ) {
-                                bool masked_i = mask_data(x,y,z)>0.9;
-                                float dens_i = dens_data(x,y,z);
-                                if (!masked_i) {
-                                        float Zin = (dens_i-mask_mean)/mask_stdev;
-                                        
-					if (Zin > 0.5) {//zscore_cutoff) {//0.5) {
-                                                regions(x,y,z) = -1;
-                                        }
-                                }
-                        }
-                }
-        }
+	// detect peaks
+	for ( int z=1; z<=(int)dens_data.u3(); ++z ) {
+		for ( int y=1; y<=(int)dens_data.u2(); ++y ) {
+			for ( int x=1; x<=(int)dens_data.u1(); ++x ) {
+				bool masked_i = mask_data(x,y,z)>0.9;
+				float dens_i = dens_data(x,y,z);
+				if ( !masked_i ) {
+					float Zin = (dens_i-mask_mean)/mask_stdev;
 
-        // Find connected components
-        int currlabel=1;
-        utility::vector1< std::set<int> > linked;
+					if ( Zin > 0.5 ) { //zscore_cutoff) {//0.5) {
+						regions(x,y,z) = -1;
+					}
+				}
+			}
+		}
+	}
 
-        for ( int z=2; z<regions.u3(); ++z ) {
-                for ( int y=2; y<regions.u2(); ++y ) {
-                        for ( int x=2; x<regions.u1(); ++x ) {
-                                if (regions(x,y,z)!=0.0) {
-                                        std::set<int> neighborlabels;
-                                        if (regions(x-1,y-1,z-1)!=0) neighborlabels.insert(regions(x-1,y-1,z-1));
-                                        if (regions(x  ,y-1,z-1)!=0) neighborlabels.insert(regions(x,  y-1,z-1));
-                                        if (regions(x+1,y-1,z-1)!=0) neighborlabels.insert(regions(x+1,y-1,z-1));
-                                        if (regions(x-1,y,  z-1)!=0) neighborlabels.insert(regions(x-1,y  ,z-1));
-                                        if (regions(x  ,y,  z-1)!=0) neighborlabels.insert(regions(x  ,y  ,z-1));
-                                        if (regions(x+1,y,  z-1)!=0) neighborlabels.insert(regions(x+1,y  ,z-1));
-                                        if (regions(x-1,y+1,z-1)!=0) neighborlabels.insert(regions(x-1,y+1,z-1));
-                                        if (regions(x  ,y+1,z-1)!=0) neighborlabels.insert(regions(x  ,y+1,z-1));
-                                        if (regions(x+1,y+1,z-1)!=0) neighborlabels.insert(regions(x+1,y+1,z-1));
+	// Find connected components
+	int currlabel=1;
+	utility::vector1< std::set<int> > linked;
 
-                                        if (regions(x-1,y-1,z)!=0) neighborlabels.insert(regions(x-1,y-1,z));
-                                        if (regions(x  ,y-1,z)!=0) neighborlabels.insert(regions(x  ,y-1,z));
-                                        if (regions(x+1,y-1,z)!=0) neighborlabels.insert(regions(x+1,y-1,z));
-                                        if (regions(x-1,y  ,z)!=0) neighborlabels.insert(regions(x-1,y  ,z));
+	for ( int z=2; z<regions.u3(); ++z ) {
+		for ( int y=2; y<regions.u2(); ++y ) {
+			for ( int x=2; x<regions.u1(); ++x ) {
+				if ( regions(x,y,z)!=0.0 ) {
+					std::set<int> neighborlabels;
+					if ( regions(x-1,y-1,z-1)!=0 ) neighborlabels.insert(regions(x-1,y-1,z-1));
+					if ( regions(x  ,y-1,z-1)!=0 ) neighborlabels.insert(regions(x,  y-1,z-1));
+					if ( regions(x+1,y-1,z-1)!=0 ) neighborlabels.insert(regions(x+1,y-1,z-1));
+					if ( regions(x-1,y,  z-1)!=0 ) neighborlabels.insert(regions(x-1,y  ,z-1));
+					if ( regions(x  ,y,  z-1)!=0 ) neighborlabels.insert(regions(x  ,y  ,z-1));
+					if ( regions(x+1,y,  z-1)!=0 ) neighborlabels.insert(regions(x+1,y  ,z-1));
+					if ( regions(x-1,y+1,z-1)!=0 ) neighborlabels.insert(regions(x-1,y+1,z-1));
+					if ( regions(x  ,y+1,z-1)!=0 ) neighborlabels.insert(regions(x  ,y+1,z-1));
+					if ( regions(x+1,y+1,z-1)!=0 ) neighborlabels.insert(regions(x+1,y+1,z-1));
 
-                                        if (neighborlabels.size() == 0) {
-                                                regions(x,y,z) = currlabel;
-                                                regions(x,y,z) = currlabel;
-                                                linked.push_back( std::set<int>({currlabel}) );
-                                                currlabel++;
-                                        } else {
-                                                regions(x,y,z) = *(neighborlabels.begin());
-                                                for (auto nl : neighborlabels) {
-							if (nl == -1) {
-                                                                TR << "!!!" << x << "," << y << "," << z << std::endl;
-                                                        }
-                                                        linked[nl].insert(neighborlabels.begin(), neighborlabels.end());
-                                                }
-                                        }
-                                }
-                        }
-                }
-        }
+					if ( regions(x-1,y-1,z)!=0 ) neighborlabels.insert(regions(x-1,y-1,z));
+					if ( regions(x  ,y-1,z)!=0 ) neighborlabels.insert(regions(x  ,y-1,z));
+					if ( regions(x+1,y-1,z)!=0 ) neighborlabels.insert(regions(x+1,y-1,z));
+					if ( regions(x-1,y  ,z)!=0 ) neighborlabels.insert(regions(x-1,y  ,z));
 
-        int nregions=currlabel-1, nregions_prune=0;
-	
+					if ( neighborlabels.size() == 0 ) {
+						regions(x,y,z) = currlabel;
+						regions(x,y,z) = currlabel;
+						linked.push_back( std::set<int>({currlabel}) );
+						currlabel++;
+					} else {
+						regions(x,y,z) = *(neighborlabels.begin());
+						for ( auto nl : neighborlabels ) {
+							if ( nl == -1 ) {
+								TR << "!!!" << x << "," << y << "," << z << std::endl;
+							}
+							linked[nl].insert(neighborlabels.begin(), neighborlabels.end());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	int nregions=currlabel-1, nregions_prune=0;
+
 	//Searches for voxels in a ligand-like pocket
 	TR << "Detecting buried voxels" << std::endl;
 	TR << "Pose size: " << pose.size() << std::endl;
 	utility::vector1<core::Real> nsurface(nregions, 0.0);
 	utility::vector1<core::Real> nburied(nregions, 0.0);
 	for ( int z=2; z<=regions.u3(); ++z ) {
-                for ( int y=2; y<=regions.u2(); ++y ) {
-                        for ( int x=2; x<=regions.u1(); ++x ) {
-				if (regions(x,y,z)!=0.0) {
+		for ( int y=2; y<=regions.u2(); ++y ) {
+			for ( int x=2; x<=regions.u1(); ++x ) {
+				if ( regions(x,y,z)!=0.0 ) {
 					bool is_surface = false;
-					if (regions(x-1,y-1,z-1)==0) is_surface=true;
-					if (regions(x  ,y-1,z-1)==0) is_surface=true;
-					if (regions(x+1,y-1,z-1)==0) is_surface=true;
-					if (regions(x-1,y,  z-1)==0) is_surface=true;
-					if (regions(x  ,y,  z-1)==0) is_surface=true;
-					if (regions(x+1,y,  z-1)==0) is_surface=true;
-					if (regions(x-1,y+1,z-1)==0) is_surface=true;
-					if (regions(x  ,y+1,z-1)==0) is_surface=true;
-					if (regions(x+1,y+1,z-1)==0) is_surface=true;
+					if ( regions(x-1,y-1,z-1)==0 ) is_surface=true;
+					if ( regions(x  ,y-1,z-1)==0 ) is_surface=true;
+					if ( regions(x+1,y-1,z-1)==0 ) is_surface=true;
+					if ( regions(x-1,y,  z-1)==0 ) is_surface=true;
+					if ( regions(x  ,y,  z-1)==0 ) is_surface=true;
+					if ( regions(x+1,y,  z-1)==0 ) is_surface=true;
+					if ( regions(x-1,y+1,z-1)==0 ) is_surface=true;
+					if ( regions(x  ,y+1,z-1)==0 ) is_surface=true;
+					if ( regions(x+1,y+1,z-1)==0 ) is_surface=true;
 
-					if (regions(x-1,y-1,z)==0) is_surface=true;
-					if (regions(x  ,y-1,z)==0) is_surface=true;
-					if (regions(x+1,y-1,z)==0) is_surface=true;
-					if (regions(x-1,y  ,z)==0) is_surface=true;
+					if ( regions(x-1,y-1,z)==0 ) is_surface=true;
+					if ( regions(x  ,y-1,z)==0 ) is_surface=true;
+					if ( regions(x+1,y-1,z)==0 ) is_surface=true;
+					if ( regions(x-1,y  ,z)==0 ) is_surface=true;
 
 					if ( is_surface ) {
 						nsurface[regions(x,y,z)]++;
 						numeric::xyzVector< core::Real > x_idx(x,y,z);
 						numeric::xyzVector<core::Real> Xi;
 						core::scoring::electron_density::getDensityMap().idx2cart( x_idx, Xi );
-					
+
 						bool is_buried = false;
 						for ( core::Size iatm = 1; iatm <= pose.size(); iatm++ ) {
 							poseCoord atom = pose[iatm];
@@ -329,44 +329,44 @@ find_unexplained_density(
 								is_buried = true;
 							}
 						}
-					
-						if ( is_buried ) nburied[regions(x,y,z)]++;	
+
+						if ( is_buried ) nburied[regions(x,y,z)]++;
 					}
-				}	
+				}
 			}
 		}
 	}
 
-        utility::vector1<int> npoints(nregions, 0.0);
-        utility::vector1< numeric::xyzVector<core::Real> > centroids(nregions, numeric::xyzVector<core::Real>(0,0,0));
+	utility::vector1<int> npoints(nregions, 0.0);
+	utility::vector1< numeric::xyzVector<core::Real> > centroids(nregions, numeric::xyzVector<core::Real>(0,0,0));
 
-        for ( int z=1; z<=regions.u3(); ++z ) {
-                for ( int y=1; y<=regions.u2(); ++y ) {
-                        for ( int x=1; x<=regions.u1(); ++x ) {
-                                if (regions(x,y,z)!=0.0) {
+	for ( int z=1; z<=regions.u3(); ++z ) {
+		for ( int y=1; y<=regions.u2(); ++y ) {
+			for ( int x=1; x<=regions.u1(); ++x ) {
+				if ( regions(x,y,z)!=0.0 ) {
 					regions(x,y,z) = *(linked[regions(x,y,z)].begin());
-                                        npoints[regions(x,y,z)]++;
-                                        centroids[regions(x,y,z)] += numeric::xyzVector<core::Real>(x,y,z);
-                                }
-                        }
-                }
-        }
+					npoints[regions(x,y,z)]++;
+					centroids[regions(x,y,z)] += numeric::xyzVector<core::Real>(x,y,z);
+				}
+			}
+		}
+	}
 
-        points.clear();
-        scores.clear();
-        for (int i=1; i<=nregions; ++i) {
-                if (npoints[i] > 0) {
-                        nregions_prune++;
-                        points.push_back( centroids[i] / npoints[i] );
-                        scores.push_back( npoints[i] );
+	points.clear();
+	scores.clear();
+	for ( int i=1; i<=nregions; ++i ) {
+		if ( npoints[i] > 0 ) {
+			nregions_prune++;
+			points.push_back( centroids[i] / npoints[i] );
+			scores.push_back( npoints[i] );
 			TR.Debug << "Blob " << i << " N buried: " << nburied[i] << std::endl;
 			TR.Debug << "Blob " << i << " N surface: " << nsurface[i] << std::endl;
 			TR.Debug << "Blob " << i << " buried percentage: " << nburied[i]/nsurface[i] << std::endl;
-                	buried_scores.push_back( nburied[i]/nsurface[i] );
+			buried_scores.push_back( nburied[i]/nsurface[i] );
 		}
-        }
+	}
 
-        TR << "Found " << nregions_prune << " regions (" << nregions << " before prune)" << std::endl;
+	TR << "Found " << nregions_prune << " regions (" << nregions << " before prune)" << std::endl;
 }
 
 void
@@ -424,14 +424,14 @@ densityTools()
 	TR.Trace << "Stage 2: model processing" << std::endl;
 	bool userpose = (option[ in::file::s ].user());
 
-	
+
 	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires, resobins, resobin_counts, bin_squared);
-	
+
 	// ligand-finding
-        bool ligand_finder = option[ denstools::ligand_finder ]();
-        if (ligand_finder and !userpose) {
-                utility_exit_with_message("if ligand_finder is enabled, an input pose must be provided with -s");
-        }
+	bool ligand_finder = option[ denstools::ligand_finder ]();
+	if ( ligand_finder and !userpose ) {
+		utility_exit_with_message("if ligand_finder is enabled, an input pose must be provided with -s");
+	}
 
 	// Truncate map only
 	if ( option[ denstools::truncate_map ] ) {
@@ -458,38 +458,38 @@ densityTools()
 		readPDBcoords( pdbfile, pose );
 
 		TR.Trace << "       : calc rho_c" << std::endl;
-		
+
 		core::Real maskcut = 1e-4;
-                if (ligand_finder) {
-                        maskcut = 4e-2;//option[ denstools::mask_cutoff ]();//0.5;//4e-2;
-                }
-		
+		if ( ligand_finder ) {
+			maskcut = 4e-2;//option[ denstools::mask_cutoff ]();//0.5;//4e-2;
+		}
+
 		core::scoring::electron_density::getDensityMap().calcRhoC( pose, mask_resolution, rhoC, rhoMask, -1, 600, maskcut, true );
 	}
 
 	// find ligands
-        if (ligand_finder) {
-                utility::vector1< numeric::xyzVector<core::Real> > points;
-                utility::vector1< core::Real > size_scores, buried_scores;
-                
+	if ( ligand_finder ) {
+		utility::vector1< numeric::xyzVector<core::Real> > points;
+		utility::vector1< core::Real > size_scores, buried_scores;
+
 		core::scoring::electron_density::getDensityMap().set_data(rhoO);
 		core::scoring::electron_density::getDensityMap().set_data(rhoMask);
 		find_unexplained_density( rhoO, rhoMask, points, size_scores, buried_scores, pose );
 
 		std::string outpath( basic::options::option[ out::path::all ]().path() );
-                std::ofstream ofs (outpath+"/ligands.pdb", std::ofstream::out);
-                for (core::Size i=1; i<=points.size(); ++i) {
-                        using ObjexxFCL::format::F;
-                        using ObjexxFCL::format::I;
+		std::ofstream ofs (outpath+"/ligands.pdb", std::ofstream::out);
+		for ( core::Size i=1; i<=points.size(); ++i ) {
+			using ObjexxFCL::format::F;
+			using ObjexxFCL::format::I;
 
-                        numeric::xyzVector<core::Real> Xi;
-                        core::scoring::electron_density::getDensityMap().idx2cart( points[i], Xi );
-                        ofs << "ATOM  "<<I(5,i%100000)<<" CA   CA  A"<<I(4,i%10000)<<"    "
-                                <<F(8,3,Xi.x())<<F(8,3,Xi.y())<<F(8,3,Xi.z())
-                                <<F(6,3,buried_scores[i])<<F(6,2,size_scores[i])
-                                <<std::endl;
-                }
-        }
+			numeric::xyzVector<core::Real> Xi;
+			core::scoring::electron_density::getDensityMap().idx2cart( points[i], Xi );
+			ofs << "ATOM  "<<I(5,i%100000)<<" CA   CA  A"<<I(4,i%10000)<<"    "
+				<<F(8,3,Xi.x())<<F(8,3,Xi.y())<<F(8,3,Xi.z())
+				<<F(6,3,buried_scores[i])<<F(6,2,size_scores[i])
+				<<std::endl;
+		}
+	}
 
 	// Mask map only
 	if ( option[ denstools::maskonly ] ) {
@@ -746,8 +746,8 @@ main( int argc, char * argv [] )
 		NEW_OPT(denstools::truncate_lowres, "low res truncation", 1000.0);
 		NEW_OPT(denstools::truncate_hires, "high res truncation", 0.0);
 		NEW_OPT(denstools::ligand_finder, "find unexplained density blobs in the map", false);
-                NEW_OPT(denstools::mask_cutoff, "mask cutoff when searching for unexplained density", 4e-2);
-                NEW_OPT(denstools::zscore_cutoff, "cutoff for standardized density value for blob finding", 0.5);
+		NEW_OPT(denstools::mask_cutoff, "mask cutoff when searching for unexplained density", 4e-2);
+		NEW_OPT(denstools::zscore_cutoff, "cutoff for standardized density value for blob finding", 0.5);
 		NEW_OPT(denstools::dump_map_and_mask, "dump mrc of rho_calc and eps_calc", false);
 		NEW_OPT(denstools::mask, "mask all calcs", false);
 		NEW_OPT(denstools::mask_modelmap, "mask model-map calcs only", false);

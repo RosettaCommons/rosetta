@@ -105,7 +105,7 @@ public:
 	//calculates penalty for ligand density correlation for identification
 	core::Real
 	calculate_density_penalty( core::Size nres, core::conformation::Residue const &lig, core::pose::Pose const &pose, core::Real unpenalized_density );
-	
+
 	core::Real
 	calculate_pose_density_correlation( core::pose::Pose const &pose );
 

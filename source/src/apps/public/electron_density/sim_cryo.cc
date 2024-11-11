@@ -507,8 +507,7 @@ SimulateCryoMover::three_fine_projections_from_xyz(
 					if ( basic::options::option[ basic::options::OptionKeys::cryst::crystal_refine ]() ) {
 						mp = bfactors_[i] / 120.0;
 						mp = mp / scatter_factors_[i];
-					}
-					else {
+					} else {
 						mp = option[ atom_gauss_random_multiplier ]();
 					}
 					// randomly pick a rotation around 360
@@ -650,43 +649,41 @@ SimulateCryoMover::set_bfactors( core::pose::Pose pose ) {
 	scatter_map["ZN"] = 15.70905;
 
 	for ( core::Size res_num = 1; res_num <= pose.size(); ++res_num ) {
-                core::conformation::Residue const & rsd( pose.residue(res_num) );
-                char chain = pose.pdb_info()->chain(res_num);
-                std::size_t search(std::string::npos);
-                if ( option[dupe_chains].user() ) {
-                        search = option[dupe_chains]().find(chain);
-                }
-                for ( core::Size atm_num = 1; atm_num <= rsd.natoms(); ++atm_num ) {
+		core::conformation::Residue const & rsd( pose.residue(res_num) );
+		char chain = pose.pdb_info()->chain(res_num);
+		std::size_t search(std::string::npos);
+		if ( option[dupe_chains].user() ) {
+			search = option[dupe_chains]().find(chain);
+		}
+		for ( core::Size atm_num = 1; atm_num <= rsd.natoms(); ++atm_num ) {
 			core::Real bfactor = pose.pdb_info()->temperature( res_num, atm_num );
 			bfactors.push_back(pose.pdb_info()->temperature( res_num, atm_num ));
-			
+
 			if ( scatter_map.count( rsd.atom_type(atm_num).element() ) ) {
 				core::Real scatter_factor = scatter_map[ rsd.atom_type(atm_num).element() ];
 				scatter_factors.push_back( scatter_factor / 6.0 );
 
 				core ::Real mp = bfactor / 120.0;
-                                mp = mp / ( scatter_factor / 6.0 );
+				mp = mp / ( scatter_factor / 6.0 );
 				TR << "Max pertubation at " << rsd.name() << " " << res_num << " atom " << rsd.atom_type(atm_num).name() << " is: " << mp << std::endl;
-			}
-			else {
+			} else {
 				scatter_factors.push_back( 1.0 );
 			}
 
-                        if ( search != std::string::npos ) {
-                                for ( core::Size x = 1; x <= option[dupe_chains_times](); ++x ) {
+			if ( search != std::string::npos ) {
+				for ( core::Size x = 1; x <= option[dupe_chains_times](); ++x ) {
 					bfactors.push_back(pose.pdb_info()->temperature( res_num, atm_num ));
 
 					if ( scatter_map.count( rsd.atom_type(atm_num).element() ) ) {
 						core::Real scatter_factor = scatter_map[ rsd.atom_type(atm_num).element() ];
 						scatter_factors.push_back( scatter_factor / 6.0 );
-					}
-					else {
+					} else {
 						scatter_factors.push_back( 1.0 );
 					}
-                                }
-                        }
-                }
-        }
+				}
+			}
+		}
+	}
 
 	bfactors_ = bfactors;
 	scatter_factors_ = scatter_factors;

@@ -63,7 +63,7 @@ public:
 
 	// alternative mutation for many torsions
 	friend LigandConformer
-        mutate_ft(LigandConformer const &l, bool single_mutation );
+	mutate_ft(LigandConformer const &l, bool single_mutation );
 
 	// crossover
 	friend LigandConformer
@@ -72,7 +72,7 @@ public:
 	// alternative mutation for many torsions
 	friend LigandConformer
 	crossover_ft(LigandConformer const &l1, LigandConformer const &l2);
-	
+
 	// distance without equivalent atom substitution
 	friend core::Real
 	distance_fast( LigandConformer &gene1, LigandConformer &gene2 );

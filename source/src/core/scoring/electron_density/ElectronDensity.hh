@@ -193,7 +193,7 @@ public:
 		core::Real forceB = -1.0,
 		core::Real B_upper_limit = 600,
 		core::Real force_mask = -1.0,
-	       	bool forcemask_is_rho_value = false);
+		bool forcemask_is_rho_value = false);
 
 	/// @brief Real-space correlation
 	core::Real
