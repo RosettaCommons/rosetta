@@ -807,8 +807,8 @@ int main(int argc, char* argv[]) {
 		set_options(GIFP);
 		GIFP.apply(*poseOP);
 	} catch (utility::excn::Exception const & e ) {
-                e.display();
-                return -1;
-        }
+		e.display();
+		return -1;
+	}
 	return 0;
 }
