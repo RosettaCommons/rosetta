@@ -372,11 +372,14 @@ public:
 	void set_sample_ring_conformers( bool const setting ) { sample_ring_conformers_ = setting; }
 	bool sample_ring_conformers() const { return sample_ring_conformers_; }
 
+	//Creates a skeleton from unmodelled regions of density for ligand docking
+	//Advanced: useful for ligands with many torsions
 	void
-	select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real skeleton_threshold_const = 2.5, core::Size neighborhood_size = 27 );
+	select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real radius, core::Real skeleton_threshold_const = 2.5, core::Size neighborhood_size = 27 );
+	void
+	advanced_select_points( core::pose::Pose const & pose, core::Size const ligid, core::Real radius, core::Real skeleton_threshold_const, core::Size neighborhood_size, core::Size pool_size );
 
-	utility::vector1< numeric::xyzVector< core::Real > > points_to_search() const { return points_to_search_; }
-
+	utility::vector1< utility::vector1< numeric::xyzVector< core::Real > > > points_to_search() const { return points_to_search_; }
 private:
 	/// @brief set constraints to target
 	void set_constraints(
@@ -419,7 +422,19 @@ private:
 
 	bool is_point_in_network ( numeric::xyzVector< core::Real > point, utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > networks );
 
-	utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > find_network ( numeric::xyzVector< core::Real > start_point, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points );
+	utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > find_network ( numeric::xyzVector< core::Real > start_point, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > eroded_points, core::Real distance_cutoff = 3.1 );
+
+	bool
+	is_base_blob( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, core::conformation::Residue const lig );
+
+	core::Real
+	score_base_blob ( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > network, core::pose::Pose const & pose, core::conformation::Residue const lig );
+
+	core::Real
+	score_satellite_blob ( utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > base_blob, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > satellite_blob, core::pose::Pose const & pose, core::conformation::Residue const lig );
+
+	utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > >
+	sort_satellite_blobs ( utility::vector1 < utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > > satellites, utility::vector1< std::pair < numeric::xyzVector< core::Real >, core::Real > > base_blob );
 
 private:
 	ConstraintInfo target_; // target pose to which we are aligning
@@ -448,8 +463,9 @@ private:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	bool sample_ring_conformers_ = true;
 
-	utility::vector1< numeric::xyzVector< core::Real > > points_to_search_;
+	utility::vector1< utility::vector1< numeric::xyzVector< core::Real > > > points_to_search_;
 	core::Size gridStep_ = 1;
+	bool print_skeletons_ = false;
 };
 
 typedef utility::pointer::shared_ptr< LigandAligner > LigandAlignerOP;
