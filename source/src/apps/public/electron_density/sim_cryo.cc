@@ -806,9 +806,9 @@ int main(int argc, char* argv[]) {
 		SimulateCryoMover GIFP;
 		set_options(GIFP);
 		GIFP.apply(*poseOP);
-	} catch ( std::runtime_error const & e ) {
-		std::cout << "Caught exception " << e.what() << std::endl;
-		return -1;
-	}
+	} catch (utility::excn::Exception const & e ) {
+                e.display();
+                return -1;
+        }
 	return 0;
 }
