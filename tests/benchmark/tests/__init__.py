@@ -982,7 +982,7 @@ def _get_path_to_conda_root(platform, config):
     url = miniconda_sources[platform_os]
 
     version = '1'
-    channels = ''  # conda-forge
+    channels = 'conda-forge'
 
     #packages = ['conda-build gcc libgcc', 'libgcc=5.2.0'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
@@ -1024,7 +1024,8 @@ def _get_path_to_conda_root(platform, config):
 
         # conda update --yes --quiet -n base -c defaults conda
 
-        if channels: execute(f'Adding extra channles {channels}...', f'cd {build_prefix} && {activate} && conda config --add channels {channels}' )
+        execute(f'Removing `defaults` channel {channels}...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults' )
+        if channels: execute(f'Adding extra channels {channels}...', f'cd {build_prefix} && {activate} && conda config --add channels {channels}' )
 
         for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
 
