@@ -336,6 +336,7 @@ set_up_lanthionine_constraints(
 		ConstraintCOP angleconst1( utility::pointer::make_shared< AngleConstraint >( atom_a, atom_b, atom_c, circharmfunc2a) );
 		ConstraintCOP angleconst2( utility::pointer::make_shared< AngleConstraint >( atom_b, atom_c, atom_d, circharmfunc2b) );
 		pose.add_constraint (angleconst1);
+        //This is adding the SCC angle for lanthionine. methyllanthionine is slightly different
         if ( pose.residue_type(dalares).base_name() == "DALA" || pose.residue_type(dalares).base_name() == "ALA" ){
 		    pose.add_constraint (angleconst2);
         }
@@ -346,7 +347,7 @@ set_up_lanthionine_constraints(
             FuncOP circharmfunc2c( utility::pointer::make_shared< CircularHarmonicFunc >( LANTHIONINE_UTIL_METHYLLANTHIONINE_BOND_CA_ANGLE, 0.14) );
             ConstraintCOP angleconst3( utility::pointer::make_shared< AngleConstraint >( atom_b, atom_c, atom_d, circharmfunc2c) );
             pose.add_constraint (angleconst3);
-            //Now, prep for the C-CB-CG angle
+            //Now, prep for the S-CB-CG angle
             AtomID const atom_cg(
                     pose.residue_type(dalares).atom_index("CG"),
                     dalares
@@ -357,26 +358,31 @@ set_up_lanthionine_constraints(
             TR << "1.\tRes=" << atom_cg.rsd() << "\tAtom=" << pose.residue(atom_cg.rsd()).atom_name(atom_cg.atomno()) << std::endl;
             TR << "2.\tRes=" << atom_c.rsd() << "\tAtom=" << pose.residue(atom_c.rsd()).atom_name(atom_c.atomno()) << std::endl;
             TR << "3.\tRes=" << atom_b.rsd() << "\tAtom=" << pose.residue(atom_b.rsd()).atom_name(atom_b.atomno()) << std::endl;
-            FuncOP circharmfunc2d( utility::pointer::make_shared< CircularHarmonicFunc >( LANTHIONINE_UTIL_METHYLLANTHIONINE_BOND_CG_ANGLE, 0.18) );
+            FuncOP circharmfunc2d( utility::pointer::make_shared< CircularHarmonicFunc >( LANTHIONINE_UTIL_METHYLLANTHIONINE_BOND_CG_ANGLE, 0.1) ); //from 0.18
             ConstraintCOP angleconst4( utility::pointer::make_shared< AngleConstraint >( atom_cg, atom_c, atom_b, circharmfunc2d) );
             pose.add_constraint (angleconst4);
+            //Finally strengthen the CA-CB-CG angle term for doing cartesian min
+            FuncOP circharmfunc2e( utility::pointer::make_shared< CircularHarmonicFunc >( LANTHIONINE_UTIL_METHYLLANTHIONINE_BOND_CB_ANGLE, 0.18) );
+            ConstraintCOP angleconst5( utility::pointer::make_shared< AngleConstraint >( atom_cg, atom_c, atom_d, circharmfunc2e) );
+            pose.add_constraint (angleconst5);
+            //Improper dihedral param as well
             //FuncOP harmdistfunc( utility::pointer::make_shared< HarmonicFunc >( 2.76, 0.07));
             //ConstraintCOP distcst ( utility::pointer::make_shared< AtomPairConstraint >( atom_cg, atom_b, harmdistfunc) );
             //pose.add_constraint( distcst );
-            //The S-CB-CB-CA dihedral is 122.4 degrees with wb97xd/6-311+g(d,p) geom opt
-            //if ( pose.residue_type(dalares).base_name() == "DBS" || pose.residue_type(dalares).base_name() == "DDBS" ) {
-            //    FuncOP circharmfuncdih(utility::pointer::make_shared<CircularHarmonicFunc>(2.136, 0.14));
-            //    ConstraintCOP dihconst(
-            //            utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_cg, atom_d,
-            //                                                              circharmfuncdih));
-            //    pose.add_constraint(dihconst);
-            //} else { //must be DBR
-            //    FuncOP circharmfuncdih(utility::pointer::make_shared<CircularHarmonicFunc>(-2.136, 0.14));
-            //    ConstraintCOP dihconst(
-            //            utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_cg, atom_d,
-            //                                                              circharmfuncdih));
-            //    pose.add_constraint(dihconst);
-            //}
+            //The S-CB-CB-CA dihedral is 122.6 degrees with wb97xd/6-311+g(d,p) geom opt
+            if ( pose.residue_type(dalares).base_name() == "DBS" || pose.residue_type(dalares).base_name() == "DDBS" ) {
+                FuncOP circharmfuncdih(utility::pointer::make_shared<CircularHarmonicFunc>(2.139, 0.14));
+                ConstraintCOP dihconst(
+                        utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_cg, atom_d,
+                                                                          circharmfuncdih));
+                pose.add_constraint(dihconst);
+            } else { //must be DBR
+                FuncOP circharmfuncdih(utility::pointer::make_shared<CircularHarmonicFunc>(-2.139, 0.14));
+                ConstraintCOP dihconst(
+                        utility::pointer::make_shared<DihedralConstraint>(atom_b, atom_c, atom_cg, atom_d,
+                                                                          circharmfuncdih));
+                pose.add_constraint(dihconst);
+            }
         }
 	}
 
