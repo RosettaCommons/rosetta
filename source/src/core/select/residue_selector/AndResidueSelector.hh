@@ -101,6 +101,9 @@ public: //Functions needed for the citation manager
 	/// @brief Provide the citation.
 	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
+	std::string
+	debug_string() const override;
+
 private: // data members
 
 	std::list< ResidueSelectorCOP > selectors_;
