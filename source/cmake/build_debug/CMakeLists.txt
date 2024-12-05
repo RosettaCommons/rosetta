@@ -28,9 +28,8 @@ INCLUDE(../build/build.post.cmake)
 ############ ALL BINARIES, ALL PILOT APPS, AND ALL UNIT TESTS
 ############ WILL BE BUILT.
 ############ Top level binaries
-#INCLUDE( ../build/apps.all.cmake )
-#INCLUDE( ../build/pilot_apps.all.cmake )
-INCLUDE( ../build/apps/enamine_ligand_evolution.cmake )
+INCLUDE( ../build/apps.all.cmake )
+INCLUDE( ../build/pilot_apps.all.cmake )
 
 ############ Unit Tests
 INCLUDE(../build/build.test.cmake)

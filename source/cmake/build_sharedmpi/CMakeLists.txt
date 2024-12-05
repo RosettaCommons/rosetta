@@ -12,7 +12,6 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-DUSEMPI)
 
-# Paul edits
 ADD_COMPILE_DEFINITIONS(OMPI_SKIP_MPICXX=1) # fixes compile error with openmpi on ubuntu
 INCLUDE(../build/modules/mpi.cmake)
 
@@ -35,11 +34,10 @@ INCLUDE(../build/build.settings.cmake)
 INCLUDE(../build/compiler.cmake)
 
 INCLUDE( ../build/build.post.cmake )
+
 ## Top level binaries
-# I removed the two includes to only compile my app
-#INCLUDE( ../build/apps.all.cmake )
-#INCLUDE( ../build/pilot_apps.all.cmake )
-INCLUDE( ../build/apps/revold.cmake )
+INCLUDE( ../build/apps.all.cmake )
+INCLUDE( ../build/pilot_apps.all.cmake )
 
 
 INCLUDE( ../build/install.cmake )
