@@ -343,7 +343,7 @@ struct Version
         r.push_back("tensorflow");
       #endif
 
-      #ifdef USE_PYTORCH
+      #ifdef USE_TORCH
         r.push_back("torch");
       #endif
 

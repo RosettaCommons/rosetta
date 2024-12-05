@@ -397,6 +397,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     elif python_version == (3, 10): packages = 'numpy>=1.22.3'
     elif python_version == (3, 11): packages = 'numpy>=1.23.5'
     elif python_version == (3, 12): packages = 'numpy>=1.26.0'
+    elif python_version == (3, 13): packages = 'numpy>=2.1'
     else: packages = 'numpy>=1.23'
 
     if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
@@ -440,6 +441,10 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         '
         if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
         elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
+
+
+    # elif python_version >= (3, 13):
+    #     packages = 'numpy>=2.1'
 
     else:
         #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
@@ -765,6 +770,7 @@ def local_python_install(platform, config):
         '3.10' : 'https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz',
         '3.11' : 'https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tgz',
         '3.12' : 'https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz',
+        '3.13' : 'https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
