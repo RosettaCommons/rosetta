@@ -35,7 +35,7 @@ static basic::Tracer TR( "protocols.ligand_evolution.Scorer" ); // NOLINT(cert-e
 namespace protocols {
 namespace ligand_evolution {
 
-Scorer::Scorer( EnamineFragmentLibrary& library, core::Size n_runs, char ligand_chain )
+Scorer::Scorer( FragmentLibrary& library, core::Size n_runs, char ligand_chain )
 :
 	ligand_chain_( ligand_chain ),
 	n_runs_( n_runs ),
@@ -399,9 +399,9 @@ void Scorer::save_results() const {
 utility::vector1< std::string > Scorer::ligand_line( LigandIdentifier const& identifier ) const {
 	utility::vector1< std::string > entries;
 	entries.push_back( utility::join( identifier, "_" ) );
-	entries.push_back( library_.enamine_reaction( identifier[ 1 ] ) );
+	entries.push_back( library_.reaction_id( identifier[ 1 ] ) );
 	for ( core::Size ii( 1 ); ii <= library_.reaction_positions( identifier[ 1 ] ); ++ii ) {
-		entries.push_back( library_.enamine_reagent( identifier[ ii + 1 ] ) );
+		entries.push_back( library_.reagent_id( identifier[ ii + 1 ] ) );
 	}
 	for ( core::Size ii( library_.reaction_positions( identifier[ 1 ] ) + 1 ); ii <= library_.max_positions(); ++ii ) {
 		entries.push_back( "-" );
@@ -534,11 +534,11 @@ bool Scorer::check_memory(const LigandIdentifier &id) {
 	if ( !loaded_score_memory_.empty() ) {
 		TR.Debug << "Old scores were loaded. Create name based identifier and search for scores for " << id << std::endl;
 
-		std::string reaction = library_.enamine_reaction(id[1]);
+		std::string reaction = library_.reaction_id(id[1]);
 		utility::vector1< std::string > universal_identifier;
 		for ( core::Size ii( 2 ); ii <= id.size(); ++ii ) {
 			if ( id[ ii ] != 0 ) {
-				universal_identifier.push_back( library_.enamine_reagent(id[ii]));
+				universal_identifier.push_back( library_.reagent_id(id[ii]));
 			} else {
 				universal_identifier.push_back( "0" );
 			}

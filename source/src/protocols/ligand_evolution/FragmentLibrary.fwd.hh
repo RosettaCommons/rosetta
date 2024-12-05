@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/EnamineFragmentLibrary.fwd.hh
-/// @brief  Forward Class declaration for %EnamineFragmentLibrary
+/// @file   protocols/ligand_evolution/FragmentLibrary.fwd.hh
+/// @brief  Forward Class declaration for %FragmentLibrary
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 
-#ifndef INCLUDED_protocols_ligand_evolution_EnamineFragmentLibrary_FWD_HH
-#define INCLUDED_protocols_ligand_evolution_EnamineFragmentLibrary_FWD_HH
+#ifndef INCLUDED_protocols_ligand_evolution_FragmentLibrary_FWD_HH
+#define INCLUDED_protocols_ligand_evolution_FragmentLibrary_FWD_HH
 
 // Utility headers
 #include <core/types.hh>
@@ -23,20 +23,20 @@
 namespace protocols {
 namespace ligand_evolution {
 
-class EnamineFragmentLibrary;
+class FragmentLibrary;
 
-typedef utility::pointer::shared_ptr< EnamineFragmentLibrary > EnamineFragmentLibraryOP;
-typedef utility::pointer::shared_ptr< EnamineFragmentLibrary const > EnamineFragmentLibraryCOP;
+typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
+typedef utility::pointer::shared_ptr< FragmentLibrary const > FragmentLibraryCOP;
 
-class EnamineReagent;
+class Reagent;
 
-typedef utility::pointer::shared_ptr< EnamineReagent > EnamineReagentOP;
-typedef utility::pointer::shared_ptr< EnamineReagent const > EnamineReagentCOP;
+typedef utility::pointer::shared_ptr< Reagent > ReagentOP;
+typedef utility::pointer::shared_ptr< Reagent const > ReagentCOP;
 
-class EnamineReaction;
+class Reaction;
 
-typedef utility::pointer::shared_ptr< EnamineReaction > EnamineReactionOP;
-typedef utility::pointer::shared_ptr< EnamineReaction const > EnamineReactionCOP;
+typedef utility::pointer::shared_ptr< Reaction > ReactionOP;
+typedef utility::pointer::shared_ptr< Reaction const > ReactionCOP;
 
 /// @brief LigandIdentifiers are a vector of ints which should encode all information needed by the FragmentLibrary to create a new ligand
 typedef utility::vector1< core::Size > LigandIdentifier;

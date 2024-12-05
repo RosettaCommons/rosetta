@@ -15,7 +15,7 @@
 #include <protocols/ligand_evolution/Population.hh>
 
 // package headers
-#include <protocols/ligand_evolution/EnamineFragmentLibrary.hh>
+#include <protocols/ligand_evolution/FragmentLibrary.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
@@ -57,7 +57,7 @@ Individual const& Population::individual( core::Size index ) const {
 	return individuals_[ index ];
 }
 
-void Population::add_random( core::Size n_random_individuals, EnamineFragmentLibrary const& lib ) {
+void Population::add_random( core::Size n_random_individuals, FragmentLibrary const& lib ) {
 	for ( core::Size ii( 1 ); ii <= n_random_individuals; ++ii ) {
 		Individual individual( lib.random_ligand(), { 0 }, "random" );
 		add_individual( individual );

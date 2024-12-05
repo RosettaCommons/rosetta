@@ -20,9 +20,9 @@
 #include <protocols/ligand_evolution/EvolutionOptions.hh>
 
 // package headers
-#include <protocols/ligand_evolution/EnamineCrossover.hh>
-#include <protocols/ligand_evolution/EnamineFragmentLibrary.hh>
-#include <protocols/ligand_evolution/EnamineMutator.hh>
+#include <protocols/ligand_evolution/Crossover.hh>
+#include <protocols/ligand_evolution/FragmentLibrary.hh>
+#include <protocols/ligand_evolution/Mutator.hh>
 #include <protocols/ligand_evolution/IdentityFactory.hh>
 #include <protocols/ligand_evolution/Population.hh>
 #include <protocols/ligand_evolution/Scorer.hh>
@@ -75,7 +75,7 @@ private:
 	WorkManagerOP work_manager_ = nullptr;
 
 	/// @brief Holds all molecular information about the protein and the ligands
-	EnamineFragmentLibrary library_;
+	FragmentLibrary library_;
 
 	/// @brief The selector which will be applied to advance the generation
 	core::Size main_selector_;
@@ -101,7 +101,7 @@ private:
 	/// @brief Stores statistical information about score distribution within the population
 	utility::vector1< core::Real > quantiles = { 9999.9, 9999.9, 9999.9, 9999.9 };
 
-	/// @brief Used to distinguish between scoring of external molecules and internal enamine optimization
+	/// @brief Used to distinguish between scoring of external molecules and internal evolutionary optimization
 	core::Size external_scoring_;
 
 };

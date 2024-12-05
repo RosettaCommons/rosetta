@@ -7,30 +7,30 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/EnamineCrossover.hh
-/// @brief  Class declaration of the %EnamineCrossover class
+/// @file   protocols/ligand_evolution/Crossover.hh
+/// @brief  Class declaration of the %Crossover class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 
-#ifndef INCLUDED_protocols_ligand_evolution_EnamineCrossover_HH
-#define INCLUDED_protocols_ligand_evolution_EnamineCrossover_HH
+#ifndef INCLUDED_protocols_ligand_evolution_Crossover_HH
+#define INCLUDED_protocols_ligand_evolution_Crossover_HH
 
 
 // unit headers
-#include <protocols/ligand_evolution/EnamineCrossover.fwd.hh>
+#include <protocols/ligand_evolution/Crossover.fwd.hh>
 #include <protocols/ligand_evolution/OffspringFactory.hh>
 
 // package headers
-#include <protocols/ligand_evolution/EnamineFragmentLibrary.hh>
+#include <protocols/ligand_evolution/FragmentLibrary.hh>
 
 namespace protocols {
 namespace ligand_evolution {
 
 /// @brief Takes two individuals and produces a set amount of offspring using a crossover.
-class EnamineCrossover : public OffspringFactory {
+class Crossover : public OffspringFactory {
 public:
 
-	explicit EnamineCrossover(  EnamineFragmentLibrary const& library );
+	explicit Crossover(  FragmentLibrary const& library );
 
 	/// @brief Selects randomly two parents to create offspring until n_offspring is available
 	/// @detail One random parent donates the reaction and both donate minimum one reagent. If they come from different reactions, the alien reagent is mapped to the most similar
@@ -48,9 +48,9 @@ private:
 private:
 
 	/// @brief Since this function regularly produces offspring and consults a %FragmentLibrary for this, it keeps ownership to one
-	EnamineFragmentLibrary const& library_;
+	FragmentLibrary const& library_;
 
-	std::string name_ = "EnamineCrossover";
+	std::string name_ = "Crossover";
 
 };
 

@@ -30,7 +30,7 @@ namespace ligand_evolution {
     // WorkManager
     // #########################################################################
 
-    WorkManager::WorkManager( ScorerOP& scorer, core::Size id_length, EnamineFragmentLibrary const& library )
+    WorkManager::WorkManager( ScorerOP& scorer, core::Size id_length, FragmentLibrary const& library )
     :
     scorer_( scorer ),
     library_( library )

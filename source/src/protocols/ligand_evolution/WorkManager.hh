@@ -33,7 +33,7 @@ namespace ligand_evolution {
     class WorkManager {
     public:
 
-        explicit WorkManager( ScorerOP& scorer, core::Size id_length, EnamineFragmentLibrary const& library );
+        explicit WorkManager( ScorerOP& scorer, core::Size id_length, FragmentLibrary const& library );
         ~WorkManager();
 
         /// @brief Scans all individuals for unscored ligands and starts working on them
@@ -77,7 +77,7 @@ namespace ligand_evolution {
 
         utility::vector1< WorkerOP > worker_;
 
-        EnamineFragmentLibrary const& library_;
+        FragmentLibrary const& library_;
 
     };
 

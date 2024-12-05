@@ -239,7 +239,7 @@ void EvolutionManager::init() {
 			for ( const std::string &name: evoopt->get_factory_names() ) {
 				const std::string &type = evoopt->get_factory_type(name);
 				if ( type == "crossover" ) {
-					factories_.emplace_back(new EnamineCrossover(library_));
+					factories_.emplace_back(new Crossover(library_));
 				} else if ( type == "identity" ) {
 					factories_.emplace_back(new IdentityFactory());
 				} else if ( type == "mutator" ) {
@@ -248,7 +248,7 @@ void EvolutionManager::init() {
 					core::Real min_similarity = evoopt->get_factory_parameter(name, "min_similarity");
 					core::Real max_similarity = evoopt->get_factory_parameter(name, "max_similarity");
 					factories_.emplace_back(
-						new EnamineMutator(library_, {reaction_weight, reagent_weight}, min_similarity,
+						new Mutator(library_, {reaction_weight, reagent_weight}, min_similarity,
 						max_similarity));
 				} else {
 					TR.Error << "Unknown factory type " << type << ". Please program setup in EvolutionManager."

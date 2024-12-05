@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/EnamineMutator.cc
-/// @brief  Implementation of the %EnamineMutator class
+/// @file   protocols/ligand_evolution/Mutator.cc
+/// @brief  Implementation of the %Mutator class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 // unit headers
-#include <protocols/ligand_evolution/EnamineMutator.hh>
+#include <protocols/ligand_evolution/Mutator.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility/stream_util.hh>
 
-static basic::Tracer TR( "protocols.ligand_evolution.EnamineMutator" );
+static basic::Tracer TR( "protocols.ligand_evolution.Mutator" );
 
 
 namespace protocols {
 namespace ligand_evolution {
 
-EnamineMutator::EnamineMutator( EnamineFragmentLibrary const& library, utility::vector1< core::Real > const& weights, core::Real min_similarity, core::Real max_similarity )
+Mutator::Mutator( FragmentLibrary const& library, utility::vector1< core::Real > const& weights, core::Real min_similarity, core::Real max_similarity )
 :
 	min_similarity_( min_similarity ),
 	max_similarity_( max_similarity ),
@@ -32,11 +32,11 @@ EnamineMutator::EnamineMutator( EnamineFragmentLibrary const& library, utility::
 	reaction_or_reagent_(weights )
 {}
 
-std::string const& EnamineMutator::name() const {
+std::string const& Mutator::name() const {
 	return name_;
 }
 
-utility::vector1< Individual > EnamineMutator::apply( utility::vector1< Individual > const& parents, core::Size n_offspring ) const {
+utility::vector1< Individual > Mutator::apply( utility::vector1< Individual > const& parents, core::Size n_offspring ) const {
 
 	if ( parents.empty() ) {
 		TR.Warning << "Received no parents to mutate. Will return empty offspring list." << std::endl;
@@ -64,10 +64,10 @@ utility::vector1< Individual > EnamineMutator::apply( utility::vector1< Individu
 	return offspring;
 }
 
-Individual EnamineMutator::mutate( Individual const& individual ) const {
+Individual Mutator::mutate( Individual const& individual ) const {
 
 	TR.Debug << "Start mutation for " << individual.identifier() << std::endl;
-	// For most parts we are now working on the LigandIdentifier. This holds all information the EnamineFragmentLibrary needs
+	// For most parts we are now working on the LigandIdentifier. This holds all information the FragmentLibrary needs
 	LigandIdentifier new_identifier = individual.identifier();
 
 	// Select which feature should be mutated. LigandIdentifier looks like [reaction_index, reagent1_index, reagent2_index, ... , reagentN_index]
@@ -144,11 +144,11 @@ Individual EnamineMutator::mutate( Individual const& individual ) const {
 	return Individual( new_identifier, { individual.id() }, "mutate" );
 }
 
-void EnamineMutator::set_min_similarity( core::Real min_similarity ) {
+void Mutator::set_min_similarity( core::Real min_similarity ) {
 	min_similarity_ = min_similarity;
 }
 
-void EnamineMutator::set_max_similarity( core::Real max_similarity ) {
+void Mutator::set_max_similarity( core::Real max_similarity ) {
 	max_similarity_ = max_similarity;
 }
 

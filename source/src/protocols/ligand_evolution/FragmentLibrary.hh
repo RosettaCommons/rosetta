@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/EnamineFragmentLibrary.hh
-/// @brief  Class declaration for %EnamineFragmentLibrary
+/// @file   protocols/ligand_evolution/FragmentLibrary.hh
+/// @brief  Class declaration for %FragmentLibrary
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 
-#ifndef INCLUDED_protocols_ligand_evolution_EnamineFragmentLibrary_HH
-#define INCLUDED_protocols_ligand_evolution_EnamineFragmentLibrary_HH
+#ifndef INCLUDED_protocols_ligand_evolution_FragmentLibrary_HH
+#define INCLUDED_protocols_ligand_evolution_FragmentLibrary_HH
 
 // unit headers
-#include <protocols/ligand_evolution/EnamineFragmentLibrary.fwd.hh>
+#include <protocols/ligand_evolution/FragmentLibrary.fwd.hh>
 
 // project headers
 #include <core/conformation/Residue.hh>
@@ -41,15 +41,15 @@
 namespace protocols {
 namespace ligand_evolution {
 
-/// @brief The %EnamineFragmentLibrary implements %FragmentLibrary for Enamine reaction and reagent data. Its main task is to hold chemical information and provide new ligands.
-class EnamineFragmentLibrary {
+/// @brief The %FragmentLibrary implements a combinatorial library for reaction and reagent data. Its main task is to hold chemical information and provide new ligands.
+class FragmentLibrary {
 public:
 
-	EnamineFragmentLibrary();
-	~EnamineFragmentLibrary();
+	FragmentLibrary();
+	~FragmentLibrary();
 	// deleted these due to rule of three
-	EnamineFragmentLibrary& operator=( EnamineFragmentLibrary const& other ) = delete;
-	EnamineFragmentLibrary( EnamineFragmentLibrary const& other ) = delete;
+	FragmentLibrary& operator=( FragmentLibrary const& other ) = delete;
+	FragmentLibrary( FragmentLibrary const& other ) = delete;
 
 public:
 
@@ -92,11 +92,11 @@ public:
 	/// @brief Returns a random reaction that is not included in exclude weighted for size of possible molecules
 	core::Size random_reaction( std::set< core::Size > const& exclude ) const;
 
-	/// @brief Returns the enamine id of this reaction
-	std::string const& enamine_reaction( core::Size reaction_id ) const;
+	/// @brief Returns the id of this reaction
+	std::string const& reaction_id( core::Size reaction_id ) const;
 
-	/// @brief Returns the enamine id of this reagent
-	std::string const& enamine_reagent( core::Size reagent_id ) const;
+	/// @brief Returns the id of this reagent
+	std::string const& reagent_id( core::Size reagent_id ) const;
 
 	/// @brief Runs the reaction specified by the ligand identifier and returns the resulting rdkit molecule
 	std::string run_reaction( LigandIdentifier const& identifier ) const;
@@ -145,10 +145,10 @@ private:
 private:
 
 	/// @brief List of all available reagents
-	utility::vector1< EnamineReagentOP > reagents_;
+	utility::vector1< ReagentOP > reagents_;
 
 	/// @brief List of all available reactions
-	utility::vector1< EnamineReactionOP > reactions_;
+	utility::vector1< ReactionOP > reactions_;
 
 	/// @brief Stores the original pose to dock all ligands in
 	// todo change all poses being part of a class to pose owning pointers
@@ -171,17 +171,17 @@ private:
 
 };
 
-/// @brief Internal class to handle enamine reagent information more easily
-class EnamineReagent {
+/// @brief Internal class to handle reagent information more easily
+class Reagent {
 public:
 
-	EnamineReagent( std::string const& name, std::string const& reagent_smiles, core::Size reaction_position, core::Size reaction_index );
+	Reagent( std::string const& name, std::string const& reagent_smiles, core::Size reaction_position, core::Size reaction_index );
 
-	~EnamineReagent();
+	~Reagent();
 
 	// deleted these due to rule of three
-	EnamineReagent& operator=( EnamineReagent const& other ) = delete;
-	EnamineReagent( EnamineReagent const& other ) = delete;
+	Reagent& operator=( Reagent const& other ) = delete;
+	Reagent( Reagent const& other ) = delete;
 
 private:
 
@@ -191,20 +191,20 @@ private:
 	RDKit::RWMOL_SPTR mol_;
 	RDKit::SparseIntVect< unsigned int >* fingerprint_;
 
-	friend EnamineFragmentLibrary;
+	friend FragmentLibrary;
 };
 
-/// @brief Internal class to handle enamine reaction information more easily
-class EnamineReaction {
+/// @brief Internal class to handle reaction information more easily
+class Reaction {
 public:
 
-	EnamineReaction( std::string const& name, std::string const& reaction_smiles, core::Size n_reagents );
+	Reaction( std::string const& name, std::string const& reaction_smiles, core::Size n_reagents );
 
-	~EnamineReaction();
+	~Reaction();
 
 	// deleted these due to rule of three
-	EnamineReaction& operator=( EnamineReaction const& other ) = delete;
-	EnamineReaction( EnamineReaction const& other ) = delete;
+	Reaction& operator=( Reaction const& other ) = delete;
+	Reaction( Reaction const& other ) = delete;
 
 	/// @brief returns the index of a random reagent in a FragmentLibraries reagents_ usable for the given position in this reaction
 	core::Size random_reagent_index( core::Size position ) const;
@@ -222,7 +222,7 @@ private:
 	RDKit::ChemicalReaction* reac_;
 	core::Size possible_molecules_ = 1;
 
-	friend EnamineFragmentLibrary;
+	friend FragmentLibrary;
 };
 
 }

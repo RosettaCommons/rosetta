@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/EnamineFragmentLibrary.cc
-/// @brief  The definition for %EnamineFragmentLibrary class
+/// @file   protocols/ligand_evolution/FragmentLibrary.cc
+/// @brief  The definition for %FragmentLibrary class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 // unit headers
-#include <protocols/ligand_evolution/EnamineFragmentLibrary.hh>
+#include <protocols/ligand_evolution/FragmentLibrary.hh>
 
 // project headers
 #include <core/chemical/MutableResidueType.hh>
@@ -39,25 +39,25 @@
 // C/C++ headers
 #include <algorithm>
 
-static basic::Tracer TR( "protocols.ligand_evolution.EnamineFragmentLibrary" ); // NOLINT(cert-err58-cpp)
+static basic::Tracer TR( "protocols.ligand_evolution.FragmentLibrary" ); // NOLINT(cert-err58-cpp)
 
 namespace protocols {
 namespace ligand_evolution {
 
 // #########################################################################
-// EnamineFragmentLibrary
+// FragmentLibrary
 // #########################################################################
 
-EnamineFragmentLibrary::EnamineFragmentLibrary() = default;
+FragmentLibrary::FragmentLibrary() = default;
 
-EnamineFragmentLibrary::~EnamineFragmentLibrary(){
+FragmentLibrary::~FragmentLibrary(){
 	for ( auto & fp : fingerprints_ ) {
         // todo switch to std uniq pointer
 		delete fp.second;
 	}
 }
 
-void EnamineFragmentLibrary::load_data( std::string const& reaction_file_path, std::string const& reagent_file_path, core::Size rank ) {
+void FragmentLibrary::load_data( std::string const& reaction_file_path, std::string const& reagent_file_path, core::Size rank ) {
 
 	// if rank is not 0, we don't want to load data, but we need to know position counts
 
@@ -103,7 +103,7 @@ void EnamineFragmentLibrary::load_data( std::string const& reaction_file_path, s
 
 }
 
-void EnamineFragmentLibrary::load_reactions( std::string const& reaction_file_path ) {
+void FragmentLibrary::load_reactions( std::string const& reaction_file_path ) {
 
 	// open file
 	TR.Debug << "Search for reaction file '" << reaction_file_path << std::endl;
@@ -159,15 +159,15 @@ void EnamineFragmentLibrary::load_reactions( std::string const& reaction_file_pa
 		core::Size reagent_count = utility::string2Size( split_line[ comp_i ] );
 		if ( reagent_count > max_reagents_ ) max_reagents_ = reagent_count;
 
-		// construct new EnamineReaction object in place at the back of the reactions vector
+		// construct new Reaction object in place at the back of the reactions vector
 		TR.Debug << "Create reaction " << reaction_name << " defined as " << reaction_smiles << " with " << reagent_count << " reagents." << std::endl;
-		reactions_.emplace_back( new EnamineReaction( reaction_name, reaction_smiles, reagent_count ) );
+		reactions_.emplace_back( new Reaction( reaction_name, reaction_smiles, reagent_count ) );
 		reaction_name_to_index_.insert( std::pair< std::string, core::Size >( reaction_name, reactions_.size() ) );
 
 	}
 }
 
-void EnamineFragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
+void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 
 	if ( reactions_.empty() ) {
 		TR.Error << "Reagents should never be loaded before reactions. Please contact developer." << std::endl;
@@ -230,7 +230,7 @@ void EnamineFragmentLibrary::load_reagents( std::string const& reagent_file_path
 		core::Size reaction_index = reaction_name_to_index_.at( split_line[ reaction_i ] );
 
 		// create reagent
-		reagents_.emplace_back( new EnamineReagent( reagent_name, reagent_smiles, position, reaction_index ) );
+		reagents_.emplace_back( new Reagent( reagent_name, reagent_smiles, position, reaction_index ) );
 		// add reagent to its reaction
 		reactions_[ reaction_index ]->reagents_[ position ].emplace_back( reagents_.size() );
 
@@ -246,7 +246,7 @@ void EnamineFragmentLibrary::load_reagents( std::string const& reagent_file_path
 	}
 }
 
-core::conformation::ResidueOP EnamineFragmentLibrary::create_ligand( std::string const& smiles, bool create_rotamers ) const {
+core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const& smiles, bool create_rotamers ) const {
 
 	// TODO Rosetta can't handle salts well, like an added Cl ion. Do I want to do something about that?
 
@@ -275,7 +275,7 @@ core::conformation::ResidueOP EnamineFragmentLibrary::create_ligand( std::string
 	return tmp_residue;
 }
 
-core::Size EnamineFragmentLibrary::generate_rotamers( core::chemical::MutableResidueType& new_ligand ) const {
+core::Size FragmentLibrary::generate_rotamers( core::chemical::MutableResidueType& new_ligand ) const {
 	// This whole function is written by and copied from Rocco Moretti !
 
 	// nconf logic adapted from Jean-Paul Ebejer's presentation
@@ -338,7 +338,7 @@ core::Size EnamineFragmentLibrary::generate_rotamers( core::chemical::MutableRes
 	return return_value.size();
 }
 
-LigandIdentifier EnamineFragmentLibrary::random_ligand() const {
+LigandIdentifier FragmentLibrary::random_ligand() const {
 
 	// set values for a completely random ligand
 	LigandIdentifier lig( max_reagents_ + 1 );
@@ -358,7 +358,7 @@ LigandIdentifier EnamineFragmentLibrary::random_ligand() const {
 	return lig;
 }
 
-ReagentSimilarityList EnamineFragmentLibrary::get_similar_reagents( core::Size reagent_id, core::Size reaction_id, core::Size position ) const {
+ReagentSimilarityList FragmentLibrary::get_similar_reagents( core::Size reagent_id, core::Size reaction_id, core::Size position ) const {
 
 	ReagentSimilarityList similar_reagents;
 
@@ -386,17 +386,17 @@ ReagentSimilarityList EnamineFragmentLibrary::get_similar_reagents( core::Size r
 	return similar_reagents;
 }
 
-core::Size EnamineFragmentLibrary::reactions_size() const {
+core::Size FragmentLibrary::reactions_size() const {
 	return reactions_.size();
 }
 
-core::Size EnamineFragmentLibrary::reagents_size() const {
+core::Size FragmentLibrary::reagents_size() const {
 	return reagents_.size();
 }
 
-core::Size EnamineFragmentLibrary::reagents_size( core::Size reaction_index ) const {
+core::Size FragmentLibrary::reagents_size( core::Size reaction_index ) const {
 	core::Size size( 0 );
-	EnamineReactionCOP reaction = reactions_[ reaction_index ];
+	ReactionCOP reaction = reactions_[ reaction_index ];
 	// iterate over all positions in the given reaction
 	for ( core::Size position( 1 ); position <= reaction->reagents_.size(); ++position ) {
 		size += reagents_size( reaction_index, position );
@@ -404,11 +404,11 @@ core::Size EnamineFragmentLibrary::reagents_size( core::Size reaction_index ) co
 	return size;
 }
 
-core::Size EnamineFragmentLibrary::reagents_size( core::Size reaction_index, core::Size position ) const {
+core::Size FragmentLibrary::reagents_size( core::Size reaction_index, core::Size position ) const {
 	return reactions_[ reaction_index ]->reagents_[ position ].size();
 }
 
-core::pose::PoseOP EnamineFragmentLibrary::create_pose( core::conformation::Residue& ligand, char ligand_chain ) const {
+core::pose::PoseOP FragmentLibrary::create_pose( core::conformation::Residue& ligand, char ligand_chain ) const {
 
 	core::pose::PoseOP ligand_pose( new core::pose::Pose );
 	ligand_pose->detached_copy( pose_ );
@@ -443,7 +443,7 @@ core::pose::PoseOP EnamineFragmentLibrary::create_pose( core::conformation::Resi
 	return ligand_pose;
 }
 
-core::pose::PoseOP EnamineFragmentLibrary::create_ligand_pose( LigandIdentifier const& id, bool create_rotamers, char ligand_chain ) const {
+core::pose::PoseOP FragmentLibrary::create_ligand_pose( LigandIdentifier const& id, bool create_rotamers, char ligand_chain ) const {
 
 	TR.Debug << "Turn id " << id << " into smiles." << std::endl;
 
@@ -456,20 +456,20 @@ core::pose::PoseOP EnamineFragmentLibrary::create_ligand_pose( LigandIdentifier 
 	return create_ligand_pose( smiles, create_rotamers, ligand_chain );
 }
 
-core::pose::PoseOP EnamineFragmentLibrary::create_ligand_pose(const std::string &smiles, bool create_rotamers, char ligand_chain) const {
+core::pose::PoseOP FragmentLibrary::create_ligand_pose(const std::string &smiles, bool create_rotamers, char ligand_chain) const {
 	TR.Debug << "Try to create ligand for " << smiles << std::endl;
 	return create_pose( *create_ligand( smiles, create_rotamers ), ligand_chain );
 }
 
-void EnamineFragmentLibrary::set_pose( core::pose::Pose const& pose ) {
+void FragmentLibrary::set_pose( core::pose::Pose const& pose ) {
 	pose_ = pose;
 }
 
-core::Size EnamineFragmentLibrary::random_reaction() const {
+core::Size FragmentLibrary::random_reaction() const {
 	return weighted_sampler_.random_sample();
 }
 
-core::Size EnamineFragmentLibrary::random_reaction( std::set<core::Size> const& exclude ) const {
+core::Size FragmentLibrary::random_reaction( std::set<core::Size> const& exclude ) const {
 	numeric::random::WeightedSampler tmp_sampler;
 	// creates a weight for all reactions as 0
 	tmp_sampler.resize( reactions_size() );
@@ -482,15 +482,15 @@ core::Size EnamineFragmentLibrary::random_reaction( std::set<core::Size> const& 
 	return tmp_sampler.random_sample();
 }
 
-std::string const& EnamineFragmentLibrary::enamine_reaction( core::Size reaction_id ) const {
+std::string const& FragmentLibrary::reaction_id( core::Size reaction_id ) const {
 	return reactions_[ reaction_id ]->name_;
 }
 
-std::string const& EnamineFragmentLibrary::enamine_reagent( core::Size reagent_id ) const {
+std::string const& FragmentLibrary::reagent_id( core::Size reagent_id ) const {
 	return reagents_[ reagent_id ]->name_;
 }
 
-std::string EnamineFragmentLibrary::run_reaction( LigandIdentifier const& identifier ) const {
+std::string FragmentLibrary::run_reaction( LigandIdentifier const& identifier ) const {
 	core::Size reaction_index( identifier[ 1 ] );
 	core::Size n_reaction_positions = reactions_[ reaction_index ]->n_positions();
 	utility::vector1< core::Size > reagent_indices( identifier.begin() + 1, identifier.end() );
@@ -523,7 +523,7 @@ std::string EnamineFragmentLibrary::run_reaction( LigandIdentifier const& identi
 	return RDKit::MolToSmiles( RDKit::RWMol( *products[ 0 ][ 0 ] ) );
 }
 
-std::string EnamineFragmentLibrary::identifier_to_smiles( LigandIdentifier const& identifier ) const {
+std::string FragmentLibrary::identifier_to_smiles( LigandIdentifier const& identifier ) const {
 	if ( smiles_.empty() ) {
 		return run_reaction( identifier );
 	} else {
@@ -531,7 +531,7 @@ std::string EnamineFragmentLibrary::identifier_to_smiles( LigandIdentifier const
 	}
 }
 
-void EnamineFragmentLibrary::load_smiles( std::string const& path_to_data ) {
+void FragmentLibrary::load_smiles( std::string const& path_to_data ) {
 	utility::io::izstream smiles_file( path_to_data );
 	TR << "Try to open file " << path_to_data << std::endl;
 	if ( !smiles_file ) {
@@ -546,26 +546,26 @@ void EnamineFragmentLibrary::load_smiles( std::string const& path_to_data ) {
 }
 
 // todo rename to something more straight forward
-core::Size EnamineFragmentLibrary::smiles_to_score() const {
+core::Size FragmentLibrary::smiles_to_score() const {
 	return smiles_.size();
 }
 
-core::Size EnamineFragmentLibrary::max_positions() const {
+core::Size FragmentLibrary::max_positions() const {
 	return max_reagents_;
 }
 
-core::Size EnamineFragmentLibrary::reaction_positions( core::Size reaction_id ) const {
+core::Size FragmentLibrary::reaction_positions( core::Size reaction_id ) const {
 	return reactions_[ reaction_id ]->n_positions();
 }
 
-core::Size EnamineFragmentLibrary::reaction_name_to_index(const std::string &reaction_name) const {
+core::Size FragmentLibrary::reaction_name_to_index(const std::string &reaction_name) const {
 	if ( reaction_name_to_index_.count( reaction_name ) == 0 ) {
 		return 0;
 	}
 	return reaction_name_to_index_.at( reaction_name );
 }
 
-core::Size EnamineFragmentLibrary::reagent_name_to_index(core::Size reaction_index, core::Size position, const std::string& reagent_name) const {
+core::Size FragmentLibrary::reagent_name_to_index(core::Size reaction_index, core::Size position, const std::string& reagent_name) const {
 	for ( core::Size reagent_index : reactions_[ reaction_index ]->reagents_[ position ] ) {
 		if ( reagent_name == reagents_[ reagent_index ]->name_ ) {
 			return reagent_index;
@@ -574,7 +574,7 @@ core::Size EnamineFragmentLibrary::reagent_name_to_index(core::Size reaction_ind
 	return 0;
 }
 
-RDKit::SparseIntVect<unsigned int>* EnamineFragmentLibrary::calculate_fingerprint(const LigandIdentifier &id) {
+RDKit::SparseIntVect<unsigned int>* FragmentLibrary::calculate_fingerprint(const LigandIdentifier &id) {
 	if ( fingerprints_.count( id ) == 0 ) {
 		std::string smiles = run_reaction(id);
 		RDKit::RWMol* mol = RDKit::SmilesToMol( smiles );
@@ -584,15 +584,15 @@ RDKit::SparseIntVect<unsigned int>* EnamineFragmentLibrary::calculate_fingerprin
 	return fingerprints_[ id ];
 }
 
-core::Real EnamineFragmentLibrary::similarity(const LigandIdentifier &id1, const LigandIdentifier &id2) {
+core::Real FragmentLibrary::similarity(const LigandIdentifier &id1, const LigandIdentifier &id2) {
 	return RDKit::TanimotoSimilarity( *calculate_fingerprint( id1 ), *calculate_fingerprint( id2 ) );
 }
 
 // #########################################################################
-// EnamineReaction
+// Reaction
 // #########################################################################
 
-EnamineReaction::EnamineReaction( std::string const& name, std::string const& reaction_smiles, core::Size n_reagents )
+Reaction::Reaction( std::string const& name, std::string const& reaction_smiles, core::Size n_reagents )
 :
 	name_( name )
 {
@@ -603,15 +603,15 @@ EnamineReaction::EnamineReaction( std::string const& name, std::string const& re
 	}
 }
 
-EnamineReaction::~EnamineReaction() {
+Reaction::~Reaction() {
 	delete reac_;
 }
 
-core::Size EnamineReaction::random_reagent_index( core::Size position ) const {
+core::Size Reaction::random_reagent_index( core::Size position ) const {
 	return reagents_[ position ][ numeric::random::random_range( 1, reagents_[ position ].size() ) ];
 }
 
-core::Size EnamineReaction::calculate_possible_molecules() {
+core::Size Reaction::calculate_possible_molecules() {
 	for ( core::Size ii = 1; ii <= reagents_.size(); ii++ ) {
 		possible_molecules_ *= reagents_[ ii ].size();
 	}
@@ -621,15 +621,15 @@ core::Size EnamineReaction::calculate_possible_molecules() {
 	return possible_molecules_;
 }
 
-core::Size EnamineReaction::n_positions() const {
+core::Size Reaction::n_positions() const {
 	return reagents_.size();
 }
 
 // #########################################################################
-// EnamineReagent
+// Reagent
 // #########################################################################
 
-EnamineReagent::EnamineReagent( std::string const& name, std::string const& reagent_smiles, core::Size reaction_position, core::Size reaction_index )
+Reagent::Reagent( std::string const& name, std::string const& reagent_smiles, core::Size reaction_position, core::Size reaction_index )
 :
 	name_( name ),
 	reaction_position_( reaction_position ),
@@ -639,7 +639,7 @@ EnamineReagent::EnamineReagent( std::string const& name, std::string const& reag
 	fingerprint_ = RDKit::MorganFingerprints::getFingerprint( *mol_, 2 );
 }
 
-EnamineReagent::~EnamineReagent() {
+Reagent::~Reagent() {
 	delete fingerprint_;
 }
 

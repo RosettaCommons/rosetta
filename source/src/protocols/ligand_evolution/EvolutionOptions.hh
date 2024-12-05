@@ -178,10 +178,10 @@ private:
 	core::Size generations_ = 25;
 
 	/// @brief Path where to find the reaction definitions. The standard settings assume you use a input and run directory structure.
-	std::string path_to_reactions_ = "../input/reactions_full.smarts";
+	std::string path_to_reactions_;
 
 	/// @brief Path where to find reagents definitions. The standard settings assume you use a input and run directory structure.
-	std::string path_to_reagents_ = "../input/enamine_full.smirk";
+	std::string path_to_reagents_;
 
 	/// @brief Maps selector names to types and parameter list
 	std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > selector_options_ {

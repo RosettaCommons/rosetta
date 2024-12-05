@@ -59,7 +59,7 @@ public:
 	Individual & individual( core::Size index );
 
 	/// @brief Adds random individuals to a population
-	void add_random( core::Size n_random_individuals, EnamineFragmentLibrary const& lib );
+	void add_random( core::Size n_random_individuals, FragmentLibrary const& lib );
 
 	/// @brief Adds new (and potentially unscored individuals to the population)
 	void add_individuals( utility::vector1< Individual > const& new_individuals );

@@ -18,7 +18,7 @@
 #include <protocols/ligand_evolution/Scorer.fwd.hh>
 
 // project headers
-#include <protocols/ligand_evolution/EnamineFragmentLibrary.hh>
+#include <protocols/ligand_evolution/FragmentLibrary.hh>
 #include <protocols/ligand_evolution/Population.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -36,7 +36,7 @@ namespace ligand_evolution {
 class Scorer {
 public:
 
-	Scorer( EnamineFragmentLibrary& library, core::Size n_runs, char ligand_chain );
+	Scorer( FragmentLibrary& library, core::Size n_runs, char ligand_chain );
 
 	/// @brief Sets the score for all individuals in the population, calculates it where needed
 	/// @details If the same ligand is multiple times present within the population, each occures after the first gets an increasing penalty.
@@ -148,7 +148,7 @@ private:
 
 	std::string current_ligand_smiles_;
 
-	EnamineFragmentLibrary& library_;
+	FragmentLibrary& library_;
 
 	core::pose::PoseOP basic_pose_ = nullptr;
 

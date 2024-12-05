@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/EnamineCrossover.fwd.hh
-/// @brief  Forward declaration of the %EnamineCrossover class
+/// @file   protocols/ligand_evolution/Crossover.fwd.hh
+/// @brief  Forward declaration of the %Crossover class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
-#ifndef INCLUDED_protocols_ligand_evolution_EnamineCrossover_FWD_HH
-#define INCLUDED_protocols_ligand_evolution_EnamineCrossover_FWD_HH
+#ifndef INCLUDED_protocols_ligand_evolution_Crossover_FWD_HH
+#define INCLUDED_protocols_ligand_evolution_Crossover_FWD_HH
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -20,10 +20,10 @@
 namespace protocols {
 namespace ligand_evolution {
 
-class EnamineCrossover;
+class Crossover;
 
-typedef utility::pointer::shared_ptr< EnamineCrossover > EnamineCrossoverOP;
-typedef utility::pointer::shared_ptr< EnamineCrossover const > EnamineCrossoverCOP;
+typedef utility::pointer::shared_ptr< Crossover > CrossoverOP;
+typedef utility::pointer::shared_ptr< Crossover const > CrossoverCOP;
 
 }
 }

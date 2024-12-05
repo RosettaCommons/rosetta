@@ -218,9 +218,9 @@ sources = {
     ],
 	"protocols/ligand_evolution": [
         "ElitistSelector",
-        "EnamineCrossover",
-        "EnamineFragmentLibrary",
-        "EnamineMutator",
+        "Crossover",
+        "FragmentLibrary",
+        "Mutator",
         "EvolutionManager",
         "EvolutionOptions",
         "IdentityFactory",

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/EnamineCrossover.cc
-/// @brief  Implementation of the %EnamineCrossover class
+/// @file   protocols/ligand_evolution/Crossover.cc
+/// @brief  Implementation of the %Crossover class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 
 // unit headers
-#include <protocols/ligand_evolution/EnamineCrossover.hh>
+#include <protocols/ligand_evolution/Crossover.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
@@ -23,22 +23,22 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/reservoir_sample.hh>
 
-static basic::Tracer TR( "protocols.ligand_evolution.EnamineCrossover" );
+static basic::Tracer TR( "protocols.ligand_evolution.Crossover" );
 
 
 namespace protocols {
 namespace ligand_evolution {
 
-EnamineCrossover::EnamineCrossover( EnamineFragmentLibrary const& library )
+Crossover::Crossover( FragmentLibrary const& library )
 :
 	library_( library )
 {}
 
-std::string const& EnamineCrossover::name() const {
+std::string const& Crossover::name() const {
 	return name_;
 }
 
-utility::vector1< Individual > EnamineCrossover::apply( utility::vector1< Individual > const& parents, core::Size n_offspring ) const {
+utility::vector1< Individual > Crossover::apply( utility::vector1< Individual > const& parents, core::Size n_offspring ) const {
 
 	utility::vector1< Individual > offspring;
 
@@ -80,7 +80,7 @@ utility::vector1< Individual > EnamineCrossover::apply( utility::vector1< Indivi
 	return offspring;
 }
 
-Individual EnamineCrossover::cross( Individual const& reaction_parent, Individual const& other_parent ) const {
+Individual Crossover::cross( Individual const& reaction_parent, Individual const& other_parent ) const {
 
 	// TODO Implement the possibility to get reagent1 as a new reagent2 similarity based like A-B + C-D = A-C'
 

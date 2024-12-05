@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/EnamineMutator.hh
-/// @brief  Class declaration of the %EnamineMutator class
+/// @file   protocols/ligand_evolution/Mutator.hh
+/// @brief  Class declaration of the %Mutator class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
-#ifndef INCLUDED_protocols_ligand_evolution_EnamineMutator_HH
-#define INCLUDED_protocols_ligand_evolution_EnamineMutator_HH
+#ifndef INCLUDED_protocols_ligand_evolution_Mutator_HH
+#define INCLUDED_protocols_ligand_evolution_Mutator_HH
 
 // unit headers
-#include <protocols/ligand_evolution/EnamineMutator.fwd.hh>
+#include <protocols/ligand_evolution/Mutator.fwd.hh>
 #include <protocols/ligand_evolution/OffspringFactory.hh>
 
 // package headers
-#include <protocols/ligand_evolution/EnamineFragmentLibrary.hh>
+#include <protocols/ligand_evolution/FragmentLibrary.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -29,10 +29,10 @@ namespace protocols {
 namespace ligand_evolution {
 
 /// @brief Take a single individual, and returns a desired number of point mutated individuals based on the input one
-class EnamineMutator : public OffspringFactory {
+class Mutator : public OffspringFactory {
 public:
 
-	EnamineMutator( EnamineFragmentLibrary const& library, utility::vector1< core::Real > const& weights, core::Real min_similarity, core::Real max_similarity );
+	Mutator( FragmentLibrary const& library, utility::vector1< core::Real > const& weights, core::Real min_similarity, core::Real max_similarity );
 
 	/// @brief Accepts a list of parents and creates n_offspring mutants
 	/// @detail Based on the internal values this mutation process changes either one of the reagents or the reaction and maps offspring to the closest ligand
@@ -60,13 +60,13 @@ private:
 	core::Real max_similarity_ = 0.99;
 
 	/// @brief Since this function regularly produces offspring and consults a %FragmentLibrary for this, it keeps a ownership to one
-	EnamineFragmentLibrary const& library_;
+	FragmentLibrary const& library_;
 
 	/// @brief Randomly chooses what feature will be mutated based on the given weights
 	numeric::random::WeightedSampler reaction_or_reagent_;
 
 	/// @brief A name to identify the type of this object
-	std::string name_ = "EnamineMutator";
+	std::string name_ = "Mutator";
 
 };
 

@@ -19,7 +19,7 @@
 #include <protocols/ligand_evolution/Individual.fwd.hh>
 
 // package headers
-#include <protocols/ligand_evolution/EnamineFragmentLibrary.fwd.hh>
+#include <protocols/ligand_evolution/FragmentLibrary.fwd.hh>
 
 // project headers
 #include <core/types.hh>
