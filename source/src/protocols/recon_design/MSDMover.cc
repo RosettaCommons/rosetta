@@ -284,8 +284,7 @@ MSDMover::apply_mpi( core::pose::Pose & pose ) {
 	/// Make a string vector out of the AAs at my designable positions in the current state
     utility::vector1< std::string > my_sequence = get_designable_sequence ( pose, my_designable_residues );
 
-    std:string pass_seq;
-    std:string passed_seq;
+    std::string pass_seq;
     for( const std::string& resi_base_name: my_sequence) {
         pass_seq += resi_base_name + " ";
     }
@@ -299,6 +298,7 @@ MSDMover::apply_mpi( core::pose::Pose & pose ) {
 				else other_pose_sequences[jj] = my_sequence;
 			}
 		} else {
+            std::string passed_seq;
 			passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
             //Need to split passed_seq by spaces
             std::istringstream iss(passed_seq);
