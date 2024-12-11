@@ -18,6 +18,11 @@
 #include <basic/Tracer.hh>
 #include <utility/stream_util.hh>
 
+// numeric headers
+#include <numeric/random/random_permutation.hh>
+
+
+
 static basic::Tracer TR( "protocols.ligand_evolution.Mutator" );
 
 
@@ -48,7 +53,7 @@ utility::vector1< Individual > Mutator::apply( utility::vector1< Individual > co
 	}
 
 	utility::vector1< Individual > local_parents( parents );
-	std::random_shuffle( local_parents.begin(), local_parents.end() );
+	numeric::random::random_permutation( local_parents.begin(), local_parents.end() );
 
 	utility::vector1< Individual > offspring;
 

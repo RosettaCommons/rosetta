@@ -21,6 +21,7 @@
 
 // numeric headers
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 #include <numeric/random/reservoir_sample.hh>
 
 static basic::Tracer TR( "protocols.ligand_evolution.Crossover" );
@@ -62,7 +63,7 @@ utility::vector1< Individual > Crossover::apply( utility::vector1< Individual > 
 
     // todo turn it into a list of indices to manipulate
 	utility::vector1< Individual > local_parents( parents );
-	std::random_shuffle( local_parents.begin(), local_parents.end() );
+	numeric::random::random_permutation( local_parents.begin(), local_parents.end() );
 	core::Size current_index = 1;
 
 	while ( offspring.size() < n_offspring ) {
@@ -73,7 +74,7 @@ utility::vector1< Individual > Crossover::apply( utility::vector1< Individual > 
 		} else {
 			// shuffle parents again to allow for different crossovers in the next iteration
 			current_index = 1;
-			std::random_shuffle( local_parents.begin(), local_parents.end() );
+            numeric::random::random_permutation( local_parents.begin(), local_parents.end() );
 		}
 	}
 
