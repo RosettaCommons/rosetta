@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/IdentityFactory.hh
+/// @file   protocols/ligand_evolution/offspring_factory/IdentityFactory.hh
 /// @brief  Class declaration of the %IdentityFactory class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
@@ -15,8 +15,8 @@
 #define INCLUDED_protocols_ligand_evolution_IdentityFactory_HH
 
 // unit headers
-#include <protocols/ligand_evolution/IdentityFactory.fwd.hh>
-#include <protocols/ligand_evolution/OffspringFactory.hh>
+#include <protocols/ligand_evolution/offspring_factory/IdentityFactory.fwd.hh>
+#include <protocols/ligand_evolution/offspring_factory/OffspringFactory.hh>
 
 namespace protocols {
 namespace ligand_evolution {

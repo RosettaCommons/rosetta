@@ -19,7 +19,7 @@
 
 // package headers
 #include <protocols/ligand_evolution/Individual.hh>
-#include <protocols/ligand_evolution/Selector.hh>
+#include <protocols/ligand_evolution/selectors/Selector.hh>
 
 // utility headers
 #include <utility/vector1.hh>

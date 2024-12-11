@@ -16,9 +16,9 @@
 #include <protocols/ligand_evolution/EvolutionManager.hh>
 
 // package headers
-#include <protocols/ligand_evolution/ElitistSelector.hh>
-#include <protocols/ligand_evolution/RouletteSelector.hh>
-#include <protocols/ligand_evolution/TournamentSelector.hh>
+#include <protocols/ligand_evolution/selectors/ElitistSelector.hh>
+#include <protocols/ligand_evolution/selectors/RouletteSelector.hh>
+#include <protocols/ligand_evolution/selectors/TournamentSelector.hh>
 
 // project headers
 #include <core/import_pose/import_pose.hh>

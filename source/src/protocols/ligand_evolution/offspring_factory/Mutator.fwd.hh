@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/TournamentSelector.fwd.hh
-/// @brief  Forward declaration of the %TournamentSelector class
+/// @file   protocols/ligand_evolution/offspring_factory/Mutator.fwd.hh
+/// @brief  Forward declaration of the %Mutator class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
-#ifndef INCLUDED_protocols_ligand_evolution_TournamentSelector_FWD_HH
-#define INCLUDED_protocols_ligand_evolution_TournamentSelector_FWD_HH
+#ifndef INCLUDED_protocols_ligand_evolution_Mutator_FWD_HH
+#define INCLUDED_protocols_ligand_evolution_Mutator_FWD_HH
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -20,10 +20,10 @@
 namespace protocols {
 namespace ligand_evolution {
 
-class TournamentSelector;
+class Mutator;
 
-typedef utility::pointer::shared_ptr< TournamentSelector > TournamentSelectorOP;
-typedef utility::pointer::shared_ptr< TournamentSelector const > TournamentSelectorCOP;
+typedef utility::pointer::shared_ptr< Mutator > MutatorOP;
+typedef utility::pointer::shared_ptr< Mutator const > MutatorCOP;
 
 }
 }

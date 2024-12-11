@@ -20,10 +20,10 @@
 #include <protocols/ligand_evolution/EvolutionOptions.hh>
 
 // package headers
-#include <protocols/ligand_evolution/Crossover.hh>
+#include <protocols/ligand_evolution/offspring_factory/Crossover.hh>
 #include <protocols/ligand_evolution/FragmentLibrary.hh>
-#include <protocols/ligand_evolution/Mutator.hh>
-#include <protocols/ligand_evolution/IdentityFactory.hh>
+#include <protocols/ligand_evolution/offspring_factory/Mutator.hh>
+#include <protocols/ligand_evolution/offspring_factory/IdentityFactory.hh>
 #include <protocols/ligand_evolution/Population.hh>
 #include <protocols/ligand_evolution/Scorer.hh>
 #include <protocols/ligand_evolution/WorkManager.hh>

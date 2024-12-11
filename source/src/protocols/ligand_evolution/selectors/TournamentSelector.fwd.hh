@@ -7,20 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/Selector.cc
-/// @brief  The (mostly empty) definition of the %Selector class
+/// @file   protocols/ligand_evolution/selectors/TournamentSelector.fwd.hh
+/// @brief  Forward declaration of the %TournamentSelector class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
-// unit headers
-#include <protocols/ligand_evolution/Selector.hh>
+#ifndef INCLUDED_protocols_ligand_evolution_TournamentSelector_FWD_HH
+#define INCLUDED_protocols_ligand_evolution_TournamentSelector_FWD_HH
 
+// utility headers
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace ligand_evolution {
 
-Selector::Selector() = default;
+class TournamentSelector;
 
-Selector::~Selector() = default;
+typedef utility::pointer::shared_ptr< TournamentSelector > TournamentSelectorOP;
+typedef utility::pointer::shared_ptr< TournamentSelector const > TournamentSelectorCOP;
 
 }
 }
+
+#endif

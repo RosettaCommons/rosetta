@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/Mutator.fwd.hh
-/// @brief  Forward declaration of the %Mutator class
+/// @file   protocols/ligand_evolution/selectors/Selector.fwd.hh
+/// @brief  Forward declaration of the %Selector class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
-#ifndef INCLUDED_protocols_ligand_evolution_Mutator_FWD_HH
-#define INCLUDED_protocols_ligand_evolution_Mutator_FWD_HH
+#ifndef INCLUDED_protocols_ligand_evolution_Selector_FWD_HH
+#define INCLUDED_protocols_ligand_evolution_Selector_FWD_HH
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -20,10 +20,10 @@
 namespace protocols {
 namespace ligand_evolution {
 
-class Mutator;
+class Selector;
 
-typedef utility::pointer::shared_ptr< Mutator > MutatorOP;
-typedef utility::pointer::shared_ptr< Mutator const > MutatorCOP;
+typedef utility::pointer::shared_ptr< Selector > SelectorOP;
+typedef utility::pointer::shared_ptr< Selector const > SelectorCOP;
 
 }
 }

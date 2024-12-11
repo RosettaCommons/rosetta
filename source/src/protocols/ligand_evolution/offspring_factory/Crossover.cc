@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/Crossover.cc
+/// @file   protocols/ligand_evolution/offspring_factory/Crossover.cc
 /// @brief  Implementation of the %Crossover class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 
 // unit headers
-#include <protocols/ligand_evolution/Crossover.hh>
+#include <protocols/ligand_evolution/offspring_factory/Crossover.hh>
 
 // utility headers
 #include <basic/Tracer.hh>

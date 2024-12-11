@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/TournamentSelector.cc
+/// @file   protocols/ligand_evolution/selectors/TournamentSelector.cc
 /// @brief  Implementation of the %TournamentSelector class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 // unit headers
-#include <protocols/ligand_evolution/TournamentSelector.hh>
+#include <protocols/ligand_evolution/selectors/TournamentSelector.hh>
 
 // utility headers
 #include <basic/Tracer.hh>

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/Mutator.hh
+/// @file   protocols/ligand_evolution/offspring_factory/Mutator.hh
 /// @brief  Class declaration of the %Mutator class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
@@ -15,8 +15,8 @@
 #define INCLUDED_protocols_ligand_evolution_Mutator_HH
 
 // unit headers
-#include <protocols/ligand_evolution/Mutator.fwd.hh>
-#include <protocols/ligand_evolution/OffspringFactory.hh>
+#include <protocols/ligand_evolution/offspring_factory/Mutator.fwd.hh>
+#include <protocols/ligand_evolution/offspring_factory/OffspringFactory.hh>
 
 // package headers
 #include <protocols/ligand_evolution/FragmentLibrary.hh>

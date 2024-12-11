@@ -20,9 +20,9 @@
 
 // package headers
 #include <protocols/ligand_evolution/Population.hh>
-#include <protocols/ligand_evolution/OffspringFactory.hh>
+#include <protocols/ligand_evolution/offspring_factory/OffspringFactory.hh>
 #include <protocols/ligand_evolution/Scorer.hh>
-#include <protocols/ligand_evolution/Selector.hh>
+#include <protocols/ligand_evolution/selectors/Selector.hh>
 
 // Utility headers
 #include <core/types.hh>

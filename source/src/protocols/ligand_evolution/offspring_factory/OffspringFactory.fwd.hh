@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/IdentityFactory.fwd.hh
-/// @brief  Forward declaration of the %IdentityFactory class
+/// @file   protocols/ligand_evolution/offspring_factory/OffspringFactory.fwd.hh
+/// @brief  Forward declaration of the %OffspringFactory class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
-#ifndef INCLUDED_protocols_ligand_evolution_IdentityFactory_FWD_HH
-#define INCLUDED_protocols_ligand_evolution_IdentityFactory_FWD_HH
+#ifndef INCLUDED_protocols_ligand_evolution_OffspringFactory_FWD_HH
+#define INCLUDED_protocols_ligand_evolution_OffspringFactory_FWD_HH
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -20,10 +20,10 @@
 namespace protocols {
 namespace ligand_evolution {
 
-class IdentityFactory;
+class OffspringFactory;
 
-typedef utility::pointer::shared_ptr< IdentityFactory > IdentityFactoryOP;
-typedef utility::pointer::shared_ptr< IdentityFactory const > IdentityFactoryCOP;
+typedef utility::pointer::shared_ptr< OffspringFactory > OffspringFactoryOP;
+typedef utility::pointer::shared_ptr< OffspringFactory const > OffspringFactoryCOP;
 
 }
 }

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/Crossover.hh
+/// @file   protocols/ligand_evolution/offspring_factory/Crossover.hh
 /// @brief  Class declaration of the %Crossover class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
@@ -17,8 +17,8 @@
 
 
 // unit headers
-#include <protocols/ligand_evolution/Crossover.fwd.hh>
-#include <protocols/ligand_evolution/OffspringFactory.hh>
+#include <protocols/ligand_evolution/offspring_factory/Crossover.fwd.hh>
+#include <protocols/ligand_evolution/offspring_factory/OffspringFactory.hh>
 
 // package headers
 #include <protocols/ligand_evolution/FragmentLibrary.hh>

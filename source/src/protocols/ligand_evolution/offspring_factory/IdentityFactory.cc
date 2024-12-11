@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/IdentityFactory.cc
+/// @file   protocols/ligand_evolution/offspring_factory/IdentityFactory.cc
 /// @brief  Implementation of the %IdentityFactory class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
 // unit headers
-#include <protocols/ligand_evolution/IdentityFactory.hh>
+#include <protocols/ligand_evolution/offspring_factory/IdentityFactory.hh>
 
 // utility headers
 #include <basic/Tracer.hh>

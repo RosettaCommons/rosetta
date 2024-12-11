@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/ElitistSelector.hh
+/// @file   protocols/ligand_evolution/selector/selectors/ElitistSelector.hh
 /// @brief  Class declaration of the %ElitistSelector class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
@@ -15,8 +15,8 @@
 #define INCLUDED_protocols_ligand_evolution_ElitistSelector_HH
 
 // unit headers
-#include <protocols/ligand_evolution/ElitistSelector.fwd.hh>
-#include <protocols/ligand_evolution/Selector.hh>
+#include <protocols/ligand_evolution/selectors/ElitistSelector.fwd.hh>
+#include <protocols/ligand_evolution/selectors/Selector.hh>
 
 namespace protocols {
 namespace ligand_evolution {

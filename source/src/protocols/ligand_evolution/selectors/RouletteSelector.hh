@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/ligand_evolution/RouletteSelector.hh
+/// @file   protocols/ligand_evolution/selectors/RouletteSelector.hh
 /// @brief  Class declaration of the %RouletteSelector class
 /// @author Paul Eisenhuth (eisenhuth451@gmail.com)
 
@@ -15,8 +15,8 @@
 #define INCLUDED_protocols_ligand_evolution_RouletteSelector_HH
 
 // unit headers
-#include <protocols/ligand_evolution/RouletteSelector.fwd.hh>
-#include <protocols/ligand_evolution/Selector.hh>
+#include <protocols/ligand_evolution/selectors/RouletteSelector.fwd.hh>
+#include <protocols/ligand_evolution/selectors/Selector.hh>
 
 // numeric headers
 #include <numeric/random/WeightedReservoirSampler.hh>
