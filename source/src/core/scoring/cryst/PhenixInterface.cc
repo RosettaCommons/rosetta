@@ -17,6 +17,7 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
+#ifdef WITH_PYTHON
 #include <iostream>
 #include <fstream>
 #include <core/scoring/cryst/util.hh>
@@ -43,16 +44,11 @@
 #include <core/scoring/Energies.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-
-
+#endif
 
 #include <basic/Tracer.hh>
 
 #include <numeric/xyzVector.fwd.hh>
-
-
-
-// Utility headers
 
 // Python interpreter
 #ifdef WITH_PYTHON
@@ -62,11 +58,6 @@
     PyErr_PrintEx(0); \
     utility_exit_with_message(msg); \
   }
-#endif
-
-// C++ headers
-
-#ifndef WIN32
 #endif
 
 namespace core {
