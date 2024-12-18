@@ -32,6 +32,7 @@
 #include <core/sequence/SequenceProfile.hh>
 
 // Basic headers
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowTensorContainer.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowProtocolBase.hh>
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
@@ -85,6 +86,12 @@ public:
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	basic::tensorflow_manager::RosettaTensorflowProtocolBaseOP clone() const override;
+
+	// @brief get the citation for ESM
+	static
+	basic::citation_manager::CitationCollectionBaseCOP
+	get_ESM_neural_net_citation();
+
 	/// @brief The tensorflow session
 #ifdef USE_TENSORFLOW
 	basic::tensorflow_manager::RosettaTensorflowSessionContainerCOP tensorflow_session_;

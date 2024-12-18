@@ -662,12 +662,6 @@ ResidueType::is_membrane() const
 }
 
 bool
-ResidueType::is_surface() const
-{
-	return properties().has_property( SURFACE );
-}
-
-bool
 ResidueType::has_sc_orbitals() const
 {
 	return properties().has_property( SC_ORBITALS );

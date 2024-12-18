@@ -14,18 +14,20 @@ PATH_TO_SOURCE_DIR = os.path.dirname( os.path.dirname( os.path.abspath(sys.argv[
 PATH_TO_SOURCE_DIR = PATH_TO_SOURCE_DIR.replace('\\', '/')
 
 
-def execute_rosetta_script_from_source_dir(script_name):
-    slash = '\\' if sys.platform == "win32" else '/'
-    return subprocess.check_call('cd .. && .' + slash + script_name, shell=True)
+def execute_rosetta_script_from_source_dir(script_name, parser='bash'):
+    if parser == 'python':
+        parser = sys.executable
+    command = parser + ' ' + script_name
+    subprocess.run(command, cwd="..", check=True, stderr=subprocess.STDOUT, shell=True)
 
 
-def update_version(): execute_rosetta_script_from_source_dir('version.py')
+def update_version(): execute_rosetta_script_from_source_dir('version.py','python')
 
-def update_options(): execute_rosetta_script_from_source_dir('update_options.sh')
+def update_options(): execute_rosetta_script_from_source_dir('update_options.sh','bash')
 
-def update_submodules(): execute_rosetta_script_from_source_dir('update_submodules.sh')
+def update_submodules(): execute_rosetta_script_from_source_dir('update_submodules.sh','bash')
 
-def update_ResidueType_enum_files(): execute_rosetta_script_from_source_dir('update_ResidueType_enum_files.sh')
+def update_ResidueType_enum_files(): execute_rosetta_script_from_source_dir('update_ResidueType_enum_files.sh','bash')
 
 
 def project_callback(project, project_path, project_files):

@@ -16,6 +16,7 @@ import logging
 import os
 import pyrosetta.distributed
 import pyrosetta.distributed.io as io
+import re
 import tempfile
 import unittest
 
@@ -23,6 +24,7 @@ from pyrosetta.distributed.cluster import PyRosettaCluster
 
 
 class LoggingTest(unittest.TestCase):
+    _ansi_regex = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
 
     def test_logging(self):
         """A test for capturing logging information in the distributed protocol."""
@@ -65,11 +67,11 @@ class LoggingTest(unittest.TestCase):
             )
             # Testing that rosetta tracers go to the logs with "set_logging_handler='logging'"
             # NOTE: This will be false if this line of the Tracer is ever changed in core.scoring.etable
-            # NOTE: On some platforms there are binary characters - the CircleCI server does not. This fails on
-            #       our AWS server but succeeds on CircleCI
+            # NOTE: On some platforms there are ANSI escape codes in the Tracer
+            output = [LoggingTest._ansi_regex.sub("", v) for v in cm.output]
             self.assertIn(
                 "INFO:rosetta:core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well",
-                cm.output,
+                output,
                 msg="rosetta logs not going to logger",
             )
 

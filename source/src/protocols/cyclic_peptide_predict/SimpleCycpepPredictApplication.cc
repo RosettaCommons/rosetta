@@ -110,6 +110,9 @@
 //Thioether cyclization
 #include <protocols/cyclic_peptide/crosslinker/thioether_util.hh>
 
+//Lanthipeptide cyclization
+#include <protocols/cyclic_peptide/crosslinker/lanthionine_util.hh>
+
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/simple_moves/DeclareBond.hh>
@@ -196,7 +199,9 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_classic_rama_for_sampling        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::n_methyl_positions                   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lariat_sample_cis               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices         );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lanthionine_positions                       );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::paraBBMB_positions                       );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_paraBBMB_filters                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::paraBBMB_sidechain_distance_filter_multiplier  );
@@ -294,6 +299,8 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::get_cyclizati
 		return "terminal_disulfide";
 	case SCPA_thioether_lariat :
 		return "thioether_lariat";
+	case SCPA_lanthipeptide :
+		return "lanthipeptide";
 	case SCPA_nterm_isopeptide_lariat :
 		return "nterm_isopeptide_lariat";
 	case SCPA_cterm_isopeptide_lariat :
@@ -388,6 +395,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	cartesian_relax_rounds_(0),
 	use_rama_prepro_for_sampling_(true),
 	n_methyl_positions_(),
+	lanthionine_positions_(),
 	parabbmb_positions_(),
 	link_all_cys_with_parabbmb_(false),
 	use_parabbmb_filters_(true),
@@ -432,6 +440,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	required_symmetry_perturbation_(0.0),
 	exclude_residues_from_rms_(),
 	lariat_sidechain_index_(0),
+	lariat_sample_cis_(true),
 	sidechain_isopeptide_indices_(std::pair<core::Size, core::Size>(0,0))
 	//TODO -- initialize variables here.
 {
@@ -520,6 +529,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	cartesian_relax_rounds_(src.cartesian_relax_rounds_),
 	use_rama_prepro_for_sampling_(src.use_rama_prepro_for_sampling_),
 	n_methyl_positions_(src.n_methyl_positions_),
+	lanthionine_positions_(src.lanthionine_positions_),
 	parabbmb_positions_(src.parabbmb_positions_),
 	link_all_cys_with_parabbmb_(src.link_all_cys_with_parabbmb_),
 	use_parabbmb_filters_(src.use_parabbmb_filters_),
@@ -564,6 +574,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	required_symmetry_perturbation_(src.required_symmetry_perturbation_),
 	exclude_residues_from_rms_(src.exclude_residues_from_rms_),
 	lariat_sidechain_index_(src.lariat_sidechain_index_),
+	lariat_sample_cis_(src.lariat_sample_cis_),
 	sidechain_isopeptide_indices_(src.sidechain_isopeptide_indices_),
 	out_prefix_(src.out_prefix_),
 	out_suffix_(src.out_suffix_),
@@ -598,12 +609,14 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	set_cyclization_type( type_from_options );
 	runtime_assert_string_msg(
 		!( (option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB]() || option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_paraBBMB]() )
-		&& ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_thioether_lariat ) ),
-		"Error in simple_cycpep_predict app: linking all cysteine residues with a crosslinker (\"-cyclic_peptide:link_all_cys_with_TBMB\" or \"-cyclic_peptide:link_all_cys_with_paraBBMB\" flags) is incompatible with teriminal disulfide cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
+		&& ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide ) ),
+		"Error in simple_cycpep_predict app: linking all cysteine residues with a crosslinker (\"-cyclic_peptide:link_all_cys_with_TBMB\" or \"-cyclic_peptide:link_all_cys_with_paraBBMB\" flags) is incompatible with teriminal disulfide cyclization, thioether, and lanthipeptide (\"-cyclic_peptide:cyclization_type\" flag)."
 	);
 	runtime_assert_string_msg(
-		!( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 2 && (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide) ),
-		"Error in simple_cycpep_predict app: quasi-symmetric sampling (\"-cyclic_peptide:require_symmetry_repeats\" flag) is incompatible with teriminal disulfide cyclization, thioether lariat cyclization, or with isopeptide bond cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
+		!( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 2 && (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_thioether_lariat
+		|| cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat
+		|| cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_lanthipeptide ) ),
+		"Error in simple_cycpep_predict app: quasi-symmetric sampling (\"-cyclic_peptide:require_symmetry_repeats\" flag) is incompatible with teriminal disulfide cyclization, thioether lariat cyclization, lanthipeptides, or with isopeptide bond cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
 	);
 	runtime_assert_string_msg(
 		!(option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB]() && option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_paraBBMB]() ),
@@ -618,7 +631,7 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	genkic_closure_attempts_ = static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::genkic_closure_attempts]() );
 	genkic_min_solution_count_ = static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::genkic_min_solution_count]() );
 
-	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
+	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 		cyclic_permutations_ = false;
 		if ( option[basic::options::OptionKeys::cyclic_peptide::cyclic_permutations]() && TR.Warning.visible() ) {
 			TR.Warning << "Warning: the \"-cyclic_peptide:cyclic_permutations\" option was set to \"true\", but this is incompatible with the chosen cyclization mode (\"-cyclic_peptide:cyclization_type\").  Disabling cyclic permutations." << std::endl;
@@ -803,6 +816,27 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		}
 	}
 
+	//CWT store lan and melan positions
+	if ( option[basic::options::OptionKeys::cyclic_peptide::lanthionine_positions].user() ) {
+		core::Size const nlanres(option[basic::options::OptionKeys::cyclic_peptide::lanthionine_positions]().size());
+		runtime_assert_string_msg( nlanres > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of residues to form lanthionine rings." );
+		//runtime_assert_string_msg( nlanres % 2 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of two.  Pairs of residues must form lanthionine rings." );
+		//Only allowing two specified residues at the moment
+		//This is due to limitations of the application only being able to handle rings within rings
+		//i.e. cannot handle overlapping or adjacent rings.
+		runtime_assert_string_msg( nlanres == 2, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lanthionine_positions\" commandline option must be followed by a list of two residues. Pairs of residues must form lanthionine rings." );
+		core::Size count(0);
+		lanthionine_positions_.resize(nlanres / 2);
+		for ( core::Size i(1), imax(nlanres / 2); i<=imax; ++i ) {
+			utility::vector1 <core::Size> innervect(2);
+			for ( core::Size j=1; j<=2; ++j ) {
+				++count;
+				innervect[j] = option[basic::options::OptionKeys::cyclic_peptide::lanthionine_positions]()[count];
+			}
+			lanthionine_positions_[i] = innervect;
+		}
+	}
+
 	//Store the paraBBMB positions.
 	if ( option[basic::options::OptionKeys::cyclic_peptide::paraBBMB_positions].user() ) {
 		runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB].user(), "Error in simple_cycpep_predict application: The \"-paraBBMB_positions\" flag and the \"-link_all_cys_with_TBMB\" flag cannot be used together." );
@@ -945,6 +979,7 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		runtime_assert_string_msg( is_lariat_type( cyclization_type_ ), "Error in simple_cycpep_predict application: The \"-cyclic_peptide:lariat_sidechain_index\" option may only be used with a lariat cyclization type." );
 	}
 	lariat_sidechain_index_ = option[basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index]();
+	lariat_sample_cis_ = option[basic::options::OptionKeys::cyclic_peptide::lariat_sample_cis]();
 
 	if ( option[basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices].user() ) {
 		runtime_assert_string_msg( cyclization_type_ == SCPA_sidechain_isopeptide, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:sidechain_isopeptide_indices\" option may only be used with the \"sidechain_isopeptide\" cyclization type." );
@@ -965,6 +1000,7 @@ SimpleCycpepPredictApplication::initialize_from_options(
 
 	return;
 } //initialize_from_options()
+
 
 /// @brief Set the cyclization type.
 ///
@@ -1761,6 +1797,18 @@ SimpleCycpepPredictApplication::run() const {
 			set_up_terminal_disulfide_variants( pose ); //Add disulfide variants, if we're doing disulfide cyclization.
 		} else if ( cyclization_type() == SCPA_thioether_lariat ) {
 			thioether_sidechain_index = set_up_terminal_thioether_lariat_variants( pose ); //Add thioether lariat variant to the N-terminus, if we're doing that type of cyclization.
+		} else if ( cyclization_type() == SCPA_lanthipeptide ) {
+			//need to call for all lan and melan resi pairs
+			if ( lanthionine_positions_.size() > 0 ) {
+				for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
+					debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
+					protocols::cyclic_peptide::crosslinker::set_up_lanthionine_variants(*pose, lanthionine_positions_[i][1], lanthionine_positions_[i][2]);
+				}
+				core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
+				core::pose::add_upper_terminus_type_to_pose_residue( *pose, pose->size() );
+			} else {
+				runtime_assert_string_msg( lanthionine_positions_.size() > 0 , "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication lanthionine positions are empty");
+			}
 		} else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 			set_up_isopeptide_variants( pose );
 		}
@@ -1772,6 +1820,15 @@ SimpleCycpepPredictApplication::run() const {
 		if ( cyclization_type() == SCPA_thioether_lariat ) {
 			runtime_assert( thioether_sidechain_index != 0  );
 			protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *pose, 1, thioether_sidechain_index );
+		} else if ( cyclization_type() == SCPA_lanthipeptide ) {
+			if ( lanthionine_positions_.size() > 0 ) {
+				for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
+					debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
+					protocols::cyclic_peptide::crosslinker::correct_lanthionine_virtuals( *pose, lanthionine_positions_[i][1], lanthionine_positions_[i][2]);
+				}
+			} else {
+				runtime_assert_string_msg( lanthionine_positions_.size() > 0 , "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication lanthionine positions are empty");
+			}
 		}
 
 		//Add cyclic constraints:
@@ -2014,6 +2071,8 @@ SimpleCycpepPredictApplication::position_backbone_is_randomizable(
 		return false;
 	} else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && res_index == 1 ) {
 		return false;
+	} else if ( cyclization_type() == SCPA_lanthipeptide ) {
+		return false;
 	}
 	return true;
 }
@@ -2158,6 +2217,39 @@ SimpleCycpepPredictApplication::find_first_and_last_thioether_lariat_residues(
 	} else {
 		lastres = find_last_disulf_res( pose );
 	}
+}
+
+/// @brief Given a pose, find the first and last lanthipeptide bond-forming residues.
+/// @details Randomly choose based on input residue numbers
+void
+SimpleCycpepPredictApplication::find_first_and_last_lanthipeptide_residues(
+	/*core::pose::PoseCOP pose,*/
+	core::Size &firstres,
+	core::Size &lastres
+) const {
+	using namespace core::chemical;
+
+	runtime_assert( cyclization_type() == SCPA_lanthipeptide );
+
+	//only lanthionine rings rn
+	if ( lanthionine_positions_.size() > 0 ) {
+		core::Size  lan_ring( numeric::random::rg().random_range(1, lanthionine_positions_.size()) );
+		if ( lanthionine_positions_[lan_ring][1] < lanthionine_positions_[lan_ring][2] ) {
+			firstres = lanthionine_positions_[lan_ring][1];
+			lastres = lanthionine_positions_[lan_ring][2];
+		} else {
+			firstres = lanthionine_positions_[lan_ring][2];
+			lastres = lanthionine_positions_[lan_ring][1];
+		}
+	} else {
+		runtime_assert_string_msg( lanthionine_positions_.size() > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication only lanthionine rn");
+	}
+	//firstres = 1;
+	//if ( lariat_sidechain_index_ != 0 ) {
+	// lastres = lariat_sidechain_index_;
+	//} else {
+	// lastres = find_last_disulf_res( pose );
+	//}
 }
 
 /// @brief Count the number of cis-peptide bonds in the pose.
@@ -2571,6 +2663,25 @@ SimpleCycpepPredictApplication::set_up_thioether_lariat_cyclization_mover(
 	);
 }
 
+void
+SimpleCycpepPredictApplication::set_up_lanthipeptide_cyclization_mover(
+	protocols::simple_moves::DeclareBondOP termini,
+	core::pose::PoseCOP pose
+) const {
+	runtime_assert( termini != nullptr ); //Should already exist.
+	debug_assert( cyclization_type() == SCPA_lanthipeptide ); //Should be true.
+
+	if ( lanthionine_positions_.size() > 0 ) {
+		for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
+			debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
+			protocols::cyclic_peptide::crosslinker::set_up_lanthionine_bond_mover(*termini, *pose, lanthionine_positions_[i][1], lanthionine_positions_[i][2]);
+		}
+		//termini->set( 1, "C", 2, "N", true );
+	} else {
+		runtime_assert_string_msg( lanthionine_positions_.size() > 0 , "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication lanthionine positions are empty");
+	}
+}
+
 /// @brief Set up the DeclareBond mover used to connect the termini, or whatever
 /// atoms are involved in the cyclization.  (Handles different cyclization modes).
 void
@@ -2599,6 +2710,9 @@ SimpleCycpepPredictApplication::set_up_cyclization_mover (
 		return;
 	case SCPA_thioether_lariat :
 		set_up_thioether_lariat_cyclization_mover( termini, pose );
+		return;
+	case SCPA_lanthipeptide :
+		set_up_lanthipeptide_cyclization_mover( termini, pose );
 		return;
 	case SCPA_invalid_type :
 		break;
@@ -2718,6 +2832,15 @@ SimpleCycpepPredictApplication::set_up_native (
 	if ( cyclization_type() == SCPA_thioether_lariat ) {
 		runtime_assert( thioether_sidechain_index != 0 ); //Should be true.
 		protocols::cyclic_peptide::crosslinker::correct_thioether_virtuals( *native_pose, 1, thioether_sidechain_index );
+	} else if ( cyclization_type() == SCPA_lanthipeptide ) {
+		if ( lanthionine_positions_.size() > 0 ) {
+			for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
+				debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
+				protocols::cyclic_peptide::crosslinker::correct_lanthionine_virtuals(*native_pose, lanthionine_positions_[i][1], lanthionine_positions_[i][2]);
+			}
+		} else {
+			runtime_assert_string_msg( lanthionine_positions_.size() > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication lanthionine positions are empty");
+		}
 	}
 }
 
@@ -2842,6 +2965,30 @@ SimpleCycpepPredictApplication::add_thioether_lariat_cyclic_constraints (
 	);
 }
 
+/// @brief Function to add lanthipeptide cyclic constraints to a pose.
+///
+void
+SimpleCycpepPredictApplication::add_lanthipeptide_cyclic_constraints (
+	core::pose::PoseOP pose
+	//core::Size n_index,
+	//core::Size c_index
+	//first res should be ala equiv, second cys
+) const {
+	//protocols::cyclic_peptide::crosslinker::set_up_lanthipeptide_constraints(
+	// *pose,
+	// n_index,
+	// c_index
+	//);
+	if ( lanthionine_positions_.size() > 0 ) {
+		for ( core::Size i=1, imax=lanthionine_positions_.size(); i<=imax; ++i ) { //Loop through all sets of doubles of residues.
+			debug_assert(lanthionine_positions_[i].size() == 2); //Should always be true.
+			protocols::cyclic_peptide::crosslinker::set_up_lanthionine_constraints(*pose, lanthionine_positions_[i][1], lanthionine_positions_[i][2]);
+		}
+	} else {
+		runtime_assert_string_msg( lanthionine_positions_.size() > 0, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication lanthionine positions are empty");
+	}
+}
+
 /// @brief Function to add cyclic constraints to a pose.
 /// @details Calls functions that do this for particular cyclization types.
 void
@@ -2859,6 +3006,9 @@ SimpleCycpepPredictApplication::add_cyclic_constraints(
 		core::Size firstres, lastres;
 		find_first_and_last_thioether_lariat_residues( pose, firstres, lastres );
 		add_thioether_lariat_cyclic_constraints( pose, firstres, lastres );
+		return;
+	case SCPA_lanthipeptide :
+		add_lanthipeptide_cyclic_constraints(pose);
 		return;
 	case SCPA_nterm_isopeptide_lariat :
 		{
@@ -2885,7 +3035,6 @@ SimpleCycpepPredictApplication::add_cyclic_constraints(
 		utility_exit_with_message("Error in SimpleCycpepPredictApplication::add_cyclic_constraints(): Invalid cyclization type!");
 	}
 }
-
 
 /// @brief Sets all omega values to 180, and randomizes mainchain torsions.
 /// @details For alpha-amino acids, mainchain torsions are randomized by the Ramachandran plot.
@@ -2917,7 +3066,7 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 					// Use a fake alanine for following_rsd for the cterm residue unless you're doing
 					// cterm cyclization and thus you can use its upper-connected residue.
 					core::chemical::ResidueTypeCOP following_rsd(
-						( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ) && i == nres
+						( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide ) && i == nres
 						?
 						core::chemical::ResidueTypeFinder( *( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) ).residue_base_name("ALA").get_representative_type()
 						:
@@ -3219,7 +3368,6 @@ SimpleCycpepPredictApplication::add_closebond_logic_thioether_lariat(
 		180.0, false, false );
 
 	//Randomize sidechains:
-	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
 	// core::Size const first_sc_at( pose->residue_type(cyclization_point_end).first_sidechain_atom() );
 	// core::chemical::ResidueType const & curtype( pose->residue_type(cyclization_point_end) );
 	// for ( core::Size curat( curtype.residue_connect_atom_index( curtype.n_possible_residue_connections() ) ); curat!=first_sc_at; curat = curtype.icoor(curat).stub_atom1().atomno() ) { //March up from the thiol atom
@@ -3232,6 +3380,20 @@ SimpleCycpepPredictApplication::add_closebond_logic_thioether_lariat(
 	// I think the above is strictly unnecessary; no one needs to randomize the un-involved sidechain
 	// and I'm going to say that we basically cannot randomize any dihedrals in 2-chloro-acetyl.
 	// In theory you could randomize CONN2-CP2-CO-N and CO-N-CA-C but that's tomorrow's problem. AMW TODO
+
+	//This application appears to only produce cis CA-N-CO-CP2 bonds without randomization,
+	// trans should be energetically favored, so setting bond to trans here if option specified
+	//lariat_sample_cis_ should be false for this option to sample trans peptide bonds
+	if ( !lariat_sample_cis_ ) {
+		genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::set_dihedral );
+		utility::vector1< core::id::NamedAtomID > omega_vect;
+		omega_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_end));
+		omega_vect.push_back( core::id::NamedAtomID( "CO", cyclization_point_end));
+		genkic->add_atomset_to_perturber_atomset_list( omega_vect );
+		genkic->add_value_to_perturber_value_list( 180.0 );
+	}
+
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
 	core::Size const first_sc_at( pose->residue_type(cyclization_point_start).first_sidechain_atom() );
 	core::chemical::ResidueType const & curtype( pose->residue_type(cyclization_point_start) );
 	for ( core::Size curat( curtype.residue_connect_atom_index( curtype.n_possible_residue_connections() ) ); curat!=first_sc_at; curat = curtype.icoor(curat).stub_atom1().atomno() ) { //March up from the thiol atom
@@ -3286,6 +3448,79 @@ SimpleCycpepPredictApplication::add_closebond_logic_thioether_lariat(
 	}
 }
 
+//Lanthionine for now
+void
+SimpleCycpepPredictApplication::add_closebond_logic_lanthipeptide(
+	core::pose::PoseCOP pose,
+	core::Size const cyclization_point_start,
+	core::Size const cyclization_point_end,
+	protocols::generalized_kinematic_closure::GeneralizedKICOP genkic
+) const {
+	debug_assert( cyclization_type() == SCPA_lanthipeptide );
+	core::Size ala_res = 0;
+	core::Size cys_res = 0;
+	if ( pose->residue_type(cyclization_point_start).base_name() == "CYS" ) {
+		ala_res = cyclization_point_end;
+		cys_res = cyclization_point_start;
+	} else {
+		ala_res = cyclization_point_start;
+		cys_res = cyclization_point_end;
+	}
+	//} else if( pose->residue_type(cyclization_point_end).base_name() == "DALA" || pose->residue_type(cyclization_point_end).base_name() == "ALA") {
+	// ala_res = cyclization_point_end;
+	// cys_res = cyclization_point_start;
+	//} else {
+	// runtime_assert_string_msg(
+	//  pose->residue_type(cyclization_point_start).base_name() == "DALA" || pose->residue_type(cyclization_point_start).base_name() == "ALA" ||
+	//  pose->residue_type(cyclization_point_end).base_name() == "DALA" || pose->residue_type(cyclization_point_end).base_name() == "ALA",
+	//  "Neither " + std::to_string( cyclization_point_end ) + " nor " + std::to_string( cyclization_point_start ) +
+	//  "is a D-ALA or ALA."
+	// );
+	//}
+	//Close lanthionine bond
+	core::chemical::ResidueType const & rt_start( pose->residue_type( cys_res ) );
+	std::string const startatom  ( rt_start.get_disulfide_atom_name() );
+	std::string const endatom ( "CB" );
+	genkic->close_bond(
+		cys_res,
+		startatom,
+		ala_res,
+		endatom,
+		0, "", 0, "",
+		protocols::cyclic_peptide::crosslinker::LANTHIONINE_UTIL_LANTHIONINE_BOND_LENGTH,
+		protocols::cyclic_peptide::crosslinker::LANTHIONINE_UTIL_LANTHIONINE_BOND_C_ANGLE/numeric::constants::d::pi*180.0,
+		protocols::cyclic_peptide::crosslinker::LANTHIONINE_UTIL_LANTHIONINE_BOND_S_ANGLE/numeric::constants::d::pi*180.0,
+		180.0, false, false );
+
+	//sidechain randomization
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+
+	core::Size const first_sc_at( pose->residue_type(cys_res).first_sidechain_atom() ); //Value is 5
+	core::chemical::ResidueType const & curtype( pose->residue_type(cys_res) );
+	for ( core::Size curat( curtype.residue_connect_atom_index( curtype.n_possible_residue_connections() ) );
+			curat!=first_sc_at; curat = curtype.icoor(curat).stub_atom1().atomno() ) { //March up from the thiol (n.possible_residue_connections()==SG) atom
+		core::Size const otherat( curtype.icoor(curat).stub_atom1().atomno() ); //Get the parent of the current atom
+		utility::vector1< core::id::NamedAtomID > sc_vect;
+		sc_vect.push_back( core::id::NamedAtomID( curtype.atom_name(curat), cys_res ) );
+		sc_vect.push_back( core::id::NamedAtomID( curtype.atom_name(otherat), cys_res ) );
+		genkic->add_atomset_to_perturber_atomset_list( sc_vect );
+	}
+
+	//Randomize upper res backbone:
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+	utility::vector1< core::id::NamedAtomID > upper_bb_vect;
+	upper_bb_vect.push_back( core::id::NamedAtomID( "N", cyclization_point_start ) );
+	upper_bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_start ) );
+	genkic->add_atomset_to_perturber_atomset_list( upper_bb_vect );
+
+	//Randomize lower res backbone:
+	genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_dihedral );
+	utility::vector1< core::id::NamedAtomID > lower_bb_vect;
+	lower_bb_vect.push_back( core::id::NamedAtomID( "CA", cyclization_point_end ) );
+	lower_bb_vect.push_back( core::id::NamedAtomID( "C", cyclization_point_end ) );
+	genkic->add_atomset_to_perturber_atomset_list( lower_bb_vect );
+}
+
 /// @brief Set up the logic to close the bond at the cyclization point.
 /// @details Calls different functions for different cyclization types.
 void
@@ -3310,6 +3545,9 @@ SimpleCycpepPredictApplication::add_closebond_logic(
 		return;
 	case SCPA_thioether_lariat :
 		add_closebond_logic_thioether_lariat( pose, cyclization_point_start, cyclization_point_end, genkic );
+		return;
+	case SCPA_lanthipeptide :
+		add_closebond_logic_lanthipeptide( pose, cyclization_point_start, cyclization_point_end, genkic);
 		return;
 	case SCPA_invalid_type :
 		utility_exit_with_message("Error in SimpleCycpepPredictApplication::add_closebond_logic(): Invalid cyclization type!");
@@ -3351,14 +3589,18 @@ SimpleCycpepPredictApplication::genkic_close(
 		find_first_and_last_isopeptide_residues( pose, cyclization_point_end, cyclization_point_start );
 	} else if ( cyclization_type() == SCPA_thioether_lariat ) {
 		find_first_and_last_thioether_lariat_residues( pose, cyclization_point_end, cyclization_point_start );
+	} else if ( cyclization_type() == SCPA_lanthipeptide ) {
+		//Ramdomly choose order of loops to close, close all loops
+		//if possible randomly choose if cyc_point is upstream or downstream
+		find_first_and_last_lanthipeptide_residues( cyclization_point_end, cyclization_point_start );
 	}
 	core::Size const anchor_res_min(
-		cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ?
+		cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide ?
 		cyclization_point_end + 2 :
 		2
 	);
 	core::Size const anchor_res_max(
-		( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ?
+		( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide ?
 		cyclization_point_start - 2 :
 		( required_symmetry_repeats_ > 1 ?
 		res_per_symm_repeat :
@@ -3372,7 +3614,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	core::Size const last_loop_res( anchor_res - 1 );
 
 	//The following should be guaranteed true:
-	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ) {
+	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide ) {
 		debug_assert( cyclization_point_end < last_loop_res );
 		debug_assert( first_loop_res < cyclization_point_start );
 	} else {
@@ -3798,7 +4040,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	for ( core::Size i=cyclization_point_end; i<=last_loop_res; ++i ) { genkic->add_loop_residue(i); }
 
 	//Add tail residues, if relevant:
-	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ) {
+	if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide ) {
 		if ( cyclization_point_end > 1 ) {
 			for ( core::Size i=cyclization_point_end-1; i>=1; --i ) { genkic->add_tail_residue(i); }
 		}
@@ -3862,7 +4104,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		if ( i > cyclization_point_start ) i = cyclization_point_end;
 
 		if ( i==anchor_res ) continue; //Can't perturb the anchor residue.
-		if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ) { //If we're cyclizing through a disulfide, don't randomize by rama
+		if ( cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide ) { //If we're cyclizing through a disulfide, don't randomize by rama
 			if ( i==cyclization_point_start || i==cyclization_point_end ) {
 				continue;
 			}
@@ -3931,7 +4173,7 @@ SimpleCycpepPredictApplication::genkic_close(
 
 			if ( cyclization_type() == SCPA_n_to_c_amide_bond && i==1 && nres==anchor_res ) continue; //Can't perturb the anchor residue.
 			if ( i-1 == anchor_res ) continue; //Can't perturb the anchor residue.
-			if ( i == cyclization_point_end && ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat ) ) {
+			if ( i == cyclization_point_end && ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_thioether_lariat || cyclization_type() == SCPA_lanthipeptide ) ) {
 				continue; //Can't perturb preceding bond if it's not in the loop.
 			}
 			if ( pose->residue_type(i).aa() == core::chemical::aa_pro || pose->residue_type(i).aa() == core::chemical::aa_dpr || pose->residue_type(i).is_peptoid() || pose->residue_type(i).is_n_methylated() ) {
@@ -4001,7 +4243,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( use_rama_filter() ) {
 		for ( core::Size i=1; i<=nres; ++i ) {
 			if ( i!=first_loop_res && i!=middle_loop_res && i!=last_loop_res ) continue; //Just filter the pivots.
-			if ( (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide ) &&
+			if ( (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_sidechain_isopeptide || cyclization_type() == SCPA_lanthipeptide ) &&
 					( i == cyclization_point_end || i == cyclization_point_start ) ) continue;
 			else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat && i == cyclization_point_start ) continue;
 			else if ( cyclization_type() == SCPA_cterm_isopeptide_lariat && i == cyclization_point_end ) continue;

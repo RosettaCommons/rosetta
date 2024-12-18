@@ -109,6 +109,9 @@ static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerRe
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueSasaMetricCreator > reg_PerResidueSasaMetricCreator;
 
+//Added by CT 2 Feb 2024:
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueBfactorMetricCreator > reg_PerResidueBfactorMetricCreator;
+
 /////////////////////
 //Protocol-level SimpleMetrics should go into protocols/analysis/metrics or protocols/analysis/yyy
 

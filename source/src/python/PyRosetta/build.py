@@ -53,6 +53,8 @@ _banned_headers_ +=' basic/database/DatabaseSessionOptions.hh' # TEMP ... and tu
 
 _banned_headers_ +=' protocols/jd3/JobOutputWritter.hh protocols/jd3/standard/PDBPoseOutputSpecification.hh protocols/jd3/standard/StandardResultOutputter.hh'  # protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh
 
+_link_bcl_ = False
+
 #_banned_headers_ +=' json.hpp'
 
 # Setting output to be printed in unicode regardless of terminal settings
@@ -86,6 +88,8 @@ def get_defines():
     if Options.type in 'Release MinSizeRel': defines += ' NDEBUG BCL_NO_OS_SIGNAL_HANDLING'
     if Options.serialization: defines += ' SERIALIZATION'
     if Options.multi_threaded: defines += ' MULTI_THREADED'
+    if Options.torch: defines += ' USE_TORCH'
+    if Options.tensorflow: defines += ' USE_TENSORFLOW USE_TENSORFLOW_CPU'
     #if Options.hdf5: defines += ' USEHDF5'
     return defines.split()
 
@@ -314,6 +318,8 @@ def get_binding_build_root(rosetta_source_path, source=False, build=False, docum
     p = os.path.join(p, Options.type.lower()
                      + ('.serialization' if Options.serialization else '')
                      + ('.thread' if Options.multi_threaded else '')
+                     + ('.torch' if Options.torch else '')
+                     + ('.tensorflow' if Options.tensorflow else '')
                      + ('.annotate' if Options.annotate_includes else '')
                      + ('.trace' if Options.trace else '')
                      )
@@ -384,6 +390,8 @@ def link_supplemental_files(rosetta_source_path):
     # os.symlink('../../../../../../../../../database', database_dest)
     symlink(rosetta_source_path + '/../database', prefix + '/pyrosetta/database')
 
+    symlink(rosetta_source_path + '/../LICENSE.PyRosetta.md', prefix + '/pyrosetta/LICENSE.PyRosetta.md')
+
     #if not os.path.islink(prefix + '/apps'): os.symlink('../../../../../../../scripts/PyRosetta/public', prefix + '/apps')  # creating link to PyRosetta apps dir
     symlink(rosetta_source_path + '/scripts/PyRosetta/public', prefix + '/apps')
 
@@ -398,7 +406,7 @@ def setup_source_directory_links(rosetta_source_path):
         if os.path.islink(s): os.unlink(s)
         os.symlink(source_path, s)
 
-    if Options.external_link:
+    if False and Options.external_link:
         target_lib_path = os.path.relpath( os.path.join(rosetta_source_path, "cmake", "build_PyRosetta.{}".format(Options.external_link) ), prefix)
 
         s = os.path.join(prefix, "lib")
@@ -425,6 +433,9 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
     scons_file_extension = '.external.settings'
     external_scons_files = [f for f in os.listdir(rosetta_source_path+'/external') if f.endswith(scons_file_extension)  and (Options.zmq  or  not f.startswith('libzmq.') ) and (not f.startswith('zlib.') ) ]
     for scons_file in external_scons_files:
+
+        if scons_file == 'bcl.external.settings' and  not _link_bcl_: continue
+
         G = {}
         sources = []
         with open(rosetta_source_path+'/external/'+scons_file) as f:
@@ -444,8 +455,11 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
             defines[lib_name] = ' '.join( G.get('defines',[]) )
 
     modified = False
+
+    source_extensions = dict(sqlite3='.c', cppdb='.cpp')
+
     for l in libs:
-        t  = 'add_library({} OBJECT\n{})\n\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/' + s for s in libs[l]] ))
+        t  = 'add_library({} OBJECT\n{})\n\n'.format(l, '\n'.join( [ rosetta_source_path + '/external/' + s +  source_extensions.get(l, '') for s in libs[l]] ))
         t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(l)
         if defines[l]: t += 'target_compile_options({} PRIVATE {})\n'.format(l, ' '.join( ['-D'+d for d in defines[l].split()] ) )   #  target_compile_definitions
         #t += 'target_compile_options({} PUBLIC -fPIC {})\n'.format(l, ' '.join([ '-D'+d for d in defines[l].split() ] ) )   #  target_compile_definitions
@@ -478,6 +492,13 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
 
     all_libs.sort(key=key, reverse=True)
 
+    if Options.skip_namespaces >= 0:
+        for l in all_libs[:]:
+            if (5 - Options.skip_namespaces ) - int(key(l)[0]) < 0: all_libs.remove(l)
+
+        print('Option `--skip-namespaces` was specified, final Rosetta namespace list is:', all_libs, '\n')
+
+
     modified = False
     for lib in all_libs:
         #if lib not in 'ObjexxFCL utility numeric basic': continue
@@ -502,10 +523,15 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
 
         sources.sort()
 
+
+
         t  = 'add_library({} OBJECT\n{})\n\n'.format(lib, '\n'.join( [ rosetta_source_path + '/src/' + s for s in sources] ))
         #t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(lib)
         t += 'set_target_properties({} PROPERTIES POSITION_INDEPENDENT_CODE ON LINKER_LANGUAGE CXX)\n'.format(lib)
         #t += '\ntarget_compile_options({} PUBLIC -fPIC)\n'.format(lib)  # Enable Position Independent Code generation for libraries
+
+        if Options.torch or Options.tensorflow: t += f'target_compile_options({lib} PRIVATE -std=c++14)\n'
+
         modified |= update_source_file(prefix + lib + '.cmake', t)
 
         libs.append(lib)
@@ -533,7 +559,7 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
              python_lib = Options.python_lib)
     )
 
-    if Options.external_link:
+    if False and Options.external_link:
         rosetta_cmake = """
             include_directories(SYSTEM {system_include})
             include_directories({rosetta_include})
@@ -563,6 +589,11 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
         cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join(extra_sources + ['$<TARGET_OBJECTS:{}>'.format(l) for l in libs] ) )  # cmake = cmake.replace('#%__PyRosetta_sources__%#', '\n'.join([ os.path.abspath(prefix + f) for f in extra_sources]))
         cmake = cmake.replace('#%__Rosetta_libraries__%#', '')  # cmake = cmake.replace('#%__Rosetta_libraries__%#', ' '.join(libs))
         cmake = cmake.replace('#%__PyRosetta_build_config__%#', build_config)
+        cmake = cmake.replace('#%__PyRosetta_compile_options__%#', '-std=c++14' if Options.torch or Options.tensorflow else '')
+        cmake = cmake.replace('#%__PyRosetta_target_link_libraries__%#',
+                              ( 'c10 torch torch_cpu torch_global_deps' if Options.torch else '' )
+                              + ( ' tensorflow' if Options.tensorflow else '' )
+                              )
 
         modified |= update_source_file(prefix + 'CMakeLists.txt', cmake)
 
@@ -681,12 +712,12 @@ def generate_bindings(rosetta_source_path):
     if Options.binder_options:      include  += ' ' + Options.binder_options
     if Options.binder_llvm_options: includes += ' ' + Options.binder_llvm_options
 
-    binder_command_line_options = '--config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {include} -- -std=c++11 {includes} {defines}'.format(
-        prefix=prefix, include=include, includes=includes, defines=defines,
-        config='./rosetta.config',
-        annotate=' --annotate-includes' if Options.annotate_includes else '',
-        trace=' --trace' if Options.trace else '',
-    )
+    cpp_standard = 'c++14' if Options.torch else 'c++11'
+    config='./rosetta.config'
+    annotate=' --annotate-includes' if Options.annotate_includes else ''
+    trace=' --trace' if Options.trace else ''
+
+    binder_command_line_options = f'--config {config} --root-module rosetta --prefix {prefix}{annotate}{trace} {include} -- -std={cpp_standard} {includes} {defines}'
     signature_update(binder_command_line_options)
 
     signature = signature.hexdigest()
@@ -797,6 +828,7 @@ def create_package(rosetta_source_path, path):
     build_prefix = get_binding_build_root(rosetta_source_path, build=True)
 
     for f in 'setup.py setup.cfg ez_setup.py'.split(): shutil.copy(build_prefix + '/' + f, package_prefix)
+    #shutil.copy(rosetta_source_path + '/../LICENSE.PyRosetta.md', package_prefix)
 
     for d in ['pyrosetta', 'rosetta']:
         dir_util_module.copy_tree(build_prefix + '/' + d, package_prefix + '/' + d, update=False)
@@ -844,15 +876,14 @@ def main(args):
     parser.add_argument('--binder', default='', help='Path to Binder tool. If none is given then download, build and install binder into main/source/build/prefix. Use "--binder-debug" to control which mode of binder (debug/release) is used.')
     parser.add_argument("--binder-debug", action="store_true", help="Run binder tool in debug mode (only relevant if no '--binder' option was specified)")
     parser.add_argument("--binder-config", action="append", default=["rosetta.config"], help="Binder config file. [Default='rosetta.config']")
-    parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given options and exit. Use this option to automate package creation.")
+    parser.add_argument("--print-build-root", action="store_true", help="Print path to where PyRosetta binaries will be located with given build options and exit. Use this option to automate package creation.")
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
     parser.add_argument('--annotate-includes', action="store_true", help='Annotate includes in generated PyRosetta source files')
-    parser.add_argument('--trace', action="store_true", help='Binder will add trace output to to generated PyRosetta source files')
+    parser.add_argument('--trace', action="store_true", help='Binder will add trace output to the generated PyRosetta source files')
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
-    parser.add_argument('--external-link', default=None, choices=["debug", "release"], help="Instead of building Rosetta libraries link to Rosetta libraries compiled with CMake PyRosetta.<kind> build")
 
     parser.add_argument('--python-include-dir', default=None, help='Path to python C headers. Use this if CMake fails to autodetect it')
     parser.add_argument('--python-lib', default=None, help='Path to python library. Use this if CMake fails to autodetect it')
@@ -861,6 +892,8 @@ def main(args):
 
     parser.add_argument('--serialization', action="store_true", help="Build PyRosetta with serialization enabled (off by default)")
     parser.add_argument('--multi-threaded', action="store_true", help="Build PyRosetta with multi_threaded enabled (off by default)")
+    parser.add_argument('--torch', action="store_true", help="Build PyRosetta with lib torch support enabled (off by default)")
+    parser.add_argument('--tensorflow', action="store_true", help="Build PyRosetta with lib tensorflow support enabled (off by default)")
     #parser.add_argument('--hdf5', action="store_true", help="Build PyRosetta with HDF5 enabled (off by default)")
 
     parser.add_argument('--binder-options', default=None, help='Specify Binder extra (non LLVM) options. Use this to specify options specific to Binder.')
@@ -873,7 +906,7 @@ def main(args):
 
     parser.add_argument('--version', help='Supply JSON version file to be used for during package creation and documentation building. File must be in the same format as standard Rosetta .release.json used to mark release versions. If no file is supplied script will fallback to use main/.version.json.')
 
-    parser.add_argument('-n', '--skip-namespaces', default=-16777216, type=int, help="EXPERIMENTAL: Specify number of high-level Rosetta namespaces to skip during generation phase. This allow one to bypass bindings generations for higher level libraries (like protocols, core etc )Default is 0, - do not skip any namespaces.")
+    parser.add_argument('-n', '--skip-namespaces', default=-16777216, type=int, help="EXPERIMENTAL: Specify number of high-level Rosetta namespaces to skip during generation phase. This allow one to bypass bindings generations for higher level libraries (like protocols, core etc ) Default is 0, - do not skip any namespaces.")
 
 
     #parser.add_argument('--build-suffix', default=None, help='Specify build suffix that will be be used when creating build directories. Default is None, - use either $HOSTNAME or value provided in local .hostname file.')

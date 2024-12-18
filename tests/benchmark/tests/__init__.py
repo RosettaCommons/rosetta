@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, shutil, codecs, urllib.request, imp, subprocess, json, hashlib  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, subprocess, json, hashlib  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
@@ -340,8 +340,10 @@ def platform_to_pretty_string(platform):
     ''' Take platform as json object and return normalized human-readable string '''
     return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.python'+platform['python'] if 'python' in platform else ''))
 
+
 def setup_for_compile(rosetta_dir):
     execute('Updating options, ResidueTypes and version info...', f'cd {rosetta_dir}/source && ' + ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) )
+
 
 def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=False, verbose=False):
     ''' Compile Rosetta binaries on a given platform return (res, output, build_command_line) '''
@@ -395,6 +397,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     elif python_version == (3, 10): packages = 'numpy>=1.22.3'
     elif python_version == (3, 11): packages = 'numpy>=1.23.5'
     elif python_version == (3, 12): packages = 'numpy>=1.26.0'
+    elif python_version == (3, 13): packages = 'numpy>=2.1'
     else: packages = 'numpy>=1.23'
 
     if platform['os'] == 'mac' and python_version == (3, 7): packages = packages.replace('blosc>=1.8.3', 'blosc>=1.10.6')
@@ -439,6 +442,10 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         if python_version == (3, 7): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p, packages.split()))
         elif python_version == (3, 6): packages = " ".join(map(lambda p: "cloudpickle<=0.7.0" if p.startswith("cloudpickle") else p.split(">=")[0], packages.split()))
 
+
+    # elif python_version >= (3, 13):
+    #     packages = 'numpy>=2.1'
+
     else:
         #packages = 'numpy>=1.19.2' if platform['os'] == 'mac' else 'numpy>=1.19.2'
         packages = 'numpy>=1.20.2'
@@ -472,6 +479,8 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
 
     if 'cxx11thread'   in platform['extras']: extra += ' --multi-threaded'
     if 'serialization' in platform['extras']: extra += ' --serialization'
+    if 'torch' in platform['extras']: extra += ' --torch'
+    if 'tensorflow' in platform['extras']: extra += ' --tensorflow'
 
     if version: extra += " --version '{version}'".format(**vars())
 
@@ -761,6 +770,7 @@ def local_python_install(platform, config):
         '3.10' : 'https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz',
         '3.11' : 'https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tgz',
         '3.12' : 'https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz',
+        '3.13' : 'https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -935,9 +945,13 @@ def generate_version_information(rosetta_dir, **kwargs):
     This is a light wrapper around the generate_version_information() function in Rosetta/main/source/version.py -- see there for the interface definition.
     '''
 
-    version = imp.load_source('version', rosetta_dir + '/source/version.py')
-    return version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
+    import importlib.util
 
+    spec = importlib.util.spec_from_file_location('rosetta_source_version', rosetta_dir + '/source/version.py' )
+    rosetta_source_version = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rosetta_source_version)
+
+    return rosetta_source_version.generate_version_information(rosetta_dir=rosetta_dir, **kwargs)
 
 
 def _get_path_to_conda_root(platform, config):
@@ -974,7 +988,7 @@ def _get_path_to_conda_root(platform, config):
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     packages = ['conda-build anaconda-client conda-verify',]
 
-    signature = f'url: {url}\nversion: {version}\channels: {channels}\npackages: {packages}\n'
+    signature = f'url: {url}\nversion: {version}\nchannels: {channels}\npackages: {packages}\n'
 
     root = calculate_unique_prefix_path(platform, config) + '/conda'
 
@@ -1109,8 +1123,9 @@ def convert_submodule_urls_from_ssh_to_https(repository_root):
     with open(f'{repository_root}/.gitmodules', 'w') as f:
         f.write(
             m
-            .replace('url = git@github.com:', 'url = https://github.com/')
-            .replace('url = ../../../',       'url = https://github.com/RosettaCommons/')
-            .replace('url = ../../',          'url = https://github.com/RosettaCommons/')
-            .replace('url = ../',             'url = https://github.com/RosettaCommons/')
+            .replace('url = git@github.com:',       'url = https://github.com/')
+            .replace('url = ../../RosettaCommons/', 'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../../',             'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../',                'url = https://github.com/RosettaCommons/')
+            .replace('url = ../',                   'url = https://github.com/RosettaCommons/')
         )

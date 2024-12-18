@@ -12,7 +12,7 @@
 ## @brief  Benchmark script for testing how Rosetta can load PBD's from www.rcsb.org
 ## @author Sergey Lyskov
 
-import os, json, enum, imp, time, shutil
+import os, json, enum, time, shutil
 from collections import namedtuple, OrderedDict
 
 script_name = os.path.abspath(__file__)  # keep this line above imp.load_source(...) line below, beacuse later change value of __file__ variable
@@ -21,7 +21,9 @@ _api_version_ = '1.1'
 
 _number_of_jobs_ = 1024
 
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../../__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
+# A bit of Python magic here, what we trying to say is this: from ../../__init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-3]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 Job = namedtuple('Job', 'name pdbs path rosetta_dir command_line')  #  hpc_job_id
 #Job.__new__.__defaults__ = (None, )
@@ -142,8 +144,8 @@ The command line below shows what was done; broadly all versions of this test ex
 <br/>
 <p>
  To update reference results please copy the files below into the main repository:<br/>
- &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
- &nbsp;&nbsp;&nbsp;&nbsp;<a href="blocklist.{mode}.new.json">blocklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blocklist.json</a> (note the cif/pdb/fast mode is ignored: the blocklist is segfaults and huge PDBs and is shared)<br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/rosetta">「Rosetta repository」</a> as <a href="https://github.com/RosettaCommons/rosetta/tree/main/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="blocklist.{mode}.new.json">blocklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/rosetta">「Rosetta repository」</a> as <a href="https://github.com/RosettaCommons/rosetta/tree/main/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blocklist.json</a> (note the cif/pdb/fast mode is ignored: the blocklist is segfaults and huge PDBs and is shared)<br/>
 </p>
 </body></html>
 '''
