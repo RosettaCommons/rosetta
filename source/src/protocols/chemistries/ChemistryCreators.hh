@@ -21,6 +21,13 @@
 namespace protocols {
 namespace chemistries {
 
+class ReprotonateCreator : public ChemistryCreator {
+public:
+	ChemistryOP create_chemistry() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
+};
+
 } //namespace chemistries
 } //namespace protocols
 

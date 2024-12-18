@@ -20,4 +20,16 @@ using chemistries::ChemistryRegistrator;
 
 static ChemistryRegistrator< chemistries::PatchChemistryCreator > reg_PatchChemistryCreator;
 
+static ChemistryRegistrator< chemistries::ReprotonateCreator > reg_ReprotonateChemistryCreator;
+
+static ChemistryRegistrator< rotamer_gen::FragmentRotamersCreator > FragmentRotamersCreator_registrator;
+static ChemistryRegistrator< rotamer_gen::RDKitRotamersCreator > RDKitRotamersCreator_registrator;
+
+static ChemistryRegistrator< drug_design::RandomFragmentLigandCreator > RandomFragmentLigandCreator_registrator;
+static ChemistryRegistrator< drug_design::ReactionGrowCreator > ReactionGrowCreator_registrator;
+static ChemistryRegistrator< drug_design::ReactionFragmentCreator > ReactionFragmentCreator_registrator;
+static ChemistryRegistrator< drug_design::ReactionMultiTransformCreator > ReactionMultiTransformCreator_registrator;
+static ChemistryRegistrator< drug_design::SubstituentReplaceCreator > SubstituentReplaceCreator_registrator;
+static ChemistryRegistrator< drug_design::SubstructureReplaceCreator > SubstructureReplaceCreator_registrator;
+
 } //namespace protocols
