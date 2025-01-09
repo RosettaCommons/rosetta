@@ -22,6 +22,8 @@
 
 // project headers
 #include <core/import_pose/import_pose.hh>
+#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+#include <core/import_pose/pose_stream/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -86,13 +88,19 @@ void EvolutionManager::init() {
 	// ------------------------------------------------------------
 	// library setup
 	// ------------------------------------------------------------
-    // TODO switch to posestream to make it more universal -> MetaPoseInputStream
-	utility::vector1<std::string> filenames = basic::options::option[basic::options::OptionKeys::in::file::s].value();
-	if ( filenames.empty() ) {
-		TR.Error << "No pdb provided. Please use the -in::file::s option" << std::endl;
+    // Using Input Streams is more robust for various commandline options
+    core::import_pose::pose_stream::MetaPoseInputStream pose_stream = core::import_pose::pose_stream::streams_from_cmd_line();
+	if ( !pose_stream.has_another_pose() ) {
+		TR.Error << "No pdb provided. Please use one of the commandline input functions like -in::file::s" << std::endl;
 		utility_exit_with_message("No pdb option provided.");
 	}
-	core::pose::PoseOP pose = core::import_pose::pose_from_file(filenames[1]);
+	core::pose::PoseOP pose;
+    pose_stream.fill_pose(*pose);
+    std::string pose_descriptor = pose_stream.get_last_pose_descriptor_string();
+    if( pose_stream.has_another_pose() ) {
+        TR.Warning << "More than one input structures are described. Selecting the first one encountered:" << std::endl;
+        TR.Warning << pose_descriptor << std::endl;
+    }
 	library_.set_pose(*pose);
 
 	if ( external_scoring_ ) {
@@ -203,6 +211,8 @@ void EvolutionManager::init() {
 
 	// These setups are not needed for external scoring runs, only evolutionary optimization
     // TODO make sure input format is the same as the outputted format
+    //      It does run without problem, I still want to check the parsing just to make sure. Also how it handles cases where the initial pop includes previous results
+    //      but not all saved scores can be matched to fragments
 	if ( external_scoring_ == 0 ) {
 		if ( rank_ == 0 ) {
 

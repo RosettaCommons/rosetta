@@ -175,6 +175,8 @@ private:
 
 };
 
+// TODO: It might be beneficial to include the pnear term from https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0240450 into the calculation
+//       It quantifies docking success to a range of [0,1] and could be used as a multiplier, eg: fitness = pnear * lid_root2
 const utility::vector1< std::string > score_terms_ { "ligand_interface_delta", "total_REU", "ligand_interface_delta_EFFICIENCY", "lid_root2", "lid_root3" };
 
 }
