@@ -52,7 +52,7 @@ private:
 	/// @brief Scores the entire population
 	void score();
 
-	void init_mpi();
+	void init_workmanager();
 
 	/// @brief Calculates the current quantiles
 	void calculate_quantiles();

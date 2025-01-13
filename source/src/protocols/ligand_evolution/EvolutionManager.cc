@@ -85,12 +85,11 @@ void EvolutionManager::init() {
             population_.initialize_from_evotoptions( *evoopt, library_, *scorer_ );
 
 		} // if rank_==0
-        // TODO rename to something init workmanager
-		init_mpi();
+        init_workmanager();
 	} // if external_scoring_==0
 }
 
-void EvolutionManager::init_mpi() {
+void EvolutionManager::init_workmanager() {
 #ifdef USEMPI
         work_manager_ = WorkManagerOP( new WorkManager( scorer_, library_.max_positions() + 1, library_ ) );
 #endif
@@ -187,7 +186,6 @@ void EvolutionManager::run( int mpi_size ) {
 				TR << std::endl;
 				TR << "******************************************************************************" << std::endl;
 				scorer_->save_results();
-                // TODO add headers to output file to make it a bit more accessible
 				write_population_information();
 
 			} // for loop
@@ -288,6 +286,10 @@ void EvolutionManager::write_population_information() const {
 	file.open( "population.tsv", ios_mode );
 
 	// write ids with labels (ligand id)
+    file << "#\tMapping ligand identifiers to individual ids\n";
+    file << "#\tAs the same ligand might be represented by multiple individuals\n";
+    file << "#ligand_identifier: indivdual_id1 indivdual_id2 indivdual_id3 ...";
+    file << std::endl;
 	for ( auto const& ligands : scorer_->expose_id_memory() ) {
 		std::string ligand_label = utility::join( ligands.first, "_" );
 		file << ligand_label << ":";
@@ -299,12 +301,22 @@ void EvolutionManager::write_population_information() const {
 	file << std::endl;
 
 	// write edges
+    file << "#\tEdges in the family tree of molecules\n";
+    file << "#\tChild ID->Parent ID\n";
+    file << "#\t0: Part of the initial population\n";
+    file << "#\tA molecule can have 1 parent if it originated from mutation or 2 in the case of crossover\n";
+    file << "#Child Parent";
+    file << std::endl;
 	for ( std::pair< core::Size, core::Size > const& edge : population_.expose_inheritance_graph() ) {
 		file << edge.first << " " << edge.second << std::endl;
 	}
 	file << std::endl;
 
 	// write generation information
+    file << "#\tList of individual ID for each generation\n";
+    file << "#\t2 lines represent each generation, starting with the random initial population\n";
+    file << "#\tThe first line is all individuals of that generation, the second is which remained after applying the main selector\n";
+    file << std::endl;
 	for ( utility::vector1< core::Size > const& generation : population_.expose_generation_log() ) {
 		file << utility::join( generation, " " ) << std::endl;
 	}
