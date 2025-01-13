@@ -21,6 +21,7 @@
 #include <protocols/ligand_evolution/FragmentLibrary.hh>
 #include <protocols/ligand_evolution/Population.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/XmlObjects.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -37,6 +38,8 @@ class Scorer {
 public:
 
 	Scorer( FragmentLibrary& library, core::Size n_runs, char ligand_chain );
+
+    void initialize_from_options( EvolutionOptionsCOP options, protocols::rosetta_scripts::XmlObjectsCOP rosetta_script, core::Size rank );
 
 	/// @brief Sets the score for all individuals in the population, calculates it where needed
 	/// @details If the same ligand is multiple times present within the population, each occures after the first gets an increasing penalty.

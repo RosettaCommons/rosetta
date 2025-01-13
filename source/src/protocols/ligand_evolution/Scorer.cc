@@ -23,6 +23,7 @@
 // project headers
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
+#include <protocols/ligand_docking/StartFrom.hh>
 
 // C/C++ headers
 #include <algorithm>
@@ -623,6 +624,28 @@ utility::vector1<LigandIdentifier> Scorer::get_best_loaded( core::Size size ) co
 void Scorer::set_similarity_penalty_threshold(core::Real threshold) {
 	similarity_penalty_threshold_ = threshold;
 }
+
+    void Scorer::initialize_from_options(EvolutionOptionsCOP options, protocols::rosetta_scripts::XmlObjectsCOP rosetta_script, core::Size rank) {
+
+        set_main_term( options->get_main_term() );
+        set_pose_path( options->get_pose_dir_path() );
+        set_base_similarity_penalty( options->get_similarity_penalty() );
+        set_similarity_penalty_threshold( options->get_similarity_penalty_threshold() );
+        set_score_function( rosetta_script->get_score_function( options->get_main_scfx() ) );
+
+        std::string const& score_memory_path = options->get_path_score_memory();
+        if ( !score_memory_path.empty() && rank == 0 ) {
+            // this function is only called by rank 0 because it requires knowledge about the fragment library
+            load_scores( score_memory_path );
+        }
+
+        protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom );
+        start_from->add_coords( options->get_start_xyz() );
+        start_from->chain( options->get_ligand_chain() );
+        add_mover(start_from);
+        add_mover( rosetta_script->get_mover("ParsedProtocol") );
+
+    }
 
 }
 }

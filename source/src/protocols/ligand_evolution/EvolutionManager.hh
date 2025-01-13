@@ -60,6 +60,8 @@ private:
 	/// @brief Saves information about the population and its history to disk. For debugging and benchmarking purposes
 	void write_population_information() const;
 
+    void init_evolution_protocol( EvolutionOptionsCOP options );
+
 private:
 
 	/// @brief Defines after how many generations optimization will stop

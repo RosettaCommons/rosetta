@@ -22,6 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <protocols/ligand_evolution/EvolutionOptions.hh>
 
 // utility headers
 #include <utility/vector1.fwd.hh>
@@ -52,6 +53,8 @@ public:
 	FragmentLibrary( FragmentLibrary const& other ) = delete;
 
 public:
+
+    void initialize_from_options( EvolutionOptionsOP options, core::Size external_scoring, core::Size rank );
 
 	/// @brief Sets the internally used pose for ligand creation
 	void set_pose( core::pose::Pose const& pose );

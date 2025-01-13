@@ -588,6 +588,16 @@ core::Real FragmentLibrary::similarity(LigandIdentifier const& id1, LigandIdenti
 	return RDKit::TanimotoSimilarity( *calculate_fingerprint( id1 ), *calculate_fingerprint( id2 ) );
 }
 
+void FragmentLibrary::initialize_from_options(EvolutionOptionsOP options, core::Size external_scoring, core::Size rank) {
+    set_pose(*options->get_pose_from_stream());
+
+    if ( external_scoring ) {
+        load_smiles(options->get_path_to_external_smiles());
+    } else {
+        load_data(options->get_path_to_reactions(), options->get_path_to_reagents(), rank);
+    }
+}
+
 // #########################################################################
 // Reaction
 // #########################################################################

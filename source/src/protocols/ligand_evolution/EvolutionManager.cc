@@ -22,7 +22,6 @@
 
 // project headers
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/ligand_docking/StartFrom.hh>
 #include <protocols/rosetta_scripts/XmlObjects.hh>
 
 // utility headers
@@ -50,9 +49,6 @@ void EvolutionManager::init() {
 
 	// All defaults and sanity checks are supposed to happen inside EvolutionOptions!
 
-	// ------------------------------------------------------------
-	// Option setup
-	// ------------------------------------------------------------
 	EvolutionOptionsOP evoopt;
 
 	if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::options ].active() ) {
@@ -64,9 +60,6 @@ void EvolutionManager::init() {
 		evoopt = EvolutionOptionsOP(new EvolutionOptions(option_path));
 	}
 
-    // ------------------------------------------------------------
-    // Docking protocol setup
-    // ------------------------------------------------------------
     // Movers and scoring functions from here will be used later. Parsing the script happens early to detect errors quickly
     protocols::rosetta_scripts::XmlObjectsCOP rosetta_script = protocols::rosetta_scripts::XmlObjects::create_from_file( evoopt->get_protocol_path() );
     if ( !rosetta_script->list_movers().has_value( "ParsedProtocol" ) ) {
@@ -75,131 +68,23 @@ void EvolutionManager::init() {
         utility_exit_with_message("No parsed protocol provided in XML script.");
     }
 
-	// ------------------------------------------------------------
-	// EvolutionManager setup
-	// ------------------------------------------------------------
 	max_generations_ = evoopt->get_max_generations();
     external_scoring_ = evoopt->get_external_scoring();
 
-	// ------------------------------------------------------------
-	// library setup
-	// ------------------------------------------------------------
-	library_.set_pose(*evoopt->get_pose_from_stream());
+	library_.initialize_from_options( evoopt, external_scoring_, rank_ );
 
-	if ( external_scoring_ ) {
-		library_.load_smiles(evoopt->get_path_to_external_smiles());
-	} else {
-		library_.load_data(evoopt->get_path_to_reactions(), evoopt->get_path_to_reagents(), rank_);
-	}
-
-	// ------------------------------------------------------------
-	// Scorer setup
-	// ------------------------------------------------------------
-	scorer_ = ScorerOP( new Scorer( library_, evoopt->get_n_scoring_runs(), evoopt->get_ligand_chain()[ 0 ] ) );
-	scorer_->set_main_term( evoopt->get_main_term() );
-	scorer_->set_pose_path( evoopt->get_pose_dir_path() );
-	scorer_->set_base_similarity_penalty( evoopt->get_similarity_penalty() );
-	scorer_->set_similarity_penalty_threshold( evoopt->get_similarity_penalty_threshold() );
-	scorer_->set_score_function( rosetta_script->get_score_function( evoopt->get_main_scfx() ) );
-
-	std::string const& score_memory_path = evoopt->get_path_score_memory();
-	if ( !score_memory_path.empty() && rank_ == 0 ) {
-		// this function is only called by rank 0 because it requires knowledge about the fragment library
-		scorer_->load_scores( score_memory_path );
-	}
-
-	// ------------------------------------------------------------
-	// Mover setup
-	// ------------------------------------------------------------
-    protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom );
-    start_from->add_coords( evoopt->get_start_xyz() );
-    start_from->chain( evoopt->get_ligand_chain() );
-    scorer_->add_mover(start_from);
-    scorer_->add_mover( rosetta_script->get_mover("ParsedProtocol") );
+    scorer_ = ScorerOP( new Scorer( library_, evoopt->get_n_scoring_runs(), evoopt->get_ligand_chain()[ 0 ] ) );
+    scorer_->initialize_from_options( evoopt, rosetta_script, rank_ );
 
 	// These setups are not needed for external scoring runs, only evolutionary optimization
     // Results from external scoring are not intended to be loaded as pre-computed scores. External scoring uses only a smiles and an arbitrary identifier
 	if ( external_scoring_ == 0 ) {
 		if ( rank_ == 0 ) {
 
-			// ------------------------------------------------------------
-			// Selector setup
-			// ------------------------------------------------------------
-			for ( std::string const& name: evoopt->get_selector_names() ) {
-				std::string const& type = evoopt->get_selector_type(name);
-				if ( type == "elitist" ) {
-					selectors_.emplace_back(new ElitistSelector());
-				} else if ( type == "roulette" ) {
-					RouletteSelectorOP roulette(new RouletteSelector());
-					roulette->consider_positive(
-						core::Size(evoopt->get_selector_parameter(name, "consider_positive")));
-					selectors_.push_back(roulette);
-				} else if ( type == "tournament" ) {
-					core::Size tournament_size = core::Size(
-						evoopt->get_selector_parameter(name, "tournament_size"));
-					core::Real win_accept = evoopt->get_selector_parameter(name, "acceptance_chance");
-					selectors_.emplace_back(new TournamentSelector(tournament_size, win_accept));
-				} else {
-					TR.Error << "Unknown selector type " << type << ". Please program setup in EvolutionManager."
-						<< std::endl;
-					utility_exit_with_message(
-						"EvolutionManager encountered unknown type of selector and can't set it up.");
-				}
-				selector_map_[name] = selectors_.size();
-			}
-			main_selector_ = selector_map_.at(evoopt->get_main_selector());
-
-			// ------------------------------------------------------------
-			// Factory setup
-			// ------------------------------------------------------------
-			for ( std::string const& name: evoopt->get_factory_names() ) {
-				std::string const& type = evoopt->get_factory_type(name);
-				if ( type == "crossover" ) {
-					factories_.emplace_back(new Crossover(library_));
-				} else if ( type == "identity" ) {
-					factories_.emplace_back(new IdentityFactory());
-				} else if ( type == "mutator" ) {
-					core::Real reaction_weight = evoopt->get_factory_parameter(name, "reaction_weight");
-					core::Real reagent_weight = evoopt->get_factory_parameter(name, "reagent_weight");
-					core::Real min_similarity = evoopt->get_factory_parameter(name, "min_similarity");
-					core::Real max_similarity = evoopt->get_factory_parameter(name, "max_similarity");
-					factories_.emplace_back(
-						new Mutator(library_, {reaction_weight, reagent_weight}, min_similarity,
-						max_similarity));
-				} else {
-					TR.Error << "Unknown factory type " << type << ". Please program setup in EvolutionManager."
-						<< std::endl;
-					utility_exit_with_message(
-						"EvolutionManager encountered unknown type of factory and can't set it up.");
-				}
-				factory_map_[name] = factories_.size();
-			}
-
-			// ------------------------------------------------------------
-			// Link and protocol setup
-			// ------------------------------------------------------------
-			// This is arguably a little confusing, but it is a leftover, and I already have to code way too much for this option system
-			for ( std::pair<std::string, std::string> const& link: evoopt->get_selector_factory_links() ) {
-				std::string const& selector = link.first;
-				std::string const& factory = link.second;
-				offspring_options_.push_back({
-					selector_map_.at(selector),
-					factory_map_.at(factory),
-					core::Size(evoopt->get_selector_parameter(selector, "size")),
-					core::Size(evoopt->get_factory_parameter(factory, "size")),
-					core::Size(evoopt->get_selector_parameter(selector, "remove"))
-					});
-			}
-
-			// ------------------------------------------------------------
-			// Population setup
-			// ------------------------------------------------------------
-            // TODO here and in general, create init functions for all options and pass them the options object - makes cleaner code and moves logic into context
+            init_evolution_protocol( evoopt );
             population_.initialize_from_evotoptions( *evoopt, library_, *scorer_ );
+
 		} // if rank_==0
-		// ------------------------------------------------------------
-		// MPI setup
-		// ------------------------------------------------------------
         // TODO rename to something init workmanager
 		init_mpi();
 	} // if external_scoring_==0
@@ -427,5 +312,76 @@ void EvolutionManager::write_population_information() const {
 	// close file
 	file.close();
 }
+
+    void EvolutionManager::init_evolution_protocol(EvolutionOptionsCOP options) {
+        // ------------------------------------------------------------
+        // Selector setup
+        // ------------------------------------------------------------
+        for ( std::string const& name: options->get_selector_names() ) {
+            std::string const& type = options->get_selector_type(name);
+            if ( type == "elitist" ) {
+                selectors_.emplace_back(new ElitistSelector());
+            } else if ( type == "roulette" ) {
+                RouletteSelectorOP roulette(new RouletteSelector());
+                roulette->consider_positive(
+                        core::Size(options->get_selector_parameter(name, "consider_positive")));
+                selectors_.push_back(roulette);
+            } else if ( type == "tournament" ) {
+                core::Size tournament_size = core::Size(
+                        options->get_selector_parameter(name, "tournament_size"));
+                core::Real win_accept = options->get_selector_parameter(name, "acceptance_chance");
+                selectors_.emplace_back(new TournamentSelector(tournament_size, win_accept));
+            } else {
+                TR.Error << "Unknown selector type " << type << ". Please program setup in EvolutionManager."
+                         << std::endl;
+                utility_exit_with_message(
+                        "EvolutionManager encountered unknown type of selector and can't set it up.");
+            }
+            selector_map_[name] = selectors_.size();
+        }
+        main_selector_ = selector_map_.at(options->get_main_selector());
+
+        // ------------------------------------------------------------
+        // Factory setup
+        // ------------------------------------------------------------
+        for ( std::string const& name: options->get_factory_names() ) {
+            std::string const& type = options->get_factory_type(name);
+            if ( type == "crossover" ) {
+                factories_.emplace_back(new Crossover(library_));
+            } else if ( type == "identity" ) {
+                factories_.emplace_back(new IdentityFactory());
+            } else if ( type == "mutator" ) {
+                core::Real reaction_weight = options->get_factory_parameter(name, "reaction_weight");
+                core::Real reagent_weight = options->get_factory_parameter(name, "reagent_weight");
+                core::Real min_similarity = options->get_factory_parameter(name, "min_similarity");
+                core::Real max_similarity = options->get_factory_parameter(name, "max_similarity");
+                factories_.emplace_back(
+                        new Mutator(library_, {reaction_weight, reagent_weight}, min_similarity,
+                                    max_similarity));
+            } else {
+                TR.Error << "Unknown factory type " << type << ". Please program setup in EvolutionManager."
+                         << std::endl;
+                utility_exit_with_message(
+                        "EvolutionManager encountered unknown type of factory and can't set it up.");
+            }
+            factory_map_[name] = factories_.size();
+        }
+
+        // ------------------------------------------------------------
+        // Link and protocol setup
+        // ------------------------------------------------------------
+        // This is arguably a little confusing, but it is a leftover, and I already have to code way too much for this option system
+        for ( std::pair<std::string, std::string> const& link: options->get_selector_factory_links() ) {
+            std::string const& selector = link.first;
+            std::string const& factory = link.second;
+            offspring_options_.push_back({
+                                                 selector_map_.at(selector),
+                                                 factory_map_.at(factory),
+                                                 core::Size(options->get_selector_parameter(selector, "size")),
+                                                 core::Size(options->get_factory_parameter(factory, "size")),
+                                                 core::Size(options->get_selector_parameter(selector, "remove"))
+                                         });
+        }
+    }
 }
 }
