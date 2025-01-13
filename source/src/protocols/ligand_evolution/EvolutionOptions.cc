@@ -464,7 +464,13 @@ void EvolutionOptions::check_factories() {
 			is_used[ factory_name ] = true;
 			generated_popsize += core::Size( factory_options_.at( factory_name ).second.at( "size" ) );
 		}
-	}
+        if ( factory_options_.at( factory_name ).first == "identity"
+             && factory_options_.at( factory_name ).second.at("size") > selector_options_.at( selector_name ).second.at( "size" ) ) {
+            TR.Error << selector_name << " selects only " << selector_options_.at( selector_name ).second.at( "size" ) << " individuals, but " << factory_name
+                     << " requires at least " << factory_options_.at( factory_name ).second.at("size") << " individuals." << std::endl;
+            error_counter_++;
+        }
+    }
 
 	if ( generated_popsize < supported_population_size_ ) {
 		TR.Error << "All offspring factories combined produce only " << generated_popsize << " new individuals, but " << supported_population_size_ << " are supported." << std::endl;

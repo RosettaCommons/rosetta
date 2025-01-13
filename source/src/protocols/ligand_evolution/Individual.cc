@@ -60,10 +60,11 @@ LigandIdentifier const& Individual::identifier() const {
 
 bool Individual::id( core::Size id ) {
 	if ( id_ == 0 ) {
+        TR.Trace << "Set id " << id << std::endl;
 		id_ = id;
 		return true;
 	} else {
-		TR.Debug << "Prohibited overwrite of id:" << id_ << " to id:" << id << std::endl;
+		TR.Debug << "Prohibited overwrite of id " << id_ << " to id " << id << std::endl;
 		return false;
 	}
 }

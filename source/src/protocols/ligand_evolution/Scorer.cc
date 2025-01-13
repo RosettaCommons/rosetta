@@ -71,6 +71,8 @@ void Scorer::score_population( Population& pop ) {
 			core::Real sim = library_.similarity( pop.individual(ii).identifier(), pop.individual(jj).identifier() );
 			if ( sim > highest_sim ) highest_sim = sim;
 			if ( sim > similarity_penalty_threshold_ ) {
+                TR.Trace << "Individual " << pop.individual( ii ).id() << " at index " << ii << " has " << sim << " similarity to individual "
+                << pop.individual( jj ).id() << " at index " << jj << std::endl;
 				sim_counter++;
 			}
 		}
@@ -82,7 +84,7 @@ void Scorer::score_population( Population& pop ) {
 			core::Real new_score = individual.score() + penalty;
 			individual.score( new_score );
 			sim_mol_counter++;
-			TR.Debug << individual.identifier() << " got a similarity penalty of " << penalty << " for exceeding the similarity threshold " << sim_counter << " times. New score: " << new_score << std::endl;
+			TR.Debug << "Individual " << individual.id() << " with ligand " << individual.identifier() << " got a similarity penalty of " << penalty << " for exceeding the similarity threshold " << sim_counter << " times. New score: " << new_score << std::endl;
 		}
 		total_sim_counter += sim_counter;
 	}

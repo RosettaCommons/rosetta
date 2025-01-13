@@ -30,7 +30,8 @@ std::string const& IdentityFactory::name() const {
 utility::vector1< Individual > IdentityFactory::apply( utility::vector1< Individual > const& parents, core::Size size ) const {
 
 	if ( parents.size() < size ) {
-		TR.Warning << "Received " << parents.size() << " parents but should produce " << size << " offspring. Parent duplicates will be included." << std::endl;
+		TR.Error << "Received " << parents.size() << " parents but should produce " << size << " offspring. Parent duplicates would be included." << std::endl;
+        utility_exit_with_message("Copying individuals more than once leads to unexpected behavior. This should be avoided at all costs.");
 	} else if ( parents.size() > size ) {
 		TR.Warning << "Received " << parents.size() << " parents but should produce " << size << " offspring. Not all parents will be passed on." << std::endl;
 	}
