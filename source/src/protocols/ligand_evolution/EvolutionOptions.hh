@@ -180,8 +180,10 @@ private:
 	/// @brief Path where to find reagents definitions. The standard settings assume you use a input and run directory structure.
 	std::string path_to_reagents_;
 
-	/// @brief Maps selector names to types and parameter list
-	std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > selector_options_ {
+    bool selectors_defined_ = false;
+
+    /// @brief Maps selector names to types and parameter list
+    std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > selector_options_ {
 { "std_elitist", { "elitist", {
 // sets how many individuals will be selected
 { "size", 15 },
@@ -204,6 +206,8 @@ private:
 } } }
 };
 
+    bool factories_defined_ = false;
+
 	/// @brief Maps offspring factory names to types and parameter list
 	std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > factory_options_ {
 { "std_mutator", { "mutator", {
@@ -220,6 +224,8 @@ private:
 { "size", 15.0 }
 } } }
 };
+
+    bool evolution_protocol_defined_ = false;
 
 	/// @brief Links a selector to a factory
 	utility::vector1< std::pair< std::string, std::string > > selector_factory_links_ {

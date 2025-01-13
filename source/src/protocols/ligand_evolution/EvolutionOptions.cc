@@ -138,6 +138,7 @@ void EvolutionOptions::parse_cmdline() {
     score_runs_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::n_scoring_runs ];
     ligand_chain_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::ligand_chain ];
     pose_dump_directory_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::pose_output_directory ].value();
+    main_score_term_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_term ];
 
     // these options are optional
     if ( basic::options::option[ basic::options::OptionKeys::ligand_evolution::score_mem_path ].active() ) {
@@ -346,7 +347,6 @@ void EvolutionOptions::check_selectors() {
 			TR.Warning << "Selector " << usage.first << " is defined but never used." << std::endl;
 		}
 	}
-    // TODO rework the unused warning system
 }
 
 void EvolutionOptions::check_factories() {
@@ -475,8 +475,6 @@ void EvolutionOptions::check_factories() {
 			TR.Warning << usage.first << " is defined but never used." << std::endl;
 		}
 	}
-
-    // TODO rework the unused factory warning
 }
 
 void EvolutionOptions::check_pop_init() {
@@ -646,8 +644,6 @@ std::string const& EvolutionOptions::get_main_term() const {
 void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 
 	// if any of those two get set, all default settings for these are removed
-	bool evolution_protocol_defined = false;
-	bool mover_protocol_defined = false;
 	bool pop_init_defined = false;
 	boost::property_tree::ptree tag_tree;
 
@@ -718,9 +714,7 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 			for ( boost::property_tree::ptree::value_type const& v : tag.second.get_child( "<xmlattr>" ) ) {
 				std::string const& attribute_name = v.first;
 				std::string const& attribute_value = v.second.data();
-				if ( attribute_name == "main_term" ) {
-					main_score_term_ = attribute_value;
-				} else if ( attribute_name == "similarity_penalty" ) {
+				if ( attribute_name == "similarity_penalty" ) {
 					similarity_penalty_ = utility::string2Real( attribute_value );
 				} else if ( attribute_name == "similarity_penalty_threshold" ) {
 					similarity_penalty_threshold_ = utility::string2Real( attribute_value );
@@ -730,6 +724,11 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 				}
 			}
 		} else if ( option_name == "Selector" ) {
+            if ( !selectors_defined_ ) {
+                TR.Warning << "Custom Selectors defined. All default Selectors are removed." << std::endl;
+                selectors_defined_ = true;
+                selector_options_.clear();
+            }
 			std::string name;
 			std::string type;
 			std::map< std::string, std::string > params;
@@ -748,29 +747,23 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 				TR.Error << option_name << " requires name and type attribute to be set." << std::endl;
 				error_counter_++;
 			} else {
-				if ( type == "elitist" ) {
-					selector_options_[ name ] = selector_options_.at( "std_elitist" );
-				} else if ( type == "tournament" ) {
-					selector_options_[ name ] = selector_options_.at( "std_tournament" );
-				} else if ( type == "roulette" ) {
-					selector_options_[ name ] = selector_options_.at( "std_roulette" );
-				} else {
-					TR.Error << "Unknown type " << type << " for selector " << name << std::endl;
-					error_counter_++;
-				}
-				if ( params.empty() ) {
-					TR.Warning << "Selector " << name << " receives " << type << " default parameters only." << std::endl;
-				} else {
-					for ( std::pair< std::string, std::string > const& p : params ) {
-						if ( p.first == "remove" ) {
-							selector_options_.at( name ).second[ p.first ] = ( p.second == "True" );
-						} else {
-							selector_options_.at(name).second[p.first] = utility::string2Real(p.second);
-						}
-					}
-				}
-			}
+                selector_options_[ name ] = std::pair< std::string, std::map< std::string, core::Real > > ( type, {});
+                for ( std::pair< std::string, std::string > const& p : params ) {
+                    if ( p.first == "remove" ) {
+                        selector_options_.at( name ).second[ p.first ] = ( p.second == "True" );
+                    } else {
+                        selector_options_.at(name).second[p.first] = utility::string2Real(p.second);
+                    }
+                }
+            }
 		} else if ( option_name == "Factory" ) {
+
+            if ( !factories_defined_ ) {
+                TR.Warning << "Custom Factories defined. All default Factories are removed." << std::endl;
+                factories_defined_ = true;
+                factory_options_.clear();
+            }
+
 			std::string name;
 			std::string type;
 			std::map< std::string, std::string > params;
@@ -789,29 +782,16 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 				TR.Error << option_name << " requires name and type attribute to be set." << std::endl;
 				error_counter_++;
 			} else {
-				if ( type == "mutator" ) {
-					factory_options_[ name ] = factory_options_.at( "std_mutator" );
-				} else if ( type == "crossover" ) {
-					factory_options_[ name ] = factory_options_.at( "std_crossover" );
-				} else if ( type == "identity" ) {
-					factory_options_[ name ] = factory_options_.at( "std_identity" );
-				} else {
-					TR.Error << "Unknown type " << type << " for factory " << name << std::endl;
-					error_counter_++;
-				}
-				if ( params.empty() ) {
-					TR.Warning << "Factory " << name << " receives " << type << " default parameters only." << std::endl;
-				} else {
-					for ( std::pair< std::string, std::string > const& p : params ) {
-						factory_options_.at( name ).second[ p.first ] = utility::string2Real( p.second );
-					}
-				}
+                factory_options_[ name ] = std::pair< std::string, std::map< std::string, core::Real > > ( type, {});
+                for ( std::pair< std::string, std::string > const& p : params ) {
+                    factory_options_.at( name ).second[ p.first ] = utility::string2Real( p.second );
+                }
 			}
 		} else if ( option_name == "EvolutionProtocol" ) {
-			if ( !evolution_protocol_defined ) {
-				evolution_protocol_defined = true;
+			if ( !evolution_protocol_defined_ ) {
+				evolution_protocol_defined_ = true;
 				selector_factory_links_.clear();
-				TR.Warning << option_name << " is defined. All default settings for it are deleted." << std::endl;
+				TR.Warning << "Custom settings for evolution protocol are defined. All default settings are deleted." << std::endl;
 			}
 			std::string selector;
 			std::string factory;
@@ -839,11 +819,12 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 		}
 	}
 
-	if ( error_counter_ != 0 ) {
-		TR.Error << "Found a total of " << error_counter_ << " errors whilst parsing file " << option_path << ". See details above." << std::endl;
-		utility_exit_with_message( "Unable to parse option file." );
-	}
-
+    if ( evolution_protocol_defined_ || selectors_defined_ || factories_defined_ ) {
+        if( !(evolution_protocol_defined_ && selectors_defined_ && factories_defined_) )  {
+            TR.Error << "At least one option for factory, selector or protocol are defined, but not all are custom. This leads to unexpected behavior." << std::endl;
+            error_counter_++;
+        }
+    }
 }
 
 std::map< std::string, std::map< std::string, core::Size > > const& EvolutionOptions::get_pop_init_options() const {
