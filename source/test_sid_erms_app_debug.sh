@@ -1,1 +1,7 @@
-./bin/sid_erms.default.linuxgccdebug -in:file:s ../inputs/1UBQ.pdb -expERMS ../inputs/exp_ERMS.csv -predERMS ../inputs/test_ERMS.csv
+./bin/SID_ERMS_Rescore.default.linuxgccdebug \
+    -database ../database \
+    -in::file::l ../inputs/inputs/in_list \
+    -out:file:o ../inputs/test_output.out \
+    -complex_type ../inputs/C2.sym \
+    -ERMS ../inputs/exp_ERMS.csv \
+    -RMSE true 
