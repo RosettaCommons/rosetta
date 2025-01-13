@@ -20,6 +20,7 @@
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <numeric/random/WeightedReservoirSampler.hh>
 
 // C/C++ headers
 #include <algorithm>
@@ -66,7 +67,7 @@ void Population::add_random( core::Size n_random_individuals, FragmentLibrary co
 
 void Population::add_individuals(utility::vector1< LigandIdentifier > const& new_individuals ) {
 	utility::vector1< Individual > indis;
-	for ( const LigandIdentifier& id : new_individuals ) {
+	for ( LigandIdentifier const& id : new_individuals ) {
 		indis.push_back( Individual( id, { 0 }, "manually added" ) );
 	}
 	add_individuals( indis );
@@ -213,6 +214,37 @@ void Population::set_supported_size(core::Size supported_size) {
 Individual &Population::individual(core::Size index) {
 	sorting_guaranteed_ = false;
 	return individuals_[ index ];
+}
+
+void Population::initialize_from_evotoptions( EvolutionOptions const& options, FragmentLibrary const& library, Scorer const& scorer ) {
+    set_supported_size(options.get_population_supported_size());
+    for ( std::pair<std::string const, std::map<std::string, core::Size> > const& init_opt: options.get_pop_init_options() ) {
+        std::string const &init_type = init_opt.first;
+        std::map<std::string, core::Size> const &type_options = init_opt.second;
+        if (init_type == "random") {
+            add_random(type_options.at("size"), library);
+        } else if (init_type == "best_loaded") {
+            utility::vector1<LigandIdentifier> best_individuals = scorer.get_best_loaded(
+                    type_options.at("selection"));
+            numeric::random::WeightedReservoirSampler<LigandIdentifier> sampler(type_options.at("size"));
+            for (LigandIdentifier const &indi: best_individuals) {
+                sampler.consider_sample(indi, 1.0);
+            }
+            TR.Debug << "Found " << best_individuals.size() << " best individuals in loaded scores. ";
+            best_individuals.clear();
+            sampler.samples(&best_individuals);
+            if (best_individuals.empty()) {
+                TR.Warning
+                        << "No best individuals where selected from loaded scores. This is due to them not being present in available fragments."
+                        << std::endl;
+            } else {
+                TR.Debug << " Add " << best_individuals.size()
+                         << " randomly selected to initial population."
+                         << std::endl;
+                add_individuals(best_individuals);
+            }
+        }
+    }
 }
 
 }

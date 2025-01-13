@@ -102,7 +102,7 @@ void EvolutionManager::init() {
 	scorer_->set_similarity_penalty_threshold( evoopt->get_similarity_penalty_threshold() );
 	scorer_->set_score_function( rosetta_script->get_score_function( evoopt->get_main_scfx() ) );
 
-	const std::string& score_memory_path = evoopt->get_path_score_memory();
+	std::string const& score_memory_path = evoopt->get_path_score_memory();
 	if ( !score_memory_path.empty() && rank_ == 0 ) {
 		// this function is only called by rank 0 because it requires knowledge about the fragment library
 		scorer_->load_scores( score_memory_path );
@@ -125,8 +125,8 @@ void EvolutionManager::init() {
 			// ------------------------------------------------------------
 			// Selector setup
 			// ------------------------------------------------------------
-			for ( const std::string &name: evoopt->get_selector_names() ) {
-				const std::string &type = evoopt->get_selector_type(name);
+			for ( std::string const& name: evoopt->get_selector_names() ) {
+				std::string const& type = evoopt->get_selector_type(name);
 				if ( type == "elitist" ) {
 					selectors_.emplace_back(new ElitistSelector());
 				} else if ( type == "roulette" ) {
@@ -152,8 +152,8 @@ void EvolutionManager::init() {
 			// ------------------------------------------------------------
 			// Factory setup
 			// ------------------------------------------------------------
-			for ( const std::string &name: evoopt->get_factory_names() ) {
-				const std::string &type = evoopt->get_factory_type(name);
+			for ( std::string const& name: evoopt->get_factory_names() ) {
+				std::string const& type = evoopt->get_factory_type(name);
 				if ( type == "crossover" ) {
 					factories_.emplace_back(new Crossover(library_));
 				} else if ( type == "identity" ) {
@@ -179,9 +179,9 @@ void EvolutionManager::init() {
 			// Link and protocol setup
 			// ------------------------------------------------------------
 			// This is arguably a little confusing, but it is a leftover, and I already have to code way too much for this option system
-			for ( const std::pair<std::string, std::string> &link: evoopt->get_selector_factory_links() ) {
-				const std::string &selector = link.first;
-				const std::string &factory = link.second;
+			for ( std::pair<std::string, std::string> const& link: evoopt->get_selector_factory_links() ) {
+				std::string const& selector = link.first;
+				std::string const& factory = link.second;
 				offspring_options_.push_back({
 					selector_map_.at(selector),
 					factory_map_.at(factory),
@@ -195,35 +195,7 @@ void EvolutionManager::init() {
 			// Population setup
 			// ------------------------------------------------------------
             // TODO here and in general, create init functions for all options and pass them the options object - makes cleaner code and moves logic into context
-			population_.set_supported_size(evoopt->get_population_supported_size());
-			for ( const std::pair<const std::string, std::map<std::string, core::Size> > &init_opt: evoopt->get_pop_init_options() ) {
-                // TODO change from west const to east const everywhere
-				const std::string &init_type = init_opt.first;
-				const std::map<std::string, core::Size> &type_options = init_opt.second;
-				if ( init_type == "random" ) {
-					population_.add_random(type_options.at("size"), library_);
-				} else if ( init_type == "best_loaded" ) {
-					utility::vector1<LigandIdentifier> best_individuals = scorer_->get_best_loaded(
-						type_options.at("selection"));
-					numeric::random::WeightedReservoirSampler<LigandIdentifier> sampler(type_options.at("size"));
-					for ( const LigandIdentifier &indi: best_individuals ) {
-						sampler.consider_sample(indi, 1.0);
-					}
-					TR.Debug << "Found " << best_individuals.size() << " best individuals in loaded scores. ";
-					best_individuals.clear();
-					sampler.samples(&best_individuals);
-					if ( best_individuals.empty() ) {
-						TR.Warning
-							<< "No best individuals where selected from loaded scores. This is due to them not being present in available fragments."
-							<< std::endl;
-					} else {
-						TR.Debug << " Add " << best_individuals.size()
-							<< " randomly selected to initial population."
-							<< std::endl;
-						population_.add_individuals(best_individuals);
-					}
-				}
-			}
+            population_.initialize_from_evotoptions( *evoopt, library_, *scorer_ );
 		} // if rank_==0
 		// ------------------------------------------------------------
 		// MPI setup

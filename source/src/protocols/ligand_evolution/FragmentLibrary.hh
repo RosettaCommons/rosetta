@@ -54,7 +54,7 @@ public:
 public:
 
 	/// @brief Sets the internally used pose for ligand creation
-	void set_pose( const core::pose::Pose& pose );
+	void set_pose( core::pose::Pose const& pose );
 
 	/// @brief generates a smiles representation for the id and calls create_ligand_pose with smiles
 	core::pose::PoseOP create_ligand_pose( LigandIdentifier const& id, bool create_rotamers, char ligand_chain ) const;
@@ -114,10 +114,10 @@ public:
 	core::Size reaction_positions( core::Size reaction_id ) const;
 
 	/// @brief Returns the used reaction index for a given reaction name. Returns 0 if not found.
-	core::Size reaction_name_to_index( const std::string& reaction_name ) const;
+	core::Size reaction_name_to_index( std::string const& reaction_name ) const;
 
 	/// @brief Returns the index for a given reagent. Returns 0 if not found.
-	core::Size reagent_name_to_index( core::Size reaction_index, core::Size position, const std::string& reagent_name ) const;
+	core::Size reagent_name_to_index( core::Size reaction_index, core::Size position, std::string const& reagent_name ) const;
 
 	/// @brief Calculates a RDKit Morgan fingerprint for a given ligand. Fingerprints are saved and can be retrieved quickly.
 	RDKit::SparseIntVect< unsigned int >* calculate_fingerprint( LigandIdentifier const& id );

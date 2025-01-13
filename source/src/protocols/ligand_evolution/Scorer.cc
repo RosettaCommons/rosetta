@@ -177,7 +177,7 @@ bool Scorer::next_step( core::Size save_n_scores ) {
 		TR.Error << "Encountered error during scoring of ligand " << current_ligand_ << " with smiles " << current_ligand_smiles_ << std::endl;
 		TR.Error << "Break scoring and set scores to +9999.9 if not set yet." << std::endl;
 		std::map< std::string, core::Real > scores;
-		for ( const std::string& score_term : score_terms_ ) {
+		for ( std::string const& score_term : score_terms_ ) {
 			scores[ score_term ] = 9999.9;
 		}
 		set_scores( current_ligand_, scores );
@@ -428,7 +428,7 @@ void Scorer::save_external_scoring_results( core::Size rank ) {
 	std::ofstream file;
 	file.open( "external_scores_" + std::to_string( rank ) + ".csv", ios_mode );
 	if ( file.is_open() ) {
-		for ( const std::pair< const LigandIdentifier, std::map< std::string, core::Real > > & entry : score_memory_ ) {
+		for ( std::pair< LigandIdentifier const, std::map< std::string, core::Real > > const& entry : score_memory_ ) {
 			std::string line = library_.identifier_to_smiles( entry.first );
 			for ( std::string const& term : score_terms_ ) {
 				line += ";" + std::to_string( entry.second.at( term ) );
@@ -445,7 +445,7 @@ void Scorer::save_external_scoring_results( core::Size rank ) {
 	score_memory_.clear();
 }
 
-void Scorer::load_scores(const std::string &path) {
+void Scorer::load_scores(std::string const& path) {
 
 	// While I wish to use the format as the output files from single runs, I can't just save things into score_memory_ for two reasons:
 	// 1) everything in score_memory_ gets printed. That is bad for run evaluations. If you intend to merge all results together, just cat the score files
@@ -506,7 +506,7 @@ void Scorer::load_scores(const std::string &path) {
 			reagent_start = 9999;
 			reagent_end = 0;
 			for ( core::Size ii( 1 ); ii <= split_line.size(); ++ii ) {
-				const std::string& column = split_line[ ii ];
+				std::string const& column = split_line[ ii ];
 				if ( column.substr( 0, 7 ) == "reagent" ) {
 					reagent_start = std::min( reagent_start, ii );
 					reagent_end = std::max( reagent_end, ii );
@@ -528,7 +528,7 @@ void Scorer::load_scores(const std::string &path) {
 
 }
 
-bool Scorer::check_memory(const LigandIdentifier &id) {
+bool Scorer::check_memory(LigandIdentifier const& id) {
 
 	// if scores have been loaded, check if the ligand is scored and copy scores
 	if ( !loaded_score_memory_.empty() ) {
@@ -567,15 +567,15 @@ utility::vector1<LigandIdentifier> Scorer::get_best_loaded( core::Size size ) co
 	// collects all ids and scores to sort later
 	utility::vector1< std::pair< core::Real, LigandIdentifier > > ligand_score_list;
 
-	for ( const std::pair< std::string, std::map< utility::vector1< std::string >, std::map< std::string, core::Real > > > reaction_mem : loaded_score_memory_ ) {
-		const std::string& reaction = reaction_mem.first;
+	for ( std::pair< std::string, std::map< utility::vector1< std::string >, std::map< std::string, core::Real > > > const& reaction_mem : loaded_score_memory_ ) {
+		std::string const& reaction = reaction_mem.first;
 		core::Size reaction_index;
 		reaction_index = library_.reaction_name_to_index(reaction);
 		if ( reaction_index == 0 ) {
 			continue;
 		}
-		for ( const std::pair< utility::vector1< std::string >, std::map< std::string, core::Real > > ligand_mem : reaction_mem.second ) {
-			const utility::vector1< std::string >& universal_id = ligand_mem.first;
+		for ( std::pair< utility::vector1< std::string > const, std::map< std::string, core::Real > > ligand_mem : reaction_mem.second ) {
+			utility::vector1< std::string > const& universal_id = ligand_mem.first;
 			LigandIdentifier id{ reaction_index };
 			core::Real score = ligand_mem.second.at( main_score_term_ );
 			bool encountered_error = false;

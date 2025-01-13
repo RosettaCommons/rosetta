@@ -456,7 +456,7 @@ core::pose::PoseOP FragmentLibrary::create_ligand_pose( LigandIdentifier const& 
 	return create_ligand_pose( smiles, create_rotamers, ligand_chain );
 }
 
-core::pose::PoseOP FragmentLibrary::create_ligand_pose(const std::string &smiles, bool create_rotamers, char ligand_chain) const {
+core::pose::PoseOP FragmentLibrary::create_ligand_pose(std::string const& smiles, bool create_rotamers, char ligand_chain) const {
 	TR.Debug << "Try to create ligand for " << smiles << std::endl;
 	return create_pose( *create_ligand( smiles, create_rotamers ), ligand_chain );
 }
@@ -558,14 +558,14 @@ core::Size FragmentLibrary::reaction_positions( core::Size reaction_id ) const {
 	return reactions_[ reaction_id ]->n_positions();
 }
 
-core::Size FragmentLibrary::reaction_name_to_index(const std::string &reaction_name) const {
+core::Size FragmentLibrary::reaction_name_to_index(std::string const& reaction_name) const {
 	if ( reaction_name_to_index_.count( reaction_name ) == 0 ) {
 		return 0;
 	}
 	return reaction_name_to_index_.at( reaction_name );
 }
 
-core::Size FragmentLibrary::reagent_name_to_index(core::Size reaction_index, core::Size position, const std::string& reagent_name) const {
+core::Size FragmentLibrary::reagent_name_to_index(core::Size reaction_index, core::Size position, std::string const& reagent_name) const {
 	for ( core::Size reagent_index : reactions_[ reaction_index ]->reagents_[ position ] ) {
 		if ( reagent_name == reagents_[ reagent_index ]->name_ ) {
 			return reagent_index;
@@ -574,7 +574,7 @@ core::Size FragmentLibrary::reagent_name_to_index(core::Size reaction_index, cor
 	return 0;
 }
 
-RDKit::SparseIntVect<unsigned int>* FragmentLibrary::calculate_fingerprint(const LigandIdentifier &id) {
+RDKit::SparseIntVect<unsigned int>* FragmentLibrary::calculate_fingerprint(LigandIdentifier const& id) {
 	if ( fingerprints_.count( id ) == 0 ) {
 		std::string smiles = run_reaction(id);
 		RDKit::RWMol* mol = RDKit::SmilesToMol( smiles );
@@ -584,7 +584,7 @@ RDKit::SparseIntVect<unsigned int>* FragmentLibrary::calculate_fingerprint(const
 	return fingerprints_[ id ];
 }
 
-core::Real FragmentLibrary::similarity(const LigandIdentifier &id1, const LigandIdentifier &id2) {
+core::Real FragmentLibrary::similarity(LigandIdentifier const& id1, LigandIdentifier const& id2) {
 	return RDKit::TanimotoSimilarity( *calculate_fingerprint( id1 ), *calculate_fingerprint( id2 ) );
 }
 

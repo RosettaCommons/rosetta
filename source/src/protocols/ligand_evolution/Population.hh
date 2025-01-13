@@ -20,6 +20,9 @@
 // package headers
 #include <protocols/ligand_evolution/Individual.hh>
 #include <protocols/ligand_evolution/selectors/Selector.hh>
+#include <protocols/ligand_evolution/EvolutionOptions.hh>
+#include <protocols/ligand_evolution/Scorer.hh>
+
 
 // utility headers
 #include <utility/vector1.hh>
@@ -33,6 +36,9 @@ public:
 
 	Population() = default;
 	~Population() = default;
+
+    /// @brief initializes setting from options object
+    void initialize_from_evotoptions( EvolutionOptions const& options, FragmentLibrary const& library, Scorer const& scorer );
 
 	/// @brief Exposes the individuals vector for const iterator access
 	utility::vector1< Individual > const& individuals() const;

@@ -49,7 +49,7 @@ EvolutionOptions::EvolutionOptions() {
     TR.Debug << "Options passed all checks." << std::endl;
 }
 
-EvolutionOptions::EvolutionOptions( const std::string& path_to_option_file) {
+EvolutionOptions::EvolutionOptions( std::string const& path_to_option_file) {
 
 	utility::io::izstream option_file( path_to_option_file );
 	if ( !option_file ) {
@@ -255,7 +255,7 @@ core::Size EvolutionOptions::check_selectors() const {
 
 	std::map< std::string, bool > is_used;
 
-	const utility::vector1< std::string > selector_types{ "elitist", "roulette", "tournament" };
+	utility::vector1< std::string > const selector_types{ "elitist", "roulette", "tournament" };
 
 	for ( auto& selec_ops : selector_options_ ) {
 		std::string selector_name = selec_ops.first;
@@ -304,7 +304,7 @@ core::Size EvolutionOptions::check_selectors() const {
 	}
 
 	core::Size leftover_popsize = supported_population_size_;
-	for ( const auto& link : selector_factory_links_ ) {
+	for ( auto const& link : selector_factory_links_ ) {
 		std::string selector_name = link.first;
 		std::string factory_name = link.second;
 		if ( is_used.count( selector_name ) == 0 ) {
@@ -330,7 +330,7 @@ core::Size EvolutionOptions::check_selectors() const {
 		is_used[ main_selector_ ] = true;
 	}
 
-	for ( const auto& usage : is_used ) {
+	for ( auto const& usage : is_used ) {
 		if ( !usage.second ) {
 			TR.Warning << "Selector " << usage.first << " is defined but never used." << std::endl;
 		}
@@ -347,9 +347,9 @@ core::Size EvolutionOptions::check_factories() const {
 
 	std::map< std::string, bool > is_used;
 
-	const utility::vector1< std::string > factory_types{ "mutator", "crossover", "identity" };
+	utility::vector1< std::string > const factory_types{ "mutator", "crossover", "identity" };
 
-	for ( const auto& fac_ops : factory_options_ ) {
+	for ( auto const& fac_ops : factory_options_ ) {
 
 		std::string factory_name = fac_ops.first;
 		std::string factory_type = fac_ops.second.first;
@@ -429,7 +429,7 @@ core::Size EvolutionOptions::check_factories() const {
 	}
 
 	core::Size generated_popsize = 0;
-	for ( const auto& link : selector_factory_links_ ) {
+	for ( auto const& link : selector_factory_links_ ) {
 		std::string selector_name = link.first;
 		std::string factory_name = link.second;
 		if ( factory_options_.count( factory_name ) == 0 ) {
@@ -446,7 +446,7 @@ core::Size EvolutionOptions::check_factories() const {
 		error_counter++;
 	}
 
-	for ( const auto& usage : is_used ) {
+	for ( auto const& usage : is_used ) {
 		if ( !usage.second ) {
 			TR.Warning << usage.first << " is defined but never used." << std::endl;
 		}
@@ -462,8 +462,8 @@ core::Size EvolutionOptions::check_pop_init() const {
 	core::Size error_counter = 0;
 	core::Size combined_init_size = 0;
 
-	for ( const auto& init_opt : pop_init_options_ ) {
-		const std::string& type = init_opt.first;
+	for ( auto const& init_opt : pop_init_options_ ) {
+		std::string const& type = init_opt.first;
 		core::Size size = 0;
 		if ( init_opt.second.count( "size" ) == 0 ) {
 			TR.Error << "Size attribute is not defined for pop init type " << type << std::endl;
@@ -476,7 +476,7 @@ core::Size EvolutionOptions::check_pop_init() const {
 		}
 		combined_init_size += size;
 		if ( type == "random" ) {
-			for ( const auto& random_opt : init_opt.second ) {
+			for ( auto const& random_opt : init_opt.second ) {
 				if ( random_opt.first != "size" ) {
 					TR.Error << "Random pop init only supports size attribute, not " << random_opt.first << std::endl;
 					error_counter++;
@@ -497,7 +497,7 @@ core::Size EvolutionOptions::check_pop_init() const {
 				TR.Error << "Selection attribute needs to greater than init size for init type " << type << std::endl;
 				error_counter++;
 			}
-			for ( const auto& random_opt : init_opt.second ) {
+			for ( auto const& random_opt : init_opt.second ) {
 				if ( random_opt.first != "size" && random_opt.first != "selection" ) {
 					TR.Error << "Random pop init only supports size attribute, not " << random_opt.first << std::endl;
 					error_counter++;
@@ -532,17 +532,17 @@ core::Size EvolutionOptions::get_external_scoring() const {
 
 utility::vector1< std::string > EvolutionOptions::get_selector_names() const {
 	utility::vector1< std::string > names;
-	for ( const auto& option : selector_options_ ) {
+	for ( auto const& option : selector_options_ ) {
 		names.emplace_back( option.first );
 	}
 	return names;
 }
 
-const std::string& EvolutionOptions::get_selector_type( const std::string& name ) const {
+std::string const& EvolutionOptions::get_selector_type( std::string const& name ) const {
 	return selector_options_.at( name ).first;
 }
 
-core::Real EvolutionOptions::get_selector_parameter( const std::string& name, const std::string& parameter) const {
+core::Real EvolutionOptions::get_selector_parameter( std::string const& name, std::string const& parameter) const {
 	if ( selector_options_.count( name ) == 0 ) {
 		utility_exit_with_message( name + " is not defined as selector." );
 	} else if ( selector_options_.at( name ).second.count( parameter ) == 0 ) {
@@ -553,17 +553,17 @@ core::Real EvolutionOptions::get_selector_parameter( const std::string& name, co
 
 utility::vector1<std::string> EvolutionOptions::get_factory_names() const {
 	utility::vector1< std::string > names;
-	for ( const auto& option : factory_options_ ) {
+	for ( auto const& option : factory_options_ ) {
 		names.emplace_back( option.first );
 	}
 	return names;
 }
 
-const std::string& EvolutionOptions::get_factory_type( const std::string& name ) const {
+std::string const& EvolutionOptions::get_factory_type( std::string const& name ) const {
 	return factory_options_.at( name ).first;
 }
 
-core::Real EvolutionOptions::get_factory_parameter( const std::string& name, const std::string& parameter) const {
+core::Real EvolutionOptions::get_factory_parameter( std::string const& name, std::string const& parameter) const {
 	if ( factory_options_.count( name ) == 0 ) {
 		utility_exit_with_message( name + " is not defined as factory." );
 	} else if ( factory_options_.at( name ).second.count( parameter ) == 0 ) {
@@ -572,15 +572,15 @@ core::Real EvolutionOptions::get_factory_parameter( const std::string& name, con
 	return factory_options_.at( name ).second.at( parameter );
 }
 
-const std::string &EvolutionOptions::get_path_to_external_smiles() const {
+std::string const& EvolutionOptions::get_path_to_external_smiles() const {
 	return path_to_external_smiles_;
 }
 
-const std::string &EvolutionOptions::get_path_to_reactions() const {
+std::string const& EvolutionOptions::get_path_to_reactions() const {
 	return path_to_reactions_;
 }
 
-const std::string &EvolutionOptions::get_path_to_reagents() const {
+std::string const& EvolutionOptions::get_path_to_reagents() const {
 	return path_to_reagents_;
 }
 
@@ -588,23 +588,23 @@ core::Size EvolutionOptions::get_population_supported_size() const {
 	return supported_population_size_;
 }
 
-const utility::vector1<std::pair<std::string, std::string> > &EvolutionOptions::get_selector_factory_links() const {
+utility::vector1<std::pair<std::string, std::string> > const& EvolutionOptions::get_selector_factory_links() const {
 	return selector_factory_links_;
 }
 
-const std::string &EvolutionOptions::get_main_selector() const {
+std::string const& EvolutionOptions::get_main_selector() const {
 	return main_selector_;
 }
 
-const std::string &EvolutionOptions::get_main_scfx() const {
+std::string const& EvolutionOptions::get_main_scfx() const {
 	return scoring_function_;
 }
 
-const std::string &EvolutionOptions::get_path_score_memory() const {
+std::string const& EvolutionOptions::get_path_score_memory() const {
 	return path_to_score_memory_;
 }
 
-const std::string &EvolutionOptions::get_ligand_chain() const {
+std::string const& EvolutionOptions::get_ligand_chain() const {
 	return ligand_chain_;
 }
 
@@ -612,7 +612,7 @@ core::Size EvolutionOptions::get_n_scoring_runs() const {
 	return score_runs_;
 }
 
-const std::string &EvolutionOptions::get_pose_dir_path() const {
+std::string const& EvolutionOptions::get_pose_dir_path() const {
 	return pose_dump_directory_;
 }
 
@@ -620,11 +620,11 @@ core::Real EvolutionOptions::get_similarity_penalty() const {
 	return similarity_penalty_;
 }
 
-const std::string &EvolutionOptions::get_main_term() const {
+std::string const& EvolutionOptions::get_main_term() const {
 	return main_score_term_;
 }
 
-void EvolutionOptions::parse_option_file( const std::string& option_path ) {
+void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 
 	// if any of those two get set, all default settings for these are removed
 	bool evolution_protocol_defined = false;
@@ -643,15 +643,15 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 
 	// that is how you get the attributes
 	// important - skip attribute thingy if tag.first == <xmlcomment>
-	for ( const std::pair< const std::string, boost::property_tree::ptree >& tag : tag_tree ) {
-		const std::string& option_name = tag.first;
+	for ( std::pair< std::string const, boost::property_tree::ptree > const& tag : tag_tree ) {
+		std::string const& option_name = tag.first;
 		if ( option_name == "<xmlcomment>" ) {
 			continue;
 		}
 		if ( option_name == "Evolution" ) {
-			for ( const boost::property_tree::ptree::value_type& v : tag.second.get_child( "<xmlattr>" ) ) {
-				const std::string attribute_name = v.first;
-				const std::string attribute_value = v.second.data();
+			for ( boost::property_tree::ptree::value_type const& v : tag.second.get_child( "<xmlattr>" ) ) {
+				std::string const& attribute_name = v.first;
+				std::string const& attribute_value = v.second.data();
 				if ( attribute_name == "generations" ) {
 					generations_ = utility::string2Size( attribute_value );
 				} else {
@@ -660,9 +660,9 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 				}
 			}
 		} else if ( option_name == "Population" ) {
-			for ( const boost::property_tree::ptree::value_type &v: tag.second.get_child("<xmlattr>") ) {
-				const std::string attribute_name = v.first;
-				const std::string attribute_value = v.second.data();
+			for ( boost::property_tree::ptree::value_type const& v: tag.second.get_child("<xmlattr>") ) {
+				std::string const& attribute_name = v.first;
+				std::string const& attribute_value = v.second.data();
 				if ( attribute_name == "main_selector" ) {
 					main_selector_ = attribute_value;
 				} else if ( attribute_name == "supported_size" ) {
@@ -681,9 +681,9 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 			}
 			std::string type;
 			std::map< std::string, core::Size > opt_map;
-			for ( const boost::property_tree::ptree::value_type &v: tag.second.get_child("<xmlattr>") ) {
-				const std::string attribute_name = v.first;
-				const std::string attribute_value = v.second.data();
+			for ( boost::property_tree::ptree::value_type const& v: tag.second.get_child("<xmlattr>") ) {
+				std::string const& attribute_name = v.first;
+				std::string const& attribute_value = v.second.data();
 				if ( attribute_name == "init_type" ) {
 					type = attribute_value;
 				} else if ( attribute_name == "size" || attribute_name == "selection" ) {
@@ -696,9 +696,9 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 			}
 			pop_init_options_[ type ] = opt_map;
 		} else if ( option_name == "Scorer" ) {
-			for ( const boost::property_tree::ptree::value_type& v : tag.second.get_child( "<xmlattr>" ) ) {
-				const std::string attribute_name = v.first;
-				const std::string attribute_value = v.second.data();
+			for ( boost::property_tree::ptree::value_type const& v : tag.second.get_child( "<xmlattr>" ) ) {
+				std::string const& attribute_name = v.first;
+				std::string const& attribute_value = v.second.data();
 				if ( attribute_name == "main_term" ) {
 					main_score_term_ = attribute_value;
 				} else if ( attribute_name == "similarity_penalty" ) {
@@ -714,9 +714,9 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 			std::string name;
 			std::string type;
 			std::map< std::string, std::string > params;
-			for ( const boost::property_tree::ptree::value_type& v : tag.second.get_child( "<xmlattr>" ) ) {
-				const std::string attribute_name = v.first;
-				const std::string attribute_value = v.second.data();
+			for ( boost::property_tree::ptree::value_type const& v : tag.second.get_child( "<xmlattr>" ) ) {
+				std::string const& attribute_name = v.first;
+				std::string const& attribute_value = v.second.data();
 				if ( attribute_name == "name" ) {
 					name = attribute_value;
 				} else if ( attribute_name == "type" ) {
@@ -742,7 +742,7 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 				if ( params.empty() ) {
 					TR.Warning << "Selector " << name << " receives " << type << " default parameters only." << std::endl;
 				} else {
-					for ( const std::pair< std::string, std::string > p : params ) {
+					for ( std::pair< std::string, std::string > const& p : params ) {
 						if ( p.first == "remove" ) {
 							selector_options_.at( name ).second[ p.first ] = ( p.second == "True" );
 						} else {
@@ -755,9 +755,9 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 			std::string name;
 			std::string type;
 			std::map< std::string, std::string > params;
-			for ( const boost::property_tree::ptree::value_type& v : tag.second.get_child( "<xmlattr>" ) ) {
-				const std::string attribute_name = v.first;
-				const std::string attribute_value = v.second.data();
+			for ( boost::property_tree::ptree::value_type const& v : tag.second.get_child( "<xmlattr>" ) ) {
+				std::string const& attribute_name = v.first;
+				std::string const& attribute_value = v.second.data();
 				if ( attribute_name == "name" ) {
 					name = attribute_value;
 				} else if ( attribute_name == "type" ) {
@@ -783,7 +783,7 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 				if ( params.empty() ) {
 					TR.Warning << "Factory " << name << " receives " << type << " default parameters only." << std::endl;
 				} else {
-					for ( const std::pair< std::string, std::string > p : params ) {
+					for ( std::pair< std::string, std::string > const& p : params ) {
 						factory_options_.at( name ).second[ p.first ] = utility::string2Real( p.second );
 					}
 				}
@@ -796,9 +796,9 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 			}
 			std::string selector;
 			std::string factory;
-			for ( const boost::property_tree::ptree::value_type &v: tag.second.get_child("<xmlattr>") ) {
-				const std::string attribute_name = v.first;
-				const std::string attribute_value = v.second.data();
+			for ( boost::property_tree::ptree::value_type const& v: tag.second.get_child("<xmlattr>") ) {
+				std::string const& attribute_name = v.first;
+				std::string const& attribute_value = v.second.data();
 				if ( attribute_name == "selector" ) {
 					selector = attribute_value;
 				} else if ( attribute_name == "factory" ) {
@@ -827,7 +827,7 @@ void EvolutionOptions::parse_option_file( const std::string& option_path ) {
 
 }
 
-const std::map< std::string, std::map< std::string, core::Size > >& EvolutionOptions::get_pop_init_options() const {
+std::map< std::string, std::map< std::string, core::Size > > const& EvolutionOptions::get_pop_init_options() const {
 	return pop_init_options_;
 }
 
@@ -835,7 +835,7 @@ core::Real EvolutionOptions::get_similarity_penalty_threshold() const {
 	return similarity_penalty_threshold_;
 }
 
-    const std::string &EvolutionOptions::get_protocol_path() const {
+    std::string const& EvolutionOptions::get_protocol_path() const {
         return protocol_path_;
     }
 

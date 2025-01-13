@@ -22,7 +22,7 @@ static basic::Tracer TR( "protocols.ligand_evolution.Individual" );
 namespace protocols {
 namespace ligand_evolution {
 
-Individual::Individual( const LigandIdentifier& identifier, utility::vector1< core::Size > const& parent_ids, std::string const& type_of_birth )
+Individual::Individual( LigandIdentifier const& identifier, utility::vector1< core::Size > const& parent_ids, std::string const& type_of_birth )
 :
 	identifier_( identifier ),
 	parent_ids_( parent_ids ),

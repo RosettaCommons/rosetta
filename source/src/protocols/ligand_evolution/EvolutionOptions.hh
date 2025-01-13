@@ -49,7 +49,7 @@ public:
 	EvolutionOptions();
 
 	/// @brief Loads settings from file and fills missing settings with standards
-	explicit EvolutionOptions( const std::string& path_to_option_file );
+	explicit EvolutionOptions( std::string const& path_to_option_file );
 
 	// --------------------------
 	// Getters
@@ -65,55 +65,55 @@ public:
 	utility::vector1< std::string > get_selector_names() const;
 
 	/// @brief Returns the type of one selector
-	const std::string& get_selector_type( const std::string& name ) const;
+	std::string const& get_selector_type( std::string const& name ) const;
 
 	/// @brief Returns a required parameter for one selector
-	core::Real get_selector_parameter( const std::string& name, const std::string& parameter ) const;
+	core::Real get_selector_parameter( std::string const& name, std::string const& parameter ) const;
 
 	/// @brief Returns all factory names
 	utility::vector1< std::string > get_factory_names() const;
 
 	/// @brief Returns the type of one factory
-	const std::string& get_factory_type( const std::string& name ) const;
+	std::string const& get_factory_type( std::string const& name ) const;
 
 	/// @brief Returns a required parameter for one factory
-	core::Real get_factory_parameter( const std::string& name, const std::string& parameter ) const;
+	core::Real get_factory_parameter( std::string const& name, std::string const& parameter ) const;
 
 	/// @brief Return the list of factory and selector links. The order defines the order of appliance
-	const utility::vector1< std::pair< std::string, std::string > >& get_selector_factory_links() const;
+	utility::vector1< std::pair< std::string, std::string > > const& get_selector_factory_links() const;
 
 	/// @brief Returns the path to a list of smiles which will all be scored
-	const std::string& get_path_to_external_smiles() const;
+	std::string const& get_path_to_external_smiles() const;
 
 	/// @brief Returns the path to a list of reactions in SMARTS, defining combinatorial rules
-	const std::string& get_path_to_reactions() const;
+	std::string const& get_path_to_reactions() const;
 
 	/// @brief Returns the path to a list of reagents in SMILES defining the fragments for combination
-	const std::string& get_path_to_reagents() const;
+	std::string const& get_path_to_reagents() const;
 
 	/// @brief Returns a map of all used pop initialization procedures
-	const std::map< std::string, std::map< std::string, core::Size > >& get_pop_init_options() const;
+	std::map< std::string, std::map< std::string, core::Size > > const& get_pop_init_options() const;
 
 	/// @brief Returns how many individuals are supported per generation, essentially defining how many can survive
 	core::Size get_population_supported_size() const;
 
 	/// @brief Returns the name of the main selector
-	const std::string& get_main_selector() const;
+	std::string const& get_main_selector() const;
 
 	/// @brief Returns the name of the score function used for the main scores within the scorer
-	const std::string& get_main_scfx() const;
+	std::string const& get_main_scfx() const;
 
 	/// @brief Returns the path to a score memory file
-	const std::string& get_path_score_memory() const;
+	std::string const& get_path_score_memory() const;
 
 	/// @brief Returns the name of the ligand chain used by all movers
-	const std::string& get_ligand_chain() const;
+	std::string const& get_ligand_chain() const;
 
 	/// @brief Returns the number of scoring runs
 	core::Size get_n_scoring_runs() const;
 
 	/// @brief Returns the path to directory where all poses will be saved
-	const std::string& get_pose_dir_path() const;
+	std::string const& get_pose_dir_path() const;
 
 	/// @brief Return the similarity penalty for similar ligands in one generation
 	core::Real get_similarity_penalty() const;
@@ -122,9 +122,9 @@ public:
 	core::Real get_similarity_penalty_threshold() const;
 
 	/// @brief Returns the name of the score term to optimize for
-	const std::string& get_main_term() const;
+	std::string const& get_main_term() const;
 
-    const std::string& get_protocol_path() const;
+    std::string const& get_protocol_path() const;
 
     core::pose::PoseOP get_pose_from_stream();
 
@@ -134,7 +134,7 @@ private:
 
     void parse_cmdline();
 
-	void parse_option_file( const std::string& option_file );
+	void parse_option_file( std::string const& option_file );
 
 	// TODO write a function which turns all options into string to either print option during start or write default settings to disk
 

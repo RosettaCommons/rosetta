@@ -312,7 +312,7 @@ namespace ligand_evolution {
     }
 
     // only called by rank == 0
-    void Worker::set_smiles(const std::string &smiles) {
+    void Worker::set_smiles(std::string const& smiles) {
         TR.Debug << "Set smiles " << smiles << " for process " << processor_rank_ << std::endl;
         ligand_smiles_ = smiles;
     }

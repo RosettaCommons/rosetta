@@ -106,7 +106,7 @@ public:
 	std::map< LigandIdentifier, std::set< core::Size > > const& expose_id_memory() const;
 
 	/// @brief Checks if score for this ligand is available in memory and loads it if possible.
-	bool check_memory( const LigandIdentifier& ligand );
+	bool check_memory( LigandIdentifier const& ligand );
 
 	/// @brief Returns a list of LigandIdentifiers for loaded scores sorted by their main term score
 	/// @param size Sets how many identifiers should be returned. If <= 0, all will be returned
@@ -177,7 +177,7 @@ private:
 
 // TODO: It might be beneficial to include the pnear term from https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0240450 into the calculation
 //       It quantifies docking success to a range of [0,1] and could be used as a multiplier, eg: fitness = pnear * lid_root2
-const utility::vector1< std::string > score_terms_ { "ligand_interface_delta", "total_REU", "ligand_interface_delta_EFFICIENCY", "lid_root2", "lid_root3" };
+utility::vector1< std::string > const score_terms_ { "ligand_interface_delta", "total_REU", "ligand_interface_delta_EFFICIENCY", "lid_root2", "lid_root3" };
 
 }
 }
