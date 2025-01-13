@@ -160,19 +160,19 @@ namespace ligand_evolution {
         core::Size n_score_terms_;
 
         /// @brief The scores calculated by the other process
-        double* raw_scores_;
+        std::unique_ptr< double[] > raw_scores_;
 
         /// @brief Request handle to check on non-blocking communication for termination
-        MPI_Request* termination_handle_ = nullptr;
+        std::unique_ptr< MPI_Request > termination_handle_ = nullptr;
 
         /// @brief Request handle to check on non-blocking communication for tasks
-        MPI_Request* task_handle_ = nullptr;
+        std::unique_ptr< MPI_Request > task_handle_ = nullptr;
 
         /// @brief Request handle to check on non-blocking communication for scores
-        MPI_Request* scores_handle_ = nullptr;
+        std::unique_ptr< MPI_Request > scores_handle_ = nullptr;
 
         /// @brief Request handle to check on non-blocking communication for smiles
-        MPI_Request* smiles_handle_ = nullptr;
+        std::unique_ptr< MPI_Request> smiles_handle_ = nullptr;
 
         /// @brief Stores the result of termination message. Unused.
         int termination_in_buffer_ = 0;
@@ -181,10 +181,10 @@ namespace ligand_evolution {
         core::Size id_length_;
 
         /// @brief Stores the result of a task message
-        int* raw_ligand_;
+        std::unique_ptr< int[] > raw_ligand_;
 
         /// @brief Stores the result of a task message sending a ligand smiles
-        char* raw_ligand_smiles_;
+        std::unique_ptr< char[] > raw_ligand_smiles_;
 
     };
 

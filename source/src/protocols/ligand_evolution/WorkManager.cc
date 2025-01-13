@@ -56,7 +56,6 @@ namespace ligand_evolution {
 
         for( Individual const& individual : pop.individuals() ) {
             LigandIdentifier const& identifier = individual.identifier();
-            // TODO test if memory check works properly on mpi
             if( !scorer_->check_memory( identifier ) && !scorer_->is_scored( identifier ) && added_ligands.count( identifier ) == 0 ) {
                 added_ligands.insert( identifier );
                 unscored_ligands_.push( identifier );
@@ -213,11 +212,11 @@ namespace ligand_evolution {
     {
         if( processor_rank_ == 0 ) {
             // starts a non blocking receiving for the termination signal
-            MPI_Irecv( &termination_in_buffer_, 1, MPI_INT, processor_rank_, TERMINATION, MPI_COMM_WORLD, termination_handle_ );
+            MPI_Irecv( &termination_in_buffer_, 1, MPI_INT, processor_rank_, TERMINATION, MPI_COMM_WORLD, termination_handle_.get() );
             // starts a non blocking receiving for a ligand
-            MPI_Irecv( raw_ligand_, int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD, task_handle_ );
+            MPI_Irecv( raw_ligand_.get(), int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD, task_handle_.get() );
             // starts a non blocking receiving for a ligand smiles
-            MPI_Irecv( raw_ligand_smiles_, 1000, MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD, smiles_handle_ );
+            MPI_Irecv( raw_ligand_smiles_.get(), 1000, MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD, smiles_handle_.get() );
         }
     }
 
@@ -227,22 +226,12 @@ namespace ligand_evolution {
         } else {
             terminate();
         }
-
-        // todo switch to std uniq pointers to get rid of mem mgmt
-        delete[] raw_scores_;
-        delete[] raw_ligand_;
-        delete[] raw_ligand_smiles_;
-
-        delete termination_handle_;
-        delete task_handle_;
-        delete smiles_handle_;
-        delete scores_handle_;
     }
 
     // only called by rank != 0
     bool Worker::check_termination() const {
         int status = 0;
-        MPI_Test( termination_handle_, &status, MPI_STATUS_IGNORE );
+        MPI_Test( termination_handle_.get(), &status, MPI_STATUS_IGNORE );
         // 0 values of basic types map to false, all others to true
         return status;
     }
@@ -250,14 +239,14 @@ namespace ligand_evolution {
     // only called by rank != 0
     bool Worker::check_task() const {
         int status = 0;
-        MPI_Test( task_handle_, &status, MPI_STATUS_IGNORE );
+        MPI_Test( task_handle_.get(), &status, MPI_STATUS_IGNORE );
         // 0 values of basic types map to false, all others to true
         return status;
     }
 
     bool Worker::check_smiles() const {
         int status = 0;
-        MPI_Test( smiles_handle_, &status, MPI_STATUS_IGNORE );
+        MPI_Test( smiles_handle_.get(), &status, MPI_STATUS_IGNORE );
         // 0 values of basic types map to false, all others to true
         return status;
     }
@@ -270,12 +259,12 @@ namespace ligand_evolution {
             for( core::Size ii = 1; ii <= id_length_; ++ii ) {
                 ligand_[ ii ]  = core::Size( raw_ligand_[ ii - 1 ] );
             }
-            ligand_smiles_ = utility::strip( std::string( raw_ligand_smiles_ ).substr( 0, 990 ), ' ' );
+            ligand_smiles_ = utility::strip( std::string( raw_ligand_smiles_.get() ).substr( 0, 990 ), ' ' );
             TR.Debug << "Received ligand " << ligand_ << " and its smiles " << ligand_smiles_ << std::endl;
             // starts a new non-blocking receiving for a ligand
-            MPI_Irecv( raw_ligand_, int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD, task_handle_ );
+            MPI_Irecv( raw_ligand_.get(), int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD, task_handle_.get() );
             // starts a new non-blocking receiving for a ligand smiles
-            MPI_Irecv( raw_ligand_smiles_, 1000, MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD, smiles_handle_ );
+            MPI_Irecv( raw_ligand_smiles_.get(), 1000, MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD, smiles_handle_.get() );
         }
     }
 
@@ -296,7 +285,7 @@ namespace ligand_evolution {
 
     // only called by rank != 0
     void Worker::send_scores() const {
-        MPI_Send( raw_scores_, int( n_score_terms_ ), MPI_DOUBLE, processor_rank_, SCORES, MPI_COMM_WORLD );
+        MPI_Send( raw_scores_.get(), int( n_score_terms_ ), MPI_DOUBLE, processor_rank_, SCORES, MPI_COMM_WORLD );
     }
 
     // only called by rank == 0
@@ -335,19 +324,19 @@ namespace ligand_evolution {
         }
 
         // add padding to always send fixed size smiles
-        // todo add error checking for smiles padding
+        // todo add error checking for smiles padding if the smiles exceeds 1000 characters
         ligand_smiles_ = utility::pad_right( ligand_smiles_, 1000, ' ' );
 
-        MPI_Send( raw_ligand_, int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD );
+        MPI_Send( raw_ligand_.get(), int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD );
         MPI_Send( ligand_smiles_.c_str(), int( ligand_smiles_.size() ), MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD );
-        MPI_Irecv( raw_scores_, int( n_score_terms_ ), MPI_DOUBLE, processor_rank_, SCORES, MPI_COMM_WORLD, scores_handle_ );
+        MPI_Irecv( raw_scores_.get(), int( n_score_terms_ ), MPI_DOUBLE, processor_rank_, SCORES, MPI_COMM_WORLD, scores_handle_.get() );
         idle_ = false;
     }
 
     // only called by rank == 0
     bool Worker::has_scores() const {
         int status = 0;
-        MPI_Test( scores_handle_, &status, MPI_STATUS_IGNORE );
+        MPI_Test( scores_handle_.get(), &status, MPI_STATUS_IGNORE );
         // 0 values of basic types map to false, all others to true
         return status;
     }
@@ -356,7 +345,7 @@ namespace ligand_evolution {
     double* Worker::retrieve_scores() {
         if( has_scores() ) {
             idle_ = true;
-            return raw_scores_;
+            return raw_scores_.get();
         } else {
             TR.Error << "No scores are ready." << std::endl;
             utility_exit_with_message( "Tried to access scores before receiving" );
