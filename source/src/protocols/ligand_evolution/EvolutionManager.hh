@@ -102,7 +102,7 @@ private:
 	utility::vector1< core::Real > quantiles = { 9999.9, 9999.9, 9999.9, 9999.9 };
 
 	/// @brief Used to distinguish between scoring of external molecules and internal evolutionary optimization
-	core::Size external_scoring_;
+	core::Size external_scoring_ = 0;
 
 };
 

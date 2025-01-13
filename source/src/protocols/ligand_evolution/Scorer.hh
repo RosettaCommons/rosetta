@@ -77,7 +77,7 @@ public:
 	void set_pose_path( std::string const& path );
 
 	/// @brief Sets the desired score function
-	void set_score_function( core::scoring::ScoreFunctionOP& score_function );
+	void set_score_function( core::scoring::ScoreFunctionOP score_function );
 
 	/// @brief Sets all score terms for an identifier if not set yet.
 	/// @details This functions expects that the scores were calculated by another instance of a Scorer which took care of all runs and wrote the best pose to disk

@@ -8797,10 +8797,20 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	),
 
 
-	# peisenhuth pilot app options
+	# peisenhuth revold app options
 	Option_Group( 'ligand_evolution',
-		Option( 'options', 'String', desc='Path to the options file' ),
-    ), #-end peisenhuth pilot apps
+		Option( 'options', 'File', desc='Path to the options file' ),
+		Option( 'xyz', 'RealVector', desc='<x> <y> <z> position of the initial ligand placement', n='3' ),
+		Option( 'external_scoring', 'Integer', desc='If set the docking protocol will be applied that often to list of smiles.' ),
+		Option( 'smiles_file', 'File', desc='List of smiles which should be docked. This triggers an alternative runmode of REvoLd.' ),
+		Option( 'n_scoring_runs', 'Integer', desc='How often should the scoring protocol be applied to each complex. Defaults to 150.', default='150' ),
+		Option( 'ligand_chain', 'String', desc='Name of the ligand chain used in the docking protocol. Defaults to X.', default='X' ),
+		Option( 'pose_output_directory', 'Path', desc='Directory to which all calculated poses will be written. Defaults to the current directory.', default='.' ),
+		Option( 'main_scfx', 'String', desc='Name of the scoring function specified in the docking protocol which should be used for scoring compounds.' ),
+		Option( 'score_mem_path', 'File', desc='Path to a former results file to load as score memory' ),
+	    Option( 'reagent_file', 'File', desc='Path to a file defining reagents for reactions' ),
+	    Option( 'reaction_file', 'File', desc='Path to a file defining reaction used for combinatorial chemical space' ),
+    ), #-end peisenhuth revold apps
 
 	Option_Group( 'peptide_deriver',
 		Option( 'pep_lengths', 'IntegerVector', desc = 'Length(s) of derived peptides', default = [ '10' ] ),

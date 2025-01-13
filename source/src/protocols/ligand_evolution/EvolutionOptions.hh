@@ -24,6 +24,11 @@
 #include <protocols/ligand_evolution/Scorer.hh>
 #include <protocols/ligand_evolution/selectors/Selector.hh>
 
+// project header
+#include <core/import_pose/import_pose.hh>
+#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+#include <core/import_pose/pose_stream/util.hh>
+
 // Utility headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -95,15 +100,6 @@ public:
 	/// @brief Returns the name of the main selector
 	const std::string& get_main_selector() const;
 
-	/// @brief Returns the names of all scoring functions defined
-	utility::vector1< std::string > get_scfx_names() const;
-
-	/// @brief Returns the name of the specified .wts file for one scoring function
-	const std::string& get_scfx_wts( const std::string& name ) const;
-
-	/// @brief Returns all reweighs for one scoring function
-	const utility::vector1< std::pair< std::string, core::Real > >& get_scfx_reweighs( const std::string& name ) const;
-
 	/// @brief Returns the name of the score function used for the main scores within the scorer
 	const std::string& get_main_scfx() const;
 
@@ -128,19 +124,15 @@ public:
 	/// @brief Returns the name of the score term to optimize for
 	const std::string& get_main_term() const;
 
-	/// @brief Returns the mover names in order of appliance
-	const utility::vector1< std::string >& get_mover_protocol() const;
+    const std::string& get_protocol_path() const;
 
-	/// @brief Returns the type of a given mover
-	const std::string& get_mover_type( const std::string& name ) const;
+    core::pose::PoseOP get_pose_from_stream();
 
-	/// @brief Returns a given parameters for a given mover
-	core::Real get_mover_parameter( const std::string& name, const std::string& param ) const;
-
-	/// @brief Returns the score function linked to a given mover
-	const std::string& get_mover_scfx( const std::string& name ) const;
+    numeric::xyzVector<core::Real> get_start_xyz() const;
 
 private:
+
+    void parse_cmdline();
 
 	void parse_option_file( const std::string& option_file );
 
@@ -148,28 +140,33 @@ private:
 
 	void check_validity();
 
-	core::Size check_scoring_functions() const;
-
 	core::Size check_scorer_setup() const;
 
 	core::Size check_selectors() const;
 
 	core::Size check_factories() const;
 
-	core::Size check_movers() const;
-
 	core::Size check_pop_init() const;
 
 private:
 
-	/// @brief Tracks if all options are properly initialized and setup. If this is false, trying to retrieve information from this class throws an error.
-	bool initialized_ = false;
+    /// @brief Counts how many errors are encountered during parsing to allow report of as many errors as possible per program call
+    core::Size error_counter_ = 0;
+
+    /// @brief coordinate where centroid of designed ligands will be placed
+    numeric::xyzVector<core::Real> xyz_;
+
+    /// @brief Stores all input streams to obtain poses
+    core::import_pose::pose_stream::MetaPoseInputStream pose_stream_;
+
+    /// @brief Stores the path to the xml protocol
+    std::string protocol_path_;
 
 	/// @brief If set to something else than 0, this will search for smiles list of ligands to score and score them as often as defined here. This is for benchmarking.
 	core::Size external_scoring_ = 0;
 
 	/// @brief If external _scoring_ is set to something else than 0, this path will be visited to open a smiles list which will be scored.
-	std::string path_to_external_smiles_ = "../input/ligands.smiles";
+	std::string path_to_external_smiles_;
 
 	/// @brief If this is set, the Scorer will try to load scores from this file to use during optimization.
 	std::string path_to_score_memory_;
@@ -244,34 +241,11 @@ private:
 	/// @brief Sets the name of the main selector. This is used to shrink the population to its supported size.
 	std::string main_selector_ = "std_tournament";
 
-	/// @brief Links score function names to weight files
-	std::map< std::string, std::string > score_function_wts_ {
-{ "std_soft_rep", "ligand_soft_rep.wts" },
-{ "std_hard_rep", "ligand.wts" }
-};
-
-	/// @brief Defines reweighs for score functions
-	std::map< std::string, utility::vector1< std::pair< std::string, core::Real > > > score_function_reweighs_ {
-{ "std_soft_rep", {
-{ "fa_elec", 0.42 },
-{ "hbond_bb_sc", 1.3 },
-{ "hbond_sc", 1.3 },
-{ "rama", 0.2 }
-} },
-{ "std_hard_rep", {
-{ "fa_intra_rep", 0.004 },
-{ "fa_elec", 0.42 },
-{ "hbond_bb_sc", 1.3 },
-{ "hbond_sc", 1.3 },
-{ "rama", 0.2 }
-} }
-};
-
 	/// @brief Sets how often all movers are applied to a ligand and how often that ligand is scored
-	core::Size score_runs_ = 150;
+	core::Size score_runs_;
 
 	/// @brief Sets the name of the ligand chain
-	std::string ligand_chain_ = "X";
+	std::string ligand_chain_;
 
 	/// @brief Sets which score term will be used for optimization
 	std::string main_score_term_ = "lid_root2";
@@ -283,47 +257,10 @@ private:
 	core::Real similarity_penalty_threshold_ = 0.95;
 
 	/// @brief Subdirectory within current run directory where all poses will be saved
-	std::string pose_dump_directory_ = "poses/";
+	std::string pose_dump_directory_;
 
 	/// @brief Name of the scoring function used calculate the final base score
-	std::string scoring_function_ = "std_hard_rep";
-
-	/// @brief Mover options and declarations
-	std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > mover_options_ {
-{ "std_start", { "start_from", {
-{ "x", 0.0 },
-{ "y", 0.0 },
-{ "z", 0.0 }
-} } },
-{ "std_transform", { "transform", {
-// Sets the width of the cubical scoring grid in Angstrom
-{ "grid_size", 40.0 },
-// Sets the box size for the transform mover in Angstrom. All moves causing a single atom to be further away from the ligand starting point than this value will be rejected.
-{ "box_size", 20.0 },
-// Sets the maximum translation distance per move in Angstrom. The actual distance is selected from a gaussian distribution ranging from 0 to this value.
-{ "max_move_distance", 1.0 },
-// Sets the maximum rotation angle per step in degree. The actual angle is selected from a gaussian distribution ranging from 0 to this value.
-{ "max_rotation_angle", 5.0 },
-{ "cycles", 500.0 },
-{ "temperature", 5.0 }
-} } },
-{ "std_hres", { "high_res_docker", {
-{ "cycles", 1.0 },
-{ "repack_every_nth", 1.0 }
-} } },
-{ "std_final_min", { "final_minimizer", {} } }
-};
-
-	/// @brief Links score functions to movers where needed
-	std::map< std::string, std::string > mover_sfx_links_ {
-{ "std_hres", "std_soft_rep" },
-{ "std_final_min", "std_hard_rep" }
-};
-
-	/// @brief Defines in which order movers will be applied
-	utility::vector1< std::string > mover_protocol_ {
-"std_start", "std_transform", "std_hres", "std_final_min"
-};
+	std::string scoring_function_;
 
 };
 

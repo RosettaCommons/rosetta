@@ -21,30 +21,15 @@
 #include <protocols/ligand_evolution/selectors/TournamentSelector.hh>
 
 // project headers
-#include <core/import_pose/import_pose.hh>
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-#include <core/import_pose/pose_stream/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-
-#include <protocols/ligand_docking/FinalMinimizer.hh>
-#include <protocols/ligand_docking/HighResDocker.hh>
-#include <protocols/ligand_docking/InterfaceBuilder.hh>
-#include <protocols/ligand_docking/LigandArea.hh>
-#include <protocols/ligand_docking/MoveMapBuilder.hh>
 #include <protocols/ligand_docking/StartFrom.hh>
-#include <protocols/ligand_docking/Transform.hh>
-
-#include <protocols/qsar/scoring_grid/ClassicGrid.hh>
-#include <protocols/qsar/scoring_grid/GridSet.hh>
+#include <protocols/rosetta_scripts/XmlObjects.hh>
 
 // utility headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/ligand_evolution.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/stream_util.hh>
-#include <utility/io/izstream.hh>
 
 // C/C++ headers
 #include <fstream>
@@ -74,52 +59,37 @@ void EvolutionManager::init() {
 		TR << "Path to evolutionary options file not set. Default settings will be used." << std::endl;
 		evoopt = EvolutionOptionsOP(new EvolutionOptions());
 	} else {
-		std::string option_path = basic::options::option[basic::options::OptionKeys::ligand_evolution::options].value();
-		TR << "Parsing evolutionary option file " << option_path << "..." << std::endl;
+		std::string option_path = basic::options::option[basic::options::OptionKeys::ligand_evolution::options];
+		TR << "Parsing evolutionary option file " << option_path << std::endl;
 		evoopt = EvolutionOptionsOP(new EvolutionOptions(option_path));
 	}
+
+    // ------------------------------------------------------------
+    // Docking protocol setup
+    // ------------------------------------------------------------
+    // Movers and scoring functions from here will be used later. Parsing the script happens early to detect errors quickly
+    protocols::rosetta_scripts::XmlObjectsCOP rosetta_script = protocols::rosetta_scripts::XmlObjects::create_from_file( evoopt->get_protocol_path() );
+    if ( !rosetta_script->list_movers().has_value( "ParsedProtocol" ) ) {
+        TR.Error << "REvoLd expects to find a mover called 'ParsedProtocol' in your script. Specify it through the <PROTOCOLS> tag." << std::endl;
+        TR.Error << "Available movers: " << rosetta_script->list_movers() << std::endl;
+        utility_exit_with_message("No parsed protocol provided in XML script.");
+    }
 
 	// ------------------------------------------------------------
 	// EvolutionManager setup
 	// ------------------------------------------------------------
 	max_generations_ = evoopt->get_max_generations();
-	external_scoring_ = evoopt->get_external_scoring();
+    external_scoring_ = evoopt->get_external_scoring();
 
 	// ------------------------------------------------------------
 	// library setup
 	// ------------------------------------------------------------
-    // Using Input Streams is more robust for various commandline options
-    core::import_pose::pose_stream::MetaPoseInputStream pose_stream = core::import_pose::pose_stream::streams_from_cmd_line();
-	if ( !pose_stream.has_another_pose() ) {
-		TR.Error << "No pdb provided. Please use one of the commandline input functions like -in::file::s" << std::endl;
-		utility_exit_with_message("No pdb option provided.");
-	}
-	core::pose::PoseOP pose;
-    pose_stream.fill_pose(*pose);
-    std::string pose_descriptor = pose_stream.get_last_pose_descriptor_string();
-    if( pose_stream.has_another_pose() ) {
-        TR.Warning << "More than one input structures are described. Selecting the first one encountered:" << std::endl;
-        TR.Warning << pose_descriptor << std::endl;
-    }
-	library_.set_pose(*pose);
+	library_.set_pose(*evoopt->get_pose_from_stream());
 
 	if ( external_scoring_ ) {
 		library_.load_smiles(evoopt->get_path_to_external_smiles());
 	} else {
 		library_.load_data(evoopt->get_path_to_reactions(), evoopt->get_path_to_reagents(), rank_);
-	}
-
-	// ------------------------------------------------------------
-	// Scoring function setup
-	// ------------------------------------------------------------
-	std::map< std::string, core::scoring::ScoreFunctionOP > scfx_memory;
-	for ( const std::string& sfx_name : evoopt->get_scfx_names() ) {
-		core::scoring::ScoreFunctionOP score_fct = core::scoring::get_score_function();
-		score_fct->initialize_from_file( evoopt->get_scfx_wts( sfx_name ) );
-		for ( const std::pair< std::string, core::Real >& reweigh : evoopt->get_scfx_reweighs( sfx_name ) ) {
-			score_fct->set_weight( core::scoring::score_type_from_name( reweigh.first ), reweigh.second );
-		}
-		scfx_memory[sfx_name] = score_fct;
 	}
 
 	// ------------------------------------------------------------
@@ -130,7 +100,7 @@ void EvolutionManager::init() {
 	scorer_->set_pose_path( evoopt->get_pose_dir_path() );
 	scorer_->set_base_similarity_penalty( evoopt->get_similarity_penalty() );
 	scorer_->set_similarity_penalty_threshold( evoopt->get_similarity_penalty_threshold() );
-	scorer_->set_score_function( scfx_memory[ evoopt->get_main_scfx() ] );
+	scorer_->set_score_function( rosetta_script->get_score_function( evoopt->get_main_scfx() ) );
 
 	const std::string& score_memory_path = evoopt->get_path_score_memory();
 	if ( !score_memory_path.empty() && rank_ == 0 ) {
@@ -141,78 +111,14 @@ void EvolutionManager::init() {
 	// ------------------------------------------------------------
 	// Mover setup
 	// ------------------------------------------------------------
-    // TODO create a rosetta script xml within my option xml, parse that and retrieve the protocol mover
-	for ( const std::string& mover_name : evoopt->get_mover_protocol() ) {
-		const std::string& mover_type = evoopt->get_mover_type( mover_name );
-		if ( mover_type == "start_from" ) {
-			protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom );
-			start_from->chain( evoopt->get_ligand_chain() );
-			core::Real x_coord = evoopt->get_mover_parameter( mover_name, "x" );
-			core::Real y_coord = evoopt->get_mover_parameter( mover_name, "y" );
-			core::Real z_coord = evoopt->get_mover_parameter( mover_name, "z" );
-			start_from->add_coords( { x_coord, y_coord, z_coord } );
-			scorer_->add_mover( start_from );
-		} else if ( mover_type == "transform" ) {
-			protocols::qsar::scoring_grid::GridSetOP gs( new protocols::qsar::scoring_grid::GridSet );
-			gs->chain( evoopt->get_ligand_chain()[ 0 ] );   // makes no difference
-			gs->width( evoopt->get_mover_parameter( mover_name, "grid_size" ) );
-			protocols::qsar::scoring_grid::GridBaseOP cs( new protocols::qsar::scoring_grid::ClassicGrid );
-			gs->add_grid( "classic", cs, 1.0 );
-			core::Real box_size = evoopt->get_mover_parameter( mover_name, "box_size" );
-			core::Real move_distance = evoopt->get_mover_parameter( mover_name, "max_move_distance" );
-			core::Real angle = evoopt->get_mover_parameter( mover_name, "max_rotation_angle" );
-			core::Size cycles = core::Size( evoopt->get_mover_parameter( mover_name, "cycles" ) );
-			core::Real temperature = evoopt->get_mover_parameter( mover_name, "temperature" );
-			protocols::moves::MoverOP transform( new protocols::ligand_docking::Transform( gs, evoopt->get_ligand_chain(), box_size, move_distance, angle, cycles, temperature ) );
-			scorer_->add_mover( transform );
-		} else if ( mover_type == "high_res_docker" ) {
-			protocols::ligand_docking::LigandAreaOP inhibitor_dock_sc( new protocols::ligand_docking::LigandArea() );
-			inhibitor_dock_sc->chain_ = evoopt->get_ligand_chain()[ 0 ];
-			inhibitor_dock_sc->cutoff_ = 6.0;
-			inhibitor_dock_sc->add_nbr_radius_ = true;
-			inhibitor_dock_sc->all_atom_mode_ = true;
-			inhibitor_dock_sc->minimize_ligand_ = 10.0;
-			utility::vector1< protocols::ligand_docking::LigandAreaOP > inhibitor_dock_sc_vec{ inhibitor_dock_sc };
-			protocols::ligand_docking::InterfaceBuilderOP side_chain_for_docking( new protocols::ligand_docking::InterfaceBuilder( inhibitor_dock_sc_vec ) );
-			protocols::ligand_docking::MoveMapBuilderOP docking( new protocols::ligand_docking::MoveMapBuilder( side_chain_for_docking, nullptr, true ) );
-			core::Size cycles = core::Size( evoopt->get_mover_parameter( mover_name, "cycles" ) );
-			core::Size repack = core::Size( evoopt->get_mover_parameter( mover_name, "repack_every_nth" ) );
-			protocols::ligand_docking::HighResDockerOP high_res_docker(
-				new protocols::ligand_docking::HighResDocker(
-				cycles, repack, scfx_memory.at( evoopt->get_mover_scfx( mover_name ) ), docking
-				) );
-			scorer_->add_mover( high_res_docker );
-		} else if ( mover_type == "final_minimizer" ) {
-			protocols::ligand_docking::LigandAreaOP inhibitor_final_sc( new protocols::ligand_docking::LigandArea() );
-			inhibitor_final_sc->chain_ = evoopt->get_ligand_chain()[ 0 ];
-			inhibitor_final_sc->cutoff_ = 6.0;
-			inhibitor_final_sc->add_nbr_radius_ = true;
-			inhibitor_final_sc->all_atom_mode_ = true;
-			utility::vector1< protocols::ligand_docking::LigandAreaOP > inhibitor_final_sc_vec{ inhibitor_final_sc };
-			protocols::ligand_docking::LigandAreaOP inhibitor_final_bb( new protocols::ligand_docking::LigandArea() );
-			inhibitor_final_bb->chain_ = evoopt->get_ligand_chain()[ 0 ];
-			inhibitor_final_bb->cutoff_ = 7.0;
-			inhibitor_final_bb->add_nbr_radius_ = false;
-			inhibitor_final_bb->all_atom_mode_ = true;
-			inhibitor_final_bb->Calpha_restraints_ = 0.3;
-			utility::vector1< protocols::ligand_docking::LigandAreaOP > inhibitor_dock_bb_vec{ inhibitor_final_bb };
-			protocols::ligand_docking::InterfaceBuilderOP side_chain_for_final( new protocols::ligand_docking::InterfaceBuilder( inhibitor_final_sc_vec ) );
-			protocols::ligand_docking::InterfaceBuilderOP backbone( new protocols::ligand_docking::InterfaceBuilder( inhibitor_dock_bb_vec, 3 ) );
-			protocols::ligand_docking::MoveMapBuilderOP finalMM( new protocols::ligand_docking::MoveMapBuilder( side_chain_for_final, backbone, true ) );
-			protocols::ligand_docking::FinalMinimizerOP final_minimizer( new protocols::ligand_docking::FinalMinimizer( scfx_memory[ evoopt->get_mover_scfx( mover_name ) ], finalMM ) );
-			scorer_->add_mover( final_minimizer );
-		} else {
-			TR.Error << "Unknown mover type " << mover_type << ". Please program setup in EvolutionManager."
-				<< std::endl;
-			utility_exit_with_message(
-				"EvolutionManager encountered unknown type of mover and can't set it up.");
-		}
-	}
+    protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom );
+    start_from->add_coords( evoopt->get_start_xyz() );
+    start_from->chain( evoopt->get_ligand_chain() );
+    scorer_->add_mover(start_from);
+    scorer_->add_mover( rosetta_script->get_mover("ParsedProtocol") );
 
 	// These setups are not needed for external scoring runs, only evolutionary optimization
-    // TODO make sure input format is the same as the outputted format
-    //      It does run without problem, I still want to check the parsing just to make sure. Also how it handles cases where the initial pop includes previous results
-    //      but not all saved scores can be matched to fragments
+    // Results from external scoring are not intended to be loaded as pre-computed scores. External scoring uses only a smiles and an arbitrary identifier
 	if ( external_scoring_ == 0 ) {
 		if ( rank_ == 0 ) {
 

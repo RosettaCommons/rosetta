@@ -209,7 +209,7 @@ void Scorer::set_pose_path( std::string const& path ) {
 	pose_path_ = path;
 }
 
-void Scorer::set_score_function( core::scoring::ScoreFunctionOP& score_function ) {
+void Scorer::set_score_function( core::scoring::ScoreFunctionOP score_function ) {
 	score_function_ = score_function;
 }
 
