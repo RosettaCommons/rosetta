@@ -97,133 +97,109 @@ void EvolutionManager::init_workmanager() {
 
 void EvolutionManager::run( int mpi_size ) {
 
-	if ( !external_scoring_ ) {
-		if ( rank_ == 0 ) {
+    if ( external_scoring_ ) {
+        external_scoring( mpi_size );
+        return;
+    }
+    if ( rank_ == 0 ) {
 
-			TR << "Start evolutionary ligand optimization. Score initial population..." << std::endl;
+        TR << "Start evolutionary ligand optimization. Score initial population..." << std::endl;
 
-			score();
-			scorer_->save_results();
-			write_population_information();
-			population_.sort();
+        score();
+        scorer_->save_results();
+        write_population_information();
+        population_.sort();
 
-			core::Real global_best_score = population_.individual( 1 ).score();
-			core::Size last_improve = 0;
-			core::Real previous_best_score = global_best_score;
-			calculate_quantiles();
+        core::Real global_best_score = population_.individual( 1 ).score();
+        core::Size last_improve = 0;
+        core::Real previous_best_score = global_best_score;
+        calculate_quantiles();
 
-			population_.next_generation( *selectors_[ main_selector_ ] );
-			TR << print_scores() << std::endl;
+        population_.next_generation( *selectors_[ main_selector_ ] );
+        TR << print_scores() << std::endl;
 
-			for ( core::Size generation( 1 ); generation <= max_generations_; ++generation ) {
+        for ( core::Size generation( 1 ); generation <= max_generations_; ++generation ) {
 
-				TR << "Producing offspring for generation " << generation << std::endl;
+            TR << "Producing offspring for generation " << generation << std::endl;
 
-				// Step 1: Generate offspring
-				utility::vector1< Individual > offspring;
-				for ( utility::vector1< core::Size > const& offspring_option : offspring_options_ ) {
+            // Step 1: Generate offspring
+            utility::vector1< Individual > offspring;
+            for ( utility::vector1< core::Size > const& offspring_option : offspring_options_ ) {
 
-					TR.Debug << "Options: " << offspring_option << std::endl;
+                TR.Debug << "Options: " << offspring_option << std::endl;
 
-					// iterate through all options defining how to combine factories and selectors
-					Selector& selector = *selectors_[ offspring_option[ 1 ]];
-					OffspringFactory& factory = *factories_[ offspring_option[ 2 ]];
-					core::Size selection_size = offspring_option[ 3 ];
-					core::Size offspring_size = offspring_option[ 4 ];
-					bool remove_from_pool = offspring_option[ 5 ];
+                // iterate through all options defining how to combine factories and selectors
+                Selector& selector = *selectors_[ offspring_option[ 1 ]];
+                OffspringFactory& factory = *factories_[ offspring_option[ 2 ]];
+                core::Size selection_size = offspring_option[ 3 ];
+                core::Size offspring_size = offspring_option[ 4 ];
+                bool remove_from_pool = offspring_option[ 5 ];
 
-					TR << "Select " << selection_size << " individuals with " << selector.name() << " for "
-						<< factory.name()
-						<< " to generate " << offspring_size << " new individuals. Selected ones ";
-					if ( remove_from_pool ) {
-						TR << "will";
-					} else {
-						TR << "won't";
-					}
-					TR << " be removed from pool." << std::endl;
+                TR << "Select " << selection_size << " individuals with " << selector.name() << " for "
+                    << factory.name()
+                    << " to generate " << offspring_size << " new individuals. Selected ones ";
+                if ( remove_from_pool ) {
+                    TR << "will";
+                } else {
+                    TR << "won't";
+                }
+                TR << " be removed from pool." << std::endl;
 
-					utility::vector1< Individual > tmp_offspring(
-						selector.apply( population_, selection_size, remove_from_pool ));
-					tmp_offspring = factory.apply( tmp_offspring, offspring_size );
-					offspring.insert( offspring.end(), tmp_offspring.begin(), tmp_offspring.end());
+                utility::vector1< Individual > tmp_offspring(
+                    selector.apply( population_, selection_size, remove_from_pool ));
+                tmp_offspring = factory.apply( tmp_offspring, offspring_size );
+                offspring.insert( offspring.end(), tmp_offspring.begin(), tmp_offspring.end());
 
-				}
+            }
 
-				TR << "Generated " << offspring.size() << " new offspring. Start scoring..." << std::endl;
+            TR << "Generated " << offspring.size() << " new offspring. Start scoring..." << std::endl;
 
-				// Step 2: Replace old individuals and score where needed
-				population_.replace_population( offspring );
-				score();
+            // Step 2: Replace old individuals and score where needed
+            population_.replace_population( offspring );
+            score();
 
-				population_.sort();
-				core::Real new_best_score = population_.individual( 1 ).score();
-				if ( new_best_score < global_best_score ) {
-					last_improve = generation;
-					previous_best_score = global_best_score;
-					global_best_score = new_best_score;
-				}
+            population_.sort();
+            core::Real new_best_score = population_.individual( 1 ).score();
+            if ( new_best_score < global_best_score ) {
+                last_improve = generation;
+                previous_best_score = global_best_score;
+                global_best_score = new_best_score;
+            }
 
-				// Step 3: Reduce population back down to its desired size with the main selector
-				population_.next_generation( *selectors_[ main_selector_ ] );
-				TR << print_scores() << std::endl;
+            // Step 3: Reduce population back down to its desired size with the main selector
+            population_.next_generation( *selectors_[ main_selector_ ] );
+            TR << print_scores() << std::endl;
 
-				utility::vector1< core::Real > old_quantiles( quantiles );
-				calculate_quantiles();
+            utility::vector1< core::Real > old_quantiles( quantiles );
+            calculate_quantiles();
 
-				TR << "******************************************************************************" << std::endl;
-				TR << std::endl;
-				TR << "Done with generation " << generation << ". Report:" << std::endl;
-				TR << "\tglobal best:" << global_best_score << " (last improved in generation " << last_improve
-					<< " from " << previous_best_score << ")" << std::endl;
-				TR << "\tbest: " << quantiles[ 1 ] << " (delta: " << quantiles[ 1 ] - old_quantiles[ 1 ] << ")"
-					<< std::endl;
-				TR << "\t25%-quantile: " << quantiles[ 2 ] << " (delta: " << quantiles[ 2 ] - old_quantiles[ 2 ] << ")"
-					<< std::endl;
-				TR << "\tmedian: " << quantiles[ 3 ] << " (delta: " << quantiles[ 3 ] - old_quantiles[ 3 ] << ")"
-					<< std::endl;
-				TR << "\t75%-quantile: " << quantiles[ 4 ] << " (delta: " << quantiles[ 4 ] - old_quantiles[ 4 ] << ")"
-					<< std::endl;
-				TR << std::endl;
-				TR << "******************************************************************************" << std::endl;
-				scorer_->save_results();
-				write_population_information();
+            TR << "******************************************************************************" << std::endl;
+            TR << std::endl;
+            TR << "Done with generation " << generation << ". Report:" << std::endl;
+            TR << "\tglobal best:" << global_best_score << " (last improved in generation " << last_improve
+                << " from " << previous_best_score << ")" << std::endl;
+            TR << "\tbest: " << quantiles[ 1 ] << " (delta: " << quantiles[ 1 ] - old_quantiles[ 1 ] << ")"
+                << std::endl;
+            TR << "\t25%-quantile: " << quantiles[ 2 ] << " (delta: " << quantiles[ 2 ] - old_quantiles[ 2 ] << ")"
+                << std::endl;
+            TR << "\tmedian: " << quantiles[ 3 ] << " (delta: " << quantiles[ 3 ] - old_quantiles[ 3 ] << ")"
+                << std::endl;
+            TR << "\t75%-quantile: " << quantiles[ 4 ] << " (delta: " << quantiles[ 4 ] - old_quantiles[ 4 ] << ")"
+                << std::endl;
+            TR << std::endl;
+            TR << "******************************************************************************" << std::endl;
+            scorer_->save_results();
+            write_population_information();
 
-			} // for loop
-		} // if rank == 0
+        } // for loop
+    } // if rank == 0
 #ifdef USEMPI
-        else {
-            work_manager_->work_loop();
-        }
+    else {
+        work_manager_->work_loop();
+    }
 
-        work_manager_->clean_up();
+    work_manager_->clean_up();
 #endif
-	} else {    // if external scoring run
-        // todo turn into a separate function which gets called at the beginning of run and returned - makes it clearer what the main protocol is
-		core::Size smiles_to_score = library_.smiles_to_score() / mpi_size;
-		for ( core::Size ii( 1 + smiles_to_score * rank_ ); ii <= smiles_to_score * ( rank_ + 1 ); ++ii ) {
-			try {
-				scorer_->score_ligand( { ii, 0 }, "", external_scoring_ );
-				if ( ii % 10 == 0 ) {
-					scorer_->save_external_scoring_results( core::Size( rank_ + 1 ));
-				}
-			} catch( ... ) {
-				// print message and continue scoring
-				TR.Error << "Unable to score " << library_.identifier_to_smiles( { ii, 0 } ) << std::endl;
-			}
-		}
-		core::Size leftovers = library_.smiles_to_score() % mpi_size;
-		// if the total numbers of smiles is not dividable by num of processors, let each one pick one smiles from the end
-		if ( leftovers != 0 && core::Size( rank_ ) < leftovers ) {
-			core::Size left_index = smiles_to_score * mpi_size + rank_ + 1;
-			try {
-				scorer_->score_ligand( { left_index, 0 }, "", external_scoring_ );
-			} catch( ... ) {
-				// nothing, just continue scoring
-			}
-		}
-		scorer_->save_external_scoring_results( core::Size( rank_ + 1 ));
-	}
-
 }
 
 void EvolutionManager::score() {
@@ -315,7 +291,7 @@ void EvolutionManager::write_population_information() const {
 	// write generation information
     file << "#\tList of individual ID for each generation\n";
     file << "#\t2 lines represent each generation, starting with the random initial population\n";
-    file << "#\tThe first line is all individuals of that generation, the second is which remained after applying the main selector\n";
+    file << "#\tThe first line is all individuals of that generation, the second is which remained after applying the main selector";
     file << std::endl;
 	for ( utility::vector1< core::Size > const& generation : population_.expose_generation_log() ) {
 		file << utility::join( generation, " " ) << std::endl;
@@ -394,6 +370,34 @@ void EvolutionManager::write_population_information() const {
                                                  core::Size(options->get_selector_parameter(selector, "remove"))
                                          });
         }
+    }
+
+    void EvolutionManager::external_scoring( int mpi_size ) {
+
+        core::Size smiles_to_score = library_.smiles_to_score() / mpi_size;
+        for ( core::Size ii( 1 + smiles_to_score * rank_ ); ii <= smiles_to_score * ( rank_ + 1 ); ++ii ) {
+            try {
+                scorer_->score_ligand( { ii, 0 }, "", external_scoring_ );
+                if ( ii % 10 == 0 ) {
+                    scorer_->save_external_scoring_results( core::Size( rank_ + 1 ));
+                }
+            } catch( ... ) {
+                // print message and continue scoring
+                TR.Error << "Unable to score " << library_.identifier_to_smiles( { ii, 0 } ) << std::endl;
+            }
+        }
+        core::Size leftovers = library_.smiles_to_score() % mpi_size;
+        // if the total numbers of smiles is not dividable by num of processors, let each one pick one smiles from the end
+        if ( leftovers != 0 && core::Size( rank_ ) < leftovers ) {
+            core::Size left_index = smiles_to_score * mpi_size + rank_ + 1;
+            try {
+                scorer_->score_ligand( { left_index, 0 }, "", external_scoring_ );
+            } catch( ... ) {
+                // nothing, just continue scoring
+            }
+        }
+        scorer_->save_external_scoring_results( core::Size( rank_ + 1 ));
+
     }
 }
 }

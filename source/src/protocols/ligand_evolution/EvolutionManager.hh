@@ -62,6 +62,8 @@ private:
 
     void init_evolution_protocol( EvolutionOptionsCOP options );
 
+    void external_scoring( int mpi_size );
+
 private:
 
 	/// @brief Defines after how many generations optimization will stop
