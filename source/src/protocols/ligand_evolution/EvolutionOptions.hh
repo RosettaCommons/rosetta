@@ -140,13 +140,13 @@ private:
 
 	void check_validity();
 
-	core::Size check_scorer_setup() const;
+	void check_scorer_setup();
 
-	core::Size check_selectors() const;
+	void check_selectors();
 
-	core::Size check_factories() const;
+	void check_factories();
 
-	core::Size check_pop_init() const;
+	void check_pop_init();
 
 private:
 

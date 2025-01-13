@@ -60,7 +60,6 @@ EvolutionOptions::EvolutionOptions( std::string const& path_to_option_file) {
     parse_cmdline();
 	parse_option_file( path_to_option_file );
 
-    // TODO I removed some functionality from the evo option file to commandline. Make sure this is reflected here.
 	check_validity();
 
 	TR.Debug << "Options passed all checks." << std::endl;
@@ -186,13 +185,13 @@ void EvolutionOptions::check_validity() {
 			error_counter_++;
 		}
 
-		error_counter_ += check_selectors();
-		error_counter_ += check_factories();
-		error_counter_ += check_pop_init();
+		check_selectors();
+		check_factories();
+		check_pop_init();
 
 	}
 
-	error_counter_ += check_scorer_setup();
+	check_scorer_setup();
 
 	if ( error_counter_ != 0 ) {
 		utility_exit_with_message( "Found a total of " + std::to_string( error_counter_ ) + " errors. See details above." );
@@ -200,58 +199,52 @@ void EvolutionOptions::check_validity() {
 
 }
 
-core::Size EvolutionOptions::check_scorer_setup() const {
-
-	core::Size error_counter = 0;
+void EvolutionOptions::check_scorer_setup() {
 
 	if ( !path_to_score_memory_.empty() ) {
 		utility::io::izstream score_memory_file( path_to_score_memory_ );
 		if ( !score_memory_file ) {
 			TR.Error << "A score memory file was specified at " << path_to_score_memory_ << " but can not be found." << std::endl;
-			error_counter++;
+			error_counter_++;
 		}
 	}
 
 	if ( score_runs_ < 1 ) {
 		TR.Error << "Score runs are set to less than one." << std::endl;
-		error_counter++;
+		error_counter_++;
 	}
 
 	if ( ligand_chain_.empty() ) {
 		TR.Error << "No ligand chain specified." << std::endl;
-		error_counter++;
+		error_counter_++;
 	}
 
 	if ( main_score_term_.empty() ) {
 		TR.Error << "No score term to optimize defined." << std::endl;
-		error_counter++;
+		error_counter_++;
 	} else if ( std::find( score_terms_.begin(), score_terms_.end(), main_score_term_ ) == score_terms_.end() ) {
 		TR.Error << main_score_term_ << " is not available. Use one of " << score_terms_ << std::endl;
-		error_counter++;
+		error_counter_++;
 	}
 
 	if ( pose_dump_directory_.empty() ) {
 		TR.Error << "No directory to save poses has been defined." << std::endl;
-		error_counter++;
+		error_counter_++;
 	} else {
 		utility::io::ozstream dummy_pdb( pose_dump_directory_ + "/dummy.pdb" );
 		if ( !dummy_pdb ) {
 			TR.Error << "Can't create a dummy pdb file at " << pose_dump_directory_ << "." << std::endl;
-			error_counter++;
+			error_counter_++;
 		}
 	}
 
 	if ( scoring_function_.empty() ) {
 		TR.Error << "No main scoring function for scorer defined to calculate base pose energy." << std::endl;
-		error_counter++;
+		error_counter_++;
 	}
-
-	return error_counter;
 }
 
-core::Size EvolutionOptions::check_selectors() const {
-
-	core::Size error_counter = 0;
+void EvolutionOptions::check_selectors() {
 
 	std::map< std::string, bool > is_used;
 
@@ -260,46 +253,64 @@ core::Size EvolutionOptions::check_selectors() const {
 	for ( auto& selec_ops : selector_options_ ) {
 		std::string selector_name = selec_ops.first;
 		std::string selector_type = selec_ops.second.first;
+        std::map< std::string, core::Real > const& selector_options = selec_ops.second.second;
+        std::map< std::string, bool > selector_option_valid;
+        for ( std::pair< std::string, core::Real > const& option : selector_options ) {
+            selector_option_valid[ option.first ] = false;
+        }
 		is_used[ selector_name ] = false;
 
 		if ( std::find( selector_types.begin(), selector_types.end(), selector_type ) == selector_types.end() ) {
 			TR.Error << selector_type << " is an unknown type of selector. Available are " << selector_types << std::endl;
-			error_counter++;
+			error_counter_++;
 		}
 
-		if ( selec_ops.second.second.count( "size" ) == 0 ) {
+		if ( selector_options.count( "size" ) == 0 ) {
 			TR.Error << "Size option has to be set for all Selectors but is absent for " << selector_name << "." << std::endl;
-			error_counter++;
-		} else if ( selec_ops.second.second.at( "size" ) <= 0 ) {
+            error_counter_++;
+		} else if ( selector_options.at( "size" ) <= 0 ) {
 			TR.Error << "Size option is less or equal 0 for " << selector_name << "." << std::endl;
-			error_counter++;
+            error_counter_++;
 		}
+        selector_option_valid[ "size" ] = true;
+        // remove does not need to be checked, supplying it is optional
+        selector_option_valid[ "remove" ] = true;
 
 		if ( selector_type == "tournament" ) {
 
-			if ( selec_ops.second.second.count( "tournament_size" ) == 0 ) {
+			if ( selector_options.count( "tournament_size" ) == 0 ) {
 				TR.Error << "tournament_size option is not set for " << selector_name << "." << std::endl;
-				error_counter++;
-			} else if ( selec_ops.second.second.at( "tournament_size" ) < 0 ) {
+                error_counter_++;
+			} else if ( selector_options.at( "tournament_size" ) < 0 ) {
 				TR.Error << "tournament_size option is less than 1 for " << selector_name << "." << std::endl;
-				error_counter++;
+                error_counter_++;
 			}
+            selector_option_valid[ "tournament_size" ] = true;
 
-			if ( selec_ops.second.second.count( "acceptance_chance" ) == 0 ) {
+			if ( selector_options.count( "acceptance_chance" ) == 0 ) {
 				TR.Error << "acceptance_chance option is not set for " << selector_name << "." << std::endl;
-				error_counter++;
-			} else if ( selec_ops.second.second.at( "acceptance_chance" ) <= 0 ) {
+                error_counter_++;
+			} else if ( selector_options.at( "acceptance_chance" ) <= 0 ) {
 				TR.Error << "acceptance_chance option is less or equal to 0 for " << selector_name << "." << std::endl;
-				error_counter++;
+                error_counter_++;
 			}
+            selector_option_valid[ "acceptance_chance" ] = true;
 		}
 
 		if ( selector_type == "roulette" ) {
-			if ( selec_ops.second.second.count( "consider_positive" ) == 0 ) {
+			if ( selector_options.count( "consider_positive" ) == 0 ) {
 				TR.Error << "consider_positive option is not set for " << selector_name << "." << std::endl;
-				error_counter++;
+                error_counter_++;
 			}
+            selector_option_valid[ "consider_positive" ] = true;
 		}
+
+        for ( std::pair< std::string, bool > const& option : selector_option_valid ) {
+            if ( !option.second ) {
+                TR.Error << option.first << " is not supported as option for " << selector_name << "." << std::endl;
+                error_counter_++;
+            }
+        }
 
 	}
 
@@ -309,13 +320,13 @@ core::Size EvolutionOptions::check_selectors() const {
 		std::string factory_name = link.second;
 		if ( is_used.count( selector_name ) == 0 ) {
 			TR.Error << "Selector " << selector_name << " linked to " << factory_name << " is not defined." << std::endl;
-			error_counter++;
+            error_counter_++;
 		} else {
 			is_used[ selector_name ] = true;
 			core::Size selection_size = core::Size( selector_options_.at( selector_name ).second.at( "size" ) );
 			if ( selection_size > leftover_popsize ) {
 				TR.Error << "Selector " << selector_name << " tries to select " << selection_size << ", but at this point only " << leftover_popsize << " individuals are available." << std::endl;
-				error_counter++;
+                error_counter_++;
 			}
 			if ( bool( selector_options_.at( selector_name ).second.at( "remove" ) ) ) {
 				leftover_popsize -= selection_size;
@@ -325,7 +336,7 @@ core::Size EvolutionOptions::check_selectors() const {
 
 	if ( is_used.count( main_selector_ ) == 0 ) {
 		TR.Error << "Main Selector " << main_selector_ << " is not defined." << std::endl;
-		error_counter++;
+        error_counter_++;
 	} else {
 		is_used[ main_selector_ ] = true;
 	}
@@ -335,15 +346,10 @@ core::Size EvolutionOptions::check_selectors() const {
 			TR.Warning << "Selector " << usage.first << " is defined but never used." << std::endl;
 		}
 	}
-
-	// TODO This does not check if options provided are unsupported or wrong. Maybe I should add this.
-
-	return error_counter;
+    // TODO rework the unused warning system
 }
 
-core::Size EvolutionOptions::check_factories() const {
-
-	core::Size error_counter = 0;
+void EvolutionOptions::check_factories() {
 
 	std::map< std::string, bool > is_used;
 
@@ -353,78 +359,96 @@ core::Size EvolutionOptions::check_factories() const {
 
 		std::string factory_name = fac_ops.first;
 		std::string factory_type = fac_ops.second.first;
+        std::map< std::string, core::Real > const& factory_options = fac_ops.second.second;
+        std::map< std::string, bool > factory_option_valid;
+        for ( std::pair< std::string, core::Real > const& option : factory_options ) {
+            factory_option_valid[ option.first ] = false;
+        }
 
 		is_used[ factory_name ] = false;
 
 		if ( std::find( factory_types.begin(), factory_types.end(), factory_type ) == factory_types.end() ) {
 			TR.Error << factory_type << " is an unknown type of factory. Available are " << factory_types << std::endl;
-			error_counter++;
+			error_counter_++;
 		}
 
-		if ( fac_ops.second.second.count( "size" ) == 0 ) {
+		if ( factory_options.count( "size" ) == 0 ) {
 			TR.Error << "size option is not set for factory " << factory_name << "." << std::endl;
-			error_counter++;
-		} else if ( fac_ops.second.second.at( "size" ) < 1.0 ) {
+            error_counter_++;
+		} else if ( factory_options.at( "size" ) < 1.0 ) {
 			TR.Error << "size option is set to less than one for factory " << factory_name << "." << std::endl;
-			error_counter++;
+            error_counter_++;
 		}
+        factory_option_valid["size"] = true;
 
 		if ( factory_type == "mutator" ) {
 
 			bool reaction_weight_set = true;
-			if ( fac_ops.second.second.count( "reaction_weight" ) == 0 ) {
+			if ( factory_options.count( "reaction_weight" ) == 0 ) {
 				TR.Error << "reaction_weight option is not set for factory " << factory_name << "." << std::endl;
 				reaction_weight_set = false;
-				error_counter++;
-			} else if ( fac_ops.second.second.at( "reaction_weight" ) < 0.0 ) {
+                error_counter_++;
+			} else if ( factory_options.at( "reaction_weight" ) < 0.0 ) {
 				TR.Warning << "reaction_weight option is set to less than zero for factory " << factory_name << "." << std::endl;
 			}
+            factory_option_valid["reaction_weight"] = true;
 
 			bool reagent_weight_set = true;
-			if ( fac_ops.second.second.count( "reagent_weight" ) == 0 ) {
+			if ( factory_options.count( "reagent_weight" ) == 0 ) {
 				TR.Error << "reagent_weight option is not set for factory " << factory_name << "." << std::endl;
 				reagent_weight_set = false;
-				error_counter++;
-			} else if ( fac_ops.second.second.at( "reagent_weight" ) < 0.0 ) {
+                error_counter_++;
+			} else if ( factory_options.at( "reagent_weight" ) < 0.0 ) {
 				TR.Warning << "reagent_weight option is set to less than zero for factory " << factory_name << ". This is treated as being set to 0." << std::endl;
 			}
+            factory_option_valid["reagent_weight"] = true;
 
-			if ( reaction_weight_set && reagent_weight_set && fac_ops.second.second.at( "reagent_weight" ) <= 0.0 && fac_ops.second.second.at( "reaction_weight" ) <= 0 ) {
+			if ( reaction_weight_set && reagent_weight_set && factory_options.at( "reagent_weight" ) <= 0.0 && factory_options.at( "reaction_weight" ) <= 0 ) {
 				TR.Error << "All weights for " << factory_name << " are set to less or equal than zero, causing it to mutate nothing." << std::endl;
-				error_counter++;
+                error_counter_++;
 			}
 
 			bool min_sim_set = true;
-			if ( fac_ops.second.second.count( "min_similarity" ) == 0 ) {
+			if ( factory_options.count( "min_similarity" ) == 0 ) {
 				TR.Error << "min_similarity option is not set for factory " << factory_name << "." << std::endl;
 				min_sim_set = false;
-				error_counter++;
-			} else if ( fac_ops.second.second.at( "min_similarity" ) < 0.0 ) {
+                error_counter_++;
+			} else if ( factory_options.at( "min_similarity" ) < 0.0 ) {
 				TR.Error << "min_similarity option is set to less than zero for factory " << factory_name << "." << std::endl;
-				error_counter++;
-			} else if ( fac_ops.second.second.at( "min_similarity" ) > 1.0 ) {
+                error_counter_++;
+			} else if ( factory_options.at( "min_similarity" ) > 1.0 ) {
 				TR.Error << "min_similarity option is set to greater than one for factory " << factory_name << "." << std::endl;
-				error_counter++;
+                error_counter_++;
 			}
+            factory_option_valid["min_similarity"] = true;
 
 			bool max_sim_set = true;
-			if ( fac_ops.second.second.count( "max_similarity" ) == 0 ) {
+			if ( factory_options.count( "max_similarity" ) == 0 ) {
 				TR.Error << "max_similarity option is not set for factory " << factory_name << "." << std::endl;
 				max_sim_set = false;
-				error_counter++;
-			} else if ( fac_ops.second.second.at( "max_similarity" ) < 0.0 ) {
+                error_counter_++;
+			} else if ( factory_options.at( "max_similarity" ) < 0.0 ) {
 				TR.Error << "max_similarity option is set to less than zero for factory " << factory_name << "." << std::endl;
-				error_counter++;
-			} else if ( fac_ops.second.second.at( "max_similarity" ) > 1.0 ) {
+                error_counter_++;
+			} else if ( factory_options.at( "max_similarity" ) > 1.0 ) {
 				TR.Error << "max_similarity option is set to greater than one for factory " << factory_name << "." << std::endl;
-				error_counter++;
+                error_counter_++;
+			}
+            factory_option_valid["max_similarity"] = true;
+
+			if ( min_sim_set && max_sim_set && factory_options.at( "max_similarity" ) <= factory_options.at( "min_similarity" ) ) {
+				TR.Error << "min_similarity is set to greater or equal than max_similarity for factory " << factory_name << "." << std::endl;
+                error_counter_++;
 			}
 
-			if ( min_sim_set && max_sim_set && fac_ops.second.second.at( "max_similarity" ) <= fac_ops.second.second.at( "min_similarity" ) ) {
-				TR.Error << "min_similarity is set to greater or equal than max_similarity for factory " << factory_name << "." << std::endl;
-				error_counter++;
-			}
 		}
+
+        for ( std::pair< std::string, bool > const& option : factory_option_valid ) {
+            if ( !option.second ) {
+                TR.Error << option.first << " is not supported as option for " << factory_name << "." << std::endl;
+                error_counter_++;
+            }
+        }
 
 	}
 
@@ -434,7 +458,7 @@ core::Size EvolutionOptions::check_factories() const {
 		std::string factory_name = link.second;
 		if ( factory_options_.count( factory_name ) == 0 ) {
 			TR.Error << factory_name << " linked to " << selector_name << " is not defined." << std::endl;
-			error_counter++;
+            error_counter_++;
 		} else {
 			is_used[ factory_name ] = true;
 			generated_popsize += core::Size( factory_options_.at( factory_name ).second.at( "size" ) );
@@ -443,7 +467,7 @@ core::Size EvolutionOptions::check_factories() const {
 
 	if ( generated_popsize < supported_population_size_ ) {
 		TR.Error << "All offspring factories combined produce only " << generated_popsize << " new individuals, but " << supported_population_size_ << " are supported." << std::endl;
-		error_counter++;
+        error_counter_++;
 	}
 
 	for ( auto const& usage : is_used ) {
@@ -452,14 +476,11 @@ core::Size EvolutionOptions::check_factories() const {
 		}
 	}
 
-	// TODO This does not check if options provided are unsupported or wrong. Maybe I should add this.
-
-	return error_counter;
+    // TODO rework the unused factory warning
 }
 
-core::Size EvolutionOptions::check_pop_init() const {
+void EvolutionOptions::check_pop_init() {
 
-	core::Size error_counter = 0;
 	core::Size combined_init_size = 0;
 
 	for ( auto const& init_opt : pop_init_options_ ) {
@@ -467,10 +488,10 @@ core::Size EvolutionOptions::check_pop_init() const {
 		core::Size size = 0;
 		if ( init_opt.second.count( "size" ) == 0 ) {
 			TR.Error << "Size attribute is not defined for pop init type " << type << std::endl;
-			error_counter++;
+			error_counter_++;
 		} else if ( init_opt.second.at( "size" ) <= 0 ) {
 			TR.Error << "Size attribute for pop init type " << type << " is less or equal than zero." << std::endl;
-			error_counter++;
+            error_counter_++;
 		} else {
 			size = init_opt.second.at( "size" );
 		}
@@ -479,47 +500,45 @@ core::Size EvolutionOptions::check_pop_init() const {
 			for ( auto const& random_opt : init_opt.second ) {
 				if ( random_opt.first != "size" ) {
 					TR.Error << "Random pop init only supports size attribute, not " << random_opt.first << std::endl;
-					error_counter++;
+                    error_counter_++;
 				}
 			}
 		} else if ( type == "best_loaded" ) {
 			if ( path_to_score_memory_.empty() ) {
 				TR.Error << type << " requires scores to be loaded, but no path to memory was defined." << std::endl;
-				error_counter++;
+                error_counter_++;
 			}
 			if ( init_opt.second.count( "selection" ) == 0 ) {
 				TR.Error << "Selection attribute needs to be defined for init type " << type << std::endl;
-				error_counter++;
+                error_counter_++;
 			} else if ( init_opt.second.at( "selection" ) <= 0 ) {
 				TR.Error << "Selection attribute needs to greater 0 for init type " << type << std::endl;
-				error_counter++;
+                error_counter_++;
 			} else if ( init_opt.second.at( "selection" ) <= size ) {
 				TR.Error << "Selection attribute needs to greater than init size for init type " << type << std::endl;
-				error_counter++;
+                error_counter_++;
 			}
 			for ( auto const& random_opt : init_opt.second ) {
 				if ( random_opt.first != "size" && random_opt.first != "selection" ) {
 					TR.Error << "Random pop init only supports size attribute, not " << random_opt.first << std::endl;
-					error_counter++;
+                    error_counter_++;
 				}
 			}
 		} else {
 			TR.Error << "Unknown pop init type " << type << std::endl;
-			error_counter++;
+            error_counter_++;
 		}
 	}
 
 	if ( combined_init_size < supported_population_size_ ) {
 		TR.Error << "Combined initial population size has to be at least as high as the supported population size." << std::endl;
-		error_counter++;
+        error_counter_++;
 	}
 
 	if ( combined_init_size <= 0 ) {
 		TR.Error << "Combined initial population size has to be greater than zero." << std::endl;
-		error_counter++;
+        error_counter_++;
 	}
-
-	return error_counter;
 }
 
 core::Size EvolutionOptions::get_max_generations() const {
