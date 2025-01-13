@@ -172,7 +172,7 @@ private:
 	std::string path_to_score_memory_;
 
 	/// @brief Set the number of generations for evolutionary optimization
-	core::Size generations_ = 25;
+	core::Size generations_ = 30;
 
 	/// @brief Path where to find the reaction definitions. The standard settings assume you use a input and run directory structure.
 	std::string path_to_reactions_;
@@ -184,15 +184,15 @@ private:
 
     /// @brief Maps selector names to types and parameter list
     std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > selector_options_ {
-{ "std_elitist", { "elitist", {
+{ "remove_elitist", { "elitist", {
 // sets how many individuals will be selected
 { "size", 15 },
 // sets if selected individuals will be removed from population or remain for further selection
-{ "remove", 0 }
+{ "remove", 1 }
 } } },
 { "std_tournament", { "tournament", {
 // tournament selector selects a subset of individuals to play a "tournament" for being the fittest...
-{ "tournament_size", 5 },
+{ "tournament_size", 15 },
 // ...and offers them according to rank the victory which they accept with this chance
 { "acceptance_chance", 0.75 },
 { "size", 15 },
@@ -202,7 +202,7 @@ private:
 { "std_roulette", { "roulette", {
 { "consider_positive", 0 },
 { "size", 15 },
-{ "remove", 1 }
+{ "remove", 0 }
 } } }
 };
 
@@ -217,8 +217,22 @@ private:
 { "min_similarity", 0.6 },
 { "max_similarity", 0.99 }
 } } },
-{ "std_crossover", { "crossover", {
-{ "size", 30.0 }
+{ "drastic_mutator", { "mutator", {
+{ "size", 30.0 },
+{ "reaction_weight", 0.0 },
+{ "reagent_weight", 1.0 },
+{ "min_similarity", 0.0 },
+{ "max_similarity", 0.25 }
+} } },
+{ "reaction_mutator", { "mutator", {
+{ "size", 30.0 },
+{ "reaction_weight", 1.0 },
+{ "reagent_weight", 0.0 },
+{ "min_similarity", 0.6 },
+{ "max_similarity", 0.99 }
+} } },
+{ "large_crossover", { "crossover", {
+{ "size", 60.0 }
 } } },
 { "std_identity", { "identity", {
 { "size", 15.0 }
@@ -229,15 +243,19 @@ private:
 
 	/// @brief Links a selector to a factory
 	utility::vector1< std::pair< std::string, std::string > > selector_factory_links_ {
-{ "std_elitist", "std_identity" },
 { "std_roulette", "std_mutator" },
-{ "std_roulette", "std_crossover" }
+{ "std_roulette", "large_crossover" },
+{ "std_roulette", "drastic_mutator" },
+{ "std_roulette", "reaction_mutator" },
+{ "remove_elitist", "std_identity" },
+{ "std_roulette", "std_mutator" },
+{ "std_roulette", "large_crossover" },
 };
 
 	/// @brief Defines how the starting population is generated. For more detail look at %Population
 	std::map< std::string, std::map< std::string, core::Size > > pop_init_options_ {
 { "random", {
-{ "size", 100 }
+{ "size", 200 }
 } }
 };
 
@@ -254,10 +272,10 @@ private:
 	std::string ligand_chain_;
 
 	/// @brief Sets which score term will be used for optimization
-	std::string main_score_term_ = "lid_root2";
+	std::string main_score_term_;
 
 	/// @brief If a molecule has better scoring molecules with a Tanimoto similarity exceeding the set threshold, it will receive a score penalty of for each of them. Penalty is added up.
-	core::Real similarity_penalty_ = 0.3;
+	core::Real similarity_penalty_ = 0.5;
 
 	/// @brief Threshold after which molecules considered being similar and therefore qualified for a penalty.
 	core::Real similarity_penalty_threshold_ = 0.95;
