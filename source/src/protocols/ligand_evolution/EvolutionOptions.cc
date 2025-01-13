@@ -139,6 +139,7 @@ void EvolutionOptions::parse_cmdline() {
     ligand_chain_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::ligand_chain ];
     pose_dump_directory_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::pose_output_directory ].value();
     main_score_term_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_term ];
+    generations_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::n_generations ];
 
     // these options are optional
     if ( basic::options::option[ basic::options::OptionKeys::ligand_evolution::score_mem_path ].active() ) {
@@ -663,18 +664,7 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 		if ( option_name == "<xmlcomment>" ) {
 			continue;
 		}
-		if ( option_name == "Evolution" ) {
-			for ( boost::property_tree::ptree::value_type const& v : tag.second.get_child( "<xmlattr>" ) ) {
-				std::string const& attribute_name = v.first;
-				std::string const& attribute_value = v.second.data();
-				if ( attribute_name == "generations" ) {
-					generations_ = utility::string2Size( attribute_value );
-				} else {
-					TR.Error << "Unable to parse " << attribute_name << "=\"" << attribute_value << "\" for tag " << option_name << std::endl;
-					error_counter_++;
-				}
-			}
-		} else if ( option_name == "Population" ) {
+		if ( option_name == "Population" ) {
 			for ( boost::property_tree::ptree::value_type const& v: tag.second.get_child("<xmlattr>") ) {
 				std::string const& attribute_name = v.first;
 				std::string const& attribute_value = v.second.data();

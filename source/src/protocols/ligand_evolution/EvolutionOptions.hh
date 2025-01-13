@@ -172,7 +172,7 @@ private:
 	std::string path_to_score_memory_;
 
 	/// @brief Set the number of generations for evolutionary optimization
-	core::Size generations_ = 30;
+	core::Size generations_;
 
 	/// @brief Path where to find the reaction definitions. The standard settings assume you use a input and run directory structure.
 	std::string path_to_reactions_;

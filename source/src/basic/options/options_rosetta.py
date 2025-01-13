@@ -8811,6 +8811,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	    Option( 'reagent_file', 'File', desc='Path to a file defining reagents for reactions' ),
 	    Option( 'reaction_file', 'File', desc='Path to a file defining reaction used for combinatorial chemical space' ),
 		Option( 'main_term', 'String', desc='Name of the main term used as fitness function. Defaults to lid_root2', default='lid_root2' ),
+		Option( 'n_generations', 'Integer', desc='For how many generations should REvoLd optimize. Defaults to 30.', default='30' ),
     ), #-end peisenhuth revold apps
 
 	Option_Group( 'peptide_deriver',
