@@ -86,6 +86,8 @@ def analyze_one_funnel( suffix='1A', expected_rmsd_of_lowest=0.3, expected_min_r
                 rmsd_vals.append( float(sline[2]) )
                 rmsd_vals_to_lowest.append( float(sline[3]) )
                 energy_vals.append( float(sline[4]) )
+            elif len(sline) == 0:
+                continue # Ignore empty lines
             elif sline[0] == "MPI_worker_node":
                 in_table = True
                 continue
