@@ -25,8 +25,7 @@ def combiningallfiles(folder, peptide_list):
         peptide_name = peptide_list[element_num]
         labelin1 = folder + '/' + peptide_name + '/' + peptide_name + '_combined.dat'
         labelout1 = folder + '/' + peptide_name + '/' + peptide_name + '_franklin2019_landscape.dat'
-        print(labelin1)
-        print(labelout1)
+        print("Processing data for", labelin1)
 
 
         label0= folder+'/'+peptide_name+'/'+peptide_name+'_franklin2019_'+str(end_index[0])+'_'+str(start_index[0])+'_landscape.dat'
@@ -52,25 +51,23 @@ def combiningallfiles(folder, peptide_list):
 
         mindata = []
 
-        try:
-            for i in range(len(X)):
+        for i in range(len(X)):
 
-                for j in range(len(Y)):
-
-
-                    newarr = df_read[df_read['angle']==Y[j]]
-                    secondarr = newarr[newarr['zcoord']==X[i]]
-
-                    arr = np.array(secondarr['total_score'])
+            for j in range(len(Y)):
 
 
-                    minpos = np.argmin(arr)
+                newarr = df_read[df_read['angle']==Y[j]]
+                secondarr = newarr[newarr['zcoord']==X[i]]
 
-                    mindata.append(secondarr.iloc[minpos,0:23])
-        except:
-            print("ERROR When processing data in file", labelin1)
-            raise
+                arr = np.array(secondarr['total_score'])
 
+                if len(arr) == 0:
+                    print("Skipping zcoord", X[i], "and angle", Y[j], "for", labelin1, "due to missing data")
+                    continue
+
+                minpos = np.argmin(arr)
+
+                mindata.append(secondarr.iloc[minpos,0:23])
         mindatadf = pd.DataFrame(mindata)
         mindatadf.to_csv(labelout1, sep=" ", index=False)
 

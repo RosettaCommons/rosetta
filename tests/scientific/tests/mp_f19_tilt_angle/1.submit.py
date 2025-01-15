@@ -61,7 +61,7 @@ for target in targets:
     prefix = f'{working_dir}/output/{target}'
     if not os.path.exists(prefix): os.makedirs(prefix)
 
-    
+
     if((target=='1a11') or (target=='2nr1')):
         print(target)
         command_line2 = command_line1 + '-mp:lipids:composition DLPC -mp:lipids:temperature 20.0'
@@ -73,12 +73,12 @@ for target in targets:
         command_line2 = command_line1 + '-mp:lipids:composition DMPC -mp:lipids:temperature 30.0'
 
     for j in range(len(start_z)):
-        
+
         command_line = []
         command_line = command_line2 + ' -parser::script_vars start_z=' + start_z[j] + ' -parser::script_vars end_z=' + end_z[j]
-        
+
         hpc_job_ids.append( hpc_driver.submit_serial_hpc_job(
-            name=f'{testname}-{target}',
+            name=f'{testname}-{target}_{start_z[j]}_to_{end_z[j]}',
 
             #==> EDIT HERE
             executable = f'{rosetta_dir}/source/bin/rosetta_scripts.{extension}',
@@ -89,7 +89,7 @@ for target in targets:
             time=24,
             block=False)
         )
-        
+
 
 
 # if not debug:
