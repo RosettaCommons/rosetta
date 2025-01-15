@@ -38,6 +38,7 @@
 
 // C/C++ headers
 #include <algorithm>
+#include <memory>
 
 static basic::Tracer TR( "protocols.ligand_evolution.FragmentLibrary" ); // NOLINT(cert-err58-cpp)
 
@@ -50,12 +51,7 @@ namespace ligand_evolution {
 
 FragmentLibrary::FragmentLibrary() = default;
 
-FragmentLibrary::~FragmentLibrary(){
-	for ( auto & fp : fingerprints_ ) {
-        // todo switch to std uniq pointer
-		delete fp.second;
-	}
-}
+FragmentLibrary::~FragmentLibrary() = default;
 
 void FragmentLibrary::load_data( std::string const& reaction_file_path, std::string const& reagent_file_path, core::Size rank ) {
 
@@ -574,12 +570,11 @@ core::Size FragmentLibrary::reagent_name_to_index(core::Size reaction_index, cor
 	return 0;
 }
 
-RDKit::SparseIntVect<unsigned int>* FragmentLibrary::calculate_fingerprint(LigandIdentifier const& id) {
+std::shared_ptr< RDKit::SparseIntVect<unsigned int> > FragmentLibrary::calculate_fingerprint(LigandIdentifier const& id) {
 	if ( fingerprints_.count( id ) == 0 ) {
 		std::string smiles = run_reaction(id);
-		RDKit::RWMol* mol = RDKit::SmilesToMol( smiles );
-		fingerprints_[ id ] = RDKit::MorganFingerprints::getFingerprint( *mol, 2 );
-		delete mol;
+		std::unique_ptr< RDKit::RWMol > mol(RDKit::SmilesToMol( smiles ) );
+		fingerprints_[ id ] = std::shared_ptr< RDKit::SparseIntVect<unsigned int> >( RDKit::MorganFingerprints::getFingerprint( *mol, 2 ) );
 	}
 	return fingerprints_[ id ];
 }

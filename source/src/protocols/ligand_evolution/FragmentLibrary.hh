@@ -123,7 +123,7 @@ public:
 	core::Size reagent_name_to_index( core::Size reaction_index, core::Size position, std::string const& reagent_name ) const;
 
 	/// @brief Calculates a RDKit Morgan fingerprint for a given ligand. Fingerprints are saved and can be retrieved quickly.
-	RDKit::SparseIntVect< unsigned int >* calculate_fingerprint( LigandIdentifier const& id );
+    std::shared_ptr< RDKit::SparseIntVect<unsigned int> > calculate_fingerprint( LigandIdentifier const& id );
 
 	/// @brief Returns the Tanimoto Similarity based on RDKit Morgan fingerprints for two given ligands. The fingerprints are either calculated or retrieved if previously calculated
 	core::Real similarity( LigandIdentifier const& id1, LigandIdentifier const& id2 );
@@ -169,7 +169,7 @@ private:
 	core::Size max_reagents_ = 0;
 
 	/// @brief stores calculated fingerprints for quick references
-	std::map< LigandIdentifier, RDKit::SparseIntVect<unsigned int>* > fingerprints_;
+	std::map< LigandIdentifier, std::shared_ptr< RDKit::SparseIntVect<unsigned int> > > fingerprints_;
 
 };
 
