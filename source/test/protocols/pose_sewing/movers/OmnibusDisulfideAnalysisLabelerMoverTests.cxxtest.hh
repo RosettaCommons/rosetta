@@ -49,14 +49,15 @@ public:
 		protocols::pose_sewing::movers::OmnibusDisulfideAnalysisLabelerMoverOP mover( new protocols::pose_sewing::movers::OmnibusDisulfideAnalysisLabelerMover );
 		mover->apply(test_3_bundle);
 		core::Size remark_count = 0;
-		utility::vector1<std::string> out_strings;
-		out_strings.push_back("DSSP_DISULFIDE_1_43_L_L");
-		out_strings.push_back("DISULFIDIZABLE_PAIRS: 2");
-		out_strings.push_back("ALL_HELIX-HELIX_ANGLE: 126.191");
-		out_strings.push_back("DISULFIDIZABLE_HELIX-HELIX_ANGLE: 126.191");
-		out_strings.push_back("ALL_HELIX-HELIX_ANGLE: -34.1131");
-		out_strings.push_back("ALL_HELIX-HELIX_ANGLE: -24.8175");
-		out_strings.push_back("DISULFIDIZABLE_HELIX-HELIX_ANGLE: -24.8175");
+		utility::vector1<std::string> out_strings {
+			"DSSP_DISULFIDE_1_43_L_L",
+			"DISULFIDIZABLE_PAIRS: 2",
+			"ALL_HELIX-HELIX_ANGLE: 126.191",
+			"DISULFIDIZABLE_HELIX-HELIX_ANGLE: 126.191",
+			"ALL_HELIX-HELIX_ANGLE: -34.1131",
+			"ALL_HELIX-HELIX_ANGLE: -24.8175",
+			"DISULFIDIZABLE_HELIX-HELIX_ANGLE: -24.8175"
+		};
 		for ( auto current_remark : test_3_bundle.pdb_info()->remarks() ) {
 			++remark_count;
 			TS_ASSERT(current_remark.value == out_strings[remark_count]);

@@ -240,10 +240,11 @@ public:
 		TS_ASSERT_EQUALS( set6_->get_lowest_energy_conformer().specific_name, "4C1" );
 		TS_ASSERT_EQUALS( set6aro_->get_lowest_energy_conformer().specific_name, "P" );
 
-		vector1< string > expected_lows;
-		expected_lows.push_back( "1E" );
-		expected_lows.push_back( "2E" );
-		expected_lows.push_back( "3E" );
+		vector1< string > expected_lows {
+			"1E",
+			"2E",
+			"3E"
+		};
 
 		core::chemical::rings::RingConformer random_conformer_from_low_energy_subset;
 

@@ -131,13 +131,15 @@ public:
 		}
 
 		// check get_abego_string
-		utility::vector1< String > abego;
-		abego.push_back( "A" );
-		abego.push_back( "B" );
-		abego.push_back( "SP" );
-		abego.push_back( "MN" );
-		abego.push_back( "E" );
-		abego.push_back( "O" );
+		utility::vector1< String > abego {
+			"A",
+			"B",
+			"SP",
+			"MN",
+			"E",
+			"O"
+		};
+
 		TS_ASSERT( "AB[SP][MN]EO" == abm.get_abego_string( abego ) );
 
 		Pose pose;
