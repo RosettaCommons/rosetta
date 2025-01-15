@@ -459,8 +459,6 @@ void Scorer::load_scores(std::string const& path) {
 	// if a new ligand should be scored and is not yet part of score_memory_, check if it is part of the loaded memory
 	// This check should be done via reagent and reaction names
 
-	// TODO the loading assumes set positions reaction and reagents as well as scores
-
 	TR.Debug << path << " should be loaded." << std::endl;
 
 	utility::io::izstream score_file( path );
@@ -469,62 +467,79 @@ void Scorer::load_scores(std::string const& path) {
 		utility_exit_with_message( "Unable to open score file." );
 	}
 
-	core::Size reagent_start = 3;
-	core::Size reagent_end = 5;
+    std::string line;
+    utility::vector1< std::string > header;
+    utility::vector1< std::string > required_fields{ "reaction", "reagent1", "reagent2" };
+
+    std::map< std::string, core::Size > header_to_index;
+
+    core::Size n_reagents ( 0 );
+
 	core::Size counter( 0 );
-	std::string line;
-	utility::vector1< std::string > loaded_score_terms;
+
 	while ( getline( score_file, line ) ) {
-		utility::vector1< std::string > split_line( utility::string_split_simple( line ) );
-		if ( split_line.size() <= 1 ) {
-			TR.Error << "Use white space only to separate columns in lines." << std::endl;
-			utility_exit_with_message( "Can't process line" );
-		}
-		if ( split_line[ 1 ] != "id" ) {
-			std::string reaction = split_line[ 2 ];
-			utility::vector1< std::string > scored_ligand;
-			for ( core::Size ii( reagent_start ); ii <= reagent_end; ++ii  ) {
-				if ( split_line[ ii ] == "-" ) {
-					scored_ligand.push_back( "0" );
-				} else {
-					scored_ligand.push_back( split_line[ii] );
-				}
-			}
-			while ( scored_ligand.size() < library_.max_positions() ) {
-				scored_ligand.push_back( "0" );
-			}
-			std::map< std::string, core::Real > scores;
-			core::Size ii = 1;
-			for ( std::string const& score_term : score_terms_ ) {
-				scores[ score_term ] =  utility::string2Real( split_line[ reagent_end + ii ] );
-				++ii;
-			}
-			if ( loaded_score_memory_.count( reaction ) == 0 ) {
-				loaded_score_memory_[ reaction ] = std::map< utility::vector1< std::string >, std::map< std::string, core::Real > >();
-			}
-			loaded_score_memory_[ reaction ][ scored_ligand ] = scores;
-			TR.Debug << "Saved scores for " << reaction << " " << scored_ligand << std::endl;
-			++counter;
-		} else {
-			reagent_start = 9999;
-			reagent_end = 0;
-			for ( core::Size ii( 1 ); ii <= split_line.size(); ++ii ) {
-				std::string const& column = split_line[ ii ];
-				if ( column.substr( 0, 7 ) == "reagent" ) {
-					reagent_start = std::min( reagent_start, ii );
-					reagent_end = std::max( reagent_end, ii );
-				}
-			}
-			loaded_score_terms.clear();
-			loaded_score_terms.insert( loaded_score_terms.end(), split_line.begin() + reagent_end, split_line.end() - 1 );
-			for ( core::Size ii( 1 ); ii <= loaded_score_terms.size(); ++ii ) {
-				if ( loaded_score_terms[ ii ] != score_terms_[ ii ] ) {
-					TR.Error << "Can't load score file since score terms are either different or not in the same order." << std::endl;
-					return;
-				}
-			}
-			TR.Debug << "Score terms match, loading continues." << std::endl;
-		}
+
+		utility::vector1< std::string > split_line( utility::split_whitespace( line ) );
+
+		if ( split_line.empty() ) continue;
+
+        // allows comments
+        if ( split_line[ 1 ] == "#" ) continue;
+
+        if ( header.empty() ) {
+            header = split_line;
+            utility::vector1< std::string > missing_fields;
+            for ( std::string const& field : required_fields ) {
+                if ( !header.has_value( field ) ) missing_fields.push_back( field );
+            }
+            for ( std::string const& field : score_terms_ ) {
+                if ( !header.has_value( field ) ) missing_fields.push_back( field );
+            }
+            if ( !missing_fields.empty() ) {
+                TR.Error << "Header line is either not present before any data or does not contain the required field(s) " << missing_fields << std::endl;
+                utility_exit_with_message("Score memory file header is different from expectations.");
+            }
+
+            for ( std::string const & field : header ) {
+                if ( field.find( "reagent" ) != std::string::npos ) n_reagents++;
+                header_to_index[ field ] = header.index( field );
+            }
+
+            continue;
+        }
+
+        if ( split_line.size() != header.size() ) {
+            TR.Warning << "Line does not match header: " << line << std::endl;
+            continue;
+        }
+
+        std::string reaction = split_line[ header_to_index[ "reaction" ] ];
+        utility::vector1< std::string > scored_ligand;
+        for ( core::Size ii( 1 ); ii <= n_reagents; ++ii  ) {
+            std::string field = "reagent" + utility::to_string( ii );
+            std::string reagent = split_line[ header_to_index[ field ] ];
+            if ( reagent == "-" ) {
+                scored_ligand.push_back( "0" );
+            } else {
+                scored_ligand.push_back( reagent );
+            }
+        }
+
+        while ( scored_ligand.size() < library_.max_positions() ) {
+            scored_ligand.push_back( "0" );
+        }
+
+        std::map< std::string, core::Real > scores;
+        for ( std::string const& score_term : score_terms_ ) {
+            scores[ score_term ] =  utility::string2Real( split_line[ header_to_index[ score_term ] ] );
+        }
+
+        if ( loaded_score_memory_.count( reaction ) == 0 ) {
+            loaded_score_memory_[ reaction ] = std::map< utility::vector1< std::string >, std::map< std::string, core::Real > >();
+        }
+        loaded_score_memory_[ reaction ][ scored_ligand ] = scores;
+        TR.Debug << "Saved scores for " << reaction << " " << scored_ligand << ". " << main_score_term_ << ": " << scores[ main_score_term_ ] << std::endl;
+        ++counter;
 	}
 
 	TR.Debug << "Loaded " << counter << " scores from file. " << std::endl;
@@ -550,8 +565,9 @@ bool Scorer::check_memory(LigandIdentifier const& id) {
 			<< std::endl;
 
 		if ( loaded_score_memory_.count(reaction) == 1 ) {
+            TR.Debug << "Found reaction " << reaction << ". ";
 			if ( loaded_score_memory_[reaction].count(universal_identifier) == 1 ) {
-				TR.Debug << "Found loaded scores." << std::endl;
+				TR.Debug << "Found loaded scores for " << universal_identifier << " ." << std::endl;
 				score_memory_[id] = loaded_score_memory_[reaction][universal_identifier];
 				return true;
 			} else {
