@@ -244,10 +244,11 @@ def execute_through_pty(command_line):
                 return execute_through_subprocess(command_line)
 
         try:
-            p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+            try:
+                p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
                                  stderr=subprocess.STDOUT, close_fds=True)
-
-            os.close(slave)
+            finally:
+                os.close(slave)
 
             buffer = []
             while True:
@@ -259,7 +260,6 @@ def execute_through_pty(command_line):
             output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
 
         finally:
-            os.close(slave)
             os.close(master)
 
         p.wait()
