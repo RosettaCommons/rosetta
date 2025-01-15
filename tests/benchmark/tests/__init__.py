@@ -175,25 +175,35 @@ def execute_through_pty(command_line):
 
     if sys.platform == "darwin":
 
-        master, slave = pty.openpty()
-        p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
-                             stderr=subprocess.STDOUT, close_fds=True)
-
-        buffer = []
-        while True:
+        try:
+            master, slave = pty.openpty()
+        except OSError:
+            time.sleep(60) # Wait a bit and see if a PTY opens up.
             try:
-                if select.select([master], [], [], 0.2)[0]:  # has something to read
-                    data = os.read(master, 1 << 22)
-                    if data: buffer.append(data)
+                master, slave = pty.openpty()
+            except OSError:
+                print("ERROR - can't open PTY -- falling back on regular subprocess approach.")
+                return execute_through_subprocess(command_line)
 
-                elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
+        try:
+            p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+                                 stderr=subprocess.STDOUT, close_fds=True)
 
-            except OSError: break  # OSError will be raised when child process close PTY descriptior
+            buffer = []
+            while True:
+                try:
+                    if select.select([master], [], [], 0.2)[0]:  # has something to read
+                        data = os.read(master, 1 << 22)
+                        if data: buffer.append(data)
 
-        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+                    elif (p.poll() is not None)  and  (not select.select([master], [], [], 0.2)[0] ): break  # process is finished and output buffer if fully read
 
-        os.close(master)
-        os.close(slave)
+                except OSError: break  # OSError will be raised when child process close PTY descriptior
+
+            output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+        finally:
+            os.close(master)
+            os.close(slave)
 
         p.wait()
         exit_code = p.returncode
@@ -223,22 +233,34 @@ def execute_through_pty(command_line):
 
     else:
 
-        master, slave = pty.openpty()
-        p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
-                             stderr=subprocess.STDOUT, close_fds=True)
-
-        os.close(slave)
-
-        buffer = []
-        while True:
+        try:
+            master, slave = pty.openpty()
+        except OSError:
+            time.sleep(60) # Wait a bit and see if a PTY opens up.
             try:
-                data = os.read(master, 1 << 22)
-                if data: buffer.append(data)
-            except OSError: break  # OSError will be raised when child process close PTY descriptior
+                master, slave = pty.openpty()
+            except OSError:
+                print("ERROR - can't open PTY -- falling back on regular subprocess approach.")
+                return execute_through_subprocess(command_line)
 
-        output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+        try:
+            p = subprocess.Popen(command_line, shell=True, stdout=slave, stdin=slave,
+                                 stderr=subprocess.STDOUT, close_fds=True)
 
-        os.close(master)
+            os.close(slave)
+
+            buffer = []
+            while True:
+                try:
+                    data = os.read(master, 1 << 22)
+                    if data: buffer.append(data)
+                except OSError: break  # OSError will be raised when child process close PTY descriptior
+
+            output = b''.join(buffer).decode(encoding='utf-8', errors='backslashreplace')
+
+        finally:
+            os.close(slave)
+            os.close(master)
 
         p.wait()
         exit_code = p.returncode
