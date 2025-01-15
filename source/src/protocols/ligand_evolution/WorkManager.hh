@@ -186,6 +186,8 @@ namespace ligand_evolution {
         /// @brief Stores the result of a task message sending a ligand smiles
         std::unique_ptr< char[] > raw_ligand_smiles_;
 
+        static int const max_smiles_length_ = 2500;
+
     };
 
     enum Tag {

@@ -208,7 +208,7 @@ namespace ligand_evolution {
             smiles_handle_( new MPI_Request ),
             id_length_( id_length ),
             raw_ligand_( new int[ id_length_ ] ),
-            raw_ligand_smiles_( new char[ 1000 ] )
+            raw_ligand_smiles_( new char[ max_smiles_length_ ] )
     {
         if( processor_rank_ == 0 ) {
             // starts a non blocking receiving for the termination signal
@@ -216,7 +216,7 @@ namespace ligand_evolution {
             // starts a non blocking receiving for a ligand
             MPI_Irecv( raw_ligand_.get(), int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD, task_handle_.get() );
             // starts a non blocking receiving for a ligand smiles
-            MPI_Irecv( raw_ligand_smiles_.get(), 1000, MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD, smiles_handle_.get() );
+            MPI_Irecv( raw_ligand_smiles_.get(), max_smiles_length_, MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD, smiles_handle_.get() );
         }
     }
 
@@ -264,7 +264,7 @@ namespace ligand_evolution {
             // starts a new non-blocking receiving for a ligand
             MPI_Irecv( raw_ligand_.get(), int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD, task_handle_.get() );
             // starts a new non-blocking receiving for a ligand smiles
-            MPI_Irecv( raw_ligand_smiles_.get(), 1000, MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD, smiles_handle_.get() );
+            MPI_Irecv( raw_ligand_smiles_.get(), max_smiles_length_, MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD, smiles_handle_.get() );
         }
     }
 
@@ -324,8 +324,11 @@ namespace ligand_evolution {
         }
 
         // add padding to always send fixed size smiles
-        // todo add error checking for smiles padding if the smiles exceeds 1000 characters
-        ligand_smiles_ = utility::pad_right( ligand_smiles_, 1000, ' ' );
+        if ( ligand_smiles_.size() > max_smiles_length_ ) {
+            TR.Error << "Ligand " << ligand_ << " with smiles " << ligand_smiles_ << " exceeds maximum length of " << max_smiles_length_ << " for MPI_Send." << std::endl;
+            utility_exit_with_message( "Smiles to long to process with MPI send protocol." );
+        }
+        ligand_smiles_ = utility::pad_right( ligand_smiles_, max_smiles_length_, ' ' );
 
         MPI_Send( raw_ligand_.get(), int( id_length_ ), MPI_INT, processor_rank_, LIGAND, MPI_COMM_WORLD );
         MPI_Send( ligand_smiles_.c_str(), int( ligand_smiles_.size() ), MPI_CHAR, processor_rank_, SMILES, MPI_COMM_WORLD );
