@@ -108,7 +108,7 @@ public:
 	std::string identifier_to_smiles( LigandIdentifier const& identifier ) const;
 
 	/// @brief Returns the number of saved external smiles that should be scored
-	core::Size smiles_to_score() const;
+	core::Size n_unscored_smiles() const;
 
 	/// @brief Returns the number of maximum positions for all reactions used
 	core::Size max_positions() const;

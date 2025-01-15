@@ -374,7 +374,7 @@ void EvolutionManager::write_population_information() const {
 
     void EvolutionManager::external_scoring( int mpi_size ) {
 
-        core::Size smiles_to_score = library_.smiles_to_score() / mpi_size;
+        core::Size smiles_to_score = library_.n_unscored_smiles() / mpi_size;
         for ( core::Size ii( 1 + smiles_to_score * rank_ ); ii <= smiles_to_score * ( rank_ + 1 ); ++ii ) {
             try {
                 scorer_->score_ligand( { ii, 0 }, "", external_scoring_ );
@@ -386,7 +386,7 @@ void EvolutionManager::write_population_information() const {
                 TR.Error << "Unable to score " << library_.identifier_to_smiles( { ii, 0 } ) << std::endl;
             }
         }
-        core::Size leftovers = library_.smiles_to_score() % mpi_size;
+        core::Size leftovers = library_.n_unscored_smiles() % mpi_size;
         // if the total numbers of smiles is not dividable by num of processors, let each one pick one smiles from the end
         if ( leftovers != 0 && core::Size( rank_ ) < leftovers ) {
             core::Size left_index = smiles_to_score * mpi_size + rank_ + 1;

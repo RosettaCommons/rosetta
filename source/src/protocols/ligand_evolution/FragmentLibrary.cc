@@ -116,7 +116,6 @@ void FragmentLibrary::load_reactions( std::string const& reaction_file_path ) {
 
 	while ( getline( reaction_file, line ) ) {
 
-        // todo catch empty file
 		utility::vector1< std::string > split_line( utility::split_whitespace( line ) );
 		// skip empty lines
 		if ( split_line.empty() ) { continue; }
@@ -161,6 +160,10 @@ void FragmentLibrary::load_reactions( std::string const& reaction_file_path ) {
 		reaction_name_to_index_.insert( std::pair< std::string, core::Size >( reaction_name, reactions_.size() ) );
 
 	}
+    if ( header.empty() ) {
+        TR.Error << "Provided reaction file " << reaction_file_path << " is empty. No reactions loaded." << std::endl;
+        utility_exit_with_message( "Empty reaction file" );
+    }
 }
 
 void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
@@ -236,6 +239,11 @@ void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 
 	}
 
+    if ( header.empty() ) {
+        TR.Error << "Provided reagent file " << reagent_file_path << " is empty. No reactions loaded." << std::endl;
+        utility_exit_with_message( "Empty reagent file" );
+    }
+
 	if ( reagents_.empty() ) {
 		TR.Error << "Unable to load reagents." << std::endl;
 		utility_exit_with_message( "Unable to load reagents." );
@@ -245,6 +253,7 @@ void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const& smiles, bool create_rotamers ) const {
 
 	// TODO Rosetta can't handle salts well, like an added Cl ion. Do I want to do something about that?
+    //      This is for now caught by the scorer and a score of 9999.9 is assigned to the molecule
 
 
 	RDKit::RWMol mutable_product( *RDKit::SmilesToMol( smiles ) );
@@ -413,23 +422,10 @@ core::pose::PoseOP FragmentLibrary::create_pose( core::conformation::Residue& li
 	if ( !pdb_info ) {
 		utility_exit_with_message( "Pose does not have PDBInfo - can't determine original chain" );
 	}
-	char original_chain = pdb_info->chain( 1 );
 
 	ligand_pose->append_residue_by_jump( ligand, 1, "", "", true );
 
-    // todo this can be shortened, since append does put the ligand always at the last pos
-	core::Size ligand_position = 0;
-	for ( core::Size ii( 1 ); ii <= pdb_info->nres(); ++ii ) {
-		if ( pdb_info->chain( ii ) != original_chain ) {
-			if ( ligand_position != 0 ) {
-				TR.Warning << "Multiple residues are not on original chain " << original_chain << ". Found residue " << ligand_position << " on chain " << pdb_info->chain( ii ) << std::endl;
-			}
-			ligand_position = ii;
-		}
-	}
-	if ( ligand_position == 0 ) {
-		utility_exit_with_message( "Couldn't identify new ligand position." );
-	}
+	core::Size ligand_position = ligand_pose->size();
 
 	ligand_pose->pdb_info()->chain( ligand_position, ligand_chain );
 	ligand_pose->update_pose_chains_from_pdb_chains();
@@ -541,8 +537,7 @@ void FragmentLibrary::load_smiles( std::string const& path_to_data ) {
 	TR << "Loaded " << smiles_.size() << " molecules to test." << std::endl;
 }
 
-// todo rename to something more straight forward
-core::Size FragmentLibrary::smiles_to_score() const {
+core::Size FragmentLibrary::n_unscored_smiles() const {
 	return smiles_.size();
 }
 
