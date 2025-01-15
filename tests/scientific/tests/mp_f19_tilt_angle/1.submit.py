@@ -52,11 +52,15 @@ targets = targets[:2] if debug else targets
 hpc_logs = f'{working_dir}/hpc-logs'
 if not os.path.exists(hpc_logs): os.makedirs(hpc_logs)
 hpc_job_ids = []
+
+# partitions =  ["-60","-50","-40","-30","-20","-10","0","10","20","30","40","50","60"] # If we're still taking too much time
+partitions =  ["-60","-40","-20","0","20","40","60"]
+
 for target in targets:
 
     command_line2 = []
-    start_z = ["-60","-40","-20","0","20","40"]
-    end_z = ["-40","-20","0","20","40","60"]
+    start_z = partitions[:-1]
+    end_z = partitions[1:]
 
     prefix = f'{working_dir}/output/{target}'
     if not os.path.exists(prefix): os.makedirs(prefix)
@@ -98,4 +102,4 @@ for target in targets:
 hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
 
 #==> EDIT HERE
-benchmark.save_variables('debug targets nstruct working_dir testname')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets nstruct working_dir testname partitions')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

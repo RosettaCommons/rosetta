@@ -39,7 +39,7 @@ folder=[]
 folder.extend( [f'{working_dir}/output'] )
 
 #print(folder[0])
-combiningfiles.combiningallfiles(folder[0], targets)
+combiningfiles.combiningallfiles(folder[0], targets, partitions) # Partitions from saved 1.submit.py variables
 # Get a list of files containing energy landscapes for each target
 energy_landscapes.extend( [ f'{working_dir}/output/{t}/{t}_franklin2019_landscape.dat' for t in targets ] )
 
