@@ -411,7 +411,7 @@ core::Size FragmentLibrary::reagents_size( core::Size reaction_index, core::Size
 core::pose::PoseOP FragmentLibrary::create_pose( core::conformation::Residue& ligand, char ligand_chain ) const {
 
 	core::pose::PoseOP ligand_pose( new core::pose::Pose );
-	ligand_pose->detached_copy( pose_ );
+	ligand_pose->detached_copy( *pose_ );
 
 	core::pose::PDBInfoOP pdb_info( ligand_pose->pdb_info() );
 	if ( !pdb_info ) {
@@ -461,7 +461,7 @@ core::pose::PoseOP FragmentLibrary::create_ligand_pose(std::string const& smiles
 	return create_pose( *create_ligand( smiles, create_rotamers ), ligand_chain );
 }
 
-void FragmentLibrary::set_pose( core::pose::Pose const& pose ) {
+void FragmentLibrary::set_pose( core::pose::PoseCOP pose ) {
 	pose_ = pose;
 }
 
@@ -589,7 +589,7 @@ core::Real FragmentLibrary::similarity(LigandIdentifier const& id1, LigandIdenti
 }
 
 void FragmentLibrary::initialize_from_options(EvolutionOptionsOP options, core::Size external_scoring, core::Size rank) {
-    set_pose(*options->get_pose_from_stream());
+    set_pose(options->get_pose_from_stream());
 
     if ( external_scoring ) {
         load_smiles(options->get_path_to_external_smiles());

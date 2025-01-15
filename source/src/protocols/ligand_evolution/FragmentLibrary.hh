@@ -57,7 +57,7 @@ public:
     void initialize_from_options( EvolutionOptionsOP options, core::Size external_scoring, core::Size rank );
 
 	/// @brief Sets the internally used pose for ligand creation
-	void set_pose( core::pose::Pose const& pose );
+	void set_pose( core::pose::PoseCOP pose );
 
 	/// @brief generates a smiles representation for the id and calls create_ligand_pose with smiles
 	core::pose::PoseOP create_ligand_pose( LigandIdentifier const& id, bool create_rotamers, char ligand_chain ) const;
@@ -154,8 +154,7 @@ private:
 	utility::vector1< ReactionOP > reactions_;
 
 	/// @brief Stores the original pose to dock all ligands in
-	// todo change all poses being part of a class to pose owning pointers
-	core::pose::Pose pose_;
+	core::pose::PoseCOP pose_;
 
 	/// @brief Weighted sampler for random unbiased selection
 	numeric::random::WeightedSampler weighted_sampler_;
