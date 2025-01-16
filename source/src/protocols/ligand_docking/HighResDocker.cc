@@ -284,7 +284,6 @@ HighResDocker::apply(core::pose::Pose & pose) {
 	// Rigid body exploration
 	utility::vector1<protocols::moves::MoverOP> rigid_body_movers= create_rigid_body_movers(pose);
 
-
 	for ( core::Size cycle = 1; cycle <= num_cycles_; ++cycle ) {
 
 		core::pack::task::PackerTaskOP packer_task;
@@ -321,7 +320,6 @@ HighResDocker::apply(core::pose::Pose & pose) {
 		}
 
 		monteCarlo->boltzmann( pose );
-
 	}
 
 	// keep the best structure we found, not the current one

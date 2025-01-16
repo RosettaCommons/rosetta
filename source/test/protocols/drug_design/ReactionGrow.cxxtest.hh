@@ -50,7 +50,7 @@ public:
 		core::chemical::MutableResidueTypeOP restype( core::chemical::read_topology_file("core/chemical/params/U28.params",residue_set) );
 
 		protocols::drug_design::ReactionGrow grow;
-		grow.reaction_file("protocols/drug_design/ester_rxn2.txt" );
+		grow.reaction_file("protocols/drug_design/enamine_rxn.txt" );
 		grow.fragment_database("protocols/drug_design/test_fragments1.sdf");
 
 		TS_ASSERT_EQUALS( restype->nheavyatoms(), 26);

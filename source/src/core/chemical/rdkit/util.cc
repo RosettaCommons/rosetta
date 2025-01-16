@@ -238,15 +238,35 @@ remove_most_charges(::RDKit::RWMol & rdmol) {
 			if ( valence > 3 ) {
 				atom.setFormalCharge( orig_charge );
 				atom.updatePropertyCache(false);
+			} else if ( valence == 3 ) {
+				// Don't change charge if we're attached to a negatively charged oxygen with a single connection (us)
+				for ( auto const & nbri: boost::make_iterator_range(rdmol.getAtomNeighbors(&atom)) ) {
+					auto nbr = rdmol[nbri];
+					if ( nbr->getAtomicNum() == 8 && nbr->getTotalValence() == 1 && nbr->getFormalCharge() == -1 ) {
+						atom.setFormalCharge( orig_charge );
+						atom.updatePropertyCache(false);
+						break; // Out of the for loop
+					}
+				}
 			}
 			break;
 		case 8 : // O
 			if ( valence > 2 ) {
 				atom.setFormalCharge( orig_charge );
 				atom.updatePropertyCache(false);
+			} else if ( valence == 1 ) {
+				// Don't change charge if we're attached to a positively charged nitrogen (ylide/nitro)
+				for ( auto const & nbri: boost::make_iterator_range(rdmol.getAtomNeighbors(&atom)) ) {
+					auto nbr = rdmol[nbri];
+					if ( nbr->getAtomicNum() == 7 && nbr->getFormalCharge() == +1 ) {
+						atom.setFormalCharge( orig_charge );
+						atom.updatePropertyCache(false);
+						break; // Out of the for loop
+					}
+				}
 			}
 			break;
-		case 15 : // P
+		case 15: // P
 			if ( valence > 3 ) {
 				atom.setFormalCharge( orig_charge );
 				atom.updatePropertyCache(false);

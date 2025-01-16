@@ -244,6 +244,5 @@ ReactionChemistry::get_reactions() const {
 	return reactions_;
 }
 
-
 }
 }

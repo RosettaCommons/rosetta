@@ -113,11 +113,10 @@ RDMolToRestype::generate_restype(MutableResidueType const & orig_restype, IndexN
 	index_to_vd_.clear();
 
 	debug_assert( rdmol_.getNumConformers() > 0 );
-
+		
 	// Add hydrogens if there aren't any already
 	// We assume that all valid indexes in the input structure correspond to the same index in the added H structure
 	::RDKit::ROMolOP rdmol( ::RDKit::MolOps::addHs(rdmol_,false,true) ); // Add physical hydrogens with coordinates - both for the "explicit" and "implicit" hydrogens on the atoms
-
 	::RDKit::Conformer const & conf( rdmol->getConformer() ); // Just the first is fine.
 
 	for ( ::RDKit::ROMol::AtomIterator aitr( rdmol->beginAtoms() ), aitr_end( rdmol->endAtoms() ); aitr != aitr_end; ++aitr ) {

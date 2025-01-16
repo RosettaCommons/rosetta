@@ -35,7 +35,6 @@
 #include <core/chemical/Element.hh> // AUTO IWYU For Element
 
 
-
 namespace core {
 namespace chemical {
 namespace rdkit {

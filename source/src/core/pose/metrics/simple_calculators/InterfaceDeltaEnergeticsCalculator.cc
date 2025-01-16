@@ -34,7 +34,6 @@
 
 #include <utility/vector1.hh>
 
-
 using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
@@ -150,87 +149,97 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 
 	// JK MAKE SURE THAT THE GRAPH STATE HERE IS "GOOD"
 
-	// Get the first and last resnum of each chain, using name_of_InterfaceNeighborDefinitionCalculator_
-	basic::MetricValue<Size> mv_size;
-	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"first_chain_first_resnum",mv_size);
-	Size ch1_begin_num = mv_size.value();
-	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"first_chain_last_resnum",mv_size);
-	Size ch1_end_num = mv_size.value();
-	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"second_chain_first_resnum",mv_size);
-	Size ch2_begin_num = mv_size.value();
-	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"second_chain_last_resnum",mv_size);
-	Size ch2_end_num = mv_size.value();
+//	// Get the first and last resnum of each chain, using name_of_InterfaceNeighborDefinitionCalculator_
+//	basic::MetricValue<Size> mv_size;
+//	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"first_chain_first_resnum",mv_size);
+//	Size ch1_begin_num = mv_size.value();
+//	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"first_chain_last_resnum",mv_size);
+//	Size ch1_end_num = mv_size.value();
+//	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"second_chain_first_resnum",mv_size);
+//	Size ch2_begin_num = mv_size.value();
+//	this_pose.metric(name_of_InterfaceNeighborDefinitionCalculator_,"second_chain_last_resnum",mv_size);
+//	Size ch2_end_num = mv_size.value();
+
 
 	// Clear the energy-holders, get the (unweighted) energies from the pose
 	delta_energies_unweighted_.clear();
 	scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
 
-	// Loop over interactions across the interface
-	for ( Size i = ch1_begin_num; i <= ch1_end_num; ++i ) {
-		for ( graph::Graph::EdgeListConstIter
-				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-				iru != irue; ++iru ) {
-			const auto * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
-			Size const j( edge->get_second_node_ind() );
-			if ( ( j >= ch2_begin_num ) && ( j <= ch2_end_num ) ) {
-				delta_energies_unweighted_ += edge->fill_energy_map();
-			}
-		}
-	}
-
-	// Graph is asymmetric, so switch i/j and redo
-	for ( Size i = ch2_begin_num; i <= ch2_end_num; ++i ) {
-		for ( graph::Graph::EdgeListConstIter
-				iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-				iru != irue; ++iru ) {
-			const auto * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
-			Size const j( edge->get_second_node_ind() );
-			if ( ( j >= ch1_begin_num ) && ( j <= ch1_end_num ) ) {
-				delta_energies_unweighted_ += edge->fill_energy_map();
-			}
-		}
-	}
-
-	//let's not forget the long range energies
-	for ( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++ ) {
-		auto lr_type = scoring::methods::LongRangeEnergyType( lr );
-		scoring::LREnergyContainerCOP lrec = this_pose.energies().long_range_container( lr_type );
-		//runtime_assert( lrec );
-		if ( !lrec ) continue;
-		if ( lrec->empty() ) continue;
-
+	Size numChains = this_pose.num_chains();
+	Size ch2_begin_num = this_pose.chain_begin(numChains);
+	Size ch2_end_num = this_pose.chain_end(numChains);
+	
+	for (Size c = 1; c < numChains; c++) {
+		Size ch1_begin_num = this_pose.chain_begin(c);
+		Size ch1_end_num = this_pose.chain_end(c);
+			
+		// Loop over interactions across the interface
 		for ( Size i = ch1_begin_num; i <= ch1_end_num; ++i ) {
-			for ( scoring::ResidueNeighborConstIteratorOP
-					rni = lrec->const_upper_neighbor_iterator_begin( i );
-					*rni != *( lrec->const_upper_neighbor_iterator_end( i ) );
-					++(*rni) ) {
-				Size j = rni->upper_neighbor_id();
+			for ( graph::Graph::EdgeListConstIter
+					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+					iru != irue; ++iru ) {
+				const auto * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
+				Size const j( edge->get_second_node_ind() );
 				if ( ( j >= ch2_begin_num ) && ( j <= ch2_end_num ) ) {
-					scoring::EnergyMap emap;
-					rni->retrieve_energy( emap );
-					delta_energies_unweighted_ += emap;
+					delta_energies_unweighted_ += edge->fill_energy_map();
 				}
 			}
-		} //loop over chain 1 residues
+		}
 
+		// Graph is asymmetric, so switch i/j and redo
 		for ( Size i = ch2_begin_num; i <= ch2_end_num; ++i ) {
-			for ( scoring::ResidueNeighborConstIteratorOP
-					rni = lrec->const_upper_neighbor_iterator_begin( i );
-					*rni != *( lrec->const_upper_neighbor_iterator_end( i ) );
-					++(*rni) ) {
-				Size j = rni->upper_neighbor_id();
+			for ( graph::Graph::EdgeListConstIter
+					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+					iru != irue; ++iru ) {
+				const auto * edge( static_cast< const scoring::EnergyEdge *> (*iru) );
+				Size const j( edge->get_second_node_ind() );
 				if ( ( j >= ch1_begin_num ) && ( j <= ch1_end_num ) ) {
-					scoring::EnergyMap emap;
-					rni->retrieve_energy( emap );
-					delta_energies_unweighted_ += emap;
+					delta_energies_unweighted_ += edge->fill_energy_map();
 				}
 			}
-		} //loop over chain 2 residues
+		}
 
-	} //loop over long range energy types
+		//let's not forget the long range energies
+		for ( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++ ) {
+			auto lr_type = scoring::methods::LongRangeEnergyType( lr );
+			scoring::LREnergyContainerCOP lrec = this_pose.energies().long_range_container( lr_type );
+			//runtime_assert( lrec );
+			if ( !lrec ) continue;
+			if ( lrec->empty() ) continue;
 
+			for ( Size i = ch1_begin_num; i <= ch1_end_num; ++i ) {
+				for ( scoring::ResidueNeighborConstIteratorOP
+						rni = lrec->const_upper_neighbor_iterator_begin( i );
+						*rni != *( lrec->const_upper_neighbor_iterator_end( i ) );
+						++(*rni) ) {
+					Size j = rni->upper_neighbor_id();
+					if ( ( j >= ch2_begin_num ) && ( j <= ch2_end_num ) ) {
+						scoring::EnergyMap emap;
+						rni->retrieve_energy( emap );
+						delta_energies_unweighted_ += emap;
+					}
+				}
+			} //loop over chain 1 residues
+
+			for ( Size i = ch2_begin_num; i <= ch2_end_num; ++i ) {
+				for ( scoring::ResidueNeighborConstIteratorOP
+						rni = lrec->const_upper_neighbor_iterator_begin( i );
+						*rni != *( lrec->const_upper_neighbor_iterator_end( i ) );
+						++(*rni) ) {
+					Size j = rni->upper_neighbor_id();
+					if ( ( j >= ch1_begin_num ) && ( j <= ch1_end_num ) ) {
+						scoring::EnergyMap emap;
+						rni->retrieve_energy( emap );
+						delta_energies_unweighted_ += emap;
+					}
+				}
+			} //loop over chain 2 residues
+
+		} //loop over long range energy types
+	}
+	
 	// Save the most recently used weights
 	weights_ = this_pose.energies().weights();
 	//set weights of score types to ignore to 0

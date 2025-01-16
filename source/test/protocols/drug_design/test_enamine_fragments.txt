@@ -1,0 +1,2 @@
+Cc1cc(C)nc(NN=[Nd])n1
+Cc1cc(O)nc(NN=[Nd])n1

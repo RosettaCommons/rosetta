@@ -26,6 +26,7 @@ static ChemistryRegistrator< rotamer_gen::FragmentRotamersCreator > FragmentRota
 static ChemistryRegistrator< rotamer_gen::RDKitRotamersCreator > RDKitRotamersCreator_registrator;
 
 static ChemistryRegistrator< drug_design::RandomFragmentLigandCreator > RandomFragmentLigandCreator_registrator;
+static ChemistryRegistrator< drug_design::ReactionBasedAnalogSamplerCreator > ReactionBasedAnalogSamplerCreator_registrator;
 static ChemistryRegistrator< drug_design::ReactionGrowCreator > ReactionGrowCreator_registrator;
 static ChemistryRegistrator< drug_design::ReactionFragmentCreator > ReactionFragmentCreator_registrator;
 static ChemistryRegistrator< drug_design::ReactionMultiTransformCreator > ReactionMultiTransformCreator_registrator;

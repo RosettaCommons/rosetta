@@ -80,6 +80,7 @@ protected: // methods
 
 	utility::vector1< std::pair< ::RDKit::ChemicalReactionOP, core::Real > > const &
 	get_reactions() const;
+	
 
 private: // data
 
