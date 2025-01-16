@@ -53,16 +53,32 @@ namespace ligand_evolution {
     void WorkManager::score( Population& pop ) {
 
         std::set< LigandIdentifier > added_ligands;
+        std::set< LigandIdentifier > encountered_ligands;
+
+        core::Size ligand_duplicates = 0;
+        core::Size ligands_in_memory = 0;
+        core::Size ligands_scored = 0;
 
         for( Individual const& individual : pop.individuals() ) {
             LigandIdentifier const& identifier = individual.identifier();
-            if( !scorer_->check_memory( identifier ) && !scorer_->is_scored( identifier ) && added_ligands.count( identifier ) == 0 ) {
+
+            bool ligand_is_duplicate = !encountered_ligands.count( identifier ) == 0;
+            bool ligand_is_scored = scorer_->is_scored( identifier );
+            bool score_in_memory = scorer_->check_memory( identifier );
+
+            encountered_ligands.insert( identifier );
+
+            if ( score_in_memory && !ligand_is_duplicate && !ligand_is_scored ) ligands_in_memory++;
+            if ( ligand_is_scored && !ligand_is_duplicate ) ligands_scored++;
+            if ( ligand_is_duplicate ) ligand_duplicates++;
+
+            if( !score_in_memory && !ligand_is_scored && !ligand_is_duplicate ) {
                 added_ligands.insert( identifier );
                 unscored_ligands_.push( identifier );
             }
         }
 
-        TR.Debug << "Start working on " << added_ligands.size() << " ligands." << std::endl;
+        TR << "Received " << pop.size() << " ligands. " << ligands_in_memory << " scores are taken from file, " << ligands_scored << " were encountered before and " << ligand_duplicates << " are duplicates in this population. Start working on " << added_ligands.size() << " remaining ligands." << std::endl;
 
         distribute_work();
 

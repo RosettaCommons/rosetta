@@ -61,6 +61,7 @@ void EvolutionManager::init() {
 	}
 
     // Movers and scoring functions from here will be used later. Parsing the script happens early to detect errors quickly
+    TR << "Loading docking protocol from rosetta script " << evoopt->get_protocol_path() << std::endl;
     protocols::rosetta_scripts::XmlObjectsCOP rosetta_script = protocols::rosetta_scripts::XmlObjects::create_from_file( evoopt->get_protocol_path() );
     if ( !rosetta_script->list_movers().has_value( "ParsedProtocol" ) ) {
         TR.Error << "REvoLd expects to find a mover called 'ParsedProtocol' in your script. Specify it through the <PROTOCOLS> tag." << std::endl;

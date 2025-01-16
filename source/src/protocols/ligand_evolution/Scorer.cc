@@ -542,7 +542,7 @@ void Scorer::load_scores(std::string const& path) {
         ++counter;
 	}
 
-	TR.Debug << "Loaded " << counter << " scores from file. " << std::endl;
+	TR << "Loaded " << counter << " scores from file. " << std::endl;
 
 }
 
