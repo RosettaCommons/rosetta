@@ -18,6 +18,7 @@ import benchmark
 import energy_landscape_metrics
 import combiningfiles
 from benchmark.util import quality_measures as qm
+import pandas as pd
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into     s
 config = benchmark.config()
@@ -75,23 +76,11 @@ for i in range( 0, len( energy_landscapes ) ):
     if ( not os.path.isfile( energy_landscapes[i] ) ):
         sys.exit( "Output data file " + energy_landscapes[i] + " not found!" )
 
-    with open( energy_landscapes[i], 'rt' ) as g:
-        contents = g.readlines()
-        contents = [ x.strip() for x in contents ]
-        contents = [ x.split(" ") for x in contents ]
+    contents = pd.read_csv(energy_landscapes[i], delimiter=" ")
 
-    zcoords = []
-    angles = []
-    total_scores = []
-
-    for x in range(1, len(contents)):
-        zcoords.append( float( contents[x][0] ) )
-        angles.append( float( contents[x][1] ))
-        total_scores.append( float( contents[x][3] ))
-
-    zcoords_arr = np.asarray( zcoords )
-    angles_arr = np.asarray( angles )
-    total_scores_arr = np.asarray( total_scores )
+    zcoords_arr = contents['zcoord'].to_numpy()
+    angles_arr = contents['angle'].to_numpy()
+    total_scores_arr = contents['total_score'].to_numpy()
 
     # Calculate the ddG of insertion and the minimum energy orientations
     dG_transfer = energy_landscape_metrics.compute_dG_transfer_energy( zcoords_arr, angles_arr, total_scores_arr )

@@ -19,11 +19,7 @@ def compute_dG_transfer_energy( zcoords, angles, energies ):
     angle_is_90_indices = set(np.where( angles == 90.0 )[0])
     z_is_max = set(np.where( zcoords == np.max(zcoords) )[0] )
     second_index = list( angle_is_90_indices.intersection( z_is_max ))
-    if len(second_index) > 0 and second_index[0] in energies:
-        solution_state_energy = energies[second_index[0]]
-    else:
-        print("Unable to compute dG transfer energy -- data not found.")
-        return 999999
+    solution_state_energy = energies[second_index[0]]
 
     return round( bilayer_energy - solution_state_energy, 2 )
 
