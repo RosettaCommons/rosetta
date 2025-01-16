@@ -78,6 +78,8 @@ for line in logfile_contents:
             rmsd_vals.append( float(sline[2]) )
             rmsd_vals_to_lowest.append( float(sline[3]) )
             energy_vals.append( float(sline[4]) )
+        elif len(sline) == 0:
+            continue # Ignore blank line
         elif sline[0] == "MPI_worker_node":
             in_table = True
             continue
