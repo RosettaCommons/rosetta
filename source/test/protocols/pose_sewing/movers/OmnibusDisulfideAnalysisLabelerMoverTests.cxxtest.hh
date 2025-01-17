@@ -57,7 +57,7 @@ public:
 			"ALL_HELIX-HELIX_ANGLE: -34.1131",
 			"ALL_HELIX-HELIX_ANGLE: -24.8175",
 			"DISULFIDIZABLE_HELIX-HELIX_ANGLE: -24.8175"
-		};
+			};
 		for ( auto current_remark : test_3_bundle.pdb_info()->remarks() ) {
 			++remark_count;
 			TS_ASSERT(current_remark.value == out_strings[remark_count]);

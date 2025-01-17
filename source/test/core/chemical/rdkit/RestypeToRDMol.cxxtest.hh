@@ -117,7 +117,7 @@ public:
 			"benzoate.sdf",
 			"ATP.sdf",
 			"nitro.sdf"
-		};
+			};
 
 		for ( core::Size ii(1); ii <= filenames.size(); ++ii ) {
 			TR << "Testing file: " << filenames[ii] << std::endl;

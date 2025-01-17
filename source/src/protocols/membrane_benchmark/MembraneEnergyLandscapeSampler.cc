@@ -202,8 +202,8 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 
 	/*-----------
 	if ( dump_structures_ ) {
-		std::string filename8( tempstr1+"_inmem_nopack"+".pdb" );
-		pose.dump_pdb( filename8 );
+	std::string filename8( tempstr1+"_inmem_nopack"+".pdb" );
+	pose.dump_pdb( filename8 );
 	}
 	--------------*/
 	core::Vector peptide_center( 0,0,0 );
@@ -274,8 +274,8 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 
 	/*
 	if ( dump_structures_ ) {
-		std::string filename7( tempstr+"_poseafterinitimove"+".pdb" );
-		pose.dump_pdb( filename7 );
+	std::string filename7( tempstr+"_poseafterinitimove"+".pdb" );
+	pose.dump_pdb( filename7 );
 	}
 	*/
 
@@ -333,8 +333,8 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 
 	/*
 	if ( dump_structures_ ) {
-		std::string filename_aa( tempstr + "_after_align_start" + std::to_string( end_z_ )  + "_end" + std::to_string( start_z_ ) + ".pdb" );
-		pose.dump_pdb( filename_aa );
+	std::string filename_aa( tempstr + "_after_align_start" + std::to_string( end_z_ )  + "_end" + std::to_string( start_z_ ) + ".pdb" );
+	pose.dump_pdb( filename_aa );
 	}
 	*/
 

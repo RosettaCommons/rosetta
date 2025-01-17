@@ -138,7 +138,7 @@ public:
 			"MN",
 			"E",
 			"O"
-		};
+			};
 
 		TS_ASSERT( "AB[SP][MN]EO" == abm.get_abego_string( abego ) );
 

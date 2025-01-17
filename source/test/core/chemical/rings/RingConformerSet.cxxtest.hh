@@ -244,7 +244,7 @@ public:
 			"1E",
 			"2E",
 			"3E"
-		};
+			};
 
 		core::chemical::rings::RingConformer random_conformer_from_low_energy_subset;
 

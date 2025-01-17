@@ -136,7 +136,7 @@ public:
 			"refpose(refpose2,9)", //Good string
 			"refpose(,10)", //Bad string
 			"refpose(refpose3,11)-3" //Good string
-		};
+			};
 
 		TR << "Input_string\tGood_string?\tRefpose_name\tRef_number\tRef_offset" << std::endl;
 		for ( core::Size i=1; i<=6; ++i ) {
