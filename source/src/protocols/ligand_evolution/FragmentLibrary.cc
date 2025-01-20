@@ -160,10 +160,10 @@ void FragmentLibrary::load_reactions( std::string const& reaction_file_path ) {
 		reaction_name_to_index_.insert( std::pair< std::string, core::Size >( reaction_name, reactions_.size() ) );
 
 	}
-    if ( header.empty() ) {
-        TR.Error << "Provided reaction file " << reaction_file_path << " is empty. No reactions loaded." << std::endl;
-        utility_exit_with_message( "Empty reaction file" );
-    }
+	if ( header.empty() ) {
+		TR.Error << "Provided reaction file " << reaction_file_path << " is empty. No reactions loaded." << std::endl;
+		utility_exit_with_message( "Empty reaction file" );
+	}
 }
 
 void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
@@ -239,10 +239,10 @@ void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 
 	}
 
-    if ( header.empty() ) {
-        TR.Error << "Provided reagent file " << reagent_file_path << " is empty. No reactions loaded." << std::endl;
-        utility_exit_with_message( "Empty reagent file" );
-    }
+	if ( header.empty() ) {
+		TR.Error << "Provided reagent file " << reagent_file_path << " is empty. No reactions loaded." << std::endl;
+		utility_exit_with_message( "Empty reagent file" );
+	}
 
 	if ( reagents_.empty() ) {
 		TR.Error << "Unable to load reagents." << std::endl;
@@ -253,7 +253,7 @@ void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const& smiles, bool create_rotamers ) const {
 
 	// TODO Rosetta can't handle salts well, like an added Cl ion. Do I want to do something about that?
-    //      This is for now caught by the scorer and a score of 9999.9 is assigned to the molecule
+	//      This is for now caught by the scorer and a score of 9999.9 is assigned to the molecule
 
 
 	RDKit::RWMol mutable_product( *RDKit::SmilesToMol( smiles ) );
@@ -579,13 +579,13 @@ core::Real FragmentLibrary::similarity(LigandIdentifier const& id1, LigandIdenti
 }
 
 void FragmentLibrary::initialize_from_options(EvolutionOptionsOP options, core::Size external_scoring, core::Size rank) {
-    set_pose(options->get_pose_from_stream());
+	set_pose(options->get_pose_from_stream());
 
-    if ( external_scoring ) {
-        load_smiles(options->get_path_to_external_smiles());
-    } else {
-        load_data(options->get_path_to_reactions(), options->get_path_to_reagents(), rank);
-    }
+	if ( external_scoring ) {
+		load_smiles(options->get_path_to_external_smiles());
+	} else {
+		load_data(options->get_path_to_reactions(), options->get_path_to_reagents(), rank);
+	}
 }
 
 // #########################################################################

@@ -44,9 +44,9 @@ namespace protocols {
 namespace ligand_evolution {
 
 EvolutionOptions::EvolutionOptions() {
-    parse_cmdline();
+	parse_cmdline();
 	check_validity();
-    TR.Debug << "Options passed all checks." << std::endl;
+	TR.Debug << "Options passed all checks." << std::endl;
 }
 
 EvolutionOptions::EvolutionOptions( std::string const& path_to_option_file) {
@@ -57,7 +57,7 @@ EvolutionOptions::EvolutionOptions( std::string const& path_to_option_file) {
 		utility_exit_with_message( "Unable to open option file." );
 	}
 
-    parse_cmdline();
+	parse_cmdline();
 	parse_option_file( path_to_option_file );
 
 	check_validity();
@@ -67,84 +67,84 @@ EvolutionOptions::EvolutionOptions( std::string const& path_to_option_file) {
 
 void EvolutionOptions::parse_cmdline() {
 
-    if ( !basic::options::option[ basic::options::OptionKeys::parser::protocol ].active() ) {
-        TR.Error << "No docking protocol provided. Use -parser:protocol to define a path to a rosetta script" << std::endl;
-        error_counter_++;
-    } else {
-        protocol_path_ = basic::options::option[ basic::options::OptionKeys::parser::protocol ];
-        utility::io::izstream protocol_file( protocol_path_ );
-        if ( !protocol_file ) {
-            TR.Error << "Can't find protocol file " << protocol_path_ << "." << std::endl;
-            error_counter_++;
-        }
-    }
+	if ( !basic::options::option[ basic::options::OptionKeys::parser::protocol ].active() ) {
+		TR.Error << "No docking protocol provided. Use -parser:protocol to define a path to a rosetta script" << std::endl;
+		error_counter_++;
+	} else {
+		protocol_path_ = basic::options::option[ basic::options::OptionKeys::parser::protocol ];
+		utility::io::izstream protocol_file( protocol_path_ );
+		if ( !protocol_file ) {
+			TR.Error << "Can't find protocol file " << protocol_path_ << "." << std::endl;
+			error_counter_++;
+		}
+	}
 
-    pose_stream_ = core::import_pose::pose_stream::streams_from_cmd_line();
-    if ( !pose_stream_.has_another_pose() ) {
-        TR.Error << "No pdb provided. Please use one of the commandline input functions like -in::file::s" << std::endl;
-        error_counter_++;
-    }
+	pose_stream_ = core::import_pose::pose_stream::streams_from_cmd_line();
+	if ( !pose_stream_.has_another_pose() ) {
+		TR.Error << "No pdb provided. Please use one of the commandline input functions like -in::file::s" << std::endl;
+		error_counter_++;
+	}
 
-    if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::xyz ].active() ){
-        TR.Error << "No position for ligand placement specified. Use -ligand_evolution::xyz to define a position" << std::endl;
-        error_counter_++;
-    } else {
-        TR.Debug << "Passed start position: "
-                 << " " << basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][1]
-                 << " " << basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][2]
-                 << " " << basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][3]
-                 << std::endl;
-        xyz_.x(basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][1]);
-        xyz_.y(basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][2]);
-        xyz_.z(basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][3]);
-    }
+	if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::xyz ].active() ) {
+		TR.Error << "No position for ligand placement specified. Use -ligand_evolution::xyz to define a position" << std::endl;
+		error_counter_++;
+	} else {
+		TR.Debug << "Passed start position: "
+			<< " " << basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][1]
+			<< " " << basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][2]
+			<< " " << basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][3]
+			<< std::endl;
+		xyz_.x(basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][1]);
+		xyz_.y(basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][2]);
+		xyz_.z(basic::options::option[basic::options::OptionKeys::ligand_evolution::xyz][3]);
+	}
 
-    if ( basic::options::option[ basic::options::OptionKeys::ligand_evolution::external_scoring ].active() != basic::options::option[ basic::options::OptionKeys::ligand_evolution::smiles_file ].active() ){
-        TR.Error << "Only one external scoring option is provided. Make sure you specified external_scoring and smiles_file" << std::endl;
-        error_counter_++;
-    } else if ( basic::options::option[ basic::options::OptionKeys::ligand_evolution::external_scoring ].active() && basic::options::option[ basic::options::OptionKeys::ligand_evolution::smiles_file ].active() ) {
-        external_scoring_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::external_scoring ];
-        path_to_external_smiles_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::smiles_file ].value();
-    }
+	if ( basic::options::option[ basic::options::OptionKeys::ligand_evolution::external_scoring ].active() != basic::options::option[ basic::options::OptionKeys::ligand_evolution::smiles_file ].active() ) {
+		TR.Error << "Only one external scoring option is provided. Make sure you specified external_scoring and smiles_file" << std::endl;
+		error_counter_++;
+	} else if ( basic::options::option[ basic::options::OptionKeys::ligand_evolution::external_scoring ].active() && basic::options::option[ basic::options::OptionKeys::ligand_evolution::smiles_file ].active() ) {
+		external_scoring_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::external_scoring ];
+		path_to_external_smiles_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::smiles_file ].value();
+	}
 
-    if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_scfx ].active() ){
-        TR.Error << "No main scoring function defined. Use -ligand_evolution::main_scfx to define a function name." << std::endl;
-        error_counter_++;
-    } else {
-        scoring_function_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_scfx ];
-    }
+	if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_scfx ].active() ) {
+		TR.Error << "No main scoring function defined. Use -ligand_evolution::main_scfx to define a function name." << std::endl;
+		error_counter_++;
+	} else {
+		scoring_function_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_scfx ];
+	}
 
-    if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::reaction_file ].active() ){
-        if ( external_scoring_ == 0 ) {
-            TR.Error << "No reaction file defined. Use -ligand_evolution::reagent_file to specify your library."
-                     << std::endl;
-            error_counter_++;
-        }
-    } else {
-        path_to_reactions_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::reaction_file ].value();
-    }
+	if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::reaction_file ].active() ) {
+		if ( external_scoring_ == 0 ) {
+			TR.Error << "No reaction file defined. Use -ligand_evolution::reagent_file to specify your library."
+				<< std::endl;
+			error_counter_++;
+		}
+	} else {
+		path_to_reactions_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::reaction_file ].value();
+	}
 
-    if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::reagent_file ].active() ){
-        if ( external_scoring_ == 0 ) {
-            TR.Error << "No reagent file defined. Use -ligand_evolution::reagent_file to specify your library."
-                     << std::endl;
-            error_counter_++;
-        }
-    } else {
-        path_to_reagents_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::reagent_file ].value();
-    }
+	if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::reagent_file ].active() ) {
+		if ( external_scoring_ == 0 ) {
+			TR.Error << "No reagent file defined. Use -ligand_evolution::reagent_file to specify your library."
+				<< std::endl;
+			error_counter_++;
+		}
+	} else {
+		path_to_reagents_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::reagent_file ].value();
+	}
 
-    // defaults are set for these options
-    score_runs_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::n_scoring_runs ];
-    ligand_chain_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::ligand_chain ];
-    pose_dump_directory_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::pose_output_directory ].value();
-    main_score_term_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_term ];
-    generations_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::n_generations ];
+	// defaults are set for these options
+	score_runs_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::n_scoring_runs ];
+	ligand_chain_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::ligand_chain ];
+	pose_dump_directory_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::pose_output_directory ].value();
+	main_score_term_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_term ];
+	generations_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::n_generations ];
 
-    // these options are optional
-    if ( basic::options::option[ basic::options::OptionKeys::ligand_evolution::score_mem_path ].active() ) {
-        path_to_score_memory_ = basic::options::option[basic::options::OptionKeys::ligand_evolution::score_mem_path].value();
-    }
+	// these options are optional
+	if ( basic::options::option[ basic::options::OptionKeys::ligand_evolution::score_mem_path ].active() ) {
+		path_to_score_memory_ = basic::options::option[basic::options::OptionKeys::ligand_evolution::score_mem_path].value();
+	}
 
 }
 
@@ -255,11 +255,11 @@ void EvolutionOptions::check_selectors() {
 	for ( auto& selec_ops : selector_options_ ) {
 		std::string selector_name = selec_ops.first;
 		std::string selector_type = selec_ops.second.first;
-        std::map< std::string, core::Real > const& selector_options = selec_ops.second.second;
-        std::map< std::string, bool > selector_option_valid;
-        for ( std::pair< std::string const, core::Real > const& option : selector_options ) {
-            selector_option_valid[ option.first ] = false;
-        }
+		std::map< std::string, core::Real > const& selector_options = selec_ops.second.second;
+		std::map< std::string, bool > selector_option_valid;
+		for ( std::pair< std::string const, core::Real > const& option : selector_options ) {
+			selector_option_valid[ option.first ] = false;
+		}
 		is_used[ selector_name ] = false;
 
 		if ( std::find( selector_types.begin(), selector_types.end(), selector_type ) == selector_types.end() ) {
@@ -269,50 +269,50 @@ void EvolutionOptions::check_selectors() {
 
 		if ( selector_options.count( "size" ) == 0 ) {
 			TR.Error << "Size option has to be set for all Selectors but is absent for " << selector_name << "." << std::endl;
-            error_counter_++;
+			error_counter_++;
 		} else if ( selector_options.at( "size" ) <= 0 ) {
 			TR.Error << "Size option is less or equal 0 for " << selector_name << "." << std::endl;
-            error_counter_++;
+			error_counter_++;
 		}
-        selector_option_valid[ "size" ] = true;
-        // remove does not need to be checked, supplying it is optional
-        selector_option_valid[ "remove" ] = true;
+		selector_option_valid[ "size" ] = true;
+		// remove does not need to be checked, supplying it is optional
+		selector_option_valid[ "remove" ] = true;
 
 		if ( selector_type == "tournament" ) {
 
 			if ( selector_options.count( "tournament_size" ) == 0 ) {
 				TR.Error << "tournament_size option is not set for " << selector_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			} else if ( selector_options.at( "tournament_size" ) < 0 ) {
 				TR.Error << "tournament_size option is less than 1 for " << selector_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
-            selector_option_valid[ "tournament_size" ] = true;
+			selector_option_valid[ "tournament_size" ] = true;
 
 			if ( selector_options.count( "acceptance_chance" ) == 0 ) {
 				TR.Error << "acceptance_chance option is not set for " << selector_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			} else if ( selector_options.at( "acceptance_chance" ) <= 0 ) {
 				TR.Error << "acceptance_chance option is less or equal to 0 for " << selector_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
-            selector_option_valid[ "acceptance_chance" ] = true;
+			selector_option_valid[ "acceptance_chance" ] = true;
 		}
 
 		if ( selector_type == "roulette" ) {
 			if ( selector_options.count( "consider_positive" ) == 0 ) {
 				TR.Error << "consider_positive option is not set for " << selector_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
-            selector_option_valid[ "consider_positive" ] = true;
+			selector_option_valid[ "consider_positive" ] = true;
 		}
 
-        for ( std::pair< std::string const, bool > const& option : selector_option_valid ) {
-            if ( !option.second ) {
-                TR.Error << option.first << " is not supported as option for " << selector_name << "." << std::endl;
-                error_counter_++;
-            }
-        }
+		for ( std::pair< std::string const, bool > const& option : selector_option_valid ) {
+			if ( !option.second ) {
+				TR.Error << option.first << " is not supported as option for " << selector_name << "." << std::endl;
+				error_counter_++;
+			}
+		}
 
 	}
 
@@ -322,13 +322,13 @@ void EvolutionOptions::check_selectors() {
 		std::string factory_name = link.second;
 		if ( is_used.count( selector_name ) == 0 ) {
 			TR.Error << "Selector " << selector_name << " linked to " << factory_name << " is not defined." << std::endl;
-            error_counter_++;
+			error_counter_++;
 		} else {
 			is_used[ selector_name ] = true;
 			core::Size selection_size = core::Size( selector_options_.at( selector_name ).second.at( "size" ) );
 			if ( selection_size > leftover_popsize ) {
 				TR.Error << "Selector " << selector_name << " tries to select " << selection_size << ", but at this point only " << leftover_popsize << " individuals are available." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
 			if ( bool( selector_options_.at( selector_name ).second.at( "remove" ) ) ) {
 				leftover_popsize -= selection_size;
@@ -338,7 +338,7 @@ void EvolutionOptions::check_selectors() {
 
 	if ( is_used.count( main_selector_ ) == 0 ) {
 		TR.Error << "Main Selector " << main_selector_ << " is not defined." << std::endl;
-        error_counter_++;
+		error_counter_++;
 	} else {
 		is_used[ main_selector_ ] = true;
 	}
@@ -360,11 +360,11 @@ void EvolutionOptions::check_factories() {
 
 		std::string factory_name = fac_ops.first;
 		std::string factory_type = fac_ops.second.first;
-        std::map< std::string, core::Real > const& factory_options = fac_ops.second.second;
-        std::map< std::string, bool > factory_option_valid;
-        for ( std::pair< std::string const, core::Real > const& option : factory_options ) {
-            factory_option_valid[ option.first ] = false;
-        }
+		std::map< std::string, core::Real > const& factory_options = fac_ops.second.second;
+		std::map< std::string, bool > factory_option_valid;
+		for ( std::pair< std::string const, core::Real > const& option : factory_options ) {
+			factory_option_valid[ option.first ] = false;
+		}
 
 		is_used[ factory_name ] = false;
 
@@ -375,12 +375,12 @@ void EvolutionOptions::check_factories() {
 
 		if ( factory_options.count( "size" ) == 0 ) {
 			TR.Error << "size option is not set for factory " << factory_name << "." << std::endl;
-            error_counter_++;
+			error_counter_++;
 		} else if ( factory_options.at( "size" ) < 1.0 ) {
 			TR.Error << "size option is set to less than one for factory " << factory_name << "." << std::endl;
-            error_counter_++;
+			error_counter_++;
 		}
-        factory_option_valid["size"] = true;
+		factory_option_valid["size"] = true;
 
 		if ( factory_type == "mutator" ) {
 
@@ -388,68 +388,68 @@ void EvolutionOptions::check_factories() {
 			if ( factory_options.count( "reaction_weight" ) == 0 ) {
 				TR.Error << "reaction_weight option is not set for factory " << factory_name << "." << std::endl;
 				reaction_weight_set = false;
-                error_counter_++;
+				error_counter_++;
 			} else if ( factory_options.at( "reaction_weight" ) < 0.0 ) {
 				TR.Warning << "reaction_weight option is set to less than zero for factory " << factory_name << "." << std::endl;
 			}
-            factory_option_valid["reaction_weight"] = true;
+			factory_option_valid["reaction_weight"] = true;
 
 			bool reagent_weight_set = true;
 			if ( factory_options.count( "reagent_weight" ) == 0 ) {
 				TR.Error << "reagent_weight option is not set for factory " << factory_name << "." << std::endl;
 				reagent_weight_set = false;
-                error_counter_++;
+				error_counter_++;
 			} else if ( factory_options.at( "reagent_weight" ) < 0.0 ) {
 				TR.Warning << "reagent_weight option is set to less than zero for factory " << factory_name << ". This is treated as being set to 0." << std::endl;
 			}
-            factory_option_valid["reagent_weight"] = true;
+			factory_option_valid["reagent_weight"] = true;
 
 			if ( reaction_weight_set && reagent_weight_set && factory_options.at( "reagent_weight" ) <= 0.0 && factory_options.at( "reaction_weight" ) <= 0 ) {
 				TR.Error << "All weights for " << factory_name << " are set to less or equal than zero, causing it to mutate nothing." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
 
 			bool min_sim_set = true;
 			if ( factory_options.count( "min_similarity" ) == 0 ) {
 				TR.Error << "min_similarity option is not set for factory " << factory_name << "." << std::endl;
 				min_sim_set = false;
-                error_counter_++;
+				error_counter_++;
 			} else if ( factory_options.at( "min_similarity" ) < 0.0 ) {
 				TR.Error << "min_similarity option is set to less than zero for factory " << factory_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			} else if ( factory_options.at( "min_similarity" ) > 1.0 ) {
 				TR.Error << "min_similarity option is set to greater than one for factory " << factory_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
-            factory_option_valid["min_similarity"] = true;
+			factory_option_valid["min_similarity"] = true;
 
 			bool max_sim_set = true;
 			if ( factory_options.count( "max_similarity" ) == 0 ) {
 				TR.Error << "max_similarity option is not set for factory " << factory_name << "." << std::endl;
 				max_sim_set = false;
-                error_counter_++;
+				error_counter_++;
 			} else if ( factory_options.at( "max_similarity" ) < 0.0 ) {
 				TR.Error << "max_similarity option is set to less than zero for factory " << factory_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			} else if ( factory_options.at( "max_similarity" ) > 1.0 ) {
 				TR.Error << "max_similarity option is set to greater than one for factory " << factory_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
-            factory_option_valid["max_similarity"] = true;
+			factory_option_valid["max_similarity"] = true;
 
 			if ( min_sim_set && max_sim_set && factory_options.at( "max_similarity" ) <= factory_options.at( "min_similarity" ) ) {
 				TR.Error << "min_similarity is set to greater or equal than max_similarity for factory " << factory_name << "." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
 
 		}
 
-        for ( std::pair< std::string const, bool > const& option : factory_option_valid ) {
-            if ( !option.second ) {
-                TR.Error << option.first << " is not supported as option for " << factory_name << "." << std::endl;
-                error_counter_++;
-            }
-        }
+		for ( std::pair< std::string const, bool > const& option : factory_option_valid ) {
+			if ( !option.second ) {
+				TR.Error << option.first << " is not supported as option for " << factory_name << "." << std::endl;
+				error_counter_++;
+			}
+		}
 
 	}
 
@@ -459,22 +459,22 @@ void EvolutionOptions::check_factories() {
 		std::string factory_name = link.second;
 		if ( factory_options_.count( factory_name ) == 0 ) {
 			TR.Error << factory_name << " linked to " << selector_name << " is not defined." << std::endl;
-            error_counter_++;
+			error_counter_++;
 		} else {
 			is_used[ factory_name ] = true;
 			generated_popsize += core::Size( factory_options_.at( factory_name ).second.at( "size" ) );
 		}
-        if ( factory_options_.at( factory_name ).first == "identity"
-             && factory_options_.at( factory_name ).second.at("size") > selector_options_.at( selector_name ).second.at( "size" ) ) {
-            TR.Error << selector_name << " selects only " << selector_options_.at( selector_name ).second.at( "size" ) << " individuals, but " << factory_name
-                     << " requires at least " << factory_options_.at( factory_name ).second.at("size") << " individuals." << std::endl;
-            error_counter_++;
-        }
-    }
+		if ( factory_options_.at( factory_name ).first == "identity"
+				&& factory_options_.at( factory_name ).second.at("size") > selector_options_.at( selector_name ).second.at( "size" ) ) {
+			TR.Error << selector_name << " selects only " << selector_options_.at( selector_name ).second.at( "size" ) << " individuals, but " << factory_name
+				<< " requires at least " << factory_options_.at( factory_name ).second.at("size") << " individuals." << std::endl;
+			error_counter_++;
+		}
+	}
 
 	if ( generated_popsize < supported_population_size_ ) {
 		TR.Error << "All offspring factories combined produce only " << generated_popsize << " new individuals, but " << supported_population_size_ << " are supported." << std::endl;
-        error_counter_++;
+		error_counter_++;
 	}
 
 	for ( auto const& usage : is_used ) {
@@ -496,7 +496,7 @@ void EvolutionOptions::check_pop_init() {
 			error_counter_++;
 		} else if ( init_opt.second.at( "size" ) <= 0 ) {
 			TR.Error << "Size attribute for pop init type " << type << " is less or equal than zero." << std::endl;
-            error_counter_++;
+			error_counter_++;
 		} else {
 			size = init_opt.second.at( "size" );
 		}
@@ -505,44 +505,44 @@ void EvolutionOptions::check_pop_init() {
 			for ( auto const& random_opt : init_opt.second ) {
 				if ( random_opt.first != "size" ) {
 					TR.Error << "Random pop init only supports size attribute, not " << random_opt.first << std::endl;
-                    error_counter_++;
+					error_counter_++;
 				}
 			}
 		} else if ( type == "best_loaded" ) {
 			if ( path_to_score_memory_.empty() ) {
 				TR.Error << type << " requires scores to be loaded, but no path to memory was defined." << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
 			if ( init_opt.second.count( "selection" ) == 0 ) {
 				TR.Error << "Selection attribute needs to be defined for init type " << type << std::endl;
-                error_counter_++;
+				error_counter_++;
 			} else if ( init_opt.second.at( "selection" ) <= 0 ) {
 				TR.Error << "Selection attribute needs to greater 0 for init type " << type << std::endl;
-                error_counter_++;
+				error_counter_++;
 			} else if ( init_opt.second.at( "selection" ) <= size ) {
 				TR.Error << "Selection attribute needs to greater than init size for init type " << type << std::endl;
-                error_counter_++;
+				error_counter_++;
 			}
 			for ( auto const& random_opt : init_opt.second ) {
 				if ( random_opt.first != "size" && random_opt.first != "selection" ) {
 					TR.Error << "Random pop init only supports size attribute, not " << random_opt.first << std::endl;
-                    error_counter_++;
+					error_counter_++;
 				}
 			}
 		} else {
 			TR.Error << "Unknown pop init type " << type << std::endl;
-            error_counter_++;
+			error_counter_++;
 		}
 	}
 
 	if ( combined_init_size < supported_population_size_ ) {
 		TR.Error << "Combined initial population size has to be at least as high as the supported population size." << std::endl;
-        error_counter_++;
+		error_counter_++;
 	}
 
 	if ( combined_init_size <= 0 ) {
 		TR.Error << "Combined initial population size has to be greater than zero." << std::endl;
-        error_counter_++;
+		error_counter_++;
 	}
 }
 
@@ -720,11 +720,11 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 				}
 			}
 		} else if ( option_name == "Selector" ) {
-            if ( !selectors_defined_ ) {
-                TR.Warning << "Custom Selectors defined. All default Selectors are removed." << std::endl;
-                selectors_defined_ = true;
-                selector_options_.clear();
-            }
+			if ( !selectors_defined_ ) {
+				TR.Warning << "Custom Selectors defined. All default Selectors are removed." << std::endl;
+				selectors_defined_ = true;
+				selector_options_.clear();
+			}
 			std::string name;
 			std::string type;
 			std::map< std::string, std::string > params;
@@ -743,22 +743,22 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 				TR.Error << option_name << " requires name and type attribute to be set." << std::endl;
 				error_counter_++;
 			} else {
-                selector_options_[ name ] = std::pair< std::string, std::map< std::string, core::Real > > ( type, {});
-                for ( std::pair< std::string const, std::string > const& p : params ) {
-                    if ( p.first == "remove" ) {
-                        selector_options_.at( name ).second[ p.first ] = ( p.second == "True" );
-                    } else {
-                        selector_options_.at(name).second[p.first] = utility::string2Real(p.second);
-                    }
-                }
-            }
+				selector_options_[ name ] = std::pair< std::string, std::map< std::string, core::Real > > ( type, {});
+				for ( std::pair< std::string const, std::string > const& p : params ) {
+					if ( p.first == "remove" ) {
+						selector_options_.at( name ).second[ p.first ] = ( p.second == "True" );
+					} else {
+						selector_options_.at(name).second[p.first] = utility::string2Real(p.second);
+					}
+				}
+			}
 		} else if ( option_name == "Factory" ) {
 
-            if ( !factories_defined_ ) {
-                TR.Warning << "Custom Factories defined. All default Factories are removed." << std::endl;
-                factories_defined_ = true;
-                factory_options_.clear();
-            }
+			if ( !factories_defined_ ) {
+				TR.Warning << "Custom Factories defined. All default Factories are removed." << std::endl;
+				factories_defined_ = true;
+				factory_options_.clear();
+			}
 
 			std::string name;
 			std::string type;
@@ -778,10 +778,10 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 				TR.Error << option_name << " requires name and type attribute to be set." << std::endl;
 				error_counter_++;
 			} else {
-                factory_options_[ name ] = std::pair< std::string, std::map< std::string, core::Real > > ( type, {});
-                for ( std::pair< std::string const, std::string > const& p : params ) {
-                    factory_options_.at( name ).second[ p.first ] = utility::string2Real( p.second );
-                }
+				factory_options_[ name ] = std::pair< std::string, std::map< std::string, core::Real > > ( type, {});
+				for ( std::pair< std::string const, std::string > const& p : params ) {
+					factory_options_.at( name ).second[ p.first ] = utility::string2Real( p.second );
+				}
 			}
 		} else if ( option_name == "EvolutionProtocol" ) {
 			if ( !evolution_protocol_defined_ ) {
@@ -815,12 +815,12 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 		}
 	}
 
-    if ( evolution_protocol_defined_ || selectors_defined_ || factories_defined_ ) {
-        if( !(evolution_protocol_defined_ && selectors_defined_ && factories_defined_) )  {
-            TR.Error << "At least one option for factory, selector or protocol are defined, but not all are custom. This leads to unexpected behavior." << std::endl;
-            error_counter_++;
-        }
-    }
+	if ( evolution_protocol_defined_ || selectors_defined_ || factories_defined_ ) {
+		if ( !(evolution_protocol_defined_ && selectors_defined_ && factories_defined_) )  {
+			TR.Error << "At least one option for factory, selector or protocol are defined, but not all are custom. This leads to unexpected behavior." << std::endl;
+			error_counter_++;
+		}
+	}
 }
 
 std::map< std::string, std::map< std::string, core::Size > > const& EvolutionOptions::get_pop_init_options() const {
@@ -831,23 +831,23 @@ core::Real EvolutionOptions::get_similarity_penalty_threshold() const {
 	return similarity_penalty_threshold_;
 }
 
-    std::string const& EvolutionOptions::get_protocol_path() const {
-        return protocol_path_;
-    }
+std::string const& EvolutionOptions::get_protocol_path() const {
+	return protocol_path_;
+}
 
-    core::pose::PoseOP EvolutionOptions::get_pose_from_stream() {
-        core::pose::PoseOP pose( new core::pose::Pose );
-        pose_stream_.fill_pose(*pose);
-        std::string pose_descriptor = pose_stream_.get_last_pose_descriptor_string();
-        if( pose_stream_.has_another_pose() ) {
-            TR.Warning << "More than one input structures are described. Selecting the first one encountered:" << std::endl;
-            TR.Warning << pose_descriptor << std::endl;
-        }
-        return pose;
-    }
+core::pose::PoseOP EvolutionOptions::get_pose_from_stream() {
+	core::pose::PoseOP pose( new core::pose::Pose );
+	pose_stream_.fill_pose(*pose);
+	std::string pose_descriptor = pose_stream_.get_last_pose_descriptor_string();
+	if ( pose_stream_.has_another_pose() ) {
+		TR.Warning << "More than one input structures are described. Selecting the first one encountered:" << std::endl;
+		TR.Warning << pose_descriptor << std::endl;
+	}
+	return pose;
+}
 
-    numeric::xyzVector<core::Real> EvolutionOptions::get_start_xyz() const {
-        return xyz_;
-    }
+numeric::xyzVector<core::Real> EvolutionOptions::get_start_xyz() const {
+	return xyz_;
+}
 }
 }

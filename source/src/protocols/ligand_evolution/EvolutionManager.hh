@@ -60,9 +60,9 @@ private:
 	/// @brief Saves information about the population and its history to disk. For debugging and benchmarking purposes
 	void write_population_information() const;
 
-    void init_evolution_protocol( EvolutionOptionsCOP options );
+	void init_evolution_protocol( EvolutionOptionsCOP options );
 
-    void external_scoring( int mpi_size );
+	void external_scoring( int mpi_size );
 
 private:
 

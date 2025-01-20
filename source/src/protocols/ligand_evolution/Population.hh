@@ -37,8 +37,8 @@ public:
 	Population() = default;
 	~Population() = default;
 
-    /// @brief initializes setting from options object
-    void initialize_from_evotoptions( EvolutionOptions const& options, FragmentLibrary const& library, Scorer const& scorer );
+	/// @brief initializes setting from options object
+	void initialize_from_evotoptions( EvolutionOptions const& options, FragmentLibrary const& library, Scorer const& scorer );
 
 	/// @brief Exposes the individuals vector for const iterator access
 	utility::vector1< Individual > const& individuals() const;

@@ -71,8 +71,8 @@ void Scorer::score_population( Population& pop ) {
 			core::Real sim = library_.similarity( pop.individual(ii).identifier(), pop.individual(jj).identifier() );
 			if ( sim > highest_sim ) highest_sim = sim;
 			if ( sim > similarity_penalty_threshold_ ) {
-                TR.Trace << "Individual " << pop.individual( ii ).id() << " at index " << ii << " has " << sim << " similarity to individual "
-                << pop.individual( jj ).id() << " at index " << jj << std::endl;
+				TR.Trace << "Individual " << pop.individual( ii ).id() << " at index " << ii << " has " << sim << " similarity to individual "
+					<< pop.individual( jj ).id() << " at index " << jj << std::endl;
 				sim_counter++;
 			}
 		}
@@ -431,20 +431,20 @@ void Scorer::save_external_scoring_results( core::Size rank ) {
 	std::ofstream file;
 	file.open( "external_scores_" + std::to_string( rank ) + ".csv", ios_mode );
 	if ( file.is_open() ) {
-        std::string line;
-        if ( int( file.tellp() ) == 0 ) {
-            line = "smiles";
-            for ( std::string const& term : score_terms_ ) {
-                line += ";" +  term;
-            }
-            file << line << std::endl;
-        }
+		std::string line;
+		if ( int( file.tellp() ) == 0 ) {
+			line = "smiles";
+			for ( std::string const& term : score_terms_ ) {
+				line += ";" +  term;
+			}
+			file << line << std::endl;
+		}
 		for ( std::pair< LigandIdentifier const, std::map< std::string, core::Real > > const& entry : score_memory_ ) {
 			line = library_.identifier_to_smiles( entry.first );
 			for ( std::string const& term : score_terms_ ) {
 				line += ";" + std::to_string( entry.second.at( term ) );
 			}
-            file << line << std::endl;
+			file << line << std::endl;
 		}
 	} else {
 		TR.Error << "Unable to open file external_scores_" + std::to_string( rank ) + ".csv to save results." << std::endl;
@@ -475,13 +475,13 @@ void Scorer::load_scores(std::string const& path) {
 		utility_exit_with_message( "Unable to open score file." );
 	}
 
-    std::string line;
-    utility::vector1< std::string > header;
-    utility::vector1< std::string > required_fields{ "reaction", "reagent1", "reagent2" };
+	std::string line;
+	utility::vector1< std::string > header;
+	utility::vector1< std::string > required_fields{ "reaction", "reagent1", "reagent2" };
 
-    std::map< std::string, core::Size > header_to_index;
+	std::map< std::string, core::Size > header_to_index;
 
-    core::Size n_reagents ( 0 );
+	core::Size n_reagents ( 0 );
 
 	core::Size counter( 0 );
 
@@ -491,63 +491,63 @@ void Scorer::load_scores(std::string const& path) {
 
 		if ( split_line.empty() ) continue;
 
-        // allows comments
-        if ( split_line[ 1 ] == "#" ) continue;
+		// allows comments
+		if ( split_line[ 1 ] == "#" ) continue;
 
-        if ( header.empty() ) {
-            header = split_line;
-            utility::vector1< std::string > missing_fields;
-            for ( std::string const& field : required_fields ) {
-                if ( !header.has_value( field ) ) missing_fields.push_back( field );
-            }
-            for ( std::string const& field : score_terms_ ) {
-                if ( !header.has_value( field ) ) missing_fields.push_back( field );
-            }
-            if ( !missing_fields.empty() ) {
-                TR.Error << "Header line is either not present before any data or does not contain the required field(s) " << missing_fields << std::endl;
-                utility_exit_with_message("Score memory file header is different from expectations.");
-            }
+		if ( header.empty() ) {
+			header = split_line;
+			utility::vector1< std::string > missing_fields;
+			for ( std::string const& field : required_fields ) {
+				if ( !header.has_value( field ) ) missing_fields.push_back( field );
+			}
+			for ( std::string const& field : score_terms_ ) {
+				if ( !header.has_value( field ) ) missing_fields.push_back( field );
+			}
+			if ( !missing_fields.empty() ) {
+				TR.Error << "Header line is either not present before any data or does not contain the required field(s) " << missing_fields << std::endl;
+				utility_exit_with_message("Score memory file header is different from expectations.");
+			}
 
-            for ( std::string const & field : header ) {
-                if ( field.find( "reagent" ) != std::string::npos ) n_reagents++;
-                header_to_index[ field ] = header.index( field );
-            }
+			for ( std::string const & field : header ) {
+				if ( field.find( "reagent" ) != std::string::npos ) n_reagents++;
+				header_to_index[ field ] = header.index( field );
+			}
 
-            continue;
-        }
+			continue;
+		}
 
-        if ( split_line.size() != header.size() ) {
-            TR.Warning << "Line does not match header: " << line << std::endl;
-            continue;
-        }
+		if ( split_line.size() != header.size() ) {
+			TR.Warning << "Line does not match header: " << line << std::endl;
+			continue;
+		}
 
-        std::string reaction = split_line[ header_to_index[ "reaction" ] ];
-        utility::vector1< std::string > scored_ligand;
-        for ( core::Size ii( 1 ); ii <= n_reagents; ++ii  ) {
-            std::string field = "reagent" + utility::to_string( ii );
-            std::string reagent = split_line[ header_to_index[ field ] ];
-            if ( reagent == "-" ) {
-                scored_ligand.push_back( "0" );
-            } else {
-                scored_ligand.push_back( reagent );
-            }
-        }
+		std::string reaction = split_line[ header_to_index[ "reaction" ] ];
+		utility::vector1< std::string > scored_ligand;
+		for ( core::Size ii( 1 ); ii <= n_reagents; ++ii  ) {
+			std::string field = "reagent" + utility::to_string( ii );
+			std::string reagent = split_line[ header_to_index[ field ] ];
+			if ( reagent == "-" ) {
+				scored_ligand.push_back( "0" );
+			} else {
+				scored_ligand.push_back( reagent );
+			}
+		}
 
-        while ( scored_ligand.size() < library_.max_positions() ) {
-            scored_ligand.push_back( "0" );
-        }
+		while ( scored_ligand.size() < library_.max_positions() ) {
+			scored_ligand.push_back( "0" );
+		}
 
-        std::map< std::string, core::Real > scores;
-        for ( std::string const& score_term : score_terms_ ) {
-            scores[ score_term ] =  utility::string2Real( split_line[ header_to_index[ score_term ] ] );
-        }
+		std::map< std::string, core::Real > scores;
+		for ( std::string const& score_term : score_terms_ ) {
+			scores[ score_term ] =  utility::string2Real( split_line[ header_to_index[ score_term ] ] );
+		}
 
-        if ( loaded_score_memory_.count( reaction ) == 0 ) {
-            loaded_score_memory_[ reaction ] = std::map< utility::vector1< std::string >, std::map< std::string, core::Real > >();
-        }
-        loaded_score_memory_[ reaction ][ scored_ligand ] = scores;
-        TR.Debug << "Saved scores for " << reaction << " " << scored_ligand << ". " << main_score_term_ << ": " << scores[ main_score_term_ ] << std::endl;
-        ++counter;
+		if ( loaded_score_memory_.count( reaction ) == 0 ) {
+			loaded_score_memory_[ reaction ] = std::map< utility::vector1< std::string >, std::map< std::string, core::Real > >();
+		}
+		loaded_score_memory_[ reaction ][ scored_ligand ] = scores;
+		TR.Debug << "Saved scores for " << reaction << " " << scored_ligand << ". " << main_score_term_ << ": " << scores[ main_score_term_ ] << std::endl;
+		++counter;
 	}
 
 	TR << "Loaded " << counter << " scores from file. " << std::endl;
@@ -573,7 +573,7 @@ bool Scorer::check_memory(LigandIdentifier const& id) {
 			<< std::endl;
 
 		if ( loaded_score_memory_.count(reaction) == 1 ) {
-            TR.Debug << "Found reaction " << reaction << ". ";
+			TR.Debug << "Found reaction " << reaction << ". ";
 			if ( loaded_score_memory_[reaction].count(universal_identifier) == 1 ) {
 				TR.Debug << "Found loaded scores for " << universal_identifier << " ." << std::endl;
 				score_memory_[id] = loaded_score_memory_[reaction][universal_identifier];
@@ -651,27 +651,27 @@ void Scorer::set_similarity_penalty_threshold(core::Real threshold) {
 	similarity_penalty_threshold_ = threshold;
 }
 
-    void Scorer::initialize_from_options(EvolutionOptionsCOP options, protocols::rosetta_scripts::XmlObjectsCOP rosetta_script, core::Size rank) {
+void Scorer::initialize_from_options(EvolutionOptionsCOP options, protocols::rosetta_scripts::XmlObjectsCOP rosetta_script, core::Size rank) {
 
-        set_main_term( options->get_main_term() );
-        set_pose_path( options->get_pose_dir_path() );
-        set_base_similarity_penalty( options->get_similarity_penalty() );
-        set_similarity_penalty_threshold( options->get_similarity_penalty_threshold() );
-        set_score_function( rosetta_script->get_score_function( options->get_main_scfx() ) );
+	set_main_term( options->get_main_term() );
+	set_pose_path( options->get_pose_dir_path() );
+	set_base_similarity_penalty( options->get_similarity_penalty() );
+	set_similarity_penalty_threshold( options->get_similarity_penalty_threshold() );
+	set_score_function( rosetta_script->get_score_function( options->get_main_scfx() ) );
 
-        std::string const& score_memory_path = options->get_path_score_memory();
-        if ( !score_memory_path.empty() && rank == 0 ) {
-            // this function is only called by rank 0 because it requires knowledge about the fragment library
-            load_scores( score_memory_path );
-        }
+	std::string const& score_memory_path = options->get_path_score_memory();
+	if ( !score_memory_path.empty() && rank == 0 ) {
+		// this function is only called by rank 0 because it requires knowledge about the fragment library
+		load_scores( score_memory_path );
+	}
 
-        protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom );
-        start_from->add_coords( options->get_start_xyz() );
-        start_from->chain( options->get_ligand_chain() );
-        add_mover(start_from);
-        add_mover( rosetta_script->get_mover("ParsedProtocol") );
+	protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom );
+	start_from->add_coords( options->get_start_xyz() );
+	start_from->chain( options->get_ligand_chain() );
+	add_mover(start_from);
+	add_mover( rosetta_script->get_mover("ParsedProtocol") );
 
-    }
+}
 
 }
 }

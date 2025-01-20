@@ -54,7 +54,7 @@ public:
 
 public:
 
-    void initialize_from_options( EvolutionOptionsOP options, core::Size external_scoring, core::Size rank );
+	void initialize_from_options( EvolutionOptionsOP options, core::Size external_scoring, core::Size rank );
 
 	/// @brief Sets the internally used pose for ligand creation
 	void set_pose( core::pose::PoseCOP pose );
@@ -123,7 +123,7 @@ public:
 	core::Size reagent_name_to_index( core::Size reaction_index, core::Size position, std::string const& reagent_name ) const;
 
 	/// @brief Calculates a RDKit Morgan fingerprint for a given ligand. Fingerprints are saved and can be retrieved quickly.
-    std::shared_ptr< RDKit::SparseIntVect<unsigned int> > calculate_fingerprint( LigandIdentifier const& id );
+	std::shared_ptr< RDKit::SparseIntVect<unsigned int> > calculate_fingerprint( LigandIdentifier const& id );
 
 	/// @brief Returns the Tanimoto Similarity based on RDKit Morgan fingerprints for two given ligands. The fingerprints are either calculated or retrieved if previously calculated
 	core::Real similarity( LigandIdentifier const& id1, LigandIdentifier const& id2 );

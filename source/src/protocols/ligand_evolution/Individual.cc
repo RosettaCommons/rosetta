@@ -60,7 +60,7 @@ LigandIdentifier const& Individual::identifier() const {
 
 bool Individual::id( core::Size id ) {
 	if ( id_ == 0 ) {
-        TR.Trace << "Set id " << id << std::endl;
+		TR.Trace << "Set id " << id << std::endl;
 		id_ = id;
 		return true;
 	} else {

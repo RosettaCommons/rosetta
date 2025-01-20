@@ -61,7 +61,7 @@ utility::vector1< Individual > Crossover::apply( utility::vector1< Individual > 
 		TR.Warning << "Expected " << n_offspring << " offspring but got " << parents.size() << " parents. Not all of them will be used." << std::endl;
 	}
 
-    // todo turn it into a list of indices to manipulate
+	// todo turn it into a list of indices to manipulate
 	utility::vector1< Individual > local_parents( parents );
 	numeric::random::random_permutation( local_parents.begin(), local_parents.end() );
 	core::Size current_index = 1;
@@ -74,7 +74,7 @@ utility::vector1< Individual > Crossover::apply( utility::vector1< Individual > 
 		} else {
 			// shuffle parents again to allow for different crossovers in the next iteration
 			current_index = 1;
-            numeric::random::random_permutation( local_parents.begin(), local_parents.end() );
+			numeric::random::random_permutation( local_parents.begin(), local_parents.end() );
 		}
 	}
 

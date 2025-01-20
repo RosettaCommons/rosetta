@@ -39,9 +39,9 @@ int main( int argc, char* argv[] ) {
 #endif
 	devel::init (argc, argv);
 
-    if( size < 10 ) {
-        TR.Warning << "Running REvoLd without MPI or with only a few CPUs causes very large runtimes. Consider using MPI and at least 10 CPUs." << std::endl;
-    }
+	if ( size < 10 ) {
+		TR.Warning << "Running REvoLd without MPI or with only a few CPUs causes very large runtimes. Consider using MPI and at least 10 CPUs." << std::endl;
+	}
 
 	EvolutionManager manager( rank );
 

@@ -124,15 +124,15 @@ public:
 	/// @brief Returns the name of the score term to optimize for
 	std::string const& get_main_term() const;
 
-    std::string const& get_protocol_path() const;
+	std::string const& get_protocol_path() const;
 
-    core::pose::PoseOP get_pose_from_stream();
+	core::pose::PoseOP get_pose_from_stream();
 
-    numeric::xyzVector<core::Real> get_start_xyz() const;
+	numeric::xyzVector<core::Real> get_start_xyz() const;
 
 private:
 
-    void parse_cmdline();
+	void parse_cmdline();
 
 	void parse_option_file( std::string const& option_file );
 
@@ -150,17 +150,17 @@ private:
 
 private:
 
-    /// @brief Counts how many errors are encountered during parsing to allow report of as many errors as possible per program call
-    core::Size error_counter_ = 0;
+	/// @brief Counts how many errors are encountered during parsing to allow report of as many errors as possible per program call
+	core::Size error_counter_ = 0;
 
-    /// @brief coordinate where centroid of designed ligands will be placed
-    numeric::xyzVector<core::Real> xyz_;
+	/// @brief coordinate where centroid of designed ligands will be placed
+	numeric::xyzVector<core::Real> xyz_;
 
-    /// @brief Stores all input streams to obtain poses
-    core::import_pose::pose_stream::MetaPoseInputStream pose_stream_;
+	/// @brief Stores all input streams to obtain poses
+	core::import_pose::pose_stream::MetaPoseInputStream pose_stream_;
 
-    /// @brief Stores the path to the xml protocol
-    std::string protocol_path_;
+	/// @brief Stores the path to the xml protocol
+	std::string protocol_path_;
 
 	/// @brief If set to something else than 0, this will search for smiles list of ligands to score and score them as often as defined here. This is for benchmarking.
 	core::Size external_scoring_ = 0;
@@ -180,10 +180,10 @@ private:
 	/// @brief Path where to find reagents definitions. The standard settings assume you use a input and run directory structure.
 	std::string path_to_reagents_;
 
-    bool selectors_defined_ = false;
+	bool selectors_defined_ = false;
 
-    /// @brief Maps selector names to types and parameter list
-    std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > selector_options_ {
+	/// @brief Maps selector names to types and parameter list
+	std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > selector_options_ {
 { "remove_elitist", { "elitist", {
 // sets how many individuals will be selected
 { "size", 15 },
@@ -206,7 +206,7 @@ private:
 } } }
 };
 
-    bool factories_defined_ = false;
+	bool factories_defined_ = false;
 
 	/// @brief Maps offspring factory names to types and parameter list
 	std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > factory_options_ {
@@ -239,7 +239,7 @@ private:
 } } }
 };
 
-    bool evolution_protocol_defined_ = false;
+	bool evolution_protocol_defined_ = false;
 
 	/// @brief Links a selector to a factory
 	utility::vector1< std::pair< std::string, std::string > > selector_factory_links_ {
