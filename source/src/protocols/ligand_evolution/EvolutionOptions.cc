@@ -108,7 +108,7 @@ void EvolutionOptions::parse_cmdline() {
     }
 
     if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_scfx ].active() ){
-        TR.Error << "No main scoring function defined. Use -ligand_evolution::main_scfx to define a position." << std::endl;
+        TR.Error << "No main scoring function defined. Use -ligand_evolution::main_scfx to define a function name." << std::endl;
         error_counter_++;
     } else {
         scoring_function_ = basic::options::option[ basic::options::OptionKeys::ligand_evolution::main_scfx ];
@@ -241,7 +241,7 @@ void EvolutionOptions::check_scorer_setup() {
 	}
 
 	if ( scoring_function_.empty() ) {
-		TR.Error << "No main scoring function for scorer defined to calculate base pose energy." << std::endl;
+		TR.Error << "Unable to load main scoring function for scorer to calculate base pose energy." << std::endl;
 		error_counter_++;
 	}
 }

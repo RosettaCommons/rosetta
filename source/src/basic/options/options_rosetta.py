@@ -8801,7 +8801,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'ligand_evolution',
 		Option( 'options', 'File', desc='Path to the options file' ),
 		Option( 'xyz', 'RealVector', desc='<x> <y> <z> position of the initial ligand placement', n='3' ),
-		Option( 'external_scoring', 'Integer', desc='If set the docking protocol will be applied to a list of smiles and the specified number of complexes will be saved.' ),
+		Option( 'external_scoring', 'Integer', desc='If set the docking protocol will be applied to a list of smiles and the specified number of results will be saved.' ),
 		Option( 'smiles_file', 'File', desc='List of smiles which should be docked. This triggers an alternative runmode of REvoLd.' ),
 		Option( 'n_scoring_runs', 'Integer', desc='How often should the scoring protocol be applied to each complex. Defaults to 150.', default='150' ),
 		Option( 'ligand_chain', 'String', desc='Name of the ligand chain used in the docking protocol. Defaults to X.', default='X' ),

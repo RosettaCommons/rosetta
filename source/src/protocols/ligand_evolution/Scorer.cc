@@ -431,12 +431,20 @@ void Scorer::save_external_scoring_results( core::Size rank ) {
 	std::ofstream file;
 	file.open( "external_scores_" + std::to_string( rank ) + ".csv", ios_mode );
 	if ( file.is_open() ) {
+        std::string line;
+        if ( int( file.tellp() ) == 0 ) {
+            line = "smiles";
+            for ( std::string const& term : score_terms_ ) {
+                line += ";" +  term;
+            }
+            file << line << std::endl;
+        }
 		for ( std::pair< LigandIdentifier const, std::map< std::string, core::Real > > const& entry : score_memory_ ) {
-			std::string line = library_.identifier_to_smiles( entry.first );
+			line = library_.identifier_to_smiles( entry.first );
 			for ( std::string const& term : score_terms_ ) {
 				line += ";" + std::to_string( entry.second.at( term ) );
 			}
-			file << line << std::endl;
+            file << line << std::endl;
 		}
 	} else {
 		TR.Error << "Unable to open file external_scores_" + std::to_string( rank ) + ".csv to save results." << std::endl;
