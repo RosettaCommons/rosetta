@@ -257,7 +257,7 @@ void EvolutionOptions::check_selectors() {
 		std::string selector_type = selec_ops.second.first;
         std::map< std::string, core::Real > const& selector_options = selec_ops.second.second;
         std::map< std::string, bool > selector_option_valid;
-        for ( std::pair< std::string, core::Real > const& option : selector_options ) {
+        for ( std::pair< std::string const, core::Real > const& option : selector_options ) {
             selector_option_valid[ option.first ] = false;
         }
 		is_used[ selector_name ] = false;
@@ -307,7 +307,7 @@ void EvolutionOptions::check_selectors() {
             selector_option_valid[ "consider_positive" ] = true;
 		}
 
-        for ( std::pair< std::string, bool > const& option : selector_option_valid ) {
+        for ( std::pair< std::string const, bool > const& option : selector_option_valid ) {
             if ( !option.second ) {
                 TR.Error << option.first << " is not supported as option for " << selector_name << "." << std::endl;
                 error_counter_++;
@@ -362,7 +362,7 @@ void EvolutionOptions::check_factories() {
 		std::string factory_type = fac_ops.second.first;
         std::map< std::string, core::Real > const& factory_options = fac_ops.second.second;
         std::map< std::string, bool > factory_option_valid;
-        for ( std::pair< std::string, core::Real > const& option : factory_options ) {
+        for ( std::pair< std::string const, core::Real > const& option : factory_options ) {
             factory_option_valid[ option.first ] = false;
         }
 
@@ -444,7 +444,7 @@ void EvolutionOptions::check_factories() {
 
 		}
 
-        for ( std::pair< std::string, bool > const& option : factory_option_valid ) {
+        for ( std::pair< std::string const, bool > const& option : factory_option_valid ) {
             if ( !option.second ) {
                 TR.Error << option.first << " is not supported as option for " << factory_name << "." << std::endl;
                 error_counter_++;
@@ -744,7 +744,7 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 				error_counter_++;
 			} else {
                 selector_options_[ name ] = std::pair< std::string, std::map< std::string, core::Real > > ( type, {});
-                for ( std::pair< std::string, std::string > const& p : params ) {
+                for ( std::pair< std::string const, std::string > const& p : params ) {
                     if ( p.first == "remove" ) {
                         selector_options_.at( name ).second[ p.first ] = ( p.second == "True" );
                     } else {
@@ -779,7 +779,7 @@ void EvolutionOptions::parse_option_file( std::string const& option_path ) {
 				error_counter_++;
 			} else {
                 factory_options_[ name ] = std::pair< std::string, std::map< std::string, core::Real > > ( type, {});
-                for ( std::pair< std::string, std::string > const& p : params ) {
+                for ( std::pair< std::string const, std::string > const& p : params ) {
                     factory_options_.at( name ).second[ p.first ] = utility::string2Real( p.second );
                 }
 			}

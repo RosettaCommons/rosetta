@@ -594,7 +594,7 @@ utility::vector1<LigandIdentifier> Scorer::get_best_loaded( core::Size size ) co
 	// collects all ids and scores to sort later
 	utility::vector1< std::pair< core::Real, LigandIdentifier > > ligand_score_list;
 
-	for ( std::pair< std::string, std::map< utility::vector1< std::string >, std::map< std::string, core::Real > > > const& reaction_mem : loaded_score_memory_ ) {
+	for ( std::pair< std::string const, std::map< utility::vector1< std::string >, std::map< std::string, core::Real > > > const& reaction_mem : loaded_score_memory_ ) {
 		std::string const& reaction = reaction_mem.first;
 		core::Size reaction_index;
 		reaction_index = library_.reaction_name_to_index(reaction);
