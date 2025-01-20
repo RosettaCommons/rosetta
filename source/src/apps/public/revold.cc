@@ -17,6 +17,7 @@
 // utility headers
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C/C++ headers
 #ifdef USEMPI
@@ -30,30 +31,36 @@ using namespace protocols::ligand_evolution;
 
 int main( int argc, char* argv[] ) {
 
-	int rank = 0;
-	int size = 1;
-#ifdef USEMPI
-    MPI_Init (&argc, &argv);
-    MPI_Comm_rank (MPI_COMM_WORLD, &rank);
-    MPI_Comm_size( MPI_COMM_WORLD, &size );
-#endif
-	devel::init (argc, argv);
+	try {
 
-	if ( size < 10 ) {
-		TR.Warning << "Running REvoLd without MPI or with only a few CPUs causes very large runtimes. Consider using MPI and at least 10 CPUs." << std::endl;
+		int rank = 0;
+		int size = 1;
+#ifdef USEMPI
+        MPI_Init (&argc, &argv);
+        MPI_Comm_rank (MPI_COMM_WORLD, &rank);
+        MPI_Comm_size( MPI_COMM_WORLD, &size );
+#endif
+		devel::init(argc, argv);
+
+		if ( size < 10 ) {
+			TR.Warning << "Running REvoLd without MPI or with only a few CPUs causes very large runtimes. Consider using MPI and at least 10 CPUs." << std::endl;
+		}
+
+		EvolutionManager manager( rank );
+
+		manager.init();
+		manager.run( size );
+
+
+#ifdef USEMPI
+        MPI_Barrier( MPI_COMM_WORLD );
+        MPI_Finalize();
+#endif
+
+		return 0;
+	} catch ( utility::excn::Exception const & e ) {
+		e.display();
+		return -1;
 	}
-
-	EvolutionManager manager( rank );
-
-	manager.init();
-	manager.run( size );
-
-
-#ifdef USEMPI
-    MPI_Barrier( MPI_COMM_WORLD );
-    MPI_Finalize();
-#endif
-
-	return 0;
 }
 
