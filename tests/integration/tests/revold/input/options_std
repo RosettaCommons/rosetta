@@ -1,0 +1,49 @@
+#Pound signs indicate comments
+
+#-in:file:s option imports the protein and ligand PDB structures
+#-in:file:extra_res_fa option imports the parameters for the ligand
+
+-in:auto_setup_metals
+-in
+	-file
+		-s input/5ZBQ_0001_A.pdb
+		
+-parser:protocol input/docking_perturb.xml
+		
+-ligand_evolution
+	-xyz -46.972 -19.708 70.869
+	-main_scfx hard_rep
+	-reagent_file input/reagents_short.txt
+	-reaction_file input/reactions_short.txt
+	-n_scoring_runs 150
+	-ligand_chain X
+	-pose_output_directory poses/
+	-n_generations 150
+	-score_mem_path input/ligands_saved_short.tsv
+	#-external_scoring 10
+	#-smiles_file smiles.txt
+
+#if true chtimestamp adds a timestamp to all tracer outputs
+#-levels set output levels for all tracers specified afterwards
+#	0 - fatal, 100 - error, 200 - warning, 300 - info, 400 - debug, 500 - trace
+#	Can be substituted with debug, info, error etc.
+-out
+	-chtimestamp false
+	-levels all:300 protocols.ligand_evolution:400 apps:400
+
+# -ex1 and -ex2 expand then sampling of rotamers in the first 2 chi angles of protein sidechains to improve the quality of packing
+-ex1 
+-ex2
+
+#overwrite allows Rosetta to write over previous structures and scores
+
+-overwrite
+
+# The RosettaLigand scoring functions do not use the new functionality of the talaris_2013 scoring function. This flag is required to turn off those functions
+-restore_pre_talaris_2013_behavior true
+
+#specifies a directory to score qsar grids. Claims to speed things up
+-qsar
+	#-grid_dir scoring_grids
+	-max_grid_cache_size 30
+
