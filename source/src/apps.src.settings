@@ -179,6 +179,7 @@ sources = {
 		"mr_protocols",
 		"grower_prep",
 		"dgdp",
+		"sim_cryo",
 	],
 	"public/enzdes": [
 		"CstfileToTheozymePDB",

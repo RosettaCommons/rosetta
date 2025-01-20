@@ -122,6 +122,34 @@ LigandConformer::initialize(
 	}
 	update_conf( pose );
 
+	// get ligand chi dependence for alternative crossover
+	core::conformation::Residue ligand( pose->residue( ligids[1] ) );
+	core::Size nligchi( ligand.nchi());
+	ligandchi_downstream_.resize( nligchi );
+
+	utility::vector1< core::Size > atmindex_defining_chi( nligchi, 0 );
+
+	for ( core::Size ichi = 1; ichi <= nligchi; ++ichi ) {
+		utility::vector1< core::Size > const &chiatms = ligand.chi_atoms( ichi );
+		atmindex_defining_chi[ichi] = (ligand.atom_base(chiatms[2]) == chiatms[3])? chiatms[1] : chiatms[4];
+	}
+
+	// WARNING! This assumes nbr atom is atom tree root.
+	// THIS IS NOT NECESSARILY TRUE!
+	// if not true this will hang
+	for ( core::Size ichi = 1; ichi <= nligchi; ++ichi ) {
+		core::Size iatm( atmindex_defining_chi[ichi] );
+		core::Size ibase( ligand.atom_base(iatm) );
+		while ( ibase != ligand.nbr_atom() ) { // recurrsive until reaches to nbr atom
+			if ( atmindex_defining_chi.contains(iatm) ) {
+				core::Size chi_parent_of_ichi = atmindex_defining_chi.index_of(iatm);
+				if ( chi_parent_of_ichi != ichi ) ligandchi_downstream_[chi_parent_of_ichi].push_back( ichi );
+			}
+			iatm = ibase;
+			ibase = ligand.atom_base(iatm);
+		}
+	}
+
 	core::pose::PoseOP ref_pose_ligand ( new core::pose::Pose );
 	for ( core::Size i=1; i<=ligids.size(); ++i ) {
 		if ( i==1 ) {
@@ -410,7 +438,6 @@ LigandConformer::to_pose( core::pose::PoseOP pose ) const {
 	for ( core::Size i=1; i <= ligandtorsionids_.size(); ++i ) {
 		pose->conformation().set_torsion(ligandtorsionids_[i], ligandchis_[i]);
 	}
-
 
 	// internal ring torsions
 	if ( sample_ring_conformers_ && ligids_.size() == 1 ) {
@@ -851,6 +878,81 @@ mutate(LigandConformer const &l ) {
 	return retval;
 }
 
+// alternative mutation for ligands with many torsions
+LigandConformer
+mutate_ft( LigandConformer const &l, bool single_mutation ) {
+	using namespace ObjexxFCL::format;
+
+	LigandConformer retval( l );
+	std::string tag;
+
+	// rigid body
+	bool randomize_rt = (numeric::random::rg().uniform() < l.rtmutationRate_ );
+
+	tag += " ";
+	if ( randomize_rt ) {
+		numeric::Quaternion< core::Real > Q;
+		if ( l.rotmutWidth_ > 180.0 ) { // complete randomization
+			numeric::xyzMatrix< core::Real > R=numeric::random::random_rotation();
+			numeric::R2quat( R, Q );
+		} else {  // perturbation
+			core::Vector Raxis( numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
+			core::Real angle = numeric::NumericTraits<core::Real>::deg2rad() * l.rotmutWidth_ * numeric::random::rg().gaussian();
+			core::Real ca = cos(angle), sa=sin(angle);
+			numeric::Quaternion< core::Real > Q1( ca, sa*Raxis[0], sa*Raxis[1], sa*Raxis[2]);
+			Q = Q1*numeric::Quaternion< core::Real >(l.rb_[1],l.rb_[2],l.rb_[3],l.rb_[4]);
+		}
+		retval.rb_[1] = Q.w(); retval.rb_[2] = Q.x(); retval.rb_[3] = Q.y(); retval.rb_[4] = Q.z();
+
+		core::Vector Taxis( numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
+		core::Real len = numeric::random::rg().uniform()*l.transmutWidth_;
+		for ( core::Size k = 5; k <= 7; ++k ) {
+			retval.rb_[k] += len*Taxis[k-5];
+		}
+		tag += "rt ";
+	} else {
+		// ligand chis
+		core::Size nligchi = l.ligandchis_.size();
+
+		// make sure at least one torsion is mutated
+		if ( nligchi > 0 ) {
+			if ( single_mutation ) {
+				core::Size j( numeric::random::rg().random_range(1,nligchi) );
+				core::Real angle_j;
+				if ( l.ligchimutWidth_ > 180.0 ) { // complete randomization
+					angle_j = 360.0 * numeric::random::rg().uniform();
+				} else {
+					core::Real angleDel = l.ligchimutWidth_*(1.0 - 2.0*numeric::random::rg().uniform());
+					angle_j = l.ligandchis_[j] + angleDel;
+				}
+				retval.ligandchis_[j] = angle_j;
+				tag += "c"+utility::to_string(j)+" ";
+			} else {
+				core::Size nligchi = l.ligandchis_.size();
+				core::Size ichi_to_mutate( numeric::random::rg().random_range(1,nligchi) );
+				utility::vector1< core::Size > const &chis_down = l.ligandchi_downstream_[ichi_to_mutate];
+
+				core::Real angleDel = l.ligchimutWidth_*(1.0 - 2.0*numeric::random::rg().uniform());
+				retval.ligandchis_[ichi_to_mutate] = l.ligandchis_[ichi_to_mutate] + angleDel;
+				tag += "c"+utility::to_string(ichi_to_mutate)+" ";
+				for ( core::Size j = 1; j <= chis_down.size(); ++j ) {
+					if ( numeric::random::rg().uniform() < 0.5 ) {
+						core::Size jchi = chis_down[j];
+						tag += "c"+utility::to_string(jchi)+" ";
+						angleDel = /*l.ligchimutWidth_*/180*(1.0 - 2.0*numeric::random::rg().uniform());
+						retval.ligandchis_[jchi] = l.ligandchis_[jchi] + angleDel;
+					}
+				}
+			}
+		}
+	}
+
+	retval.set_generation_tag( tag );
+	retval.ligandxyz_synced_ = false;
+
+	return retval;
+}
+
 // crossover
 LigandConformer
 crossover(LigandConformer const &l1, LigandConformer const &l2) {
@@ -935,6 +1037,37 @@ crossover(LigandConformer const &l1, LigandConformer const &l2) {
 	return retval;
 }
 
+// alternative crossover for ligands with many torsions. Keeps chis constant upstream of selected chi
+LigandConformer
+crossover_ft(LigandConformer const &l1, LigandConformer const &l2 ){
+	// pick (randomly) one to be "parent"
+	//fd let's give every pose a shot to be parent
+	bool l1_is_parent = true; // (numeric::random::rg().uniform() <= 0.5 );
+	LigandConformer const &l_parent = l1_is_parent? l1 : l2;
+	LigandConformer const &l_child = l1_is_parent? l2 : l1;
+
+	LigandConformer retval(l_parent);
+	std::string tag;
+	if ( l1_is_parent ) tag = "parent1 ";
+	else tag = "parent2 ";
+
+	// pick ONE chi and set all downstream to l_child
+	core::Size nligchi = l1.ligandchis_.size();
+	core::Size ichi_to_cross( numeric::random::rg().random_range(1,nligchi) );
+	utility::vector1< core::Size > const &chis_down = l1.ligandchi_downstream_[ichi_to_cross];
+	retval.ligandchis_[ichi_to_cross] = l_child.ligandchis_[ichi_to_cross];
+	tag += "flip:c"+utility::to_string(ichi_to_cross)+" ";
+	for ( core::Size j = 1; j <= chis_down.size(); ++j ) {
+		core::Size jchi = chis_down[j];
+		tag += "down:c"+utility::to_string(jchi)+" ";
+		retval.ligandchis_[jchi] = l_child.ligandchis_[jchi];
+	}
+
+	retval.set_generation_tag( tag );
+	retval.ligandxyz_synced_ = false;
+
+	return retval;
+}
 
 core::Real
 distance_slow( LigandConformer &gene1, LigandConformer &gene2 ){

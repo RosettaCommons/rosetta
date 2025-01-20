@@ -150,7 +150,6 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	TaskFactoryOP  tf_design_;
 	//kinematics::MoveMapOP movemap_;
-	pack::task::PackerTaskOP task_design_;
 	Size monomer_nres_;
 	bool ala_interface_, find_bb_binding_E_, skip_hd_docking_;// pymolreport_;
 	int n_pack_min_runs_;
@@ -325,15 +324,10 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 
 	protocols::minimization_packing::MinMoverOP sym_minmover( new protocols::minimization_packing::MinMover(mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.001, true /*use_nblist*/ ) );
 
-	task_design_ = tf_design_->create_task_and_apply_taskoperations( pose );
-	protocols::minimization_packing::PackRotamersMoverOP sym_pack_design( new protocols::minimization_packing::PackRotamersMover(scorefxn_, task_design_) );
+	protocols::minimization_packing::PackRotamersMoverOP sym_pack_design( new protocols::minimization_packing::PackRotamersMover(scorefxn_, tf_design_) );
 
-	TR<< "Monomer total residues: "<< monomer_nres_ << " Repacked/Designed residues: "
-		<< task_design_->num_to_be_packed() / 2 << std::endl;
-
-#ifndef NDEBUG
-	TR<< "DESIGN Packer Task after setup: " << *(task_design_) <<std::endl;
-#endif
+	TR<< "Monomer total residues: "<< monomer_nres_ <<
+		" Repacked/Designed residues: " << tf_design_->create_task_and_apply_taskoperations( pose )->num_to_be_packed() / 2 << std::endl;
 
 	TR<< "Number of repack/minimize runs to do: " << n_pack_min_runs_ << std::endl;
 	TR << "Minimizing with: " << option[ OptionKeys::run::min_type ].value() << std::endl;
@@ -477,8 +471,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 		}
 		//fill task factory with these restrictions
 		tf_nataa->push_back( repack_op );
-		PackerTaskOP task_nataa = tf_nataa->create_task_and_apply_taskoperations( pose );
-		protocols::minimization_packing::PackRotamersMoverOP sym_pack_nataa( new protocols::minimization_packing::PackRotamersMover(scorefxn_, task_nataa) );
+		protocols::minimization_packing::PackRotamersMoverOP sym_pack_nataa( new protocols::minimization_packing::PackRotamersMover(scorefxn_, tf_nataa) );
 		sym_pack_nataa->apply( pose );
 		TR << "Default SCORE after all NATAA repack: " << (*scorefxn_)(pose) << std::endl;
 		//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "nataarepack_");
