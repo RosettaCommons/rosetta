@@ -29,7 +29,7 @@
 #	Can be substituted with debug, info, error etc.
 -out
 	-chtimestamp false
-	-levels all:300 protocols.ligand_evolution:400 apps:400
+	-levels all:100 protocols.ligand_evolution:400 apps:400
 
 # -ex1 and -ex2 expand then sampling of rotamers in the first 2 chi angles of protein sidechains to improve the quality of packing
 -ex1 

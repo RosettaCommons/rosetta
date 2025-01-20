@@ -8,7 +8,7 @@
 	-file
 		-s input/5ZBQ_0001_A.pdb
 		
--parser:protocol input/docking_perturb.xml
+-parser:protocol input/docking_fast.xml
 		
 -ligand_evolution
 	-options input/options_short.xml
@@ -19,8 +19,8 @@
 	-n_scoring_runs 1
 	-ligand_chain X
 	-pose_output_directory poses/
-	-n_generations 1
-	-score_mem_path input/ligands_saved_short.tsv
+	-n_generations 2
+	-score_mem_path ligands_short.tsv
 	#-external_scoring 10
 	#-smiles_file smiles.txt
 	

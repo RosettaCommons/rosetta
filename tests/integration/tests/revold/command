@@ -70,6 +70,15 @@ mv population.tsv population_short.tsv
 mv ligands.tsv ligands_short.tsv
      
 
+%(bin)s/revold.%(binext)s %(additional_flags)s @input/options_output_as_score -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+     | egrep -vf ../../ignore_list \
+     | egrep -v '\[..\:..\:..\]' \
+     > log_output_as_score
+
+mv population.tsv population_oas.tsv
+mv ligands.tsv ligands_oas.tsv
+     
+
 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_vhts -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      | egrep -v '\[..\:..\:..\]' \
