@@ -229,7 +229,7 @@ void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 		core::Size reaction_index = reaction_name_to_index_.at( split_line[ reaction_i ] );
 
 		// create reagent
-		reagents_.emplace_back( new Reagent( reagent_name, reagent_smiles, position, reaction_index ) );
+		reagents_.emplace_back( new Reagent( reagent_name, reagent_smiles ) );
 		// add reagent to its reaction
 		reactions_[ reaction_index ]->reagents_[ position ].emplace_back( reagents_.size() );
 
@@ -629,11 +629,9 @@ core::Size Reaction::n_positions() const {
 // Reagent
 // #########################################################################
 
-Reagent::Reagent( std::string const& name, std::string const& reagent_smiles, core::Size reaction_position, core::Size reaction_index )
+Reagent::Reagent( std::string const& name, std::string const& reagent_smiles )
 :
 	name_( name ),
-	reaction_position_( reaction_position ),
-	reaction_index_( reaction_index ),
 	mol_( RDKit::SmilesToMol( reagent_smiles ) )
 {
 	fingerprint_ = RDKit::MorganFingerprints::getFingerprint( *mol_, 2 );

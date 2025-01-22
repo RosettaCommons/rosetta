@@ -177,7 +177,7 @@ private:
 class Reagent {
 public:
 
-	Reagent( std::string const& name, std::string const& reagent_smiles, core::Size reaction_position, core::Size reaction_index );
+	Reagent( std::string const& name, std::string const& reagent_smiles );
 
 	~Reagent();
 
@@ -188,8 +188,6 @@ public:
 private:
 
 	std::string name_;
-	core::Size reaction_position_;
-	core::Size reaction_index_;
 	RDKit::RWMOL_SPTR mol_;
 	RDKit::SparseIntVect< unsigned int >* fingerprint_;
 
