@@ -790,12 +790,12 @@ def native_libc_pyrosetta_conda_release(kind, rosetta_dir, working_dir, platform
 
                 # m = re_module.search(r"pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE)
                 # .tar.bz2 is no longer when `--output-folder` option is used
-                m = re_module.search(r"pyrosetta-.*\.conda", conda_package_output, re_module.MULTILINE)
+                m = re_module.search(r"pyrosetta-.*\.(tar\.bz2|conda)", conda_package_output, re_module.MULTILINE)
 
                 conda_package = m.group(0) if m else 'unknown'
                 # conda_package_dir = re_module.search(r"/([^/]*)/pyrosetta-.*\.tar\.bz2", conda_package_output, re_module.MULTILINE).group(1)
                 # .tar.bz2 is no longer when `--output-folder` option is used
-                conda_package_dir = re_module.search(r"/([^/]*)/pyrosetta-.*\.conda", conda_package_output, re_module.MULTILINE).group(1)
+                conda_package_dir = re_module.search(r"/([^/]*)/pyrosetta-.*\.(tar\.bz2|conda)", conda_package_output, re_module.MULTILINE).group(1)
 
                 TR(f'Building Conda package: {conda_package}...')
                 res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
@@ -1144,9 +1144,9 @@ def native_libc_rosetta_conda_release(kind, rosetta_dir, working_dir, platform, 
 
         with open(f'{working_dir}/conda_package_output_folder.log', 'w') as f: f.write(conda_package_output)
 
-        m = re_module.search(r"rosetta-.*\.conda", conda_package_output, re_module.MULTILINE)
+        m = re_module.search(r"rosetta-.*\.(tar\.bz2|conda)", conda_package_output, re_module.MULTILINE)
         conda_package = m.group(0) if m else 'unknown'
-        conda_package_dir = re_module.search(r"/([^/]*)/rosetta-.*\.conda", conda_package_output, re_module.MULTILINE).group(1)
+        conda_package_dir = re_module.search(r"/([^/]*)/rosetta-.*\.(tar\.bz2|conda)", conda_package_output, re_module.MULTILINE).group(1)
 
         TR(f'Building Conda package: {conda_package}...')
         res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
