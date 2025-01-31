@@ -15,13 +15,8 @@
 	-main_scfx hard_rep
 	-reagent_file input/reagents_short.txt
 	-reaction_file input/reactions_short.txt
-	-n_scoring_runs 150
-	-ligand_chain X
 	-pose_output_directory poses/
-	-n_generations 150
 	-score_mem_path input/ligands_saved_short.tsv
-	#-external_scoring 10
-	#-smiles_file smiles.txt
 
 #if true chtimestamp adds a timestamp to all tracer outputs
 #-levels set output levels for all tracers specified afterwards
@@ -29,7 +24,7 @@
 #	Can be substituted with debug, info, error etc.
 -out
 	-chtimestamp false
-	-levels all:100 protocols.ligand_evolution:400 apps:400
+	-levels all:100 protocols.ligand_evolution:300 apps:300
 
 # -ex1 and -ex2 expand then sampling of rotamers in the first 2 chi angles of protein sidechains to improve the quality of packing
 -ex1 
