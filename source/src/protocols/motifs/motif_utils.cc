@@ -1527,5 +1527,25 @@ write_motifs_to_disk(MotifCOPs motifcops, std::string filename)
 	}
 }
 
+// @brief function to hash out an input motif library into a standard map of motifCOPs
+//inputs are initial motif library and map that is to be filled out
+//map keys are tuples of 7 strings, which is the residue involved in the motif and then the names of the atoms involved (3 atoms on both sides of motif; we don't care about ligand name in key)
+//
+void hash_motif_library_into_map(protocols::motifs::MotifCOPs & input_library, std::map<motif_atoms, protocols::motifs::MotifCOPs> & mymap)
+{
+	//iterate over the input library
+	for ( auto motifcop : input_library ) {
+		//collect residue name from motifcop
+		std::string motif_residue_name(motifcop->restype_name1());
+		//declare tuple key
+		motif_atoms key_tuple(motifcop->restype_name1(),motifcop->res1_atom1_name(),motifcop->res1_atom2_name(),motifcop->res1_atom3_name(),motifcop->res2_atom1_name(),motifcop->res2_atom2_name(),motifcop->res2_atom3_name());
+
+		//push back motif to motifcops at key address
+		mymap[key_tuple].push_back(motifcop);
+
+	}
+}
+
+
 } // namespace motifs
 } // namespace protocols
