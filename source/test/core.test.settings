@@ -760,6 +760,7 @@ testinputfiles = [
 	"chemical/atom_properties.txt",
 	"chemical/ASX.params", # remove if the database version gets permanently enabled
 	"chemical/LYX.params", # remove if the database version gets permanently enabled
+	"chemical/bad_atom_ordering.patch",
 	"chemical/conflict_patch.txt",
 	"chemical/conn.pdb",
 	"chemical/carbohydrates/amylopectin_fragment.pdb",
