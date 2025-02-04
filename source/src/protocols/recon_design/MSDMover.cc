@@ -298,8 +298,7 @@ MSDMover::apply_mpi( core::pose::Pose & pose ) {
 				else other_pose_sequences[jj] = my_sequence;
 			}
 		} else {
-            std::string passed_seq;
-			passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
+            std::string passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
             //Need to split passed_seq by spaces
             std::istringstream iss(passed_seq);
             std::string resi_name;

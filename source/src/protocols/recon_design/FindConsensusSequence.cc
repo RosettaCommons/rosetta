@@ -233,7 +233,7 @@ void FindConsensusSequence::apply_mpi( core::pose::Pose & pose ) {
 	utility::vector1< std::string > my_sequence = get_designable_sequence ( pose, my_designable_residues );
 
     std::string pass_seq;
-    for( const std::string& resi_base_name: my_sequence) {
+    for( std::string const & resi_base_name: my_sequence) {
         pass_seq += resi_base_name + " ";
     }
 

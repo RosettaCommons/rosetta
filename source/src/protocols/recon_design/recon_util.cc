@@ -59,7 +59,7 @@ get_designable_sequence ( core::pose::Pose & pose, utility::vector1< core::Size 
 /// Based on a list of sequences from poses, get all the AAs present at
 /// the position given by position_no
 utility::vector1< std::string >
-get_candidate_AAs( utility::vector1< utility::vector1< std::string > > other_pose_sequences,
+get_candidate_AAs( const utility::vector1< utility::vector1< std::string > > & other_pose_sequences,
 	core::Size position_no ) {
 
 	utility::vector1< std::string > candidate_AAs;
