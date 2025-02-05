@@ -89,6 +89,8 @@ cat mpi_log* > log_vhts
 
 cat external_scores* > vhts_results.tsv
 
+mv poses poses_vhts
+
 rm mpi_log*
 rm external_scores*
 

@@ -90,6 +90,8 @@ mkdir poses
      | egrep -v '\[..\:..\:..\]' \
      > log_vhts
 
+mv poses poses_vhts
+
 
 ## test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 # ^^^^ you want to add this line after each call to app-protocol in case they terminate abnormally
