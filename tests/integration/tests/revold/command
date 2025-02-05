@@ -52,6 +52,7 @@ date > start-time.ignore
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 
+mkdir poses
 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_std -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      | egrep -v '\[..\:..\:..\]' \
@@ -59,8 +60,10 @@ date > start-time.ignore
 
 mv population.tsv population_std.tsv
 mv ligands.tsv ligands_std.tsv
+mv poses poses_std
      
 
+mkdir poses
 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_short -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      | egrep -v '\[..\:..\:..\]' \
@@ -68,8 +71,10 @@ mv ligands.tsv ligands_std.tsv
 
 mv population.tsv population_short.tsv
 mv ligands.tsv ligands_short.tsv
+mv poses poses_short
      
 
+mkdir poses
 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_output_as_score -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      | egrep -v '\[..\:..\:..\]' \
@@ -77,8 +82,9 @@ mv ligands.tsv ligands_short.tsv
 
 mv population.tsv population_oas.tsv
 mv ligands.tsv ligands_oas.tsv
+mv poses poses_oas
      
-
+mkdir poses
 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_vhts -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      | egrep -v '\[..\:..\:..\]' \

@@ -52,30 +52,37 @@ date > start-time.ignore
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 
+mkdir poses
 mpirun -np 6 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_std -database %(database)s -testing:INTEGRATION_TEST  > /dev/null 2>&1
      
 cat mpi_log* > log_std
 
 mv population.tsv population_std.tsv
 mv ligands.tsv ligands_std.tsv
+mv poses poses_std
      
 
+mkdir poses
 mpirun -np 6 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_short -database %(database)s -testing:INTEGRATION_TEST  > /dev/null 2>&1
      
 cat mpi_log* > log_short
 
 mv population.tsv population_short.tsv
 mv ligands.tsv ligands_short.tsv
+mv poses poses_short
      
 
+mkdir poses
 mpirun -np 6 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_output_as_score -database %(database)s -testing:INTEGRATION_TEST  > /dev/null 2>&1
      
 cat mpi_log* > log_oas
 
 mv population.tsv population_oas.tsv
 mv ligands.tsv ligands_oas.tsv
+mv poses poses_oas
      
 
+mkdir poses
 mpirun -np 6 %(bin)s/revold.%(binext)s %(additional_flags)s @input/options_vhts -database %(database)s -testing:INTEGRATION_TEST  > /dev/null 2>&1
      
 cat mpi_log* > log_vhts
