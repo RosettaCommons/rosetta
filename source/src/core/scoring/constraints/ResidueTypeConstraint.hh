@@ -57,15 +57,15 @@ public:
 		Real favor_native_bonus
 	);
 
-    ResidueTypeConstraint(
-            pose::Pose const & pose,
-            Size seqpos,
-            std::string const & AAname,
-            Real favor_native_bonus,
-            bool base_name
-    );
+	ResidueTypeConstraint(
+		pose::Pose const & pose,
+		Size seqpos,
+		std::string const & AAname,
+		Real favor_native_bonus,
+		bool base_name
+	);
 
-    ResidueTypeConstraint(
+	ResidueTypeConstraint(
 		Size seqpos,
 		std::string const & aa_in,
 		std::string const & name3_in,
@@ -130,18 +130,18 @@ public:
 	std::string
 	get_rsd_type_name3() const;
 
-    bool
-    get_base_name_active() const;
+	bool
+	get_base_name_active() const;
 
-    void
-    set_base_name_active( bool base_name );
+	void
+	set_base_name_active( bool base_name );
 
 private:
 	Size seqpos_;
 	std::string AAname;
 	std::string rsd_type_name3_;
 	core::Real favor_native_bonus_;
-    bool base_name_ = false;
+	bool base_name_ = false;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

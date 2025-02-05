@@ -169,7 +169,7 @@ MSDMover::apply( core::pose::Pose & pose ) {
 	setup_mover( pose );
 
 	// Find the sequence of the other poses
-    utility::vector1< utility::vector1< std::string > > other_pose_sequences;
+	utility::vector1< utility::vector1< std::string > > other_pose_sequences;
 	for  ( core::Size ii = 1; ii <= poses_.size(); ++ii ) {
 		if ( ii != current_pose_ ) {
 			other_pose_sequences.push_back(
@@ -254,7 +254,7 @@ MSDMover::apply_linked_constraints( core::pose::Pose & pose,
 				pose_position, //seqpos
 				constrained_AA, //AAname
 				weight_, //constraint weight
-                true // using base_name
+				true // using base_name
 				) );
 			constraints.push_back( pose.add_constraint( temp_cst ) );
 		}
@@ -283,12 +283,12 @@ MSDMover::apply_mpi( core::pose::Pose & pose ) {
 	utility::vector1< core::Size > my_designable_residues = get_designable_residues( pose, this_nodes_resfile );
 
 	/// Make a string vector out of the AAs at my designable positions in the current state
-    utility::vector1< std::string > my_sequence = get_designable_sequence ( pose, my_designable_residues );
+	utility::vector1< std::string > my_sequence = get_designable_sequence ( pose, my_designable_residues );
 
-    std::string pass_seq;
-    for( const std::string& resi_base_name: my_sequence) {
-        pass_seq += resi_base_name + " ";
-    }
+	std::string pass_seq;
+	for ( const std::string& resi_base_name: my_sequence ) {
+		pass_seq += resi_base_name + " ";
+	}
 
 	/// Get the AAs at designable positions of the other states I need to cooperate with
 	utility::vector1< utility::vector1<std::string> > other_pose_sequences( n_procs );
@@ -299,10 +299,10 @@ MSDMover::apply_mpi( core::pose::Pose & pose ) {
 				else other_pose_sequences[jj] = my_sequence;
 			}
 		} else {
-            std::string passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
-            //Need to split passed_seq by spaces
-            utility::vector1<std::string> split_seq = utility::split_whitespace(passed_seq);
-            other_pose_sequences[ii].append(split_seq);
+			std::string passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
+			//Need to split passed_seq by spaces
+			utility::vector1<std::string> split_seq = utility::split_whitespace(passed_seq);
+			other_pose_sequences[ii].append(split_seq);
 		}
 	}
 
@@ -318,10 +318,10 @@ MSDMover::apply_mpi( core::pose::Pose & pose ) {
 
 	if ( debug_ ) {
 		TR << "my sequence is ";
-        for( core::Size i = 1; i <= my_sequence.size(); ++i ) {
-            TR << my_sequence[i] << " ";
-        }
-        TR << std::endl;
+		for ( core::Size i = 1; i <= my_sequence.size(); ++i ) {
+			TR << my_sequence[i] << " ";
+		}
+		TR << std::endl;
 	}
 
 	/// Run my multistate design

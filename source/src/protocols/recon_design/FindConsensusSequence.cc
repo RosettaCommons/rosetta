@@ -232,12 +232,12 @@ void FindConsensusSequence::apply_mpi( core::pose::Pose & pose ) {
 	/// Make a string out of the AAs at my designable positions in the current state
 	utility::vector1< std::string > my_sequence = get_designable_sequence ( pose, my_designable_residues );
 
-    std::string pass_seq;
-    for( std::string const & resi_base_name: my_sequence) {
-        pass_seq += resi_base_name + " ";
-    }
+	std::string pass_seq;
+	for ( std::string const & resi_base_name: my_sequence ) {
+		pass_seq += resi_base_name + " ";
+	}
 
-    utility::vector1< utility::vector1<std::string> > all_pose_sequences (n_procs_);
+	utility::vector1< utility::vector1<std::string> > all_pose_sequences (n_procs_);
 	for ( core::Size ii = 1; ii <= n_procs_; ++ii ) {
 		if ( rank_ == ii ) {
 			for ( core::Size jj = 1; jj <= n_procs_; ++jj ) {
@@ -246,14 +246,14 @@ void FindConsensusSequence::apply_mpi( core::pose::Pose & pose ) {
 			}
 		} else {
 			//all_pose_sequences[ii] = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
-            std::string passed_seq;
-            passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
-            //Need to split passed_seq by spaces
-            std::istringstream iss(passed_seq);
-            std::string resi_name;
-            while (iss >> resi_name){
-                all_pose_sequences[ii].push_back(resi_name);
-            }
+			std::string passed_seq;
+			passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
+			//Need to split passed_seq by spaces
+			std::istringstream iss(passed_seq);
+			std::string resi_name;
+			while ( iss >> resi_name ) {
+				all_pose_sequences[ii].push_back(resi_name);
+			}
 		}
 	}
 
@@ -261,10 +261,10 @@ void FindConsensusSequence::apply_mpi( core::pose::Pose & pose ) {
 		TR << "printing all AAs at designable positions to check indices: "<< std::endl;
 		for ( core::Size i = 1; i <= all_pose_sequences.size(); ++i ) {
 			TR << i << ":";
-            for (const std::string& resi : all_pose_sequences[i]) {
-                TR << resi << "-";
-            }
-            TR << ", ";
+			for ( const std::string& resi : all_pose_sequences[i] ) {
+				TR << resi << "-";
+			}
+			TR << ", ";
 		}
 		TR << std::endl;
 	}
