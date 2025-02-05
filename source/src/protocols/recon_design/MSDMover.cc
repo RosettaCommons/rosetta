@@ -253,7 +253,8 @@ MSDMover::apply_linked_constraints( core::pose::Pose & pose,
 				pose,
 				pose_position, //seqpos
 				constrained_AA, //AAname
-				weight_ //constraint weight
+				weight_, //constraint weight
+                true // using base_name
 				) );
 			constraints.push_back( pose.add_constraint( temp_cst ) );
 		}
@@ -300,11 +301,8 @@ MSDMover::apply_mpi( core::pose::Pose & pose ) {
 		} else {
             std::string passed_seq = utility::receive_string_from_node( ii-1 ); // node ranks are 0-indexed
             //Need to split passed_seq by spaces
-            std::istringstream iss(passed_seq);
-            std::string resi_name;
-            while (iss >> resi_name){
-                other_pose_sequences[ii].push_back(resi_name);
-            }
+            utility::vector1<std::string> split_seq = utility::split_whitespace(passed_seq);
+            other_pose_sequences[ii].append(split_seq);
 		}
 	}
 
