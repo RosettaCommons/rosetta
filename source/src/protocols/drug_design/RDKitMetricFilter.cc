@@ -65,7 +65,7 @@ void RDKitMetricFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"Filter is false if the metric is greater than this value" );
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(),
-		"Test the number of heteroatom-heteroatom (non C/H) bonds in a residue.",
+		"Calculates the specified metric from RDKit on the given residue.",
 		attlist );
 }
 

@@ -36,7 +36,7 @@ public:
 		Filter( class_name() )
 	{}
 
-	AtomExistsFilter( std::string const & residue, std::string atom_name ):
+	AtomExistsFilter( std::string const & residue, std::string const & atom_name ):
 		Filter( class_name() ),
 		residue_( residue ),
 		atom_name_( atom_name )
