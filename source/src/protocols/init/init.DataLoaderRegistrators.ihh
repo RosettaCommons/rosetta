@@ -31,9 +31,11 @@ static DataLoaderRegistrator< ConstraintGeneratorLoaderCreator > reg_ConstraintG
 static DataLoaderRegistrator< SimpleMetricLoaderCreator > reg_SimpleMetricLoaderCreator;
 
 static DataLoaderRegistrator< chemistries::ChemistryLoaderCreator > reg_ChemistryLoaderCreator;
+
 static DataLoaderRegistrator< ligand_docking::InterfaceBuilderLoaderCreator > reg_InterfaceBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::MoveMapBuilderLoaderCreator > reg_MoveMapBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::LigandAreaLoaderCreator > reg_LigandAreaLoaderCreator;
+
 static DataLoaderRegistrator< loops::loops_definers::LoopsDefinerLoaderCreator > reg_LoopsDefinerLoaderCreator;
 
 } //namespace protocols

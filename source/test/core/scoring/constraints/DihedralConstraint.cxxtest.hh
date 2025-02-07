@@ -237,17 +237,17 @@ public:
 			//[old behavior] Objects are equivalent (same data) but not identical (different places in memory)
 			//TS_ASSERT( constraints_orig[i] != constraints_copy[i] );
 			// Objects are identical (same place in memory)
-			TS_ASSERT( constraints_orig[i] == constraints_copy[i] );
-			TS_ASSERT( constraints_orig[i].get() == constraints_copy[i].get() );
+			TS_ASSERT_EQUALS( constraints_orig[i], constraints_copy[i] );
+			TS_ASSERT_EQUALS( constraints_orig[i].get(), constraints_copy[i].get() );
 			TS_ASSERT_EQUALS( constraints_orig[i]->to_string(), "DihedralConstraint 116 2 116 6 116 7 116 8 CIRCULARHARMONIC 2.44839 0.0872665\n" );
 			TS_ASSERT_EQUALS( constraints_orig[i]->to_string(), constraints_copy[i]->to_string() );
 		}
 
 		core::Size const size_before = pose.constraint_set()->get_all_constraints().size();
-		TS_ASSERT( size_before == 1 );
-		TS_ASSERT( pose.remove_constraint(constraint) == true );
+		TS_ASSERT_EQUALS( size_before, 1 );
+		TS_ASSERT(pose.remove_constraint(constraint) == true);
 		core::Size const size_after = pose.constraint_set()->get_all_constraints().size();
-		TS_ASSERT( size_after == 0 );
+		TS_ASSERT_EQUALS( size_after, 0 );
 		// Can't remove a constraint twice:
 		TS_ASSERT( pose.remove_constraint(constraint) == false );
 	}
