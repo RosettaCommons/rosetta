@@ -70,6 +70,7 @@ SET_ICOOR  3H4 -60.0    70.0   1.089  C4  C3  C2
 #Unpatched H gets its geometry from LOWER, which we have removed
 
 SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 # If modified, no longer canonical.
 DELETE_PROPERTY CANONICAL_AA
