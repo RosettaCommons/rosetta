@@ -64,10 +64,10 @@ double do_sinpass( double x, double min, double max, double min_trans, double ma
 	runtime_assert( max_trans >= 0 );
 	if ( x >= min && x <= max ) { return 1.0; }
 	if ( x <= min - min_trans || x >= max + max_trans ) { return 0.0; }
-	if ( x < min && x >= min - min_trans ) {
+	if ( x < min && x > min - min_trans ) {
 		return std::cos( (x-min) * constants::d::pi / min_trans )/2 + 0.5;
 	}
-	if ( x > max && x <= max + max_trans ) {
+	if ( x > max && x < max + max_trans ) {
 		return std::cos( (x-max) * constants::d::pi / max_trans )/2 + 0.5;
 	}
 	return 0.0; // Should never get here.

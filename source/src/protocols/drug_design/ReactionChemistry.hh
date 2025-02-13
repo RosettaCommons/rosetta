@@ -27,6 +27,10 @@
 
 #include <rdkit/GraphMol/Substruct/SubstructMatch.h>
 
+#ifdef PYROSETTA
+#include <rdkit/GraphMol/ChemReactions/Reaction.h> // Needed to properly wrap vector1< ChemicalReactionOP >
+#endif
+
 namespace protocols {
 namespace drug_design {
 
