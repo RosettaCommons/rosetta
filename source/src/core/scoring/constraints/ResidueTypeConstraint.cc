@@ -267,6 +267,7 @@ core::scoring::constraints::ResidueTypeConstraint::save( Archive & arc ) const {
 	arc( CEREAL_NVP( AAname ) ); // std::string
 	arc( CEREAL_NVP( rsd_type_name3_ ) ); // std::string
 	arc( CEREAL_NVP( favor_native_bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( base_name_ ) ); // bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -278,6 +279,7 @@ core::scoring::constraints::ResidueTypeConstraint::load( Archive & arc ) {
 	arc( AAname ); // std::string
 	arc( rsd_type_name3_ ); // std::string
 	arc( favor_native_bonus_ ); // core::Real
+	arc( base_name_  ); // bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::ResidueTypeConstraint );
