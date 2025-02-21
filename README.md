@@ -52,7 +52,7 @@ Example `~/.condarc` for US WEST coast (if unsure use this mirror):
 ```
 channels: 
 - https://conda.rosettacommons.org
-- defaults
+- conda-forge
 ```
 
 Example `~/.condarc` for US EAST coast:
@@ -60,7 +60,7 @@ Example `~/.condarc` for US EAST coast:
 ```
 channels: 
 - https://conda.graylab.jhu.edu
-- defaults
+- conda-forge
 ```
 
 

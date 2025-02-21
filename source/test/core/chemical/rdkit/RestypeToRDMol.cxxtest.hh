@@ -110,13 +110,14 @@ public:
 	void test_charge_states() {
 		using namespace core::chemical;
 
-		utility::vector1< std::string > filenames;
-		filenames.push_back( "purine.sdf" );
-		filenames.push_back( "pyridineNoxide.sdf" );
-		filenames.push_back( "nmethylpyridine.sdf" );
-		filenames.push_back( "benzoate.sdf" );
-		filenames.push_back( "ATP.sdf" );
-		filenames.push_back( "nitro.sdf" );
+		utility::vector1< std::string > filenames {
+			"purine.sdf",
+			"pyridineNoxide.sdf",
+			"nmethylpyridine.sdf",
+			"benzoate.sdf",
+			"ATP.sdf",
+			"nitro.sdf"
+			};
 
 		for ( core::Size ii(1); ii <= filenames.size(); ++ii ) {
 			TR << "Testing file: " << filenames[ii] << std::endl;
