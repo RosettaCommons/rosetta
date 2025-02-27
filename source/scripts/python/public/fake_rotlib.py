@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from multiprocessing import Pool
 from subprocess import check_output
 from shutil import move
 from copy import deepcopy
@@ -28,6 +29,9 @@ def parseArgs(argv):
     parser.add_argument("-c","--n_cbb",type=int,metavar="N",
                         default = 1,
                         help="number of carbons in the backbone, i.e., N = 2 for beta AA, 3 for gamma AA, etc. (default: %(default)s)")
+    parser.add_argument("-p","--n_processes",type=int,metavar="N",
+                        default=1,
+                        help="Number of processes to use for conformer generation/scoring (default: %(default)s)")
     parser.add_argument("-m","--mmff",action="store_true",
                         default=False,
                         help="If specified, MMFF94 will be used for geometry optimization and conformer scoring instead of UFF.")
@@ -191,13 +195,32 @@ def geomOptimize(mol, maxIter, mmff=False):
         return mol
 
 #Generate conformations of NCAA for rotamer library
-def rdkitConf(ncaamol, noext, topN, instructions, mmff):
+def rdkitConf(ncaamol, noext, topN, instructions, mmff, nProc):
     print("Generating RDKit Conformations...")
     confs = AllChem.EmbedMultipleConfs(ncaamol, useRandomCoords=True, numConfs=int(10*topN), numThreads=0, useExpTorsionAnglePrefs=False)
     print("Aligning conformations...")
     AllChem.AlignMolConformers(ncaamol, confIds=confs)
     print("Scoring conformations...")
-    scoreconfs = scoreConf(ncaamol, confs, instructions, mmff)
+    lines = instructions.split("\n")
+    polylines = []
+    for line in lines:
+        if "POLY_IGNORE" in line or "POLY_UPPER" in line or "POLY_LOWER" in line:
+            polylines.append(line)
+    ignoreidx = []
+    for line in polylines:
+        ignoreidx += [int(i) for i in line.split()[2:]]
+    ignoreidx.sort(reverse=True)
+    editmol = Chem.EditableMol(ncaamol)
+    for idx in ignoreidx:
+        editmol.RemoveAtom(idx-1)
+
+    #Score the poses
+    stripmol = Chem.AddHs(editmol.GetMol())
+    AllChem.MMFFSanitizeMolecule(stripmol)
+    p = Pool(nProc)
+    argList = [(stripmol, c, mmff) for c in confs]
+    scoreconfs = p.starmap(scoreConf, argList)
+    scoreconfs.sort(key=lambda x: x[1])
     Chem.SetConjugation(ncaamol)
     Chem.SetAromaticity(ncaamol)
     g = open(noext+"_rotamer.sdf","w")
@@ -208,36 +231,15 @@ def rdkitConf(ncaamol, noext, topN, instructions, mmff):
     g.close()
 
 #Score all generated conformations and return the most favorable
-def scoreConf(mol, confids, instructions, mmff):
+def scoreConf(mol, c, mmff):
     #Rip off the dihedral caps (they interfere with the energy of the sidechain)
-    lines = instructions.split("\n")
-    polylines = []
-    for line in lines:
-        if "POLY_IGNORE" in line or "POLY_UPPER" in line or "POLY_LOWER" in line:
-            polylines.append(line)
-    ignoreidx = []
-    for line in polylines:
-        ignoreidx += [int(i) for i in line.split()[2:]]
-    ignoreidx.sort(reverse=True)
-    editmol = Chem.EditableMol(mol)
-    for idx in ignoreidx:
-        editmol.RemoveAtom(idx-1)
-
-    #Score the poses
-    stripmol = Chem.AddHs(editmol.GetMol())
-    AllChem.MMFFSanitizeMolecule(stripmol)
-    scoreconfs = []
     if mmff:
-        prop = AllChem.MMFFGetMoleculeProperties(stripmol)
-        for c in confids:
-            ff = AllChem.MMFFGetMoleculeForceField(stripmol,prop,confId=c)
-            scoreconfs.append((c, ff.CalcEnergy()))
+        prop = AllChem.MMFFGetMoleculeProperties(mol)
+        ff = AllChem.MMFFGetMoleculeForceField(mol,prop,confId=c)
+        return (c, ff.CalcEnergy())
     else:
-        for c in confids:
-            ff = AllChem.UFFGetMoleculeForceField(stripmol,confId=c)
-            scoreconfs.append((c, ff.CalcEnergy()))
-    scoreconfs.sort(key=lambda x: x[1])
-    return scoreconfs
+        ff = AllChem.UFFGetMoleculeForceField(mol,confId=c)
+        return (c, ff.CalcEnergy())
 
 #Convert between [0,360] angle and [-180,180] angle
 def negposang(ang,pos):
@@ -492,7 +494,7 @@ if __name__ == "__main__":
         g.close()
     else:
         #Run the conformer generator
-        rdkitConf(ncaamol, noext, args.top_n_confs, instructions, args.mmff)
+        rdkitConf(ncaamol, noext, args.top_n_confs, instructions, args.mmff, args.n_processes)
     
     #Run molfile_to_params_polymer.py
     m2pp = os.path.join(sys.path[0],"molfile_to_params_polymer.py")
