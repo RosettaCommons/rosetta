@@ -117,7 +117,7 @@ void EvolutionManager::run( int mpi_size ) {
 		calculate_quantiles();
 
 		population_.next_generation( *selectors_[ main_selector_ ] );
-		TR << print_scores() << std::endl;
+		TR << scores_to_str() << std::endl;
 
 		for ( core::Size generation( 1 ); generation <= max_generations_; ++generation ) {
 
@@ -169,7 +169,7 @@ void EvolutionManager::run( int mpi_size ) {
 
 			// Step 3: Reduce population back down to its desired size with the main selector
 			population_.next_generation( *selectors_[ main_selector_ ] );
-			TR << print_scores() << std::endl;
+			TR << scores_to_str() << std::endl;
 
 			utility::vector1< core::Real > old_quantiles( quantiles );
 			calculate_quantiles();
@@ -211,7 +211,7 @@ void EvolutionManager::score() {
 #endif
 }
 
-std::string EvolutionManager::print_scores() const {
+std::string EvolutionManager::scores_to_str() const {
 	std::string str = "Scores:";
 	for ( Individual const& individual : population_.individuals() ) {
 		str += " " + utility::to_string( individual.score() );

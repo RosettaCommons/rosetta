@@ -45,7 +45,7 @@ public:
 	void init();
 
 	/// @brief Prints scores of all individuals
-	std::string print_scores() const;
+	std::string scores_to_str() const;
 
 private:
 
