@@ -56,7 +56,6 @@ sources = {
 		"minimize_ppi",
 		"mutate",
 		"packstat",
-		"revold",
 		"relax",
 		"remodel",
 		"restype_converter",
@@ -184,6 +183,9 @@ sources = {
 	"public/enzdes": [
 		"CstfileToTheozymePDB",
 		"enzyme_design",
+	],
+	"public/ligand_design": [
+		"revold",
 	],
 	"public/motif_ligand_discovery": [
 		"identify_ligand_motifs",
