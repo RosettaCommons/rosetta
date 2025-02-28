@@ -37,15 +37,15 @@ int main( int argc, char* argv[] ) {
 		int size = 1;
 
 #ifdef USEMPI
-        MPI_Init (&argc, &argv);
-        MPI_Comm_rank (MPI_COMM_WORLD, &rank);
-        MPI_Comm_size( MPI_COMM_WORLD, &size );
+		MPI_Init (&argc, &argv);
+		MPI_Comm_rank (MPI_COMM_WORLD, &rank);
+		MPI_Comm_size( MPI_COMM_WORLD, &size );
 
-        devel::init(argc, argv);
+		devel::init(argc, argv);
 
-        if ( size < 10 ) {
-            TR.Warning << "Running REvoLd less than 10 CPUs causes very large runtimes. Consider using more CPUs." << std::endl;
-        }
+		if ( size < 10 ) {
+			TR.Warning << "Running REvoLd less than 10 CPUs causes very large runtimes. Consider using more CPUs." << std::endl;
+		}
 #else
 		devel::init(argc, argv);
 		TR.Warning << "Running REvoLd without MPI causes very large runtimes. Consider using MPI." << std::endl;
@@ -58,8 +58,8 @@ int main( int argc, char* argv[] ) {
 
 
 #ifdef USEMPI
-        MPI_Barrier( MPI_COMM_WORLD );
-        MPI_Finalize();
+		MPI_Barrier( MPI_COMM_WORLD );
+		MPI_Finalize();
 #endif
 
 		return 0;

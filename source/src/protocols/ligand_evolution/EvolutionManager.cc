@@ -92,7 +92,7 @@ void EvolutionManager::init() {
 
 void EvolutionManager::init_workmanager() {
 #ifdef USEMPI
-        work_manager_ = WorkManagerOP( new WorkManager( scorer_, library_.max_positions() + 1, library_ ) );
+	work_manager_ = WorkManagerOP( new WorkManager( scorer_, library_.max_positions() + 1, library_ ) );
 #endif
 }
 
@@ -195,17 +195,17 @@ void EvolutionManager::run( int mpi_size ) {
 		} // for loop
 	} // if rank == 0
 #ifdef USEMPI
-    else {
-        work_manager_->work_loop();
-    }
+	else {
+		work_manager_->work_loop();
+	}
 
-    work_manager_->clean_up();
+	work_manager_->clean_up();
 #endif
 }
 
 void EvolutionManager::score() {
 #ifdef USEMPI
-        work_manager_->score( population_ );
+	work_manager_->score( population_ );
 #else
 	scorer_->score_population( population_ );
 #endif
