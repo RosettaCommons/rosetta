@@ -38,10 +38,10 @@ namespace ligand_evolution {
 		MPI_Comm_size (MPI_COMM_WORLD, &n_processes_);
 		MPI_Comm_rank (MPI_COMM_WORLD, &rank_);
 		if( rank_ != 0 ) {
-			worker_.emplace_back( new Worker( 0, scorer_->n_score_terms(), id_length ) );
+			worker_.push_back( utility::pointer::make_shared< Worker >( 0, scorer_->n_score_terms(), id_length ) );
 		} else {
 			for( int ii = 1; ii < n_processes_; ++ii ) {
-				worker_.emplace_back( new Worker( ii, scorer_->n_score_terms(), id_length ) );
+				worker_.push_back( utility::pointer::make_shared< Worker >( ii, scorer_->n_score_terms(), id_length ) );
 			}
 		}
 	}

@@ -40,10 +40,11 @@ Scorer::Scorer( FragmentLibrary& library, core::Size n_runs, char ligand_chain )
 :
 	ligand_chain_( ligand_chain ),
 	n_runs_( n_runs ),
-	library_( library ),
-	best_pose_( new core::pose::Pose ),
-	working_pose_( new core::pose::Pose )
-{}
+	library_( library )
+{
+	best_pose_ = utility::pointer::make_shared< core::pose::Pose >();
+	working_pose_ = utility::pointer::make_shared< core::pose::Pose >();
+}
 
 void Scorer::add_mover( moves::MoverOP const& mover ) {
 	mover_.push_back( mover );
@@ -665,7 +666,7 @@ void Scorer::initialize_from_options(EvolutionOptionsCOP options, protocols::ros
 		load_scores( score_memory_path );
 	}
 
-	protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom );
+	protocols::ligand_docking::StartFromOP start_from = utility::pointer::make_shared< protocols::ligand_docking::StartFrom >();
 	start_from->add_coords( options->get_start_xyz() );
 	start_from->chain( options->get_ligand_chain() );
 	add_mover(start_from);

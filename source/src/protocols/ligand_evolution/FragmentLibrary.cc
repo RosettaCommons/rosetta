@@ -156,7 +156,7 @@ void FragmentLibrary::load_reactions( std::string const& reaction_file_path ) {
 
 		// construct new Reaction object in place at the back of the reactions vector
 		TR.Debug << "Create reaction " << reaction_name << " defined as " << reaction_smiles << " with " << reagent_count << " reagents." << std::endl;
-		reactions_.emplace_back( new Reaction( reaction_name, reaction_smiles, reagent_count ) );
+		reactions_.push_back( utility::pointer::make_shared< Reaction >( reaction_name, reaction_smiles, reagent_count ) );
 		reaction_name_to_index_.insert( std::pair< std::string, core::Size >( reaction_name, reactions_.size() ) );
 
 	}
@@ -229,7 +229,7 @@ void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 		core::Size reaction_index = reaction_name_to_index_.at( split_line[ reaction_i ] );
 
 		// create reagent
-		reagents_.emplace_back( new Reagent( reagent_name, reagent_smiles ) );
+		reagents_.push_back( utility::pointer::make_shared< Reagent >( reagent_name, reagent_smiles ) );
 		// add reagent to its reaction
 		reactions_[ reaction_index ]->reagents_[ position ].emplace_back( reagents_.size() );
 
@@ -273,7 +273,7 @@ core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const&
 
 	core::chemical::ResidueTypeCOP restype = core::chemical::ResidueType::make( *new_ligand );
 
-	core::conformation::ResidueOP tmp_residue( new core::conformation::Residue( restype, true ) );
+	core::conformation::ResidueOP tmp_residue = utility::pointer::make_shared< core::conformation::Residue >( restype, true );
 
 	TR.Debug << "Done creating." << std::endl;
 
@@ -295,7 +295,7 @@ core::Size FragmentLibrary::generate_rotamers( core::chemical::MutableResidueTyp
 
 	TR.Debug << "Try to create " << nconf << " rotamers." << std::endl;
 
-	core::chemical::rotamers::StoredRotamerLibrarySpecificationOP rotamers_spec( new core::chemical::rotamers::StoredRotamerLibrarySpecification() );
+	core::chemical::rotamers::StoredRotamerLibrarySpecificationOP rotamers_spec = utility::pointer::make_shared< core::chemical::rotamers::StoredRotamerLibrarySpecification >();
 
 	utility::vector1< std::map< std::string, core::Vector > > return_value;
 
@@ -415,7 +415,7 @@ core::Size FragmentLibrary::reagents_size( core::Size reaction_index, core::Size
 
 core::pose::PoseOP FragmentLibrary::create_pose( core::conformation::Residue& ligand, char ligand_chain ) const {
 
-	core::pose::PoseOP ligand_pose( new core::pose::Pose );
+	core::pose::PoseOP ligand_pose = utility::pointer::make_shared< core::pose::Pose >();
 	ligand_pose->detached_copy( *pose_ );
 
 	core::pose::PDBInfoOP pdb_info( ligand_pose->pdb_info() );

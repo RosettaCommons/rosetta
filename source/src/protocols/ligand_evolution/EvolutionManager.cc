@@ -53,11 +53,11 @@ void EvolutionManager::init() {
 
 	if ( !basic::options::option[ basic::options::OptionKeys::ligand_evolution::options ].active() ) {
 		TR << "Path to evolutionary options file not set. Default settings will be used." << std::endl;
-		evoopt = EvolutionOptionsOP(new EvolutionOptions());
+		evoopt = utility::pointer::make_shared< EvolutionOptions >( EvolutionOptions() );
 	} else {
 		std::string option_path = basic::options::option[basic::options::OptionKeys::ligand_evolution::options];
 		TR << "Parsing evolutionary option file " << option_path << std::endl;
-		evoopt = EvolutionOptionsOP(new EvolutionOptions(option_path));
+		evoopt = utility::pointer::make_shared< EvolutionOptions >( EvolutionOptions(option_path));
 	}
 
 	// Movers and scoring functions from here will be used later. Parsing the script happens early to detect errors quickly
@@ -74,7 +74,7 @@ void EvolutionManager::init() {
 
 	library_.initialize_from_options( evoopt, external_scoring_, rank_ );
 
-	scorer_ = ScorerOP( new Scorer( library_, evoopt->get_n_scoring_runs(), evoopt->get_ligand_chain()[ 0 ] ) );
+	scorer_ = utility::pointer::make_shared< Scorer >( Scorer( library_, evoopt->get_n_scoring_runs(), evoopt->get_ligand_chain()[ 0 ] ) );
 	scorer_->initialize_from_options( evoopt, rosetta_script, rank_ );
 
 	// These setups are not needed for external scoring runs, only evolutionary optimization
@@ -92,7 +92,7 @@ void EvolutionManager::init() {
 
 void EvolutionManager::init_workmanager() {
 #ifdef USEMPI
-	work_manager_ = WorkManagerOP( new WorkManager( scorer_, library_.max_positions() + 1, library_ ) );
+	work_manager_ = utility::pointer::make_shared< WorkManager >( scorer_, library_.max_positions() + 1, library_ );
 #endif
 }
 
@@ -309,9 +309,9 @@ void EvolutionManager::init_evolution_protocol(EvolutionOptionsCOP options) {
 	for ( std::string const& name: options->get_selector_names() ) {
 		std::string const& type = options->get_selector_type(name);
 		if ( type == "elitist" ) {
-			selectors_.emplace_back(new ElitistSelector());
+			selectors_.push_back( utility::pointer::make_shared< ElitistSelector >());
 		} else if ( type == "roulette" ) {
-			RouletteSelectorOP roulette(new RouletteSelector());
+			RouletteSelectorOP roulette = utility::pointer::make_shared< RouletteSelector >();
 			roulette->consider_positive(
 				core::Size(options->get_selector_parameter(name, "consider_positive")));
 			selectors_.push_back(roulette);
@@ -319,7 +319,7 @@ void EvolutionManager::init_evolution_protocol(EvolutionOptionsCOP options) {
 			core::Size tournament_size = core::Size(
 				options->get_selector_parameter(name, "tournament_size"));
 			core::Real win_accept = options->get_selector_parameter(name, "acceptance_chance");
-			selectors_.emplace_back(new TournamentSelector(tournament_size, win_accept));
+			selectors_.push_back( utility::pointer::make_shared< TournamentSelector >(tournament_size, win_accept));
 		} else {
 			TR.Error << "Unknown selector type " << type << ". Please program setup in EvolutionManager."
 				<< std::endl;
@@ -336,16 +336,16 @@ void EvolutionManager::init_evolution_protocol(EvolutionOptionsCOP options) {
 	for ( std::string const& name: options->get_factory_names() ) {
 		std::string const& type = options->get_factory_type(name);
 		if ( type == "crossover" ) {
-			factories_.emplace_back(new Crossover(library_));
+			factories_.push_back(utility::pointer::make_shared< Crossover >(library_));
 		} else if ( type == "identity" ) {
-			factories_.emplace_back(new IdentityFactory());
+			factories_.push_back(utility::pointer::make_shared< IdentityFactory >());
 		} else if ( type == "mutator" ) {
 			core::Real reaction_weight = options->get_factory_parameter(name, "reaction_weight");
 			core::Real reagent_weight = options->get_factory_parameter(name, "reagent_weight");
 			core::Real min_similarity = options->get_factory_parameter(name, "min_similarity");
 			core::Real max_similarity = options->get_factory_parameter(name, "max_similarity");
-			factories_.emplace_back(
-				new Mutator(library_, {reaction_weight, reagent_weight}, min_similarity,
+			factories_.push_back(
+				utility::pointer::make_shared< Mutator >(library_, utility::vector1< core::Real >{reaction_weight, reagent_weight}, min_similarity,
 				max_similarity));
 		} else {
 			TR.Error << "Unknown factory type " << type << ". Please program setup in EvolutionManager."

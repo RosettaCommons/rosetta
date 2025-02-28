@@ -836,7 +836,7 @@ std::string const& EvolutionOptions::get_protocol_path() const {
 }
 
 core::pose::PoseOP EvolutionOptions::get_pose_from_stream() {
-	core::pose::PoseOP pose( new core::pose::Pose );
+	core::pose::PoseOP pose = utility::pointer::make_shared< core::pose::Pose >();
 	pose_stream_.fill_pose(*pose);
 	std::string pose_descriptor = pose_stream_.get_last_pose_descriptor_string();
 	if ( pose_stream_.has_another_pose() ) {
