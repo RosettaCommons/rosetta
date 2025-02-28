@@ -377,14 +377,9 @@ void EvolutionManager::external_scoring( int mpi_size ) {
 
 	core::Size smiles_to_score = library_.n_unscored_smiles() / mpi_size;
 	for ( core::Size ii( 1 + smiles_to_score * rank_ ); ii <= smiles_to_score * ( rank_ + 1 ); ++ii ) {
-		try {
-			scorer_->score_ligand( { ii, 0 }, "", external_scoring_ );
-			if ( ii % 10 == 0 ) {
-				scorer_->save_external_scoring_results( core::Size( rank_ + 1 ));
-			}
-		} catch( ... ) {
-			// print message and continue scoring
-			TR.Error << "Unable to score " << library_.identifier_to_smiles( { ii, 0 } ) << std::endl;
+		scorer_->score_ligand( { ii, 0 }, "", external_scoring_ );
+		if ( ii % 10 == 0 ) {
+			scorer_->save_external_scoring_results( core::Size( rank_ + 1 ));
 		}
 	}
 	core::Size leftovers = library_.n_unscored_smiles() % mpi_size;
