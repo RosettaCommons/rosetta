@@ -40,11 +40,10 @@ Scorer::Scorer( FragmentLibrary& library, core::Size n_runs, char ligand_chain )
 :
 	ligand_chain_( ligand_chain ),
 	n_runs_( n_runs ),
-	library_( library )
-{
-	best_pose_ = utility::pointer::make_shared< core::pose::Pose >();
-	working_pose_ = utility::pointer::make_shared< core::pose::Pose >();
-}
+	library_( library ),
+	best_pose_( utility::pointer::make_shared< core::pose::Pose >() ),
+	working_pose_( utility::pointer::make_shared< core::pose::Pose >() )
+{}
 
 void Scorer::add_mover( moves::MoverOP const& mover ) {
 	mover_.push_back( mover );
