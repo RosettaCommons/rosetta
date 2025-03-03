@@ -229,12 +229,10 @@ sources = {
         "Crossover",
         "IdentityFactory",
         "Mutator",
-        "OffspringFactory",
 	],
     "protocols/ligand_evolution/selectors": [
         "ElitistSelector",
         "RouletteSelector",
-        "Selector",
         "TournamentSelector",
 	],
 	"protocols/pack_interface": [

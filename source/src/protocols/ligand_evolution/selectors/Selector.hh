@@ -32,9 +32,6 @@ namespace ligand_evolution {
 class Selector : public utility::VirtualBase {
 public:
 
-	Selector();
-	~Selector();
-
 	/// @brief Applies the specified rules to create a list of indices of selected individuals
 	virtual utility::vector1< Individual > apply( Population& population, core::Size size, bool remove ) const = 0;
 
