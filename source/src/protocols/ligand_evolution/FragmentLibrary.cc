@@ -258,14 +258,14 @@ core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const&
 	//		None of these molecules actually contained a salt ion.
 
 
-	RDKit::RWMol mutable_product( *RDKit::SmilesToMol( smiles ) );
+	RDKit::RWMOL_SPTR mutable_product( RDKit::SmilesToMol( smiles ) );
 
-	RDKit::MolOps::sanitizeMol( mutable_product );
-	RDKit::MolOps::addHs( mutable_product );
+	RDKit::MolOps::sanitizeMol( *mutable_product );
+	RDKit::MolOps::addHs( *mutable_product );
 
-	RDKit::DGeomHelpers::EmbedMolecule( mutable_product );
+	RDKit::DGeomHelpers::EmbedMolecule( *mutable_product, RDKit::DGeomHelpers::srETKDGv3 );
 
-	core::chemical::rdkit::RDMolToRestype mol_to_res( mutable_product );
+	core::chemical::rdkit::RDMolToRestype mol_to_res( *mutable_product );
 	core::chemical::MutableResidueTypeOP new_ligand = mol_to_res.generate_restype();
 
 	if ( create_rotamers ) {
@@ -307,12 +307,8 @@ core::Size FragmentLibrary::generate_rotamers( core::chemical::MutableResidueTyp
 	core::chemical::VDIndexMapping const & rosetta_to_rdkit( to_rdmol.vd_to_index() );
 
 	// Generate the rotamers
-	::RDKit::INT_VECT conf_ids; // List of generated conformations
-	::RDKit::DGeomHelpers::EmbedMultipleConfs(*rdmol, conf_ids, nconf,
-		/*numThreads*/ 1, /*maxIterations*/ 30, /*seed*/ 11111, /*clearConfs*/ true, /*useRandomCoords*/ false, /*boxSizeMult*/ 2.0,   // We use a fixed seed such that conformer generation is repeatable.
-		/*randNegEig*/ true, /*numZeroFail*/ 1, /*pruneRmsThresh*/ -1.0, /*coordMap*/ nullptr, /*optimizerForceTol*/ 1e-3, /*ignoreSmoothingFailures*/ false,
-		/*enforceChirality*/ true, /*useExpTorsionAnglePrefs*/ true, /*useBasicKnowledge*/ true  // These are the ones we're changing
-	);
+	RDKit::INT_VECT conf_ids; // List of generated conformations
+	RDKit::DGeomHelpers::EmbedMultipleConfs(*rdmol, conf_ids, nconf, RDKit::DGeomHelpers::srETKDGv3);
 
 	TR.Debug << "RDKit generated " << conf_ids.size() << " rotamers." << std::endl;
 
