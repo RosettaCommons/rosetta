@@ -632,14 +632,9 @@ core::Size Reaction::n_positions() const {
 Reagent::Reagent( std::string const& name, std::string const& reagent_smiles )
 :
 	name_( name ),
-	mol_( RDKit::SmilesToMol( reagent_smiles ) )
-{
-	fingerprint_ = RDKit::MorganFingerprints::getFingerprint( *mol_, 2 );
-}
-
-Reagent::~Reagent() {
-	delete fingerprint_;
-}
+	mol_( RDKit::SmilesToMol( reagent_smiles ) ),
+	fingerprint_( RDKit::MorganFingerprints::getFingerprint( *mol_, 2 ) )
+{}
 
 }
 }

@@ -179,7 +179,7 @@ public:
 
 	Reagent( std::string const& name, std::string const& reagent_smiles );
 
-	~Reagent();
+	~Reagent() = default;
 
 	// deleted these due to rule of three
 	Reagent& operator=( Reagent const& other ) = delete;
@@ -189,7 +189,7 @@ private:
 
 	std::string name_;
 	RDKit::RWMOL_SPTR mol_;
-	RDKit::SparseIntVect< unsigned int >* fingerprint_;
+	std::shared_ptr< RDKit::SparseIntVect< unsigned int > > fingerprint_;
 
 	friend FragmentLibrary;
 };
