@@ -505,14 +505,14 @@ std::string FragmentLibrary::run_reaction( LigandIdentifier const& identifier ) 
 	// rdkit requires some weird vector and vector of vector shenanigans
 	RDKit::MOL_SPTR_VECT react;
 	for ( core::Size ii( 1 ); ii <= n_reaction_positions; ++ii ) {
-		react.push_back( RDKit::RWMOL_SPTR( reagents_[ reagent_indices[ ii ] ]->mol_ ) );
+		react.push_back( reagents_[ reagent_indices[ ii ] ]->mol_ );
 	}
 
 	auto products = reactions_[ reaction_index ]->reac_->runReactants( react );
 	TR.Debug << "Len of outer vector: " << products.size() << std::endl;
 	TR.Debug << "Len of inner vector: " << products[ 0 ].size() << std::endl;
 
-	return RDKit::MolToSmiles( RDKit::RWMol( *products[ 0 ][ 0 ] ) );
+	return RDKit::MolToSmiles(  *products[ 0 ][ 0 ] );
 }
 
 std::string FragmentLibrary::identifier_to_smiles( LigandIdentifier const& identifier ) const {
