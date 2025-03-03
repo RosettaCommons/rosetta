@@ -254,8 +254,8 @@ core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const&
 
 	// TODO Rosetta can't handle salts well, like an added Cl ion.
 	//      This is for now caught by the scorer and a score of 9999.9 is assigned to the molecule and the issue seems to be not important.
-	//		There are only 16 salt ion containing fragments in the 2022 REAL space and final benchmark assigned the failed score to only 5 out of ~360k docked molecules
-	//		None of these molecules actually contained a salt ion.
+	//  There are only 16 salt ion containing fragments in the 2022 REAL space and final benchmark assigned the failed score to only 5 out of ~360k docked molecules
+	//  None of these molecules actually contained a salt ion.
 
 
 	RDKit::RWMOL_SPTR mutable_product( RDKit::SmilesToMol( smiles ) );
@@ -270,7 +270,7 @@ core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const&
 
 	if ( create_rotamers ) {
 		// TODO it might be more efficient to embed all conformers from the original RWMol, then convert, then pull out the conformers into the
-		// 		StoredRotamerLibrarySpecification, rather than bouncing back-and-forth between the representations.
+		//   StoredRotamerLibrarySpecification, rather than bouncing back-and-forth between the representations.
 		core::Size n_rotamers = generate_rotamers( *new_ligand );
 		TR.Debug << "Set " << n_rotamers << " rotamers." << std::endl;
 	}
