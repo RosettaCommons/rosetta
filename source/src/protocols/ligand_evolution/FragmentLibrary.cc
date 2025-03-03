@@ -75,9 +75,9 @@ void FragmentLibrary::load_data( std::string const& reaction_file_path, std::str
 		weighted_sampler_.add_weight( core::Real( possible_mols ) );
 
 		// print size distribution of loaded reactions
-		TR.Debug << reactions_[ ii ]->name_ << "\t" << possible_mols;
+		TR.Debug << reactions_[ ii ]->name() << "\t" << possible_mols;
 		for ( core::Size jj( 1 ); jj <= reactions_[ ii ]->n_positions(); ++jj ) {
-			TR.Debug << "\t" << reactions_[ ii ]->reagents_[ jj ].size();
+			TR.Debug << "\t" << reactions_[ ii ]->reagents( jj ).size();
 		}
 		TR.Debug << std::endl;
 
@@ -231,7 +231,7 @@ void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 		// create reagent
 		reagents_.push_back( utility::pointer::make_shared< Reagent >( reagent_name, reagent_smiles ) );
 		// add reagent to its reaction
-		reactions_[ reaction_index ]->reagents_[ position ].emplace_back( reagents_.size() );
+		reactions_[ reaction_index ]->add_reagent( position,  reagents_.size() );
 
 		if ( reagents_.size() % 100000 == 0 ) {
 			TR.Debug << "Loaded " << reagents_.size() << " reagents." << std::endl;
@@ -374,8 +374,8 @@ ReagentSimilarityList FragmentLibrary::get_similar_reagents( core::Size reagent_
 	}
 
 	// calculate all similarities between the given reagent and reagents at the given position in the given reaction
-	for ( core::Size reagent : reactions_[ reaction_id ]->reagents_[ position ] ) {
-		core::Real similarity( RDKit::TanimotoSimilarity( *( reagents_[ reagent_id ]->fingerprint_ ), *( reagents_[ reagent ]->fingerprint_ ) ) );
+	for ( core::Size reagent : reactions_[ reaction_id ]->reagents( position ) ) {
+		core::Real similarity( RDKit::TanimotoSimilarity( *( reagents_[ reagent_id ]->fingerprint() ), *( reagents_[ reagent ]->fingerprint() ) ) );
 		similar_reagents.emplace_back( reagent, similarity );
 	}
 
@@ -403,14 +403,14 @@ core::Size FragmentLibrary::reagents_size( core::Size reaction_index ) const {
 	core::Size size( 0 );
 	ReactionCOP reaction = reactions_[ reaction_index ];
 	// iterate over all positions in the given reaction
-	for ( core::Size position( 1 ); position <= reaction->reagents_.size(); ++position ) {
+	for ( core::Size position( 1 ); position <= reaction->n_positions(); ++position ) {
 		size += reagents_size( reaction_index, position );
 	}
 	return size;
 }
 
 core::Size FragmentLibrary::reagents_size( core::Size reaction_index, core::Size position ) const {
-	return reactions_[ reaction_index ]->reagents_[ position ].size();
+	return reactions_[ reaction_index ]->reagents( position ).size();
 }
 
 core::pose::PoseOP FragmentLibrary::create_pose( core::conformation::Residue& ligand, char ligand_chain ) const {
@@ -468,18 +468,18 @@ core::Size FragmentLibrary::random_reaction( std::set<core::Size> const& exclude
 	for ( core::Size ii( 1 ); ii <= reactions_size(); ++ii ) {
 		// if the reaction id is not excluded, adjust its weight. Otherwise, keep it at 0.
 		if ( exclude.count( ii ) == 0 ) {
-			tmp_sampler.set_weight( ii, reactions_[ ii ]->possible_molecules_ );
+			tmp_sampler.set_weight( ii, reactions_[ ii ]->possible_molecules() );
 		}
 	}
 	return tmp_sampler.random_sample();
 }
 
-std::string const& FragmentLibrary::reaction_id( core::Size reaction_id ) const {
-	return reactions_[ reaction_id ]->name_;
+std::string FragmentLibrary::reaction_id( core::Size reaction_id ) const {
+	return reactions_[ reaction_id ]->name();
 }
 
-std::string const& FragmentLibrary::reagent_id( core::Size reagent_id ) const {
-	return reagents_[ reagent_id ]->name_;
+std::string FragmentLibrary::reagent_id( core::Size reagent_id ) const {
+	return reagents_[ reagent_id ]->name();
 }
 
 std::string FragmentLibrary::run_reaction( LigandIdentifier const& identifier ) const {
@@ -490,25 +490,25 @@ std::string FragmentLibrary::run_reaction( LigandIdentifier const& identifier ) 
 	// make sure that the given index actually refers to a reagent useable by the reaction
 	for ( core::Size ii( 1 ); ii <= n_reaction_positions; ++ii ) {
 		assert( reagent_indices[ ii ] >= 1 && reagent_indices[ ii ] <= reagents_.size() );
-		if ( !reactions_[ reaction_index ]->reagents_[ ii ].has_value( reagent_indices[ ii ] ) ) {
-			TR.Error << "Reaction " << reactions_[ reaction_index ]->name_ << " can't use " << reagents_[ reagent_indices[ ii ] ]->name_ << " at position " << ii << std::endl;
+		if ( !reactions_[ reaction_index ]->reagents( ii ).has_value( reagent_indices[ ii ] ) ) {
+			TR.Error << "Reaction " << reactions_[ reaction_index ]->name() << " can't use " << reagents_[ reagent_indices[ ii ] ]->name() << " at position " << ii << std::endl;
 			utility_exit_with_message( "Invalid reagent selection" );
 		}
 	}
 
-	TR.Debug << "Running reaction: " << reactions_[ reaction_index ]->name_ << " with";
+	TR.Debug << "Running reaction: " << reactions_[ reaction_index ]->name() << " with";
 	for ( core::Size ii( 1 ); ii <= n_reaction_positions; ++ii ) {
-		TR.Debug << " reagent" << ii << " " << reagents_[ reagent_indices[ ii ] ]->name_;
+		TR.Debug << " reagent" << ii << " " << reagents_[ reagent_indices[ ii ] ]->name();
 	}
 	TR.Debug << std::endl;
 
 	// rdkit requires some weird vector and vector of vector shenanigans
 	RDKit::MOL_SPTR_VECT react;
 	for ( core::Size ii( 1 ); ii <= n_reaction_positions; ++ii ) {
-		react.push_back( reagents_[ reagent_indices[ ii ] ]->mol_ );
+		react.push_back( reagents_[ reagent_indices[ ii ] ]->mol() );
 	}
 
-	auto products = reactions_[ reaction_index ]->reac_->runReactants( react );
+	auto products = reactions_[ reaction_index ]->reac()->runReactants( react );
 	TR.Debug << "Len of outer vector: " << products.size() << std::endl;
 	TR.Debug << "Len of inner vector: " << products[ 0 ].size() << std::endl;
 
@@ -557,8 +557,8 @@ core::Size FragmentLibrary::reaction_name_to_index(std::string const& reaction_n
 }
 
 core::Size FragmentLibrary::reagent_name_to_index(core::Size reaction_index, core::Size position, std::string const& reagent_name) const {
-	for ( core::Size reagent_index : reactions_[ reaction_index ]->reagents_[ position ] ) {
-		if ( reagent_name == reagents_[ reagent_index ]->name_ ) {
+	for ( core::Size reagent_index : reactions_[ reaction_index ]->reagents( position ) ) {
+		if ( reagent_name == reagents_[ reagent_index ]->name() ) {
 			return reagent_index;
 		}
 	}
@@ -594,17 +594,13 @@ void FragmentLibrary::initialize_from_options(EvolutionOptionsOP options, core::
 
 Reaction::Reaction( std::string const& name, std::string const& reaction_smiles, core::Size n_reagents )
 :
-	name_( name )
+	name_( name ),
+	reac_( RDKit::RxnSmartsToChemicalReaction( reaction_smiles ) )
 {
-	reac_ = RDKit::RxnSmartsToChemicalReaction( reaction_smiles );
 	reac_->initReactantMatchers();
 	for ( core::Size ii( 1 ); ii <= n_reagents; ++ii ) {
 		reagents_.emplace_back( );
 	}
-}
-
-Reaction::~Reaction() {
-	delete reac_;
 }
 
 core::Size Reaction::random_reagent_index( core::Size position ) const {

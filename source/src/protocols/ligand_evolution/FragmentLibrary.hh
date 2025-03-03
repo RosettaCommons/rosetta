@@ -96,10 +96,10 @@ public:
 	core::Size random_reaction( std::set< core::Size > const& exclude ) const;
 
 	/// @brief Returns the id of this reaction
-	std::string const& reaction_id( core::Size reaction_id ) const;
+	std::string reaction_id( core::Size reaction_id ) const;
 
 	/// @brief Returns the id of this reagent
-	std::string const& reagent_id( core::Size reagent_id ) const;
+	std::string reagent_id( core::Size reagent_id ) const;
 
 	/// @brief Runs the reaction specified by the ligand identifier and returns the resulting rdkit molecule
 	std::string run_reaction( LigandIdentifier const& identifier ) const;
@@ -185,13 +185,18 @@ public:
 	Reagent& operator=( Reagent const& other ) = delete;
 	Reagent( Reagent const& other ) = delete;
 
+	std::string name() const { return name_; }
+
+	std::shared_ptr< RDKit::SparseIntVect< unsigned int > > fingerprint() { return fingerprint_; }
+
+	RDKit::RWMOL_SPTR mol() { return mol_; }
+
 private:
 
 	std::string name_;
 	RDKit::RWMOL_SPTR mol_;
 	std::shared_ptr< RDKit::SparseIntVect< unsigned int > > fingerprint_;
 
-	friend FragmentLibrary;
 };
 
 /// @brief Internal class to handle reaction information more easily
@@ -200,7 +205,7 @@ public:
 
 	Reaction( std::string const& name, std::string const& reaction_smiles, core::Size n_reagents );
 
-	~Reaction();
+	~Reaction() = default;
 
 	// deleted these due to rule of three
 	Reaction& operator=( Reaction const& other ) = delete;
@@ -215,14 +220,23 @@ public:
 	/// @brief Returns the number positions with this reaction
 	core::Size n_positions() const;
 
+	std::string name() const { return name_; }
+
+	utility::vector1< core::Size > const& reagents( core::Size pos ) const { return reagents_[pos]; }
+
+	void add_reagent( core::Size pos, core::Size reagent_idx ) { reagents_[ pos ].emplace_back( reagent_idx ); }
+
+	core::Size possible_molecules() const { return possible_molecules_; }
+
+	std::shared_ptr< RDKit::ChemicalReaction > reac() { return reac_; }
+
 private:
 
 	std::string name_;
 	utility::vector1< utility::vector1< core::Size > > reagents_;
-	RDKit::ChemicalReaction* reac_;
+	std::shared_ptr< RDKit::ChemicalReaction > reac_;
 	core::Size possible_molecules_ = 1;
 
-	friend FragmentLibrary;
 };
 
 }
