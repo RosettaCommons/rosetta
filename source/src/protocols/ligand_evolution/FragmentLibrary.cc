@@ -252,8 +252,10 @@ void FragmentLibrary::load_reagents( std::string const& reagent_file_path ) {
 
 core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const& smiles, bool create_rotamers ) const {
 
-	// TODO Rosetta can't handle salts well, like an added Cl ion. Do I want to do something about that?
-	//      This is for now caught by the scorer and a score of 9999.9 is assigned to the molecule
+	// TODO Rosetta can't handle salts well, like an added Cl ion.
+	//      This is for now caught by the scorer and a score of 9999.9 is assigned to the molecule and the issue seems to be not important.
+	//		There are only 16 salt ion containing fragments in the 2022 REAL space and final benchmark assigned the failed score to only 5 out of ~360k docked molecules
+	//		None of these molecules actually contained a salt ion.
 
 
 	RDKit::RWMol mutable_product( *RDKit::SmilesToMol( smiles ) );
