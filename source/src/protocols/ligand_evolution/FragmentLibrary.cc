@@ -269,6 +269,8 @@ core::conformation::ResidueOP FragmentLibrary::create_ligand( std::string const&
 	core::chemical::MutableResidueTypeOP new_ligand = mol_to_res.generate_restype();
 
 	if ( create_rotamers ) {
+		// TODO it might be more efficient to embed all conformers from the original RWMol, then convert, then pull out the conformers into the
+		// 		StoredRotamerLibrarySpecification, rather than bouncing back-and-forth between the representations.
 		core::Size n_rotamers = generate_rotamers( *new_ligand );
 		TR.Debug << "Set " << n_rotamers << " rotamers." << std::endl;
 	}
@@ -302,7 +304,7 @@ core::Size FragmentLibrary::generate_rotamers( core::chemical::MutableResidueTyp
 	utility::vector1< std::map< std::string, core::Vector > > return_value;
 
 	core::chemical::rdkit::RestypeToRDMol to_rdmol( new_ligand, /*neutralize = */ false, /*keep_hydro=*/ true );
-	::RDKit::RWMOL_SPTR rdmol( to_rdmol.Mol() );
+	RDKit::RWMOL_SPTR rdmol( to_rdmol.Mol() );
 
 	core::chemical::VDIndexMapping const & rosetta_to_rdkit( to_rdmol.vd_to_index() );
 
@@ -315,12 +317,12 @@ core::Size FragmentLibrary::generate_rotamers( core::chemical::MutableResidueTyp
 	// Now convert the coordinates to rotamers for Rosetta
 	for ( core::Size ii(0); ii < conf_ids.size(); ++ii ) {
 
-		::RDKit::Conformer const & conf( rdmol->getConformer(conf_ids[ii]) );
+		RDKit::Conformer const & conf( rdmol->getConformer(conf_ids[ii]) );
 		std::map< std::string, core::Vector > single_rotamer_spec;
 
 		for ( core::chemical::VD atm: new_ligand.all_atoms() ) {
 			if ( rosetta_to_rdkit[ atm ] != rosetta_to_rdkit.invalid_entry() ) {
-				::RDGeom::Point3D const & pos( conf.getAtomPos( rosetta_to_rdkit[ atm ] ) );
+				RDGeom::Point3D const & pos( conf.getAtomPos( rosetta_to_rdkit[ atm ] ) );
 				//set the xyz coordinates in Rosetta
 				single_rotamer_spec[ new_ligand.atom_name(atm) ] = core::Vector( pos.x, pos.y, pos.z );
 			}
