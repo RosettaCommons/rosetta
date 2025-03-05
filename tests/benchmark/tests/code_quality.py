@@ -18,9 +18,9 @@ import glob, shutil
 import plistlib
 import time
 
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
-
+# A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
+import importlib.util, sys
+importlib.util.spec_from_file_location(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py').loader.exec_module(sys.modules[__name__])
 
 _api_version_ = '1.1'
 
@@ -470,6 +470,9 @@ def run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driv
 
     if res:
         state, output = _S_failed_, 'Some of the source code looks ugly!!! Script test_all_files_already_beautiful.py output:\n' + o
+        res_diff, diff = execute('Generating patch file for changes', 'cd {}/source && git --no-pager diff --no-color'.format(rosetta_dir), return_="tuple")
+        with open(working_dir+'/full_diff.patch', 'w') as f: f.write(diff)
+        output += "\n\nSee full_diff.patch in the `Test files` for the full list of changes\n"
     else:
         state = _S_passed_
 

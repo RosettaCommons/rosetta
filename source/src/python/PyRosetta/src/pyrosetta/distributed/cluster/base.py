@@ -29,7 +29,11 @@ from pyrosetta.distributed.cluster.converters import _parse_protocols
 from pyrosetta.distributed.cluster.initialization import (
     _get_residue_type_set_name3 as _get_residue_type_set,
 )
-from pyrosetta.distributed.cluster.validators import _validate_protocols_seeds_decoy_ids
+from pyrosetta.distributed.cluster.validators import (
+    _validate_clients_indices,
+    _validate_protocols_seeds_decoy_ids,
+    _validate_resources,
+)
 from pyrosetta.distributed.packed_pose.core import PackedPose
 from typing import (
     Any,
@@ -41,7 +45,6 @@ from typing import (
     Sized,
     Tuple,
     TypeVar,
-    Union,
     cast,
 )
 
@@ -104,19 +107,40 @@ class TaskBase(Generic[G]):
         )
 
         return pyrosetta_init_kwargs
+    
+    def _get_clients_index(
+            self, clients_indices: List[int], protocols: List[Callable[..., Any]]
+        ) -> int:
+        """Return the clients index for the current protocol."""
+        if clients_indices is None:
+            return 0
+        else:
+            _protocols_index = len(clients_indices) - len(protocols)
+            return clients_indices[_protocols_index]
+    
+    def _get_resource(
+            self, resources: List[Dict[Any, Any]], protocols: List[Callable[..., Any]]
+        ) -> Optional[Dict[Any, Any]]:
+        """Return the resource for the current protocol."""
+        if resources is None:
+            return None
+        else:
+            _protocols_index = len(resources) - len(protocols)
+            return resources[_protocols_index]
 
     def _setup_kwargs(
-        self, kwargs: Dict[Any, Any]
-    ) -> Tuple[bytes, Dict[str, Any], Callable[..., Any]]:
+        self, kwargs: Dict[Any, Any], clients_indices: List[int], resources: Optional[Dict[Any, Any]],
+    ) -> Tuple[bytes, Dict[str, Any], Callable[..., Any], int, Optional[Dict[Any, Any]]]:
         """Setup the kwargs for the subsequent tasks."""
-
+        clients_index = self._get_clients_index(clients_indices, kwargs[self.protocols_key])
+        resource = self._get_resource(resources, kwargs[self.protocols_key])
         _protocols, protocol, seed = self._get_task_state(kwargs[self.protocols_key])
         kwargs[self.protocols_key] = _protocols
         kwargs = self._setup_seed(kwargs, seed)
         pyrosetta_init_kwargs = self._setup_pyrosetta_init_kwargs(kwargs)
         compressed_kwargs = self.serializer.compress_kwargs(kwargs)
 
-        return compressed_kwargs, pyrosetta_init_kwargs, protocol
+        return compressed_kwargs, pyrosetta_init_kwargs, protocol, clients_index, resource
 
     def _setup_seed(self, kwargs: Dict[Any, Any], seed: Optional[str]) -> Dict[Any, Any]:
         """
@@ -145,15 +169,22 @@ class TaskBase(Generic[G]):
         return kwargs
 
     def _setup_protocols_protocol_seed(
-        self, args: Tuple[Any, ...], protocols: Any
-    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str]]:
+        self, args: Tuple[Any, ...], protocols: Any, clients_indices: Any, resources: Any,
+    ) -> Tuple[List[Callable[..., Any]], Callable[..., Any], Optional[str], int, Optional[Dict[Any, Any]]]:
         """Parse, validate, and setup the user-provided PyRosetta protocol(s)."""
 
         _protocols = _parse_protocols(args) + _parse_protocols(protocols)
+        _clients_dict_keys = list(self.clients_dict.keys())
+        _validate_clients_indices(clients_indices, _protocols, _clients_dict_keys)
+        _validate_resources(resources, _protocols)
+        _clients_index = self._get_clients_index(clients_indices, _protocols)
+        _resource = self._get_resource(resources, _protocols)
 
-        return self._get_task_state(
+        _protocols, _protocol, _seed = self._get_task_state(
             _validate_protocols_seeds_decoy_ids(_protocols, self.seeds, self.decoy_ids)
         )
+
+        return _protocols, _protocol, _seed, _clients_index, _resource
 
 
 def capture_task_metadata(func: M) -> M:

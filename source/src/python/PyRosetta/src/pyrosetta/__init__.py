@@ -29,8 +29,8 @@ import logging
 logger = logging.getLogger("pyrosetta.rosetta")
 
 import pyrosetta.logging_support as logging_support
-# this try/except black should be removed after the decorator module
-# is installed on the test server.
+
+# this try/except block is due to decorator-module requirement of the Distributed framework
 try:
     from pyrosetta.distributed.utility.log import LoggingContext
 except:
@@ -212,7 +212,7 @@ def version():
         '│              (C) Copyright Rosetta Commons Member Institutions               │\n'
         '│                                                                              │\n'
         '│ NOTE: USE OF PyRosetta FOR COMMERCIAL PURPOSES REQUIRE PURCHASE OF A LICENSE │\n'
-        '│              See LICENSE.md or email license@uw.edu for details              │\n'
+        '│         See LICENSE.PyRosetta.md or email license@uw.edu for details         │\n'
         '└──────────────────────────────────────────────────────────────────────────────┘\n'
     ) + \
     'PyRosetta-4 ' + rosetta.utility.Version.date().split('-').pop(0) + \

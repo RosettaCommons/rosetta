@@ -443,176 +443,32 @@ settings = {
         },
     },
 
-    "gcc, 13.1" : {
+    "gcc, |cxx_ver:>=13.0|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
                     "Wno-error=array-bounds=", # There's a probably spurious "__builtin_memmove() forming offset is out of the bounds" warning for vector1<bool>
                     "Wno-error=stringop-overread", # Issue with Eigen
-                    "Wno-error=dangling-reference", # Too agressive.
                     "Wno-error=restrict", # Issue with json-spirit
-                ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
+                    "Wno-error=dangling-reference", # Too agressive.
                 ],
             },
         },
     },
 
-    "gcc, 12.3" : {
-        "removes" : {
+    "gcc, |cxx_ver:>=12.0,<13.0|" : {
+        "appends" : {
             "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 12.2" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 12.1" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
+                "warn" : [
+                    "Wno-error=array-bounds", # There's a probably spurious "__builtin_memmove() forming offset is out of the bounds" warning for vector1<bool>
+                    "Wno-error=restrict", # Issue with json-spirit
+                    "Wno-error=use-after-free", # Issue with utility/tag/Tag.cc
                 ],
             },
         },
     },
 
-    "gcc, 11.4" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 11.3" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 11.2" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 11.1" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-
-
-    "gcc, 10.5" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 10.4" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 10.3" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 10.2" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 10.1" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-
-
-    "gcc, 9.5" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 9.4" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 9.3" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 9.2" : {
-        "removes" : {
-            "flags" : {
-                "cxx" : [
-                    "ffor-scope",
-                ],
-            },
-        },
-    },
-    "gcc, 9.1" : {
+    "gcc, |cxx_ver:>9.0|" : {
         "removes" : {
             "flags" : {
                 "cxx" : [
@@ -1267,25 +1123,25 @@ settings = {
     "gcc, macos, opencl" : {
         "appends" : {
             "include_path" : [
-                "/Developer/GPU\ Computing/OpenCL/common/inc",
-                "/Developer/GPU\ Computing/OpenCL/common/inc/CL",
-                "/Developer/GPU\ Computing/shared/inc",
-                "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
-                "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
-                "/Developer-3.2.6/GPU\ Computing/shared/inc"
+                r"/Developer/GPU\ Computing/OpenCL/common/inc",
+                r"/Developer/GPU\ Computing/OpenCL/common/inc/CL",
+                r"/Developer/GPU\ Computing/shared/inc",
+                r"/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
+                r"/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
+                r"/Developer-3.2.6/GPU\ Computing/shared/inc"
             ],
             #"include_path" : [\
-            #    "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
-            #    "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
-            #    "/Developer-3.2.6/GPU\ Computing/shared/inc"
+            #    r"/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
+            #    r"/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
+            #    r"/Developer-3.2.6/GPU\ Computing/shared/inc"
             #],
             #"include_path" : [
-            #    "/Developer/GPU\ Computing/OpenCL/common/inc",
-            #    "/Developer/GPU\ Computing/OpenCL/common/inc/CL",
-            #    "/Developer/GPU\ Computing/shared/inc"
+            #    r"/Developer/GPU\ Computing/OpenCL/common/inc",
+            #    r"/Developer/GPU\ Computing/OpenCL/common/inc/CL",
+            #    r"/Developer/GPU\ Computing/shared/inc"
             #],
             #"libraries" : [ "OpenCL" ],
-            #"library_path" : [ "/Developer/CUDA/lib" ],
+            #"library_path" : [ r"/Developer/CUDA/lib" ],
             "defines"  : [
                 "USEOPENCL",
                 "MACOPENCL"
@@ -1399,10 +1255,10 @@ settings = {
         },
     },
 
-    "gcc, pytorch" : {
+    "gcc, torch" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
+                "USE_TORCH",
                 "CXX14",
                 "CXX14_OR_LATER",
                 # Uncomment if using torchlib with pre-cxx11 ABI
@@ -1435,11 +1291,11 @@ settings = {
         },
     },
 
-    "gcc, pytorch_gpu" : {
+    "gcc, torch_gpu" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
-		"USE_PYTORCH_GPU",
+                "USE_TORCH",
+		"USE_TORCH_GPU",
 		#Libtorch with cuda needs at least C++17
                 "CXX17",
                 "CXX17_OR_LATER",
@@ -2322,7 +2178,7 @@ settings = {
     #    },
     #},
 
-    "clang, 3.7" : {
+    "clang, |cxx_ver:>=3.7|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
@@ -2332,77 +2188,22 @@ settings = {
         },
     },
 
-    "clang, 3.8" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 3.9" : {
+    "clang, |cxx_ver:>=3.9|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
                     "Wcomma",
-                    "Winconsistent-missing-override",
                 ],
             },
         },
     },
 
-    "clang, 4.0" : {
+    "clang, |cxx_ver:>=18|" : {
         "appends" : {
             "flags" : {
                 "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 4.1" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 4.2" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 5.0" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
-                ],
-            },
-        },
-    },
-
-    "clang, 5.1" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [
-                    "Wcomma",
-                    "Winconsistent-missing-override",
+                    "Wno-error=deprecated-declarations",
+		    "Wno-error=enum-constexpr-conversion",
                 ],
             },
         },
@@ -2471,6 +2272,11 @@ settings = {
                 "compile" : [ "march=native", "march=core2", ],
             },
         },
+        "appends" : {
+            "flags" : {
+                "link"   : [ "headerpad_max_install_names"],
+	    },
+	},
     },
 
 
@@ -2940,10 +2746,10 @@ settings = {
     },
 
 
-    "clang, pytorch" : {
+    "clang, torch" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
+                "USE_TORCH",
                 "CXX14",
                 "CXX14_OR_LATER",
                 # Uncomment if using torchlib with pre-cxx11 ABI
@@ -2976,11 +2782,11 @@ settings = {
         },
     },
 
-    "clang, pytorch_gpu" : {
+    "clang, torch_gpu" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
-		"USE_PYTORCH_GPU",
+                "USE_TORCH",
+		"USE_TORCH_GPU",
 		# Libtorch with cuda needs at least C++17
                 "CXX17",
                 "CXX17_OR_LATER",
@@ -3110,10 +2916,10 @@ settings = {
         },
     },
 
-    "clang, macos, pytorch" : {
+    "clang, macos, torch" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
+                "USE_TORCH",
                 "CXX14",
                 "CXX14_OR_LATER",
                 # Uncomment if using torchlib with pre-cxx11 ABI
@@ -3146,11 +2952,11 @@ settings = {
         },
     },
 
-    "clang, macos, pytorch_gpu" : {
+    "clang, macos, torch_gpu" : {
         "appends" : {
             "defines" : [
-                "USE_PYTORCH",
-		"USE_PYTORCH_GPU",
+                "USE_TORCH",
+		"USE_TORCH_GPU",
 		# Libtorch needs at least CXX17
                 "CXX17",
                 "CXX17_OR_LATER",

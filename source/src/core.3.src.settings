@@ -209,6 +209,7 @@ sources = {
         	"CurrentProbabilityMetric",
 		"HbondMetric",
 		"LoadedProbabilitiesMetric",
+		"PerResidueBfactorMetric",
 		"PerResidueClashMetric",
 		"PerResidueDensityFitMetric",
 		"PerResidueEnergyMetric",

@@ -150,7 +150,7 @@ class Serialization(Generic[G]):
         return zlib.compress(obj, 9)
 
     def requires_compression(func):
-        # @wraps
+        @wraps(func)
         def wrapper(self, obj):
             if all(x is not None for x in (self.encoder, self.decoder)):
                 return func(self, obj)

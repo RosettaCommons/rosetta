@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This function expects that the current working directory is the Rosetta root directory.
 # If that's ever not true, we need to modify this to take an optional dir name on the cmd line.
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -145,7 +145,7 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
         if res: git_describe = None
         else:
             git_describe_str = git_describe_str[:-1] # remove \n at the end
-            describe_match = re.match("v(?P<year>\d+)\.(?P<week>\d+)(-dev(?P<dev_revision>\d+))?-(?P<post_revision>\d+)-g(?P<commit>\w+)", git_describe_str)
+            describe_match = re.match(r"v(?P<year>\d+)\.(?P<week>\d+)(-dev(?P<dev_revision>\d+))?-(?P<post_revision>\d+)-g(?P<commit>\w+)", git_describe_str)
 
             if describe_match:
                 git_describe = describe_match.groupdict()
@@ -307,7 +307,10 @@ version_utility_template = '''\
 #ifndef INCLUDED_utility_version_hh
 #define INCLUDED_utility_version_hh
 
+#include <utility/stream_util.hh>
+
 #include <string>
+#include <vector>
 
 namespace utility {
 
@@ -320,6 +323,32 @@ struct Version
     static inline std::string commit()   { return "%(commit)s"; }
     static inline std::string url()      { return "%(url)s"; }
     static inline std::string date()     { return "%(date)s"; }
+
+    static inline std::vector<std::string> extras()   {
+      std::vector<std::string> r;
+
+      #ifdef MULTI_THREADED
+        r.push_back("cxx11thread");
+      #endif
+
+      #ifdef USEMPI
+        r.push_back("mpi");
+      #endif
+
+      #ifdef SERIALIZATION
+        r.push_back("serialization");
+      #endif
+
+      #ifdef USE_TENSORFLOW
+        r.push_back("tensorflow");
+      #endif
+
+      #ifdef USE_TORCH
+        r.push_back("torch");
+      #endif
+
+      return r;
+    }
 };
 
 } // utility

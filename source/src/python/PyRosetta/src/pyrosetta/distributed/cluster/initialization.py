@@ -57,7 +57,7 @@ def _get_residue_type_set_name3() -> Union[AbstractSet[str], NoReturn]:
     return set(_name3_list)
 
 
-def _maybe_init_master() -> Optional[NoReturn]:
+def _maybe_init_client() -> Optional[NoReturn]:
     """
     Initialize PyRosetta if it has not been initialized, otherwise confirm that
     PyRosetta was initialized with a constant seed.
