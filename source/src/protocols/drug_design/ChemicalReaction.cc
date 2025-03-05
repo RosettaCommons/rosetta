@@ -9,7 +9,7 @@
 
 /// @file src/protocols/drug_design/ChemicalReaction.cc
 /// @brief A reaction object that keeps track of its fragment sets.
-/// @author Tracy Tang (yidan.tang@vanderbilt.edu)
+/// @author Yidan Tang (yidan.tang@vanderbilt.edu)
 
 #include <protocols/drug_design/ChemicalReaction.hh>
 
@@ -76,11 +76,13 @@ ChemicalReaction::ChemicalReaction(
 
 ChemicalReaction::~ChemicalReaction() = default;
 
+/// @brief Is the reaction valid, or was there an error loading the reaction?
 bool
 ChemicalReaction::reaction_valid() const {
 	return rxn_ != nullptr;
 }
 
+/// @brief is the reaction valid, with usable reaction list (deprecated)
 bool
 ChemicalReaction::is_reaction_usable() {
 	if ( rxn_ == nullptr ) { return false; }
@@ -89,11 +91,13 @@ ChemicalReaction::is_reaction_usable() {
 	return nreagents() == reagent_smiles_.size();
 }
 
+// The number of components for this reaction
 core::Size
 ChemicalReaction::nreagents() const {
 	return rxn_->getNumReactantTemplates();
 }
 
+// The number of loaded reagents for the given reagent number (deprecated)
 core::Size
 ChemicalReaction::n_availible_reagents(core::Size reag_no) {
 	load_reagents();
@@ -104,6 +108,7 @@ ChemicalReaction::n_availible_reagents(core::Size reag_no) {
 	}
 }
 
+// Get a specific reagent (deprecated)
 ::RDKit::ROMolOP
  ChemicalReaction::reagent(core::Size reag_no, core::Size reag_index) {
 	load_reagents();
@@ -135,6 +140,7 @@ ChemicalReaction::n_availible_reagents(core::Size reag_no) {
 	return reag;
 }
 
+// Lazy loading of reagents -- no-op if already loaded (deprecated)
 void
 ChemicalReaction::load_reagents() {
 	if ( !reagent_smiles_.empty() ) {
@@ -180,6 +186,9 @@ ChemicalReaction::load_reagents() {
 	TR << "Read " << nloaded << " reagents for reaction " << name_ << " in " << dir_ << std::endl;
 }
 
+/// Do the corresponding reaction, and return the result.
+/// The passed parameter is the selection for each reagent.
+/// Can return a nullptr if the reaction doesn't work.
 ::RDKit::RWMolOP
 ChemicalReaction::reaction_result( ::RDKit::MOL_SPTR_VECT const & reagents ) const {
 
@@ -212,6 +221,8 @@ bool ChemicalReaction::cleanup_product( ::RDKit::RWMol & prod ) const {
 	} catch (::RDKit::MolSanitizeException const&se) {
 		return true; // Cleanup failed.
 	}
+	
+	::RDKit::MolOps::addHs( prod, /*explicitOnly=*/false,/*addCoords=*/false );
 
 	// Make a basic conformation - don't put too much effort in it, as we're probably just using it for ghost atoms.
 	// This long call is needed such that we can put "useExpTorsionAnglePrefs=true" and "useBasicKnowledge=true" so embedding doesn't mess up rings, etc.
@@ -227,6 +238,7 @@ bool ChemicalReaction::cleanup_product( ::RDKit::RWMol & prod ) const {
 	return false; // All good.
 }
 
+// Returns the line-by-line contents of the relevant file. (deprecated)
 utility::vector1< std::string >
 ChemicalReaction::load_file( std::string const & reaction_dir, std::string const & filename ) {
 	utility::vector1< std::string > lines;

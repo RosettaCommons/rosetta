@@ -9,7 +9,7 @@
 
 /// @file src/protocols/drug_design/ChemicalReaction.hh
 /// @brief A reaction object that keeps track of its fragment sets.
-/// @author Tracy Tang (yidan.tang@vanderbilt.edu)
+/// @author Yidan Tang (yidan.tang@vanderbilt.edu)
 
 #ifndef INCLUDED_protocols_drug_design_ChemicalReaction_hh
 #define INCLUDED_protocols_drug_design_ChemicalReaction_hh
@@ -52,7 +52,7 @@ public:
 	bool
 	reaction_valid() const;
 
-	/// @brief is the reaction valid, with usable reaction list
+	/// @brief is the reaction valid, with usable reaction list (deprecated)
 	bool
 	is_reaction_usable();
 
@@ -60,14 +60,15 @@ public:
 	reaction_name() const { return name_; }
 
 
-	// The number of reagent positions for this reaction
+	// The number of components for this reaction
 	core::Size
 	nreagents() const;
 
-	// The number of loaded reagents for the given reagent number
+	// The number of loaded reagents for the given reagent number (deprecated)
 	core::Size
 	n_availible_reagents(core::Size reag_no);
 
+	// Get a specific reagent (deprecated)
 	::RDKit::ROMolOP
 	reagent(core::Size reag_no, core::Size reag_index);
 
@@ -75,7 +76,7 @@ public:
 	::RDKit::ROMolOP
 	representative_prod();
 
-	// Lazy loading of reagents -- no-op if already loaded
+	// Lazy loading of reagents -- no-op if already loaded (deprecated)
 	void load_reagents();
 
 	/// Do the corresponding reaction, and return the result.
@@ -91,7 +92,7 @@ private:
 
 	bool cleanup_product( ::RDKit::RWMol & prod ) const;
 
-	// Returns the line-by-line contents of the relevant file.
+	// Returns the line-by-line contents of the relevant file. (deprecated)
 	static
 	utility::vector1< std::string >
 	load_file( std::string const & reaction_dir, std::string const & filename );

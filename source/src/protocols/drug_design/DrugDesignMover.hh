@@ -10,6 +10,7 @@
 /// @file src/protocols/drug_design/DrugDesignMover.hh
 /// @brief do MonteCarlo drug design in a protein context
 /// @author Rocco Moretti (rmorettiase@gmail.com)
+/// @author Yidan Tang (yidan.tang@vanderbilt.edu)
 
 #ifndef INCLUDED_protocols_drug_design_DrugDesignMover_hh
 #define INCLUDED_protocols_drug_design_DrugDesignMover_hh

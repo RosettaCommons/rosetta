@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/drug_design/ReactionBasedAnalogSampler.hh
-/// @brief apply RDKit's reaction mechanism to react reagents based on a given reaction
-/// @author Tracy Tang (yidan.tang@vanderbilt.edu)
+/// @brief Reaction-based and similarity guided analoging in a given chemical library
+/// @author Yidan Tang (yidan.tang@vanderbilt.edu)
 
 #ifndef INCLUDED_protocols_drug_design_ReactionBasedAnalogSampler_hh
 #define INCLUDED_protocols_drug_design_ReactionBasedAnalogSampler_hh
@@ -45,9 +45,9 @@ class ReactionBasedAnalogSampler : public protocols::chemistries::Chemistry {
 //		::RDKit::SparseIntVect<unsigned int>* ecfp_;
 		ExplicitBitVect* fp_;
 		std::string rxn_;
-		core::Size no_;
+		core::Size no_;		// component number
 
-		bool operator<( const Reagent& r ) const {
+		bool operator<( const Reagent& r ) const {	// for sorting components before running the reaction
 			return no_ < r.no_;
 		}
 	};
@@ -90,10 +90,10 @@ public:
 
 	void reset_spl_ratio() { geo_spl_ratio = dynamic_spl_ratios[0]; }
 
-	/// @brief A factory function for loading reactions (old)
+	/// @brief load reaction files from a designated path (deprecated)
 	void load_reactions( std::string const & reaction_dir, std::string const & filename );
 
-	/// @brief A factory function for loading reactions (2 components only)
+	/// @brief load reactions from a single file
 	void load_reactions( std::string const & filename );
 
 	static std::string class_name();
@@ -101,13 +101,13 @@ public:
 
 private:
 
-	/// @brief A factory function for loading reagents in all reactions (old)
+	/// @brief load reagents through corresponding reactions (deprecated)
 	void load_all_reagents();
 
-	/// @brief A factory function for loading reagents in all reactions
+	/// @brief load reagents from a single file
 	void load_all_reagents( std::string const & filename );
 
-	/// @brief Remove any invalid or problematic structures from the chemical database
+	/// @brief check if the reagent contains bad structures that would later fail RDKit
 	bool check_reagent_validity( ::RDKit::ROMOL_SPTR reag ) const;
 
 	/// @brief Draw samples given a list of fragment similarity to reference input

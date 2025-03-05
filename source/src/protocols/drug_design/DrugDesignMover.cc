@@ -10,6 +10,7 @@
 /// @file protocols/drug_design/DrugDesignMover.cc
 /// @brief MonteCarlo protocol to design drugs in a protein context
 /// @author Rocco Moretti (rmorettiase@gmail.com)
+/// @author Yidan Tang (yidan.tang@vanderbilt.edu)
 
 // Unit Headers
 #include <protocols/drug_design/DrugDesignMover.hh>
@@ -244,46 +245,42 @@ DrugDesignMover::apply( Pose & pose )
 
 	// Statistics for attempts (MC won't show earlier aborts.)
 	std::map< std::string, core::Size > stat_attempt, stat_failed, stat_tested, stat_accepted;
-
+	
+	// score initial input pose
 	Real initial_score = scorer_->report_sm( pose );
-//	Real temp_initial_score = initial_score;
 
 	assert( temperature() ); // Can't work with a temperature of zero
 	core::Size res_pos( find_design_position( pose ) );
-
-	if ( lig_efficiency_ ) {	// lid_root2 as in Paul Eienhuth's ligand evolution method
-		initial_score /= std::pow( pose.residue( res_pos ).nheavyatoms(), 1.0 / 2.0 );
-	}
 
 	TR << "For round " << 0 << " ligand " << pose.residue( res_pos ).name() << " score " << initial_score << std::endl;
 	protocols::moves::MonteCarlo mc( pose, initial_score, temperature() );
 
 	std::string original_name( pose.residue( res_pos ).name() );
-	//Size tenth_trial = 0;
 
-	// benchmark parameters
-	std::ofstream f;
+	//Setup data for the iteration
+	numeric::random::WeightedSampler sampler(weights_);
+	
+	// log files
+	std::ofstream log_file;
 	std::ofstream temp_f;
 	std::string path = basic::options::option[ basic::options::OptionKeys::out::path::all ]().path();
 	std::string filename = path + get_jobname();
-	f.open(filename + ".log");
+	log_file.open(filename + ".log");
 
 	if ( simulated_annealing_ ) {
 		temp_f.open(filename + ".temp");
 	}
 
-	//Setup data for the iteration
-	numeric::random::WeightedSampler sampler(weights_);
-
 	// TODO: can I pull the trial number out of the MC object instead?
 	for ( Size ii=1; ii<=maxtrials_; ii++ ) {
-		TR << "Trial number: " << ii <<std::endl;
+		TR << "Trial number: " << ii << std::endl;
 
 		// If simulated annealing is on and if enough MC trial has reached, reset temperature to min and turn off simulated annealing
 		if ( simulated_annealing_ && ( temperature_params[3] > 0 ) && ( ii > temperature_params[3] ) ) {
 			mc.set_temperature( temperature_params[0] );
 			simulated_annealing_ = false;
 			temp_f.close();
+			TR << "Simulated Annealing turned off. Temperature reset to " << temperature_params[0] << std::endl;
 		}
 //		// Simulated Annealing; Change temperature according to present accept ratio
 //		if ( simulated_annealing_ && (ii % int(temp_update_interval_) == 0) ) {
@@ -369,50 +366,50 @@ DrugDesignMover::apply( Pose & pose )
 
 		// MonteCarlo
 		Real score = scorer_->report_sm( pose );
-		Real temp_score = score;
-//		Real temp_score = score * std::pow( pose.residue( res_pos ).nheavyatoms(), 1.0 / 2.0 );
+		Real raw_score = score;
+		Real LE_score = score;
 
-		// Consider ligand efficiency
+		// Consider ligand efficiency and calculate the raw interface score / LE score for reporting purpose
 		if ( !lig_efficiency_ ) {	// lid_root2 as in Paul Eienhuth's ligand evolution method
-			temp_score = score / std::pow( pose.residue( res_pos ).nheavyatoms(), 1.0 / 2.0 );
+			LE_score = score / std::pow( pose.residue( res_pos ).nheavyatoms(), 1.0 / 2.0 );
 		} else {
-			temp_score = score * std::pow( pose.residue( res_pos ).nheavyatoms(), 1.0 / 2.0 );
+			raw_score = score * std::pow( pose.residue( res_pos ).nheavyatoms(), 1.0 / 2.0 );
 		}
 
-		///Debuggg
-//		pose.dump_pdb( "all_pdb/" + restype->name() + ".pdb" );
-		core::chemical::rdkit::RestypeToRDMol to_converter(*restype);
-		::RDKit::RWMOL_SPTR rdmol( to_converter.Mol() );
+		std::string res_smiles;
+		if ( restype->properties().string_properties().count( "SMILES" ) > 0 ) {
+			res_smiles = restype->get_string_property( "SMILES" );
+		}
 
 		TR << "For round " << ii << " ligand " << pose.residue( res_pos ).name() << " score " << score << std::endl;
 		if ( mc.boltzmann( pose, score, chemistry.name() ) ) {
 			++stat_accepted[ chemistry.name() ];
-
+			TR << "Round " << ii << " ACCEPTED with ligand " << res_smiles << std::endl;
 			// Simulated Annealing; reset temperature to min if MC accepted
 			if ( simulated_annealing_ ) {
+				TR << "MC accepted. Reset temperature to " << temperature_params[0] << std::endl;
 				mc.set_temperature( temperature_params[0] );
 				temp_f << ii << "," << mc.temperature() << std::endl;
 			}
 
-			f << ii << "," << temp_score << "," << score << "," << ::RDKit::MolToSmiles( *rdmol ) << std::endl;
+			log_file << ii << "," << raw_score << "," << LE_score << "," << res_smiles << std::endl;
 
 		}
 		else {
+			TR << "Round " << ii << " REJECTED with ligand " << res_smiles << std::endl;
 			// Simulated Annealing; increase temperature by step if MC rejected
 			if ( simulated_annealing_ ) {
 				core::Real new_temperature = std::min( temperature_params[1], mc.temperature() + temperature_params[2]);
 				mc.set_temperature( new_temperature );
 				temp_f << ii << "," << mc.temperature() << std::endl;
+				TR << "MC rejected. Set temperature to " << new_temperature << std::endl;
 			}
-//			f << ii << "," << temp_score << "," << score << "," << ::RDKit::MolToSmiles( *rdmol ) << ",REJECT" << std::endl;
 		}
 		mc.show_scores();
 
 	} // i<=maxtrials_g
 
 	pose = mc.lowest_score_pose();
-	//negative
-	//pose = mc.last_accepted_pose();
 
 	TR << "DockDesignMover finished." << std::endl;
 
@@ -427,26 +424,27 @@ DrugDesignMover::apply( Pose & pose )
 			<< " Hard Fails: " << stat_failed[name] << " (" << stat_failed[name]/float(stat_attempt[name]) << ")"
 			<< " Tested: " << stat_tested[name] << " (" << stat_tested[name]/float(stat_attempt[name]) << ")"
 			<< " Accepted: " << stat_accepted[name] << " (" << stat_accepted[name]/float(stat_attempt[name]) << ")" << std::endl;
-		// benchmark parameter
-		f << "Stats for " << name << ": Attempts: " << stat_attempt[name] << " (" << stat_attempt[name]/float(maxtrials_) << ")"
-			<< " Hard Fails: " << stat_failed[name] << " (" << stat_failed[name]/float(stat_attempt[name]) << ")"
-			<< " Tested: " << stat_tested[name] << " (" << stat_tested[name]/float(stat_attempt[name]) << ")"
-			<< " Accepted: " << stat_accepted[name] << " (" << stat_accepted[name]/float(stat_attempt[name]) << ")" << std::endl;
+		// Output to log file
+		log_file << "Stats for " << name << ": Attempts: " << stat_attempt[name] << " (" << stat_attempt[name]/float(maxtrials_) << ")"
+				<< " Hard Fails: " << stat_failed[name] << " (" << stat_failed[name]/float(stat_attempt[name]) << ")"
+				<< " Tested: " << stat_tested[name] << " (" << stat_tested[name]/float(stat_attempt[name]) << ")"
+				<< " Accepted: " << stat_accepted[name] << " (" << stat_accepted[name]/float(stat_attempt[name]) << ")" << std::endl;
 	}
 
 	MutableResidueType rsdtype( pose.residue_type( res_pos ) );
-	core::chemical::rdkit::RestypeToRDMol to_converter(rsdtype);
-	::RDKit::RWMOL_SPTR rdmol( to_converter.Mol() );
-	f << "The best scoring ligand is " << ::RDKit::MolToSmiles( *rdmol ) << std::endl;
+	if ( rsdtype.properties().string_properties().count( "SMILES" ) > 0 ) {
+		log_file << "The best scoring ligand is " << rsdtype.get_string_property( "SMILES" ) << std::endl;
+	}
+
 	int frag_no(0);
 	bool hasProperty = rsdtype.properties().string_properties().count( "fragment" + std::to_string( frag_no ) ) > 0;
 	while ( hasProperty ) {
-		f << "Fragment" << std::to_string( frag_no ) << ": " << rsdtype.get_string_property( "fragment" + std::to_string( frag_no ) ) << std::endl;
+		log_file << "Fragment" << std::to_string( frag_no ) << ": " << rsdtype.get_string_property( "fragment" + std::to_string( frag_no ) ) << std::endl;
 		++frag_no;
 		hasProperty = rsdtype.properties().string_properties().count( "fragment" + std::to_string( frag_no ) ) > 0;
 	}
 
-	f.close();
+	log_file.close();
 	if ( simulated_annealing_ ) {
 		temp_f.close();
 	}
@@ -568,16 +566,10 @@ DrugDesignMover::emplace_residue_type(
 		return true;
 	}
 
-	// Debugggg
-//	pose.dump_pdb( "before_redock/" + restype->name() + ".pdb" );
-
 	// Apply the redocker
 	dump_molecule( pose.residue( res_pos ), "before_dock" );
 	redocker_->apply( pose );
 	dump_molecule( pose.residue( res_pos ), "after_dock" );
-
-	// Debugggg
-//	pose.dump_pdb( "after_redock/" + restype->name() + "-redock" + restype->atom_name( restype->root_atom() ) + ".pdb" );
 
 	// Debugging - check to make sure that the we're not leaking constraints
 	//pose.constraint_set()->show_definition(TR, pose);
