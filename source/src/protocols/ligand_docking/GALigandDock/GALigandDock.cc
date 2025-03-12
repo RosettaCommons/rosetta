@@ -604,8 +604,8 @@ GALigandDock::apply( pose::Pose & pose )
 
 				core::Real expected_dens = 0.4535172 - 0.0190373 * local_res_ + 0.5542869 * pose_cc  -0.0006722 * nheavyatoms;
 
-				core::Real dG_z = ((dG - expected_dG)/15.8 * -1 * 1.5);
-				core::Real dens_z = ((penalized_density - expected_dens)/(0.07192 * 0.6));
+				core::Real dG_z = ((dG - expected_dG)/15.8 * -1 * 0.8);
+				core::Real dens_z = ((penalized_density - expected_dens)/(0.07192 * 1.1));
 
 				core::Real zscore = ((dG_z + dens_z)/2)/(std::pow(0.5, 0.5));
 
@@ -690,7 +690,7 @@ GALigandDock::apply( pose::Pose & pose )
 				core::pose::getPoseExtraScore( pose, "ligandname", ligandname );
 				core::pose::getPoseExtraScore( pose, "lig_dens", lig_dens );
 
-				core::pose::setPoseExtraScore( pose, "probability", id_probabilities[i] );
+				//core::pose::setPoseExtraScore( pose, "probability", id_probabilities[i] );
 
 				remaining_outputs_.push( pose, score, rms, complexscore, ligscore, recscore, 0, ligandname );
 				++i;
