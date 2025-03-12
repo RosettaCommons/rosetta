@@ -170,6 +170,33 @@ extension_from_filetype(
 	return "ERROR"; //To keep compiler happy, though we should never reach here.
 }
 
+FileType
+filetype_from_extension(
+	std::string const & filename
+) {
+	utility::vector1< std::string > split = utility::string_split( filename, '.');
+
+	std::string ext = split[split.size()-1];
+	if ( ext == "gz" ) {
+		ext = split[split.size()-2];
+	}
+	ext = utility::lower(ext);
+
+	if ( ext == "pdb" ) {
+		return PDB_file;
+	} else if ( ext == "cif" ) {
+		return CIF_file;
+	} else if ( ext == "mmcif" ) {
+		return CIF_file;
+	} else if ( ext == "mmtf" ) {
+		return MMTF_file;
+	} else if ( ext == "srlz" ) {
+		return SRLZ_file;
+	} else {
+		return Unknown_file;
+	}
+}
+
 void
 read_all_poses(
 	utility::vector1< std::string > const & filenames,
@@ -303,6 +330,9 @@ determine_file_type( std::string const &contents_of_file) {
 		cifParser->ParseString( contents_of_file, diagnostics );
 		if ( diagnostics.empty() ) {
 			return CIF_file;
+		} else if ( TR.Debug.visible() ) {
+			TR.Debug << "Attempted to read file as an mmCIF file. The mmCIF parser didn't like it, saying:" << std::endl;
+			TR.Debug <<  diagnostics << std::endl;
 		}
 	}
 
@@ -372,7 +402,13 @@ pose_from_file(
 
 	if ( file_type == Unknown_file ) {
 		file_type = determine_file_type( contents_of_file );
-		TR << "File '" << filename << "' automatically determined to be of type " << file_type << std::endl;
+		TR << "File '" << filename << "' automatically determined to be of type " << file_type << " from contents." << std::endl;
+	}
+
+	if ( file_type == Unknown_file ) {
+		// Attempt to use extension as a proxy. Note that for merged filenames, this will only trigger on the last filename extension
+		file_type =  filetype_from_extension( filename );
+		TR << "Determining filetype from extension. File '" << filename << "' is typed as " << file_type << std::endl;
 	}
 
 	if ( file_type == Unknown_file ) {
@@ -404,6 +440,10 @@ pose_from_file(
 		CifFileOP cifFile( new CifFile );
 		CifParserOP cifParser( new CifParser( cifFile.get() ) );
 		cifParser->ParseString( contents_of_file, diagnostics );
+		if ( !diagnostics.empty() ) {
+			TR.Warning << "mmCIF parser reports issues with file '" << filename "' : " << std:;endl;
+			TR.Warning << diagnostics << std::endl;
+		}
 		io::StructFileRepOP sfr ( io::mmcif::create_sfr_from_cif_file_op( cifFile, options ) );
 		// We need to get rid of the cif parser IMMEDIATELY because of the arcanity in
 		// the library that there can only be one at once... even though you can only have one per
