@@ -441,7 +441,7 @@ pose_from_file(
 		CifParserOP cifParser( new CifParser( cifFile.get() ) );
 		cifParser->ParseString( contents_of_file, diagnostics );
 		if ( !diagnostics.empty() ) {
-			TR.Warning << "mmCIF parser reports issues with file '" << filename "' : " << std:;endl;
+			TR.Warning << "mmCIF parser reports issues with file '" << filename << "' : " << std::endl;
 			TR.Warning << diagnostics << std::endl;
 		}
 		io::StructFileRepOP sfr ( io::mmcif::create_sfr_from_cif_file_op( cifFile, options ) );
