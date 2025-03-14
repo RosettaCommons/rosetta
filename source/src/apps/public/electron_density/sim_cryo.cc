@@ -404,7 +404,7 @@ void
 SimulateCryoMover::add_flat_noise( ObjexxFCL::FArray3D< float > & three_projections, core::Real noise_range) {
 	numeric::random::RandomGenerator & rg(numeric::random::rg());
 	if ( integration_test_ ) rg.set_seed(1);
-	else { rg.set_seed(time(NULL)); }
+	else { rg.set_seed(time(nullptr)); }
 
 	for ( int z = 1; z <= three_projections.u3(); ++z ) {
 		for ( int y = 1; y <= three_projections.u2(); ++y ) {
@@ -443,7 +443,7 @@ SimulateCryoMover::add_gaussian_noise( ObjexxFCL::FArray3D< float > & three_proj
 void
 SimulateCryoMover::add_perlin_noise( ObjexxFCL::FArray3D< float > & three_projections, core::Real perlin_noise_multiplier, core::Real perlin_noise_offset ) {
 	if ( integration_test_ ) srand(1);
-	else { srand(time(NULL)); }
+	else { srand(time(nullptr)); }
 
 	// must be between 0.1 and 64
 	double const frequency = option[ perlin_noise_frequency ]();
@@ -488,7 +488,7 @@ SimulateCryoMover::three_fine_projections_from_xyz(
 
 	numeric::random::RandomGenerator & rg(numeric::random::rg());
 	if ( integration_test_ ) rg.set_seed(1);
-	else { rg.set_seed(time(NULL)); }
+	else { rg.set_seed(time(nullptr)); }
 
 	ObjexxFCL::FArray3D< float > three_projections;
 	three_projections.dimension( extents_[0], extents_[0], 3, 0.0 );

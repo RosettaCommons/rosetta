@@ -1,7 +1,7 @@
 -out:level 300
 -mute all_high_mpi_rank_filebuf
 -out:nstruct 4
--run:n_replica 1
+-run:n_replica 3
 
 -in:file:s P.pdb
 -in:file:native native.pdb
