@@ -1003,8 +1003,9 @@ def _get_path_to_conda_root(platform, config):
 
     url = miniconda_sources[platform_os]
 
-    version = '1'
-    channels = 'conda-forge'
+    version = '1.0.1'
+    # https://stackoverflow.com/questions/67695893/how-do-i-completely-purge-and-disable-the-default-channel-in-anaconda-and-switch
+    channels = 'conda-forge nodefaults'.split()
 
     #packages = ['conda-build gcc libgcc', 'libgcc=5.2.0'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
@@ -1046,8 +1047,16 @@ def _get_path_to_conda_root(platform, config):
 
         # conda update --yes --quiet -n base -c defaults conda
 
-        execute(f'Removing `defaults` channel {channels}...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults || echo' )
-        if channels: execute(f'Adding extra channels {channels}...', f'cd {build_prefix} && {activate} && conda config --add channels {channels}' )
+        #execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults || echo' )
+
+        o = execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --show channels || echo', return_='output' )
+        current_channels = o.partition('channels:')[2]
+        for c in current_channels.split('\n'):
+            c = c.strip().partition('- ')[2]
+            if c:
+                execute(f'Removing channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --remove channels {c} || echo' )
+
+        for c in channels: execute(f'Adding extra channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --add channels {c}' )
 
         for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
 
