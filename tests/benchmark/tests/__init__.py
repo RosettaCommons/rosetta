@@ -980,6 +980,8 @@ def _get_path_to_conda_root(platform, config):
     ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
         this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` defined below
     '''
+    assert False, 'DO NOT USE, DEPRECATED'
+
     miniconda_sources = {
         'mac'    : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh',
         'linux'  : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh',
@@ -1003,8 +1005,9 @@ def _get_path_to_conda_root(platform, config):
 
     url = miniconda_sources[platform_os]
 
-    version = '1'
-    channels = ''  # conda-forge
+    version = '1.0.1'
+    # https://stackoverflow.com/questions/67695893/how-do-i-completely-purge-and-disable-the-default-channel-in-anaconda-and-switch
+    channels = 'conda-forge nodefaults'.split()
 
     #packages = ['conda-build gcc libgcc', 'libgcc=5.2.0'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
@@ -1046,7 +1049,16 @@ def _get_path_to_conda_root(platform, config):
 
         # conda update --yes --quiet -n base -c defaults conda
 
-        if channels: execute(f'Adding extra channles {channels}...', f'cd {build_prefix} && {activate} && conda config --add channels {channels}' )
+        #execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults || echo' )
+
+        o = execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --show channels || echo', return_='output' )
+        current_channels = o.partition('channels:')[2]
+        for c in current_channels.split('\n'):
+            c = c.strip().partition('- ')[2]
+            if c:
+                execute(f'Removing channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --remove channels {c} || echo' )
+
+        for c in channels: execute(f'Adding extra channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --add channels {c}' )
 
         for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
 
@@ -1061,10 +1073,100 @@ def _get_path_to_conda_root(platform, config):
 
 
 
+def _get_path_to_miniforge_root(platform, config):
+    ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
+        this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` defined below
+    '''
+    miniforge_source_suffixes = {
+        'mac'    : 'MacOSX-x86_64.sh',
+        'linux'  : 'Linux-x86_64.sh',
+        'aarch64': 'Linux-aarch64.sh',
+        'ubuntu' : 'Linux-x86_64.sh',
+        'm1'     : 'MacOSX-arm64.sh',
+    }
+    platform_os = platform['os']
+    for o in 'alpine centos ubuntu'.split():
+        if platform_os.startswith(o): platform_os = 'linux'
+
+    url = 'https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-' + miniforge_source_suffixes[platform_os]
+
+    version = 'miniforge-0.0.1'
+    channels = 'conda-forge'.split()
+
+    # packages = ['conda-build anaconda-client conda-verify',]
+    packages = ['conda-build',]
+
+    signature = f'url: {url}\nversion: {version}\nchannels: {channels}\npackages: {packages}\n'
+
+    root = calculate_unique_prefix_path(platform, config) + '/miniforge'
+
+    signature_file_name = root + '/.signature'
+
+    # presense of __PYVENV_LAUNCHER__,PYTHONHOME, PYTHONPATH sometimes confuse Python so we have to unset them
+    unset = 'unset __PYVENV_LAUNCHER__ && unset PYTHONHOME && unset PYTHONPATH'
+    activate = unset + ' && . ' + root + '/bin/activate'
+
+    executable = root + '/bin/conda'
+
+    if os.path.isfile(signature_file_name) and open(signature_file_name).read() == signature:
+        print( f'Install for MiniForge is detected, skipping installation procedure...' )
+
+    else:
+        print( f'Installing MiniForge, using {url}...' )
+
+        if os.path.isdir(root): shutil.rmtree(root)
+
+        dot_conda_rc = os.path.expanduser('~/.condarc')
+        if os.path.isfile(dot_conda_rc):
+            os.replace(dot_conda_rc, f'{dot_conda_rc}.{datetime.datetime.now(datetime.timezone.utc).isoformat()}')
+            # os.remove(dot_conda_rc)
+
+        build_prefix = os.path.abspath(root + f'/../build-miniforge' )
+
+        #if not os.path.isdir(root): os.makedirs(root)
+        if not os.path.isdir(build_prefix): os.makedirs(build_prefix)
+
+        archive = build_prefix + '/' + url.split('/')[-1]
+
+        with open(archive, 'wb') as f:
+            response = urllib.request.urlopen(url)
+            f.write( response.read() )
+
+        execute('Installing miniforge...', f'cd {build_prefix} && {unset} && bash {archive} -b -p {root}' )
+
+        # conda update --yes --quiet -n base -c defaults conda
+
+        #execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --remove channels defaults || echo' )
+
+        execute(f'Disabling auto-activation...', f'cd {build_prefix} && {activate} && conda config --set auto_activate_base false')
+
+        # o = execute(f'Removing `defaults` channel...', f'cd {build_prefix} && {activate} && conda config --show channels || echo', return_='output' )
+        # current_channels = o.partition('channels:')[2]
+        # for c in current_channels.split('\n'):
+        #     c = c.strip().partition('- ')[2]
+        #     if c:
+        #         execute(f'Removing channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --remove channels {c} || echo' )
+
+        for c in channels: execute(f'Adding extra channel {c!r}...', f'cd {build_prefix} && {activate} && conda config --add channels {c}' )
+
+        for p in packages: execute(f'Installing conda packages: {p}...', f'cd {build_prefix} && {activate} && conda install --quiet --yes {p}' )
+
+        shutil.rmtree(build_prefix)
+
+        with open(signature_file_name, 'w') as f: f.write(signature)
+
+        print( f'Installing MiniForge, using {url}... Done.' )
+
+    execute(f'Updating conda base...', f'{activate} && conda update --all --yes' )
+    return NT(conda=executable, root=root, activate=activate, url=url)
+
+
+
 def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
     ''' Deploy Conda virtual environment at working_dir
     '''
-    conda_root_env = _get_path_to_conda_root(platform, config)
+    #conda_root_env = _get_path_to_conda_root(platform, config)
+    conda_root_env = _get_path_to_miniforge_root(platform, config)
     activate = conda_root_env.activate
 
     python_version = platform.get('python', DEFAULT_PYTHON_VERSION)
