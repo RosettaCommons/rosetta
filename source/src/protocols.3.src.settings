@@ -131,6 +131,10 @@ sources = {
 		"fibril_util",
 		"SetupForFibrilMover",
 	],
+	"protocols/rotamer_gen" : [
+		"FragmentRotamers",
+		"RDKitRotamers",
+	],
 	"protocols/interface": [
 		"util",
 	],
