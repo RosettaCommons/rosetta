@@ -234,6 +234,21 @@ public:
 		TS_ASSERT( pose->residue(pose->total_residue()).connected_residue_at_upper() == 1 );
 	}
 
+	/// @brief This tests for proper chain separation when you have a cyclic peptide after a regular one.
+	/// There was a bug where the peptide cycle was counted as "part of" the previous chain,
+	/// due to the lack of being "terminal"
+	void test_read_cyclic_peptide_chain_ending() {
+		core::pose::PoseOP pose( core::import_pose::pose_from_file( "core/io/pose_from_sfr/cycle_chain_test.pdb", false ) );
+		TS_ASSERT_EQUALS( pose->size(), 5 );
+		TR << "cycle_chain_test.pdb sequence: " << pose->annotated_sequence() << std::endl;
+		TS_ASSERT( pose->residue(2).is_upper_terminus() );
+		TS_ASSERT( !pose->residue(3).is_lower_terminus() );
+		TS_ASSERT( !pose->residue(5).is_upper_terminus() );
+		TS_ASSERT_EQUALS( pose->residue(3).connected_residue_at_lower(), 5 );
+		TS_ASSERT_EQUALS( pose->residue(5).connected_residue_at_upper(), 3 );
+		TS_ASSERT_EQUALS( pose->num_chains(), 2 );
+	}
+
 	/// @brief Test that we can correctly read poses without adding termini to user-specified chains.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	void test_read_pose_without_terminal_variant_types() {
