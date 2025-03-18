@@ -1,0 +1,32 @@
+-constant_seed 1
+-s 4s0v_and_suvorexant_only.pdb
+
+#load in suvorexant ligand
+-extra_res_fa test_params/suvorexant.params
+
+#input motifs file (only has motifs from 4S0V for an expected 100% real motif rate)
+-motif_filename 4S0V_motifs.motifs
+
+
+#placement motifs collection
+-collect_motifs_from_placed_ligand true
+
+#motifs against residues of interest
+-significant_residues_for_motifs 447,450,419,134,86,423,451,85,62
+-minimum_motifs_formed_cutoff 6
+-minimum_significant_motifs_formed_cutoff 1
+
+#mandatory at least 1 real motif
+-minimum_ratio_of_real_motifs_from_ligand 0.01
+
+#must form a motif with ASN423
+-mandatory_residues_for_motifs 423
+
+#check real motifs
+-check_if_ligand_motifs_match_real true
+-duplicate_dist_cutoff 1.2
+-duplicate_angle_cutoff 0.45
+
+
+#do not output generated ligand motifs as pdbs
+-output_motifs_as_pdb false
