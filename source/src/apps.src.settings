@@ -87,6 +87,7 @@ sources = {
 		"score_jd2",
 		"sc",
                 "SID_ERMS_prediction",
+                "SID_ERMS_Rescore",
 		"shobuns",
 	],
 	"public/antibody": [
