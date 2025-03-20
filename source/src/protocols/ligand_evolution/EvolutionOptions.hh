@@ -184,80 +184,80 @@ private:
 
 	/// @brief Maps selector names to types and parameter list
 	std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > selector_options_ {
-		{ "remove_elitist", { "elitist", {
-			// sets how many individuals will be selected
-			{ "size", 15 },
-			// sets if selected individuals will be removed from population or remain for further selection
-			{ "remove", 1 }
-		} } },
-		{ "std_tournament", { "tournament", {
-			// tournament selector selects a subset of individuals to play a "tournament" for being the fittest...
-			{ "tournament_size", 15 },
-			// ...and offers them according to rank the victory which they accept with this chance
-			{ "acceptance_chance", 0.75 },
-			{ "size", 15 },
-			{ "remove", 0 }
-		} } },
-		// Roulette selector can consider positive values but this distorts chance slightly. 0 maps to false
-		{ "std_roulette", { "roulette", {
-			{ "consider_positive", 0 },
-			{ "size", 15 },
-			{ "remove", 0 }
-		} } }
-	};
+{ "remove_elitist", { "elitist", {
+// sets how many individuals will be selected
+{ "size", 15 },
+// sets if selected individuals will be removed from population or remain for further selection
+{ "remove", 1 }
+} } },
+{ "std_tournament", { "tournament", {
+// tournament selector selects a subset of individuals to play a "tournament" for being the fittest...
+{ "tournament_size", 15 },
+// ...and offers them according to rank the victory which they accept with this chance
+{ "acceptance_chance", 0.75 },
+{ "size", 15 },
+{ "remove", 0 }
+} } },
+// Roulette selector can consider positive values but this distorts chance slightly. 0 maps to false
+{ "std_roulette", { "roulette", {
+{ "consider_positive", 0 },
+{ "size", 15 },
+{ "remove", 0 }
+} } }
+};
 
 	bool factories_defined_ = false;
 
 	/// @brief Maps offspring factory names to types and parameter list
 	std::map< std::string, std::pair< std::string, std::map< std::string, core::Real > > > factory_options_ {
-		{ "std_mutator", { "mutator", {
-			{ "size", 30.0 },
-			{ "reaction_weight", 1.0 },
-			{ "reagent_weight", 2.0 },
-			{ "min_similarity", 0.6 },
-			{ "max_similarity", 0.99 }
-		} } },
-		{ "drastic_mutator", { "mutator", {
-			{ "size", 30.0 },
-			{ "reaction_weight", 0.0 },
-			{ "reagent_weight", 1.0 },
-			{ "min_similarity", 0.0 },
-			{ "max_similarity", 0.25 }
-		} } },
-		{ "reaction_mutator", { "mutator", {
-			{ "size", 30.0 },
-			{ "reaction_weight", 1.0 },
-			{ "reagent_weight", 0.0 },
-			{ "min_similarity", 0.6 },
-			{ "max_similarity", 0.99 }
-		} } },
-		{ "large_crossover", { "crossover", {
-			{ "size", 60.0 }
-		} } },
-		{ "std_identity", { "identity", {
-			{ "size", 15.0 }
-		} } }
-	};
+{ "std_mutator", { "mutator", {
+{ "size", 30.0 },
+{ "reaction_weight", 1.0 },
+{ "reagent_weight", 2.0 },
+{ "min_similarity", 0.6 },
+{ "max_similarity", 0.99 }
+} } },
+{ "drastic_mutator", { "mutator", {
+{ "size", 30.0 },
+{ "reaction_weight", 0.0 },
+{ "reagent_weight", 1.0 },
+{ "min_similarity", 0.0 },
+{ "max_similarity", 0.25 }
+} } },
+{ "reaction_mutator", { "mutator", {
+{ "size", 30.0 },
+{ "reaction_weight", 1.0 },
+{ "reagent_weight", 0.0 },
+{ "min_similarity", 0.6 },
+{ "max_similarity", 0.99 }
+} } },
+{ "large_crossover", { "crossover", {
+{ "size", 60.0 }
+} } },
+{ "std_identity", { "identity", {
+{ "size", 15.0 }
+} } }
+};
 
 	bool evolution_protocol_defined_ = false;
 
 	/// @brief Links a selector to a factory
 	utility::vector1< std::pair< std::string, std::string > > selector_factory_links_ {
-		{ "std_roulette", "std_mutator" },
-		{ "std_roulette", "large_crossover" },
-		{ "std_roulette", "drastic_mutator" },
-		{ "std_roulette", "reaction_mutator" },
-		{ "remove_elitist", "std_identity" },
-		{ "std_roulette", "std_mutator" },
-		{ "std_roulette", "large_crossover" },
-	};
+{ "std_roulette", "std_mutator" },
+{ "std_roulette", "large_crossover" },
+{ "std_roulette", "drastic_mutator" },
+{ "std_roulette", "reaction_mutator" },
+{ "remove_elitist", "std_identity" },
+{ "std_roulette", "std_mutator" },
+{ "std_roulette", "large_crossover" },
+};
 
 	/// @brief Defines how the starting population is generated. For more detail look at %Population
 	std::map< std::string, std::map< std::string, core::Size > > pop_init_options_ {
-		{ "random", {
-			{ "size", 200 }
-		} }
-	};
+{ "random", {
+{ "size", 200 }
+} }
+};
 
 	/// @brief Defines the size of maximum supported individuals in a population
 	core::Size supported_population_size_ = 50;
