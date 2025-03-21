@@ -184,6 +184,9 @@ sources = {
 		"CstfileToTheozymePDB",
 		"enzyme_design",
 	],
+	"public/ligand_design": [
+		"revold",
+	],
 	"public/motif_ligand_discovery": [
 		"identify_ligand_motifs",
 		"ligand_discovery_search_protocol",
