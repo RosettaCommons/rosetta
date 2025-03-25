@@ -15,7 +15,7 @@
 
 #include <sstream>
 #include <string>
-#include <core/types.hh>
+#include <core/types.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/motifs/MotifLibrary.fwd.hh>
 #include <protocols/motifs/MotifLibrary.hh>

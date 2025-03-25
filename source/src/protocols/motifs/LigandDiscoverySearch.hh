@@ -11,13 +11,12 @@
 /// @brief aginsparg, ipatel, sthyme; this script uses a target receptor, list of motifs, and input ligand(s) to attempt to fit ligands against the receptor against a specified residue index
 
 
-#include <core/types.hh>
+#include <core/types.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -40,16 +39,13 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/pose/PDBInfo.fwd.hh>
 
 #include <core/chemical/GlobalResidueTypeSet.fwd.hh>
 
 #include <protocols/dna/PDBOutput.fwd.hh>
-#include <protocols/dna/util.hh>
-#include <protocols/dna/util.hh>
-#include <protocols/dna/util.hh>
 
 
 #include <basic/prof.fwd.hh>
