@@ -506,8 +506,7 @@ IdentifyLigandMotifs::process_for_motifs(
 
 		//Here we're going to check to see what's in motif_indices_list
 		for ( auto motif_position : motif_indices_list ) {
-			utility::vector1< Size > cur_trip ( motif_position );
-			TR.Debug << "Motif index contains: " << cur_trip[1] << "-" << cur_trip[2] << "-" << cur_trip[3] << std::endl;
+			TR.Debug << "Motif index contains: " << motif_position[1] << "-" << motif_position[2] << "-" << motif_position[3] << std::endl;
 		}
 	}
 
