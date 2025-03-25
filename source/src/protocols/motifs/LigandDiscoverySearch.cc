@@ -573,11 +573,12 @@ void LigandDiscoverySearch::add_ligand_to_pose_residuetypeset(const core::chemic
 	core::chemical::PoseResidueTypeSetOP rts( working_pose_->conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
 
 	//make a ResidueTypeSetCOP that will be pulled from the PoseResidueTypeSetOP
-	core::chemical::ResidueTypeSetCOP def_rts(rts->default_rts());
+	//core::chemical::ResidueTypeSetCOP def_rts(rts->default_rts());
 
 	//use the name_mapOP function to get a residue type pointer based on the name of the ligand (could be either a nullptr or a pointer to the type)
 	//should be a nullptr if it isn't in the set
-	core::chemical::ResidueTypeCOP lig_rt(def_rts->name_mapOP(working_pose_->residue(working_pose_->size()).name()));
+	//core::chemical::ResidueTypeCOP lig_rt(def_rts->name_mapOP(working_pose_->residue(working_pose_->size()).name()));
+	core::chemical::ResidueTypeCOP lig_rt(rts->name_mapOP(working_pose_->residue(working_pose_->size()).name()));
 
 	//add the ligand to the residue type set if lig_rt is a nullpointer (which it should be)
 	if ( lig_rt == nullptr ) {
