@@ -11,7 +11,7 @@
 /// @brief aginsparg, ipatel, sthyme; this script uses a target receptor, list of motifs, and input ligand(s) to attempt to fit ligands against the receptor against a specified residue index
 
 
-#include <core/types.fwd.hh>
+#include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
