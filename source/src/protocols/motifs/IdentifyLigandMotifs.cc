@@ -166,7 +166,7 @@ using utility::vector1;
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "IdentifyLigandMotifs", basic::t_info );
+static basic::Tracer TR( "protocols.motifs.IdentifyLigandMotifs", basic::t_info );
 
 //default constructor
 IdentifyLigandMotifs::IdentifyLigandMotifs()
@@ -719,7 +719,7 @@ IdentifyLigandMotifs::write_motifs_to_disk()
 utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(core::pose::PoseOP working_pose, std::map<protocols::motifs::motif_atoms,protocols::motifs::MotifCOPs> mymap, std::string const & pdb_name)
 {
 	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "IdentifyLigandMotifs.evaluate_motifs_of_pose", basic::t_info );
+	static basic::Tracer ms_tr( "protocols.motifs.IdentifyLigandMotifs.evaluate_motifs_of_pose", basic::t_info );
 
 	ms_tr.Trace << "Beginning evaluate_motifs_of_pose" << std::endl;
 

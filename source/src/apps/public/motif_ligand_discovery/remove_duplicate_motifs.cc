@@ -122,6 +122,11 @@ remove_duplicate_motifs(
 	protocols::motifs::MotifLibrary motif_library_no_duplicates;
 	//core::Real duplicate_motif_cutoff = basic::options::option[ basic::options::OptionKeys::motifs::duplicate_motif_cutoff ](); // Default 0.2
 	//iterate through motif library to search for duplicates
+
+	//obtain thresholds for determining when a motif is considered a duplicate for angle and distance between motifs
+	Real dist_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ]  );
+	Real angl_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] );
+
 	for ( auto single_motif : motif_library ) {
 
 		ms_tr <<  "========================================" << std::endl;
@@ -149,9 +154,6 @@ remove_duplicate_motifs(
 			//ms_tr << "Comparing to motif " << motifcop->remark() << std::endl;
 			//ms_tr << "Distance: " << distance << std::endl;
 			//ms_tr << "Theta: " << theta << std::endl;
-
-			Real dist_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_dist_cutoff ]  );
-			Real angl_threshold( basic::options::option[ basic::options::OptionKeys::motifs::duplicate_angle_cutoff ] );
 
 			//core::Real rmsdtest = 0.2;//core::scoring::automorphic_rmsd( *res, *res2, false );
 			if ( distance < dist_threshold && theta < angl_threshold ) {
