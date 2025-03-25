@@ -47,12 +47,12 @@ cd %(workdir)s
 # "pip install pubmed-lookup" or "pip3 install pubmed-lookup".
 echo "Testing addition of two citations to the Rosetta database." >>out.log
 cp -v database/citations/rosetta_citations.txt database/citations/rosetta_citations.original.txt
-`which python3` %(template_dir)s/add_citation_by_pubmed_id.py --database database/ --pmid 19717430 >>out.log 2>err1.log
+%(python3)s %(template_dir)s/add_citation_by_pubmed_id.py --database database/ --pmid 19717430 >>out.log 2>err1.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || echo "First script ran successfully."
 
 sleep 5
 
-`which python3` %(template_dir)s/add_citation_by_pubmed_id.py --database database/ --pmid 19880752 >>out.log 2>err2.log
+%(python3)s %(template_dir)s/add_citation_by_pubmed_id.py --database database/ --pmid 19880752 >>out.log 2>err2.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || echo "Second script ran successfully."
 
 # Check that output matches expected:

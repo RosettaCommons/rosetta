@@ -2198,6 +2198,17 @@ settings = {
         },
     },
 
+    "clang, |cxx_ver:>=18|" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [
+                    "Wno-error=deprecated-declarations",
+		    "Wno-error=enum-constexpr-conversion",
+                ],
+            },
+        },
+    },
+
     # OSs #####################################################################
 
     "clang, linux" : {
@@ -2261,6 +2272,11 @@ settings = {
                 "compile" : [ "march=native", "march=core2", ],
             },
         },
+        "appends" : {
+            "flags" : {
+                "link"   : [ "headerpad_max_install_names"],
+	    },
+	},
     },
 
 

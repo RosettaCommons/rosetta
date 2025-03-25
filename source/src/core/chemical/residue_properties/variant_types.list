@@ -144,6 +144,7 @@ CARBOXYLATION  # Add a carboxy (COO-) group the "standard" (sidechain) location
 DIIODINATION   # Add two iodines to the "standard" (sidechain) locations
 
 N_METHYLATION  # Add a methyl group to an A.A. backbone nitrogen *without* altering the LOWER connect
+NTERM2_OXOBUTRYLATION  # for 2_Oxobutrylation as the n terminus, like in pdb 2KTO
 
 # REPRESENTATIONAL VARIANTS
 

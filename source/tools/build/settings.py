@@ -23,7 +23,10 @@ def clean_env_for_external(env, requested = None):
 
     # Common flags for both C++ and C
     ccflags = env['CCFLAGS'].split()
+    has_Werror = len( [f for f in ccflags if f.startswith("-Wno") or f == "-Werror" or f == "-Wno-error"] ) > 0 # Compiler supports Werror designations?
     ccflags = [f for f in ccflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
+    if has_Werror > 0:
+        ccflags.append("-Wno-error")
     if requested is not None:
         if requested.ccflags:
           ccflags += requested['ccflags']

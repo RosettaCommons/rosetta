@@ -439,6 +439,12 @@ BackrubMover::add_segment(
 		}
 	}
 
+	if ( max_angle_disp <= 0 ) {
+		TR.Warning << "Maximum angular displacement is negative! (" << max_angle_disp <<") Using zero instead." << std::endl;
+		TR.Warning << "    tdist " << tdist << " max_angle_disp_4 " << max_angle_disp_4_ << " max_angle_disp_7 " << max_angle_disp_7_ << " max_angle_disp_slope " << max_angle_disp_slope_ << std::endl;
+		max_angle_disp = 0;
+	}
+
 	segments_.push_back(BackrubSegment(start_atomid, start_atomid1, start_atomid2, end_atomid, tdist+1, max_angle_disp));
 
 	core::Size segment_id = segments_.size();

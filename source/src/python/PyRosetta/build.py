@@ -53,6 +53,8 @@ _banned_headers_ +=' basic/database/DatabaseSessionOptions.hh' # TEMP ... and tu
 
 _banned_headers_ +=' protocols/jd3/JobOutputWritter.hh protocols/jd3/standard/PDBPoseOutputSpecification.hh protocols/jd3/standard/StandardResultOutputter.hh'  # protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh
 
+_link_bcl_ = False
+
 #_banned_headers_ +=' json.hpp'
 
 # Setting output to be printed in unicode regardless of terminal settings
@@ -431,6 +433,9 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
     scons_file_extension = '.external.settings'
     external_scons_files = [f for f in os.listdir(rosetta_source_path+'/external') if f.endswith(scons_file_extension)  and (Options.zmq  or  not f.startswith('libzmq.') ) and (not f.startswith('zlib.') ) ]
     for scons_file in external_scons_files:
+
+        if scons_file == 'bcl.external.settings' and  not _link_bcl_: continue
+
         G = {}
         sources = []
         with open(rosetta_source_path+'/external/'+scons_file) as f:
@@ -486,6 +491,13 @@ def generate_rosetta_cmake_files(rosetta_source_path, prefix):
         return i+k
 
     all_libs.sort(key=key, reverse=True)
+
+    if Options.skip_namespaces >= 0:
+        for l in all_libs[:]:
+            if (5 - Options.skip_namespaces ) - int(key(l)[0]) < 0: all_libs.remove(l)
+
+        print('Option `--skip-namespaces` was specified, final Rosetta namespace list is:', all_libs, '\n')
+
 
     modified = False
     for lib in all_libs:
@@ -868,7 +880,7 @@ def main(args):
     parser.add_argument('--cross-compile', action="store_true", help='Specify for cross-compile build')
     parser.add_argument('--pybind11', default='', help='Path to pybind11 source tree')
     parser.add_argument('--annotate-includes', action="store_true", help='Annotate includes in generated PyRosetta source files')
-    parser.add_argument('--trace', action="store_true", help='Binder will add trace output to to generated PyRosetta source files')
+    parser.add_argument('--trace', action="store_true", help='Binder will add trace output to the generated PyRosetta source files')
 
     parser.add_argument('-p', '--create-package', default='', help='Create PyRosetta Python package at specified path (default is to skip creating package)')
     parser.add_argument('--create-wheel', default='', help='Create python wheel in the specified directory. (default is to skip creating wheel)')
@@ -894,7 +906,7 @@ def main(args):
 
     parser.add_argument('--version', help='Supply JSON version file to be used for during package creation and documentation building. File must be in the same format as standard Rosetta .release.json used to mark release versions. If no file is supplied script will fallback to use main/.version.json.')
 
-    parser.add_argument('-n', '--skip-namespaces', default=-16777216, type=int, help="EXPERIMENTAL: Specify number of high-level Rosetta namespaces to skip during generation phase. This allow one to bypass bindings generations for higher level libraries (like protocols, core etc )Default is 0, - do not skip any namespaces.")
+    parser.add_argument('-n', '--skip-namespaces', default=-16777216, type=int, help="EXPERIMENTAL: Specify number of high-level Rosetta namespaces to skip during generation phase. This allow one to bypass bindings generations for higher level libraries (like protocols, core etc ) Default is 0, - do not skip any namespaces.")
 
 
     #parser.add_argument('--build-suffix', default=None, help='Specify build suffix that will be be used when creating build directories. Default is None, - use either $HOSTNAME or value provided in local .hostname file.')

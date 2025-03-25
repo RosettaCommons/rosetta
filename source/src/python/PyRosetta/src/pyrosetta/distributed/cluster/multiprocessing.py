@@ -23,6 +23,7 @@ except ImportError:
     raise
 
 import tempfile
+import time
 
 from pyrosetta.distributed import requires_init
 from pyrosetta.distributed.cluster.base import (
@@ -59,6 +60,13 @@ from typing import (
 Q = TypeVar("Q", bound=billiard.Queue)
 P = TypeVar("P", bound=billiard.context.Process)
 S = TypeVar("S", bound=Serialization)
+
+
+def _maybe_delay(dt: float, max_delay_time: Union[float, int]) -> None:
+    """Maybe delay the user-provided PyRosetta protocol result(s)."""
+    delay_time = max_delay_time - dt
+    if delay_time > 0.0:
+        time.sleep(delay_time)
 
 
 @trace_protocol_exceptions
@@ -161,9 +169,11 @@ def user_spawn_thread(
     logging_level: str,
     DATETIME_FORMAT: str,
     compression: Optional[Union[str, bool]],
+    max_delay_time: Union[float, int],
     client_residue_type_set: AbstractSet[str],
 ) -> List[Tuple[Optional[Union[PackedPose, bytes]], Union[Dict[Any, Any], bytes]]]:
     """Generic worker task using the billiard multiprocessing module."""
+    t0 = time.time()
     client_repr = repr(get_client())
 
     q = billiard.Queue()
@@ -191,5 +201,8 @@ def user_spawn_thread(
         q, p, compressed_kwargs, protocol.__name__, timeout, ignore_errors
     )
     p.join()
+
+    dt = time.time() - t0
+    _maybe_delay(dt, max_delay_time)
 
     return results
