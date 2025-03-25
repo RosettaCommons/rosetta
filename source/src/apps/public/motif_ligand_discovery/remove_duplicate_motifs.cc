@@ -113,12 +113,10 @@ remove_duplicate_motifs(
 	utility::vector1< std::string > ligand_atom_names;
 
 	protocols::motifs::MotifLibrary motifs( protocols::motifs::get_LigandMotifLibrary_user(ligand_marker, ligand_atom_names));
-	protocols::motifs::MotifCOPs motifcops = motifs.library();
+	protocols::motifs::MotifCOPs motif_library = motifs.library();
 
 	//print initial size of motif library that has been read in
-	ms_tr << "Size of read in motif library is " << motifcops.size() << std::endl;
-	protocols::motifs::MotifCOPs motif_library;
-	motif_library = motifcops;
+	ms_tr << "Size of read in motif library is " << motif_library.size() << std::endl;
 
 	//Make new motif library that will have no duplicates
 	protocols::motifs::MotifLibrary motif_library_no_duplicates;
