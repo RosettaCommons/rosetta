@@ -238,19 +238,9 @@ main( int argc, char * argv [] )
 			core::import_pose::pose_from_file( pose_pointer_helper, *filename , core::import_pose::PDB_file);
 			pose::PoseOP pose(new pose::Pose(pose_pointer_helper));
 
-			//get discovery position
-			//core::Size discovery_position = option[ OptionKeys::motifs::protein_discovery_locus ];
-			//now using a vector instead of a single core::Size value
-			//read as int and then convert to core::Size
-			//utility::vector1<int> discovery_position_int = option[ OptionKeys::motifs::protein_discovery_locus ];
-			utility::vector1<core::Size> discovery_position;
-
-			utility::vector1<core::Size> discovery_positions_int = option[ OptionKeys::motifs::protein_discovery_locus ]();
-
-			//iteratively append discovery positions to the discovery_position vector
-			for ( const auto & position : discovery_positions_int ) {
-				discovery_position.push_back(position);
-			}
+			//get discovery position(s), load into Size vector
+			//vector from options is int, but assignment should convert to size
+			utility::vector1<core::Size> discovery_position = option[ OptionKeys::motifs::protein_discovery_locus ]();
 
 			//declare LigandDiscoverySearch object
 			ms_tr << "Making LigandDiscoverySearch object" << std::endl;
