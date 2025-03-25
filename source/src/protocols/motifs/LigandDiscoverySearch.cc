@@ -584,11 +584,10 @@ void LigandDiscoverySearch::add_ligand_to_pose_residuetypeset(const core::chemic
 	//add the ligand to the residue type set if lig_rt is a nullpointer (which it should be)
 	if ( lig_rt == nullptr ) {
 		rts->add_base_residue_type(lig_mrt);
+		//reset the residue type sets for the working_pose_ and the original_pose_ so that they are updated to have the new ligand
+		working_pose_->conformation().reset_residue_type_set_for_conf(rts);
+		original_pose_.conformation().reset_residue_type_set_for_conf(rts);
 	}
-
-	//reset the residue type sets for the working_pose_ and the original_pose_ so that they are updated to have the new ligand
-	working_pose_->conformation().reset_residue_type_set_for_conf(rts);
-	original_pose_.conformation().reset_residue_type_set_for_conf(rts);
 }
 
 // @brief This function creates a HighResDockOP object for using highresdock in discover() to try to optimize the ligand placement. The function takes in a score function OP to use in the HRD
