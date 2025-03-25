@@ -1158,10 +1158,10 @@ Motif::motif_atom_match_lax(
 	if ( restype_name1_ != compare.restype_name1() ) return false;
 	if ( res1_atom1_name_ != compare.res1_atom1_name() ) return false;
 	if ( res1_atom2_name_ != compare.res1_atom2_name() ) return false;
-	if ( res1_atom3_name_ != compare.realmotifcop->res1_atom3_name() ) return false;
-	if ( res2_atom1_name_ != compare.realmotifcop->res2_atom1_name() ) return false;
-	if ( res2_atom2_name_ != compare.realmotifcop->res2_atom2_name() ) return false;
-	if ( res2_atom3_name_ != compare.realmotifcop->res2_atom3_name() ) return false;
+	if ( res1_atom3_name_ != compare.res1_atom3_name() ) return false;
+	if ( res2_atom1_name_ != compare.res2_atom1_name() ) return false;
+	if ( res2_atom2_name_ != compare.res2_atom2_name() ) return false;
+	if ( res2_atom3_name_ != compare.res2_atom3_name() ) return false;
 	return true;
 }
 
