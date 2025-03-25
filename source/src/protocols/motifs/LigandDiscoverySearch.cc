@@ -572,6 +572,7 @@ void LigandDiscoverySearch::add_ligand_to_pose_residuetypeset(const core::chemic
 	//code to add type set of imported ligand into pose
 	core::chemical::PoseResidueTypeSetOP rts( working_pose_->conformation().modifiable_residue_type_set_for_conf( core::chemical::FULL_ATOM_t ) );
 
+	//keeping this commented just in case, but now removing the pull of the default rts, since I now know you can just pull the ligand residue type straight from the poseRTS
 	//make a ResidueTypeSetCOP that will be pulled from the PoseResidueTypeSetOP
 	//core::chemical::ResidueTypeSetCOP def_rts(rts->default_rts());
 
