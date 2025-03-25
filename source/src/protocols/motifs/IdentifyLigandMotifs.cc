@@ -881,7 +881,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 					//difference is that we are not deleting any motifs, instead if we get a match hit, we will call out ligand-derived motif real
 					//secondary confirm that the motifs match (there is no good reason why we should hit a continue off of this if the map is formed right)
 					//no need to check if restype_name2 is equal, since it is expected that those names should be different (from completely different molecules)
-					if ( ligmotifcop->motif_atom_match_strict(*realmotifcop) == false ) continue;
+					if ( ligmotifcop->motif_atom_match_lax(*realmotifcop) == false ) continue;
 
 					core::Real motif_distance = 0;
 					core::Real motif_theta = 0;
