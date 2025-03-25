@@ -136,14 +136,10 @@ remove_duplicate_motifs(
 		bool broke( false );
 
 		for ( auto motifcop : motif_library_no_duplicates ) {
-			if ( motifcop->restype_name1() != single_motif->restype_name1() ) continue;
-			if ( motifcop->restype_name2() != single_motif->restype_name2() ) continue;
-			if ( motifcop->res1_atom1_name() != single_motif->res1_atom1_name() ) continue;
-			if ( motifcop->res1_atom2_name() != single_motif->res1_atom2_name() ) continue;
-			if ( motifcop->res1_atom3_name() != single_motif->res1_atom3_name() ) continue;
-			if ( motifcop->res2_atom1_name() != single_motif->res2_atom1_name() ) continue;
-			if ( motifcop->res2_atom2_name() != single_motif->res2_atom2_name() ) continue;
-			if ( motifcop->res2_atom3_name() != single_motif->res2_atom3_name() ) continue;
+
+			//check if atoms match and ensure same residue names on both sides
+			if ( motifcop->motif_atom_match_strict(*single_motif) == false ) continue;
+
 			//motifcop->place_residue( *protres, *res2 );
 
 

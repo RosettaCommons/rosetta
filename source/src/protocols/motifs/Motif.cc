@@ -1147,6 +1147,37 @@ Motif::place_atoms_(
 	return;
 }
 
+// check if atom types between this object and another motif match; returns a boolean
+// if amino acid residue names on each motif and atoms involved match, then this returns true, otherwise it returns false
+// notably, this match does not check if the ligand name side matches
+bool
+Motif::motif_atom_match_lax(
+	Motif compare
+	)
+{
+	if ( restype_name1_ != compare.restype_name1() ) return false;
+	if ( res1_atom1_name_ != compare.res1_atom1_name() ) return false;
+	if ( res1_atom2_name_ != compare.res1_atom2_name() ) return false;
+	if ( res1_atom3_name_ != compare.realmotifcop->res1_atom3_name() ) return false;
+	if ( res2_atom1_name_ != compare.realmotifcop->res2_atom1_name() ) return false;
+	if ( res2_atom2_name_ != compare.realmotifcop->res2_atom2_name() ) return false;
+	if ( res2_atom3_name_ != compare.realmotifcop->res2_atom3_name() ) return false;
+	return true;
+}
+
+// check if atom types between this object and another motif match; returns a boolean
+// if residue names on each side of each motif and atoms involved match, then this returns true, otherwise it returns false
+// notably, this match does  check if the ligand name side matches
+bool
+Motif::motif_atom_match_strict(
+	Motif compare
+	)
+{
+	if ( restype_name2_ != compare.restype_name2() ) return false;
+	if ( motif_atom_match_lax(compare) == false ) return false;
+	return true;
+}
+
 void
 Motif::print( std::ostream & out ) const
 {
