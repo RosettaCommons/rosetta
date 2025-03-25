@@ -731,7 +731,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 	utility::vector1< core::Real > placement_motifs_data (5,0);
 
 	//clone a non-pointer of working_pose_ to pass into process_for_motifs, this may resolve the pointer issue that seems to occur when I pass the PoseOP working_pose into process_for_motifs
-	core::pose::Pose working_pose_copy = *((*working_pose).clone());
+	core::pose::PoseOP working_pose_copy = working_pose->clone();
 
 	// make a new motif_library to use, and add the motifs to motif_library_ after we get the motifs
 	protocols::motifs::MotifLibrary pose_motif_library;
@@ -740,7 +740,7 @@ utility::vector1< core::Real > IdentifyLigandMotifs::evaluate_motifs_of_pose(cor
 
 	//use ilm process_for_motifs to obtain motifs from the pose
 	//make vector that holds the indices of residues that contribute to motifs (probably the easiest way to track if motifs were made on residues of interest)
-	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(working_pose_copy, pdb_name, pose_motif_library);
+	utility::vector1< core::Size > prot_pos_that_made_motifs_size = process_for_motifs(*working_pose_copy, pdb_name, pose_motif_library);
 
 	//add all motifs in pose_motif_library to motif_library_
 	//convert the motif library to motifCOPS
