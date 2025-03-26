@@ -1427,9 +1427,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 //to call this function the least amount of times (and minimize wasted time/resources), this function is only to be called right before a placement is culled before a continue statement after working_pose_ had a ligand added to it
 void LigandDiscoverySearch::reset_working_pose()
 {
-	core::pose::PoseOP original_poseop(original_pose_.clone());
-	//assign the original_poseop to working_pose_
-	working_pose_ = original_poseop;
+	//assign working_pose_ to clone of original
+	working_pose_ = original_pose_.clone();
 }
 
 //function to get a sub-library of motifs from the main library, based on the residue being used (only get for select residue)
