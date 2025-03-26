@@ -67,7 +67,6 @@ using namespace protocols::dna;
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-static basic::Tracer TR( "protocols.motifs.LigandDiscoverySearch" );
 
 #include <core/import_pose/import_pose.hh> // Need since refactor
 
@@ -148,6 +147,9 @@ using namespace task;
 using namespace scoring;
 using namespace options;
 using namespace OptionKeys;
+
+//declare global tracer for class
+static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch" );
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -243,9 +245,6 @@ LigandDiscoverySearch::LigandDiscoverySearch(core::pose::PoseOP pose_from_PDB, p
 // @brief this function is to be called by the constructor(s) to seed initial values to cutoffs that are used for scoring/evaluating metrics of placed ligands in discover() and the functions it calls
 void LigandDiscoverySearch::seed_cutoff_values()
 {
-	//make tracer for debugging
-	static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch.seed_cutoff_values", basic::t_info );
-
 	//score function cutoffs
 	ms_tr.Debug << "Using fa_rep cutoff of: "  << option[ OptionKeys::motifs::fa_rep_cutoff ] << std::endl;
 	fa_rep_cutoff_ = option[ OptionKeys::motifs::fa_rep_cutoff ];
@@ -457,9 +456,6 @@ LigandDiscoverySearch::atom_trios LigandDiscoverySearch::derive_adjacent_atoms_o
 //if returns true, a minipose was successfully made; if returns false, minipose is still empty because no other residues were recruited to it
 bool LigandDiscoverySearch::make_minipose(core::pose::PoseOP & minipose, const core::conformation::ResidueOP ligresOP)
 {
-	//make a tracer
-	static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch.make_minipose", basic::t_info );
-
 	working_pose_->append_residue_by_jump(*ligresOP, 1);
 
 	ms_tr.Debug << "Builting Minipose made of residue indices: ";
@@ -649,10 +645,6 @@ void LigandDiscoverySearch::run_HighResDock_on_working_pose(const protocols::lig
 //parameter is a string to be a prefix name to use for outputted file names
 core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 {
-	//create tracer to identify points of the run
-	//This tracer uses the following tracer outpurs: standard (no extension), Debug, Warning, and Trace
-	static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch.discover", basic::t_info );
-
 	//create identifyligandmotifs object for use with deriving motifs from placed ligands
 	IdentifyLigandMotifs ilm;
 
@@ -1435,8 +1427,6 @@ void LigandDiscoverySearch::reset_working_pose()
 //function may have use outside discover, so public can use it
 protocols::motifs::MotifCOPs LigandDiscoverySearch::get_motif_sublibrary_by_aa(std::string residue_name)
 {
-	static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch.get_motif_sublibrary_by_aa", basic::t_info );
-
 	//create temporary motifcops object to hold
 	protocols::motifs::MotifCOPs motif_holder;
 
@@ -1464,10 +1454,6 @@ protocols::motifs::MotifCOPs LigandDiscoverySearch::get_motif_sublibrary_by_aa(s
 //uses working_pose to make the matrix
 void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_shift, core::Size & y_shift, core::Size & z_shift, int & x_bound_int, int & y_bound_int, int & z_bound_int)
 {
-
-	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch.create_protein_representation_matrix", basic::t_info );
-
 	//run through all atoms to derive a range of dimensions to contain the protein in a 3D  space
 	//since we can't have negative indices, we need to normalize the coordinate values so that everything is positive
 	//derive constant values based  on the most negative values in each dimension, and then add that constant to all coordinates
@@ -1594,9 +1580,6 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	10 = do not use, keep even for unoccupied space
 	11 = ligand and protein in sub area, iodine, purple
 	*/
-
-	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch.create_protein_matrix_space_fill", basic::t_info );
 
 	int smallest_x = 1;
 	int smallest_y = 1;
@@ -2204,9 +2187,6 @@ LigandDiscoverySearch::SpaceFillMatrix LigandDiscoverySearch::space_fill_analysi
 	11 = ligand and protein in sub area, iodine, purple
 	*/
 
-	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch.space_fill_analysis", basic::t_info );
-
 	//debugging
 	//print out what matrix data counts looks like before and after modification
 
@@ -2375,9 +2355,6 @@ LigandDiscoverySearch::SpaceFillMatrix LigandDiscoverySearch::space_fill_analysi
 pose::Pose LigandDiscoverySearch::export_space_fill_matrix_as_C_H_O_N_pdb(SpaceFillMatrix space_fill_matrix, utility::vector1<core::Size> & xyz_shift, utility::vector1<core::Size> & xyz_bound, int & resolution_increase_factor,
 	utility::vector1<core::Real> & occupied_ratios, std::string pdb_name_prefix, core::chemical::MutableResidueType dummylig_mrt)
 {
-	//create tracer to identify points of the run
-	static basic::Tracer ms_tr( "protocols.motifs.LigandDiscoverySearch.export_space_fill_matrix_as_C_H_O_N_pdb", basic::t_info );
-
 	std::string matrix_pdb_name = pdb_name_prefix + "_WholeRatio_" + std::to_string(occupied_ratios[1]) + "_SubRatio_" + std::to_string(occupied_ratios[2]) + ".pdb";
 
 	ms_tr.Trace << "Preparing to make visualization pose for " << matrix_pdb_name << std::endl;
