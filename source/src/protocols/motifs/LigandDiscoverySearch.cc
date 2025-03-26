@@ -1457,14 +1457,15 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 	//run through all atoms to derive a range of dimensions to contain the protein in a 3D  space
 	//since we can't have negative indices, we need to normalize the coordinate values so that everything is positive
 	//derive constant values based  on the most negative values in each dimension, and then add that constant to all coordinates
+	//to be safe, values need to be seeded with an initial value, or errors could be thrown when deriving shift values
 
-	int smallest_x;
-	int smallest_y;
-	int smallest_z;
+	int smallest_x = 1;
+	int smallest_y = 1;
+	int smallest_z = 1;
 
-	int largest_x;
-	int largest_y;
-	int largest_z;
+	int largest_x = 1;
+	int largest_y = 1;
+	int largest_z = 1;
 
 	//create a list of coordinates of each atom to hold and work with to fill the protein_representation_matrix
 	//can't seem to make a vector of xyzVector objects, so will need to just make a custome 2D vector  to  hold the data
@@ -1588,13 +1589,13 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	11 = ligand and protein in sub area, iodine, purple
 	*/
 
-	int smallest_x;
-	int smallest_y;
-	int smallest_z;
+	int smallest_x = 1;
+	int smallest_y = 1;
+	int smallest_z = 1;
 
-	int largest_x;
-	int largest_y;
-	int largest_z;
+	int largest_x = 1;
+	int largest_y = 1;
+	int largest_z = 1;
 
 	//create a list of coordinates of each atom to hold and work with to fill the protein_representation_matrix
 	//can't seem to make a vector of xyzVector objects, so will need to just make a custome 2D vector  to  hold the data
@@ -1619,7 +1620,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 			atom_xyz_float_with_lj_radius.push_back(atom_xyz.x());
 			atom_xyz_float_with_lj_radius.push_back(atom_xyz.y());
 			atom_xyz_float_with_lj_radius.push_back(atom_xyz.z());
-			
+
 			atom_xyz_float_with_lj_radius.push_back(working_pose_->residue(res_num).atom_type(atom_num).lj_radius());
 
 			atom_coordinates_float_and_lj_radius.push_back(atom_xyz_float_with_lj_radius);
