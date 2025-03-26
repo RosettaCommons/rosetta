@@ -1458,13 +1458,13 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 	//since we can't have negative indices, we need to normalize the coordinate values so that everything is positive
 	//derive constant values based  on the most negative values in each dimension, and then add that constant to all coordinates
 
-	int smallest_x = 1;
-	int smallest_y = 1;
-	int smallest_z = 1;
+	int smallest_x;
+	int smallest_y;
+	int smallest_z;
 
-	int largest_x = 1;
-	int largest_y = 1;
-	int largest_z = 1;
+	int largest_x;
+	int largest_y;
+	int largest_z;
 
 	//create a list of coordinates of each atom to hold and work with to fill the protein_representation_matrix
 	//can't seem to make a vector of xyzVector objects, so will need to just make a custome 2D vector  to  hold the data
@@ -1473,12 +1473,24 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 	//determine largest and smallest x,y,z  values to determine dimensions of matrix
 	for ( core::Size res_num = 1; res_num <= working_pose_->size(); ++res_num ) {
 		for ( core::Size atom_num = 1; atom_num <= working_pose_->residue(res_num).natoms(); ++atom_num ) {
-			//get the x,y,z data of the atom
-			numeric::xyzVector<int> atom_xyz = working_pose_->residue(res_num).xyz(atom_num);
-			//convert the coordinates to integers
-			atom_xyz.x() = static_cast<int>(atom_xyz.x());
-			atom_xyz.y() = static_cast<int>(atom_xyz.y());
-			atom_xyz.z() = static_cast<int>(atom_xyz.z());
+			//get the x,y,z data of the atom, rounded to the closest value
+			numeric::xyzVector<int> atom_xyz;
+			//floor the coordinates down for a constant negative directional shift
+			atom_xyz.x() = std::floor(working_pose_->residue(res_num).xyz(atom_num).x());
+			atom_xyz.y() = std::floor(working_pose_->residue(res_num).xyz(atom_num).y());
+			atom_xyz.z() = std::floor(working_pose_->residue(res_num).xyz(atom_num).z());
+
+			//safe handling for the first atom encountered to be set as the smallest and largest values
+			if ( res_num == 1 && atom_num == 1)
+			{
+				smallest_x = atom_xyz.x();
+				smallest_y = atom_xyz.y();
+				smallest_z = atom_xyz.z();
+				largest_x = atom_xyz.x();
+				largest_y = atom_xyz.y();
+				largest_z = atom_xyz.z();
+				continue;
+			}
 
 			//determine if any of the values  are the smallest
 			if ( smallest_x > atom_xyz.x() ) {
@@ -1508,6 +1520,8 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 	}
 
 	//take negative values of the smallest values and then add 1 to derive the constants
+	//the logic here should apply, whether the smallest value is positive or negative
+	//for the smallest value in the system to be indexed to 1, you add the negative of itself + 1; this shift would be applied to all other atom coordinates
 	x_shift = (smallest_x * -1) + 1;
 	y_shift = (smallest_y * -1) + 1;
 	z_shift = (smallest_z * -1) + 1;
@@ -1521,15 +1535,7 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 	y_bound_int = y_bound;
 	z_bound_int = z_bound;
 
-	//apply constants to all coordinates
-	for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
-		atom_coordinates[xyzVec].x() += x_shift;
-		atom_coordinates[xyzVec].y() += y_shift;
-		atom_coordinates[xyzVec].z() += z_shift;
-	}
-
 	//create 3D matrix to roughly represent 3D coordinate space of protein
-
 	ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << x_bound << "," << y_bound << "," << z_bound << std::endl;
 
 
@@ -1550,9 +1556,10 @@ void LigandDiscoverySearch::create_protein_representation_matrix(core::Size & x_
 	}
 
 	//seed the matrix with approximate coordinates of each atom
-	//approximated by always rounding down via int casting
+	//apply the shift to the coordinates
+	//approximated by flooring coordinates down
 	for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
-		protein_representation_matrix_[static_cast<int>(atom_coordinates[xyzVec].x())][static_cast<int>(atom_coordinates[xyzVec].y())][static_cast<int>(atom_coordinates[xyzVec].z())] = true;
+		protein_representation_matrix_[atom_coordinates[xyzVec].x() + x_shift][atom_coordinates[xyzVec].y() + y_shift][atom_coordinates[xyzVec].z() + z_shift] = true;
 	}
 }
 
@@ -1581,13 +1588,13 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	11 = ligand and protein in sub area, iodine, purple
 	*/
 
-	int smallest_x = 1;
-	int smallest_y = 1;
-	int smallest_z = 1;
+	int smallest_x;
+	int smallest_y;
+	int smallest_z;
 
-	int largest_x = 1;
-	int largest_y = 1;
-	int largest_z = 1;
+	int largest_x;
+	int largest_y;
+	int largest_z;
 
 	//create a list of coordinates of each atom to hold and work with to fill the protein_representation_matrix
 	//can't seem to make a vector of xyzVector objects, so will need to just make a custome 2D vector  to  hold the data
@@ -1600,22 +1607,34 @@ void LigandDiscoverySearch::create_protein_representation_matrix_space_fill(util
 	//determine largest and smallest x,y,z  values to determine dimensions of matrix
 	for ( core::Size res_num = 1; res_num <= working_pose_->size(); ++res_num ) {
 		for ( core::Size atom_num = 1; atom_num <= working_pose_->residue(res_num).natoms(); ++atom_num ) {
-			//get the x,y,z data of the atom
-			numeric::xyzVector<int> atom_xyz = working_pose_->residue(res_num).xyz(atom_num);
+			//get the x,y,z data of the atom, rounded to the closest value
+			numeric::xyzVector<int> atom_xyz;
+			//floor the coordinates down for a constant negative directional shift
+			atom_xyz.x() = std::floor(working_pose_->residue(res_num).xyz(atom_num).x());
+			atom_xyz.y() = std::floor(working_pose_->residue(res_num).xyz(atom_num).y());
+			atom_xyz.z() = std::floor(working_pose_->residue(res_num).xyz(atom_num).z());
 
 			utility::vector1<core::Real> atom_xyz_float_with_lj_radius;
+			//note, these are floor ints, as derived directly above
 			atom_xyz_float_with_lj_radius.push_back(atom_xyz.x());
 			atom_xyz_float_with_lj_radius.push_back(atom_xyz.y());
 			atom_xyz_float_with_lj_radius.push_back(atom_xyz.z());
+			
 			atom_xyz_float_with_lj_radius.push_back(working_pose_->residue(res_num).atom_type(atom_num).lj_radius());
 
 			atom_coordinates_float_and_lj_radius.push_back(atom_xyz_float_with_lj_radius);
 
-
-			//convert the coordinates to integers
-			atom_xyz.x() = static_cast<int>(atom_xyz.x());
-			atom_xyz.y() = static_cast<int>(atom_xyz.y());
-			atom_xyz.z() = static_cast<int>(atom_xyz.z());
+			//safe handling for the first atom encountered to be set as the smallest and largest values
+			if ( res_num == 1 && atom_num == 1)
+			{
+				smallest_x = atom_xyz.x();
+				smallest_y = atom_xyz.y();
+				smallest_z = atom_xyz.z();
+				largest_x = atom_xyz.x();
+				largest_y = atom_xyz.y();
+				largest_z = atom_xyz.z();
+				continue;
+			}
 
 			//determine if any of the values  are the smallest
 			if ( smallest_x > atom_xyz.x() ) {
