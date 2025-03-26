@@ -125,7 +125,7 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
         # Changes to report, create a patch file for users
         # (Can't automatically commit results to either repo anymore.)
 
-        res, user_diff_output = execute('Getting status output ...', f'cd {doc_dir} && git diff --stat=240 HEAD', return_='tuple')
+        res, user_diff_output = execute('Getting status output ...', f'cd {doc_dir} && git --no-pager diff --no-color --stat=240 HEAD', return_='tuple')
 
         res_diff, diff = execute('Generating patch file for changes', f'cd {doc_dir} && git --no-pager diff --no-color HEAD', return_="tuple")
         with open(working_dir+'/full_diff.patch', 'w') as f: f.write(diff)
