@@ -56,47 +56,9 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
 
     TR('Running Documentation Maintenance "test" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    ##################################################################################
-    # Long list of double-checks to make sure we don't mess up the documentation state.
+    #### We assume that the documentation submodule has been checked out and updated to the current state, and the running directory is "clean"
 
-    branches = find_branches(rosetta_dir)
-    if len(branches) != 1:
-        return FAIL(None, f"Could not figure out which branch to update documentation for, commit belongs to following (expecting exactly one): " + ', '.join(branches) )
-    main_branch = branches.pop()
-
-    # Now update to the branch tip
-    res, output = execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch} && git submodule update && git branch --set-upstream-to=origin/{branch} {branch}'.format(rosetta_dir, branch=main_branch), return_='tuple')
-    if res:
-        return FAIL(output, "Can't update to proper branch value.")
-
-
-    res, output = execute("Getting main's revision number ...", f'cd {rosetta_dir} && git rev-parse HEAD', return_='tuple')
-    if res:
-        return FAIL(output, "Can't get main's revision number")
-    main_rev = output.strip()
-
-    res, output = execute("Getting documentation's revision number ...", f'cd {doc_dir} && git rev-parse HEAD', return_='tuple' )
-    if res:
-        return FAIL(output, "Can't get documentation's revision number")
-    doc_rev = output.strip()
-
-    # I think this should probably work decently.
-    doc_branch = main_branch
-
-    res, output = execute("Does the doc branch exist?", f'cd {doc_dir} && git rev-parse --verify origin/{doc_branch}', return_='tuple')
-    if res:
-        # Branch does not exist - create it.
-        res, output = execute("Creating branch for documentation updates", f'cd {doc_dir} && git checkout -b {doc_branch} && git branch --set-upstream-to=origin/{doc_branch} {doc_branch}', return_='tuple' )
-    else:
-        # Branch already exists - check it out, and then make sure we include what we have currently for the documentation
-        res, output = execute("Checking out branch for documentation updates", f'cd {doc_dir} && git checkout {doc_branch} && git pull && git merge {doc_rev}', return_='tuple')
-        if res:
-            return FAIL(output, f"Can't properly checkout documentation repo branch {doc_branch}")
-
-    ##########################################################
-    # Update the repo(s)
-
-    # try: finally: here to make sure we clean up the documentation directory in case of failures
+    # try: finally: here to make sure we clean up the documentation directory afterward.
     try:
 
         # Compile Rosetta - will also update the options documentation.
@@ -107,15 +69,17 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
             results[_LogKey_]   = f'Compiling: {build_command_line}\n{output}'
             return results
 
+        # Update the options documentation -- should be regenerated from the compile.
+        shutil.copyfile(f'{rosetta_dir}/source/src/basic/options/full-options-list.md', f'{doc_dir}/full-options-list.md')
+
         # Now attempt to generate the XSD
 
         ext = calculate_extension(platform, mode)
-        res, output =  execute('Generating RosettaScripts XSD ...', f'cd {doc_dir} && {rosetta_dir}/source/bin/rosetta_scripts.{ext} -parser::output_schema rosettascripts.xsd', return_='tuple' )
+        res, xsd_output =  execute('Generating RosettaScripts XSD ...', f'cd {doc_dir} && {rosetta_dir}/source/bin/rosetta_scripts.{ext} -parser::output_schema rosettascripts.xsd', return_='tuple' )
         if res:
             results[_StateKey_] = _S_script_failed_
-            results[_LogKey_]   = 'Issue running XSD generation: \n' + output
+            results[_LogKey_]   = 'Issue running XSD generation: \n' + xsd_output
             return results
-
 
         # Clear out the old md files in the XSD directory
         for f in glob.glob(f"{doc_dir}/scripting_documentation/RosettaScripts/xsd/*.md"):
@@ -129,68 +93,63 @@ def run_documentation_update(rosetta_dir, working_dir, platform, config, hpc_dri
             return results
 
         # We need to double check if there's any case sensitivity issues
-        res, output = execute('Checking for case sensitivity issues ...', f'cd {doc_dir} && find . | sort -f | uniq -di', return_='tuple')
-        if res or output.strip() != '':
+        res, case_output = execute('Checking for case sensitivity issues ...', f'cd {doc_dir} && find . | sort -f | uniq -di', return_='tuple')
+        if res or case_output.strip() != '':
             results[_StateKey_] = _S_script_failed_
-            results[_LogKey_]   = 'Case sensitivity failure encountered: \n' + gen_output + '\n\n' + output
+            results[_LogKey_]   = 'Case sensitivity failure encountered: \n' + gen_output + '\n\n' + case_output
             return results
 
-        # While we're at it, we can update the full options list - should be regenerated from the compile
-        shutil.copyfile(f'{rosetta_dir}/source/src/basic/options/full-options-list.md', f'{doc_dir}/full-options-list.md')
-
-        #################################
-        # Cleanup
-
-        os.remove(f"{doc_dir}/rosettascripts.xsd")
-
         ####################
-        # Commit to repo
+        # Generate diff
 
-        # Add XSD changes to staging area
-        execute('Adding Markdown changes to XSD ...', f'cd {doc_dir} && git add ./scripting_documentation/RosettaScripts/xsd/' )
-        execute('Removing any removed Markdown XSD files...', f'cd {doc_dir} && git add -u ./scripting_documentation/RosettaScripts/xsd/' )
-
-        # Don't bother adding full option list unless more than the date changes
+        # Don't bother with full option list unless more than the date changes
         res, output = execute('Checking fulloption list differences ...', f'cd {doc_dir} && git --no-pager diff --no-color --numstat -- full-options-list.md', return_='tuple')
         if len(output.split()) == 3 and output.split() == ['1','1','full-options-list.md']:
             execute('Reverting date-only change to full-options-list.md ...', f'cd {doc_dir} && git checkout -- ./full-options-list.md' )
-        else:
-            # Add that to the staging area
-            execute('Add Option list update ...', f'cd {doc_dir} && git add ./full-options-list.md' )
 
-        res, status_output = execute('Getting status output ...', f'cd {doc_dir} && git status', return_='tuple')
+        # Cleanup unneeded file
+        if os.path.exists(f"{doc_dir}/rosettascripts.xsd"):
+            os.remove(f"{doc_dir}/rosettascripts.xsd")
 
-        # Now we commit
-        res, output = execute('Committing ...', f'cd {doc_dir} && git commit -m "Test server update for {main_rev}"', return_='tuple' )
-        if res:
-            # We get this when there's nothing that needs to be updated.
+        # Make sure that we pull in any new files from the XSD
+        execute('Adding Markdown changes to XSD ...', f'cd {doc_dir} && git add ./scripting_documentation/RosettaScripts/xsd/' )
+
+        res, porc_status_output = execute('Getting status output ...', f'cd {doc_dir} && git status --porcelain', return_='tuple')
+
+        if len( porc_status_output.strip() ) == 0:
+            # No changes -- report success.
             results[_StateKey_] = _S_passed_
-            results[_LogKey_]   = 'No update to commit: \n' + output + '\n'
+            results[_LogKey_]   = 'No documentation changes to report.'
             return results
 
-        # Push to Github documentation repo
-        res, output = execute('Pushing ...', f'cd {doc_dir} && git push', return_='tuple'  )
-        if res:
-            return FAIL(output, "Couldn't push documentation update")
+        # Changes to report, create a patch file for users
+        # (Can't automatically commit results to either repo anymore.)
 
-        # Update main and push to branch on main
-        res, output = execute("Updating current branch", f'cd {rosetta_dir} && git add documentation/ && git commit -m "Test server updating documentation submodule"', return_='tuple')
-        if res:
-            return FAIL(output, "Couldn't update main repo")
-        res, output = execute("Pushing main...", f'cd {rosetta_dir} && git push', return_='tuple' )
-        if res:
-            return FAIL(output, "Couldn't push main repo updates")
+        res, user_diff_output = execute('Getting status output ...', f'cd {doc_dir} && git diff --stat=240 HEAD', return_='tuple')
 
-        # If we've reached here, we're successful
-        results[_StateKey_] = _S_passed_
-        results[_LogKey_]   = 'Updated documentation repo : \n' + output + '\n\n' + gen_output + '\n\n' + status_output
+        res_diff, diff = execute('Generating patch file for changes', f'cd {doc_dir} && git --no-pager diff --no-color HEAD', return_="tuple")
+        with open(working_dir+'/full_diff.patch', 'w') as f: f.write(diff)
+
+        output = '''Documentation Repository Needs Updating
+
+See full_diff.patch in the `Test files` for the full list of changes.
+
+You can apply these changes to your branch by downloading that patch file and executing
+
+        cd rosetta/documentation/; git apply ~/Downloads/full_diff.patch
+
+Git status output of diff:
+'''
+
+        output += user_diff_output
+
+        results[_StateKey_] = _S_failed_
+        results[_LogKey_]   = output
         return results
 
     finally:
-        # Revert any changes that haven't been properly pushed, also remove any extra (non-ignored) files
-        res, output = execute("What should the doc repo be at?...", f'cd {rosetta_dir} && git ls-tree HEAD -- documentation/', return_='tuple' )
-        reset_to = output.split()[2]
-        execute('Cleaning up', f'cd {doc_dir} && ( git reset --hard {reset_to}; git clean -fd )' )
+        # Revert any changes, also remove any extra (non-ignored) files
+        execute('Cleaning up', f'cd {doc_dir} && ( git reset --hard HEAD; git clean -fd )' )
 
 def run(test, repository_root, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
     ''' Run single test.
