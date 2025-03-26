@@ -327,4 +327,7 @@ private:
 
 	// @brief modified ligand.wts function that only contains fa_atr and fa_rep as a weighted term. Used in quicker preliminary filtering before running whole score function
 	core::scoring::ScoreFunctionOP fa_atr_rep_fxn_;
+
+	// @brief a copy of either whole_score_fxn_ or fa_atr_rep_fxn_ that is defined by the OptionKeys::motifs::highresdock_with_whole_score_fxn flag and is used in highresdock and scoring operations
+	core::scoring::ScoreFunctionOP working_fxn_;
 };

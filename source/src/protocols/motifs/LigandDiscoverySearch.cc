@@ -392,6 +392,14 @@ void LigandDiscoverySearch::setup_score_functions()
 	fa_atr_rep_fxn_->set_weight(core::scoring::fa_atr, 0.8);
 	fa_atr_rep_fxn_->set_weight(core::scoring::fa_rep, 0.4);
 
+	//seed working function to be either the whole or atr_rep function, which will be used on most heavy duty scoring cases
+	//there are individual cases where the user can additionally select to get a score with a specific function that will be left as is, but this working_fxn will be used in all other cases
+	if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
+		working_fxn_ = whole_score_fxn_;
+	} else {
+		working_fxn_ = fa_atr_rep_fxn_;
+	}
+
 	//set coordinate_constraint to zero for the whole function (creates strange ddg scores otherwise)
 	whole_score_fxn_->set_weight(core::scoring::coordinate_constraint, 0);
 }
@@ -654,12 +662,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 	//declare the highresdockerop
 	protocols::ligand_docking::HighResDockerOP my_HighResDocker;
 
-	//create the highresdocker object using either the whole score function or fa_atr_rep
-	if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
-		my_HighResDocker = make_HighResDockOP_for_discovery(whole_score_fxn_);
-	} else {
-		my_HighResDocker = make_HighResDockOP_for_discovery(fa_atr_rep_fxn_);
-	}
+	//create the highresdocker object using either the working function
+	my_HighResDocker = make_HighResDockOP_for_discovery(working_fxn_);
 
 	//iterate over all indices in working_positions_
 	//if the size of working_positions is 0, return -1 because we want at least 1 index to work with
@@ -1099,14 +1103,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//declaration of variable
 					core::Real delta_score = 10000;
 
-					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
-					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
-						//whole
-						delta_score = get_pose_ddg(whole_score_fxn_, working_pose_);
-					} else {
-						//atrrep
-						delta_score = get_pose_ddg(fa_atr_rep_fxn_, working_pose_);
-					}
+					//use working function based to get ddg before highresdock
+					delta_score = get_pose_ddg(working_fxn_, working_pose_);
 
 					ms_tr.Debug << "Pre-move delta score = " << delta_score << ", fa_atr = " << fa_atr << ", fa_rep = " << fa_rep << ", fa_atr_rep before = " << fa_atr_rep_score_before << std::endl;
 
@@ -1126,14 +1124,8 @@ core::Size LigandDiscoverySearch::discover(std::string output_prefix)
 					//apply the highresdocker to working_pose
 					run_HighResDock_on_working_pose(my_HighResDocker);
 
-					//use fa atr/rep or whole function based on highresdock_with_whole_score_fxn flag to get ddg before highresdock
-					if ( option[ OptionKeys::motifs::highresdock_with_whole_score_fxn ] ) {
-						//whole
-						delta_score = get_pose_ddg(whole_score_fxn_, working_pose_);
-					} else {
-						//atrrep
-						delta_score = get_pose_ddg(fa_atr_rep_fxn_, working_pose_);
-					}
+					//use working function to get ddg after highresdock
+					delta_score = get_pose_ddg(working_fxn_, working_pose_);
 
 					//this section up until collecting motifs off the placed ligand I do not think makes sense to put into its own function
 					//My reasoning is that this could be made into 2 small specific scoring functions, which seems like extra work
