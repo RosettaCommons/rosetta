@@ -138,6 +138,8 @@ You can apply these changes to your branch by downloading that patch file and ex
 
         cd rosetta/documentation/; git apply ~/Downloads/full_diff.patch
 
+(You may need to use `dos2unix` on the full_diff.patch first.)
+
 You will then need to commit and push those changes to the `documentation` repository (i.e. make a PR in the docs repo),
 and then update your branch in the `rosetta` repo to point the documentation submodule to the updated commit.
 
