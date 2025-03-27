@@ -39,9 +39,7 @@
 namespace core {
 namespace grid {
 
-class ProteinGrid : public utility::VirtualBase
-{
-public:
+
 	/// @brief condensing the data type name for the main 3D vector (or matrix) that represents the protein
 	// currently laid out in that the matrix internal data can only be of Size. If flexibility is needed, this could be expanded upon later. The main reason for not doing this now is that operations that use the matrix data rely on the data being a discrete set of positive integers
 	typedef utility::vector1<utility::vector1<utility::vector1<core::Size>>> ProteinMatrix;
@@ -52,7 +50,7 @@ public:
 	//parameterized constructors
 
 	//simple constructor that only takes in pose
-	ProteinGrid(core::pose::PoseOP in_pose)
+	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose)
 	{
 		protein_matrix_ = in_pose;
 
@@ -61,17 +59,19 @@ public:
 	}
 
 	//constructor that takes in pose and new resolution value
-	ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution)
+	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution)
 	{
 		protein_matrix_ = in_pose;
 		resolution_ = resolution;
+		//validate the resolution
+		validate_resolution();
 
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
 	}
 
 	//constructor that takes in pose and sub_region_min/max vectors
-	ProteinGrid(core::pose::PoseOP in_pose, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
+	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
 	{
 		protein_matrix_ = in_pose;
 
@@ -87,12 +87,13 @@ public:
 		wrap_matrix_around_pose();
 	}
 
-
 	//constructor that takes in pose, resolution values, and subregion vectors
-	ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
+	ProteinGrid::ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
 	{
 		protein_matrix_ = in_pose;
 		resolution_ = resolution;
+		//validate the resolution
+		validate_resolution();
 
 		sub_region_max_[1] = sub_region_max[1];
 		sub_region_max_[2] = sub_region_max[2];
@@ -107,22 +108,22 @@ public:
 	}
 
 	//copy constructor
-	ProteinGrid( ProteinGrid const & other ) 
+	ProteinGrid::ProteinGrid( ProteinGrid const & other ) 
 	{
 		other.clone( *this );
 	}
 
 	//@brief = operator overload
-	ProteinGrid & operator=( ProteinGrid const & other ) {
+	ProteinGrid::ProteinGrid & operator=( ProteinGrid const & other ) {
 		other.clone( *this );
 		return *this;
 	}
 
 	// destructor
-	~ProteinGrid() override = default;
+	~ProteinGrid::ProteinGrid() override = default;
 
 	// @brief function to clone the current ProteinGrid into inputted ProteinGrid
-	void clone(ProteinGrid & copy) const {
+	void ProteinGrid::clone(ProteinGrid & copy) const {
 		// copy over gross information
 		copy.protein_matrix_ = this->protein_matrix_;
 		copy.working_pose_ = this->working_pose_;
@@ -131,27 +132,35 @@ public:
 		copy.resolution_ = this->resolution_;
 		copy.sub_region_max_ = this->sub_region_max_;
 		copy.sub_region_min_ = this->sub_region_min_;
+		copy.matrix_fullness_ = this->matrix_fullness_;
+		copy.fullness_ratio_ = this->fullness_ratio_;
+		copy.matrix_volume_ = this->matrix_volume_;
+	}
+
+	// @brief simple function to derive the volume of the matrix
+	core::Size ProteinGrid::get_grid_volume()
+	{
+		return (xyz_bound_[0] * xyz_bound_[1] * xyz_bound_[2]);
 	}
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
+	void ProteinGrid::project_lj_radii(){
+
+	}
 
 	//(function for determining space fill difference by also including a ligand residuetype)
-
-
-
-private:
 
 	// @brief default constructor
 	//will need to use class functions to seed values for input pose and other potential input data
 	//should only use parameterized or copy constructor
-	ProteinGrid();
+	ProteinGrid::ProteinGrid();
 
 	// @brief critical function that builds/rebuilds (overwrites existing) the proteingrid protein_matrix_ around the pose in working_pose_
 	//called on creation of the object, and also called in cases like changing the pose or resolution
 	//this function will simply fill out cells with either a 0 if there is no atom present in the corresponding cell, or a 1 if there is
 	//for a more in-depth space fill (project LJ radii), the space fill function will need to be called
-	void wrap_matrix_around_pose()
+	ProteinGrid::void wrap_matrix_around_pose()
 	{
 		//run through all atoms to derive a range of dimensions to contain the protein in a 3D  space
 		//since we can't have negative indices, we need to normalize the coordinate values so that everything is positive
@@ -235,6 +244,16 @@ private:
 		ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
 		ms_tr.Debug << "Shift from from original coordinates, and multiplied by current resolution factor (" << resolution_ << ") are: " << xyz_shift_[1] << "," << xyz_shift_[2] << "," << xyz_shift_[3] << std::endl;
 
+		//wipe the current contents of the protein_matrix_ and reset fullness values
+		//create an empty dummy vector, and then assign protein_matrix_ with it
+		ProteinMatrix dummy_matrix;
+		protein_matrix_ = dummy_matrix;
+
+		matrix_volume_ = get_grid_volume();
+
+		matrix_fullness_ = 0;
+		fullness_ratio_ = 0;
+
 		for ( core::Size x = 1; x <= xyz_bound_[1]; ++x ) {
 			//make a 2D  matrix
 			utility::vector1<utility::vector1<core::Size>> sub_matrix;
@@ -256,6 +275,30 @@ private:
 		//approximated by flooring coordinates down
 		for ( core::Size xyzVec = 1; xyzVec <= atom_coordinates.size(); ++xyzVec ) {
 			protein_matrix_[atom_coordinates[xyzVec].x() + xyz_shift_[1]][atom_coordinates[xyzVec].y() + xyz_shift_[2]][atom_coordinates[xyzVec].z() + xyz_shift_[3]] = 1;
+
+			//increment occupied cell count by 1
+			++matrix_fullness_;
+		}
+
+		//safety check to ensure that we actually had atoms in the pose, and that the matrix has a nonzero volume
+		if(matrix_volume_ == 0)
+		{
+			ms_tr.Warning << "The matrix has no volume, likely because the inputted pose has no atoms!" << std::endl;
+		}
+
+		//derive the fullness ratio as the number of occupied cells over the total cell number
+		fullness_ratio_ = static_cast<core::Real>(matrix_fullness_) / matrix_volume_;
+
+	}
+
+	// @brief function to check and ensure that the resolution value is valid (> 0)
+	// if invalid, will throw a warning and set resolution to 1
+	void ProteinGrid::validate_resolution()
+	{
+		if(resolution_ <= 0)
+		{
+			ms_tr.Warning << "Invalid resolution scale. Resolution value must be >0. Setting resolution factor to default of 1." << std::endl;
+			resolution_ = 1;
 		}
 	}
 
@@ -272,6 +315,9 @@ private:
 	// @brief vector to hold the xyz boundaries of the matrix (not the pose coordinates, but the boundaries that are shifted and potentially scaled within the matrix)
 	utility::vector1<core::Size> xyz_bound_(3,0);
 
+	// @brief value to hold the number of cells/voxels within the matrix, derived by the product of the xyz_bound_ dimensions
+	core::Size matrix_volume_ = 0;
+
 	// @brief floating value that can be used to scale the resolution of the protein grid, if desired
 	// default resolution of voxels are at 1 cubic angstrom (generally recommended)
 	//values <1 decrease the resolution of the matrix, increasing the likelihood of multiple atoms appearing in the same voxel
@@ -284,10 +330,11 @@ private:
 	//seed values to be zero to indicate that we should not be using the subregion unless these values get set to be >=1
 	utility::vector1<core::Size> sub_region_max_(3,0);
 	utility::vector1<core::Size> sub_region_min_(3,0);
-};
+
+	// @brief values to track how full the matrix is with atoms, and a ratio to track the fullness value compared to the size of the matrix
+	core::Size matrix_fullness_ = 0;
+	core::Real fullness_ratio_ = 0;
+
 
 }
 }
-
-
-#endif 
