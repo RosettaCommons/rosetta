@@ -75,6 +75,20 @@ ResidueTypeConstraint::ResidueTypeConstraint(
 {}
 
 ResidueTypeConstraint::ResidueTypeConstraint(
+	core::pose::Pose const &, //pose,
+	Size seqpos,
+	std::string const & AA_name,
+	core::Real favor_native_bonus,
+	bool base_name
+):
+	Constraint( core::scoring::res_type_constraint ),
+	seqpos_( seqpos ),
+	rsd_type_name3_( AA_name ),
+	favor_native_bonus_( favor_native_bonus ),
+	base_name_( base_name )
+{}
+
+ResidueTypeConstraint::ResidueTypeConstraint(
 	Size seqpos,
 	std::string const & aa_in,
 	std::string const & name3_in,
@@ -157,6 +171,17 @@ ResidueTypeConstraint::remapped_clone( pose::Pose const&, pose::Pose const&, id:
 	return utility::pointer::make_shared< ResidueTypeConstraint >(newseqpos, AAname, rsd_type_name3_, favor_native_bonus_);
 }
 
+bool
+ResidueTypeConstraint::get_base_name_active( ) const
+{
+	return base_name_;
+}
+
+void
+ResidueTypeConstraint::set_base_name_active( bool base_name )
+{
+	base_name_ = base_name;
+}
 
 // Calculates a score for this constraint using XYZ_Func, and puts the UNWEIGHTED score into
 // emap. Although the current set of weights currently is provided, Constraint objects
@@ -168,8 +193,19 @@ ResidueTypeConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const &
 	if ( weight == 0 ) return; // what's the point?
 
 	conformation::Residue const & rsd( xyz_func.residue(seqpos_) );
-	if ( rsd.type().name3() == rsd_type_name3_ ) {
-		emap[ this->score_type() ] -= favor_native_bonus_;
+	if ( base_name_ ) {
+		if ( rsd.type().base_name() == rsd_type_name3_ ) {
+			emap[ this->score_type() ] -= favor_native_bonus_;
+		}
+	} else {
+		if ( rsd_type_name3_.length() > 3 ) {
+			TR.Warning <<
+				"Warning: base_name_ is not set (set_base_name_active(true)), but rsd_type_name3_ is greater than 3: "
+				<< rsd_type_name3_ << std::endl;
+		}
+		if ( rsd.type().name3() == rsd_type_name3_ ) {
+			emap[ this->score_type() ] -= favor_native_bonus_;
+		}
 	}
 	// no match, don't adjust score
 }
@@ -177,7 +213,16 @@ ResidueTypeConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const &
 core::Real
 ResidueTypeConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
 	conformation::Residue const & rsd( xyz.residue(seqpos_) );
-	return rsd.type().name3() == rsd_type_name3_;
+	if ( base_name_ ) {
+		return rsd.type().base_name() == rsd_type_name3_;
+	} else {
+		if ( rsd_type_name3_.length() > 3 ) {
+			TR.Warning <<
+				"Warning: base_name_ is not set (set_base_name_active(true)), but rsd_type_name3_ is greater than 3: "
+				<< rsd_type_name3_ << std::endl;
+		}
+		return rsd.type().name3() == rsd_type_name3_;
+	}
 }
 
 void
@@ -222,6 +267,7 @@ core::scoring::constraints::ResidueTypeConstraint::save( Archive & arc ) const {
 	arc( CEREAL_NVP( AAname ) ); // std::string
 	arc( CEREAL_NVP( rsd_type_name3_ ) ); // std::string
 	arc( CEREAL_NVP( favor_native_bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( base_name_ ) ); // bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -233,6 +279,7 @@ core::scoring::constraints::ResidueTypeConstraint::load( Archive & arc ) {
 	arc( AAname ); // std::string
 	arc( rsd_type_name3_ ); // std::string
 	arc( favor_native_bonus_ ); // core::Real
+	arc( base_name_  ); // bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::ResidueTypeConstraint );
