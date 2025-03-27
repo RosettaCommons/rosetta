@@ -39,7 +39,6 @@
 namespace core {
 namespace grid {
 
-template <typename T>
 class ProteinGrid : public utility::VirtualBase
 {
 public:
@@ -72,13 +71,67 @@ public:
 	}
 
 	//constructor that takes in pose and sub_region_min/max vectors
+	ProteinGrid(core::pose::PoseOP in_pose, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
+	{
+		protein_matrix_ = in_pose;
+
+		sub_region_max_[1] = sub_region_max[1];
+		sub_region_max_[2] = sub_region_max[2];
+		sub_region_max_[3] = sub_region_max[3];
+
+		sub_region_min_[1] = sub_region_min[1];
+		sub_region_min_[2] = sub_region_min[2];
+		sub_region_min_[3] = sub_region_min[3];
+
+		//wrap matrix around pose
+		wrap_matrix_around_pose();
+	}
+
 
 	//constructor that takes in pose, resolution values, and subregion vectors
+	ProteinGrid(core::pose::PoseOP in_pose, core::Real resolution, utility::vector1<core::Size> sub_region_max, utility::vector1<core::Size> sub_region_min)
+	{
+		protein_matrix_ = in_pose;
+		resolution_ = resolution;
+
+		sub_region_max_[1] = sub_region_max[1];
+		sub_region_max_[2] = sub_region_max[2];
+		sub_region_max_[3] = sub_region_max[3];
+
+		sub_region_min_[1] = sub_region_min[1];
+		sub_region_min_[2] = sub_region_min[2];
+		sub_region_min_[3] = sub_region_min[3];
+
+		//wrap matrix around pose
+		wrap_matrix_around_pose();
+	}
 
 	//copy constructor
+	ProteinGrid( ProteinGrid const & other ) 
+	{
+		other.clone( *this );
+	}
+
+	//@brief = operator overload
+	ProteinGrid & operator=( ProteinGrid const & other ) {
+		other.clone( *this );
+		return *this;
+	}
 
 	// destructor
 	~ProteinGrid() override = default;
+
+	// @brief function to clone the current ProteinGrid into inputted ProteinGrid
+	void clone(ProteinGrid & copy) const {
+		// copy over gross information
+		copy.protein_matrix_ = this->protein_matrix_;
+		copy.working_pose_ = this->working_pose_;
+		copy.xyz_shift_ = this->xyz_shift_;
+		copy.xyz_bound_ = this->xyz_bound_;
+		copy.resolution_ = this->resolution_;
+		copy.sub_region_max_ = this->sub_region_max_;
+		copy.sub_region_min_ = this->sub_region_min_;
+	}
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
