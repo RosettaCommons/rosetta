@@ -31,6 +31,8 @@
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 
+#include <cmath>
+
 using namespace core;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
