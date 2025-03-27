@@ -24,6 +24,16 @@ namespace scoring {
 namespace hbonds {
 namespace graph {
 
+
+HBondNode & HBondNode_from_LowMemNode(utility::graph::LowMemNode & node) {
+	return (HBondNode &)node;
+}
+HBondEdge & HBondEdge_from_LowMemEdge(utility::graph::LowMemEdge & edge) {
+	return (HBondEdge &)(edge);
+}
+
+
+
 //dummy! please do not call these
 HBondNode::HBondNode() :
 	utility::graph::LowMemNode( 0 ),
