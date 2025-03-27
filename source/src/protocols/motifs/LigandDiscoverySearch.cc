@@ -133,6 +133,8 @@ using utility::string_split;
 
 #include <utility/Binary_Util.hh>
 
+#include <core/grid/ProteinGrid.hh>
+
 // Time profiling header
 #include <time.h>
 
