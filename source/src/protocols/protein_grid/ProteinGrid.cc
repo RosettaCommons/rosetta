@@ -193,7 +193,7 @@ namespace protein_grid {
 	//should only use parameterized or copy constructor
 	ProteinGrid::ProteinGrid()
 	{
-		
+
 	}
 
 	// @brief critical function that builds/rebuilds (overwrites existing) the proteingrid protein_matrix_ around the pose in working_pose_
@@ -280,9 +280,9 @@ namespace protein_grid {
 		xyz_shift_[3] = std::floor(((smallest_z * -1) + 1) * resolution_);
 
 		//apply shift values to largest to get boundaries
-		xyz_bound_[1] = std::floor((x_shift + largest_x) * resolution_);
-		xyz_bound_[2] = std::floor((y_shift + largest_y) * resolution_);
-		xyz_bound_[3] = std::floor((z_shift + largest_z) * resolution_);
+		xyz_bound_[1] = std::floor((xyz_shift_[1] + largest_x) * resolution_);
+		xyz_bound_[2] = std::floor((xyz_shift_[2] + largest_y) * resolution_);
+		xyz_bound_[3] = std::floor((xyz_shift_[3] + largest_z) * resolution_);
 
 		//create 3D matrix to roughly represent 3D coordinate space of protein
 		ms_tr.Debug << "Creating protein clash coordinate matrix. Dimensions of matrix are " << xyz_bound_[1] << "," << xyz_bound_[2] << "," << xyz_bound_[3] << std::endl;
