@@ -10,10 +10,6 @@
 /// @file   src/core/grid/ProteinGrid.hh
 /// @author Ari Ginsparg
 
-#ifndef INCLUDED_core_grid_ProteinGrid_fwd_hh
-#define INCLUDED_core_grid_ProteinGrid_fwd_hh
-
-
 #include <core/grid/ProteinGrid.fwd.hh>
 #include <core/types.hh>
 
@@ -146,7 +142,15 @@ namespace grid {
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
 	void ProteinGrid::project_lj_radii(){
+		//iterate over each atom in working_pose
+		for ( core::Size res_num = 1; res_num <= working_pose_->size(); ++res_num ) {
+			for ( core::Size atom_num = 1; atom_num <= working_pose_->residue(res_num).natoms(); ++atom_num ) {
+			
 
+
+			}
+		}
+		//
 	}
 
 	//(function for determining space fill difference by also including a ligand residuetype)
@@ -301,40 +305,5 @@ namespace grid {
 			resolution_ = 1;
 		}
 	}
-
-	// @brief 3D matrix of voxelized representation of atoms in pose; individual indices contain data values that correspond to whether the voxel is occupied by pose atoms
-	// the coordinates of pose atoms are used to correspond to voxels in this matrix. Atom coordinates are all shifted so that the minimum coordinate value of all pose atoms are shifted to 1
-	ProteinMatrix protein_matrix_;
-
-	// @brief the corresponding pose that the protein_matrix_ is wrapped around
-	core::pose::PoseOP working_pose_;
-
-	// @brief vector to hold the values that atom coordinates shift by in the x,y,z directions
-	utility::vector1<int> xyz_shift_(3,0);
-
-	// @brief vector to hold the xyz boundaries of the matrix (not the pose coordinates, but the boundaries that are shifted and potentially scaled within the matrix)
-	utility::vector1<core::Size> xyz_bound_(3,0);
-
-	// @brief value to hold the number of cells/voxels within the matrix, derived by the product of the xyz_bound_ dimensions
-	core::Size matrix_volume_ = 0;
-
-	// @brief floating value that can be used to scale the resolution of the protein grid, if desired
-	// default resolution of voxels are at 1 cubic angstrom (generally recommended)
-	//values <1 decrease the resolution of the matrix, increasing the likelihood of multiple atoms appearing in the same voxel
-	//values >1 increase the resolution, which can help better define the sphere shape of lj radii from atoms; this comes at a substantial time/memory code
-	//resolution value must be positive
-	core::Real resolution_ = 1;
-
-	// @brief vectors of maximum and minimum xyz values for a sub-area to potentially investigate in methods like space filling
-	// the region is a rectangular prism that is defined by coordinates outlined in sub_refoun_min_ and sub_region_max_
-	//seed values to be zero to indicate that we should not be using the subregion unless these values get set to be >=1
-	utility::vector1<core::Size> sub_region_max_(3,0);
-	utility::vector1<core::Size> sub_region_min_(3,0);
-
-	// @brief values to track how full the matrix is with atoms, and a ratio to track the fullness value compared to the size of the matrix
-	core::Size matrix_fullness_ = 0;
-	core::Real fullness_ratio_ = 0;
-
-
 }
 }

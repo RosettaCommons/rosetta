@@ -10,9 +10,6 @@
 /// @file   src/core/grid/ProteinGrid.hh
 /// @author Ari Ginsparg
 
-#ifndef INCLUDED_core_grid_ProteinGrid_fwd_hh
-#define INCLUDED_core_grid_ProteinGrid_fwd_hh
-
 
 #include <core/grid/ProteinGrid.fwd.hh>
 #include <core/types.hh>

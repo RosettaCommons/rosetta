@@ -17,7 +17,6 @@
 namespace core {
 namespace grid {
 
-template <typename T>
 class ProteinGrid; // fwd declaration
 }
 }
