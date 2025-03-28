@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/grid/ProteinGrid.hh
+/// @file   src/protocols/protein_grid/ProteinGrid.hh
 /// @author Ari Ginsparg
 
 #ifndef INCLUDED_protocols_protein_grid_ProteinGrid_hh
 #define INCLUDED_protocols_protein_grid_ProteinGrid_hh
 
-#include <core/grid/ProteinGrid.fwd.hh>
+#include <protocols/protein_grid/ProteinGrid.fwd.hh>
 #include <core/types.hh>
 
 #include <numeric/xyzVector.hh>
