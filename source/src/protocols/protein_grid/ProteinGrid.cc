@@ -32,8 +32,8 @@
 #include <algorithm>
 #include <sstream>
 
-namespace core {
-namespace grid {
+namespace protocols {
+namespace protein_grid {
 
 
 	/// @brief condensing the data type name for the main 3D vector (or matrix) that represents the protein

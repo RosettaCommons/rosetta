@@ -10,12 +10,12 @@
 /// @file   src/core/grid/ProteinGrid.fwd.hh
 /// @author Ari Ginsparg
 
-#ifndef INCLUDED_core_grid_ProteinGrid_fwd_hh
-#define INCLUDED_core_grid_ProteinGrid_fwd_hh
+#ifndef INCLUDED_protocols_protein_grid_ProteinGrid_fwd_hh
+#define INCLUDED_protocols_protein_grid_ProteinGrid_fwd_hh
 
 
-namespace core {
-namespace grid {
+namespace protocols {
+namespace protein_grid {
 
 class ProteinGrid; // fwd declaration
 }

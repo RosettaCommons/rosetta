@@ -10,8 +10,8 @@
 /// @file   src/core/grid/ProteinGrid.hh
 /// @author Ari Ginsparg
 
-#ifndef INCLUDED_core_grid_ProteinGrid_hh
-#define INCLUDED_core_grid_ProteinGrid_hh
+#ifndef INCLUDED_protocols_protein_grid_ProteinGrid_hh
+#define INCLUDED_protocols_protein_grid_ProteinGrid_hh
 
 #include <core/grid/ProteinGrid.fwd.hh>
 #include <core/types.hh>
@@ -35,8 +35,8 @@
 #include <algorithm>
 #include <sstream>
 
-namespace core {
-namespace grid {
+namespace protocols {
+namespace protein_grid {
 
 class ProteinGrid : public utility::VirtualBase
 {

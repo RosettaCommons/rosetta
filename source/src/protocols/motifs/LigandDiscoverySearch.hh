@@ -85,7 +85,7 @@
 
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
-#include <core/grid/ProteinGrid.fwd.hh>
+#include <protocols/protein_grid/ProteinGrid.fwd.hh>
 
 // Time profiling header
 #include <time.h>
