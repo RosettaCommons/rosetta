@@ -50,6 +50,10 @@ namespace grid {
 	{
 		protein_matrix_ = in_pose;
 
+		//reset the subregion vectors
+		//shift and bound vectors will be set/reset in the wrap function
+		reset_sub_region_vectors();
+
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
 	}
@@ -62,6 +66,10 @@ namespace grid {
 		//validate the resolution
 		validate_resolution();
 
+		//reset the subregion vectors
+		//shift and bound vectors will be set/reset in the wrap function
+		reset_sub_region_vectors();
+
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
 	}
@@ -71,13 +79,12 @@ namespace grid {
 	{
 		protein_matrix_ = in_pose;
 
-		sub_region_max_[1] = sub_region_max[1];
-		sub_region_max_[2] = sub_region_max[2];
-		sub_region_max_[3] = sub_region_max[3];
+		//reset the subregion vectors
+		//shift and bound vectors will be set/reset in the wrap function
+		reset_sub_region_vectors();
 
-		sub_region_min_[1] = sub_region_min[1];
-		sub_region_min_[2] = sub_region_min[2];
-		sub_region_min_[3] = sub_region_min[3];
+		//set sub regions
+		set_sub_regions(sub_region_max,sub_region_min);
 
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
@@ -91,13 +98,12 @@ namespace grid {
 		//validate the resolution
 		validate_resolution();
 
-		sub_region_max_[1] = sub_region_max[1];
-		sub_region_max_[2] = sub_region_max[2];
-		sub_region_max_[3] = sub_region_max[3];
+		//reset the subregion vectors
+		//shift and bound vectors will be set/reset in the wrap function
+		reset_sub_region_vectors();
 
-		sub_region_min_[1] = sub_region_min[1];
-		sub_region_min_[2] = sub_region_min[2];
-		sub_region_min_[3] = sub_region_min[3];
+		//set sub regions
+		set_sub_regions(sub_region_max,sub_region_min);
 
 		//wrap matrix around pose
 		wrap_matrix_around_pose();
@@ -137,6 +143,32 @@ namespace grid {
 	core::Size ProteinGrid::get_grid_volume()
 	{
 		return (xyz_bound_[0] * xyz_bound_[1] * xyz_bound_[2]);
+	}
+
+	// @brief function to set the xyz coordinates of the sub_region_min
+	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
+	void ProteinGrid::set_sub_region_min( utility::vector1<core::Size> region_in )
+	{
+		sub_region_min_[1] = region_in[1];
+		sub_region_min_[2] = region_in[2];
+		sub_region_min_[3] = region_in[3];
+	}
+
+	// @brief function to set the xyz coordinates of the sub_region_max
+	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
+	void ProteinGrid::set_sub_region_max( utility::vector1<core::Size> region_in )
+	{
+		sub_region_max_[1] = region_in[1];
+		sub_region_max_[2] = region_in[2];
+		sub_region_max_[3] = region_in[3];
+	}
+
+	// @brief function to set the xyz coordinates of sub_region_max and sun_region_min
+	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
+	void ProteinGrid::set_sub_regions( utility::vector1<core::Size> region_max, utility::vector1<core::Size> region_min )
+	{
+		set_sub_region_max(region_max);
+		set_sub_region_min(region_min);
 	}
 
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
@@ -232,6 +264,10 @@ namespace grid {
 			}
 		}
 
+		//set (or reset) the shift and bound vectors to be 3 values of 0 before setting them
+		//this is necessary at least for the initial setting when the object is constructed
+		reset_xyz_vectors();
+
 		//take negative values of the smallest values and then add 1 to derive the constants
 		//the logic here should apply, whether the smallest value is positive or negative
 		//for the smallest value in the system to be indexed to 1, you add the negative of itself + 1; this shift would be applied to all other atom coordinates
@@ -304,6 +340,20 @@ namespace grid {
 			ms_tr.Warning << "Invalid resolution scale. Resolution value must be >0. Setting resolution factor to default of 1." << std::endl;
 			resolution_ = 1;
 		}
+	}
+
+	// @brief reset (or set) the xyz shift and bound matrices to be 3 values of zeroes
+	void ProteinGrid::reset_xyz_vectors()
+	{
+		xyz_shift_ = utility::vector1<int>(3, 0);
+		xyz_bound_ = utility::vector1<int>(3, 0);
+	}
+
+	// @brief reset (or set) the sub-region matrices to be 3 values of zeroes
+	void ProteinGrid::reset_sub_region_vectors()
+	{
+		sub_region_max_ = utility::vector1<int>(3, 0);
+		sub_region_min_ = utility::vector1<int>(3, 0);
 	}
 }
 }

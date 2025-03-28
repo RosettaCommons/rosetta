@@ -10,6 +10,8 @@
 /// @file   src/core/grid/ProteinGrid.hh
 /// @author Ari Ginsparg
 
+#ifndef INCLUDED_core_grid_ProteinGrid_hh
+#define INCLUDED_core_grid_ProteinGrid_hh
 
 #include <core/grid/ProteinGrid.fwd.hh>
 #include <core/types.hh>
@@ -72,6 +74,18 @@ public:
 	// @brief simple function to derive the volume of the matrix
 	core::Size get_grid_volume();
 
+	// @brief function to set the xyz coordinates of the sub_region_min
+	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
+	void set_sub_region_min( utility::vector1<core::Size> region_in );
+
+	// @brief function to set the xyz coordinates of the sub_region_max
+	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
+	void set_sub_region_max( utility::vector1<core::Size> region_in );
+
+	// @brief function to set the xyz coordinates of sub_region_max and sun_region_min
+	// reminder, these values should directly relate to coordinates in the pose, and not be directly aimed at the matrix indices
+	void set_sub_regions( utility::vector1<core::Size> region_max, utility::vector1<core::Size> region_min );	
+
 	// @brief function to elaborate upon the protein_matrix_, and will review the pose and update occupied cells by projecting atom lennard jobes radii and marking cells within the radius as occupied
 	// if a sub area boundary is defined, will define that area with different values
 	void project_lj_radii();
@@ -97,6 +111,12 @@ private:
 	// if invalid, will throw a warning and set resolution to 1
 	void validate_resolution();
 
+	// @brief reset (or set) the xyz shift and bound matrices to be 3 values of zeroes
+	void reset_xyz_vectors();
+
+	// @brief reset (or set) the sub-region matrices to be 3 values of zeroes
+	void reset_sub_region_vectors();	
+
 	// @brief 3D matrix of voxelized representation of atoms in pose; individual indices contain data values that correspond to whether the voxel is occupied by pose atoms
 	// the coordinates of pose atoms are used to correspond to voxels in this matrix. Atom coordinates are all shifted so that the minimum coordinate value of all pose atoms are shifted to 1
 	ProteinMatrix protein_matrix_;
@@ -105,10 +125,10 @@ private:
 	core::pose::PoseOP working_pose_;
 
 	// @brief vector to hold the values that atom coordinates shift by in the x,y,z directions
-	utility::vector1<int> xyz_shift_(3,0);
+	utility::vector1<int> xyz_shift_;
 
 	// @brief vector to hold the xyz boundaries of the matrix (not the pose coordinates, but the boundaries that are shifted and potentially scaled within the matrix)
-	utility::vector1<core::Size> xyz_bound_(3,0);
+	utility::vector1<core::Size> xyz_bound_;
 
 	// @brief value to hold the number of cells/voxels within the matrix, derived by the product of the xyz_bound_ dimensions
 	core::Size matrix_volume_ = 0;
@@ -123,8 +143,10 @@ private:
 	// @brief vectors of maximum and minimum xyz values for a sub-area to potentially investigate in methods like space filling
 	// the region is a rectangular prism that is defined by coordinates outlined in sub_refoun_min_ and sub_region_max_
 	//seed values to be zero to indicate that we should not be using the subregion unless these values get set to be >=1
-	utility::vector1<core::Size> sub_region_max_(3,0);
-	utility::vector1<core::Size> sub_region_min_(3,0);
+	//these are meant to be coordinats in the pose (rounded to an int), not cells in the ProteinMatrix
+	//the values will be scaled and shifted when used
+	utility::vector1<core::Size> sub_region_max_;
+	utility::vector1<core::Size> sub_region_min_;
 
 	// @brief values to track how full the matrix is with atoms, and a ratio to track the fullness value compared to the size of the matrix
 	core::Size matrix_fullness_ = 0;
